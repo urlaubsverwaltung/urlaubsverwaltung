@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
@@ -109,7 +110,8 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Person boss = new Person();
         boss.setId(1L);
@@ -175,7 +177,8 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -279,7 +282,9 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(person);
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -314,7 +319,9 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(person);
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -547,7 +554,8 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -586,7 +594,8 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Person colleague = new Person();
         colleague.setId(3L);
@@ -635,7 +644,8 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Person colleague = new Person();
         colleague.setId(3L);
@@ -688,7 +698,8 @@ class ApplicationMailServiceTest {
         final List<Person> recipients = singletonList(person);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(recipients);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -765,7 +776,8 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
         application.setDayLength(FULL);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -798,7 +810,8 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
         application.setDayLength(FULL);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -845,7 +858,8 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
         application.setDayLength(FULL);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Person colleague = new Person();
         colleague.setId(3L);
@@ -895,7 +909,8 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
         application.setDayLength(FULL);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Person colleague = new Person();
         colleague.setId(3L);
@@ -947,7 +962,8 @@ class ApplicationMailServiceTest {
         application.setStartDate(LocalDate.of(2020, 10, 2));
         application.setEndDate(LocalDate.of(2020, 10, 3));
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -1008,7 +1024,8 @@ class ApplicationMailServiceTest {
         final List<Person> recipients = singletonList(person);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(recipients);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
@@ -1053,7 +1070,8 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
 
-        final ApplicationComment comment = new ApplicationComment(person, clock);
+        final ApplicationComment comment = new ApplicationComment(
+            1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);

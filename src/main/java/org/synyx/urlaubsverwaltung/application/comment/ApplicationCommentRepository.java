@@ -1,21 +1,22 @@
 package org.synyx.urlaubsverwaltung.application.comment;
 
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
 
-/**
- * Repository for {@link ApplicationComment} entities.
- */
-interface ApplicationCommentRepository extends CrudRepository<ApplicationComment, Long> {
+interface ApplicationCommentRepository extends CrudRepository<ApplicationCommentEntity, Long> {
 
-    List<ApplicationComment> findByApplication(Application application);
+    List<ApplicationCommentEntity> findByApplicationId(Long applicationId);
 
-    List<ApplicationComment> findByPerson(Person person);
+    List<ApplicationCommentEntity> findByPerson(Person person);
 
     @Modifying
-    void deleteByApplicationPerson(Person person);
+    void deleteByPerson(Person person);
+
+    @Modifying
+    @Query("DELETE FROM application_comment c WHERE c.applicationId IN (SELECT a.id FROM Application a WHERE a.person = :applicationPerson)")
+    void deleteByApplicationPerson(Person applicationPerson);
 }

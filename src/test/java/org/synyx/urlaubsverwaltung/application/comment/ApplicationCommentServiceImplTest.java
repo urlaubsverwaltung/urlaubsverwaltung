@@ -8,12 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,14 +33,17 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 @ExtendWith(MockitoExtension.class)
 class ApplicationCommentServiceImplTest {
 
-    private ApplicationCommentServiceImpl commentService;
+    private ApplicationCommentServiceImpl sut;
+
+    @Mock
+    private ApplicationService applicationService;
 
     @Mock
     private ApplicationCommentRepository commentRepository;
 
     @BeforeEach
     void setUp() {
-        commentService = new ApplicationCommentServiceImpl(commentRepository, Clock.systemUTC());
+        sut = new ApplicationCommentServiceImpl(commentRepository, applicationService, Clock.systemUTC());
     }
 
 
@@ -50,23 +52,33 @@ class ApplicationCommentServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
+
         final Application application = createApplication(person, vacationType);
+        application.setId(1337L);
 
         when(commentRepository.save(any())).then(returnsFirstArg());
+        when(applicationService.getApplicationById(1337L)).thenReturn(Optional.of(application));
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationComment comment = commentService.create(application, ALLOWED, Optional.empty(), author);
+        final ApplicationComment comment = sut.create(application, ALLOWED, Optional.empty(), author);
 
         assertThat(comment).isNotNull();
-        assertThat(comment.getDate()).isNotNull();
-        assertThat(comment.getAction()).isNotNull();
-        assertThat(comment.getPerson()).isNotNull();
-        assertThat(comment.getApplication()).isNotNull();
-        assertThat(comment.getAction()).isEqualTo(ALLOWED);
-        assertThat(comment.getPerson()).isEqualTo(author);
-        assertThat(comment.getText()).isNull();
+        assertThat(comment.date()).isNotNull();
+        assertThat(comment.application()).isNotNull();
+        assertThat(comment.action()).isEqualTo(ALLOWED);
+        assertThat(comment.person()).isEqualTo(author);
+        assertThat(comment.text()).isNull();
 
-        verify(commentRepository).save(comment);
+        final ArgumentCaptor<ApplicationCommentEntity> captor = ArgumentCaptor.forClass(ApplicationCommentEntity.class);
+        verify(commentRepository).save(captor.capture());
+
+        assertThat(captor.getValue()).satisfies(persistedComment -> {
+            assertThat(persistedComment.getDate()).isNotNull();
+            assertThat(persistedComment.getApplicationId()).isEqualTo(1337L);
+            assertThat(persistedComment.getAction()).isEqualTo(ALLOWED);
+            assertThat(persistedComment.getPerson()).isEqualTo(author);
+            assertThat(persistedComment.getText()).isNull();
+        });
     }
 
 
@@ -75,52 +87,58 @@ class ApplicationCommentServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
+
         final Application application = createApplication(person, vacationType);
+        application.setId(42L);
 
         when(commentRepository.save(any())).then(returnsFirstArg());
+        when(applicationService.getApplicationById(42L)).thenReturn(Optional.of(application));
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationComment savedComment = commentService.create(application, REJECTED, Optional.of("Foo"), author);
+        final ApplicationComment savedComment = sut.create(application, REJECTED, Optional.of("Foo"), author);
 
-        assertThat(savedComment).isNotNull();
-        assertThat(savedComment.getDate()).isNotNull();
-        assertThat(savedComment.getAction()).isNotNull();
-        assertThat(savedComment.getPerson()).isNotNull();
-        assertThat(savedComment.getText()).isNotNull();
-        assertThat(savedComment.getAction()).isEqualTo(REJECTED);
-        assertThat(savedComment.getPerson()).isEqualTo(author);
-        assertThat(savedComment.getText()).isEqualTo("Foo");
+        assertThat(savedComment.text()).isEqualTo("Foo");
 
-        verify(commentRepository).save(savedComment);
+        final ArgumentCaptor<ApplicationCommentEntity> captor = ArgumentCaptor.forClass(ApplicationCommentEntity.class);
+        verify(commentRepository).save(captor.capture());
+
+        assertThat(captor.getValue()).satisfies(persistedComment -> {
+            assertThat(persistedComment.getText()).isEqualTo("Foo");
+        });
     }
 
     @Test
     void ensureDeletionOfCommentAuthor() {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
-        applicationComment.setId(1L);
-        final List<ApplicationComment> applicationCommentsOfAuthor = List.of(applicationComment);
-        when(commentRepository.findByPerson(person)).thenReturn(applicationCommentsOfAuthor);
+        final Person person = new Person();
+        person.setId(1L);
 
-        commentService.deleteCommentAuthor(person);
+        final Application application = new Application();
+        application.setId(1337L);
+
+        final ApplicationCommentEntity entity = new ApplicationCommentEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+
+        when(commentRepository.findByPerson(person)).thenReturn(List.of(entity));
+
+        sut.deleteCommentAuthor(person);
 
         verify(commentRepository).findByPerson(person);
 
-        final ArgumentCaptor<List<ApplicationComment>> argument = ArgumentCaptor.forClass(List.class);
+        final ArgumentCaptor<List<ApplicationCommentEntity>> argument = ArgumentCaptor.forClass(List.class);
         verify(commentRepository).saveAll(argument.capture());
         assertThat(argument.getValue().get(0).getPerson()).isNull();
     }
 
     @Test
     void ensureDeletionByApplicationPerson() {
-        final Person applicationPerson = new Person();
-        applicationPerson.setId(1L);
 
-        commentService.deleteByApplicationPerson(applicationPerson);
+        final Person person = new Person();
+        person.setId(1L);
 
-        verify(commentRepository).deleteByApplicationPerson(applicationPerson);
+        sut.deleteByApplicationPerson(person);
+
+        verify(commentRepository).deleteByApplicationPerson(person);
     }
-
-
 }

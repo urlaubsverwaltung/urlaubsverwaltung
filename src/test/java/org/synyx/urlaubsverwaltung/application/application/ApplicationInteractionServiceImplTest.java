@@ -174,7 +174,9 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
 
         final Settings settings = new Settings();
@@ -200,7 +202,9 @@ class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
 
         final Settings settings = new Settings();
@@ -248,7 +252,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person))
+            .thenReturn(applicationComment);
 
         sut.directAllow(applicationForLeave, person, comment);
 
@@ -283,7 +291,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, person, "Foo");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person))
+            .thenReturn(applicationComment);
 
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("eventId"));
@@ -316,7 +328,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office))
+            .thenReturn(applicationComment);
 
         sut.directAllow(applicationForLeave, office, comment);
 
@@ -344,7 +360,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, boss, comment);
 
@@ -373,8 +393,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(false);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
-        when(applicationComment).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, boss, "Foo");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, boss, comment);
 
@@ -396,7 +419,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, boss, comment);
 
@@ -456,7 +483,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
@@ -480,7 +511,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
@@ -535,7 +570,10 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(false);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(any(), any(), any(), any())).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(any(), any(), any(), any())).thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
@@ -559,7 +597,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, secondStage, comment);
 
@@ -590,7 +632,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, secondStage, comment);
 
@@ -614,8 +660,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
-        when(applicationComment).thenReturn(new ApplicationComment(person, clock));
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, secondStage, "Foo");
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, secondStage, comment);
 
@@ -641,8 +690,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, departmentHead, "");
+
         final Optional<String> comment = of("Foo");
-        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority)).thenReturn(new ApplicationComment(departmentHead, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority))
+            .thenReturn(applicationComment);
 
         sut.allow(applicationForLeave, secondStageAuthority, comment);
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, departmentHead, secondStageAuthority);
@@ -858,7 +911,8 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final Optional<String> optionalComment = of("Foo");
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.REJECTED, person, "");
 
         when(commentService.create(applicationForLeave, ApplicationCommentAction.REJECTED, optionalComment, boss)).thenReturn(applicationComment);
 
@@ -878,7 +932,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, person)).thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, person, comment);
@@ -929,8 +985,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
-            .thenReturn(new ApplicationComment(person, clock));
+            .thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, person, comment);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED);
@@ -959,7 +1018,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(applicationForLeave, CANCELLED, comment, person)).thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, person, comment);
@@ -992,8 +1053,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
-            .thenReturn(new ApplicationComment(person, clock));
+            .thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, canceller, comment);
 
@@ -1021,8 +1085,11 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
-            .thenReturn(new ApplicationComment(person, clock));
+            .thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, canceller, comment);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
@@ -1048,7 +1115,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.ALLOWED, person, "");
+
         when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
             .thenReturn(applicationComment);
 
@@ -1099,7 +1168,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, person, "");
+
         when(commentService.create(applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, comment, person)).thenReturn(applicationComment);
 
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
@@ -1141,7 +1212,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = new ApplicationComment(office, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, person, "");
+
         when(commentService.create(applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, comment, office)).thenReturn(applicationComment);
 
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
@@ -1177,7 +1250,9 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final Optional<String> comment = of("Anfrage kann nicht storniert werden!");
-        final ApplicationComment applicationComment = new ApplicationComment(canceller, clock);
+        final ApplicationComment applicationComment = new ApplicationComment(
+            1L, Instant.now(clock), applicationForLeave, CANCEL_REQUESTED_DECLINED, person, "");
+
         when(commentService.create(applicationForLeave, CANCEL_REQUESTED_DECLINED, comment, canceller)).thenReturn(applicationComment);
 
         final Application application = sut.declineCancellationRequest(applicationForLeave, canceller, comment);
