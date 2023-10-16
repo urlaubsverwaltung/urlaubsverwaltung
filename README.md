@@ -141,12 +141,16 @@ uv.mail.application-url
 uv.mail.sender
 uv.mail.senderDisplayName=Urlaubsverwaltung
 
-# TODO oidc (openid connect)
-uv.security.oidc.client-id
-uv.security.oidc.client-secret
-uv.security.oidc.issuer-uri
-uv.security.oidc.logout-uri
-uv.security.oidc.scopes=openid,profile,email
+# security - openid connect
+uv.security.oidc.login-form-url
+uv.security.oidc.post-logout-redirect-uri={baseUrl}
+uv.security.oidc.group-claim.boolean=false
+uv.security.oidc.group-claim.claim-name=groups
+uv.security.oidc.group-claim.permitted-group=urlaubsverwaltung_user
+uv.security.oidc.user-mappings.identifier=sub
+uv.security.oidc.user-mappings.email=email
+uv.security.oidc.user-mappings.family-name=family_name
+uv.security.oidc.user-mappings.given-name=given_name
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
@@ -155,16 +159,13 @@ uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
 #### Security Provider konfigurieren
 
-* `oidc`
-    * Authentifizierung via OpenID Connect (OIDC)
-    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
-    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
-      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
+Siehe die [Spring Boot oAuth2](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings) konfiguration.
+
+Zudem kann das Verhalten der Urlaubsverwaltung anhand von `uv.security.oidc` beeinflusst werden.
+
+Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`. Der client registration muss deshalb mit den Scopes `openid`,`profile` und `email` konfiguriert werden.
     
-Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
-Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
+Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt. Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
 
 #### Datenbank konfigurieren
 
