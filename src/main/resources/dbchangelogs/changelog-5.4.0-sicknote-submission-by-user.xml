@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+  <changeSet author="honnel" id="sicknote-creation-by-user">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="user_is_allowed_to_submit_sick_notes"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="settings">
+      <column name="user_is_allowed_to_submit_sick_notes" type="boolean" defaultValue="false"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

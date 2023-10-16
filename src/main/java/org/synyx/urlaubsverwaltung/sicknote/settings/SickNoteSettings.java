@@ -19,6 +19,11 @@ public class SickNoteSettings {
      */
     private Integer daysBeforeEndOfSickPayNotification = 7;
 
+    /**
+     * Allows users to submit sicknotes for themselves
+     */
+    private boolean userIsAllowedToSubmitSickNotes = false;
+
     public Integer getMaximumSickPayDays() {
         return maximumSickPayDays;
     }
@@ -33,5 +38,13 @@ public class SickNoteSettings {
 
     public void setDaysBeforeEndOfSickPayNotification(Integer daysBeforeEndOfSickPayNotification) {
         this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
+    }
+
+    public boolean getUserIsAllowedToSubmitSickNotes() {
+        return userIsAllowedToSubmitSickNotes;
+    }
+
+    public void setUserIsAllowedToSubmitSickNotes(boolean userIsAllowedToSubmitSickNotes) {
+        this.userIsAllowedToSubmitSickNotes = userIsAllowedToSubmitSickNotes;
     }
 }
