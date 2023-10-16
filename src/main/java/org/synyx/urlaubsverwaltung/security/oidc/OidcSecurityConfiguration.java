@@ -36,7 +36,7 @@ class OidcSecurityConfiguration {
 
     @Bean
     OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
-        return new OidcPersonAuthoritiesMapper(personService);
+        return new OidcPersonAuthoritiesMapper(personService, properties);
     }
 
     @Bean

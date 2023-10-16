@@ -6,7 +6,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 
@@ -26,9 +24,11 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
+    private final OidcSecurityProperties.UserMappings userMappings;
 
-    public OidcPersonAuthoritiesMapper(PersonService personService) {
+    public OidcPersonAuthoritiesMapper(PersonService personService, OidcSecurityProperties properties) {
         this.personService = personService;
+        this.userMappings = properties.getUserMappings();
     }
 
     @Override
@@ -83,39 +83,39 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             .stream()
             .map(Role::name)
             .map(SimpleGrantedAuthority::new)
-            .collect(toList());
+            .toList();
     }
 
     private String extractIdentifier(OidcUserAuthority authority) {
-        final String userUniqueID = authority.getIdToken().getSubject();
-        if (userUniqueID == null || userUniqueID.isBlank()) {
-            LOG.error("Can not retrieve the subject of the id token for oidc person mapping");
-            throw new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
-        }
-        return userUniqueID;
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getIdentifier()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getIdentifier())))
+            .orElseThrow(() -> {
+                LOG.error("Can not retrieve the subject of the id token for oidc person mapping with {} on {} ", userMappings.getIdentifier(), authority);
+                return new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
+            });
     }
 
     private String extractFamilyName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getFamilyName)
-            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getFamilyName()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getFamilyName())))
             .orElseThrow(() -> {
-                LOG.error("Can not retrieve the lastname for oidc person mapping");
+                LOG.error("Can not retrieve the lastname for oidc person mapping with {} on {} ", userMappings.getFamilyName(), authority);
                 return new OidcPersonMappingException("Can not retrieve the lastname for oidc person mapping");
             });
     }
 
     private String extractGivenName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getGivenName)
-            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getGivenName))
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getGivenName()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getGivenName())))
             .orElseThrow(() -> {
-                LOG.error("Can not retrieve the given name for oidc person mapping");
+                LOG.error("Can not retrieve the given name for oidc person mapping with {} on {} ", userMappings.getGivenName(), authority);
                 return new OidcPersonMappingException("Can not retrieve the given name for oidc person mapping");
             });
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getEmail)
-            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getEmail))
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail())))
             .filter(email -> EmailValidator.getInstance().isValid(email))
             .orElse(null);
     }
