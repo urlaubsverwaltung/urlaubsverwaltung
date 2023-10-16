@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 
 import java.time.Duration;
 import java.util.List;
@@ -10,13 +13,16 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 
+@Component
 final class ApplicationMapper {
 
-    private ApplicationMapper() {
-        // prevents init
+    private final VacationTypeService vacationTypeService;
+
+    ApplicationMapper(VacationTypeService vacationTypeService) {
+        this.vacationTypeService = vacationTypeService;
     }
 
-    static Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm) {
+    Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm) {
 
         final Application target = new Application();
         target.setId(applicationForLeaveForm.getId());
@@ -24,7 +30,11 @@ final class ApplicationMapper {
         return merge(target, applicationForLeaveForm);
     }
 
-    static Application merge(Application applicationForLeave, ApplicationForLeaveForm applicationForLeaveForm) {
+    Application merge(Application applicationForLeave, ApplicationForLeaveForm applicationForLeaveForm) {
+
+        final Long vacationTypeId = applicationForLeaveForm.getVacationType().getId();
+        final VacationType vacationType = vacationTypeService.getById(vacationTypeId)
+            .orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + vacationTypeId));
 
         final Application newApplication = new Application();
         BeanUtils.copyProperties(applicationForLeave, newApplication);
@@ -38,7 +48,7 @@ final class ApplicationMapper {
         newApplication.setEndDate(applicationForLeaveForm.getEndDate());
         newApplication.setEndTime(applicationForLeaveForm.getEndTime());
 
-        newApplication.setVacationType(convert(applicationForLeaveForm.getVacationType()));
+        newApplication.setVacationType(convert(vacationType));
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 class ApplicationForLeaveFormTest {
 
@@ -39,9 +37,12 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.now().minusDays(2);
         final LocalTime endTime = LocalTime.now().minusHours(7);
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
             .person(person)
@@ -49,7 +50,7 @@ class ApplicationForLeaveFormTest {
             .startTime(startTime)
             .endDate(endDate)
             .endTime(endTime)
-            .vacationType(vacationType)
+            .vacationType(vacationTypeDto)
             .dayLength(DayLength.ZERO)
             .hoursAndMinutes(Duration.ofMinutes(75))
             .reason("Good one.")
@@ -64,7 +65,7 @@ class ApplicationForLeaveFormTest {
         assertThat(form.getStartTime()).isEqualTo(startTime);
         assertThat(form.getEndDate()).isEqualTo(endDate);
         assertThat(form.getEndTime()).isEqualTo(endTime);
-        assertThat(form.getVacationType()).isEqualTo(vacationType);
+        assertThat(form.getVacationType()).isSameAs(vacationTypeDto);
         assertThat(form.getDayLength()).isEqualTo(DayLength.ZERO);
         assertThat(form.getHours()).isEqualTo(ONE);
         assertThat(form.getMinutes()).isEqualTo(15);
@@ -137,10 +138,13 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.of(2022, 2, 2);
         final LocalTime endTime = LocalTime.of(12, 10, 0);
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-
         final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
         replacementDto.setPerson(holidayReplacement);
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
             .person(person)
@@ -148,7 +152,7 @@ class ApplicationForLeaveFormTest {
             .startTime(startTime)
             .endDate(endDate)
             .endTime(endTime)
-            .vacationType(vacationType)
+            .vacationType(vacationTypeDto)
             .dayLength(DayLength.ZERO)
             .hoursAndMinutes(Duration.ZERO)
             .reason("Reason")
@@ -158,11 +162,10 @@ class ApplicationForLeaveFormTest {
             .comment("Comment")
             .build();
 
-        assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=2022-01-02, " +
-            "startTime=11:10, endDate=2022-02-02, endTime=12:10, vacationType=VacationType{id=1, active=true, category=HOLIDAY, " +
-            "messageKey='message_key', requiresApprovalToApply='true', requiresApprovalToCancel='true', color='YELLOW', visibleToEveryone=false}, dayLength=ZERO, " +
-            "hours=0, minutes=0, holidayReplacements=[HolidayReplacementDto{person=Person{id='null'}, " +
-            "departments=null}], teamInformed=true}");
+        assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=2022-01-02," +
+            " startTime=11:10, endDate=2022-02-02, endTime=12:10, vacationType=ApplicationForLeaveFormVacationTypeDto{id=1," +
+            " messageKey='message_key', category=HOLIDAY}, dayLength=ZERO, hours=0, minutes=0, " +
+            "holidayReplacements=[HolidayReplacementDto{person=Person{id='null'}, departments=null}], teamInformed=true}");
     }
 
     private ApplicationForLeaveForm formWithOvertime(BigDecimal hours, Integer minutes) {

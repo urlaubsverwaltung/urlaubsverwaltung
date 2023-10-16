@@ -49,7 +49,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreatesACommentAndPersistsIt() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentRepository.save(any())).then(returnsFirstArg());
@@ -74,7 +74,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreationOfCommentWithTextWorks() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentRepository.save(any())).then(returnsFirstArg());

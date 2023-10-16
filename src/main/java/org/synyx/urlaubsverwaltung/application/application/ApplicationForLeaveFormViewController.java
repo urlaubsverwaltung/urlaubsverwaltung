@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettings
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -43,6 +43,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -59,12 +60,9 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -95,6 +93,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
+    private final ApplicationMapper applicationMapper;
 
     @Autowired
     ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
@@ -102,7 +101,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
                                           VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
                                           ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
                                           SettingsService settingsService, DateFormatAware dateFormatAware,
-                                          Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService) {
+                                          Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService,
+                                          ApplicationMapper applicationMapper) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.accountService = accountService;
@@ -114,6 +114,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
         this.specialLeaveSettingsService = specialLeaveSettingsService;
+        this.applicationMapper = applicationMapper;
     }
 
     @InitBinder
@@ -121,7 +122,6 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         binder.registerCustomEditor(Time.class, new TimePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
-        binder.registerCustomEditor(VacationType.class, new VacationTypePropertyEditor(vacationTypeService));
     }
 
     @GetMapping("/application/new")
@@ -295,7 +295,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             return "application/application_form";
         }
 
-        final Application app = mapToApplication(appForm);
+        final Application app = applicationMapper.mapToApplication(appForm);
 
         final Application savedApplicationForLeave;
         if (app.getVacationType().isRequiresApprovalToApply()) {
@@ -383,7 +383,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             return "application/application_form";
         }
 
-        final Application editedApplication = merge(application, appForm);
+        final Application editedApplication = applicationMapper.merge(application, appForm);
         final Application savedApplicationForLeave;
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
@@ -421,6 +421,11 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         }
         model.addAttribute("vacationTypes", activeVacationTypes);
 
+        if (appForm.getVacationType() != null) {
+            final VacationType vacationType = findVacationType(activeVacationTypes, appForm.getVacationType().getId());
+            appForm.setVacationType(toApplicationForLeaveFormVacationTypeDto(vacationType));
+        }
+
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
             .filter(SpecialLeaveSettingsItem::isActive)
             .collect(toList());
@@ -435,6 +440,17 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
+    }
+
+    private VacationType findVacationType(Collection<VacationType> vacationTypes, Long id) {
+        return vacationTypes.stream()
+            .filter(type -> type.getId().equals(id))
+            .findFirst()
+            .orElseGet(() -> getVacationType(id));
+    }
+
+    private VacationType getVacationType(Long id) {
+        return vacationTypeService.getById(id).orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + id));
     }
 
     private static Predicate<Person> personEquals(Person person) {
@@ -505,10 +521,26 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             .dayLength(application.getDayLength())
             .hoursAndMinutes(application.getHours())
             .person(application.getPerson())
-            .vacationType(convert(application.getVacationType()))
+            .vacationType(toApplicationForLeaveFormVacationTypeDto(application.getVacationType()))
             .reason(application.getReason())
             .holidayReplacements(holidayReplacementDtos)
             .build();
+    }
+
+    private ApplicationForLeaveFormVacationTypeDto toApplicationForLeaveFormVacationTypeDto(VacationTypeEntity vacationTypeEntity) {
+        final ApplicationForLeaveFormVacationTypeDto dto = new ApplicationForLeaveFormVacationTypeDto();
+        dto.setId(vacationTypeEntity.getId());
+        dto.setMessageKey(vacationTypeEntity.getMessageKey());
+        dto.setCategory(vacationTypeEntity.getCategory());
+        return dto;
+    }
+
+    private ApplicationForLeaveFormVacationTypeDto toApplicationForLeaveFormVacationTypeDto(VacationType vacationType) {
+        final ApplicationForLeaveFormVacationTypeDto dto = new ApplicationForLeaveFormVacationTypeDto();
+        dto.setId(vacationType.getId());
+        dto.setMessageKey(vacationType.getMessageKey());
+        dto.setCategory(vacationType.getCategory());
+        return dto;
     }
 
     private List<String> departmentNamesForPerson(Person person, List<Department> departments) {

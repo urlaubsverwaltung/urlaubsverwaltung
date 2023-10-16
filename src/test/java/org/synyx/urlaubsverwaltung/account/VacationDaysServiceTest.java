@@ -451,7 +451,7 @@ class VacationDaysServiceTest {
         final Application application = anyApplication(person);
         application.setStartDate(LocalDate.of(year, JANUARY, 3));
         application.setEndDate(LocalDate.of(year, JANUARY, 28));
-        application.setVacationType(createVacationTypeEntity(category));
+        application.setVacationType(createVacationTypeEntity(1L, category));
 
         final List<ApplicationStatus> applicationStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
@@ -753,7 +753,7 @@ class VacationDaysServiceTest {
         final Application application = new Application();
         application.setId(1L);
         application.setPerson(person);
-        application.setVacationType(createVacationTypeEntity(HOLIDAY));
+        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
         application.setDayLength(FULL);
         return application;
     }
