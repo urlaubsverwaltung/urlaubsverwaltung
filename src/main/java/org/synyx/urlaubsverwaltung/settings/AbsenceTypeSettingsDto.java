@@ -45,4 +45,11 @@ public class AbsenceTypeSettingsDto {
     public int hashCode() {
         return Objects.hash(items);
     }
+
+    @Override
+    public String toString() {
+        return "AbsenceTypeSettingsDto{" +
+            "items=" + items +
+            '}';
+    }
 }

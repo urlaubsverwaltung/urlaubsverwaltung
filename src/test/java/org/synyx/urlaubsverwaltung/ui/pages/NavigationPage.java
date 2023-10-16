@@ -42,7 +42,7 @@ public class NavigationPage {
 
     public void clickSettings() {
         page.locator(SETTINGS_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/web/settings$"));
+        page.waitForURL(Pattern.compile("/web/settings/absences"));
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

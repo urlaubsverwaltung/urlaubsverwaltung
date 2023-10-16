@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{settings.header.title}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('settings_form.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="settings_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+    <th:block th:ref="content">
+      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+        <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
+
+        <form
+          method="post"
+          th:action="@{/web/settings/calendar-sync}"
+          th:object="${settings}"
+          class="form-horizontal"
+          role="form"
+        >
+          <input type="hidden" th:field="*{id}" />
+          <button type="submit" hidden></button>
+
+          <th:block th:replace="~{/settings/fragments::save-feedback}" />
+
+          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='calendar-sync')}" />
+
+          <div id="calendar" class="tw-mt-6">
+            <div class="alert alert-danger tw-flex tw-items-center" role="alert">
+              <svg th:replace="~{icon/megaphone::svg(className='tw-w-4 tw-h-4')}"></svg>
+              &nbsp;<th:block th:text="#{settings.calendar.deprecated}" />
+            </div>
+            <div class="form-section">
+              <div th:replace="~{settings/calendar/integration::section}"></div>
+            </div>
+            <div class="form-section" id="exchange-calendar">
+              <div th:replace="~{settings/calendar/exchange::section}"></div>
+            </div>
+            <div class="form-section" id="google-calendar">
+              <div th:replace="~{settings/calendar/google::section}"></div>
+            </div>
+          </div>
+
+          <th:block th:replace="~{/settings/fragments::save-button}" />
+        </form>
+      </main>
+    </th:block>
+  </body>
+</html>

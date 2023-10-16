@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import java.util.Objects;
+
 public class SpecialLeaveItemDto {
 
     private boolean active;
@@ -28,6 +30,19 @@ public class SpecialLeaveItemDto {
 
     public void setDays(int days) {
         this.days = days;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpecialLeaveItemDto that = (SpecialLeaveItemDto) o;
+        return active == that.active && days == that.days && Objects.equals(messageKey, that.messageKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(active, messageKey, days);
     }
 
     @Override

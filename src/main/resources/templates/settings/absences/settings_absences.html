@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{settings.header.title}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('settings_form.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="settings_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+    <th:block th:ref="content">
+      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+        <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
+
+        <form
+          method="post"
+          th:action="@{/web/settings/absences}"
+          th:object="${settings}"
+          class="form-horizontal"
+          role="form"
+        >
+          <input type="hidden" th:field="*{id}" />
+          <button type="submit" hidden></button>
+
+          <th:block th:replace="~{/settings/fragments::save-feedback}" />
+
+          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='absences')}" />
+
+          <div id="absence" class="tw-mt-6">
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/vacation::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
+            </div>
+            <div class="form-section">
+              <div th:replace="~{settings/absences/sick-days::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
+            </div>
+          </div>
+        </form>
+      </main>
+    </th:block>
+  </body>
+</html>

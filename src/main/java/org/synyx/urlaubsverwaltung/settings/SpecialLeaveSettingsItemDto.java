@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import jakarta.validation.constraints.Min;
 
+import java.util.Objects;
+
 public class SpecialLeaveSettingsItemDto {
 
     private long id;
@@ -40,5 +42,28 @@ public class SpecialLeaveSettingsItemDto {
 
     public void setDays(int days) {
         this.days = days;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpecialLeaveSettingsItemDto that = (SpecialLeaveSettingsItemDto) o;
+        return id == that.id && active == that.active && days == that.days && Objects.equals(messageKey, that.messageKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, active, messageKey, days);
+    }
+
+    @Override
+    public String toString() {
+        return "SpecialLeaveSettingsItemDto{" +
+            "id=" + id +
+            ", active=" + active +
+            ", messageKey='" + messageKey + '\'' +
+            ", days=" + days +
+            '}';
     }
 }

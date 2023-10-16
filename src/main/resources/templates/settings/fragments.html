@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Settings Fragments</title>
+  </head>
+  <body>
+    <th:block th:fragment="save-feedback">
+      <div class="tw-mb-4">
+        <div class="feedback">
+          <div
+            th:if="${not #strings.isEmpty(errors)}"
+            th:text="#{settings.action.update.error}"
+            class="alert alert-danger"
+          ></div>
+          <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></div>
+        </div>
+      </div>
+    </th:block>
+
+    <th:block th:fragment="tab-navigation(activeElement)">
+      <ul class="nav nav-tabs">
+        <li
+          th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
+          th:class="${activeElement == 'absences' ? 'active' : ''}"
+        >
+          <a href="#" th:href="@{/web/settings/absences}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
+            <th:block th:text="#{settings.tabs.absence}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li th:class="${activeElement == 'absence-types' ? 'active' : ''}">
+          <a href="#absenceTypes" th:href="@{/web/settings/absence-types}" th:text="#{settings.tabs.absenceTypes}">
+            Abwesenheitsarten
+          </a>
+        </li>
+        <li
+          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
+          th:class="${activeElement == 'working-time' ? 'active' : ''}"
+        >
+          <a
+            href="#"
+            th:href="@{/web/settings/working-time}"
+            th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            data-test-id="settings-tab-working-time"
+          >
+            <th:block th:text="#{settings.tabs.workingTime}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li th:class="${activeElement == 'avatar' ? 'active' : ''}">
+          <a href="#" th:href="@{/web/settings/avatar}">
+            <th:block th:text="#{settings.tabs.avatar}" />
+          </a>
+        </li>
+        <li
+          th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}"
+          th:class="${activeElement == 'calendar-sync' ? 'active' : ''}"
+        >
+          <a href="#" th:href="@{/web/settings/calendar-sync}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
+            <th:block th:text="#{settings.tabs.calendar}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+      </ul>
+    </th:block>
+
+    <th:block th:fragment="save-button">
+      <div class="form-section tw-mt-8">
+        <div class="tw-mb-16">
+          <button
+            th:text="#{action.save}"
+            type="submit"
+            class="button-main-green"
+            data-test-id="settings-save-button"
+          ></button>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

@@ -3,37 +3,26 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.account.AccountSettings;
-import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
-import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,9 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
-class SettingsViewControllerTest {
+class SettingsCalendarSyncViewControllerTest {
 
-    private SettingsViewController sut;
+    private SettingsCalendarSyncViewController sut;
 
     private static final String OATUH_REDIRECT_REL = "/google-api-handshake";
     private static final String ERRORS_ATTRIBUTE = "errors";
@@ -68,22 +57,18 @@ class SettingsViewControllerTest {
     @Mock
     private SettingsService settingsService;
     @Mock
-    private VacationTypeService vacationTypeService;
-    @Mock
-    private SettingsValidator settingsValidator;
-    @Mock
-    private SpecialLeaveSettingsService specialLeaveService;
+    private SettingsCalendarSyncValidator settingsValidator;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, specialLeaveService);
+        sut = new SettingsCalendarSyncViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock);
     }
 
     @Test
     void getAuthorizedRedirectUrl() {
-        final String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
+        final String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings/calendar-sync", OATUH_REDIRECT_REL);
         final String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
         assertThat(actual).isEqualTo(expected);
     }
@@ -91,28 +76,27 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setActive(true);
-        vacationType.setRequiresApprovalToApply(true);
-        vacationType.setCategory(VacationCategory.HOLIDAY);
-        vacationType.setMessageKey("vacationType.messageKey");
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+        final CalendarSettings calendarSettings = new CalendarSettings();
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        final Settings settings = new Settings();
+        settings.setId(42L);
+        settings.setCalendarSettings(calendarSettings);
 
-        final String requestUrl = "/web/settings";
+        when(settingsService.getSettings()).thenReturn(settings);
 
-        // TODO test explicit settings attributes
-        perform(get(requestUrl))
-            .andExpect(model().attributeExists("settings"))
-            .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))
-            .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
-            .andExpect(model().attribute("weekDays", DayOfWeek.values()))
+        final SettingsCalendarSyncDto expectedSettingsCalendarSyncDto = new SettingsCalendarSyncDto();
+        expectedSettingsCalendarSyncDto.setId(42L);
+        expectedSettingsCalendarSyncDto.setCalendarSettings(calendarSettings);
+
+        perform(get("/web/settings/calendar-sync"))
+            .andExpect(model().attribute("settings", allOf(
+                    hasProperty("id", is(42L)),
+                    hasProperty("calendarSettings", sameInstance(calendarSettings))
+            )))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("authorizedRedirectUrl",
-                sut.getAuthorizedRedirectUrl("http://localhost" + requestUrl, OATUH_REDIRECT_REL)));
+                sut.getAuthorizedRedirectUrl("http://localhost/web/settings/calendar-sync", OATUH_REDIRECT_REL)));
     }
 
     @Test
@@ -120,7 +104,7 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
-        perform(get("/web/settings")
+        perform(get("/web/settings/calendar-sync")
             .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
             .andExpect(model().attribute(ERRORS_ATTRIBUTE, OAUTH_ERROR_VALUE));
@@ -131,7 +115,7 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
-        perform(get("/web/settings")
+        perform(get("/web/settings/calendar-sync")
             .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
             .andExpect(model().attribute(ERRORS_ATTRIBUTE, nullValue()));
@@ -142,7 +126,7 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
-        perform(get("/web/settings"))
+        perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
             .andExpect(model().attribute(ERRORS_ATTRIBUTE, nullValue()));
     }
@@ -152,7 +136,7 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
-        perform(get("/web/settings"))
+        perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
             .andExpect(model().attribute(ERRORS_ATTRIBUTE, nullValue()));
     }
@@ -165,7 +149,7 @@ class SettingsViewControllerTest {
 
         assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isNull();
 
-        perform(get("/web/settings"));
+        perform(get("/web/settings/calendar-sync"));
 
         assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId())
             .isEqualTo(clock.getZone().getId());
@@ -180,7 +164,7 @@ class SettingsViewControllerTest {
 
         assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
 
-        perform(get("/web/settings"));
+        perform(get("/web/settings/calendar-sync"));
 
         assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
     }
@@ -188,8 +172,8 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
         when(settingsService.getSettings()).thenReturn(new Settings());
-        perform(get("/web/settings"))
-            .andExpect(view().name("settings/settings_form"));
+        perform(get("/web/settings/calendar-sync"))
+            .andExpect(view().name("settings/calendar/settings_calendar_sync"));
     }
 
     @Test
@@ -197,12 +181,12 @@ class SettingsViewControllerTest {
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
-            errors.rejectValue("applicationSettings", "error");
+            errors.rejectValue("calendarSettings", "error");
             return null;
         }).when(settingsValidator).validate(any(), any());
 
         perform(
-            post("/web/settings")
+            post("/web/settings/calendar-sync")
                 .param("calendarSettings.provider", "NoopCalendarSyncProvider")
                 .param("calendarSettings.exchangeCalendarSettings.email", "")
                 .param("calendarSettings.exchangeCalendarSettings.password", "")
@@ -214,52 +198,7 @@ class SettingsViewControllerTest {
                 .param("calendarSettings.googleCalendarSettings.calendarId", "")
                 .param("calendarSettings.googleCalendarSettings.authorizedRedirectUrl", "http://localhost:8080/web/google-api-handshake")
         )
-            .andExpect(view().name("settings/settings_form"));
-    }
-
-    @Test
-    void ensureSavingWorkingTimeSettings() throws Exception {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        perform(
-            post("/web/settings")
-                // required settings stuff for the form POST
-                .param("absenceTypeSettings.items[0].id", "1000")
-                .param("absenceTypeSettings.items[0].active", "true")
-                .param("_absenceTypeSettings.items[0].active", "on")
-                .param("_absenceTypeSettings.items[0].requiresApprovalToApply", "on")
-                .param("_absenceTypeSettings.items[0].requiresApprovalToCancel", "on")
-                // actual system under test
-                .param("workingTimeSettings.workingDays", "1")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("workingTimeSettings.workingDays", "3")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("workingTimeSettings.workingDays", "4")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("workingTimeSettings.workingDays", "5")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("_workingTimeSettings.workingDays", "on")
-                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
-                .param("calendarSettings.clientId", "clientId")
-        )
-            .andExpect(redirectedUrl("/web/settings"));
-
-        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
-
-        verify(settingsService).save(settingsArgumentCaptor.capture());
-
-        final Settings savedSettings = settingsArgumentCaptor.getValue();
-        final WorkingTimeSettings savedWorkingTimeSettings = savedSettings.getWorkingTimeSettings();
-        assertThat(savedWorkingTimeSettings.getMonday()).isEqualTo(DayLength.FULL);
-        assertThat(savedWorkingTimeSettings.getTuesday()).isEqualTo(DayLength.ZERO);
-        assertThat(savedWorkingTimeSettings.getWednesday()).isEqualTo(DayLength.FULL);
-        assertThat(savedWorkingTimeSettings.getThursday()).isEqualTo(DayLength.FULL);
-        assertThat(savedWorkingTimeSettings.getFriday()).isEqualTo(DayLength.FULL);
-        assertThat(savedWorkingTimeSettings.getSaturday()).isEqualTo(DayLength.ZERO);
-        assertThat(savedWorkingTimeSettings.getSunday()).isEqualTo(DayLength.ZERO);
+            .andExpect(view().name("settings/calendar/settings_calendar_sync"));
     }
 
     @Test
@@ -268,7 +207,7 @@ class SettingsViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
-            post("/web/settings")
+            post("/web/settings/calendar-sync")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
                 .param("calendarSettings.clientId", "clientId")
@@ -278,25 +217,12 @@ class SettingsViewControllerTest {
     }
 
     @Test
-    void validateSpecialLeaves() throws Exception {
-
-        perform(
-            post("/web/settings")
-                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
-                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "-1")
-
-        )
-            .andExpect(model().attributeHasFieldErrors("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days"))
-            .andExpect(model().attributeHasFieldErrorCode("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days", "Min"));
-    }
-
-    @Test
     void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
-            post("/web/settings")
+            post("/web/settings/calendar-sync")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
                 .param("calendarSettings.clientId", "clientId")
@@ -304,48 +230,13 @@ class SettingsViewControllerTest {
             .andExpect(flash().attribute("success", true));
 
         perform(
-            post("/web/settings")
+            post("/web/settings/calendar-sync")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
                 .param("calendarSettings.clientId", "clientId")
         )
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/settings"));
-    }
-
-    @Test
-    void ensureSavingAvatarSettings() throws Exception {
-
-        when(settingsService.getSettings()).thenReturn(someSettings());
-
-        perform(
-            post("/web/settings")
-                .param("absenceTypeSettings.items[0].id", "10")
-                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
-                .param("avatarSettings.gravatarEnabled", "true")
-        ).andExpect(redirectedUrl("/web/settings"));
-
-        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
-
-        verify(settingsService).save(settingsArgumentCaptor.capture());
-
-        final Settings savedSettings = settingsArgumentCaptor.getValue();
-        final AvatarSettings avatarSettings = savedSettings.getAvatarSettings();
-        assertThat(avatarSettings.isGravatarEnabled()).isTrue();
-    }
-
-    private static Settings someSettings() {
-        final Settings settings = new Settings();
-        settings.setId(1L);
-        settings.setApplicationSettings(new ApplicationSettings());
-        settings.setAccountSettings(new AccountSettings());
-        settings.setWorkingTimeSettings(new WorkingTimeSettings());
-        settings.setOvertimeSettings(new OvertimeSettings());
-        settings.setTimeSettings(new TimeSettings());
-        settings.setSickNoteSettings(new SickNoteSettings());
-        settings.setCalendarSettings(new CalendarSettings());
-        settings.setAvatarSettings(new AvatarSettings());
-        return settings;
+            .andExpect(redirectedUrl("/web/settings/calendar-sync"));
     }
 
     private static Settings someSettingsWithNoExchangeTimezone() {
