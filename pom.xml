@@ -23,7 +23,7 @@
     <testcontainers.version>1.19.1</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <docker.name>urlaubsverwaltung/urlaubsverwaltung</docker.name>
-    <shedlock.version>4.43.0</shedlock.version>
+    <shedlock.version>4.46.0</shedlock.version>
     <uv-extension-api.version>0.9.0</uv-extension-api.version>
     <jollyday.version>0.21.0</jollyday.version>
     <packaging.layout>jar</packaging.layout>
