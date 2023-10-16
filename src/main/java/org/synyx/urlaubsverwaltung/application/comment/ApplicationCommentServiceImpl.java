@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +46,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
         final ApplicationCommentEntity savedEntity = commentRepository.save(commentEntity);
 
-        final Function<Long, Application> byId = applicationId -> applicationService.getApplicationById(applicationId)
+        final LongFunction<Application> byId = applicationId -> applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new IllegalStateException("could not find application with id=" + applicationId));
 
         return toApplicationComment(savedEntity, byId);
@@ -82,7 +83,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
         commentRepository.saveAll(applicationComments);
     }
 
-    private ApplicationComment toApplicationComment(ApplicationCommentEntity entity, Function<Long, Application> applicationSupplier) {
+    private ApplicationComment toApplicationComment(ApplicationCommentEntity entity, LongFunction<Application> applicationSupplier) {
         final Application application = applicationSupplier.apply(entity.getApplicationId());
         return new ApplicationComment(entity.getId(), entity.getDate(), application, entity.getAction(), entity.getPerson(), entity.getText());
     }

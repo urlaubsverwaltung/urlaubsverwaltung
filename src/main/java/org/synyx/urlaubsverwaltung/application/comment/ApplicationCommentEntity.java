@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
@@ -19,8 +18,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
 
-@Entity
-@Table(name = "application_comment")
+@Entity(name = "application_comment")
 class ApplicationCommentEntity {
 
     @Id
