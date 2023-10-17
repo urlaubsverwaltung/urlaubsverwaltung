@@ -22,7 +22,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -39,8 +38,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
         perform(
             get("/api/persons")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest
@@ -63,8 +61,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
         perform(
             get("/api/persons/1")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest

@@ -85,6 +85,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
         registry.add("spring.security.oauth2.client.registration.keycloak.authorization-grant-type", () -> "authorization_code");
         registry.add("spring.security.oauth2.client.registration.keycloak.redirect-uri", () -> "http://{baseHost}{basePort}/login/oauth2/code/{registrationId}");
         registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> this.getAuthServerUrl() + "/realms/urlaubsverwaltung-realm");
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> this.getAuthServerUrl() + "/realms/urlaubsverwaltung-realm");
     }
 
     private Keycloak adminClient() {

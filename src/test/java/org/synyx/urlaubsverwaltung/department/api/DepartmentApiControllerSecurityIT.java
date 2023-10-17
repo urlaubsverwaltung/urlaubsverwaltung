@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -30,8 +29,7 @@ class DepartmentApiControllerSecurityIT extends TestContainersBase {
         perform(
             get("/api/departments")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest

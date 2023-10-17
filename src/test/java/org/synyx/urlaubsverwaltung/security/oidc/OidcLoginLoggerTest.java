@@ -7,48 +7,97 @@ import ch.qos.logback.core.read.ListAppender;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.Optional;
 
+import static ch.qos.logback.classic.Level.INFO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class OidcLoginLoggerTest {
 
-    private static final Long UNIQUE_ID = 42L;
-
-    private PersonService personService;
     private OidcLoginLogger sut;
-    private Authentication authentication;
+
+    @Mock
+    private PersonService personService;
+
     private ListAppender<ILoggingEvent> loggingEventAppender;
 
     @BeforeEach
     void setup() {
-        personService = mock(PersonService.class);
-        authentication = prepareAuthentication();
-        loggingEventAppender = prepareLoggingEventAppender();
+        loggingEventAppender = loggingEventAppender();
 
         sut = new OidcLoginLogger(personService);
     }
 
-    private ListAppender<ILoggingEvent> prepareLoggingEventAppender() {
+    @Test
+    void ensureLoggingUserIdForExistingUser() {
+
+        final Person person = new Person("uniqueIdentifier", "lastname", "firstname", "firstname.lastname@example.org");
+        person.setId(42L);
+        when(personService.getPersonByUsername("uniqueIdentifier")).thenReturn(Optional.of(person));
+
+        final Authentication authentication = prepareAuthentication();
+        sut.handle(new AuthenticationSuccessEvent(authentication));
+
+        assertThat(loggingEventAppender.list)
+            .extracting(ILoggingEvent::getFormattedMessage, ILoggingEvent::getLevel)
+            .containsExactly(Tuple.tuple("User '42' has signed in", INFO));
+    }
+
+    @Test
+    void ensureLoggingErrorOnNonExistingUser() {
+        when(personService.getPersonByUsername("uniqueIdentifier")).thenReturn(Optional.empty());
+
+        final Authentication authentication = prepareAuthentication();
+        sut.handle(new AuthenticationSuccessEvent(authentication));
+
+        assertThat(loggingEventAppender.list)
+            .extracting(ILoggingEvent::getFormattedMessage, ILoggingEvent::getLevel)
+            .containsExactly(Tuple.tuple("Could not find signed-in user with id 'uniqueIdentifier'", Level.ERROR));
+    }
+
+    @Test
+    void ensureNotLoggingIfJWT() {
+
+        final Authentication authentication = mock(Authentication.class);
+        final Jwt jwt = mock(Jwt.class);
+        when(authentication.getPrincipal()).thenReturn(jwt);
+
+        sut.handle(new AuthenticationSuccessEvent(authentication));
+
+        assertThat(loggingEventAppender.list)
+            .extracting(ILoggingEvent::getFormattedMessage, ILoggingEvent::getLevel)
+            .isEmpty();
+    }
+
+    private Authentication prepareAuthentication() {
+        final Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("uniqueIdentifier");
+        return authentication;
+    }
+
+    private ListAppender<ILoggingEvent> loggingEventAppender() {
 
         // get Logback Logger
-        Logger OidcLoginLoggerLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
+        final Logger OidcLoginLoggerLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
 
         // because of global test logging level WARN
-        OidcLoginLoggerLogger.setLevel(Level.INFO);
+        OidcLoginLoggerLogger.setLevel(INFO);
 
         // create and start a ListAppender
-        ListAppender<ILoggingEvent> loggingEventAppender = new ListAppender<>();
+        final ListAppender<ILoggingEvent> loggingEventAppender = new ListAppender<>();
         loggingEventAppender.start();
 
         // add the appender to the logger
@@ -56,43 +105,4 @@ class OidcLoginLoggerTest {
 
         return loggingEventAppender;
     }
-
-    private Authentication prepareAuthentication() {
-        Authentication authentication = mock(Authentication.class);
-        OidcUser oidcUser = mock(OidcUser.class);
-        OidcIdToken oidcIdToken = mock(OidcIdToken.class);
-        when(authentication.getPrincipal()).thenReturn(oidcUser);
-        when(oidcUser.getIdToken()).thenReturn(oidcIdToken);
-        when(oidcIdToken.getSubject()).thenReturn(UNIQUE_ID.toString());
-
-        return authentication;
-    }
-
-    @Test
-    void ensureLoggingUserIdForExistingUser() {
-
-        Person person = new Person("username", "lastname", "firstname", "firstname.lastname@example.org");
-        person.setId(UNIQUE_ID);
-        when(personService.getPersonByUsername(UNIQUE_ID.toString())).thenReturn(Optional.of(person));
-
-        sut.handle(new AuthenticationSuccessEvent(authentication));
-
-        assertThat(loggingEventAppender.list)
-            .extracting(ILoggingEvent::getFormattedMessage, ILoggingEvent::getLevel)
-            .containsExactly(Tuple.tuple("User '42' has signed in", Level.INFO));
-    }
-
-    @Test
-    void ensureLoggingErrorOnNonExistingUser() {
-        when(personService.getPersonByUsername(UNIQUE_ID.toString())).thenReturn(Optional.empty());
-
-        sut.handle(new AuthenticationSuccessEvent(authentication));
-
-        assertThat(loggingEventAppender.list)
-            .extracting(ILoggingEvent::getFormattedMessage, ILoggingEvent::getLevel)
-            .containsExactly(Tuple.tuple("Could not find signed-in user with id '42'", Level.ERROR));
-
-    }
-
-
 }

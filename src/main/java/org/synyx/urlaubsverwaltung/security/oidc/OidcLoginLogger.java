@@ -3,8 +3,7 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -27,10 +26,12 @@ class OidcLoginLogger {
 
     @EventListener
     public void handle(AuthenticationSuccessEvent event) {
-        final Authentication authentication = event.getAuthentication();
-        final OidcUser user = (OidcUser) authentication.getPrincipal();
-        final String userUniqueID = user.getIdToken().getSubject();
 
+        if (event.getAuthentication().getPrincipal() instanceof Jwt) {
+            return;
+        }
+
+        final String userUniqueID = event.getAuthentication().getName();
         final Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         optionalPerson.ifPresentOrElse(
             person -> LOG.info("User '{}' has signed in", person.getId()),
