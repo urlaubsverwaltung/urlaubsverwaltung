@@ -20,7 +20,7 @@ services:
       - '8025:8025'
   keycloak:
     build: ./docker/keycloak
-    image: quay.io/keycloak/keycloak:22.0.4
+    image: urlaubsverwaltung/keycloak-with-demodata:22.0.4
     environment:
       KC_HTTP_PORT: '8090'
       KC_HOSTNAME_STRICT: 'false'
