@@ -9,7 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
-import org.synyx.urlaubsverwaltung.TestPostgreContainer;
+import org.synyx.urlaubsverwaltung.TestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -61,7 +61,7 @@ class OvertimeUIIT {
     private int port;
 
     @Container
-    private static final TestPostgreContainer postgre = new TestPostgreContainer();
+    private static final TestPostgreSQLContainer postgre = new TestPostgreSQLContainer();
     @Container
     private static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
