@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.DayOfWeek;
@@ -59,15 +60,14 @@ class OvertimeUIIT {
     @LocalServerPort
     private int port;
 
-    static final TestPostgreContainer postgre = new TestPostgreContainer();
-    static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
+    @Container
+    private static final TestPostgreContainer postgre = new TestPostgreContainer();
+    @Container
+    private static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
     @DynamicPropertySource
     static void containerProperties(DynamicPropertyRegistry registry) {
-        postgre.start();
         postgre.configureSpringDataSource(registry);
-
-        keycloak.start();
         keycloak.configureSpringDataSource(registry);
     }
 
@@ -90,7 +90,7 @@ class OvertimeUIIT {
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
-        page.navigate("http://localhost:" + port+ "/oauth2/authorization/keycloak");
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
         page.waitForLoadState();
 
