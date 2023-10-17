@@ -159,7 +159,7 @@ uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
 #### Security Provider konfigurieren
 
-Siehe die [Spring Boot oAuth2](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings) konfiguration.
+Siehe die [Spring Boot oAuth2](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings) konfiguration und für die Konfiguration des [Resource Servers via JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) z.B.
 
 Zudem kann das Verhalten der Urlaubsverwaltung anhand von `uv.security.oidc` beeinflusst werden.
 
