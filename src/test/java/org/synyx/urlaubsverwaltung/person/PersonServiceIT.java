@@ -115,7 +115,7 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).hasSize(1);
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isOne();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson)).hasSize(1);
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId)).hasSize(1);
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).hasSize(1);
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isEqualTo(personWithId);
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isEqualTo(personWithId);
@@ -134,7 +134,7 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).person()).isNull();
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId).get(0).person()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isNull();

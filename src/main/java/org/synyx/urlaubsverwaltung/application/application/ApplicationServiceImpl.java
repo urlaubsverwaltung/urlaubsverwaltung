@@ -44,77 +44,78 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Optional<Application> getApplicationById(Long id) {
-        return applicationRepository.findById(id);
+        return applicationRepository.findById(id).map(ApplicationServiceImpl::toApplication);
     }
 
     @Override
     public List<Application> findApplicationsByIds(Iterable<Long> applicationIds) {
-        return asList(applicationRepository.findAllById(applicationIds));
+        return toApplication(applicationRepository.findAllById(applicationIds));
     }
 
     @Override
     public Application save(Application application) {
-        return applicationRepository.save(application);
+        final ApplicationEntity savedEntity = applicationRepository.save(toApplicationEntity(application));
+        return toApplication(savedEntity);
     }
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
-        return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+        return toApplication(applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person));
     }
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses) {
-        return applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, statuses);
+        return toApplication(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, statuses));
     }
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
-        return applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
+        return toApplication(applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory));
     }
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status) {
-        return applicationRepository.getApplicationsForACertainTimeAndState(startDate, endDate, status);
+        return toApplication(applicationRepository.getApplicationsForACertainTimeAndState(startDate, endDate, status));
     }
 
     @Override
     public List<Application> getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(LocalDate from, LocalDate to, List<ApplicationStatus> statuses) {
-        return applicationRepository.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(statuses, from, to);
+        return toApplication(applicationRepository.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(statuses, from, to));
     }
 
     @Override
     public List<Application> getApplicationsWhereHolidayReplacementShouldBeNotified(LocalDate from, LocalDate to, List<ApplicationStatus> statuses) {
-        return applicationRepository.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(statuses, from, to);
+        return toApplication(applicationRepository.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(statuses, from, to));
     }
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status) {
-        return applicationRepository.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
+        return toApplication(applicationRepository.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status));
     }
 
     @Override
     public List<Application> getForStates(List<ApplicationStatus> statuses) {
-        return applicationRepository.findByStatusIn(statuses);
+        return toApplication(applicationRepository.findByStatusIn(statuses));
     }
 
     @Override
     public List<Application> getForStatesSince(List<ApplicationStatus> statuses, LocalDate since) {
-        return applicationRepository.findByStatusInAndEndDateGreaterThanEqual(statuses, since);
+        return toApplication(applicationRepository.findByStatusInAndEndDateGreaterThanEqual(statuses, since));
     }
 
     @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons) {
-        return applicationRepository.findByStatusInAndPersonIn(statuses, persons);
+        return toApplication(applicationRepository.findByStatusInAndPersonIn(statuses, persons));
     }
 
     @Override
     public List<Application> getForStatesAndPersonSince(List<ApplicationStatus> statuses, List<Person> persons, LocalDate since) {
-        return applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(statuses, persons, since);
+        return toApplication(applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(statuses, persons, since));
     }
 
     @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end) {
-        return applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, start, end);
+        return toApplication(applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, start, end));
     }
 
     @Override
@@ -155,25 +156,25 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date) {
         final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, status);
+        return toApplication(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, status));
     }
 
     @Override
     public List<Application> deleteApplicationsByPerson(Person person) {
-        return applicationRepository.deleteByPerson(person);
+        return toApplication(applicationRepository.deleteByPerson(person));
     }
 
     @Override
     public void deleteInteractionWithApplications(Person person) {
-        final List<Application> applicationsWithoutBoss = applicationRepository.findByBoss(person);
+        final List<ApplicationEntity> applicationsWithoutBoss = applicationRepository.findByBoss(person);
         applicationsWithoutBoss.forEach(application -> application.setBoss(null));
         applicationRepository.saveAll(applicationsWithoutBoss);
 
-        final List<Application> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
+        final List<ApplicationEntity> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
         applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
         applicationRepository.saveAll(applicationsWithoutCanceller);
 
-        final List<Application> applicationsWithoutApplier = applicationRepository.findByApplier(person);
+        final List<ApplicationEntity> applicationsWithoutApplier = applicationRepository.findByApplier(person);
         applicationsWithoutApplier.forEach(application -> application.setApplier(null));
         applicationRepository.saveAll(applicationsWithoutApplier);
     }
@@ -185,24 +186,82 @@ class ApplicationServiceImpl implements ApplicationService {
      */
     @EventListener
     void deleteHolidayReplacements(PersonDeletedEvent event) {
-        final List<Application> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.getPerson()).stream()
+        final List<ApplicationEntity> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.getPerson()).stream()
             .map(deleteHolidayReplacement(event.getPerson()))
             .collect(toList());
         applicationRepository.saveAll(applicationsWithReplacedApplicationReplacements);
     }
 
-    private Function<Application, Application> deleteHolidayReplacement(Person deletedPerson) {
-        return application -> {
-            application.setHolidayReplacements(application.getHolidayReplacements().stream()
+    private Function<ApplicationEntity, ApplicationEntity> deleteHolidayReplacement(Person deletedPerson) {
+        return applicationEntity -> {
+            applicationEntity.setHolidayReplacements(applicationEntity.getHolidayReplacements().stream()
                 .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
                 .collect(toList())
             );
 
-            return application;
+            return applicationEntity;
         };
     }
 
-    private static <T> List<T> asList(Iterable<T> iterable) {
-        return StreamSupport.stream(iterable.spliterator(), false).toList();
+    private List<Application> toApplication(Iterable<ApplicationEntity> entityList) {
+        return StreamSupport.stream(entityList.spliterator(), false).map(ApplicationServiceImpl::toApplication).toList();
+    }
+
+    private static Application toApplication(ApplicationEntity applicationEntity) {
+        final Application application = new Application();
+        application.setId(applicationEntity.getId());
+        application.setAddress(applicationEntity.getAddress());
+        application.setApplicationDate(applicationEntity.getApplicationDate());
+        application.setCancelDate(applicationEntity.getCancelDate());
+        application.setEditedDate(applicationEntity.getEditedDate());
+        application.setApplier(applicationEntity.getApplier());
+        application.setBoss(applicationEntity.getBoss());
+        application.setCanceller(applicationEntity.getCanceller());
+        application.setTwoStageApproval(applicationEntity.isTwoStageApproval());
+        application.setEndDate(applicationEntity.getEndDate());
+        application.setStartTime(applicationEntity.getStartTime());
+        application.setEndTime(applicationEntity.getEndTime());
+        application.setDayLength(applicationEntity.getDayLength());
+        application.setPerson(applicationEntity.getPerson());
+        application.setReason(applicationEntity.getReason());
+        application.setStartDate(applicationEntity.getStartDate());
+        application.setStatus(applicationEntity.getStatus());
+        application.setVacationType(applicationEntity.getVacationType());
+        application.setRemindDate(applicationEntity.getRemindDate());
+        application.setTeamInformed(applicationEntity.isTeamInformed());
+        application.setHours(applicationEntity.getHours());
+        application.setUpcomingHolidayReplacementNotificationSend(applicationEntity.getUpcomingHolidayReplacementNotificationSend());
+        application.setUpcomingApplicationsReminderSend(applicationEntity.getUpcomingApplicationsReminderSend());
+        application.setHolidayReplacements(applicationEntity.getHolidayReplacements());
+        return application;
+    }
+
+    private static ApplicationEntity toApplicationEntity(Application application) {
+        final ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setId(application.getId());
+        applicationEntity.setAddress(application.getAddress());
+        applicationEntity.setApplicationDate(application.getApplicationDate());
+        applicationEntity.setCancelDate(application.getCancelDate());
+        applicationEntity.setEditedDate(application.getEditedDate());
+        applicationEntity.setApplier(application.getApplier());
+        applicationEntity.setBoss(application.getBoss());
+        applicationEntity.setCanceller(application.getCanceller());
+        applicationEntity.setTwoStageApproval(application.isTwoStageApproval());
+        applicationEntity.setEndDate(application.getEndDate());
+        applicationEntity.setStartTime(application.getStartTime());
+        applicationEntity.setEndTime(application.getEndTime());
+        applicationEntity.setDayLength(application.getDayLength());
+        applicationEntity.setPerson(application.getPerson());
+        applicationEntity.setReason(application.getReason());
+        applicationEntity.setStartDate(application.getStartDate());
+        applicationEntity.setStatus(application.getStatus());
+        applicationEntity.setVacationType(application.getVacationType());
+        applicationEntity.setRemindDate(application.getRemindDate());
+        applicationEntity.setTeamInformed(application.isTeamInformed());
+        applicationEntity.setHours(application.getHours());
+        applicationEntity.setUpcomingHolidayReplacementNotificationSend(application.getUpcomingHolidayReplacementNotificationSend());
+        applicationEntity.setUpcomingApplicationsReminderSend(application.getUpcomingApplicationsReminderSend());
+        applicationEntity.setHolidayReplacements(application.getHolidayReplacements());
+        return applicationEntity;
     }
 }
