@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -52,8 +51,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         perform(
             get("/api/persons/1/vacations")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -235,8 +233,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
             get("/api/persons/1/vacations")
                 .param("ofDepartmentMembers", "true")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(status().is4xxClientError());
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -31,6 +32,10 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
 
     @EventListener
     public void handle(AuthenticationSuccessEvent event) {
+
+        if (event.getAuthentication().getPrincipal() instanceof Jwt) {
+            return;
+        }
 
         final OidcUser oidcUser = (OidcUser) event.getAuthentication().getPrincipal();
 

@@ -13,6 +13,9 @@ uv:
 spring:
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://auth.example.org/realms/2657fdc6/protocol/openid-connect/certs
       client:
         registration:
           default:
