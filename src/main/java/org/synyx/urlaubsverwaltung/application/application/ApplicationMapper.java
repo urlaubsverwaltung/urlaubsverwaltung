@@ -11,7 +11,6 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 
 @Component
 final class ApplicationMapper {
@@ -48,7 +47,7 @@ final class ApplicationMapper {
         newApplication.setEndDate(applicationForLeaveForm.getEndDate());
         newApplication.setEndTime(applicationForLeaveForm.getEndTime());
 
-        newApplication.setVacationType(convert(vacationType));
+        newApplication.setVacationType(vacationType);
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());

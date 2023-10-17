@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
@@ -51,7 +51,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreatesACommentAndPersistsIt() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
+        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
 
         final Application application = createApplication(person, vacationType);
         application.setId(1337L);
@@ -86,7 +86,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreationOfCommentWithTextWorks() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(1L, HOLIDAY);
+        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
 
         final Application application = createApplication(person, vacationType);
         application.setId(42L);

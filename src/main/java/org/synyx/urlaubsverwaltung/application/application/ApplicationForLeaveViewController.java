@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -199,7 +199,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), id);
     }
 
-    private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationTypeEntity vacationType) {
+    private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationType vacationType) {
         return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey(), vacationType.getColor());
     }
 

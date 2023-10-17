@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -30,6 +31,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.CYAN;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceImplTest {
@@ -73,7 +75,14 @@ class ApplicationServiceImplTest {
         final LocalTime endTime = LocalTime.now();
         final Person person = new Person();
         final LocalDate startDate = LocalDate.now();
-        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(2L);
+        vacationTypeEntity.setActive(true);
+        vacationTypeEntity.setColor(CYAN);
+        vacationTypeEntity.setMessageKey("vacation-type-message-key");
+        vacationTypeEntity.setRequiresApprovalToApply(true);
+        vacationTypeEntity.setVisibleToEveryone(true);
+        vacationTypeEntity.setCategory(OVERTIME);
         final LocalDate remindDate = LocalDate.now();
         final LocalDate upcomingHolidayReplacementNotificationSend = LocalDate.now();
         final LocalDate upcomingApplicationsReminderSend = LocalDate.now();
@@ -97,7 +106,7 @@ class ApplicationServiceImplTest {
         entity.setReason("reason");
         entity.setStartDate(startDate);
         entity.setStatus(WAITING);
-        entity.setVacationType(vacationType);
+        entity.setVacationType(vacationTypeEntity);
         entity.setRemindDate(remindDate);
         entity.setTeamInformed(true);
         entity.setHours(Duration.ofHours(2));
@@ -128,7 +137,15 @@ class ApplicationServiceImplTest {
             assertThat(application.getReason()).isEqualTo("reason");
             assertThat(application.getStartDate()).isSameAs(startDate);
             assertThat(application.getStatus()).isEqualTo(WAITING);
-            assertThat(application.getVacationType()).isSameAs(vacationType);
+            assertThat(application.getVacationType()).satisfies(vacationType -> {
+                assertThat(vacationType.getId()).isEqualTo(2L);
+                assertThat(vacationType.isActive()).isTrue();
+                assertThat(vacationType.getColor()).isEqualTo(CYAN);
+                assertThat(vacationType.getMessageKey()).isEqualTo("vacation-type-message-key");
+                assertThat(vacationType.isRequiresApprovalToApply()).isTrue();
+                assertThat(vacationType.isVisibleToEveryone()).isTrue();
+                assertThat(vacationType.getCategory()).isEqualTo(OVERTIME);
+            });
             assertThat(application.getRemindDate()).isSameAs(remindDate);
             assertThat(application.isTeamInformed()).isTrue();
             assertThat(application.getHours()).isEqualTo(Duration.ofHours(2));
@@ -168,8 +185,8 @@ class ApplicationServiceImplTest {
         final Person holidayReplacementPerson = new Person();
         person.setId(5L);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacementPerson);
@@ -191,7 +208,7 @@ class ApplicationServiceImplTest {
         application.setReason("reason");
         application.setStartDate(startDate);
         application.setStatus(WAITING);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
         application.setRemindDate(remindDate);
         application.setTeamInformed(true);
         application.setHours(Duration.ofHours(5));
@@ -201,6 +218,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity entity = new ApplicationEntity();
         entity.setId(1L);
+        entity.setVacationType(new VacationTypeEntity());
         when(applicationRepository.save(any(ApplicationEntity.class))).thenReturn(entity);
 
         final Application savedApplication = sut.save(application);
@@ -228,7 +246,7 @@ class ApplicationServiceImplTest {
             assertThat(persistedEntity.getReason()).isEqualTo("reason");
             assertThat(persistedEntity.getStartDate()).isEqualTo(startDate);
             assertThat(persistedEntity.getStatus()).isEqualTo(WAITING);
-            assertThat(persistedEntity.getVacationType()).isEqualTo(vacationTypeEntity);
+            assertThat(persistedEntity.getVacationType()).isNotNull();
             assertThat(persistedEntity.getRemindDate()).isEqualTo(remindDate);
             assertThat(persistedEntity.isTeamInformed()).isEqualTo(true);
             assertThat(persistedEntity.getHours()).isEqualTo(Duration.ofHours(5));
@@ -261,6 +279,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         when(applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(WAITING), LocalDate.of(2020, 10, 3)))
             .thenReturn(List.of(applicationEntity));
@@ -277,6 +296,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -312,6 +332,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
@@ -332,6 +353,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationRepository.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(statuses, from, to))
@@ -351,6 +373,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationRepository.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(statuses, from, to))
@@ -371,6 +394,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, from, to, HOLIDAY))
@@ -395,6 +419,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, List.of(WAITING)))
             .thenReturn(List.of(applicationEntity));
@@ -414,6 +439,7 @@ class ApplicationServiceImplTest {
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setId(1L);
+        applicationEntity.setVacationType(new VacationTypeEntity());
 
         when(applicationRepository.deleteByPerson(person)).thenReturn(List.of(applicationEntity));
 

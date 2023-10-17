@@ -11,7 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -1450,8 +1450,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(view().name("application/application-overview"));
     }
 
-    private static VacationTypeEntity anyVacationType() {
-        final VacationTypeEntity vacationType = new VacationTypeEntity();
+    private static VacationType anyVacationType() {
+        final VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
         vacationType.setMessageKey("vacationTypeMessageKey");
         return vacationType;

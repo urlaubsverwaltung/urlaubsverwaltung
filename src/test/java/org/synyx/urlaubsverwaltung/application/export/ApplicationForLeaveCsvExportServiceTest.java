@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -61,11 +61,11 @@ class ApplicationForLeaveCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
-        vacationTypeEntity.setCategory(HOLIDAY);
-        vacationTypeEntity.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
         application.setId(42L);
@@ -74,7 +74,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         application.setEndDate(endDate);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
 

@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -451,7 +451,7 @@ class VacationDaysServiceTest {
         final Application application = anyApplication(person);
         application.setStartDate(LocalDate.of(year, JANUARY, 3));
         application.setEndDate(LocalDate.of(year, JANUARY, 28));
-        application.setVacationType(createVacationTypeEntity(1L, category));
+        application.setVacationType(createVacationType(1L, category));
 
         final List<ApplicationStatus> applicationStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
@@ -753,7 +753,7 @@ class VacationDaysServiceTest {
         final Application application = new Application();
         application.setId(1L);
         application.setPerson(person);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         application.setDayLength(FULL);
         return application;
     }

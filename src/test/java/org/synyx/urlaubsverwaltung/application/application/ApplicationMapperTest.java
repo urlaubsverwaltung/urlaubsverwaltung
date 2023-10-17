@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 
 import java.math.BigDecimal;
@@ -37,11 +36,11 @@ class ApplicationMapperTest {
     @Test
     void ensureOvertimeReductionForEditingVacationOvertime() {
 
-        final VacationTypeEntity oldVacationTypeEntity = new VacationTypeEntity();
-        oldVacationTypeEntity.setCategory(UNPAIDLEAVE);
+        final VacationType oldVacationType = new VacationType();
+        oldVacationType.setCategory(UNPAIDLEAVE);
 
         final Application oldApplication = new Application();
-        oldApplication.setVacationType(oldVacationTypeEntity);
+        oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
@@ -64,7 +63,7 @@ class ApplicationMapperTest {
     @Test
     void ensureReasonForEditingVacationSpecialLeave() {
 
-        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
+        final VacationType oldVacationType = new VacationType();
         oldVacationType.setId(1L);
         oldVacationType.setCategory(SPECIALLEAVE);
 
@@ -92,7 +91,7 @@ class ApplicationMapperTest {
     @Test
     void ensureNoOvertimeReductionForConvertingVacationOvertimeToHoliday() {
 
-        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
+        final VacationType oldVacationType = new VacationType();
         oldVacationType.setId(1L);
         oldVacationType.setCategory(OVERTIME);
 
@@ -119,7 +118,7 @@ class ApplicationMapperTest {
     @Test
     void ensureNoReasonForConvertingVacationSpecialLeaveToHoliday() {
 
-        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
+        final VacationType oldVacationType = new VacationType();
         oldVacationType.setId(1L);
         oldVacationType.setCategory(SPECIALLEAVE);
 

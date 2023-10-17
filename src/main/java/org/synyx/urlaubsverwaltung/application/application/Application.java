@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -29,7 +29,6 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  */
 
 public class Application {
-
 
     private Long id;
 
@@ -87,7 +86,7 @@ public class Application {
     /**
      * Type of vacation, e.g. holiday, special leave etc.
      */
-    private VacationTypeEntity vacationType;
+    private VacationType vacationType;
 
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
@@ -283,11 +282,11 @@ public class Application {
         this.status = status;
     }
 
-    public VacationTypeEntity getVacationType() {
+    public VacationType getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationTypeEntity vacationType) {
+    public void setVacationType(VacationType vacationType) {
         this.vacationType = vacationType;
     }
 

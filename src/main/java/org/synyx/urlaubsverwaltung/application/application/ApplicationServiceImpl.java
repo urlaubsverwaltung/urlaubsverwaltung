@@ -27,6 +27,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
@@ -226,7 +227,7 @@ class ApplicationServiceImpl implements ApplicationService {
         application.setReason(applicationEntity.getReason());
         application.setStartDate(applicationEntity.getStartDate());
         application.setStatus(applicationEntity.getStatus());
-        application.setVacationType(applicationEntity.getVacationType());
+        application.setVacationType(convert(applicationEntity.getVacationType()));
         application.setRemindDate(applicationEntity.getRemindDate());
         application.setTeamInformed(applicationEntity.isTeamInformed());
         application.setHours(applicationEntity.getHours());
@@ -255,7 +256,7 @@ class ApplicationServiceImpl implements ApplicationService {
         applicationEntity.setReason(application.getReason());
         applicationEntity.setStartDate(application.getStartDate());
         applicationEntity.setStatus(application.getStatus());
-        applicationEntity.setVacationType(application.getVacationType());
+        applicationEntity.setVacationType(convert(application.getVacationType()));
         applicationEntity.setRemindDate(application.getRemindDate());
         applicationEntity.setTeamInformed(application.isTeamInformed());
         applicationEntity.setHours(application.getHours());
