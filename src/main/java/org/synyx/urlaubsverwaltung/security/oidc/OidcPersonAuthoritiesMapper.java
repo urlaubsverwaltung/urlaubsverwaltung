@@ -48,7 +48,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
         return resolvePerson(oidcUserAuthority)
-            .map(this::extractPermissions).orElse(generateListOfRoles())
+            .map(this::extractPermissions).orElseGet(this::generateListOfRoles)
             .stream()
             .map(Role::name)
             .map(SimpleGrantedAuthority::new)
