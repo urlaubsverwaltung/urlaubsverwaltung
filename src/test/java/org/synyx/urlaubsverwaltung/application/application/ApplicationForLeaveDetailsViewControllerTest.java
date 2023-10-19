@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
@@ -32,7 +33,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -50,7 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -127,7 +126,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesProvidedYear() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -142,7 +141,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailWithUserDepartments() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
@@ -162,7 +161,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailDefaultsToApplicationEndDateYearIfNoYearProvided() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(personService.getSignedInUser()).thenReturn(somePerson());
 
         Application application = someApplication();
@@ -178,7 +177,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesCorrectView() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -190,7 +189,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailSignedInUserIsBoss() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
@@ -206,7 +205,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailSignedInUserIsOffice() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
@@ -222,7 +221,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailSignedInUserIsDepartmentHeadOfPerson() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
@@ -239,7 +238,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailSignedInUserIsSecondStageAuthorityOfPerson() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(commentService.getCommentsByApplication(any())).thenReturn(List.of(anyApplicationComment()));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
@@ -955,7 +954,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Application application = applicationOfPerson(signedInPerson);
-        application.setStatus(ALLOWED);
+        application.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         doAnswer(invocation -> {
@@ -1299,7 +1298,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     private static Application allowedApplication() {
 
         final Application application = someApplication();
-        application.setStatus(ALLOWED);
+        application.setStatus(ApplicationStatus.ALLOWED);
 
         return application;
     }
@@ -1341,6 +1340,14 @@ class ApplicationForLeaveDetailsViewControllerTest {
         person.setId(1L);
         person.setPermissions(List.of(role));
         return person;
+    }
+
+    private ApplicationComment anyApplicationComment() {
+
+        final Application application = new Application();
+        application.setId(1L);
+
+        return new ApplicationComment(1L, clock.instant(), application, ApplicationCommentAction.ALLOWED, somePerson(), "");
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

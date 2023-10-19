@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.toList;
@@ -44,6 +45,11 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Optional<Application> getApplicationById(Long id) {
         return applicationRepository.findById(id);
+    }
+
+    @Override
+    public List<Application> findApplicationsByIds(Iterable<Long> applicationIds) {
+        return asList(applicationRepository.findAllById(applicationIds));
     }
 
     @Override
@@ -194,5 +200,9 @@ class ApplicationServiceImpl implements ApplicationService {
 
             return application;
         };
+    }
+
+    private static <T> List<T> asList(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false).toList();
     }
 }

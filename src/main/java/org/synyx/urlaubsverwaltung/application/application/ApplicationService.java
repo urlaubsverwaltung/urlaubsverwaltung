@@ -25,6 +25,8 @@ public interface ApplicationService {
      */
     Optional<Application> getApplicationById(Long id);
 
+    List<Application> findApplicationsByIds(Iterable<Long> applicationIds);
+
     /**
      * Saves a new {@link Application}.
      *

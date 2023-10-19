@@ -134,7 +134,7 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).getPerson()).isNull();
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).person()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isNull();

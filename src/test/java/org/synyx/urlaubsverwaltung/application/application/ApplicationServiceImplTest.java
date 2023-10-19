@@ -53,6 +53,20 @@ class ApplicationServiceImplTest {
         assertThat(optional).isEmpty();
     }
 
+    // Get applications by ID -------------------------------------------------------------------------------------------
+
+    @Test
+    void ensureFindApplicationsByIds() {
+
+        final Application application = new Application();
+        application.setId(1337L);
+
+        when(applicationRepository.findAllById(List.of(1337L))).thenReturn(List.of(application));
+
+        final List<Application> actual = sut.findApplicationsByIds(List.of(1337L));
+        assertThat(actual).containsExactly(application);
+    }
+
     // Save application ------------------------------------------------------------------------------------------------
     @Test
     void ensureSaveCallsCorrectDaoMethod() {
