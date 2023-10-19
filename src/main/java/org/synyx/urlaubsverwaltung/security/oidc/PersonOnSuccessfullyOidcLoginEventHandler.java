@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
@@ -80,8 +81,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     private String extractIdentifier(OidcUser oidcUser) {
-        return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getIdentifier()))
-            .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcUserInfo -> oidcUserInfo.getClaimAsString(userMappings.getIdentifier())))
+        return getClaimAsString(oidcUser, userMappings::getIdentifier)
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the subject for oidc person mapping");
                 return new OidcPersonMappingException("Can not retrieve the subject for oidc person mapping");
@@ -89,8 +89,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     private String extractFamilyName(OidcUser oidcUser) {
-        return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getFamilyName()))
-            .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getFamilyName())))
+        return getClaimAsString(oidcUser, userMappings::getFamilyName)
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the family name for oidc person mapping");
                 return new OidcPersonMappingException("Can not retrieve the family name for oidc person mapping");
@@ -98,8 +97,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     private String extractGivenName(OidcUser oidcUser) {
-        return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getGivenName()))
-            .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getGivenName())))
+        return getClaimAsString(oidcUser, userMappings::getGivenName)
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the given name for oidc person mapping");
                 return new OidcPersonMappingException("Can not retrieve the given name for oidc person mapping");
@@ -107,9 +105,13 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     private String extractMailAddress(OidcUser oidcUser) {
-        return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail()))
-            .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail())))
+        return getClaimAsString(oidcUser, userMappings::getEmail)
             .filter(email -> EmailValidator.getInstance().isValid(email))
             .orElse(null);
+    }
+
+    private Optional<String> getClaimAsString(OidcUser oidcUser, Supplier<String> claimSupplier) {
+        return ofNullable(oidcUser.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get()))
+            .or(() -> ofNullable(oidcUser.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get())));
     }
 }

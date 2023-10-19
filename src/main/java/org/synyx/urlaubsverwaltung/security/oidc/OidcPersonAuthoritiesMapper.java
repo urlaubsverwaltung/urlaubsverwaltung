@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -80,8 +81,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractIdentifier(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getIdentifier()))
-            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getIdentifier())))
+        return getClaimAsString(authority, userMappings::getIdentifier)
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the subject of the id token for oidc person mapping with {} on {} ", userMappings.getIdentifier(), authority);
                 return new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
@@ -89,9 +89,13 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail()))
-            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(userMappings.getEmail())))
+        return getClaimAsString(authority, userMappings::getEmail)
             .filter(email -> EmailValidator.getInstance().isValid(email))
             .orElse(null);
+    }
+
+    private Optional<String> getClaimAsString(OidcUserAuthority authority, Supplier<String> claimSupplier) {
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get())));
     }
 }
