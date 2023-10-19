@@ -237,7 +237,7 @@ class ApplicationServiceImplTest {
             assertThat(persistedEntity.getApplier()).isEqualTo(applier);
             assertThat(persistedEntity.getBoss()).isEqualTo(boss);
             assertThat(persistedEntity.getCanceller()).isEqualTo(canceller);
-            assertThat(persistedEntity.isTwoStageApproval()).isEqualTo(true);
+            assertThat(persistedEntity.isTwoStageApproval()).isTrue();
             assertThat(persistedEntity.getEndDate()).isEqualTo(endDate);
             assertThat(persistedEntity.getStartTime()).isEqualTo(startTime);
             assertThat(persistedEntity.getEndTime()).isEqualTo(endTime);
@@ -248,7 +248,7 @@ class ApplicationServiceImplTest {
             assertThat(persistedEntity.getStatus()).isEqualTo(WAITING);
             assertThat(persistedEntity.getVacationType()).isNotNull();
             assertThat(persistedEntity.getRemindDate()).isEqualTo(remindDate);
-            assertThat(persistedEntity.isTeamInformed()).isEqualTo(true);
+            assertThat(persistedEntity.isTeamInformed()).isTrue();
             assertThat(persistedEntity.getHours()).isEqualTo(Duration.ofHours(5));
             assertThat(persistedEntity.getUpcomingHolidayReplacementNotificationSend()).isEqualTo(upcomingApplicationReminderSend);
             assertThat(persistedEntity.getUpcomingApplicationsReminderSend()).isEqualTo(upcomingApplicationsReminderSend);
