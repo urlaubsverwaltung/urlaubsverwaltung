@@ -3,7 +3,7 @@ FROM quay.io/keycloak/keycloak:22.0.4 AS builder
 # See https://www.keycloak.org/server/all-config?f=build for all build configuration options
 #
 ENV KC_CACHE=local
-COPY keycloak-export/ /tmp/realm-import
+COPY export/ /tmp/realm-import
 RUN /opt/keycloak/bin/kc.sh build
 RUN /opt/keycloak/bin/kc.sh import --dir /tmp/realm-import
 

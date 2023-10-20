@@ -1,7 +1,7 @@
 {
   "id" : "urlaubsverwaltung-realm",
-  "realm" : "urlaubsverwaltung-realm",
-  "displayName" : "urlaubsverwaltung",
+  "realm" : "urlaubsverwaltung",
+  "displayName" : "Urlaubsverwaltung",
   "displayNameHtml" : "",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
@@ -47,14 +47,6 @@
   "failureFactor" : 30,
   "roles" : {
     "realm" : [ {
-      "id" : "de218f25-24cc-44d6-b3a7-922c0b0d5bf5",
-      "name" : "urlaubsverwaltung_USER",
-      "description" : "",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "urlaubsverwaltung-realm",
-      "attributes" : { }
-    }, {
       "id" : "a1d7f458-e3ae-4708-8cc5-0f1586f96d8f",
       "name" : "offline_access",
       "description" : "${role_offline-access}",
@@ -80,30 +72,6 @@
       "id" : "06b1e454-f3e5-4d78-85ea-4e0f7769ce34",
       "name" : "uma_authorization",
       "description" : "${role_uma_authorization}",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "urlaubsverwaltung-realm",
-      "attributes" : { }
-    }, {
-      "id" : "50fb145a-25f6-4384-a023-1367ac7cfd39",
-      "name" : "urlaubsverwaltung_VIEW_REPORT_ALL",
-      "description" : "",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "urlaubsverwaltung-realm",
-      "attributes" : { }
-    }, {
-      "id" : "fefac8c1-9618-4375-9c8e-55db784f222a",
-      "name" : "urlaubsverwaltung_WORKING_TIME_EDIT_ALL",
-      "description" : "",
-      "composite" : false,
-      "clientRole" : false,
-      "containerId" : "urlaubsverwaltung-realm",
-      "attributes" : { }
-    }, {
-      "id" : "d0fcc3dd-7e1e-46fa-89ce-f7727e1a46f3",
-      "name" : "urlaubsverwaltung_OVERTIME_ACCOUNT_EDIT_ALL",
-      "description" : "",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "urlaubsverwaltung-realm",
@@ -279,6 +247,7 @@
         "attributes" : { }
       } ],
       "security-admin-console" : [ ],
+      "urlaubsverwaltung" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
       "broker" : [ {
@@ -290,7 +259,6 @@
         "containerId" : "e6509d16-5ad8-409e-9a5e-98219482b1d4",
         "attributes" : { }
       } ],
-      "urlaubsverwaltung" : [ ],
       "account" : [ {
         "id" : "4d349eb6-a40c-4a15-bd09-fb2a71fc42c8",
         "name" : "view-consent",
@@ -368,27 +336,7 @@
       } ]
     }
   },
-  "groups" : [ {
-    "id" : "22a2468b-05d4-442d-bca1-03b167d12afb",
-    "name" : "urlaubsverwaltung_ACCESS",
-    "path" : "/urlaubsverwaltung_ACCESS",
-    "attributes" : { },
-    "realmRoles" : [ "urlaubsverwaltung_USER" ],
-    "clientRoles" : { },
-    "subGroups" : [ ]
-  }, {
-    "id" : "f845401c-8811-42b5-87bf-053a491284bf",
-    "name" : "urlaubsverwaltung_PRIVILEGED",
-    "path" : "/urlaubsverwaltung_PRIVILEGED",
-    "attributes" : { },
-    "realmRoles" : [
-      "urlaubsverwaltung_VIEW_REPORT_ALL",
-      "urlaubsverwaltung_WORKING_TIME_EDIT_ALL",
-      "urlaubsverwaltung_OVERTIME_ACCOUNT_EDIT_ALL"
-    ],
-    "clientRoles" : { },
-    "subGroups" : [ ]
-  } ],
+  "groups" : [ ],
   "defaultRole" : {
     "id" : "ddc246e0-d094-468b-9ad3-6cd2301bb8a2",
     "name" : "default-roles-urlaubsverwaltung-realm",
@@ -397,7 +345,6 @@
     "clientRole" : false,
     "containerId" : "urlaubsverwaltung-realm"
   },
-  "defaultGroups" : [ "/urlaubsverwaltung_ACCESS" ],
   "requiredCredentials" : [ "password" ],
   "otpPolicyType" : "totp",
   "otpPolicyAlgorithm" : "HmacSHA1",
@@ -406,7 +353,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppFreeOTPName", "totpAppGoogleName" ],
+  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -442,13 +389,13 @@
     "clientId" : "account",
     "name" : "${client_account}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/urlaubsverwaltung-realm/account/",
+    "baseUrl" : "/realms/urlaubsverwaltung/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "secret" : "2acfac09-f095-4d48-a5eb-56be62359270",
-    "redirectUris" : [ "/realms/urlaubsverwaltung-realm/account/*" ],
+    "redirectUris" : [ "/realms/urlaubsverwaltung/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -600,13 +547,13 @@
     "clientId" : "security-admin-console",
     "name" : "${client_security-admin-console}",
     "rootUrl" : "${authAdminUrl}",
-    "baseUrl" : "/admin/urlaubsverwaltung-realm/console/",
+    "baseUrl" : "/admin/urlaubsverwaltung/console/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "secret" : "c3951636-578b-4f1f-a470-ce1c8112f68a",
-    "redirectUris" : [ "/admin/urlaubsverwaltung-realm/console/*" ],
+    "redirectUris" : [ "/admin/urlaubsverwaltung/console/*" ],
     "webOrigins" : [ "+" ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -1173,6 +1120,7 @@
   "browserSecurityHeaders" : {
     "contentSecurityPolicyReportOnly" : "",
     "xContentTypeOptions" : "nosniff",
+    "referrerPolicy" : "no-referrer",
     "xRobotsTag" : "none",
     "xFrameOptions" : "SAMEORIGIN",
     "contentSecurityPolicy" : "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
@@ -1182,8 +1130,8 @@
   "smtpServer" : {
     "replyToDisplayName" : "",
     "starttls" : "",
-    "port" : "1025",
     "auth" : "",
+    "port" : "1025",
     "replyTo" : "",
     "host" : "mailhog",
     "from" : "no-reply@example.org",
@@ -1224,7 +1172,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "saml-user-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper" ]
       }
     }, {
       "id" : "08ab9858-507e-4d69-8625-e7697c0f25b2",
@@ -1261,7 +1209,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "saml-role-list-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "987c9751-059b-4516-9271-3c23bd026168",
@@ -1272,12 +1220,6 @@
       "config" : {
         "allow-default-scopes" : [ "true" ]
       }
-    } ],
-    "org.keycloak.userprofile.UserProfileProvider" : [ {
-      "id" : "ead415ed-ded4-4332-a3e7-2ddcec7f829d",
-      "providerId" : "declarative-user-profile",
-      "subComponents" : { },
-      "config" : { }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
       "id" : "b4b81e7b-6754-4477-9dcf-ade05e89ee27",
@@ -1632,42 +1574,6 @@
       "userSetupAllowed" : false
     } ]
   }, {
-    "id" : "6fabf9f9-b305-4f57-8609-b1c376142d50",
-    "alias" : "http challenge",
-    "description" : "An authentication flow based on challenge-response HTTP Authentication Schemes",
-    "providerId" : "basic-flow",
-    "topLevel" : true,
-    "builtIn" : true,
-    "authenticationExecutions" : [ {
-      "authenticator" : "no-cookie-redirect",
-      "authenticatorFlow" : false,
-      "requirement" : "REQUIRED",
-      "priority" : 10,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticator" : "basic-auth",
-      "authenticatorFlow" : false,
-      "requirement" : "REQUIRED",
-      "priority" : 20,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticator" : "basic-auth-otp",
-      "authenticatorFlow" : false,
-      "requirement" : "DISABLED",
-      "priority" : 30,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticator" : "auth-spnego",
-      "authenticatorFlow" : false,
-      "requirement" : "DISABLED",
-      "priority" : 40,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    } ]
-  }, {
     "id" : "e43b8c83-e92b-42c8-b89e-3a69d4b18efc",
     "alias" : "registration",
     "description" : "registration flow",
@@ -1815,9 +1721,9 @@
     "priority" : 10,
     "config" : { }
   }, {
-    "alias" : "terms_and_conditions",
+    "alias" : "TERMS_AND_CONDITIONS",
     "name" : "Terms and Conditions",
-    "providerId" : "terms_and_conditions",
+    "providerId" : "TERMS_AND_CONDITIONS",
     "enabled" : false,
     "defaultAction" : false,
     "priority" : 20,
@@ -1885,7 +1791,7 @@
     "frontendUrl" : "",
     "acr.loa.map" : "{}"
   },
-  "keycloakVersion" : "20.0.1",
+  "keycloakVersion" : "22.0.4",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]

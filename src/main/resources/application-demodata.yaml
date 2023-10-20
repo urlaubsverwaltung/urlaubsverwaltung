@@ -17,7 +17,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8090/realms/urlaubsverwaltung-realm
+          issuer-uri: http://localhost:8090/realms/urlaubsverwaltung
       client:
         registration:
           default:
@@ -29,7 +29,7 @@ spring:
             redirect-uri: http://{baseHost}{basePort}/login/oauth2/code/{registrationId}
         provider:
           default:
-            issuer-uri: http://localhost:8090/realms/urlaubsverwaltung-realm
+            issuer-uri: http://localhost:8090/realms/urlaubsverwaltung
   mail:
     host: localhost
     port: 1025

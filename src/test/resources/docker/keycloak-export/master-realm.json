@@ -70,7 +70,7 @@
       "composites" : {
         "realm" : [ "create-realm" ],
         "client" : {
-          "urlaubsverwaltung-realm-realm" : [ "manage-clients", "manage-realm", "manage-identity-providers", "view-events", "view-identity-providers", "query-realms", "query-clients", "view-authorization", "create-client", "manage-users", "manage-events", "view-users", "impersonation", "query-groups", "view-realm", "manage-authorization", "view-clients", "query-users" ],
+          "urlaubsverwaltung-realm" : [ "manage-clients", "manage-realm", "manage-identity-providers", "view-events", "view-identity-providers", "query-realms", "query-clients", "view-authorization", "create-client", "manage-users", "manage-events", "view-users", "impersonation", "query-groups", "view-realm", "manage-authorization", "view-clients", "query-users" ],
           "master-realm" : [ "view-users", "manage-realm", "create-client", "view-clients", "manage-identity-providers", "query-realms", "view-authorization", "view-identity-providers", "query-groups", "manage-users", "manage-events", "impersonation", "query-users", "manage-authorization", "view-events", "manage-clients", "query-clients", "view-realm" ]
         }
       },
@@ -101,15 +101,7 @@
       "attributes" : { }
     } ],
     "client" : {
-      "registry" : [ {
-        "id" : "f81a172a-ef73-4b1e-b6f5-5de96c30c213",
-        "name" : "registry_operator",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "d31b54f8-d6c0-44b1-a9c6-0b6ebc46989c",
-        "attributes" : { }
-      } ],
-      "urlaubsverwaltung-realm-realm" : [ {
+      "urlaubsverwaltung-realm" : [ {
         "id" : "a5271a2e-a115-4e0b-bed4-7fbd980dfd45",
         "name" : "manage-clients",
         "description" : "${role_manage-clients}",
@@ -172,7 +164,7 @@
         "composite" : true,
         "composites" : {
           "client" : {
-            "urlaubsverwaltung-realm-realm" : [ "query-groups", "query-users" ]
+            "urlaubsverwaltung-realm" : [ "query-groups", "query-users" ]
           }
         },
         "clientRole" : true,
@@ -249,7 +241,7 @@
         "composite" : true,
         "composites" : {
           "client" : {
-            "urlaubsverwaltung-realm-realm" : [ "query-clients" ]
+            "urlaubsverwaltung-realm" : [ "query-clients" ]
           }
         },
         "clientRole" : true,
@@ -431,14 +423,6 @@
         "containerId" : "533187a6-4549-4444-967a-7546f09bb426",
         "attributes" : { }
       } ],
-      "urlaubsverwaltung" : [ {
-        "id" : "c4a0ce76-69e9-47b0-897f-caa08d456a4e",
-        "name" : "URLAUBSVERWALTUNG_OPERATOR",
-        "composite" : false,
-        "clientRole" : true,
-        "containerId" : "1921a0ec-27ec-4b4b-b45a-5d3140ebae4d",
-        "attributes" : { }
-      } ],
       "account" : [ {
         "id" : "2207e3cc-5359-43d9-9a7c-1afc5b498056",
         "name" : "manage-account-links",
@@ -516,27 +500,7 @@
       } ]
     }
   },
-  "groups" : [ {
-    "id" : "061cbd94-543b-4655-ac2e-bad5f0470b30",
-    "name" : "URLAUBSVERWALTUNG_OPERATOR",
-    "path" : "/URLAUBSVERWALTUNG_OPERATOR",
-    "attributes" : { },
-    "realmRoles" : [ ],
-    "clientRoles" : {
-      "urlaubsverwaltung" : [ "URLAUBSVERWALTUNG_OPERATOR" ]
-    },
-    "subGroups" : [ ]
-  }, {
-    "id" : "d186d86e-0e64-4894-bd55-d5cc83c90aec",
-    "name" : "registry operator",
-    "path" : "/registry operator",
-    "attributes" : { },
-    "realmRoles" : [ ],
-    "clientRoles" : {
-      "registry" : [ "registry_operator" ]
-    },
-    "subGroups" : [ ]
-  } ],
+  "groups" : [ ],
   "defaultRole" : {
     "id" : "18406690-86b1-40c8-a443-7f2e0ae90b9f",
     "name" : "default-roles-master",
@@ -553,7 +517,7 @@
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
   "otpPolicyCodeReusable" : false,
-  "otpSupportedApplications" : [ "totpAppFreeOTPName", "totpAppGoogleName" ],
+  "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppGoogleName", "totpAppFreeOTPName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
   "webAuthnPolicyRpId" : "",
@@ -743,59 +707,6 @@
     "defaultClientScopes" : [ "web-origins", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
-    "id" : "d31b54f8-d6c0-44b1-a9c6-0b6ebc46989c",
-    "clientId" : "registry",
-    "name" : "",
-    "description" : "",
-    "rootUrl" : "",
-    "adminUrl" : "",
-    "baseUrl" : "",
-    "surrogateAuthRequired" : false,
-    "enabled" : true,
-    "alwaysDisplayInConsole" : false,
-    "clientAuthenticatorType" : "client-secret",
-    "secret" : "c0289815-c98e-4930-a50c-ab39aa2174b6",
-    "redirectUris" : [ "*" ],
-    "webOrigins" : [ ],
-    "notBefore" : 0,
-    "bearerOnly" : false,
-    "consentRequired" : false,
-    "standardFlowEnabled" : true,
-    "implicitFlowEnabled" : false,
-    "directAccessGrantsEnabled" : true,
-    "serviceAccountsEnabled" : false,
-    "publicClient" : false,
-    "frontchannelLogout" : false,
-    "protocol" : "openid-connect",
-    "attributes" : {
-      "saml.assertion.signature" : "false",
-      "saml.force.post.binding" : "false",
-      "saml.multivalued.roles" : "false",
-      "saml.encrypt" : "false",
-      "post.logout.redirect.uris" : "+",
-      "oauth2.device.authorization.grant.enabled" : "false",
-      "saml$server$signature" : "false",
-      "backchannel.logout.revoke.offline.tokens" : "false",
-      "saml.server.signature" : "false",
-      "saml.server.signature.keyinfo.ext" : "false",
-      "exclude.session.state.from.auth.response" : "false",
-      "oidc.ciba.grant.enabled" : "false",
-      "backchannel.logout.session.required" : "true",
-      "client_credentials.use_refresh_token" : "false",
-      "saml$server$signature$keyinfo$ext" : "false",
-      "saml_force_name_id_format" : "false",
-      "saml.client.signature" : "false",
-      "tls.client.certificate.bound.access.tokens" : "false",
-      "saml.authnstatement" : "false",
-      "display.on.consent.screen" : "false",
-      "saml.onetimeuse.condition" : "false"
-    },
-    "authenticationFlowBindingOverrides" : { },
-    "fullScopeAllowed" : true,
-    "nodeReRegistrationTimeout" : -1,
-    "defaultClientScopes" : [ "web-origins", "profile", "roles", "admin", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
-  }, {
     "id" : "794828d6-af15-4b6e-8de0-8cb6b932b538",
     "clientId" : "security-admin-console",
     "name" : "${client_security-admin-console}",
@@ -843,47 +754,8 @@
     "defaultClientScopes" : [ "web-origins", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
-    "id" : "1921a0ec-27ec-4b4b-b45a-5d3140ebae4d",
-    "clientId" : "urlaubsverwaltung",
-    "name" : "",
-    "description" : "",
-    "rootUrl" : "",
-    "adminUrl" : "",
-    "baseUrl" : "",
-    "surrogateAuthRequired" : false,
-    "enabled" : true,
-    "alwaysDisplayInConsole" : false,
-    "clientAuthenticatorType" : "client-secret",
-    "secret" : "FEWQK0cBatgWCMx1HyM8jPceN35sDRM8",
-    "redirectUris" : [ "*" ],
-    "webOrigins" : [ ],
-    "notBefore" : 0,
-    "bearerOnly" : false,
-    "consentRequired" : false,
-    "standardFlowEnabled" : true,
-    "implicitFlowEnabled" : false,
-    "directAccessGrantsEnabled" : true,
-    "serviceAccountsEnabled" : false,
-    "publicClient" : false,
-    "frontchannelLogout" : true,
-    "protocol" : "openid-connect",
-    "attributes" : {
-      "oidc.ciba.grant.enabled" : "false",
-      "client.secret.creation.time" : "1663021719",
-      "backchannel.logout.session.required" : "true",
-      "post.logout.redirect.uris" : "https://urlaubsverwaltung.cloud",
-      "display.on.consent.screen" : "false",
-      "oauth2.device.authorization.grant.enabled" : "false",
-      "backchannel.logout.revoke.offline.tokens" : "false"
-    },
-    "authenticationFlowBindingOverrides" : { },
-    "fullScopeAllowed" : true,
-    "nodeReRegistrationTimeout" : -1,
-    "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
-  }, {
     "id" : "fe2fc1ce-43c3-4cf4-ba92-76392abc29a3",
-    "clientId" : "urlaubsverwaltung-realm-realm",
+    "clientId" : "urlaubsverwaltung-realm",
     "name" : "urlaubsverwaltung-realm Realm",
     "surrogateAuthRequired" : false,
     "enabled" : true,
@@ -1389,6 +1261,7 @@
   "browserSecurityHeaders" : {
     "contentSecurityPolicyReportOnly" : "",
     "xContentTypeOptions" : "nosniff",
+    "referrerPolicy" : "no-referrer",
     "xRobotsTag" : "none",
     "xFrameOptions" : "SAMEORIGIN",
     "contentSecurityPolicy" : "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
@@ -1427,7 +1300,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper", "saml-user-attribute-mapper" ]
       }
     }, {
       "id" : "b74e9381-5176-446a-b50f-4f37d2975e09",
@@ -1471,7 +1344,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-address-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "oidc-address-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper" ]
       }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
@@ -1520,35 +1393,6 @@
       "priority" : 20,
       "autheticatorFlow" : true,
       "flowAlias" : "Verify Existing Account by Re-authentication",
-      "userSetupAllowed" : false
-    } ]
-  }, {
-    "id" : "25aa3aca-9a3d-475f-8a30-caaf1a3ff52e",
-    "alias" : "Authentication Options",
-    "description" : "Authentication options.",
-    "providerId" : "basic-flow",
-    "topLevel" : false,
-    "builtIn" : true,
-    "authenticationExecutions" : [ {
-      "authenticator" : "basic-auth",
-      "authenticatorFlow" : false,
-      "requirement" : "REQUIRED",
-      "priority" : 10,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticator" : "basic-auth-otp",
-      "authenticatorFlow" : false,
-      "requirement" : "DISABLED",
-      "priority" : 20,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticator" : "auth-spnego",
-      "authenticatorFlow" : false,
-      "requirement" : "DISABLED",
-      "priority" : 30,
-      "autheticatorFlow" : false,
       "userSetupAllowed" : false
     } ]
   }, {
@@ -1868,28 +1712,6 @@
       "userSetupAllowed" : false
     } ]
   }, {
-    "id" : "dbb1042c-2f2c-4c21-9eee-3505489660ef",
-    "alias" : "http challenge",
-    "description" : "An authentication flow based on challenge-response HTTP Authentication Schemes",
-    "providerId" : "basic-flow",
-    "topLevel" : true,
-    "builtIn" : true,
-    "authenticationExecutions" : [ {
-      "authenticator" : "no-cookie-redirect",
-      "authenticatorFlow" : false,
-      "requirement" : "REQUIRED",
-      "priority" : 10,
-      "autheticatorFlow" : false,
-      "userSetupAllowed" : false
-    }, {
-      "authenticatorFlow" : true,
-      "requirement" : "REQUIRED",
-      "priority" : 20,
-      "autheticatorFlow" : true,
-      "flowAlias" : "Authentication Options",
-      "userSetupAllowed" : false
-    } ]
-  }, {
     "id" : "1d38b968-48a1-4f13-bf5e-b6bcbb47e35c",
     "alias" : "registration",
     "description" : "registration flow",
@@ -2015,9 +1837,9 @@
     "priority" : 10,
     "config" : { }
   }, {
-    "alias" : "terms_and_conditions",
+    "alias" : "TERMS_AND_CONDITIONS",
     "name" : "Terms and Conditions",
-    "providerId" : "terms_and_conditions",
+    "providerId" : "TERMS_AND_CONDITIONS",
     "enabled" : false,
     "defaultAction" : false,
     "priority" : 20,
@@ -2083,7 +1905,7 @@
     "cibaInterval" : "5",
     "realmReusableOtpCode" : "false"
   },
-  "keycloakVersion" : "20.0.1",
+  "keycloakVersion" : "22.0.4",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : [ ]

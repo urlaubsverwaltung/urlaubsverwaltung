@@ -18,13 +18,14 @@ public class TestKeycloakContainer extends KeycloakContainer {
 
     private static final String VERSION = "22.0.4";
     private static final String IMAGE = "quay.io/keycloak/keycloak";
+    public static final String REALM_URLAUBSVERWALTUNG = "urlaubsverwaltung";
 
     public TestKeycloakContainer() {
         super(IMAGE + ":" + VERSION);
         withRealmImportFiles(
             "/docker/keycloak-export/master-realm.json",
             "/docker/keycloak-export/master-users-0.json",
-            "/docker/keycloak-export/urlaubsverwaltung-realm-realm.json"
+            "/docker/keycloak-export/urlaubsverwaltung-realm.json"
         );
     }
 
@@ -42,7 +43,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
         final Keycloak keycloak = adminClient();
 
         // Get realm
-        final RealmResource realmResource = keycloak.realm("urlaubsverwaltung-realm");
+        final RealmResource realmResource = keycloak.realm(REALM_URLAUBSVERWALTUNG);
         final UsersResource usersRessource = realmResource.users();
 
         // Create user (requires manage-users role)
@@ -83,9 +84,9 @@ public class TestKeycloakContainer extends KeycloakContainer {
         registry.add("spring.security.oauth2.client.registration.keycloak.provider", () -> "keycloak");
         registry.add("spring.security.oauth2.client.registration.keycloak.scope", () -> "openid,profile,email,roles");
         registry.add("spring.security.oauth2.client.registration.keycloak.authorization-grant-type", () -> "authorization_code");
-        registry.add("spring.security.oauth2.client.registration.keycloak.redirect-uri", () -> "http://{baseHost}{basePort}/login/oauth2/code/{registrationId}");
-        registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> this.getAuthServerUrl() + "/realms/urlaubsverwaltung-realm");
-        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> this.getAuthServerUrl() + "/realms/urlaubsverwaltung-realm");
+        registry.add("spring.security.oauth2.client.registratirealmon.keycloak.redirect-uri", () -> "http://{baseHost}{basePort}/login/oauth2/code/{registrationId}");
+        registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri", () -> this.getAuthServerUrl() + "/realms/"+ REALM_URLAUBSVERWALTUNG);
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> this.getAuthServerUrl() + "/realms/"+ REALM_URLAUBSVERWALTUNG);
     }
 
     private Keycloak adminClient() {
