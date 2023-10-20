@@ -6,9 +6,6 @@ uv:
     sender: sender@example.org
     administrator: administrators@example.org
     senderDisplayName: Urlaubsverwaltung
-  security:
-    oidc:
-      login-form-url: http://localhost:8080/login/redirect
 
 spring:
   security:

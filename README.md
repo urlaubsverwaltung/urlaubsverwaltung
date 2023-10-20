@@ -142,7 +142,6 @@ uv.mail.sender
 uv.mail.senderDisplayName=Urlaubsverwaltung
 
 # security - openid connect
-uv.security.oidc.login-form-url
 uv.security.oidc.post-logout-redirect-uri={baseUrl}
 uv.security.oidc.group-claim.boolean=false
 uv.security.oidc.group-claim.claim-name=groups

@@ -1,7 +1,4 @@
 uv:
-  security:
-    oidc:
-      login-form-url: http://localhost:8060/oauth2/authorization/default
   mail:
     application-url: http://localhost:8080
     sender: sender@example.org

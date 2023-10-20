@@ -23,9 +23,6 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String postLogoutRedirectUri = "{baseUrl}";
 
-    @NotEmpty
-    private String loginFormUrl;
-
     @NotNull
     private GroupClaim groupClaim = new GroupClaim();
 
@@ -38,14 +35,6 @@ public class OidcSecurityProperties {
 
     public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
         this.postLogoutRedirectUri = postLogoutRedirectUri;
-    }
-
-    public String getLoginFormUrl() {
-        return loginFormUrl;
-    }
-
-    public void setLoginFormUrl(String loginFormUrl) {
-        this.loginFormUrl = loginFormUrl;
     }
 
     public GroupClaim getGroupClaim() {
