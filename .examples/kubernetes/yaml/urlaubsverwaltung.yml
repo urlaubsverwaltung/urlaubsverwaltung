@@ -19,7 +19,7 @@ data:
     spring.security.oauth2.client.registration.default.provider=default
     spring.security.oauth2.client.registration.default.scope=openid,profile,email,roles
     spring.security.oauth2.client.registration.default.authorization-grant-type=authorization_code
-    spring.security.oauth2.client.registration.default.redirect-uri=http://{baseHost}:8060/login/oauth2/code/{registrationId}
+    spring.security.oauth2.client.registration.default.redirect-uri=http://{baseHost}:8080/login/oauth2/code/{registrationId}
     spring.security.oauth2.client.provider.default.issuer-uri=http://localhost:8090/auth/realms/urlaubsverwaltung-realm
 
     # Deactivate mail health check to prevent k8s to crashLoop,
