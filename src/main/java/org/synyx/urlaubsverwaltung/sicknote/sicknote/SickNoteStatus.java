@@ -8,6 +8,11 @@ import java.util.List;
 public enum SickNoteStatus {
 
     /**
+     * After the submission of a sick note by a user him/herself the saved sick note gets this status
+     */
+    SUBMITTED,
+
+    /**
      * After creating a sick note the saved sick note gets this status
      */
     ACTIVE,
