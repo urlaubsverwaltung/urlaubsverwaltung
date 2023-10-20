@@ -53,7 +53,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
-    void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getAbsencesWithoutOIDCAuthIsUnauthorized() throws Exception {
         perform(
             get("/api/absences")
         )
