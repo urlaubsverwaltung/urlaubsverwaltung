@@ -78,6 +78,8 @@ class SecurityWebConfiguration {
             logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
         );
 
+        /* TODO remove the explicit save and fix ReloadAuthenticationAuthoritiesFilter */
+        http.securityContext(securityContext -> securityContext.requireExplicitSave(false));
         http.addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
 
         return http.build();
