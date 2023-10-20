@@ -95,6 +95,9 @@ class SickNoteViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private SickNoteValidator sickNoteValidator;
+
+    @Mock
+    private SickNoteSubmissionValidator sickNoteSubmissionValidator;
     @Mock
     private SickNoteCommentFormValidator sickNoteCommentFormValidator;
     @Mock

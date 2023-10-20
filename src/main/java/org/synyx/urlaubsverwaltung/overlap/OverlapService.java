@@ -200,7 +200,7 @@ public class OverlapService {
         // only active sick notes are relevant
         return sickNoteService.getByPersonAndPeriod(person, startDate, endDate)
             .stream()
-            .filter(SickNote::isActive)
+            .filter(SickNote::isSubmittedOrActive)
             .collect(toList());
     }
 
