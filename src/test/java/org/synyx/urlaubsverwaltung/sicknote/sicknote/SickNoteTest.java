@@ -226,13 +226,13 @@ class SickNoteTest {
     @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
     void ensureIsNotActiveForInactiveStatus(SickNoteStatus status) {
         final SickNote sickNote = SickNote.builder().status(status).build();
-        assertThat(sickNote.isActive()).isFalse();
+        assertThat(sickNote.isSubmittedOrActive()).isFalse();
     }
 
     @Test
     void ensureIsActiveForActiveStatus() {
         final SickNote sickNote = SickNote.builder().status(SickNoteStatus.ACTIVE).build();
-        assertThat(sickNote.isActive()).isTrue();
+        assertThat(sickNote.isSubmittedOrActive()).isTrue();
     }
 
     @Test

@@ -26,7 +26,7 @@ public class SickDaysOverview {
         this.childSickDays = new SickDays();
 
         for (SickNote sickNote : sickNotes) {
-            if (!sickNote.isActive()) {
+            if (!sickNote.isSubmittedOrActive()) {
                 continue;
             }
 
