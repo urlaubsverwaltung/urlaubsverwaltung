@@ -10,9 +10,11 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -36,10 +38,12 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     private PersonService personService;
     @Mock
     private SessionService sessionService;
+    @Mock
+    private DelegatingSecurityContextRepository securityContextRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService);
+        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository);
     }
 
     @Test
@@ -55,16 +59,18 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         signedInUser.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        SecurityContextHolder.getContext().setAuthentication(prepareOAuth2Authentication());
+        final SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(prepareOAuth2Authentication());
 
         sut.doFilterInternal(request, response, filterChain);
 
-        final List<String> updatedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+        final List<String> updatedAuthorities = context.getAuthentication().getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .collect(toList());
         assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
 
         verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
+        verify(securityContextRepository).saveContext(context, request, response);
     }
 
     @Test

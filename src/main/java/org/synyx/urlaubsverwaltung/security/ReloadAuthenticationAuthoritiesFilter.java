@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -31,10 +33,12 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     private final PersonService personService;
     private final SessionService sessionService;
+    private final DelegatingSecurityContextRepository securityContextRepository;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService sessionService) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService sessionService, DelegatingSecurityContextRepository securityContextRepository) {
         this.personService = personService;
         this.sessionService = sessionService;
+        this.securityContextRepository = securityContextRepository;
     }
 
     @Override
@@ -55,12 +59,15 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
         final Person signedInUser = personService.getSignedInUser();
         final List<GrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        final SecurityContext context = SecurityContextHolder.getContext();
+        final Authentication authentication = context.getAuthentication();
 
         final OAuth2AuthenticationToken oAuth2Auth = (OAuth2AuthenticationToken) authentication;
         final Authentication updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
 
-        SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
+        context.setAuthentication(updatedAuthentication);
+        securityContextRepository.saveContext(context, request, response);
         LOG.info("Updated authorities of person with the id {} from {} to {}", signedInUser.getId(), authentication.getAuthorities(), updatedAuthorities);
 
         chain.doFilter(request, response);

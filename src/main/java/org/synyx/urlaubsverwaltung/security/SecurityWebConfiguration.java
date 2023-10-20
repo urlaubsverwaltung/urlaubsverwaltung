@@ -11,6 +11,9 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -35,7 +38,7 @@ class SecurityWebConfiguration {
     }
 
     @Bean
-    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http) throws Exception {
+    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
 
         http
             .authorizeHttpRequests(authorizeHttpRequests ->
@@ -78,10 +81,17 @@ class SecurityWebConfiguration {
             logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
         );
 
-        /* TODO remove the explicit save and fix ReloadAuthenticationAuthoritiesFilter */
-        http.securityContext(securityContext -> securityContext.requireExplicitSave(false));
-        http.addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
+        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
+        http.addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    DelegatingSecurityContextRepository securityContextRepository() {
+       return new DelegatingSecurityContextRepository(
+            new RequestAttributeSecurityContextRepository(),
+            new HttpSessionSecurityContextRepository()
+        );
     }
 }
