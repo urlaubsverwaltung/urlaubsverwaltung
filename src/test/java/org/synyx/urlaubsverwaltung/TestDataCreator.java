@@ -76,7 +76,7 @@ public final class TestDataCreator {
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
-    public static Application createApplication(Person person, VacationTypeEntity vacationType) {
+    public static Application createApplication(Person person, VacationType vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
         return createApplication(person, vacationType, now, now.plusDays(3), FULL);
@@ -84,7 +84,10 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        final VacationTypeEntity vacationType = createVacationTypeEntity(1L, HOLIDAY, "application.data.vacationType.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
 
         final Application application = new Application();
         application.setPerson(person);
@@ -97,7 +100,7 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationTypeEntity vacationType, LocalDate startDate,
+    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
                                                 LocalDate endDate, DayLength dayLength) {
 
         Application application = new Application();
@@ -187,19 +190,19 @@ public final class TestDataCreator {
         return workingTime;
     }
 
-    public static VacationTypeEntity createVacationTypeEntity(Long id, VacationCategory category) {
-        return createVacationTypeEntity(id, category, "application.data.vacationType.holiday");
+    public static VacationType createVacationType(Long id, VacationCategory category) {
+        return createVacationType(id, category, "application.data.vacationType.holiday");
     }
 
-    public static VacationTypeEntity createVacationTypeEntity(Long id, VacationCategory category, String messageKey) {
+    public static VacationType createVacationType(Long id, VacationCategory category, String messageKey) {
 
-        VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(id);
-        vacationTypeEntity.setCategory(category);
-        vacationTypeEntity.setMessageKey(messageKey);
-        vacationTypeEntity.setColor(ORANGE);
+        VacationType vacationType = new VacationType();
+        vacationType.setId(id);
+        vacationType.setCategory(category);
+        vacationType.setMessageKey(messageKey);
+        vacationType.setColor(ORANGE);
 
-        return vacationTypeEntity;
+        return vacationType;
     }
 
     public static List<VacationType> createVacationTypes() {

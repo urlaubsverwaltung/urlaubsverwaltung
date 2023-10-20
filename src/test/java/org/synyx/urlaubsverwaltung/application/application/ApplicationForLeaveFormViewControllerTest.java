@@ -72,14 +72,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -1157,7 +1156,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(new VacationType()));
@@ -1183,7 +1182,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setPerson(person);
         application.setId(1L);
         application.setStatus(WAITING);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         when(applicationInteractionService.get(1L)).thenReturn(Optional.of(application));
 
         assertThatThrownBy(() ->
@@ -1216,7 +1215,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(new VacationType()));
@@ -1254,7 +1253,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setDayLength(DayLength.MORNING);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(new VacationType()));
@@ -1305,7 +1304,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))
@@ -1659,7 +1658,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
 
         final Application application = new Application();
-        application.setVacationType(convert(holidayType));
+        application.setVacationType(holidayType);
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(20));
 

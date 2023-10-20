@@ -35,7 +35,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 
 /**
  * Builds a {@link ApplicationForLeaveStatistics} for the given
@@ -118,9 +117,9 @@ class ApplicationForLeaveStatisticsBuilder {
                 final ApplicationForLeaveStatistics statistics = statisticsByPerson.get(application.getPerson());
 
                 if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
-                    statistics.addWaitingVacationDays(convert(application.getVacationType()), workingTime);
+                    statistics.addWaitingVacationDays(application.getVacationType(), workingTime);
                 } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
-                    statistics.addAllowedVacationDays(convert(application.getVacationType()), workingTime);
+                    statistics.addAllowedVacationDays(application.getVacationType(), workingTime);
                 }
             }
         }

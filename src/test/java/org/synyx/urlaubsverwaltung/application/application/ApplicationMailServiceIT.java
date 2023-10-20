@@ -44,7 +44,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
@@ -3822,7 +3822,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = new Application();
         application.setId(1234L);
         application.setPerson(person);
-        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(createVacationType(1L, HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

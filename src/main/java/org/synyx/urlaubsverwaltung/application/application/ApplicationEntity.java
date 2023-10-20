@@ -1,55 +1,63 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.DurationConverter;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static java.math.RoundingMode.HALF_EVEN;
-import static java.time.Duration.ZERO;
-import static java.time.ZoneOffset.UTC;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
-import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
-/**
- * This class describes an application for leave.
- */
+@Entity(name = "application")
+class ApplicationEntity {
 
-public class Application {
-
+    @Id
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "application_generator")
+    @SequenceGenerator(name = "application_generator", sequenceName = "application_id_seq")
     private Long id;
 
     /**
      * Person that will be on vacation if this application for leave is allowed.
      */
+    @ManyToOne
     private Person person;
 
     /**
      * Person that made the application - can be different to the person that will be on vacation.
      */
+    @ManyToOne
     private Person applier;
 
     /**
      * Person that allowed or rejected the application for leave.
      */
+    @ManyToOne
     private Person boss;
 
     /**
      * Person that cancelled the application.
      */
+    @ManyToOne
     private Person canceller;
 
     /**
@@ -86,11 +94,13 @@ public class Application {
     /**
      * Type of vacation, e.g. holiday, special leave etc.
      */
-    private VacationType vacationType;
+    @ManyToOne
+    private VacationTypeEntity vacationType;
 
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
      */
+    @Enumerated(STRING)
     private DayLength dayLength;
 
     /**
@@ -98,6 +108,8 @@ public class Application {
      */
     private String reason;
 
+    @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
+    @ElementCollection(fetch = EAGER)
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**
@@ -128,6 +140,7 @@ public class Application {
     /**
      * Describes the current status of the application for leave (e.g. allowed, rejected etc.)
      */
+    @Enumerated(STRING)
     private ApplicationStatus status;
 
     /**
@@ -140,6 +153,7 @@ public class Application {
      *
      * @since 2.11.0
      */
+    @Convert(converter = DurationConverter.class)
     private Duration hours;
 
     private LocalDate upcomingHolidayReplacementNotificationSend;
@@ -282,16 +296,12 @@ public class Application {
         this.status = status;
     }
 
-    public VacationType getVacationType() {
+    public VacationTypeEntity getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationType vacationType) {
+    public void setVacationType(VacationTypeEntity vacationType) {
         this.vacationType = vacationType;
-    }
-
-    public boolean isFormerlyAllowed() {
-        return hasStatus(CANCELLED);
     }
 
     public LocalDate getRemindDate() {
@@ -314,46 +324,6 @@ public class Application {
         return hours;
     }
 
-    private Duration getHoursForDateRange(DateRange dateRange) {
-        final DateRange overtimeDateRange = new DateRange(startDate, endDate);
-        final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
-
-        final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-        final BigDecimal secondsProRata = toFormattedDecimal(hours)
-            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-            .multiply(toFormattedDecimal(durationOfOverlap))
-            .setScale(0, HALF_EVEN);
-
-        return DecimalConverter.toDuration(secondsProRata);
-    }
-
-    private List<DateRange> splitByYear() {
-        List<DateRange> dateRangesByYear = new ArrayList<>();
-
-        LocalDate currentStartDate = startDate;
-        LocalDate currentEndDate = startDate.withDayOfYear(1).plusYears(1).minusDays(1);
-
-        while (currentEndDate.isBefore(endDate) || currentEndDate.isEqual(endDate)) {
-            dateRangesByYear.add(new DateRange(currentStartDate, currentEndDate));
-
-            currentStartDate = currentEndDate.plusDays(1);
-            currentEndDate = currentStartDate.withDayOfYear(1).plusYears(1).minusDays(1);
-        }
-
-        // Add the remaining date range if endDate is not on a year boundary
-        if (!currentStartDate.isAfter(endDate)) {
-            dateRangesByYear.add(new DateRange(currentStartDate, endDate));
-        }
-
-        return dateRangesByYear;
-    }
-
-    public Map<Integer, Duration> getHoursByYear() {
-        return this.splitByYear().stream().collect(Collectors.toMap(
-            dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
-            this::getHoursForDateRange));
-    }
-
     public void setHours(Duration hours) {
         this.hours = hours;
     }
@@ -374,59 +344,6 @@ public class Application {
         this.upcomingApplicationsReminderSend = upcomingApplicationsReminderSend;
     }
 
-    /**
-     * Checks if the application for leave has the given status.
-     *
-     * @param status to be checked
-     * @return {@code true} if the application for leave has the given status, else {@code false}
-     */
-    public boolean hasStatus(ApplicationStatus status) {
-        return getStatus() == status;
-    }
-
-    /**
-     * Return period of time of the application for leave.
-     *
-     * @return period of time, never {@code null}
-     */
-    public Period getPeriod() {
-        return new Period(getStartDate(), getEndDate(), getDayLength());
-    }
-
-    /**
-     * Get start of application for leave as date with time.
-     *
-     * @return start date with time or {@code null} if start date or start time is missing
-     */
-    public ZonedDateTime getStartDateWithTime() {
-
-        final LocalDate date = getStartDate();
-        final LocalTime time = getStartTime();
-
-        if (date != null && time != null) {
-            return ZonedDateTime.of(date, time, UTC);
-        }
-
-        return null;
-    }
-
-    /**
-     * Get end of application for leave as date with time.
-     *
-     * @return end date with time or {@code null} if end date or end time is missing
-     */
-    public ZonedDateTime getEndDateWithTime() {
-
-        final LocalDate date = getEndDate();
-        final LocalTime time = getEndTime();
-
-        if (date != null && time != null) {
-            return ZonedDateTime.of(date, time, UTC);
-        }
-
-        return null;
-    }
-
     public List<HolidayReplacementEntity> getHolidayReplacements() {
         return holidayReplacements;
     }
@@ -437,7 +354,7 @@ public class Application {
 
     @Override
     public String toString() {
-        return "Application{" +
+        return "ApplicationEntity{" +
             "person=" + person +
             ", applier=" + applier +
             ", boss=" + boss +
@@ -468,7 +385,7 @@ public class Application {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Application that = (Application) o;
+        final ApplicationEntity that = (ApplicationEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

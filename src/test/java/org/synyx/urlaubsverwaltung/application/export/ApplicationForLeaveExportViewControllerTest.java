@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -82,11 +82,11 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
-        vacationTypeEntity.setCategory(HOLIDAY);
-        vacationTypeEntity.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
         application.setId(42L);
@@ -95,7 +95,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setEndDate(endDate);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
@@ -128,11 +128,11 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
-        vacationTypeEntity.setCategory(HOLIDAY);
-        vacationTypeEntity.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
         application.setId(42L);
@@ -141,7 +141,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setEndDate(endDate);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
@@ -176,11 +176,11 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
-        vacationTypeEntity.setCategory(HOLIDAY);
-        vacationTypeEntity.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
         application.setId(42L);
@@ -189,7 +189,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setEndDate(endDate);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
@@ -223,11 +223,11 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
-        vacationTypeEntity.setCategory(HOLIDAY);
-        vacationTypeEntity.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
         application.setId(42L);
@@ -236,7 +236,7 @@ class ApplicationForLeaveExportViewControllerTest {
         application.setEndDate(endDate);
         application.setDayLength(DayLength.FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);

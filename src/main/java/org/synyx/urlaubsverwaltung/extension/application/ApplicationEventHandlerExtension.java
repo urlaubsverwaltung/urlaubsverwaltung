@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCreatedFromSickNoteEvent;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Instant;
@@ -163,7 +163,7 @@ public class ApplicationEventHandlerExtension {
         };
     }
 
-    private static VacationTypeDTO toVacationType(VacationTypeEntity vacationType) {
+    private static VacationTypeDTO toVacationType(VacationType vacationType) {
         return VacationTypeDTO.builder()
             .sourceId(vacationType.getId())
             .category(vacationType.getCategory().name())

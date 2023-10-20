@@ -17,6 +17,6 @@ interface ApplicationCommentRepository extends CrudRepository<ApplicationComment
     void deleteByPerson(Person person);
 
     @Modifying
-    @Query("DELETE FROM application_comment c WHERE c.applicationId IN (SELECT a.id FROM Application a WHERE a.person = :applicationPerson)")
+    @Query("DELETE FROM application_comment c WHERE c.applicationId IN (SELECT a.id FROM application a WHERE a.person = :applicationPerson)")
     void deleteByApplicationPerson(Person applicationPerson);
 }

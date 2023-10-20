@@ -18,7 +18,6 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
@@ -52,7 +51,7 @@ class ApplicationForLeaveDataProvider {
             application.setApplicationDate(startDate.minusDays(5L));
             application.setStartDate(startDate);
             application.setEndDate(endDate);
-            application.setVacationType(convert(getVacationType(vacationCategory)));
+            application.setVacationType(getVacationType(vacationCategory));
             application.setDayLength(dayLength);
             application.setReason("Lorem ipsum dolor sit amet, consetetur sadipscing elitr");
 

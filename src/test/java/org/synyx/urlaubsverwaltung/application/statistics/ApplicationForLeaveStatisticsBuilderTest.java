@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -45,7 +44,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypesEntities;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -89,7 +88,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
-        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+        final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person();
 
@@ -147,7 +146,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
-        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+        final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person();
 
@@ -208,7 +207,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
-        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+        final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person();
 
@@ -277,7 +276,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
-        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+        final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person();
 
@@ -345,7 +344,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
             workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
-        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+        final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person();
 

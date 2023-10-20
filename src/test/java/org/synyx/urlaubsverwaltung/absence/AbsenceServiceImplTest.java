@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -180,9 +180,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
 
         final Application application = new Application();
         application.setId(42L);
@@ -191,7 +191,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -221,9 +221,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(false);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(false);
 
         final Application application = new Application();
         application.setId(42L);
@@ -232,7 +232,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.NOON);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -262,9 +262,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(false);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(false);
 
         final Application application = new Application();
         application.setId(42L);
@@ -273,7 +273,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -384,7 +384,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -438,7 +438,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, JUNE, 10));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -515,7 +515,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, MAY, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -572,7 +572,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -632,7 +632,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -713,9 +713,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(true);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(true);
 
         final Application application = new Application();
         application.setId(42L);
@@ -724,7 +724,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(CANCELLED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -754,9 +754,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(false);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(false);
 
         final Application application = new Application();
         application.setId(42L);
@@ -765,7 +765,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.NOON);
         application.setStatus(CANCELLED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -795,9 +795,9 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
-        vacationTypeEntity.setVisibleToEveryone(false);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setVisibleToEveryone(false);
 
         final Application application = new Application();
         application.setId(42L);
@@ -806,7 +806,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(FULL);
         application.setStatus(CANCELLED);
-        application.setVacationType(vacationTypeEntity);
+        application.setVacationType(vacationType);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -917,7 +917,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(ALLOWED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -971,7 +971,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, JUNE, 10));
         application.setDayLength(FULL);
         application.setStatus(CANCELLED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -1048,7 +1048,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, MAY, 31));
         application.setDayLength(FULL);
         application.setStatus(CANCELLED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -1105,7 +1105,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(CANCELLED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -1165,7 +1165,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(CANCELLED);
-        application.setVacationType(anyVacationTypeEntity());
+        application.setVacationType(anyVacationType());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -1199,12 +1199,12 @@ class AbsenceServiceImplTest {
         });
     }
 
-    private static VacationTypeEntity anyVacationTypeEntity() {
+    private static VacationType anyVacationType() {
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1L);
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
 
-        return vacationTypeEntity;
+        return vacationType;
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {

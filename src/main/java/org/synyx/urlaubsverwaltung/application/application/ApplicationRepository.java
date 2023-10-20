@@ -12,74 +12,71 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Repository for {@link Application} entities.
- */
-interface ApplicationRepository extends CrudRepository<Application, Long> {
+interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> {
 
-    List<Application> findByStatusIn(List<ApplicationStatus> statuses);
+    List<ApplicationEntity> findByStatusIn(List<ApplicationStatus> statuses);
 
-    List<Application> findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(List<ApplicationStatus> statuses, LocalDate from, LocalDate to);
+    List<ApplicationEntity> findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(List<ApplicationStatus> statuses, LocalDate from, LocalDate to);
 
-    List<Application> findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(List<ApplicationStatus> statuses, LocalDate from, LocalDate to);
+    List<ApplicationEntity> findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(List<ApplicationStatus> statuses, LocalDate from, LocalDate to);
 
-    List<Application> findByStatusInAndEndDateGreaterThanEqual(List<ApplicationStatus> statuses, LocalDate since);
+    List<ApplicationEntity> findByStatusInAndEndDateGreaterThanEqual(List<ApplicationStatus> statuses, LocalDate since);
 
-    List<Application> findByStatusInAndPersonIn(List<ApplicationStatus> statuses, List<Person> persons);
+    List<ApplicationEntity> findByStatusInAndPersonIn(List<ApplicationStatus> statuses, List<Person> persons);
 
-    List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
+    List<ApplicationEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
 
-    List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+    List<ApplicationEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
 
-    List<Application> findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> statuses);
+    List<ApplicationEntity> findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> statuses);
 
     @Query(
-        "select x from Application x "
+        "select x from application x "
             + "where x.status = ?3 "
             + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
+    List<ApplicationEntity> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
     @Query(
-        "select x from Application x "
+        "select x from application x "
             + "where x.person = ?3 "
             + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
+    List<ApplicationEntity> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
-    List<Application> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
+    List<ApplicationEntity> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
     @Query(
-        "select x from Application x "
+        "select x from application x "
             + "where x.person = ?3 "
             + "and x.status = ?4 "
             + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
+    List<ApplicationEntity> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
 
     @Query(
-        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
-            + "AND application.vacationType.category = 'OVERTIME' "
-            + "AND (application.status = 'WAITING' OR application.status = 'TEMPORARY_ALLOWED' OR application.status = 'ALLOWED' OR application.status = 'ALLOWED_CANCELLATION_REQUESTED')"
+        "SELECT SUM(a.hours) FROM application a WHERE a.person = :person "
+            + "AND a.vacationType.category = 'OVERTIME' "
+            + "AND (a.status = 'WAITING' OR a.status = 'TEMPORARY_ALLOWED' OR a.status = 'ALLOWED' OR a.status = 'ALLOWED_CANCELLATION_REQUESTED')"
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
 
-    List<Application> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
+    List<ApplicationEntity> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
         Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
 
-    List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
+    List<ApplicationEntity> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 
-    List<Application> findByBoss(Person person);
+    List<ApplicationEntity> findByBoss(Person person);
 
-    List<Application> findByCanceller(Person person);
+    List<ApplicationEntity> findByCanceller(Person person);
 
-    List<Application> findByApplier(Person person);
+    List<ApplicationEntity> findByApplier(Person person);
 
     @Modifying
-    List<Application> deleteByPerson(Person person);
+    List<ApplicationEntity> deleteByPerson(Person person);
 
-    List<Application> findAllByHolidayReplacements_Person(Person person);
+    List<ApplicationEntity> findAllByHolidayReplacements_Person(Person person);
 }

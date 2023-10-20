@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -494,15 +494,15 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to))
             .thenReturn(List.of(overtimeOne, overtimeTwo));
 
-        final VacationTypeEntity overtimeVacationTypeEntity = new VacationTypeEntity();
-        overtimeVacationTypeEntity.setId(1L);
-        overtimeVacationTypeEntity.setCategory(VacationCategory.OVERTIME);
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setId(1L);
+        overtimeVacationType.setCategory(VacationCategory.OVERTIME);
 
         final Application personOvertimeReduction = new Application();
         personOvertimeReduction.setId(1L);
         personOvertimeReduction.setPerson(person);
         personOvertimeReduction.setStatus(ApplicationStatus.ALLOWED);
-        personOvertimeReduction.setVacationType(overtimeVacationTypeEntity);
+        personOvertimeReduction.setVacationType(overtimeVacationType);
         personOvertimeReduction.setHours(Duration.ofMinutes(90));
         // overtime reduction should result in `overall`. NOT in `date range`.
         personOvertimeReduction.setStartDate(LocalDate.now(clock).withMonth(JANUARY.getValue()));

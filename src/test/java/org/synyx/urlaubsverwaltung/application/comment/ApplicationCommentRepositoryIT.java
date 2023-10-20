@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -29,17 +31,23 @@ class ApplicationCommentRepositoryIT extends TestContainersBase {
     private ApplicationService applicationService;
     @Autowired
     private ApplicationCommentService applicationCommentService;
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Test
     void ensureDeleteByApplicationPerson() {
 
+        final VacationType vacationType = vacationTypeService.getActiveVacationTypes().get(0);
+
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
         final Application application = new Application();
         application.setPerson(person);
+        application.setVacationType(vacationType);
 
         final Person personToDelete = personService.create("robin", "Grayson", "Dick", "robin@example.org");
         final Application applicationToDelete = new Application();
         applicationToDelete.setPerson(personToDelete);
+        applicationToDelete.setVacationType(vacationType);
 
         final Application applicationWithId = applicationService.save(application);
         final Application applicationToDeleteWithId = applicationService.save(applicationToDelete);

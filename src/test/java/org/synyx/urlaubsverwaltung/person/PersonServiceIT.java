@@ -10,6 +10,8 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
@@ -54,11 +56,14 @@ class PersonServiceIT extends TestContainersBase {
     private OvertimeService overtimeService;
     @Autowired
     private DepartmentService departmentService;
+    @Autowired
+    private VacationTypeService vacationTypeService;
 
     @Test
     void deletePerson() {
 
         final LocalDate now = LocalDate.now();
+        final VacationType vacationType = vacationTypeService.getActiveVacationTypes().get(0);
 
         final Person personWithId = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED), List.of(USER));
         final Long personId = personWithId.getId();
@@ -68,13 +73,16 @@ class PersonServiceIT extends TestContainersBase {
 
         final Application application = new Application();
         application.setPerson(personWithId);
+        application.setVacationType(vacationType);
         final Application applicationWithId = applicationService.save(application);
 
         final Application applicationWithCommentOfPerson = new Application();
+        applicationWithCommentOfPerson.setVacationType(vacationType);
         final Application applicationWithCommentOfPersonWithId = applicationService.save(applicationWithCommentOfPerson);
         applicationCommentService.create(applicationWithCommentOfPersonWithId, ApplicationCommentAction.EDITED, Optional.of("Test"), personWithId);
 
         final Application applicationWithHolidayReplacementOfPerson = new Application();
+        applicationWithHolidayReplacementOfPerson.setVacationType(vacationType);
         final HolidayReplacementEntity replacement = new HolidayReplacementEntity();
         replacement.setPerson(personWithId);
         applicationWithHolidayReplacementOfPerson.setHolidayReplacements(new ArrayList<>(List.of(replacement)));
@@ -82,14 +90,17 @@ class PersonServiceIT extends TestContainersBase {
 
         final Application applicationWithCanceller = new Application();
         applicationWithCanceller.setCanceller(personWithId);
+        applicationWithCanceller.setVacationType(vacationType);
         final Application applicationWithCancellerWithId = applicationService.save(applicationWithCanceller);
 
         final Application applicationWithBoss = new Application();
         applicationWithBoss.setBoss(personWithId);
+        applicationWithBoss.setVacationType(vacationType);
         final Application applicationWithBossWithId = applicationService.save(applicationWithBoss);
 
         final Application applicationWithApplier = new Application();
         applicationWithApplier.setApplier(personWithId);
+        applicationWithApplier.setVacationType(vacationType);
         final Application applicationWithApplierWithId = applicationService.save(applicationWithApplier);
 
         final SickNote sickNoteWithId =
@@ -115,7 +126,7 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).hasSize(1);
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isOne();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson)).hasSize(1);
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId)).hasSize(1);
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).hasSize(1);
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isEqualTo(personWithId);
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isEqualTo(personWithId);
@@ -134,7 +145,7 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).person()).isNull();
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId).get(0).person()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isNull();

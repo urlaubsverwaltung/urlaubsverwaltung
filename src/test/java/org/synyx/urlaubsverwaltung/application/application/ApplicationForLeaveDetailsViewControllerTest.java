@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -1284,7 +1284,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(30));
         application.setStatus(WAITING);
-        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        final VacationType vacationType = new VacationType();
         vacationType.setRequiresApprovalToApply(true);
         vacationType.setRequiresApprovalToCancel(true);
         application.setVacationType(vacationType);

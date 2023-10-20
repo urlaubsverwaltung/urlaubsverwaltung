@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -181,7 +181,7 @@ class ApplicationTest {
         replacementEntity.setPerson(person);
         replacementEntity.setNote("hello myself");
 
-        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        final VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
         vacationType.setColor(YELLOW);
 
@@ -212,8 +212,8 @@ class ApplicationTest {
         final String toString = application.toString();
         assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
             "canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, startTime=12:15, endDate=+999999999-12-31, " +
-            "endTime=11:15, vacationType=VacationTypeEntity{id=null, active=false, category=HOLIDAY, messageKey='null', " +
-            "requiresApprovalToApply=false, requiresApprovalToCancel=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
+            "endTime=11:15, vacationType=VacationType{id=null, active=false, category=HOLIDAY, messageKey='null', " +
+            "requiresApprovalToApply='false', requiresApprovalToCancel='false', color='YELLOW', visibleToEveryone=false}, dayLength=FULL, " +
             "holidayReplacements=[HolidayReplacementEntity{person=Person{id='10'}}], " +
             "applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, " +
             "status=ALLOWED, teamInformed=true, hours=PT10H}");
