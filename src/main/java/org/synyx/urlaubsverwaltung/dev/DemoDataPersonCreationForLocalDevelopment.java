@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.availability.AvailabilityChangeEvent;
+import org.springframework.boot.availability.AvailabilityState;
+import org.springframework.boot.availability.LivenessState;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.boot.availability.LivenessState.CORRECT;
 
 /**
  * This class creates person demo data for local development
@@ -34,7 +37,15 @@ public class DemoDataPersonCreationForLocalDevelopment {
     @Async
     // AvailabilityChangeEvent is after ApplicationStartedEvent which creates sick note type definitions in database which are needed for demo data creations
     @EventListener(AvailabilityChangeEvent.class)
-    public void createDemoPersons() {
+    public void onAvailabilityChange(AvailabilityChangeEvent<? extends AvailabilityState> event) {
+        if (event.getState() instanceof LivenessState livenessState) {
+            if (CORRECT.equals(livenessState)) {
+                createDemoPersons();
+            }
+        }
+    }
+
+    private void createDemoPersons() {
         LOG.info("Creating demo persons for local development");
         personDataProvider.createTestPerson("user", "Klaus", "Müller", "user@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("departmentHead", "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud");
