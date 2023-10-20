@@ -104,8 +104,6 @@ affinity: {}
 
 secrets: {}
 
-# see https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/master/src/main/resources/application.properties
-# for configuration options
 extraEnv: |
   - name: JAVA_OPTS
     value: >-
@@ -159,3 +157,9 @@ mariadb:
     database: urlaubsverwaltung
     username: urlaubsverwaltung
 
+postgresql:
+  # If `true`, the PostgreSQL dependency is enabled
+  enabled: true
+  auth:
+    database: urlaubsverwaltung
+    username: urlaubsverwaltung
