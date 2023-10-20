@@ -26,12 +26,12 @@ müssen diese zwei Schritte wiederholt werden.
 
 ## kubernetes
 
-Die kubernetes Deployments verwenden den helm Chart [urlaubsverwaltung](kubernetes/chart/urlaubsverwaltung). Die
+Die kubernetes Deployments verwenden den helm Chart [urlaubsverwaltung](kubernetes/chart/charts). Die
 nachfolgenden Beispiele verwenden `helm template`, um nicht extra einen tiller im k8s Cluster installiert haben zu müssen.
 
 ### Mit existierender PostgreSQL
 
-In der Datei [values-existing-postgresql.yaml](kubernetes/chart/urlaubsverwaltung/values-existing-postgresql.yaml)
+In der Datei [values-existing-postgresql.yaml](kubernetes/chart/charts/values-existing-postgresql.yaml)
 sind die Verbindungsdaten zu der existierenden PostgreSQL zu konfigurieren. Danach kann via helm das Deployment
 durchgeführt werden:
 

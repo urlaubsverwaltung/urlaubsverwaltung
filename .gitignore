@@ -32,4 +32,4 @@ src/test/resources/google_oauth.properties
 !.mvn/wrapper/maven-wrapper.jar
 
 # ignore chart requirements
-.examples/kubernetes/chart/urlaubsverwaltung/charts/
+charts/urlaubsverwaltung/charts/
