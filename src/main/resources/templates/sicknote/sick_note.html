@@ -28,7 +28,7 @@
             <h2 th:text="#{sicknote.title}">Krankmeldung</h2>
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
-            <th:block th:if="${sickNote.active}">
+            <th:block th:if="${sickNote.submittedOrActive}">
               <div class="tw-flex tw-flex-row">
                 <th:block th:if="${canEditSickNote}">
                   <a

@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 public class SickNote {
 
@@ -158,6 +159,10 @@ public class SickNote {
 
     public boolean isActive() {
         return SickNoteStatus.ACTIVE.equals(getStatus());
+    }
+
+    public boolean isSubmittedOrActive() {
+        return SickNoteStatus.SUBMITTED.equals(getStatus()) || SickNoteStatus.ACTIVE.equals(getStatus());
     }
 
     public boolean isAubPresent() {
