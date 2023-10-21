@@ -564,20 +564,6 @@ class OvertimeServiceImplTest {
         inOrder.verify(overtimeRepository).deleteByPerson(person);
     }
 
-    private static OvertimeDurationSum overtimeDurationSum(Person person, Double duration) {
-        return new OvertimeDurationSum() {
-            @Override
-            public Person getPerson() {
-                return person;
-            }
-
-            @Override
-            public Double getDurationDouble() {
-                return duration;
-            }
-        };
-    }
-
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
 
         final Settings settings = new Settings();
