@@ -40,7 +40,7 @@ public class CalendarMailService {
         final Mail mailToTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.sync")
-            .withTemplate("calendar_error_sync", model)
+            .withTemplate("calendar_error_sync", locale -> model)
             .build();
         mailService.send(mailToTechnical);
     }
@@ -66,7 +66,7 @@ public class CalendarMailService {
         final Mail toTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.update")
-            .withTemplate("calendar_error_update", model)
+            .withTemplate("calendar_error_update", locale -> model)
             .build();
         mailService.send(toTechnical);
     }
@@ -89,7 +89,7 @@ public class CalendarMailService {
         final Mail toTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.delete")
-            .withTemplate("calendar_error_delete", model)
+            .withTemplate("calendar_error_delete", locale -> model)
             .build();
         mailService.send(toTechnical);
     }

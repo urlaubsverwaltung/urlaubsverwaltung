@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -62,7 +63,7 @@ class CalendarMailServiceTest {
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.sync");
         assertThat(mails.getTemplateName()).isEqualTo("calendar_error_sync");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 
 
@@ -95,7 +96,7 @@ class CalendarMailServiceTest {
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.update");
         assertThat(mails.getTemplateName()).isEqualTo("calendar_error_update");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 
     @Test
@@ -118,6 +119,6 @@ class CalendarMailServiceTest {
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.delete");
         assertThat(mails.getTemplateName()).isEqualTo("calendar_error_delete");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 }

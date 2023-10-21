@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +65,7 @@ class OvertimeMailServiceTest {
         assertThat(mails.getMailAddressRecipients()).hasValue(List.of(submitter));
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created.applicant");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_to_applicant_from_applicant");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 
     @Test
@@ -95,7 +96,7 @@ class OvertimeMailServiceTest {
         assertThat(mails.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created.applicant_from_management");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_to_applicant_from_management");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 
     @Test
@@ -125,6 +126,6 @@ class OvertimeMailServiceTest {
         assertThat(mails.getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created.management");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_to_management");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
     }
 }

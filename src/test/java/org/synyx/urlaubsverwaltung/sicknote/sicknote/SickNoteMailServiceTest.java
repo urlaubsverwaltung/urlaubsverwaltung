@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -113,19 +114,19 @@ class SickNoteMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
-        assertThat(mails.get(0).getTemplateModel()).isEqualTo(modelA);
+        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(modelA);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay.office");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");
-        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelA);
+        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelA);
         assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(sickNoteB.getPerson()));
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
-        assertThat(mails.get(2).getTemplateModel()).isEqualTo(modelB);
+        assertThat(mails.get(2).getTemplateModel(GERMAN)).isEqualTo(modelB);
         assertThat(mails.get(3).getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.get(3).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay.office");
         assertThat(mails.get(3).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");
-        assertThat(mails.get(3).getTemplateModel()).isEqualTo(modelB);
+        assertThat(mails.get(3).getTemplateModel(GERMAN)).isEqualTo(modelB);
 
         verify(sickNoteService).setEndOfSickPayNotificationSend(sickNoteA);
         verify(sickNoteService).setEndOfSickPayNotificationSend(sickNoteB);
@@ -169,7 +170,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_by_management_to_applicant");
-        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     @Test
@@ -199,7 +200,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_to_colleagues");
-        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     @Test
@@ -230,7 +231,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.edited.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_edited_by_management_to_applicant");
-        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     @Test
@@ -261,7 +262,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancelled_by_management_to_applicant");
-        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     @Test
@@ -291,7 +292,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
-        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {

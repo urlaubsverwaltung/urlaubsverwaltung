@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -105,11 +106,11 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         assertThat(mail0.getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mail0.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mail0.getTemplateName()).isEqualTo("account_cron_updated_accounts_turn_of_the_year");
-        assertThat(mail0.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
+        assertThat(mail0.getTemplateModel(GERMAN)).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
         final Mail mail1 = mails.get(1);
         assertThat(mail1.isSendToTechnicalMail()).isTrue();
         assertThat(mail1.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mail1.getTemplateName()).isEqualTo("account_cron_updated_accounts_turn_of_the_year");
-        assertThat(mail1.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
+        assertThat(mail1.getTemplateModel(GERMAN)).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
     }
 }
