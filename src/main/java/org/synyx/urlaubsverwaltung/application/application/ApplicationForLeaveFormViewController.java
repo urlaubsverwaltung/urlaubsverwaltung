@@ -415,11 +415,14 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
-        List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        if (!overtimeActive) {
-            activeVacationTypes = vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
-        }
-        model.addAttribute("vacationTypes", activeVacationTypes);
+        final List<VacationType> activeVacationTypes = overtimeActive
+            ? vacationTypeService.getActiveVacationTypes()
+            : vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
+
+        final List<ApplicationForLeaveFormVacationTypeDto> activeVacationTypesDtos = activeVacationTypes.stream()
+            .map(this::toApplicationForLeaveFormVacationTypeDto)
+            .toList();
+        model.addAttribute("vacationTypes", activeVacationTypesDtos);
 
         if (appForm.getVacationType() != null) {
             final VacationType vacationType = findVacationType(activeVacationTypes, appForm.getVacationType().getId());

@@ -197,9 +197,18 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(
+            ProvidedVacationType.builder()
+                .id(1L)
+                .category(HOLIDAY)
+                .messageKey("vacation-type-message-key")
+                .build()
+        ));
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setCategory(HOLIDAY);
+        vacationTypeDto.setMessageKey("vacation-type-message-key");
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(true);
@@ -208,11 +217,13 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final ResultActions resultActions = perform(get("/web/application/new"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("overtimeActive", is(true)));
-        resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
-        resultActions.andExpect(model().attribute("showHalfDayOption", is(true)));
+        perform(
+            get("/web/application/new")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("overtimeActive", is(true)))
+            .andExpect(model().attribute("vacationTypes", hasItems(vacationTypeDto)))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
     @Test
@@ -228,9 +239,18 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(
+            ProvidedVacationType.builder()
+                .id(1L)
+                .category(HOLIDAY)
+                .messageKey("vacation-type-message-key")
+                .build()
+        ));
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setCategory(HOLIDAY);
+        vacationTypeDto.setMessageKey("vacation-type-message-key");
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -239,11 +259,13 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final ResultActions resultActions = perform(get("/web/application/new"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("overtimeActive", is(false)));
-        resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
-        resultActions.andExpect(model().attribute("showHalfDayOption", is(true)));
+        perform(
+            get("/web/application/new")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("overtimeActive", is(false)))
+            .andExpect(model().attribute("vacationTypes", hasItems(vacationTypeDto)))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
     @Test
@@ -259,9 +281,18 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(
+            ProvidedVacationType.builder()
+                .id(1L)
+                .category(HOLIDAY)
+                .messageKey("vacation-type-message-key")
+                .build()
+        ));
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setCategory(HOLIDAY);
+        vacationTypeDto.setMessageKey("vacation-type-message-key");
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -273,11 +304,13 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setApplicationSettings(appSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final ResultActions resultActions = perform(get("/web/application/new"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("overtimeActive", is(false)));
-        resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
-        resultActions.andExpect(model().attribute("showHalfDayOption", is(false)));
+        perform(
+            get("/web/application/new")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("overtimeActive", is(false)))
+            .andExpect(model().attribute("vacationTypes", hasItems(vacationTypeDto)))
+            .andExpect(model().attribute("showHalfDayOption", is(false)));
     }
 
     @Test
