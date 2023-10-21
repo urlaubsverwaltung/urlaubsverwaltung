@@ -78,7 +78,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
         csvWriter.writeNext(csvHeader);
         csvWriter.writeNext(csvSubHeader);
 
-        final List<VacationType> allVacationTypes = vacationTypeService.getAllVacationTypes();
+        final List<VacationType<?>> allVacationTypes = vacationTypeService.getAllVacationTypes();
 
         final String translatedTextTotal = getTranslation(locale, "applications.statistics.total");
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
@@ -100,10 +100,10 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             csvRow[10] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
             csvWriter.writeNext(csvRow);
 
-            for (final VacationType type : allVacationTypes) {
+            for (final VacationType<?> type : allVacationTypes) {
                 if (applicationForLeaveStatistics.hasVacationType(type)) {
                     final String[] csvRowVacationTypes = new String[csvHeader.length];
-                    csvRowVacationTypes[3] = getTranslation(locale, type.getMessageKey());
+                    csvRowVacationTypes[3] = type.getLabel(locale);
                     csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
                     csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
                     csvWriter.writeNext(csvRowVacationTypes);

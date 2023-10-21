@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -93,6 +94,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics() throws Exception {
 
+        final Locale locale = JAPANESE;
+        when(messageSource.getMessage("vacation-type-label-message-key", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -104,21 +108,21 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final List<VacationType> vacationType = List.of(ProvidedVacationType.builder().build());
-//        final List<VacationType> vacationType = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
+        final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build());
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019"));
-
-        resultActions
+        perform(
+            get("/web/application/statistics")
+                .locale(locale)
+                .param("from", "01.01.2019")
+                .param("to", "01.08.2019")
+        )
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statisticsPagination", hasProperty("page", hasProperty("content", is(List.of())))))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(model().attribute("vacationTypes", vacationType))
+            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label"))))
             .andExpect(view().name("application/application-statistics"));
     }
 
@@ -126,15 +130,14 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
 
         final Locale locale = JAPANESE;
+        when(messageSource.getMessage("vacation-type-label-message-key", new Object[]{}, locale)).thenReturn("vacation type label");
+        when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
-
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -157,12 +160,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
-        final ResultActions resultActions = perform(get("/web/application/statistics")
-            .locale(locale)
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019"));
-
-        resultActions
+        perform(
+            get("/web/application/statistics")
+                .locale(locale)
+                .param("from", "01.01.2019")
+                .param("to", "01.08.2019")
+        )
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", hasSize(1)))
@@ -184,7 +187,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(model().attribute("vacationTypes", List.of(vacationType)))
+            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label"))))
             .andExpect(view().name("application/application-statistics"));
     }
 
@@ -361,8 +364,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(statistics)));
@@ -391,8 +394,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -425,8 +428,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -458,8 +461,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder().build();
-//        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");

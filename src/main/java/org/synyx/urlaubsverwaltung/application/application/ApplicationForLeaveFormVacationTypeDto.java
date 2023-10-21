@@ -7,7 +7,7 @@ import java.util.Objects;
 public class ApplicationForLeaveFormVacationTypeDto {
 
     private Long id;
-    private String messageKey;
+    private String label;
     private VacationCategory category;
 
     public Long getId() {
@@ -18,12 +18,12 @@ public class ApplicationForLeaveFormVacationTypeDto {
         this.id = id;
     }
 
-    public String getMessageKey() {
-        return messageKey;
+    public String getLabel() {
+        return label;
     }
 
-    public void setMessageKey(String messageKey) {
-        this.messageKey = messageKey;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public VacationCategory getCategory() {
@@ -39,19 +39,19 @@ public class ApplicationForLeaveFormVacationTypeDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplicationForLeaveFormVacationTypeDto that = (ApplicationForLeaveFormVacationTypeDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(messageKey, that.messageKey) && category == that.category;
+        return Objects.equals(id, that.id) && Objects.equals(label, that.label) && category == that.category;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, messageKey, category);
+        return Objects.hash(id, label, category);
     }
 
     @Override
     public String toString() {
         return "ApplicationForLeaveFormVacationTypeDto{" +
             "id=" + id +
-            ", messageKey='" + messageKey + '\'' +
+            ", label='" + label + '\'' +
             ", category=" + category +
             '}';
     }

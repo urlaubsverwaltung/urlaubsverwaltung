@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung;
 
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -77,15 +78,15 @@ public final class TestDataCreator {
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
-    public static Application createApplication(Person person, VacationType vacationType) {
+    public static Application createApplication(Person person, VacationType<?> vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
         return createApplication(person, vacationType, now, now.plusDays(3), FULL);
     }
 
-    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength, MessageSource messageSource) {
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -102,7 +103,7 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
+    public static Application createApplication(Person person, VacationType<?> vacationType, LocalDate startDate,
                                                 LocalDate endDate, DayLength dayLength) {
 
         Application application = new Application();
@@ -192,12 +193,12 @@ public final class TestDataCreator {
         return workingTime;
     }
 
-    public static VacationType createVacationType(Long id, VacationCategory category) {
-        return createVacationType(id, category, "application.data.vacationType.holiday");
+    public static VacationType<?> createVacationType(Long id, VacationCategory category, MessageSource messageSource) {
+        return createVacationType(id, category, "application.data.vacationType.holiday", messageSource);
     }
 
-    public static VacationType createVacationType(Long id, VacationCategory category, String messageKey) {
-        return ProvidedVacationType.builder()
+    public static VacationType<?> createVacationType(Long id, VacationCategory category, String messageKey, MessageSource messageSource) {
+        return ProvidedVacationType.builder(messageSource)
             .id(id)
             .category(category)
             .messageKey(messageKey)
@@ -205,9 +206,9 @@ public final class TestDataCreator {
             .build();
     }
 
-    public static List<VacationType> createVacationTypes() {
+    public static List<VacationType<?>> createVacationTypes(MessageSource messageSource) {
         return List.of(
-            ProvidedVacationType.builder()
+            ProvidedVacationType.builder(messageSource)
                 .id(1000L)
                 .active(true)
                 .category(HOLIDAY)
@@ -217,7 +218,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            ProvidedVacationType.builder()
+            ProvidedVacationType.builder(messageSource)
                 .id(2000L)
                 .active(true)
                 .category(SPECIALLEAVE)
@@ -227,7 +228,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            ProvidedVacationType.builder()
+            ProvidedVacationType.builder(messageSource)
                 .id(3000L)
                 .active(true)
                 .category(UNPAIDLEAVE)
@@ -237,7 +238,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            ProvidedVacationType.builder()
+            ProvidedVacationType.builder(messageSource)
                 .id(4000L)
                 .active(true)
                 .category(OVERTIME)

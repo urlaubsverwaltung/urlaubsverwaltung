@@ -37,7 +37,7 @@ class ApplicationCommentRepositoryIT extends TestContainersBase {
     @Test
     void ensureDeleteByApplicationPerson() {
 
-        final VacationType vacationType = vacationTypeService.getActiveVacationTypes().get(0);
+        final VacationType<?> vacationType = vacationTypeService.getActiveVacationTypes().get(0);
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
         final Application application = new Application();

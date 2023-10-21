@@ -24,7 +24,10 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
@@ -61,7 +64,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 class ApplicationMailService {
 
     private static final String APPLICATION = "application";
-    private static final String VACATION_TYPE = "vacationTypeMessageKey";
+    private static final String VACATION_TYPE = "vacationTypeLabel";
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
@@ -94,7 +97,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, applicationComment
         );
@@ -141,7 +144,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -177,7 +180,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             "sender", sender
         );
@@ -317,7 +320,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -351,7 +354,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -386,7 +389,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -551,7 +554,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -577,7 +580,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -644,7 +647,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -673,7 +676,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -711,7 +714,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
@@ -796,7 +799,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment,
             "departmentVacations", applicationsForLeave
@@ -842,7 +845,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSecondStageSupplier = locale -> Map.of(
             APPLICATION, application,
-            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment,
             "departmentVacations", applicationsForLeave
@@ -941,15 +944,9 @@ class ApplicationMailService {
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
 
-            final int numberOfApplications = entry.getValue().size();
-            final Map<Person, List<Application>> applicationsByPerson = entry.getValue().stream()
-                .sorted(comparing(Application::getStartDate).reversed())
-                .collect(groupingBy(Application::getPerson));
-
-            final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
-                "applicationsByPerson", applicationsByPerson,
-                "numberOfApplications", numberOfApplications
-            );
+            final List<Application> applications = entry.getValue();
+            final int numberOfApplications = applications.size();
+            final MailTemplateModelSupplier modelSupplier = applicationRemindCronManagementMailTemplateModelSupplier(applications);
 
             final Person recipient = entry.getKey();
             final Mail mailToRemindForWaiting = Mail.builder()
@@ -959,6 +956,36 @@ class ApplicationMailService {
                 .build();
             mailService.send(mailToRemindForWaiting);
         }
+    }
+
+    private static MailTemplateModelSupplier applicationRemindCronManagementMailTemplateModelSupplier(List<Application> applications) {
+
+        final List<Application> sortedApplications = applications.stream()
+            .sorted(comparing(Application::getStartDate).reversed())
+            .toList();
+
+        // mapper is called for every mail recipient and locale could differ. therefore cache mapping by locale.
+        final Function<Locale, Map<Person, List<ApplicationMailRemindCronManagementDto>>> applicationDtoMapper = cachedByKey(
+            locale -> sortedApplications.stream()
+                .map(application -> applicationRemindCronManagementDto(application, locale))
+                .collect(groupingBy(ApplicationMailRemindCronManagementDto::person))
+        );
+
+        return locale -> Map.of(
+            "applicationsByPerson", applicationDtoMapper.apply(locale),
+            "numberOfApplications", applications.size()
+        );
+    }
+
+    private static ApplicationMailRemindCronManagementDto applicationRemindCronManagementDto(Application application, Locale locale) {
+        return new ApplicationMailRemindCronManagementDto(
+            application.getId(),
+            application.getPerson(),
+            application.getStartDate(),
+            application.getEndDate(),
+            application.getDayLength(),
+            application.getVacationType().getLabel(locale)
+        );
     }
 
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, Person recipient) {
@@ -973,5 +1000,10 @@ class ApplicationMailService {
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
         final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
         return new AbsenceTimeConfiguration(timeSettings);
+    }
+
+    private static <T, R> Function<T, R> cachedByKey(Function<T, R> function) {
+        final Map<T, R> cache = new ConcurrentHashMap<>();
+        return key -> cache.computeIfAbsent(key, function);
     }
 }

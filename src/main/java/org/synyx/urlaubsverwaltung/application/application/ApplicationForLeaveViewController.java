@@ -149,7 +149,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
             .person(toViewPerson(person, allowedToAccessPersonData))
-            .vacationType(toViewVacationType(application.getVacationType()))
+            .vacationType(toViewVacationType(application.getVacationType(), locale))
             .status(application.getStatus())
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
@@ -199,8 +199,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), id);
     }
 
-    private static ApplicationForLeaveDto.VacationTypeDto toViewVacationType(VacationType vacationType) {
-        return new ApplicationForLeaveDto.VacationTypeDto(vacationType.getCategory().name(), vacationType.getMessageKey(), vacationType.getColor());
+    private static ApplicationForLeaveDto.VacationTypeDto toViewVacationType(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationForLeaveDto.VacationTypeDto(vacationType.getCategory().name(), vacationType.getLabel(locale), vacationType.getColor());
     }
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {

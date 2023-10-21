@@ -224,12 +224,12 @@ public class ApplicationForLeaveDto {
 
     public static class VacationTypeDto {
         private final String category;
-        private final String messageKey;
+        private final String label;
         private final VacationTypeColor color;
 
-        VacationTypeDto(String category, String messageKey, VacationTypeColor color) {
+        VacationTypeDto(String category, String label, VacationTypeColor color) {
             this.category = category;
-            this.messageKey = messageKey;
+            this.label = label;
             this.color = color;
         }
 
@@ -237,8 +237,8 @@ public class ApplicationForLeaveDto {
             return category;
         }
 
-        public String getMessageKey() {
-            return messageKey;
+        public String getLabel() {
+            return label;
         }
 
         public VacationTypeColor getColor() {

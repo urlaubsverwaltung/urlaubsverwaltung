@@ -62,7 +62,7 @@ class ApplicationForLeaveStatisticsBuilder {
         this.clock = clock;
     }
 
-    public Map<Person, ApplicationForLeaveStatistics> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
+    public Map<Person, ApplicationForLeaveStatistics> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
         final LocalDate today = LocalDate.now(clock);

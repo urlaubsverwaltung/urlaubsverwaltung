@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
@@ -57,7 +58,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -95,7 +95,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         appForm = new ApplicationForLeaveForm();
@@ -450,12 +450,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(HOLIDAY).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         appForm.setVacationType(vacationTypeDto);
@@ -477,12 +477,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(UNPAIDLEAVE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(UNPAIDLEAVE).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(UNPAIDLEAVE);
 
         appForm.setVacationType(vacationTypeDto);
@@ -504,12 +504,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -531,12 +531,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(SPECIALLEAVE).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(SPECIALLEAVE).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(SPECIALLEAVE);
 
         appForm.setVacationType(vacationTypeDto);
@@ -599,12 +599,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(HOLIDAY).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         appForm.setDayLength(FULL);
@@ -629,12 +629,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(HOLIDAY).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         appForm.setDayLength(NOON);
@@ -684,12 +684,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -712,11 +712,11 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         when(vacationTypeService.getById(1L))
-            .thenReturn(Optional.of(ProvidedVacationType.builder().id(1L).messageKey("message_key_1").category(HOLIDAY).build()));
+            .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).messageKey("message_key_1").category(HOLIDAY).build()));
         when(vacationTypeService.getById(2L))
-            .thenReturn(Optional.of(ProvidedVacationType.builder().id(2L).messageKey("message_key_2").category(SPECIALLEAVE).build()));
+            .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(2L).messageKey("message_key_2").category(SPECIALLEAVE).build()));
         when(vacationTypeService.getById(3L))
-            .thenReturn(Optional.of(ProvidedVacationType.builder().id(3L).messageKey("message_key_3").category(UNPAIDLEAVE).build()));
+            .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(3L).messageKey("message_key_3").category(UNPAIDLEAVE).build()));
 
         Consumer<ApplicationForLeaveFormVacationTypeDto> assertHoursNotMandatory = (vacationTypeDto) -> {
             appForm.setVacationType(vacationTypeDto);
@@ -729,17 +729,17 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveFormVacationTypeDto holidayDto = new ApplicationForLeaveFormVacationTypeDto();
         holidayDto.setId(1L);
-        holidayDto.setMessageKey("message_key_1");
+        holidayDto.setLabel("message_key_1");
         holidayDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveFormVacationTypeDto specialLeaveDto = new ApplicationForLeaveFormVacationTypeDto();
         specialLeaveDto.setId(2L);
-        specialLeaveDto.setMessageKey("message_key_2");
+        specialLeaveDto.setLabel("message_key_2");
         specialLeaveDto.setCategory(SPECIALLEAVE);
 
         final ApplicationForLeaveFormVacationTypeDto unpaidLeaveDto = new ApplicationForLeaveFormVacationTypeDto();
         unpaidLeaveDto.setId(3L);
-        unpaidLeaveDto.setMessageKey("message_key_3");
+        unpaidLeaveDto.setLabel("message_key_3");
         unpaidLeaveDto.setCategory(UNPAIDLEAVE);
 
         assertHoursNotMandatory.accept(holidayDto);
@@ -759,12 +759,12 @@ class ApplicationForLeaveFormValidatorTest {
         settings.getOvertimeSettings().setOvertimeActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -785,12 +785,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -812,12 +812,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -867,12 +867,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -894,12 +894,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -921,12 +921,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -947,12 +947,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -974,12 +974,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(10));
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -1000,12 +1000,12 @@ class ApplicationForLeaveFormValidatorTest {
 
         setupOvertimeSettings();
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setVacationType(vacationTypeDto);
@@ -1123,12 +1123,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(HOLIDAY).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -1375,7 +1375,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
         return new ApplicationForLeaveForm.Builder()
@@ -1386,12 +1386,12 @@ class ApplicationForLeaveFormValidatorTest {
 
     private void overtimeMinimumTest(BigDecimal hours) {
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).category(OVERTIME).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
         appForm.setHours(hours);
@@ -1413,7 +1413,7 @@ class ApplicationForLeaveFormValidatorTest {
         return settings;
     }
 
-    private VacationType anyVacationType() {
-        return ProvidedVacationType.builder().id(1L).category(HOLIDAY).messageKey("message_key").build();
+    private VacationType<?> anyVacationType() {
+        return ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).messageKey("message_key").build();
     }
 }

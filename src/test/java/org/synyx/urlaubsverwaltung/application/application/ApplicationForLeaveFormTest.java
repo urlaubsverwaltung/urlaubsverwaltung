@@ -41,7 +41,7 @@ class ApplicationForLeaveFormTest {
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("vacation type label");
         vacationTypeDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
@@ -143,7 +143,7 @@ class ApplicationForLeaveFormTest {
 
         final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
         vacationTypeDto.setId(1L);
-        vacationTypeDto.setMessageKey("message_key");
+        vacationTypeDto.setLabel("vacation type label");
         vacationTypeDto.setCategory(HOLIDAY);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
@@ -164,7 +164,7 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=2022-01-02," +
             " startTime=11:10, endDate=2022-02-02, endTime=12:10, vacationType=ApplicationForLeaveFormVacationTypeDto{id=1," +
-            " messageKey='message_key', category=HOLIDAY}, dayLength=ZERO, hours=0, minutes=0, " +
+            " label='vacation type label', category=HOLIDAY}, dayLength=ZERO, hours=0, minutes=0, " +
             "holidayReplacements=[HolidayReplacementDto{person=Person{id='null'}, departments=null}], teamInformed=true}");
     }
 

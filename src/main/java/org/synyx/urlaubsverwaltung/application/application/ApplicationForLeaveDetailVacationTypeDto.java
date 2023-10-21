@@ -5,21 +5,21 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 public class ApplicationForLeaveDetailVacationTypeDto {
 
-    private final String messageKey;
+    private final String label;
     private final VacationCategory category;
     private final VacationTypeColor color;
     private final boolean requiresApprovalToCancel;
 
-    public ApplicationForLeaveDetailVacationTypeDto(String messageKey, VacationCategory category, VacationTypeColor color,
+    public ApplicationForLeaveDetailVacationTypeDto(String label, VacationCategory category, VacationTypeColor color,
                                                     boolean requiresApprovalToCancel) {
-        this.messageKey = messageKey;
+        this.label = label;
         this.category = category;
         this.color = color;
         this.requiresApprovalToCancel = requiresApprovalToCancel;
     }
 
-    public String getMessageKey() {
-        return messageKey;
+    public String getLabel() {
+        return label;
     }
 
     public VacationCategory getCategory() {
@@ -37,7 +37,7 @@ public class ApplicationForLeaveDetailVacationTypeDto {
     @Override
     public String toString() {
         return "ApplicationForLeaveDetailVacationTypeDto{" +
-            "messageKey='" + messageKey + '\'' +
+            "label='" + label + '\'' +
             ", category=" + category +
             ", color=" + color +
             ", requiresApprovalToCancel=" + requiresApprovalToCancel +

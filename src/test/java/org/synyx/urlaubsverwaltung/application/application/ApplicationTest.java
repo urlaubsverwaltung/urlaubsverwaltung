@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -182,7 +183,7 @@ class ApplicationTest {
         replacementEntity.setPerson(person);
         replacementEntity.setNote("hello myself");
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(VacationCategory.HOLIDAY)
             .color(YELLOW)
@@ -215,8 +216,8 @@ class ApplicationTest {
         final String toString = application.toString();
         assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
             "canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, startTime=12:15, endDate=+999999999-12-31, " +
-            "endTime=11:15, vacationType=ProvidedVacationType{id=1, active=false, category=HOLIDAY, messageKey='null', " +
-            "requiresApprovalToApply='false', requiresApprovalToCancel='false', color='YELLOW', visibleToEveryone=false}, dayLength=FULL, " +
+            "endTime=11:15, vacationType=ProvidedVacationType{messageKey='null', id=1, active=false, category=HOLIDAY, " +
+            "requiresApprovalToApply=false, requiresApprovalToCancel=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
             "holidayReplacements=[HolidayReplacementEntity{person=Person{id='10'}}], " +
             "applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, " +
             "status=ALLOWED, teamInformed=true, hours=PT10H}");

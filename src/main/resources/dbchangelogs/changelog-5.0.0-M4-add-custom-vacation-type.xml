@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="seber" id="add-custom-vacation-type">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="vacation_type_id_seq" startValue="10000"/>
+
+    <dropNotNullConstraint tableName="vacation_type" columnName="message_key"/>
+
+    <addColumn tableName="vacation_type">
+      <column name="custom" defaultValueBoolean="false" type="boolean"/>
+      <column name="label_by_locale" type="VARCHAR"/>
+    </addColumn>
+
+  </changeSet>
+</databaseChangeLog>

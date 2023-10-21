@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
@@ -43,10 +44,10 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
 
     @GetMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsDetails(Model model) {
+    public String settingsDetails(Model model, Locale locale) {
 
         final Settings settings = settingsService.getSettings();
-        final SettingsAbsenceTypesDto dto = settingsToDto(settings);
+        final SettingsAbsenceTypesDto dto = settingsToDto(settings, locale);
 
         model.addAttribute("settings", dto);
 
@@ -79,17 +80,17 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         return "redirect:/web/settings/absence-types";
     }
 
-    private SettingsAbsenceTypesDto settingsToDto(Settings settings) {
+    private SettingsAbsenceTypesDto settingsToDto(Settings settings, Locale locale) {
         final SettingsAbsenceTypesDto dto = new SettingsAbsenceTypesDto();
         dto.setId(settings.getId());
-        dto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        dto.setAbsenceTypeSettings(absenceTypeItemSettingDto(locale));
         dto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
         return dto;
     }
 
-    private AbsenceTypeSettingsDto absenceTypeItemSettingDto() {
-        final List<VacationType> allVacationTypes = vacationTypeService.getAllVacationTypes();
-        return mapToAbsenceTypeItemSettingDto(allVacationTypes);
+    private AbsenceTypeSettingsDto absenceTypeItemSettingDto(Locale locale) {
+        final List<VacationType<?>> allVacationTypes = vacationTypeService.getAllVacationTypes();
+        return mapToAbsenceTypeItemSettingDto(allVacationTypes, locale);
     }
 
     private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {

@@ -58,7 +58,7 @@ class ApplicationForLeaveStatisticsService {
      */
     Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
         final Pageable pageable = pageableSearchQuery.getPageable();
-        final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
+        final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
         final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);

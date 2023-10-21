@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -45,7 +46,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
             .thenReturn(List.of(fullDayApplication));
@@ -61,7 +62,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(TEMPORARY_ALLOWED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -78,7 +79,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -95,7 +96,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(ALLOWED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -115,7 +116,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(REJECTED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -130,7 +131,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(CANCELLED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -145,7 +146,7 @@ class VacationAbsenceProviderTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate fullDayVacationDate = LocalDate.of(2016, 1, 4);
-        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL);
+        final Application fullDayApplication = createApplication(person, fullDayVacationDate, fullDayVacationDate, FULL, new StaticMessageSource());
         fullDayApplication.setStatus(REVOKED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(fullDayVacationDate, fullDayVacationDate, person))
@@ -160,7 +161,7 @@ class VacationAbsenceProviderTest {
 
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate twoHalfDayVacationsDate = LocalDate.of(2016, 1, 5);
-        final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING);
+        final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING, new StaticMessageSource());
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(twoHalfDayVacationsDate, twoHalfDayVacationsDate, testPerson))
             .thenReturn(List.of(halfMorningDayApplication));
@@ -176,8 +177,8 @@ class VacationAbsenceProviderTest {
 
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate twoHalfDayVacationsDate = LocalDate.of(2016, 1, 5);
-        final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING);
-        final Application halfNoonDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, NOON);
+        final Application halfMorningDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, MORNING, new StaticMessageSource());
+        final Application halfNoonDayApplication = createApplication(testPerson, twoHalfDayVacationsDate, twoHalfDayVacationsDate, NOON, new StaticMessageSource());
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(twoHalfDayVacationsDate, twoHalfDayVacationsDate, testPerson))
             .thenReturn(List.of(halfMorningDayApplication, halfNoonDayApplication));

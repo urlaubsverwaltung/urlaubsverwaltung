@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -33,7 +34,7 @@ class ApplicationForLeaveStatisticsTest {
         assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ZERO);
 
         // Per vacation type
-        for (VacationType type : createVacationTypes()) {
+        for (VacationType type : createVacationTypes(new StaticMessageSource())) {
             assertThat(statistics.getWaitingVacationDays(type)).isEqualTo(ZERO);
             assertThat(statistics.getAllowedVacationDays(type)).isEqualTo(ZERO);
         }
@@ -50,7 +51,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureCanAddWaitingVacationDays() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -65,7 +66,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureHasVacationTypeIsTrueByWaiting() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -76,7 +77,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureHasVacationTypeIsTrueByAllowed() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -87,7 +88,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureHasVacationTypeIsTrueByAllowedAndWaiting() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -99,7 +100,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureCanAddAllowedVacationDays() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -114,7 +115,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureCanCalculateTotalWaitingVacationDays() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -131,7 +132,7 @@ class ApplicationForLeaveStatisticsTest {
 
     @Test
     void ensureCanCalculateTotalAllowedVacationDays() {
-        final List<VacationType> vacationTypes = createVacationTypes();
+        final List<VacationType<?>> vacationTypes = createVacationTypes(new StaticMessageSource());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);

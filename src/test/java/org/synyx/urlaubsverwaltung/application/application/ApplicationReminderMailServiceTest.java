@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -57,7 +58,7 @@ class ApplicationReminderMailServiceTest {
         boolean isActive = true;
         prepareSettingsWithRemindForWaitingApplications(isActive);
 
-        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
+        final VacationType<?> vacationType = TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Application shortWaitingApplication = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationType);
         shortWaitingApplication.setApplicationDate(LocalDate.now(clock));
@@ -102,7 +103,7 @@ class ApplicationReminderMailServiceTest {
         final ApplicationSettings applicationSettings = prepareSettingsWithRemindForUpcomingApplications(true);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
+        final VacationType<?> vacationType = TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource());
         final LocalDate now = LocalDate.now(clock);
         final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
 
@@ -137,7 +138,7 @@ class ApplicationReminderMailServiceTest {
         final LocalDate now = LocalDate.now(clock);
         final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
 
-        final Application tomorrowApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY));
+        final Application tomorrowApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         tomorrowApplication.setApplicationDate(to);
 
         when(applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));

@@ -62,7 +62,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -83,7 +84,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)
@@ -130,7 +131,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)
@@ -179,7 +180,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)
@@ -227,7 +228,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
@@ -29,12 +31,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,6 +94,10 @@ class ApplicationMailServiceTest {
     @Test
     void ensureSendsAllowedNotificationToManagementAndColleague() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Settings settings = new Settings();
         settings.setApplicationSettings(new ApplicationSettings());
         when(settingsService.getSettings()).thenReturn(settings);
@@ -100,7 +109,7 @@ class ApplicationMailServiceTest {
         person.setId(0L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -133,7 +142,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = Map.of(
             "application", application,
-            "vacationTypeMessageKey", "application.data.vacationType.holiday",
+            "vacationTypeLabel", "vacation type label",
             "dayLength", "FULL",
             "comment", applicationComment
         );
@@ -146,19 +155,19 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_management");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
-        assertThat(mails.get(2).getTemplateModel(GERMAN)).isEqualTo(modelColleagues);
+        assertThat(mails.get(2).getTemplateModel(locale)).isEqualTo(modelColleagues);
         assertThat(mails.get(2).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(2).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
@@ -166,10 +175,14 @@ class ApplicationMailServiceTest {
     @Test
     void sendRejectedNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -188,7 +201,7 @@ class ApplicationMailServiceTest {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", applicationComment);
 
@@ -202,20 +215,24 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.rejected");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_rejected_information_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.rejected_information");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_rejected_information_to_management");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
     void sendReferApplicationNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person recipient = new Person();
         final Person sender = new Person();
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -231,7 +248,7 @@ class ApplicationMailServiceTest {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("sender", sender);
 
@@ -243,7 +260,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.refer");
         assertThat(mail.getTemplateName()).isEqualTo("application_referred_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
@@ -252,7 +269,7 @@ class ApplicationMailServiceTest {
         final Person editor = new Person();
         editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .build();
@@ -549,10 +566,14 @@ class ApplicationMailServiceTest {
     @Test
     void sendConfirmation() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -571,7 +592,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -583,17 +604,21 @@ class ApplicationMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.user");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_by_applicant_to_applicant");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
     void sendConfirmationAllowedDirectly() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .requiresApprovalToApply(false)
@@ -620,7 +645,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -632,20 +657,24 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_directly_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
     }
 
     @Test
     void sendConfirmationAllowedDirectlyByManagement() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .requiresApprovalToApply(false)
@@ -672,7 +701,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -684,21 +713,25 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.management");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_directly_by_management_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
     }
 
     @Test
     void sendNewDirectlyAllowedApplicationNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .requiresApprovalToApply(false)
@@ -721,7 +754,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -734,7 +767,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.boss");
         assertThat(mail.getSubjectMessageArguments()[0]).isEqualTo("Lord Helmchen");
         assertThat(mail.getTemplateName()).isEqualTo("application_allowed_directly_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
@@ -782,10 +815,14 @@ class ApplicationMailServiceTest {
     @Test
     void sendAppliedForLeaveByOfficeNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -801,7 +838,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -813,15 +850,19 @@ class ApplicationMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.management");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_by_management_to_applicant");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
     void sendCancelledDirectlyInformationToRecipientOfInterest() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -837,7 +878,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
 
@@ -853,11 +894,15 @@ class ApplicationMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipientOfInterest));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.information.recipients_of_interest");
         assertThat(mail.getTemplateName()).isEqualTo("application_cancelled_directly_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
     void sendCancelledDirectlyConfirmationByApplicant() {
+
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
 
         final Settings settings = new Settings();
         settings.setTimeSettings(new TimeSettings());
@@ -866,7 +911,7 @@ class ApplicationMailServiceTest {
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -894,7 +939,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = Map.of(
             "application", application,
-            "vacationTypeMessageKey", "application.data.vacationType.holiday",
+            "vacationTypeLabel", "vacation type label",
             "dayLength", "FULL",
             "comment", comment
         );
@@ -909,11 +954,11 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_applicant_to_applicant");
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
@@ -921,10 +966,14 @@ class ApplicationMailServiceTest {
     @Test
     void sendCancelledDirectlyConfirmationByOffice() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -947,7 +996,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = Map.of(
             "application", application,
-            "vacationTypeMessageKey", "application.data.vacationType.holiday",
+            "vacationTypeLabel", "vacation type label",
             "dayLength", "FULL",
             "comment", comment
         );
@@ -960,11 +1009,11 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.management");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_management_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
     }
 
     @Test
@@ -1031,11 +1080,15 @@ class ApplicationMailServiceTest {
     @Test
     void sendNewApplicationNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -1061,7 +1114,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("dayLength", "FULL");
         model.put("comment", comment);
         model.put("departmentVacations", applicationsForLeave);
@@ -1075,17 +1128,21 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.boss");
         assertThat(mail.getSubjectMessageArguments()[0]).isEqualTo("Lord Helmchen");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
     }
 
     @Test
     void sendTemporaryAllowedNotification() {
 
+        final Locale locale = JAPANESE;
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
         final List<Person> recipients = singletonList(person);
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -1114,7 +1171,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> modelSecondStage = new HashMap<>();
         modelSecondStage.put("application", application);
-        modelSecondStage.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
+        modelSecondStage.put("vacationTypeLabel", "vacation type label");
         modelSecondStage.put("dayLength", "FULL");
         modelSecondStage.put("comment", comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
@@ -1127,11 +1184,11 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_temporary_allowed_to_applicant");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_temporary_allowed_to_management");
-        assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(modelSecondStage);
+        assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelSecondStage);
     }
 
     @Test
@@ -1140,7 +1197,7 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .build();
@@ -1187,7 +1244,7 @@ class ApplicationMailServiceTest {
         holidayReplacementEntityTwo.setPerson(holidayReplacementTwo);
         holidayReplacementEntityTwo.setNote("Note 2");
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .category(HOLIDAY)
             .build();

@@ -63,7 +63,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setLastName("personOneLastName");
         final PersonBasedata basedata = new PersonBasedata(new PersonId((long) -1), "42", "OneInformation");
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).messageKey("holiday").build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).messageKey("holiday").build();
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         applicationForLeaveStatistics.setPersonBasedata(basedata);
         applicationForLeaveStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
@@ -83,7 +83,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         addMessageSource("applications.statistics.total", locale);
         addMessageSource("person.account.basedata.personnelNumber", locale);
         addMessageSource("person.account.basedata.additionalInformation", locale);
-        addMessageSource(vacationType.getMessageKey(), locale);
+        addMessageSource("holiday", locale);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
@@ -114,7 +114,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setLastName("personTwoLastName");
         final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1L), "42", "SecondInformation");
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).messageKey("holiday").build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).messageKey("holiday").build();
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne, List.of(vacationType));
         personOneStatistics.setPersonBasedata(basedataOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);
@@ -139,7 +139,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         addMessageSource("applications.statistics.total", locale);
         addMessageSource("person.account.basedata.personnelNumber", locale);
         addMessageSource("person.account.basedata.additionalInformation", locale);
-        addMessageSource(vacationType.getMessageKey(), locale);
+        addMessageSource("holiday", locale);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 

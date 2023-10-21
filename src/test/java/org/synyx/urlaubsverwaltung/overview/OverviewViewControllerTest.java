@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
@@ -37,6 +38,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
@@ -45,12 +47,14 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -527,9 +531,13 @@ class OverviewViewControllerTest {
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
-        final VacationType vacationType = ProvidedVacationType.builder()
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
             .id(1L)
             .category(HOLIDAY)
+            .messageKey("message-key")
             .build();
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
@@ -570,9 +578,10 @@ class OverviewViewControllerTest {
 
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
-        final ResultActions resultActions = perform(get("/web/person/1/overview").param("year", "2021"));
-
-        resultActions
+        perform(
+            get("/web/person/1/overview").param("year", "2021")
+                .locale(locale)
+        )
             .andExpect(status().isOk())
             .andExpect(view().name("person/person-overview"))
             .andExpect(model().attribute("applications", hasSize(3)))
@@ -622,6 +631,12 @@ class OverviewViewControllerTest {
             .withVacationDaysUsedNextYear(ZERO)
             .notExpiring(ZERO)
             .build();
+    }
+
+    private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
+        return messageSource;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

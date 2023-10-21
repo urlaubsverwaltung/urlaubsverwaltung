@@ -406,7 +406,7 @@
                     th:each="type : ${vacationTypes}"
                     th:if="${statistic.hasVacationType(type)}"
                   >
-                    <span class="tw-text-xs" th:text="|#{${type.messageKey}}:|"></span>
+                    <span class="tw-text-xs" th:text="|${type.label}:|"></span>
                   </div>
                 </td>
 

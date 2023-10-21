@@ -146,14 +146,14 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final boolean isSignedInUserAllowedToSeeAbsencesOfOthers = !membersOfSignedInUser.isEmpty();
         model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsencesOfOthers || overviewPersons.contains(signedInUser));
 
-        final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
-        final Map<Long, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
+        final List<VacationType<?>> vacationTypes = vacationTypeService.getAllVacationTypes();
+        final Map<Long, VacationType<?>> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
 
         final boolean isSignedInUserInOverview = overviewPersons.contains(signedInUser);
         // use active vacation types instead of all to avoid too many items in the legend.
         // (there could be non-active vacation types visible in the absence-overview)
         // the legend will be removed soon -> therefore display just the active items
-        List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsencesOfOthers, isSignedInUserInOverview, vacationTypes);
+        List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsencesOfOthers, isSignedInUserInOverview, vacationTypes, locale);
         model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !recordInfo.getPerson().equals(signedInUser)
@@ -169,21 +169,25 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return "absences/absences-overview";
     }
 
-    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType> vacationTypes) {
-        final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).toList();
+    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType<?>> vacationTypes, Locale locale) {
 
         List<VacationTypeColorDto> vacationTypeColorDtos;
 
+        final Function<VacationType<?>, VacationTypeColorDto> toVacationTypeColorsDto =
+            (vacationType) -> toVacationTypeColorsDto(vacationType, locale);
+
+        final List<VacationType<?>> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).toList();
+
         if (isSignedInUserAllowedToSeeAbsences) {
-            vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).toList();
+            vacationTypeColorDtos = activeVacationTypes.stream().map(toVacationTypeColorsDto).toList();
         } else {
             if (isSignedInUserInOverview) {
-                vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+                vacationTypeColorDtos = activeVacationTypes.stream().map(toVacationTypeColorsDto).collect(Collectors.toList());
             } else {
-                vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+                vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(toVacationTypeColorsDto).collect(Collectors.toList());
             }
             if (activeVacationTypes.stream().anyMatch(vacationType -> !vacationType.isVisibleToEveryone())) {
-                vacationTypeColorDtos.add(getAnonymizedAbsenceTypeColor());
+                vacationTypeColorDtos.add(getAnonymizedAbsenceTypeColor(locale));
             }
         }
         return vacationTypeColorDtos;
@@ -458,7 +462,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return builder;
     }
 
-    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Long, VacationType> vacationTypById) {
+    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Long, VacationType<?>> vacationTypById) {
         return recordInfo.getVacationTypeId()
             .map(vacationTypById)
             .map(VacationType::getColor)
@@ -582,12 +586,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             .collect(toList());
     }
 
-    private static VacationTypeColorDto toVacationTypeColorsDto(VacationType vacationType) {
-        return new VacationTypeColorDto(vacationType.getMessageKey(), vacationType.getColor());
+    private static VacationTypeColorDto toVacationTypeColorsDto(VacationType<?> vacationType, Locale locale) {
+        return new VacationTypeColorDto(vacationType.getLabel(locale), vacationType.getColor());
     }
 
-    private static VacationTypeColorDto getAnonymizedAbsenceTypeColor() {
-        return new VacationTypeColorDto("absences.overview.absence", ANONYMIZED_ABSENCE_COLOR);
+    private VacationTypeColorDto getAnonymizedAbsenceTypeColor(Locale locale) {
+        final String label = messageSource.getMessage("absences.overview.absence", new Object[]{}, locale);
+        return new VacationTypeColorDto(label, ANONYMIZED_ABSENCE_COLOR);
     }
-
 }

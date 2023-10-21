@@ -178,7 +178,7 @@
                 >
                   <span
                     class="tw-block tw-mb-0.5 tw-text-lg group-hover:tw-underline group-focus:tw-underline"
-                    th:text="${#messages.msg(app.vacationType.messageKey)}"
+                    th:text="${app.vacationType.label}"
                   ></span>
                   <span class="tw-block tw-text-[#444444] dark:tw-text-zinc-200">
                     <th:block th:if="${app.startDate == app.endDate}">
@@ -211,7 +211,7 @@
                   <script type="text/javascript" th:inline="javascript">
                     document.addEventListener("DOMContentLoaded", function () {
                       const dayLength = /*[[${app.dayLength}]]*/ 1;
-                      const personId = /*[[${app.person.id}]]*/ 1;
+                      const personId = /*[[${app.personId}]]*/ 1;
                       const startDate = /*[[${#temporals.format(app.startDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
                       const endDate = /*[[${#temporals.format(app.endDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
 

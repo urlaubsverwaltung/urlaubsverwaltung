@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -24,14 +25,16 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 @ExtendWith(MockitoExtension.class)
 class VacationTypeServiceImplTest {
 
+    private VacationTypeServiceImpl sut;
+
     @Mock
     private VacationTypeRepository vacationTypeRepository;
-
-    private VacationTypeServiceImpl sut;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new VacationTypeServiceImpl(vacationTypeRepository);
+        sut = new VacationTypeServiceImpl(vacationTypeRepository, messageSource);
     }
 
     @Test
@@ -54,7 +57,7 @@ class VacationTypeServiceImplTest {
 
         when(vacationTypeRepository.findByActiveIsTrueOrderById()).thenReturn(List.of(holiday, overtimeActive, overtime));
 
-        final List<VacationType> typesWithoutCategory = sut.getActiveVacationTypesWithoutCategory(OVERTIME);
+        final List<VacationType<?>> typesWithoutCategory = sut.getActiveVacationTypesWithoutCategory(OVERTIME);
         assertThat(typesWithoutCategory).hasSize(1);
         assertThat(typesWithoutCategory.get(0).getId()).isEqualTo(1);
     }
@@ -74,7 +77,7 @@ class VacationTypeServiceImplTest {
 
         when(vacationTypeRepository.findByActiveIsTrueOrderById()).thenReturn(List.of(holiday, overtimeActive));
 
-        final List<VacationType> activeVacationTypes = sut.getActiveVacationTypes();
+        final List<VacationType<?>> activeVacationTypes = sut.getActiveVacationTypes();
         assertThat(activeVacationTypes).hasSize(2);
         assertThat(activeVacationTypes.get(0).getId()).isEqualTo(1);
         assertThat(activeVacationTypes.get(1).getId()).isEqualTo(2);
@@ -94,7 +97,7 @@ class VacationTypeServiceImplTest {
 
         when(vacationTypeRepository.findAll(Sort.by("id"))).thenReturn(List.of(holiday, overtime));
 
-        final List<VacationType> allVacationTypes = sut.getAllVacationTypes();
+        final List<VacationType<?>> allVacationTypes = sut.getAllVacationTypes();
         assertThat(allVacationTypes).hasSize(2);
         assertThat(allVacationTypes.get(0).getId()).isEqualTo(1);
         assertThat(allVacationTypes.get(1).getId()).isEqualTo(2);

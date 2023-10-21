@@ -22,8 +22,8 @@ public class ApplicationForLeaveStatistics {
     private final Person person;
     private PersonBasedata personBasedata;
 
-    private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
-    private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
+    private final Map<VacationType<?>, BigDecimal> waitingVacationDays = new HashMap<>();
+    private final Map<VacationType<?>, BigDecimal> allowedVacationDays = new HashMap<>();
 
     private BigDecimal leftVacationDaysForYear = ZERO;
     private BigDecimal leftRemainingVacationDaysForYear = ZERO;
@@ -32,10 +32,10 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
     private Duration leftOvertimeForPeriod = Duration.ZERO;
 
-    ApplicationForLeaveStatistics(Person person, List<VacationType> vacationTypes) {
+    ApplicationForLeaveStatistics(Person person, List<VacationType<?>> vacationTypes) {
         this.person = person;
 
-        for (VacationType type : vacationTypes) {
+        for (VacationType<?> type : vacationTypes) {
             addWaitingVacationDays(type, ZERO);
             addAllowedVacationDays(type, ZERO);
         }
@@ -53,11 +53,11 @@ public class ApplicationForLeaveStatistics {
         return Optional.ofNullable(personBasedata);
     }
 
-    public Map<VacationType, BigDecimal> getWaitingVacationDays() {
+    public Map<VacationType<?>, BigDecimal> getWaitingVacationDays() {
         return waitingVacationDays;
     }
 
-    public Map<VacationType, BigDecimal> getAllowedVacationDays() {
+    public Map<VacationType<?>, BigDecimal> getAllowedVacationDays() {
         return allowedVacationDays;
     }
 
@@ -119,25 +119,25 @@ public class ApplicationForLeaveStatistics {
             .reduce(ZERO, BigDecimal::add);
     }
 
-    public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
+    public void addWaitingVacationDays(VacationType<?> vacationType, BigDecimal waitingVacationDays) {
         final BigDecimal currentWaitingVacationDays = getWaitingVacationDays().getOrDefault(vacationType, ZERO);
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
-    public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
+    public void addAllowedVacationDays(VacationType<?> vacationType, BigDecimal allowedVacationDays) {
         final BigDecimal currentAllowedVacationDays = getAllowedVacationDays().getOrDefault(vacationType, ZERO);
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
-    public boolean hasVacationType(VacationType type) {
+    public boolean hasVacationType(VacationType<?> type) {
         return waitingVacationDays.containsKey(type) || allowedVacationDays.containsKey(type);
     }
 
-    public BigDecimal getWaitingVacationDays(VacationType type) {
+    public BigDecimal getWaitingVacationDays(VacationType<?> type) {
         return waitingVacationDays.getOrDefault(type, ZERO);
     }
 
-    public BigDecimal getAllowedVacationDays(VacationType type) {
+    public BigDecimal getAllowedVacationDays(VacationType<?> type) {
         return allowedVacationDays.getOrDefault(type, ZERO);
     }
 }

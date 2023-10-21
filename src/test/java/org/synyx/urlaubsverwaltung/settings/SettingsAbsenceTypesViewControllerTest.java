@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
@@ -14,10 +15,13 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.List;
+import java.util.Locale;
 
+import static java.util.Locale.GERMAN;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -51,8 +55,10 @@ class SettingsAbsenceTypesViewControllerTest {
     @Test
     void ensureGetSettings() throws Exception {
 
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key-1", "label-1", locale);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(
-            ProvidedVacationType.builder()
+            ProvidedVacationType.builder(messageSource)
                 .id(1L)
                 .active(true)
                 .category(HOLIDAY)
@@ -75,7 +81,7 @@ class SettingsAbsenceTypesViewControllerTest {
             AbsenceTypeSettingsItemDto.builder()
                 .setId(1L)
                 .setActive(true)
-                .setMessageKey("message-key-1")
+                .setLabel("label-1")
                 .setCategory(HOLIDAY)
                 .setRequiresApprovalToApply(true)
                 .setRequiresApprovalToCancel(true)
@@ -93,7 +99,10 @@ class SettingsAbsenceTypesViewControllerTest {
         final SpecialLeaveSettingsDto expectedSpecialLeaveSettingsDto = new SpecialLeaveSettingsDto();
         expectedSpecialLeaveSettingsDto.setSpecialLeaveSettingsItems(List.of(item));
 
-        perform(get("/web/settings/absence-types"))
+        perform(
+            get("/web/settings/absence-types")
+                .locale(locale)
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("settings", allOf(
                 hasProperty("absenceTypeSettings", is(expectedAbsenceTypeSettingsDto)),
@@ -108,7 +117,7 @@ class SettingsAbsenceTypesViewControllerTest {
             .param("id", "1337")
             .param("absenceTypeSettings.items[0].id", "1")
             .param("absenceTypeSettings.items[0].active", "true")
-            .param("absenceTypeSettings.items[0].messageKey", "message-key-1")
+            .param("absenceTypeSettings.items[0].label", "label-1")
             .param("absenceTypeSettings.items[0].category", "HOLIDAY")
             .param("absenceTypeSettings.items[0].requiresApprovalToApply", "true")
             .param("absenceTypeSettings.items[0].requiresApprovalToCancel", "true")
@@ -132,6 +141,12 @@ class SettingsAbsenceTypesViewControllerTest {
         ));
 
         verifyNoInteractions(settingsService);
+    }
+
+    private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
+        return messageSource;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

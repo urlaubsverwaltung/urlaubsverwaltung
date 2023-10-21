@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.Duration.ZERO;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -41,10 +43,12 @@ class ApplicationServiceImplTest {
 
     @Mock
     private ApplicationRepository applicationRepository;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationServiceImpl(applicationRepository);
+        sut = new ApplicationServiceImpl(applicationRepository, messageSource);
     }
 
     // Get application by ID -------------------------------------------------------------------------------------------
@@ -64,6 +68,8 @@ class ApplicationServiceImplTest {
 
     @Test
     void ensureFindApplicationsByIds() {
+
+        when(messageSource.getMessage("vacation-type-message-key", new Object[]{}, JAPANESE)).thenReturn("vacation type label");
 
         final LocalDate applicationDate = LocalDate.now();
         final LocalDate cancelDate = LocalDate.now();
@@ -142,7 +148,7 @@ class ApplicationServiceImplTest {
                 assertThat(vacationType.getId()).isEqualTo(2L);
                 assertThat(vacationType.isActive()).isTrue();
                 assertThat(vacationType.getColor()).isEqualTo(CYAN);
-                assertThat(vacationType.getMessageKey()).isEqualTo("vacation-type-message-key");
+                assertThat(vacationType.getLabel(JAPANESE)).isEqualTo("vacation type label");
                 assertThat(vacationType.isRequiresApprovalToApply()).isTrue();
                 assertThat(vacationType.isVisibleToEveryone()).isTrue();
                 assertThat(vacationType.getCategory()).isEqualTo(OVERTIME);
@@ -186,7 +192,7 @@ class ApplicationServiceImplTest {
         final Person holidayReplacementPerson = new Person();
         person.setId(5L);
 
-        final VacationType vacationType = ProvidedVacationType.builder().id(1L).build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacementPerson);

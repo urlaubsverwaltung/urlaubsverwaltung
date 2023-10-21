@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -51,7 +52,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreatesACommentAndPersistsIt() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
+        final VacationType<?> vacationType = TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Application application = createApplication(person, vacationType);
         application.setId(1337L);
@@ -86,7 +87,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreationOfCommentWithTextWorks() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = TestDataCreator.createVacationType(1L, HOLIDAY);
+        final VacationType<?> vacationType = TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource());
 
         final Application application = createApplication(person, vacationType);
         application.setId(42L);

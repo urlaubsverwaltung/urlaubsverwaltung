@@ -120,7 +120,7 @@
                       <th:block th:fragment="application-vacationtype-select-options">
                         <option
                           th:each="vacationType: ${vacationTypes}"
-                          th:text="#{__${vacationType.messageKey}__}"
+                          th:text="${vacationType.label}"
                           th:value="${vacationType.id}"
                           th:selected="${applicationForLeaveForm.vacationType?.id == vacationType.id}"
                           th:data-vacationtype-category="${vacationType.category.name}"

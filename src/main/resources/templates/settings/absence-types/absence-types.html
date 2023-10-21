@@ -90,10 +90,7 @@
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
                 <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
-                <span
-                  th:text="#{__${absenceType.messageKey}__}"
-                  class="absence-type-cell-text tw-flex-1 sm:tw-truncate"
-                ></span>
+                <span th:text="${absenceType.label}" class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
                 <label

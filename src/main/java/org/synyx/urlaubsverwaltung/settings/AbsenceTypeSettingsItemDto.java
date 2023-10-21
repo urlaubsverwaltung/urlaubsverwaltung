@@ -9,7 +9,7 @@ public class AbsenceTypeSettingsItemDto {
 
     private Long id;
     private boolean active;
-    private String messageKey;
+    private String label;
     private VacationCategory category;
     private boolean requiresApprovalToApply;
     private boolean requiresApprovalToCancel;
@@ -32,12 +32,12 @@ public class AbsenceTypeSettingsItemDto {
         this.active = active;
     }
 
-    public String getMessageKey() {
-        return messageKey;
+    public String getLabel() {
+        return label;
     }
 
-    public void setMessageKey(String messageKey) {
-        this.messageKey = messageKey;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public VacationCategory getCategory() {
@@ -89,7 +89,7 @@ public class AbsenceTypeSettingsItemDto {
         return "AbsenceTypeItemSettingDto{" +
             "id=" + id +
             ", active=" + active +
-            ", messageKey='" + messageKey + '\'' +
+            ", label='" + label + '\'' +
             ", category='" + category + '\'' +
             ", requiresApprovalToApply=" + requiresApprovalToApply +
             ", requiresApprovalToCancel=" + requiresApprovalToCancel +
@@ -108,20 +108,20 @@ public class AbsenceTypeSettingsItemDto {
             && requiresApprovalToCancel == that.requiresApprovalToCancel
             && visibleToEveryone == that.visibleToEveryone
             && Objects.equals(id, that.id)
-            && Objects.equals(messageKey, that.messageKey)
+            && Objects.equals(label, that.label)
             && category == that.category
             && Objects.equals(color, that.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, messageKey, category, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
+        return Objects.hash(id, active, label, category, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
     }
 
     static class Builder {
         private Long id;
         private boolean active;
-        private String messageKey;
+        private String label;
         private VacationCategory category;
         private boolean requiresApprovalToApply;
         private boolean requiresApprovalToCancel;
@@ -138,8 +138,8 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
-        Builder setMessageKey(String messageKey) {
-            this.messageKey = messageKey;
+        Builder setLabel(String label) {
+            this.label = label;
             return this;
         }
 
@@ -172,7 +172,7 @@ public class AbsenceTypeSettingsItemDto {
             final AbsenceTypeSettingsItemDto dto = new AbsenceTypeSettingsItemDto();
             dto.setId(id);
             dto.setActive(active);
-            dto.setMessageKey(messageKey);
+            dto.setLabel(label);
             dto.setCategory(category);
             dto.setRequiresApprovalToApply(requiresApprovalToApply);
             dto.setRequiresApprovalToCancel(requiresApprovalToCancel);

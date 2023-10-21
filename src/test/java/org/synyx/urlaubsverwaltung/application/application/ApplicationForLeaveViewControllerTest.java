@@ -1452,8 +1452,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(view().name("application/application-overview"));
     }
 
-    private static VacationType anyVacationType() {
-        return ProvidedVacationType.builder()
+    private VacationType<?> anyVacationType() {
+        return ProvidedVacationType.builder(messageSource)
             .id(1L)
             .category(VacationCategory.HOLIDAY)
             .messageKey("vacationTypeMessageKey")

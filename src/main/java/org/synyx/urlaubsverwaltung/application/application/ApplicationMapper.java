@@ -32,7 +32,7 @@ final class ApplicationMapper {
     Application merge(Application applicationForLeave, ApplicationForLeaveForm applicationForLeaveForm) {
 
         final Long vacationTypeId = applicationForLeaveForm.getVacationType().getId();
-        final VacationType vacationType = vacationTypeService.getById(vacationTypeId)
+        final VacationType<?> vacationType = vacationTypeService.getById(vacationTypeId)
             .orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + vacationTypeId));
 
         final Application newApplication = new Application();

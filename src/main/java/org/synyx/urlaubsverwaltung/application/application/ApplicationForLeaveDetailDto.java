@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,8 +23,8 @@ class ApplicationForLeaveDetailDto {
     private LocalTime endTime;
     // startWithTime
     // endWithTime
-    // weekDayOfStart
-    // weekDayOfEnd
+    private DayOfWeek weekDayOfStartDate;
+    private DayOfWeek weekDayOfEndDate;
     private DayLength dayLength;
     private BigDecimal workDays;
     private Duration hours;
@@ -105,6 +106,22 @@ class ApplicationForLeaveDetailDto {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    public DayOfWeek getWeekDayOfStartDate() {
+        return weekDayOfStartDate;
+    }
+
+    public void setWeekDayOfStartDate(DayOfWeek weekDayOfStartDate) {
+        this.weekDayOfStartDate = weekDayOfStartDate;
+    }
+
+    public DayOfWeek getWeekDayOfEndDate() {
+        return weekDayOfEndDate;
+    }
+
+    public void setWeekDayOfEndDate(DayOfWeek weekDayOfEndDate) {
+        this.weekDayOfEndDate = weekDayOfEndDate;
     }
 
     public DayLength getDayLength() {

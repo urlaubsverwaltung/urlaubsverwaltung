@@ -118,7 +118,7 @@ class ApplicationForLeaveFormValidator implements Validator {
 
         final ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
         final Settings settings = settingsService.getSettings();
-        final VacationType vacationType = getVacationType(applicationForm.getVacationType().getId());
+        final VacationType<?> vacationType = getVacationType(applicationForm.getVacationType().getId());
 
         // check if date fields are valid
         validateDateFields(applicationForm, settings, errors);
@@ -145,7 +145,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private VacationType getVacationType(Long vacationTypeId) {
+    private VacationType<?> getVacationType(Long vacationTypeId) {
         return vacationTypeService.getById(vacationTypeId)
             .orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + vacationTypeId));
     }
@@ -304,7 +304,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, VacationType vacationType, Errors errors) {
+    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, VacationType<?> vacationType, Errors errors) {
 
         final boolean isOvertime = OVERTIME.equals(vacationType.getCategory());
         if (!isOvertime) {
@@ -346,7 +346,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, VacationType vacationType, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, VacationType<?> vacationType, Errors errors) {
 
         /*
          * Ensure the person has a working time for the period of the application for leave
@@ -414,7 +414,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         return overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
     }
 
-    private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm, VacationType vacationType) {
+    private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm, VacationType<?> vacationType) {
 
         final boolean isHoliday = HOLIDAY.equals(vacationType.getCategory());
 
@@ -426,7 +426,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         return true;
     }
 
-    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings, VacationType vacationType) {
+    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings, VacationType<?> vacationType) {
 
         final boolean isOvertime = OVERTIME.equals(vacationType.getCategory());
 
