@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class VacationTypeUpdate {
 
@@ -10,14 +13,17 @@ public class VacationTypeUpdate {
     private final boolean requiresApprovalToCancel;
     private final VacationTypeColor color;
     private final boolean visibleToEveryone;
+    private final Map<Locale, String> labelByLocale;
 
-    public VacationTypeUpdate(Long id, boolean active, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
+    public VacationTypeUpdate(Long id, boolean active, boolean requiresApprovalToApply, boolean requiresApprovalToCancel,
+                              VacationTypeColor color, boolean visibleToEveryone, Map<Locale, String> labelByLocale) {
         this.id = id;
         this.active = active;
         this.requiresApprovalToApply = requiresApprovalToApply;
         this.requiresApprovalToCancel = requiresApprovalToCancel;
         this.color = color;
         this.visibleToEveryone = visibleToEveryone;
+        this.labelByLocale = labelByLocale;
     }
 
     public Long getId() {
@@ -44,6 +50,10 @@ public class VacationTypeUpdate {
         return visibleToEveryone;
     }
 
+    public Optional<Map<Locale, String>> getLabelByLocale() {
+        return Optional.ofNullable(labelByLocale);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,12 +64,13 @@ public class VacationTypeUpdate {
             && requiresApprovalToCancel == that.requiresApprovalToCancel
             && visibleToEveryone == that.visibleToEveryone
             && Objects.equals(id, that.id)
-            && color == that.color;
+            && color == that.color
+            && Objects.equals(labelByLocale, that.labelByLocale);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
+        return Objects.hash(id, active, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone, labelByLocale);
     }
 
     @Override
@@ -71,6 +82,7 @@ public class VacationTypeUpdate {
             ", requiresApprovalToCancel=" + requiresApprovalToCancel +
             ", color=" + color +
             ", visibleToEveryone=" + visibleToEveryone +
+            ", labelByLocale=" + labelByLocale +
             '}';
     }
 }

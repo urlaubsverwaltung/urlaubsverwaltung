@@ -54,6 +54,7 @@ public final class ProvidedVacationType extends VacationType<ProvidedVacationTyp
 
         Builder(ProvidedVacationType vacationType) {
             super(vacationType);
+            this.messageKey = vacationType.messageKey;
         }
 
         public Builder messageKey(String messageKey) {

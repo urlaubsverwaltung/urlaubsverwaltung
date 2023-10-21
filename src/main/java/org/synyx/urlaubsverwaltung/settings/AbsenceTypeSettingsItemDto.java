@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
+import java.util.List;
 import java.util.Objects;
 
 public class AbsenceTypeSettingsItemDto {
@@ -15,6 +16,23 @@ public class AbsenceTypeSettingsItemDto {
     private boolean requiresApprovalToCancel;
     private VacationTypeColor color;
     private boolean visibleToEveryone;
+    private List<AbsenceTypeSettingsItemLabelDto> labels;
+
+    public AbsenceTypeSettingsItemDto() {
+        //
+    }
+
+    private AbsenceTypeSettingsItemDto(Builder builder) {
+        this.id = builder.id;
+        this.active = builder.active;
+        this.label = builder.label;
+        this.category = builder.category;
+        this.requiresApprovalToApply = builder.requiresApprovalToApply;
+        this.requiresApprovalToCancel = builder.requiresApprovalToCancel;
+        this.color = builder.color;
+        this.visibleToEveryone = builder.visibleToEveryone;
+        this.labels = builder.labels;
+    }
 
     public Long getId() {
         return id;
@@ -80,6 +98,14 @@ public class AbsenceTypeSettingsItemDto {
         this.visibleToEveryone = visibleToEveryone;
     }
 
+    public List<AbsenceTypeSettingsItemLabelDto> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<AbsenceTypeSettingsItemLabelDto> labels) {
+        this.labels = labels;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -95,6 +121,7 @@ public class AbsenceTypeSettingsItemDto {
             ", requiresApprovalToCancel=" + requiresApprovalToCancel +
             ", color=" + color +
             ", visibleToEveryone=" + visibleToEveryone +
+            ", labels=" + labels +
             '}';
     }
 
@@ -102,23 +129,25 @@ public class AbsenceTypeSettingsItemDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbsenceTypeSettingsItemDto that = (AbsenceTypeSettingsItemDto) o;
-        return active == that.active
-            && requiresApprovalToApply == that.requiresApprovalToApply
-            && requiresApprovalToCancel == that.requiresApprovalToCancel
-            && visibleToEveryone == that.visibleToEveryone
-            && Objects.equals(id, that.id)
-            && Objects.equals(label, that.label)
-            && category == that.category
-            && Objects.equals(color, that.color);
+        AbsenceTypeSettingsItemDto dto = (AbsenceTypeSettingsItemDto) o;
+        return active == dto.active
+            && requiresApprovalToApply == dto.requiresApprovalToApply
+            && requiresApprovalToCancel == dto.requiresApprovalToCancel
+            && visibleToEveryone == dto.visibleToEveryone
+            && Objects.equals(id, dto.id)
+            && Objects.equals(label, dto.label)
+            && category == dto.category
+            && color == dto.color
+            && Objects.equals(labels, dto.labels);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, label, category, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
+        return Objects.hash(id, active, label, category, requiresApprovalToApply, requiresApprovalToCancel, color,
+            visibleToEveryone, labels);
     }
 
-    static class Builder {
+    public static class Builder {
         private Long id;
         private boolean active;
         private String label;
@@ -127,6 +156,7 @@ public class AbsenceTypeSettingsItemDto {
         private boolean requiresApprovalToCancel;
         private VacationTypeColor color;
         private boolean visibleToEveryone;
+        private List<AbsenceTypeSettingsItemLabelDto> labels;
 
         Builder setId(Long id) {
             this.id = id;
@@ -168,17 +198,13 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
+        Builder setLabels(List<AbsenceTypeSettingsItemLabelDto> labels) {
+            this.labels = labels;
+            return this;
+        }
+
         AbsenceTypeSettingsItemDto build() {
-            final AbsenceTypeSettingsItemDto dto = new AbsenceTypeSettingsItemDto();
-            dto.setId(id);
-            dto.setActive(active);
-            dto.setLabel(label);
-            dto.setCategory(category);
-            dto.setRequiresApprovalToApply(requiresApprovalToApply);
-            dto.setRequiresApprovalToCancel(requiresApprovalToCancel);
-            dto.setColor(color);
-            dto.setVisibleToEveryone(visibleToEveryone);
-            return dto;
+            return new AbsenceTypeSettingsItemDto(this);
         }
     }
 }

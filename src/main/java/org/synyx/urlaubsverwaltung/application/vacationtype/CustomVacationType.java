@@ -1,12 +1,22 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * {@linkplain VacationType} created by the user.
  */
 public final class CustomVacationType extends VacationType<CustomVacationType> {
 
+    private final Map<Locale, String> labelByLocale;
+
     private CustomVacationType(CustomVacationType.Builder builder) {
         super(builder);
+        this.labelByLocale = builder.labelByLocale;
+    }
+
+    public Map<Locale, String> getLabelByLocale() {
+        return labelByLocale;
     }
 
     @Override
@@ -23,7 +33,11 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
     }
 
     public static Builder builder() {
-        return new Builder();
+
+        final VacationTypeLabelResolver<CustomVacationType> labelResolver =
+            (vacationType, locale) -> vacationType.labelByLocale.get(locale);
+
+        return new Builder(labelResolver);
     }
 
     public static Builder builder(CustomVacationType customVacationType) {
@@ -32,13 +46,19 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
 
     public static final class Builder extends VacationType.Builder<CustomVacationType, Builder> {
 
-        Builder() {
-            // TODO allow labels for custom vacation type
-            super((vacationType, locale) -> "");
+        private Map<Locale, String> labelByLocale;
+
+        Builder(VacationTypeLabelResolver<CustomVacationType> labelResolver) {
+            super(labelResolver);
         }
 
         Builder(CustomVacationType vacationType) {
             super(vacationType);
+        }
+
+        public Builder labelByLocale(Map<Locale, String> labelByLocale) {
+            this.labelByLocale = labelByLocale;
+            return this;
         }
 
         @Override

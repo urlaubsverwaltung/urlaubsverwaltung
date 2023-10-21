@@ -20,7 +20,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
 import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
@@ -99,12 +101,20 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
     }
 
     private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
+        // editing labels is only possible for CustomVacationTypes yet. Not for ProvidedVacationTypes.
+        final List<AbsenceTypeSettingsItemLabelDto> labels = absenceTypeSettingsItemDto.getLabels();
+        final Map<Locale, String> labelByLocale = labels == null ? null : labels.stream().collect(toMap(
+            AbsenceTypeSettingsItemLabelDto::getLocale,
+            AbsenceTypeSettingsItemLabelDto::getLabel
+        ));
         return new VacationTypeUpdate(
             absenceTypeSettingsItemDto.getId(),
             absenceTypeSettingsItemDto.isActive(),
             absenceTypeSettingsItemDto.isRequiresApprovalToApply(),
             absenceTypeSettingsItemDto.isRequiresApprovalToCancel(),
             absenceTypeSettingsItemDto.getColor(),
-            absenceTypeSettingsItemDto.isVisibleToEveryone());
+            absenceTypeSettingsItemDto.isVisibleToEveryone(),
+            labelByLocale
+        );
     }
 }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 
 import java.util.List;
@@ -35,6 +36,18 @@ public class AbsenceTypeSettingsDtoMapper {
             .setRequiresApprovalToCancel(vacationType.isRequiresApprovalToCancel())
             .setColor(vacationType.getColor())
             .setVisibleToEveryone(vacationType.isVisibleToEveryone())
+            .setLabels(vacationTypeLabelDtos(vacationType))
             .build();
+    }
+
+    private static List<AbsenceTypeSettingsItemLabelDto> vacationTypeLabelDtos(VacationType<?> vacationType) {
+        if (vacationType instanceof CustomVacationType customVacationType) {
+            return customVacationType.getLabelByLocale().entrySet()
+                .stream()
+                .map(entry -> new AbsenceTypeSettingsItemLabelDto(entry.getKey(), entry.getValue()))
+                .toList();
+        }
+        // setting label is only supported by CustomVacationType for now
+        return null;
     }
 }

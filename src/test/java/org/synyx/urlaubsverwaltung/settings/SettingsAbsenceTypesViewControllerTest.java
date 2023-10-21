@@ -133,7 +133,7 @@ class SettingsAbsenceTypesViewControllerTest {
             .andExpect(flash().attribute("success", true));
 
         verify(vacationTypeService).updateVacationTypes(List.of(
-            new VacationTypeUpdate(1L, true, true, true, CYAN, true)
+            new VacationTypeUpdate(1L, true, true, true, CYAN, true, null)
         ));
 
         verify(specialLeaveSettingsService).saveAll(List.of(

@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -132,9 +133,9 @@ class VacationTypeServiceImplTest {
         when(vacationTypeRepository.findAllById(Set.of(1L, 2L, 3L))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1L, true, false, false, YELLOW, false),
-            new VacationTypeUpdate(2L, false, true, true, YELLOW, false),
-            new VacationTypeUpdate(3L, true, true, true, YELLOW, true)
+            new VacationTypeUpdate(1L, true, false, false, YELLOW, false, Map.of()),
+            new VacationTypeUpdate(2L, false, true, true, YELLOW, false, Map.of()),
+            new VacationTypeUpdate(3L, true, true, true, YELLOW, true, Map.of())
         ));
 
         @SuppressWarnings("unchecked") final ArgumentCaptor<List<VacationTypeEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
