@@ -199,8 +199,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), id);
     }
 
-    private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationType vacationType) {
-        return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey(), vacationType.getColor());
+    private static ApplicationForLeaveDto.VacationTypeDto toViewVacationType(VacationType vacationType) {
+        return new ApplicationForLeaveDto.VacationTypeDto(vacationType.getCategory().name(), vacationType.getMessageKey(), vacationType.getColor());
     }
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {

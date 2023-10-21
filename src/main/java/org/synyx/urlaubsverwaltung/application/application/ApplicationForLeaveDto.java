@@ -9,7 +9,7 @@ public class ApplicationForLeaveDto {
 
     private final long id;
     private final ApplicationPersonDto person;
-    private final VacationType vacationType;
+    private final VacationTypeDto vacationType;
     private final ApplicationStatus status;
     private final String duration;
     private final DayLength dayLength;
@@ -24,7 +24,7 @@ public class ApplicationForLeaveDto {
     private final boolean cancellationRequested;
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
-    private ApplicationForLeaveDto(long id, ApplicationPersonDto person, VacationType vacationType, ApplicationStatus status,
+    private ApplicationForLeaveDto(long id, ApplicationPersonDto person, VacationTypeDto vacationType, ApplicationStatus status,
                                    String duration, DayLength dayLength, BigDecimal workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean cancelAllowed, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
@@ -53,7 +53,7 @@ public class ApplicationForLeaveDto {
         return person;
     }
 
-    public VacationType getVacationType() {
+    public VacationTypeDto getVacationType() {
         return vacationType;
     }
 
@@ -112,7 +112,7 @@ public class ApplicationForLeaveDto {
     static class Builder {
         private long id;
         private ApplicationPersonDto person;
-        private VacationType vacationType;
+        private VacationTypeDto vacationType;
         private ApplicationStatus status;
         private String duration;
         private DayLength dayLength;
@@ -136,7 +136,7 @@ public class ApplicationForLeaveDto {
             return this;
         }
 
-        Builder vacationType(VacationType vacationType) {
+        Builder vacationType(VacationTypeDto vacationType) {
             this.vacationType = vacationType;
             return this;
         }
@@ -222,12 +222,12 @@ public class ApplicationForLeaveDto {
         }
     }
 
-    public static class VacationType {
+    public static class VacationTypeDto {
         private final String category;
         private final String messageKey;
         private final VacationTypeColor color;
 
-        VacationType(String category, String messageKey, VacationTypeColor color) {
+        VacationTypeDto(String category, String messageKey, VacationTypeColor color) {
             this.category = category;
             this.messageKey = messageKey;
             this.color = color;

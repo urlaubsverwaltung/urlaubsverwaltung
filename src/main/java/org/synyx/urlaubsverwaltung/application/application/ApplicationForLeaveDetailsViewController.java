@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -402,7 +403,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("app", new ApplicationForLeave(application, workDaysCountService));
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        model.addAttribute("app", applicationForLeaveDetailDto(applicationForLeave));
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
                 application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
@@ -481,5 +483,38 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             .filter(not(isEqual(signedInUser)))
             .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || (person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING)))
             .collect(toList());
+    }
+
+    private ApplicationForLeaveDetailDto applicationForLeaveDetailDto(ApplicationForLeave applicationForLeave) {
+        final ApplicationForLeaveDetailDto dto = new ApplicationForLeaveDetailDto();
+        dto.setId(applicationForLeave.getId());
+        dto.setPerson(applicationForLeave.getPerson());
+        dto.setStatus(applicationForLeave.getStatus());
+        dto.setVacationType(applicationForLeaveDetailVacationTypeDto(applicationForLeave.getVacationType()));
+        dto.setApplicationDate(applicationForLeave.getApplicationDate());
+        dto.setStartDate(applicationForLeave.getStartDate());
+        dto.setEndDate(applicationForLeave.getEndDate());
+        dto.setStartTime(applicationForLeave.getStartTime());
+        dto.setEndTime(applicationForLeave.getEndTime());
+        dto.setDayLength(applicationForLeave.getDayLength());
+        dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setHours(applicationForLeave.getHours());
+        dto.setEditedDate(applicationForLeave.getEditedDate());
+        dto.setCancelDate(applicationForLeave.getCancelDate());
+        dto.setTwoStageApproval(applicationForLeave.isTwoStageApproval());
+        dto.setReason(applicationForLeave.getReason());
+        dto.setHolidayReplacements(applicationForLeave.getHolidayReplacements());
+        dto.setTeamInformed(applicationForLeave.isTeamInformed());
+        dto.setAddress(applicationForLeave.getAddress());
+        return dto;
+    }
+
+    private ApplicationForLeaveDetailVacationTypeDto applicationForLeaveDetailVacationTypeDto(VacationType vacationType) {
+        return new ApplicationForLeaveDetailVacationTypeDto(
+            vacationType.getMessageKey(),
+            vacationType.getCategory(),
+            vacationType.getColor(),
+            vacationType.isRequiresApprovalToCancel()
+        );
     }
 }
