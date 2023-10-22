@@ -622,7 +622,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCEL_REQUESTED_DECLINED, office, "Stornierung abgelehnt!");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        relevantPerson.setId(2L);
+        relevantPerson.setId(1337L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
@@ -682,7 +682,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Stornierung abgelehnt!
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.""");
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1337/notifications anpassen.""");
     }
 
     @Test
