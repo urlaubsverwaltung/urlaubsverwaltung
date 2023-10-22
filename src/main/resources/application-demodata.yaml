@@ -54,8 +54,3 @@ launchpad:
       en: urlaubsverwaltung.cloud
     url: https://urlaubsverwaltung.cloud
   name-default-locale: de
-
-management:
-  health:
-    ldap:
-      enabled: false
