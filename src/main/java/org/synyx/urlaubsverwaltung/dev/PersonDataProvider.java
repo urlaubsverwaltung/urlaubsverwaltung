@@ -98,7 +98,7 @@ class PersonDataProvider {
 
     void createTestPerson(String username, String firstName, String lastName, String email) {
 
-        final Optional<Person> person = personService.getPersonByUsername(username);
+        final Optional<Person> person = personService.getPersonByMailAddress(email);
         if (person.isPresent()) {
             LOG.info("Person {} already exists, nothing to do...", person.get());
             return;
