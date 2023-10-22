@@ -2,55 +2,17 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
+import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 
-/**
- * @author Florian Krupicka - krupicka@synyx.de
- */
 @Validated
 @ConfigurationProperties("uv.security.oidc")
 public class OidcSecurityProperties {
-
-    /**
-     * The OpenId Connect issuer URI (e.g. your OIDC server).
-     */
-    @URL
-    private String issuerUri;
-
-    /**
-     * OIDC client identifier to authenticate the UV application against your OIDC authentication server.
-     */
-    @NotEmpty
-    private String clientId;
-
-    /**
-     * OIDC client secret to authenticate the UV application against your OIDC authentication server.
-     */
-    @NotEmpty
-    private String clientSecret;
-
-    /**
-     * The logout URI where the logout is defined for the used provider.
-     *
-     * <p>e.g. for <i>keycloak</i> this would be
-     * <pre>'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'</pre>
-     * </p>
-     *
-     * @deprecated
-     */
-    @NotEmpty
-    @Deprecated(forRemoval = true, since = "4.49.0")
-    private String logoutUri;
-
-    /**
-     * OIDC client scopes to receive family name, given name and email in the OIDC access token.
-     */
-    @NotEmpty
-    private List<String> scopes = List.of("openid", "profile", "email");
 
     /**
      * OIDC post logout redirect uri.
@@ -64,45 +26,8 @@ public class OidcSecurityProperties {
     @NotNull
     private GroupClaim groupClaim = new GroupClaim();
 
-    public String getIssuerUri() {
-        return issuerUri;
-    }
-
-    public void setIssuerUri(String issuerUri) {
-        this.issuerUri = issuerUri;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-
-    public String getLogoutUri() {
-        return logoutUri;
-    }
-
-    public void setLogoutUri(String logoutUri) {
-        this.logoutUri = logoutUri;
-    }
-
-    public List<String> getScopes() {
-        return scopes;
-    }
-
-    public void setScopes(List<String> scopes) {
-        this.scopes = scopes;
-    }
+    @NotNull
+    private UserMappings userMappings = new UserMappings();
 
     public String getPostLogoutRedirectUri() {
         return postLogoutRedirectUri;
@@ -118,6 +43,14 @@ public class OidcSecurityProperties {
 
     public void setGroupClaim(GroupClaim groupClaim) {
         this.groupClaim = groupClaim;
+    }
+
+    public UserMappings getUserMappings() {
+        return userMappings;
+    }
+
+    public void setUserMappings(UserMappings userMappings) {
+        this.userMappings = userMappings;
     }
 
     public static class GroupClaim {
@@ -152,6 +85,50 @@ public class OidcSecurityProperties {
 
         public void setPermittedGroup(String permittedGroup) {
             this.permittedGroup = permittedGroup;
+        }
+    }
+
+    public static class UserMappings {
+
+        @NotEmpty
+        private String identifier = SUB;
+        @NotEmpty
+        private String familyName = FAMILY_NAME;
+        @NotEmpty
+        private String givenName = GIVEN_NAME;
+        @NotEmpty
+        private String email = EMAIL;
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
+
+        public String getFamilyName() {
+            return familyName;
+        }
+
+        public void setFamilyName(String familyName) {
+            this.familyName = familyName;
+        }
+
+        public String getGivenName() {
+            return givenName;
+        }
+
+        public void setGivenName(String givenName) {
+            this.givenName = givenName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
     }
 }

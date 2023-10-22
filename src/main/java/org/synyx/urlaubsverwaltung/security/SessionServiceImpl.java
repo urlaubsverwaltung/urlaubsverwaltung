@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import java.util.Map;
 
 @Service
-public class SessionServiceImpl<S extends Session> implements SessionService {
+class SessionServiceImpl<S extends Session> implements SessionService {
 
     static final String RELOAD_AUTHORITIES = "reloadAuthorities";
 

@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,132 +50,84 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
-    void getHolidaysWithoutAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays"));
-        resultActions.andExpect(status().isUnauthorized());
+    void ensureNotToGetHolidaysWithoutAuthentication() throws Exception {
+        perform(
+            get("/api/public-holidays")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
+    void ensureGetHolidaysForOtherUserIsForbidden(final String role) throws Exception {
+        perform(
+            get("/api/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser
-    void getHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void getHolidaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "BOSS")
-    void getHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void getHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void getHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "OFFICE")
     void getHolidaysWithOfficeRoleIsOk() throws Exception {
 
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    void personsPublicHolidaysWithoutAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays"));
-        resultActions.andExpect(status().isUnauthorized());
+    void personsPublicHolidaysWithoutAuthenticationIsNotPossible() throws Exception {
+        perform(
+            get("/api/persons/1/public-holidays")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    void ensuresPersonsPublicHolidaysForOtherUserIsForbidden(final String role) throws Exception {
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser
-    void personsPublicHolidaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void personsPublicHolidaysAsAdminUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void personsPublicHolidaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
     void personsPublicHolidaysAsDepartmentHeadUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
+        person.setId(1L);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person departmentHead = new Person();
+        departmentHead.setId(2L);
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername("departmentHead")).thenReturn(Optional.of(departmentHead));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().idToken(builder -> builder.subject("departmentHead")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
     void personsPublicHolidaysAsSSAUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -184,40 +139,46 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().idToken(builder -> builder.subject("ssa")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "BOSS")
     void personsPublicHolidaysWithBossRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "OFFICE")
     void personsPublicHolidaysWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "user")
     void personsPublicHolidaysWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -225,24 +186,29 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "differentUser")
     void personsPublicHolidaysWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/1/public-holidays")
+                .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-31")
+        )
+            .andExpect(status().isForbidden());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

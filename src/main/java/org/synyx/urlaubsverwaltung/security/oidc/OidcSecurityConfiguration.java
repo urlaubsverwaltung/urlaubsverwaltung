@@ -8,48 +8,20 @@ import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.ClientRegistrations;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-
-import java.util.List;
-
-import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
-import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+import org.synyx.urlaubsverwaltung.security.oidc.OidcSecurityProperties.GroupClaim;
 
 @Configuration
-@ConditionalOnProperty(value = "uv.security.auth", havingValue = "oidc")
 @EnableConfigurationProperties(OidcSecurityProperties.class)
-public class OidcSecurityConfiguration {
+class OidcSecurityConfiguration {
 
     private final OidcSecurityProperties properties;
 
-    public OidcSecurityConfiguration(OidcSecurityProperties properties) {
+    OidcSecurityConfiguration(OidcSecurityProperties properties) {
         this.properties = properties;
-    }
-
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        final ClientRegistration.Builder builder = ClientRegistrations
-            .fromOidcIssuerLocation(properties.getIssuerUri())
-            .scope(properties.getScopes())
-            .registrationId("oidc");
-
-        builder.clientId(properties.getClientId());
-
-        if (properties.getClientSecret() != null) {
-            builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(CLIENT_SECRET_BASIC);
-        }
-
-        builder.authorizationGrantType(AUTHORIZATION_CODE);
-
-        final ClientRegistration clientRegistration = builder.build();
-
-        return new InMemoryClientRegistrationRepository(List.of(clientRegistration));
     }
 
     @Bean
@@ -63,15 +35,19 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
+    PersonOnSuccessfullyOidcLoginEventHandler personOnSuccessfullyOidcLoginEventHandler(PersonService personService) {
+        return new PersonOnSuccessfullyOidcLoginEventHandler(personService, properties);
+    }
+
+    @Bean
     OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
-        return new OidcPersonAuthoritiesMapper(personService);
+        return new OidcPersonAuthoritiesMapper(personService, properties);
     }
 
     @Bean
     @ConditionalOnProperty(value = "uv.security.oidc.group-claim.enabled", havingValue = "true")
-    public UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
-        OidcSecurityProperties.GroupClaim groupClaim = oidcSecurityProperties.getGroupClaim();
-
+    UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
+        final GroupClaim groupClaim = oidcSecurityProperties.getGroupClaim();
         return new UrlaubsverwaltungOAuth2UserService(new OidcUserService(), groupClaim.getClaimName(), groupClaim.getPermittedGroup());
     }
 

@@ -24,7 +24,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.security.AuthenticationHelper.userName;
 
 @Service
 class UserSettingsServiceImpl implements UserSettingsService {
@@ -49,7 +48,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     @EventListener
     void handleAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        final String userName = userName(event.getAuthentication());
+        final String userName = event.getAuthentication().getName();
         final Optional<Person> maybePerson = personService.getPersonByUsername(userName);
 
         getRequest()

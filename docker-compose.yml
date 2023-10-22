@@ -18,3 +18,12 @@ services:
     ports:
       - '1025:1025'
       - '8025:8025'
+  keycloak:
+    build: ./docker/keycloak
+    image: urlaubsverwaltung/keycloak-with-demodata:22.0.4
+    environment:
+      KC_HTTP_PORT: '8090'
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HOSTNAME_STRICT_HTTPS: 'false'
+    ports:
+      - '8090:8090'

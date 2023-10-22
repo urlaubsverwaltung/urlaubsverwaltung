@@ -141,44 +141,15 @@ uv.mail.application-url
 uv.mail.sender
 uv.mail.senderDisplayName=Urlaubsverwaltung
 
-# security
-uv.security.auth=default
-
-uv.security.directory-service.identifier=sAMAccountName
-uv.security.directory-service.last-name=givenName
-uv.security.directory-service.first-name=sn
-uv.security.directory-service.mail-address=mail
-uv.security.directory-service.sync.cron=0 0 1 * * ?
-uv.security.directory-service.filter.member-of
-uv.security.directory-service.filter.object-class=person
-
-## active directory
-uv.security.directory-service.active-directory.url=ldap://ad.example.org/
-uv.security.directory-service.active-directory.domain=example.org
-uv.security.directory-service.active-directory.searchFilter=
-uv.security.directory-service.active-directory.sync.enabled=false
-uv.security.directory-service.active-directory.sync.password=password
-uv.security.directory-service.active-directory.sync.user-dn=cn=Administrator,cn=users,dc=example,dc=org
-uv.security.directory-service.active-directory.sync.user-search-base=dc=example,dc=org
-
-## ldap
-uv.security.directory-service.ldap.url=ldap://ldap.example.org/
-uv.security.directory-service.ldap.base=dc=example,dc=org
-uv.security.directory-service.ldap.manager-dn
-uv.security.directory-service.ldap.manager-password
-uv.security.directory-service.ldap.user-search-filter=(uid={0})
-uv.security.directory-service.ldap.user-search-base=ou=accounts
-uv.security.directory-service.ldap.sync.enabled=false
-uv.security.directory-service.ldap.sync.password=password
-uv.security.directory-service.ldap.sync.user-dn=uid=username,ou=other,ou=accounts,dc=example,dc=org
-uv.security.directory-service.ldap.sync.user-search-base=ou=people,ou=accounts
-
-# oidc (openid connect)
-uv.security.oidc.client-id
-uv.security.oidc.client-secret
-uv.security.oidc.issuer-uri
-uv.security.oidc.logout-uri
-uv.security.oidc.scopes=openid,profile,email
+# security - openid connect
+uv.security.oidc.post-logout-redirect-uri={baseUrl}
+uv.security.oidc.group-claim.boolean=false
+uv.security.oidc.group-claim.claim-name=groups
+uv.security.oidc.group-claim.permitted-group=urlaubsverwaltung_user
+uv.security.oidc.user-mappings.identifier=sub
+uv.security.oidc.user-mappings.email=email
+uv.security.oidc.user-mappings.family-name=family_name
+uv.security.oidc.user-mappings.given-name=given_name
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
@@ -187,45 +158,18 @@ uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
 #### Security Provider konfigurieren
 
-Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
+Siehe die [Spring Boot oAuth2](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings) konfiguration und für die Konfiguration des [Resource Servers via JWT](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html) z.B.
 
-* `oidc`
-    * Authentifizierung via OpenID Connect (OIDC)
-    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
-    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
-      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
-      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
-* `ldap`
-    * Authentifizierung via LDAP
-    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
-      konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
-    * Wenn ldaps verwendet werden soll, dann muss die url
-      `uv.security.directory-service.ldap.url=ldaps://oc.example.org`
-      angepasst und am LDAP Server der entsprechende Port freigegeben werden.
-* `activedirectory`
-    * Authentifizierung via Active Directory
-    * Es müssen die Active Directory Domain und LDAP URL konfiguriert
-      sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `development`
-    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+Zudem kann das Verhalten der Urlaubsverwaltung anhand von `uv.security.oidc` beeinflusst werden.
+
+Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`. Der client registration muss deshalb mit den Scopes `openid`,`profile` und `email` konfiguriert werden.
     
-Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
-Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
-
-Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der eigenen Konfigurationsdatei gesetzt werden.
-
+Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt. Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
 
 #### Datenbank konfigurieren
 
 Die Anwendung verwendet zur Speicherung der Daten ein PostgreSQL-Datenbankmanagementsystem. 
-Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`.
-
-```sql
-CREATE DATABASE urlaubsverwaltung DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;
-```
-sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
+Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
 ```properties
 spring.datasource.url=jdbc:postgresql://$HOST:$PORT/$NAME_DER_DATENBANK
@@ -237,7 +181,7 @@ Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Da
 
 #### E-Mail-Server konfigurieren
 
-Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenommen werden.
+Um den E-Mail-Server zu konfigurieren, müssen folgende Konfigurationen vorgenommen werden.
 
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
@@ -256,12 +200,8 @@ eingesehen werden.
 
 #### Benutzer-Synchronisation konfigurieren
 
-Seit der Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
-sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren, indem der Konfigurationsparameter
-`uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled`
- auf `true` gesetzt wird.
-
+Personen werden nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
+sondern nur noch beim Login der jeweiligen Person in der Urlaubsverwaltung angelegt.
 
 #### Logging konfigurieren
 
@@ -347,14 +287,14 @@ Auf diese Weise wird die Anwendung mit einer PostgreSQL-Datenbankmanagementsyste
 
 Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
-| Benutzername         | Rolle                            |
-|----------------------|----------------------------------|
-| user                 | User                             |
-| departmentHead       | User & Abteilungsleiter          |
-| secondStageAuthority | User & Freigabe-Verantwortlicher |
-| boss                 | User & Chef                      |
-| office               | User & Office                    |
-| admin                | User & Admin                     |
+| Benutzername                                 | Passwort | Rolle                            |
+|----------------------------------------------|----------|----------------------------------|
+| user@urlaubsverwaltung.cloud                 | secret   | User                             |
+| departmentHead@urlaubsverwaltung.cloud       | secret   | User & Abteilungsleiter          |
+| secondStageAuthority@urlaubsverwaltung.cloud | secret   | User & Freigabe-Verantwortlicher |
+| boss@urlaubsverwaltung.cloud                 | secret   | User & Chef                      |
+| office@urlaubsverwaltung.cloud               | secret   | User & Office                    |
+| admin@urlaubsverwaltung.cloud                | secret   | User & Admin                     |
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 

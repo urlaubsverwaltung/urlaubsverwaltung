@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,8 +45,10 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void getWorkdaysWithoutAuthIsUnauthorized() throws Exception {
-        perform(get("/api/workdays"))
-            .andExpect(status().isUnauthorized());
+        perform(
+            get("/api/workdays")
+        )
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -64,7 +66,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("department head").authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -87,7 +89,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("second stage authority").authorities(new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+                .with(oidcLogin().idToken(builder -> builder.subject("second stage authority")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -102,7 +104,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("user").authorities(new SimpleGrantedAuthority(role)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -125,7 +127,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("department head").authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -148,7 +150,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("second stage authority").authorities(new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+                .with(oidcLogin().idToken(builder -> builder.subject("second stage authority")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -163,7 +165,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("user").authorities(new SimpleGrantedAuthority("BOSS")))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("BOSS")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -179,7 +181,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("user").authorities(new SimpleGrantedAuthority("OFFICE")))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("OFFICE")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -197,7 +199,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("user"))
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -214,7 +216,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(user("differentUser"))
+                .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")

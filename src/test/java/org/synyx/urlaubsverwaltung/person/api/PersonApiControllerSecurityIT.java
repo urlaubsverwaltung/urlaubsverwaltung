@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,15 +35,17 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnPersonsUsers() throws Exception {
-        perform(get("/api/persons"))
-            .andExpect(status().isUnauthorized());
+        perform(
+            get("/api/persons")
+        )
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
     void ensureAccessIsForbiddenForOtherOnPersonsUsers(final String role) throws Exception {
         perform(get("/api/persons")
-            .with(user("user").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         ).andExpect(status().isForbidden());
     }
 
@@ -55,15 +58,17 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnSpecificPerson() throws Exception {
-        perform(get("/api/persons/1"))
-            .andExpect(status().isUnauthorized());
+        perform(
+            get("/api/persons/1")
+        )
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
     void ensureAccessIsForbiddenForOtherUsersOnSpecificPerson(final String role) throws Exception {
         perform(get("/api/persons/1")
-            .with(user("user").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         ).andExpect(status().isForbidden());
     }
 

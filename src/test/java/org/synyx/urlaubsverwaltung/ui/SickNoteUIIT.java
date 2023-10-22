@@ -11,10 +11,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.synyx.urlaubsverwaltung.TestPostgreContainer;
+import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
+import org.synyx.urlaubsverwaltung.TestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
@@ -22,6 +24,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteOverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Clock;
@@ -30,8 +33,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -51,13 +56,14 @@ import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
 @UiTest
-class SickNoteIT {
+class SickNoteUIIT {
 
     @TestConfiguration
     static class Configuration {
@@ -72,12 +78,15 @@ class SickNoteIT {
     @LocalServerPort
     private int port;
 
-    static final TestPostgreContainer postgre = new TestPostgreContainer();
+    @Container
+    private static final TestPostgreSQLContainer postgre = new TestPostgreSQLContainer();
+    @Container
+    private static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
     @DynamicPropertySource
-    static void postgreProperties(DynamicPropertyRegistry registry) {
-        postgre.start();
+    static void containerProperties(DynamicPropertyRegistry registry) {
         postgre.configureSpringDataSource(registry);
+        keycloak.configureSpringDataSource(registry);
     }
 
     @Autowired
@@ -91,14 +100,15 @@ class SickNoteIT {
 
     @Test
     void ensureSickNote(Page page) {
-        final Person person = createPerson();
+        final Person person = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
+        page.context().waitForCondition(loginPage::isVisible);
 
-        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         page.context().waitForCondition(navigationPage::isVisible);
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
@@ -234,8 +244,16 @@ class SickNoteIT {
         assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic(person.getFirstName(), person.getLastName(), 4, 1)).isTrue();
     }
 
-    private Person createPerson() {
-        final Person savedPerson = personService.create("pennyworth", "Alfred", "Pennyworth", "alfred.pennyworth@example.org", List.of(), List.of(USER, OFFICE));
+    private Person createPerson(String firstName, String lastName, List<Role> roles) {
+
+        final String email = format("%s.%s@example.org", trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
+        final Optional<Person> personByMailAddress = personService.getPersonByMailAddress(email);
+        if (personByMailAddress.isPresent()) {
+            return personByMailAddress.get();
+        }
+
+        final String userId = keycloak.createUser(email, firstName, lastName, email, email);
+        final Person savedPerson = personService.create(userId, firstName, lastName, email, List.of(), roles);
 
         final LocalDate validFrom = LocalDate.of(2022, 1, 1);
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());

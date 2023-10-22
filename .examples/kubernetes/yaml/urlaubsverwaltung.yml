@@ -9,34 +9,18 @@ data:
     server.port=8080
 
     # DATABASE CONFIG
-    spring.datasource.url=jdbc:mariadb://xxx:3306/urlaubsverwaltung
+    spring.datasource.url=jdbc:postgresql://xxx:5434/urlaubsverwaltung
 
-    # AUTHENTICATION
-    uv.security.auth=ldap
-
-    # LDAP / ACTIVE DIRECTORY ATTRIBUTES
-    uv.security.directory-service.identifier=uid
-    uv.security.directory-service.firstName=givenName
-    uv.security.directory-service.lastName=sn
-    uv.security.directory-service.mailAddress=mail
-
-    # LDAP Filter Attributes
-    uv.security.directory-service.filter.objectClass=person
-    uv.security.directory-service.filter.memberOf=
-
-    # LDAP
-    uv.security.directory-service.ldap.url=xxx
-    uv.security.directory-service.ldap.base=dc=xxx,dc=xxx
-    uv.security.directory-service.ldap.managerDn=
-    uv.security.directory-service.ldap.managerPassword=
-    uv.security.directory-service.ldap.userSearchBase=ou=accounts
-    uv.security.directory-service.ldap.userSearchFilter=(uid={0})
-
-    # LDAP Data Sync
-    uv.security.directory-service.ldap.sync.enabled=true
-    uv.security.directory-service.ldap.sync.userSearchBase=ou=xxx,ou=xxx
-    uv.security.directory-service.ldap.sync.userDn=
-    uv.security.directory-service.ldap.sync.password=
+    # Security
+    ## oidc configuration for the default tenant
+    spring.security.oauth2.client.registration.default.client-id=urlaubsverwaltung
+    spring.security.oauth2.client.registration.default.client-secret=urlaubsverwaltung-secret
+    spring.security.oauth2.client.registration.default.client-name=urlaubsverwaltung
+    spring.security.oauth2.client.registration.default.provider=default
+    spring.security.oauth2.client.registration.default.scope=openid,profile,email,roles
+    spring.security.oauth2.client.registration.default.authorization-grant-type=authorization_code
+    spring.security.oauth2.client.registration.default.redirect-uri=http://{baseHost}:8080/login/oauth2/code/{registrationId}
+    spring.security.oauth2.client.provider.default.issuer-uri=http://localhost:8090/auth/realms/urlaubsverwaltung-realm
 
     # Deactivate mail health check to prevent k8s to crashLoop,
     # because mail will be configured after the first mail was sent.

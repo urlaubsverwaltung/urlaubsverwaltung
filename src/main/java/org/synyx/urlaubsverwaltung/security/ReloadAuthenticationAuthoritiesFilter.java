@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,13 +57,11 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         final List<GrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        try {
-            final Authentication updatedAuthentication = getUpdatedAuthentication(updatedAuthorities, authentication);
-            SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
-            LOG.info("Updated authorities of person with the id {} from {} to {}", signedInUser.getId(), authentication.getAuthorities(), updatedAuthorities);
-        } catch (ReloadAuthenticationException e) {
-            LOG.error(e.getMessage());
-        }
+        final OAuth2AuthenticationToken oAuth2Auth = (OAuth2AuthenticationToken) authentication;
+        final Authentication updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
+
+        SecurityContextHolder.getContext().setAuthentication(updatedAuthentication);
+        LOG.info("Updated authorities of person with the id {} from {} to {}", signedInUser.getId(), authentication.getAuthorities(), updatedAuthorities);
 
         chain.doFilter(request, response);
     }
@@ -73,18 +70,5 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         return signedInUser.getPermissions().stream()
             .map(role -> new SimpleGrantedAuthority(role.name()))
             .collect(toList());
-    }
-
-    private Authentication getUpdatedAuthentication(List<GrantedAuthority> updatedAuthorities, Authentication authentication) throws ReloadAuthenticationException {
-        final Authentication updatedAuthentication;
-        if (authentication instanceof OAuth2AuthenticationToken oAuth2Auth) {
-            updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
-        } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            updatedAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), updatedAuthorities);
-        } else {
-            throw new ReloadAuthenticationException("Could not update authentication with updated authorities, because of type mismatch");
-        }
-
-        return updatedAuthentication;
     }
 }

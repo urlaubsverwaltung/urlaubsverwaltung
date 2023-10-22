@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,89 +38,31 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
     @MockBean
     private AvailabilityService availabilityService;
 
-
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void getAvailabilitiesIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities"));
-        resultActions.andExpect(status().isUnauthorized());
+        perform(
+            get("/api/persons/5/availabilities")
+        )
+            .andExpect(status().is4xxClientError());
     }
 
-    @Test
-    @WithMockUser
-    void getAvailabilityAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
+    void getAvailabilityForOtherUserIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
 
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/5/availabilities")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void getAvailabilityAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getAvailabilityAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "BOSS")
-    void getAvailabilityAsBossUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void getAvailabilityAsAdminUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void getAvailabilityAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "OFFICE")
     void getAvailabilitiesHasOfficeRole() throws Exception {
 
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -125,12 +70,14 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
 
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/5/availabilities")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
+            .andExpect(status().isOk());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
