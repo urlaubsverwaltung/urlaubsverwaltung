@@ -19,11 +19,14 @@ services:
       - '1025:1025'
       - '8025:8025'
   keycloak:
-    build: ./docker/keycloak
-    image: urlaubsverwaltung/keycloak-with-demodata:22.0.4
+    image: quay.io/keycloak/keycloak:22.0.4
+    command: ["start-dev", "--import-realm"]
     environment:
       KC_HTTP_PORT: '8090'
       KC_HOSTNAME_STRICT: 'false'
       KC_HOSTNAME_STRICT_HTTPS: 'false'
+      KC_CACHE: 'local'
     ports:
       - '8090:8090'
+    volumes:
+      - ./docker/keycloak/export:/opt/keycloak/data/import
