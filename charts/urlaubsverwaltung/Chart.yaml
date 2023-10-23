@@ -1,6 +1,6 @@
 apiVersion: v2
-name: urlaubsverwaltung
-description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
+name: helm-chart-urlaubsverwaltung
+description: Helm Chart for the urlaubsverwaltung
 type: application
 version: 5.0.0
 appVersion: 5.0.0-M2
