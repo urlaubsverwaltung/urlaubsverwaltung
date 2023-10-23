@@ -5,33 +5,12 @@ on:
 
 jobs:
   release:
-    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
-    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
-    permissions:
-      contents: write
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup git user
-        uses: fregante/setup-git-user@v2
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-
-      - name: Add dependency repositories
-        run: |
-          for dir in $(ls -d charts/*/); do
-            helm dependency list $dir 2> /dev/null | tail +2 | head -n -1 | awk '{ print "helm repo add " $1 " " $3 }' | while read cmd; do $cmd; done
-          done
-
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@main
+        uses: stefanprodan/helm-gh-pages@1.7.0
         with:
-          mark_as_latest: false
-          packages_with_index: true
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          dependencies: bitnami,https://charts.bitnami.com/bitnami
+          token: ${{ secrets.GITHUB_TOKEN }}
