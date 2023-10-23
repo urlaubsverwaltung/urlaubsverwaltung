@@ -10,10 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b541174c-7ac2-460e-a8e7-d27e00ecacb9" name="Changes" comment="Add departments of person to overtime list and details">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/index.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="b541174c-7ac2-460e-a8e7-d27e00ecacb9" name="Changes" comment="Add departments of person to overtime list and details" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -194,8 +191,8 @@
       <recent name="" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/docker/keycloak/keycloak-export" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/docker/keycloak/keycloak-export" />
       <recent name="$PROJECT_DIR$/src/test/resources/docker/" />
       <recent name="$PROJECT_DIR$/src/test/resources/docker/keycloak" />
       <recent name="$PROJECT_DIR$/src/test/resources" />
