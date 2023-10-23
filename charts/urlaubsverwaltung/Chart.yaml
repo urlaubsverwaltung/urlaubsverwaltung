@@ -3,7 +3,7 @@ name: helm-chart-urlaubsverwaltung
 description: Helm Chart for the urlaubsverwaltung
 type: application
 version: 5.0.0
-appVersion: 5.0.0-M2
+appVersion: 5.0.0-M3
 keywords:
   - urlaub
 home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
