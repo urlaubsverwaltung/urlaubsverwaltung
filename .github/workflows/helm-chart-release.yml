@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run chart-releaser
-        uses: stefanprodan/helm-gh-pages@1.7.0
+        uses: stefanprodan/helm-gh-pages@v1.7.0
         with:
           dependencies: bitnami,https://charts.bitnami.com/bitnami
           token: ${{ secrets.GITHUB_TOKEN }}
