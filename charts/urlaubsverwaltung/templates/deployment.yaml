@@ -62,7 +62,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.postgresql.fullname" . }}
-                  key: postgresql-password
+                  key: postgres-password
             {{- end }}
             {{- if .Values.customizedManagementServer.enabled }}
             - name: MANAGEMENT_SERVER_PORT
