@@ -25,7 +25,7 @@ entries:
     - https://github.com/urlaubsverwaltung/urlaubsverwaltung
     type: application
     urls:
-    - https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/download/urlaubsverwaltung-5.0.0/urlaubsverwaltung-5.0.0.tgz
+    - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-5.0.0.tgz
     version: 5.0.0
   - apiVersion: v2
     appVersion: 4.55.1
