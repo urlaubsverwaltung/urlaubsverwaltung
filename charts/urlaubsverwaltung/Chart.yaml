@@ -1,5 +1,5 @@
 apiVersion: v2
-name: helm-chart-urlaubsverwaltung
+name: urlaubsverwaltung
 description: Helm Chart for the urlaubsverwaltung
 type: application
 version: 5.0.0
