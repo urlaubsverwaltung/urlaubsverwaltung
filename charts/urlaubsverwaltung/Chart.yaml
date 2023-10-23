@@ -3,7 +3,7 @@ name: urlaubsverwaltung
 description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
 type: application
 version: 5.0.0
-appVersion: 5.0.0-M3
+appVersion: 5.0.0-M2
 keywords:
   - urlaub
 home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
