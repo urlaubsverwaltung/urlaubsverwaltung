@@ -45,6 +45,10 @@
               th:data-enabled="${specialLeaveSettingsItem.active}"
             >
               <td data-col-status th:data-table-head-text="#{settings.specialleave.table.head.state}">
+                <input
+                  type="hidden"
+                  th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].messageKey}"
+                />
                 <span class="checkbox-switch">
                   <input
                     type="hidden"

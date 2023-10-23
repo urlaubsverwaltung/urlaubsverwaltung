@@ -69,7 +69,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     @Override
     public void updateVacationTypes(List<VacationTypeUpdate> vacationTypeUpdates) {
 
-        final Map<Long, VacationTypeUpdate> byId = vacationTypeUpdates.stream().collect(toMap(VacationTypeUpdate::getId, vacationTypeUpdate -> vacationTypeUpdate));
+        final Map<Long, VacationTypeUpdate> byId = vacationTypeUpdates.stream()
+            .collect(toMap(VacationTypeUpdate::getId, vacationTypeUpdate -> vacationTypeUpdate));
 
         final List<VacationTypeEntity> updatedEntities = vacationTypeRepository.findAllById(byId.keySet())
             .stream()

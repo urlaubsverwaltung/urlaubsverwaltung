@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
@@ -31,12 +32,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OTHER;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.CYAN;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class SettingsAbsenceTypesViewControllerTest {
+
+    private static final Locale LOCALE_DE_AT = Locale.forLanguageTag("de-AT");
+    private static final Locale LOCALE_EL = Locale.forLanguageTag("el");
 
     private SettingsAbsenceTypesViewController sut;
 
@@ -141,6 +148,75 @@ class SettingsAbsenceTypesViewControllerTest {
         ));
 
         verifyNoInteractions(settingsService);
+    }
+
+    @Test
+    void ensureAddAbsenceType() throws Exception {
+
+        final AbsenceTypeSettingsItemDto existingAbsenceType = new AbsenceTypeSettingsItemDto();
+        existingAbsenceType.setId(1L);
+        existingAbsenceType.setActive(true);
+        existingAbsenceType.setLabel("label-1");
+        existingAbsenceType.setCategory(HOLIDAY);
+        existingAbsenceType.setRequiresApprovalToApply(true);
+        existingAbsenceType.setRequiresApprovalToCancel(true);
+        existingAbsenceType.setVisibleToEveryone(true);
+        existingAbsenceType.setColor(CYAN);
+
+        final AbsenceTypeSettingsItemDto newAbsenceType = new AbsenceTypeSettingsItemDto();
+        newAbsenceType.setActive(false);
+        newAbsenceType.setLabel(null);
+        newAbsenceType.setCategory(OTHER);
+        newAbsenceType.setLabels(List.of(
+            new AbsenceTypeSettingsItemLabelDto(GERMAN, ""),
+            new AbsenceTypeSettingsItemLabelDto(LOCALE_DE_AT, ""),
+            new AbsenceTypeSettingsItemLabelDto(ENGLISH, ""),
+            new AbsenceTypeSettingsItemLabelDto(LOCALE_EL, "")
+        ));
+        newAbsenceType.setRequiresApprovalToApply(false);
+        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setVisibleToEveryone(false);
+        newAbsenceType.setColor(YELLOW);
+
+        final AbsenceTypeSettingsDto absenceTypeSettings = new AbsenceTypeSettingsDto();
+        absenceTypeSettings.setItems(List.of(existingAbsenceType, newAbsenceType));
+
+        final SpecialLeaveSettingsItemDto specialLeaveSettingsItem = new SpecialLeaveSettingsItemDto();
+        specialLeaveSettingsItem.setId(2L);
+        specialLeaveSettingsItem.setActive(true);
+        specialLeaveSettingsItem.setMessageKey("message-key-2");
+        specialLeaveSettingsItem.setDays(3);
+
+        final SpecialLeaveSettingsDto specialLeaveSettings = new SpecialLeaveSettingsDto();
+        specialLeaveSettings.setSpecialLeaveSettingsItems(List.of(specialLeaveSettingsItem));
+
+        final SettingsAbsenceTypesDto expectedSettings = new SettingsAbsenceTypesDto();
+        expectedSettings.setId(1337L);
+        expectedSettings.setAbsenceTypeSettings(absenceTypeSettings);
+        expectedSettings.setSpecialLeaveSettings(specialLeaveSettings);
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("add-absence-type", "")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].id", "1")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].label", "label-1")
+                .param("absenceTypeSettings.items[0].category", "HOLIDAY")
+                .param("absenceTypeSettings.items[0].requiresApprovalToApply", "true")
+                .param("absenceTypeSettings.items[0].requiresApprovalToCancel", "true")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                .param("absenceTypeSettings.items[0].visibleToEveryone", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].active", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].messageKey", "message-key-2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "3")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("settings", is(expectedSettings)))
+            .andExpect(view().name("settings/absence-types/settings_absence_types"));
+
+        verifyNoInteractions(vacationTypeService);
     }
 
     private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {

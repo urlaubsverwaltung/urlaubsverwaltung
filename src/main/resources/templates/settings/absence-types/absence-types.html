@@ -90,7 +90,34 @@
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
                 <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
-                <span th:text="${absenceType.label}" class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
+                <th:block th:if="${not #strings.isEmpty(absenceType.label)}">
+                  <input type="hidden" th:field="*{absenceTypeSettings.items[__${loop.index}__].label}" />
+                  <span th:text="${absenceType.label}" class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
+                </th:block>
+                <th:block th:if="${not #lists.isEmpty(absenceType.labels)}">
+                  <svg th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2')}"></svg>
+                  <div class="tw-space-y-2 tw-my-0.5">
+                    <div th:each="label : ${absenceType.labels}">
+                      <input
+                        type="hidden"
+                        th:field="*{absenceTypeSettings.items[__${loop.index}__].labels[__${labelStat.index}__].locale}"
+                      />
+                      <input
+                        type="text"
+                        th:field="*{absenceTypeSettings.items[__${loop.index}__].labels[__${labelStat.index}__].label}"
+                      />
+                      <span>
+                        <img
+                          th:src="@{/images/flags/{locale}.svg (locale=${label.locale})}"
+                          alt=""
+                          width="16"
+                          height="16"
+                        />
+                        <span class="tw-text-sm" th:text="${#messages.msg('locale.' + label.locale)}"></span>
+                      </span>
+                    </div>
+                  </div>
+                </th:block>
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
                 <label

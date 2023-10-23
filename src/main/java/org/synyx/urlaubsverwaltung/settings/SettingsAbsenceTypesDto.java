@@ -49,4 +49,13 @@ public class SettingsAbsenceTypesDto {
     public int hashCode() {
         return Objects.hash(id, absenceTypeSettings, specialLeaveSettings);
     }
+
+    @Override
+    public String toString() {
+        return "SettingsAbsenceTypesDto{" +
+            "id=" + id +
+            ", absenceTypeSettings=" + absenceTypeSettings +
+            ", specialLeaveSettings=" + specialLeaveSettings +
+            '}';
+    }
 }

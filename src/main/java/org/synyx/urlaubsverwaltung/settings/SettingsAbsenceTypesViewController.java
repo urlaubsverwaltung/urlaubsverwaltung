@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +59,34 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         return "settings/absence-types/settings_absence_types";
     }
 
+    @PostMapping(params = "add-absence-type")
+    @PreAuthorize(IS_OFFICE)
+    public String addNewAbsenceType(@ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto, Model model, Locale locale) {
+
+        final AbsenceTypeSettingsItemDto newAbsenceType = new AbsenceTypeSettingsItemDto();
+        newAbsenceType.setActive(false);
+        newAbsenceType.setLabel(null);
+        newAbsenceType.setCategory(VacationCategory.OTHER);
+        newAbsenceType.setLabels(List.of(
+            new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, ""),
+            new AbsenceTypeSettingsItemLabelDto(Locale.forLanguageTag("de-AT"), ""),
+            new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, ""),
+            new AbsenceTypeSettingsItemLabelDto(Locale.forLanguageTag("el"), "")
+        ));
+        newAbsenceType.setRequiresApprovalToApply(false);
+        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setVisibleToEveryone(false);
+        newAbsenceType.setColor(VacationTypeColor.YELLOW);
+
+        final List<AbsenceTypeSettingsItemDto> list = new ArrayList<>(settingsDto.getAbsenceTypeSettings().getItems());
+        list.add(newAbsenceType);
+        settingsDto.getAbsenceTypeSettings().setItems(list);
+
+        model.addAttribute("settings", settingsDto);
+
+        return "settings/absence-types/settings_absence_types";
+    }
+
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String settingsSaved(@Valid @ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto, Errors errors,
@@ -67,6 +98,7 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             return "settings/absence-types/settings_absence_types";
         }
 
+        // TODO save new VacationTypes (dto items without an id)
         final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()
             .stream()
             .map(SettingsAbsenceTypesViewController::absenceTypeDtoToVacationTypeUpdate)
