@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
@@ -61,7 +62,9 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
 
     @PostMapping(params = "add-absence-type")
     @PreAuthorize(IS_OFFICE)
-    public String addNewAbsenceType(@ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto, Model model, Locale locale) {
+    public String addNewAbsenceType(@ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto,
+                                    @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
+                                    Model model) {
 
         final AbsenceTypeSettingsItemDto newAbsenceType = new AbsenceTypeSettingsItemDto();
         newAbsenceType.setActive(false);
@@ -78,9 +81,17 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         newAbsenceType.setVisibleToEveryone(false);
         newAbsenceType.setColor(VacationTypeColor.YELLOW);
 
-        final List<AbsenceTypeSettingsItemDto> list = new ArrayList<>(settingsDto.getAbsenceTypeSettings().getItems());
-        list.add(newAbsenceType);
-        settingsDto.getAbsenceTypeSettings().setItems(list);
+        final List<AbsenceTypeSettingsItemDto> absenceTypes = new ArrayList<>(settingsDto.getAbsenceTypeSettings().getItems());
+
+        if ("frame-absence-type".equals(turboFrame)) {
+            model.addAttribute("newAbsenceType", newAbsenceType);
+            model.addAttribute("newAbsenceTypeIndex", absenceTypes.size());
+            model.addAttribute("frameNewAbsenceTypeRequested", true);
+            return "settings/absence-types/absence-types::#frame-absence-type";
+        }
+
+        absenceTypes.add(newAbsenceType);
+        settingsDto.getAbsenceTypeSettings().setItems(absenceTypes);
 
         model.addAttribute("settings", settingsDto);
 

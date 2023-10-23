@@ -219,6 +219,51 @@ class SettingsAbsenceTypesViewControllerTest {
         verifyNoInteractions(vacationTypeService);
     }
 
+    @Test
+    void ensureAddAbsenceTypeWithTurboFrame() throws Exception {
+
+        final AbsenceTypeSettingsItemDto newAbsenceType = new AbsenceTypeSettingsItemDto();
+        newAbsenceType.setActive(false);
+        newAbsenceType.setLabel(null);
+        newAbsenceType.setCategory(OTHER);
+        newAbsenceType.setLabels(List.of(
+            new AbsenceTypeSettingsItemLabelDto(GERMAN, ""),
+            new AbsenceTypeSettingsItemLabelDto(LOCALE_DE_AT, ""),
+            new AbsenceTypeSettingsItemLabelDto(ENGLISH, ""),
+            new AbsenceTypeSettingsItemLabelDto(LOCALE_EL, "")
+        ));
+        newAbsenceType.setRequiresApprovalToApply(false);
+        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setVisibleToEveryone(false);
+        newAbsenceType.setColor(YELLOW);
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("add-absence-type", "")
+                .header("Turbo-Frame", "frame-absence-type")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].id", "1")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].label", "label-1")
+                .param("absenceTypeSettings.items[0].category", "HOLIDAY")
+                .param("absenceTypeSettings.items[0].requiresApprovalToApply", "true")
+                .param("absenceTypeSettings.items[0].requiresApprovalToCancel", "true")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                .param("absenceTypeSettings.items[0].visibleToEveryone", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].active", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].messageKey", "message-key-2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "3")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("newAbsenceType", is(newAbsenceType)))
+            .andExpect(model().attribute("newAbsenceTypeIndex", 1))
+            .andExpect(model().attribute("frameNewAbsenceTypeRequested", true))
+            .andExpect(view().name("settings/absence-types/absence-types::#frame-absence-type"));
+
+        verifyNoInteractions(vacationTypeService);
+    }
+
     private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
