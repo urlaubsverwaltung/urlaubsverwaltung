@@ -6,7 +6,7 @@ leave and sick days of employees.
 ## TL;DR;
 
 ```console
-$ helm repo add urlaubsverwaltung https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo
+$ helm repo add urlaubsverwaltung https://urlaubsverwaltung.github.io/urlaubsverwaltung
 $ helm install urlaubsverwaltung urlaubsverwaltung/urlaubsverwaltung
 ```
 
