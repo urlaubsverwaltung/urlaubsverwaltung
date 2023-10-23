@@ -104,27 +104,23 @@ affinity: {}
 
 secrets: {}
 
-# see https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/master/src/main/resources/application.properties
-# for configuration options
 extraEnv: |
   - name: JAVA_OPTS
     value: >-
       -XX:+PrintFlagsFinal
-  - name: SPRING_PROFILES_ACTIVE
-    value: default
   - name: SPRING_MAIL_HOST
     value: localhost
   - name: SPRING_MAIL_PORT
     value: "25"
-  - name: UV_MAIL_APPLICATIONURL
+  - name: UV_MAIL_APPLICATION-URL
     value: https://urlaubsverwaltung.example.org
   - name: UV_MAIL_SENDER
     value: urlaubsverwaltung@example.org
   - name: UV_MAIL_ADMINISTRATOR
     value: root@example.org
+  - name: UV_CALENDAR_ORGANIZER
+    value: organizer@example.org
   - name: MANAGEMENT_HEALTH_MAIL_ENABLED
-    value: "false"
-  - name: MANAGEMENT_HEALTH_LDAP_ENABLED
     value: "false"
 
 # customize the spring boot actuator management server settings
@@ -151,11 +147,9 @@ serviceMonitor:
   # The Service port at which metrics are served
   port: http
 
-
-mariadb:
-  # If `true`, the MariaDB dependency is enabled
+postgresql:
+  # If `true`, the PostgreSQL dependency is enabled
   enabled: true
   auth:
     database: urlaubsverwaltung
     username: urlaubsverwaltung
-

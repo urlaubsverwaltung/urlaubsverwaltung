@@ -53,16 +53,16 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            {{- if .Values.mariadb.enabled }}
+            {{- if .Values.postgresql.enabled }}
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mariadb://{{ include "urlaubsverwaltung.mariadb.fullname" . }}:{{ .Values.mariadb.primary.service.ports.mysql }}/{{ .Values.mariadb.auth.database }}
+              value: jdbc:postgresql://{{ include "urlaubsverwaltung.postgresql.fullname" . }}:{{ .Values.postgresql.primary.service.ports.postgresql }}/{{ .Values.postgresql.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
-              value: {{ .Values.mariadb.auth.username}}
+              value: {{ .Values.postgresql.auth.username}}
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "urlaubsverwaltung.mariadb.fullname" . }}
-                  key: mariadb-password
+                  name: {{ include "urlaubsverwaltung.postgresql.fullname" . }}
+                  key: postgresql-password
             {{- end }}
             {{- if .Values.customizedManagementServer.enabled }}
             - name: MANAGEMENT_SERVER_PORT
