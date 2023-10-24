@@ -58,7 +58,7 @@ import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-@Testcontainers
+@Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @UiTest
 class ApplicationForLeaveUIIT {

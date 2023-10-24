@@ -38,6 +38,9 @@ spring:
   thymeleaf:
     servlet:
       produce-partial-output-while-processing: false
+  threads:
+    virtual:
+      enabled: true
 
 server:
   compression:
