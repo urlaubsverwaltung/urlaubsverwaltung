@@ -47,6 +47,9 @@ spring:
       initialize-schema: always
   messages:
     fallback-to-system-locale: false
+  threads:
+    virtual:
+      enabled: true
 
 info:
   app:
