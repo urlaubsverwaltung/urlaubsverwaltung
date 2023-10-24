@@ -1,0 +1,27 @@
+# node
+node_modules/
+/node/
+
+# netbeans
+/nbproject/
+nbactions.xml
+/.settings/
+/target/
+/lib/~/
+*.dump.sql
+logs
+
+# Ignore log
+*.log
+
+# Ignore IntelliJ IDEA project files
+.idea
+*.iml
+
+# Eclipse ignores
+.classpath
+.project
+
+# Ignore vim swap files
+*.sw[o|p]
+*.sdsrc
