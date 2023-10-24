@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
@@ -109,12 +111,19 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             return "settings/absence-types/settings_absence_types";
         }
 
-        // TODO save new VacationTypes (dto items without an id)
         final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()
             .stream()
+            .filter(dto -> dto.getId() != null)
             .map(SettingsAbsenceTypesViewController::absenceTypeDtoToVacationTypeUpdate)
             .toList();
         vacationTypeService.updateVacationTypes(vacationTypeUpdates);
+
+        final List<VacationType<?>> newVacationTypes = settingsDto.getAbsenceTypeSettings().getItems()
+            .stream()
+            .filter(dto -> dto.getId() == null)
+            .map(SettingsAbsenceTypesViewController::customVacationType)
+            .collect(toList());
+        vacationTypeService.createVacationTypes(newVacationTypes);
 
         final SpecialLeaveSettingsDto specialLeaveSettingsDto = settingsDto.getSpecialLeaveSettings();
         final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
@@ -159,5 +168,20 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             absenceTypeSettingsItemDto.isVisibleToEveryone(),
             labelByLocale
         );
+    }
+
+    private static VacationType<?> customVacationType(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
+        return CustomVacationType.builder()
+            .active(absenceTypeSettingsItemDto.isActive())
+            .category(VacationCategory.OTHER)
+            .requiresApprovalToApply(absenceTypeSettingsItemDto.isRequiresApprovalToApply())
+            .requiresApprovalToCancel(absenceTypeSettingsItemDto.isRequiresApprovalToCancel())
+            .color(absenceTypeSettingsItemDto.getColor())
+            .visibleToEveryone(absenceTypeSettingsItemDto.isVisibleToEveryone())
+            .labelByLocale(absenceTypeSettingsItemDto.getLabels().stream().collect(toMap(
+                AbsenceTypeSettingsItemLabelDto::getLocale,
+                AbsenceTypeSettingsItemLabelDto::getLabel
+            )))
+            .build();
     }
 }

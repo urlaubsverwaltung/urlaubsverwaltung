@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,4 +36,11 @@ public interface VacationTypeService {
      * @param vacationTypeUpdates the vacation types to update
      */
     void updateVacationTypes(List<VacationTypeUpdate> vacationTypeUpdates);
+
+    /**
+     * Creates new vacation types. Ids of every element must be null.
+     *
+     * @param vacationTypes to create
+     */
+    void createVacationTypes(Collection<VacationType<?>> vacationTypes);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -93,6 +94,23 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .collect(toList());
 
         vacationTypeRepository.saveAll(updatedEntities);
+    }
+
+    @Override
+    public void createVacationTypes(Collection<VacationType<?>> vacationTypes) {
+
+        final List<VacationTypeEntity> newEntities = vacationTypes.stream()
+            .map(VacationTypeServiceImpl::convert)
+            .filter(entity -> {
+                final boolean isNew = entity.getId() == null;
+                if (!isNew) {
+                    LOG.info("skipping vacationType={} from list of newly created vacation types due to existing id.", entity);
+                }
+                return isNew;
+            })
+            .toList();
+
+        vacationTypeRepository.saveAll(newEntities);
     }
 
     public static VacationTypeEntity convert(VacationType<?> vacationType) {

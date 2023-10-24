@@ -10,12 +10,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
@@ -262,6 +265,49 @@ class SettingsAbsenceTypesViewControllerTest {
             .andExpect(view().name("settings/absence-types/absence-types::#frame-absence-type"));
 
         verifyNoInteractions(vacationTypeService);
+    }
+
+    @Test
+    void ensureSaveNewAbsenceType() throws Exception {
+
+        perform(
+            post("/web/settings/absence-types")
+                .param("id", "1337")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("absenceTypeSettings.items[0].label", "label-1")
+                .param("absenceTypeSettings.items[0].requiresApprovalToApply", "true")
+                .param("absenceTypeSettings.items[0].requiresApprovalToCancel", "true")
+                .param("absenceTypeSettings.items[0].color", "CYAN")
+                .param("absenceTypeSettings.items[0].visibleToEveryone", "true")
+                .param("absenceTypeSettings.items[0].labels[0].locale", "de")
+                .param("absenceTypeSettings.items[0].labels[0].label", "label-deutsch")
+                .param("absenceTypeSettings.items[0].labels[1].locale", "de_AT")
+                .param("absenceTypeSettings.items[0].labels[1].label", "label-österreich")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].active", "true")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].messageKey", "message-key-2")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "3")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/settings/absence-types"))
+            .andExpect(flash().attribute("success", true));
+
+        verify(vacationTypeService).updateVacationTypes(List.of());
+
+        verify(vacationTypeService).createVacationTypes(List.of(
+            CustomVacationType.builder()
+                .active(true)
+                .category(VacationCategory.OTHER)
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(CYAN)
+                .visibleToEveryone(true)
+                .labelByLocale(Map.of(
+                    GERMAN, "label-deutsch",
+                    Locale.forLanguageTag("de_AT"), "label-österreich"
+                ))
+                .build()
+        ));
     }
 
     private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {

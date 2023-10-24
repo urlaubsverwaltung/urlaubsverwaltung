@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,8 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OTHER;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.BLUE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
@@ -170,5 +173,76 @@ class VacationTypeServiceImplTest {
         sut.updateVacationTypes(List.of());
 
         verify(vacationTypeRepository).saveAll(emptyList());
+    }
+
+    @Test
+    void ensureCreateVacationTypesIgnoresElementsWithIds() {
+        sut.createVacationTypes(List.of(CustomVacationType.builder().id(1L).build()));
+        verify(vacationTypeRepository).saveAll(List.of());
+    }
+
+    @Test
+    void ensureCreateVacationTypes() {
+
+        sut.createVacationTypes(List.of(
+            CustomVacationType.builder()
+                .active(true)
+                .category(OTHER)
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(true)
+                .labelByLocale(Map.of(
+                    Locale.GERMAN, "jokertag",
+                    Locale.ENGLISH, "jokerday"
+                ))
+                .build(),
+            CustomVacationType.builder()
+                .active(false)
+                .category(HOLIDAY)
+                .requiresApprovalToApply(false)
+                .requiresApprovalToCancel(false)
+                .color(BLUE)
+                .visibleToEveryone(false)
+                .labelByLocale(Map.of(
+                    Locale.GERMAN, "familientag",
+                    Locale.ENGLISH, "family day"
+                ))
+                .build()
+        ));
+
+        @SuppressWarnings("unchecked")
+        final ArgumentCaptor<List<VacationTypeEntity>> captor = ArgumentCaptor.forClass(List.class);
+
+        verify(vacationTypeRepository).saveAll(captor.capture());
+
+        final List<VacationTypeEntity> actual = captor.getValue();
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0)).satisfies(entity -> {
+            assertThat(entity.isActive()).isTrue();
+            assertThat(entity.getCategory()).isEqualTo(OTHER);
+            assertThat(entity.isRequiresApprovalToApply()).isTrue();
+            assertThat(entity.isRequiresApprovalToCancel()).isTrue();
+            assertThat(entity.getColor()).isEqualTo(YELLOW);
+            assertThat(entity.isVisibleToEveryone()).isTrue();
+            assertThat(entity.getLabelByLocale()).containsExactlyEntriesOf(Map.of(
+                Locale.GERMAN, "jokertag",
+                Locale.ENGLISH, "jokerday"
+            ));
+            assertThat(entity.getMessageKey()).isNull();
+        });
+        assertThat(actual.get(1)).satisfies(entity -> {
+            assertThat(entity.isActive()).isFalse();
+            assertThat(entity.getCategory()).isEqualTo(HOLIDAY);
+            assertThat(entity.isRequiresApprovalToApply()).isFalse();
+            assertThat(entity.isRequiresApprovalToCancel()).isFalse();
+            assertThat(entity.getColor()).isEqualTo(BLUE);
+            assertThat(entity.isVisibleToEveryone()).isFalse();
+            assertThat(entity.getLabelByLocale()).containsExactlyEntriesOf(Map.of(
+                Locale.GERMAN, "familientag",
+                Locale.ENGLISH, "family day"
+            ));
+            assertThat(entity.getMessageKey()).isNull();
+        });
     }
 }
