@@ -48,7 +48,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService, new OidcSecurityProperties());
+        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService);
     }
 
     @Nested

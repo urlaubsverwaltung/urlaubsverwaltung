@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.oidc.OidcSecurityProperties;
 
 import java.time.Instant;
 import java.util.List;
@@ -39,7 +38,7 @@ class JwtToPersonGrantedAuthoritiesConverterTest {
 
     @BeforeEach
     void setUp() {
-        sut = new JwtToPersonGrantedAuthoritiesConverter(personService, new OidcSecurityProperties());
+        sut = new JwtToPersonGrantedAuthoritiesConverter(personService);
     }
 
     @Test

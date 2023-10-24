@@ -45,7 +45,7 @@ class OidcPersonAuthoritiesMapperTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OidcPersonAuthoritiesMapper(personService, new OidcSecurityProperties());
+        sut = new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Test

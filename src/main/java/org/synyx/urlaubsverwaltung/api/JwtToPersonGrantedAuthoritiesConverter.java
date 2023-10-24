@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.security.oidc.OidcSecurityProperties;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +19,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 class JwtToPersonGrantedAuthoritiesConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final PersonService personService;
-    private final OidcSecurityProperties properties;
 
-    JwtToPersonGrantedAuthoritiesConverter(PersonService personService, OidcSecurityProperties properties) {
+    JwtToPersonGrantedAuthoritiesConverter(PersonService personService) {
         this.personService = personService;
-        this.properties = properties;
     }
 
     @Override
@@ -34,7 +31,7 @@ class JwtToPersonGrantedAuthoritiesConverter implements Converter<Jwt, AbstractA
 
     private List<SimpleGrantedAuthority> applicationAuthorities(Jwt jwt) {
 
-        final String userUniqueID = jwt.getClaimAsString(properties.getUserMappings().getIdentifier());
+        final String userUniqueID = jwt.getSubject();
         final Optional<Person> maybePerson = personService.getPersonByUsername(userUniqueID);
 
         if (maybePerson.isPresent()) {
