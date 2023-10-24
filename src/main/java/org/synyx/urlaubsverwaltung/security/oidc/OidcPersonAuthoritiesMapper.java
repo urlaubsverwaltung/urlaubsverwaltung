@@ -20,6 +20,8 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -29,11 +31,9 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
-    private final OidcSecurityProperties.UserMappings userMappings;
 
-    OidcPersonAuthoritiesMapper(PersonService personService, OidcSecurityProperties properties) {
+    OidcPersonAuthoritiesMapper(PersonService personService) {
         this.personService = personService;
-        this.userMappings = properties.getUserMappings();
     }
 
     @Override
@@ -81,21 +81,21 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractIdentifier(OidcUserAuthority authority) {
-        return getClaimAsString(authority, userMappings::getIdentifier)
+        return getClaimAsString(authority, () -> SUB)
             .orElseThrow(() -> {
-                LOG.error("Can not retrieve the subject of the id token for oidc person mapping with {} on {} ", userMappings.getIdentifier(), authority);
+                LOG.error("Can not retrieve the subject of the id token for oidc person mapping on {} ", authority);
                 return new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
             });
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
-        return getClaimAsString(authority, userMappings::getEmail)
+        return getClaimAsString(authority, () -> EMAIL)
             .filter(email -> EmailValidator.getInstance().isValid(email))
             .orElse(null);
     }
 
-    private Optional<String> getClaimAsString(OidcUserAuthority authority, Supplier<String> claimSupplier) {
-        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get()))
-            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimSupplier.get())));
+    private Optional<String> getClaimAsString(OidcUserAuthority authority, Supplier<String> claimAccessor) {
+        return ofNullable(authority.getIdToken()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimAccessor.get()))
+            .or(() -> ofNullable(authority.getUserInfo()).map(oidcIdToken -> oidcIdToken.getClaimAsString(claimAccessor.get())));
     }
 }

@@ -146,10 +146,6 @@ uv.security.oidc.post-logout-redirect-uri={baseUrl}
 uv.security.oidc.group-claim.boolean=false
 uv.security.oidc.group-claim.claim-name=groups
 uv.security.oidc.group-claim.permitted-group=urlaubsverwaltung_user
-uv.security.oidc.user-mappings.identifier=sub
-uv.security.oidc.user-mappings.email=email
-uv.security.oidc.user-mappings.family-name=family_name
-uv.security.oidc.user-mappings.given-name=given_name
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
