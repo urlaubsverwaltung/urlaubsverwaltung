@@ -11,6 +11,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  MAVEN_ARGS: "--batch-mode --errors --fail-at-end --show-version"
+
 jobs:
   build:
     name: build and analyse
@@ -18,38 +21,24 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
-    env:
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
+
+      - uses: actions/setup-java@v3
         with:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+
       - name: Build
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          -Pcoverage
-          dependency:go-offline
-          clean verify
+        run: ./mvnw -Pcoverage dependency:go-offline clean verify
+
       - name: Analyse with SonarCloud
         if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
         run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          -Pcoverage
-          sonar:sonar
+          ./mvnw -Pcoverage sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=urlaubsverwaltung
           -Dsonar.projectKey=urlaubsverwaltung_urlaubsverwaltung
@@ -62,6 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v3
         if: always()
