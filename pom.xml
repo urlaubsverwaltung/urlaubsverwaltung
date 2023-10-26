@@ -349,6 +349,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <layout>ZIP</layout>
+          <loaderImplementation>CLASSIC</loaderImplementation><!-- TODO remove with 3.2.0-RC2-->
           <image>
             <name>
               ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
