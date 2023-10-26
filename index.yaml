@@ -3,6 +3,31 @@ entries:
   urlaubsverwaltung:
   - apiVersion: v2
     appVersion: 5.0.0-M3
+    created: "2023-10-26T15:32:23.023156834Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.12.10
+    description: Helm Chart for the urlaubsverwaltung
+    digest: 4ab8edfb223c9f94c3cff54698cbd9fd47c5ea33f115918bd12ad93e1bd832bb
+    home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    keywords:
+    - urlaub
+    maintainers:
+    - email: Johannes.Graf@focus-shift.de
+      name: Johannes Graf
+    - email: Tobias.Schneider@focus-shift.de
+      name: Tobias Schneider
+    name: urlaubsverwaltung
+    sources:
+    - https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    type: application
+    urls:
+    - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-5.0.2.tgz
+    version: 5.0.2
+  - apiVersion: v2
+    appVersion: 5.0.0-M3
     created: "2023-10-26T14:32:01.481808946Z"
     dependencies:
     - condition: postgresql.enabled
@@ -228,4 +253,4 @@ entries:
     urls:
     - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-26T14:32:01.474637886Z"
+generated: "2023-10-26T15:32:23.015583172Z"
