@@ -4,15 +4,12 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -69,17 +66,9 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             personService.update(existentPerson);
 
         } else {
-            final Person createdPerson = personService.create(userUniqueID, lastName, firstName, emailAddress, List.of(), getRoles(oidcUser));
+            final Person createdPerson = personService.create(userUniqueID, lastName, firstName, emailAddress);
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
-    }
-
-    private List<Role> getRoles(OidcUser oidcUser) {
-        return oidcUser.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .map(Role::valueOf)
-            .toList();
     }
 
     private String extractIdentifier(OidcUser oidcUser) {
