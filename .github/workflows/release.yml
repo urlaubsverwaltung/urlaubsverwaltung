@@ -9,7 +9,7 @@ env:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
 jobs:
-  release:
+  create-github-release:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -27,10 +27,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Build jar with Maven
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          clean verify
-      - name: Extract release tag
+        run: ./mvnw $MAVEN_CLI_OPTS verify
+      - name: Extract release version
         id: vars
         run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
       - name: Create Release
@@ -46,7 +44,7 @@ jobs:
 
   container-upload-github:
     needs:
-      - release
+      - create-github-release
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +73,7 @@ jobs:
 
   container-upload-docker-hub-urlaubsverwaltung:
     needs:
-      - release
+      - create-github-release
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -104,7 +102,7 @@ jobs:
 
   container-upload-docker-hub-synyx:
     needs:
-      - release
+      - create-github-release
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
