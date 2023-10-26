@@ -57,12 +57,12 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://{{ include "urlaubsverwaltung.postgresql.fullname" . }}:{{ .Values.postgresql.primary.service.ports.postgresql }}/{{ .Values.postgresql.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
-              value: {{ .Values.postgresql.auth.username}}
+              value: {{ .Values.postgresql.auth.username }}
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "urlaubsverwaltung.postgresql.fullname" . }}
-                  key: postgres-password
+                  key: password
             {{- end }}
             {{- if .Values.customizedManagementServer.enabled }}
             - name: MANAGEMENT_SERVER_PORT
