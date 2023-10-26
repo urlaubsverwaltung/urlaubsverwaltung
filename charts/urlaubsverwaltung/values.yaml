@@ -150,6 +150,3 @@ serviceMonitor:
 postgresql:
   # If `true`, the PostgreSQL dependency is enabled
   enabled: true
-  auth:
-    database: urlaubsverwaltung
-    username: urlaubsverwaltung
