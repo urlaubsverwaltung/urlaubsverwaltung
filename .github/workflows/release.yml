@@ -19,13 +19,6 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Build jar with Maven
         run: ./mvnw $MAVEN_CLI_OPTS verify
       - name: Extract release version
@@ -54,13 +47,6 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -83,13 +69,6 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Publish docker image to Docker Hub urlaubsverwaltung
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -112,13 +91,6 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Publish docker image to Docker Hub synyx
         run: >
           ./mvnw $MAVEN_CLI_OPTS
