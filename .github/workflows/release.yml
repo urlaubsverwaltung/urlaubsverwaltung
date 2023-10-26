@@ -5,11 +5,12 @@ on:
     tags:
       - 'urlaubsverwaltung*'
 
+env:
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
 jobs:
   release:
     runs-on: ubuntu-22.04
-    env:
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -42,6 +43,26 @@ jobs:
           files: |
             ./target/urlaubsverwaltung-*.jar
           prerelease: true
+
+  container-upload-github:
+    needs:
+      - release
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'liberica'
+          java-version: '21'
+          cache: 'maven'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -51,6 +72,26 @@ jobs:
           -Ddocker-publish-registry-path=${{ github.repository }}
           -Ddocker-publish-registry-username=${{ github.actor }}
           -Ddocker-publish-registry-password=${{ secrets.GITHUB_TOKEN }}
+
+  container-upload-docker-hub-urlaubsverwaltung:
+    needs:
+      - release
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'liberica'
+          java-version: '21'
+          cache: 'maven'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Publish docker image to Docker Hub urlaubsverwaltung
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -60,6 +101,26 @@ jobs:
           -Ddocker-publish-registry-path=urlaubsverwaltung
           -Ddocker-publish-registry-username=${{ secrets.DOCKER_UV_USERNAME }}
           -Ddocker-publish-registry-password=${{ secrets.DOCKER_UV_TOKEN }}
+
+  container-upload-docker-hub-synyx:
+    needs:
+      - release
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'liberica'
+          java-version: '21'
+          cache: 'maven'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Publish docker image to Docker Hub synyx
         run: >
           ./mvnw $MAVEN_CLI_OPTS
