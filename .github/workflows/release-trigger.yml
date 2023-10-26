@@ -26,22 +26,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
+
       - name: Build
         run: ./mvnw -Pcoverage clean verify
+
+      - name: Setup git user
+        uses: fregante/setup-git-user@v2
+
       - name: Create Release Notes
         uses: docker://decathlon/release-notes-generator-action:3.1.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_FOLDER: .chglog/
           FILENAME: ${{ github.event.inputs.releaseVersion }}
-      - name: Setup git user
-        uses: fregante/setup-git-user@v2
       - name: Commit Release Notes
         run: |
           git add .chglog/*.md
@@ -51,6 +55,7 @@ jobs:
         with:
           github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
+
       - name: Set release version
         run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
       - name: Commit release version
@@ -62,6 +67,7 @@ jobs:
         with:
           github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
+
       - name: Set new snapshot version
         run: ./mvnw versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
       - name: Commit new snapshot version
