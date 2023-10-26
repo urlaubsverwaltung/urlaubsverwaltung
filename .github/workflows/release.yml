@@ -28,7 +28,6 @@ jobs:
       - name: Build jar with Maven
         run: >
           ./mvnw $MAVEN_CLI_OPTS
-          -Pcoverage
           clean verify
       - name: Extract release tag
         id: vars
