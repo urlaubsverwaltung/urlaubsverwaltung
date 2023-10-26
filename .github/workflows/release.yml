@@ -6,7 +6,7 @@ on:
       - 'urlaubsverwaltung*'
 
 env:
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  MAVEN_ARGS: "--batch-mode --errors --fail-at-end --show-version"
 
 jobs:
   create-github-release:
@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
       - name: Build jar with Maven
-        run: ./mvnw $MAVEN_CLI_OPTS verify
+        run: ./mvnw clean package
       - name: Extract release version
         id: vars
         run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
@@ -47,8 +47,7 @@ jobs:
           cache: 'maven'
       - name: Publish docker image to GitHub Container Registry
         run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          spring-boot:build-image
+          ./mvnw spring-boot:build-image
           -Dspring-boot.build-image.publish=true
           -Ddocker-publish-registry=ghcr.io
           -Ddocker-publish-registry-path=${{ github.repository }}
@@ -68,8 +67,7 @@ jobs:
           cache: 'maven'
       - name: Publish docker image to Docker Hub urlaubsverwaltung
         run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          spring-boot:build-image
+          ./mvnw spring-boot:build-image
           -Dspring-boot.build-image.publish=true
           -Ddocker-publish-registry=registry.hub.docker.com
           -Ddocker-publish-registry-path=urlaubsverwaltung
@@ -89,8 +87,7 @@ jobs:
           cache: 'maven'
       - name: Publish docker image to Docker Hub synyx
         run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          spring-boot:build-image
+          ./mvnw spring-boot:build-image
           -Dspring-boot.build-image.publish=true
           -Ddocker-publish-registry=registry.hub.docker.com
           -Ddocker-publish-registry-path=synyx
