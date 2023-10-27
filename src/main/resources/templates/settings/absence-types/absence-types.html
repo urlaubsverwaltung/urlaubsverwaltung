@@ -119,9 +119,11 @@
                       th:attrappend="open=${#bools.isTrue(frameNewAbsenceTypeRequested) ? true : null}"
                     >
                       <summary class="tw-flex tw-items-center tw-shrink-0">
-                        <svg
-                          th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2 tw-cursor-pointer')}"
-                        ></svg>
+                        <span th:data-title="#{settings.absenceTypes.action.labels.button.tooltip}">
+                          <svg
+                            th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2 tw-cursor-pointer')}"
+                          ></svg>
+                        </span>
                         <span
                           th:text="${absenceType.label}"
                           class="absence-type-cell-text tw-flex-1 tw-cursor-default sm:tw-truncate"
