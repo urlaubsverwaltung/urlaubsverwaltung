@@ -73,11 +73,15 @@
             <th:block th:each="absenceType, loop : ${settings.absenceTypeSettings.items}">
               <li
                 th:fragment="item-absence-type(absenceType,index)"
-                th:with="index=${index ?: loop.index}"
+                th:with="index=${index ?: loop.index}, isCustomVacationType=${not #lists.isEmpty(absenceType.labels)}"
                 class="absence-type-list-item"
                 th:data-enabled="${absenceType.active}"
               >
-                <div data-col-status class="tw-flex sm:tw-items-center">
+                <div
+                  data-col-status
+                  class="tw-flex"
+                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
+                >
                   <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-cell-title"> </span>
                   <span class="absence-type-cell-text tw-flex-1 checkbox-switch">
                     <input
@@ -101,7 +105,7 @@
                 </div>
                 <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
                   <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
-                  <th:block th:if="${not #strings.isEmpty(absenceType.label)}">
+                  <th:block th:if="${not isCustomVacationType}">
                     <input
                       type="hidden"
                       th:name="|absenceTypeSettings.items${index}].label|"
@@ -109,34 +113,48 @@
                     />
                     <span th:text="${absenceType.label}" class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
                   </th:block>
-                  <th:block th:if="${not #lists.isEmpty(absenceType.labels)}">
-                    <svg th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2')}"></svg>
-                    <div class="tw-space-y-2 tw-my-0.5">
-                      <div th:each="label : ${absenceType.labels}">
-                        <input
-                          type="hidden"
-                          th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].locale|"
-                          th:value="${label.locale}"
-                        />
-                        <input
-                          type="text"
-                          th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].label|"
-                          th:value="${label.label}"
-                        />
-                        <span>
-                          <img
-                            th:src="@{/images/flags/{locale}.svg (locale=${label.locale})}"
-                            alt=""
-                            width="16"
-                            height="16"
+                  <th:block th:if="${isCustomVacationType}">
+                    <details class="tw-my-0.5 tw-flex-1 sm:tw-truncate">
+                      <summary class="tw-flex tw-items-center tw-shrink-0">
+                        <svg
+                          th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2 tw-cursor-pointer')}"
+                        ></svg>
+                        <span
+                          th:text="${absenceType.label}"
+                          class="absence-type-cell-text tw-flex-1 tw-cursor-default sm:tw-truncate"
+                        ></span>
+                      </summary>
+                      <div class="tw-mt-2">
+                        <div th:each="label : ${absenceType.labels}" class="tw-mt-0.5">
+                          <input
+                            type="hidden"
+                            th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].locale|"
+                            th:value="${label.locale}"
                           />
-                          <span class="tw-text-sm" th:text="${#messages.msg('locale.' + label.locale)}"></span>
-                        </span>
+                          <input
+                            type="text"
+                            th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].label|"
+                            th:value="${label.label}"
+                            class="tw-px-1"
+                          />
+                          <span>
+                            <img
+                              th:src="@{/images/flags/{locale}.svg (locale=${label.locale})}"
+                              alt=""
+                              width="16"
+                              height="16"
+                            />
+                            <span class="tw-text-sm" th:text="${#messages.msg('locale.' + label.locale)}"></span>
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </details>
                   </th:block>
                 </div>
-                <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <div
+                  class="tw-flex sm:tw-justify-end"
+                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
+                >
                   <label
                     th:text="#{settings.absenceTypes.action.approveToApply.label}"
                     th:for="${'absenceType-approval-to-apply-' + index}"
@@ -151,7 +169,10 @@
                     class="uv-checkbox"
                   />
                 </div>
-                <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <div
+                  class="tw-flex sm:tw-justify-end"
+                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
+                >
                   <label
                     th:text="#{settings.absenceTypes.action.approveToCancel.label}"
                     th:for="${'absenceType-approval-to-cancel-' + index}"
@@ -166,7 +187,10 @@
                     class="uv-checkbox"
                   />
                 </div>
-                <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <div
+                  class="tw-flex sm:tw-justify-end"
+                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
+                >
                   <label
                     th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
                     th:for="|absenceType-visible-to-everyone-${index}|"
@@ -181,14 +205,17 @@
                     class="uv-checkbox"
                   />
                 </div>
-                <div class="tw-flex sm:tw-items-center">
+                <div
+                  class="tw-flex"
+                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
+                >
                   <label
                     th:text="#{settings.absenceTypes.action.color.label}"
                     th:for="|color-${index}|"
                     class="absence-type-cell-title tw-pr-4 tw-m-0"
                   >
                   </label>
-                  <div is="uv-color-picker">
+                  <div is="uv-color-picker" class="tw-mt-[4px]">
                     <label
                       th:id="|color-picker-label-${index}|"
                       th:for="|color-picker-${index}|"

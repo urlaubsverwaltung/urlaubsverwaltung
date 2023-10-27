@@ -77,6 +77,14 @@
     @apply tw-transition-colors;
   }
 
+  .absence-type-list-item input[type="text"] {
+    @apply tw-transition-colors;
+  }
+
+  .absence-type-list-item:hover input[type="text"] {
+    @apply dark:tw-bg-zinc-600 !important; /* !important to override :is(tw-dark input) */
+  }
+
   .absence-type-list-item[data-enabled="false"] {
     @apply tw-text-zinc-500;
     @apply dark:tw-text-zinc-300;
