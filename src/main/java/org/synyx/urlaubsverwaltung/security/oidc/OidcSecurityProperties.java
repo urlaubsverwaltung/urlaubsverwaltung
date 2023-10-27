@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,57 +17,11 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String postLogoutRedirectUri = "{baseUrl}";
 
-    @NotNull
-    private GroupClaim groupClaim = new GroupClaim();
-
     public String getPostLogoutRedirectUri() {
         return postLogoutRedirectUri;
     }
 
     public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
         this.postLogoutRedirectUri = postLogoutRedirectUri;
-    }
-
-    public GroupClaim getGroupClaim() {
-        return groupClaim;
-    }
-
-    public void setGroupClaim(GroupClaim groupClaim) {
-        this.groupClaim = groupClaim;
-    }
-
-    public static class GroupClaim {
-
-        private boolean enabled = false;
-
-        @NotEmpty
-        private String claimName = "groups";
-
-        @NotEmpty
-        private String permittedGroup = "urlaubsverwaltung_user";
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public String getClaimName() {
-            return claimName;
-        }
-
-        public void setClaimName(String claimName) {
-            this.claimName = claimName;
-        }
-
-        public String getPermittedGroup() {
-            return permittedGroup;
-        }
-
-        public void setPermittedGroup(String permittedGroup) {
-            this.permittedGroup = permittedGroup;
-        }
     }
 }

@@ -1,21 +1,24 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.oidc.OidcSecurityProperties.GroupClaim;
+
+import java.util.List;
 
 @Configuration
-@EnableConfigurationProperties(OidcSecurityProperties.class)
+@EnableConfigurationProperties({OidcSecurityProperties.class, RolesFromClaimMappersProperties.class})
 class OidcSecurityConfiguration {
 
     private final OidcSecurityProperties properties;
@@ -45,10 +48,9 @@ class OidcSecurityConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "uv.security.oidc.group-claim.enabled", havingValue = "true")
-    UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
-        final GroupClaim groupClaim = oidcSecurityProperties.getGroupClaim();
-        return new UrlaubsverwaltungOAuth2UserService(new OidcUserService(), groupClaim.getClaimName(), groupClaim.getPermittedGroup());
+    OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService(List<RolesFromClaimMapper> rolesFromClaimMappers) {
+        final OidcUserService defaultOidcUserService = new OidcUserService();
+        return new RolesFromClaimMappersInfusedOAuth2UserService(defaultOidcUserService, rolesFromClaimMappers);
     }
 
     @Bean

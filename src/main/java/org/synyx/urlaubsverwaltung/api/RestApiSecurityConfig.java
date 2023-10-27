@@ -6,6 +6,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
+
+import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
@@ -13,15 +16,12 @@ import static org.springframework.security.config.http.SessionCreationPolicy.NEV
 @Configuration
 class RestApiSecurityConfig {
 
-    private final PersonService personService;
-
-    RestApiSecurityConfig(PersonService personService) {
-        this.personService = personService;
-    }
-
     @Bean
     @Order(1)
-    SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain apiSecurityFilterChain(final HttpSecurity http,
+                                               final PersonService personService,
+                                               final List<RolesFromClaimMapper> claimMappers) throws Exception {
+
         return http
             .securityMatcher("/api/**", "/api/", "/api")
             .authorizeHttpRequests(authorizeHttpRequests ->
@@ -32,8 +32,7 @@ class RestApiSecurityConfig {
                 sessionManagement -> sessionManagement.sessionCreationPolicy(NEVER)
             ).oauth2ResourceServer(
                 oauth2ResourceServer -> oauth2ResourceServer.jwt(
-                    jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new JwtToPersonGrantedAuthoritiesConverter(personService)))
+                    jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new RolesFromClaimMappersInfusedJwtAuthenticationConverter(personService, claimMappers)))
             ).build();
     }
-
 }

@@ -143,9 +143,11 @@ uv.mail.senderDisplayName=Urlaubsverwaltung
 
 # security - openid connect
 uv.security.oidc.post-logout-redirect-uri={baseUrl}
-uv.security.oidc.group-claim.boolean=false
-uv.security.oidc.group-claim.claim-name=groups
-uv.security.oidc.group-claim.permitted-group=urlaubsverwaltung_user
+uv.security.oidc.claim-mappers.role-prefix=urlaubsverwaltung_
+uv.security.oidc.claim-mappers.group-claim.enabled=false
+uv.security.oidc.claim-mappers.group-claim.claim-name=groups
+uv.security.oidc.claim-mappers.resource-access-claim.enabled=false
+uv.security.oidc.claim-mappers.resource-access-claim.resource-app=urlaubsverwaltung
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *

@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
 
 import java.time.Instant;
 import java.util.List;
@@ -31,14 +32,16 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class JwtToPersonGrantedAuthoritiesConverterTest {
 
-    private JwtToPersonGrantedAuthoritiesConverter sut;
+    private RolesFromClaimMappersInfusedJwtAuthenticationConverter sut;
 
     @Mock
     private PersonService personService;
+    @Mock
+    private RolesFromClaimMapper claimMapper;
 
     @BeforeEach
     void setUp() {
-        sut = new JwtToPersonGrantedAuthoritiesConverter(personService);
+        sut = new RolesFromClaimMappersInfusedJwtAuthenticationConverter(personService, List.of(claimMapper));
     }
 
     @Test
