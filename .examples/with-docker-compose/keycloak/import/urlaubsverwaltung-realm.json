@@ -617,7 +617,7 @@
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "secret" : "51964fe9-8509-419d-9ee8-d2450822b7c9",
+    "secret" : "urlaubsverwaltung-secret",
     "redirectUris" : [ "http://localhost:8080/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
