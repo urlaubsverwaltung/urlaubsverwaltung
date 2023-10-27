@@ -25,6 +25,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
+import static org.synyx.urlaubsverwaltung.settings.SupportedLanguages.compareSupportedLanguageLocale;
 
 @Service
 @Transactional
@@ -173,8 +174,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     private static CustomVacationType updateCustomVacationType(CustomVacationType customVacationType, VacationTypeUpdate vacationTypeUpdate) {
 
-        final Map<Locale, String> labelByLocale = vacationTypeUpdate.getLabelByLocale()
-            .orElseThrow(() -> new IllegalStateException("expected locales to be defined. cannot update %s".formatted(customVacationType)));
+        final List<VacationTypeLabel> labels = vacationTypeUpdate.getLabels()
+            .orElseThrow(() -> new IllegalStateException("expected vacationTypeLabels to be defined. cannot update %s".formatted(customVacationType)));
 
         return CustomVacationType.builder(customVacationType)
             .active(vacationTypeUpdate.isActive())
@@ -182,7 +183,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .requiresApprovalToCancel(vacationTypeUpdate.isRequiresApprovalToCancel())
             .color(vacationTypeUpdate.getColor())
             .visibleToEveryone(vacationTypeUpdate.isVisibleToEveryone())
-            .labelByLocale(labelByLocale)
+            .labels(labels)
             .build();
     }
 
@@ -210,8 +211,16 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .requiresApprovalToCancel(customVacationTypeEntity.isRequiresApprovalToCancel())
             .color(customVacationTypeEntity.getColor())
             .visibleToEveryone(customVacationTypeEntity.isVisibleToEveryone())
-            .labelByLocale(customVacationTypeEntity.getLabelByLocale())
+            .labels(vacationTypeLabels(customVacationTypeEntity.getLabelByLocale()))
             .build();
+    }
+
+    private static List<VacationTypeLabel> vacationTypeLabels(Map<Locale, String> labelByLocale) {
+        return labelByLocale.entrySet()
+            .stream()
+            .map(entry -> new VacationTypeLabel(entry.getKey(), entry.getValue()))
+            .sorted((o1, o2) -> compareSupportedLanguageLocale(o1.locale(), o2.locale()))
+            .toList();
     }
 
     private static ProvidedVacationType convertProvidedVacationType(VacationTypeEntity providedVacationType,
@@ -236,9 +245,15 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     private static VacationTypeEntity convertCustomVacationType(CustomVacationType customVacationType) {
+
+        final Map<Locale, String> labelByLocale = customVacationType.labels()
+            .stream()
+            .collect(toMap(VacationTypeLabel::locale, VacationTypeLabel::label));
+
         final VacationTypeEntity vacationTypeEntity = toEntityBase(customVacationType);
         vacationTypeEntity.setCustom(true);
-        vacationTypeEntity.setLabelByLocale(customVacationType.getLabelByLocale());
+        vacationTypeEntity.setLabelByLocale(labelByLocale);
+
         return vacationTypeEntity;
     }
 

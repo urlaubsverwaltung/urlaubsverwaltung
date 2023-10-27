@@ -13,12 +13,12 @@ import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettings
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
@@ -302,9 +302,9 @@ class SettingsAbsenceTypesViewControllerTest {
                 .requiresApprovalToCancel(true)
                 .color(CYAN)
                 .visibleToEveryone(true)
-                .labelByLocale(Map.of(
-                    GERMAN, "label-deutsch",
-                    Locale.forLanguageTag("de_AT"), "label-österreich"
+                .labels(List.of(
+                    new VacationTypeLabel(GERMAN, "label-deutsch"),
+                    new VacationTypeLabel(Locale.forLanguageTag("de_AT"), "label-österreich")
                 ))
                 .build()
         ));

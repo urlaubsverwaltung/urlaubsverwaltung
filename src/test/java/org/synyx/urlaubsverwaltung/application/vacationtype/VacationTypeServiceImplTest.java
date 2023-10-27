@@ -16,6 +16,9 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +32,8 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 @ExtendWith(MockitoExtension.class)
 class VacationTypeServiceImplTest {
 
+    public static final Locale LOCALE_DE_AT = Locale.forLanguageTag("de_AT");
+    public static final Locale LOCALE_EL = Locale.forLanguageTag("el");
     private VacationTypeServiceImpl sut;
 
     @Mock
@@ -89,6 +94,7 @@ class VacationTypeServiceImplTest {
 
     @Test
     void getAllVacationTypes() {
+
         final VacationTypeEntity holiday = new VacationTypeEntity();
         holiday.setId(1L);
         holiday.setCategory(HOLIDAY);
@@ -105,6 +111,38 @@ class VacationTypeServiceImplTest {
         assertThat(allVacationTypes).hasSize(2);
         assertThat(allVacationTypes.get(0).getId()).isEqualTo(1);
         assertThat(allVacationTypes.get(1).getId()).isEqualTo(2);
+    }
+
+    @Test
+    void getAllVacationTypesSortsLabelsDeterministically() {
+
+        final VacationTypeEntity entity = new VacationTypeEntity();
+        entity.setCustom(true);
+        entity.setLabelByLocale(Map.of(
+            // SupportedLanguage
+            ENGLISH, "englisch",
+            LOCALE_DE_AT, "österreichisch",
+            GERMAN, "deutsch",
+            LOCALE_EL, "griechisch",
+            // not a SupportedLanguage
+            JAPANESE, "japanisch"
+        ));
+
+        when(vacationTypeRepository.findAll(Sort.by("id"))).thenReturn(List.of(entity));
+
+        final List<VacationType<?>> allVacationTypes = sut.getAllVacationTypes();
+        assertThat(allVacationTypes.get(0)).satisfies(vacationType -> {
+            assertThat(vacationType).isInstanceOf(CustomVacationType.class);
+
+            final CustomVacationType customVacationType = (CustomVacationType) vacationType;
+            assertThat(customVacationType.labels()).containsExactly(
+                new VacationTypeLabel(GERMAN, "deutsch"),
+                new VacationTypeLabel(LOCALE_DE_AT, "österreichisch"),
+                new VacationTypeLabel(ENGLISH, "englisch"),
+                new VacationTypeLabel(LOCALE_EL, "griechisch"),
+                new VacationTypeLabel(JAPANESE, "japanisch")
+            );
+        });
     }
 
     @Test
@@ -136,9 +174,9 @@ class VacationTypeServiceImplTest {
         when(vacationTypeRepository.findAllById(Set.of(1L, 2L, 3L))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1L, true, false, false, YELLOW, false, Map.of()),
-            new VacationTypeUpdate(2L, false, true, true, YELLOW, false, Map.of()),
-            new VacationTypeUpdate(3L, true, true, true, YELLOW, true, Map.of())
+            new VacationTypeUpdate(1L, true, false, false, YELLOW, false, List.of()),
+            new VacationTypeUpdate(2L, false, true, true, YELLOW, false, List.of()),
+            new VacationTypeUpdate(3L, true, true, true, YELLOW, true, List.of())
         ));
 
         @SuppressWarnings("unchecked") final ArgumentCaptor<List<VacationTypeEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
@@ -177,7 +215,7 @@ class VacationTypeServiceImplTest {
 
     @Test
     void ensureCreateVacationTypesIgnoresElementsWithIds() {
-        sut.createVacationTypes(List.of(CustomVacationType.builder().id(1L).build()));
+        sut.createVacationTypes(List.of(CustomVacationType.builder().id(1L).labels(List.of()).build()));
         verify(vacationTypeRepository).saveAll(List.of());
     }
 
@@ -192,9 +230,9 @@ class VacationTypeServiceImplTest {
                 .requiresApprovalToCancel(true)
                 .color(YELLOW)
                 .visibleToEveryone(true)
-                .labelByLocale(Map.of(
-                    Locale.GERMAN, "jokertag",
-                    Locale.ENGLISH, "jokerday"
+                .labels(List.of(
+                    new VacationTypeLabel(GERMAN, "jokertag"),
+                    new VacationTypeLabel(ENGLISH, "jokerday")
                 ))
                 .build(),
             CustomVacationType.builder()
@@ -204,9 +242,9 @@ class VacationTypeServiceImplTest {
                 .requiresApprovalToCancel(false)
                 .color(BLUE)
                 .visibleToEveryone(false)
-                .labelByLocale(Map.of(
-                    Locale.GERMAN, "familientag",
-                    Locale.ENGLISH, "family day"
+                .labels(List.of(
+                    new VacationTypeLabel(GERMAN, "familientag"),
+                    new VacationTypeLabel(ENGLISH, "family day")
                 ))
                 .build()
         ));
@@ -225,9 +263,9 @@ class VacationTypeServiceImplTest {
             assertThat(entity.isRequiresApprovalToCancel()).isTrue();
             assertThat(entity.getColor()).isEqualTo(YELLOW);
             assertThat(entity.isVisibleToEveryone()).isTrue();
-            assertThat(entity.getLabelByLocale()).containsExactlyEntriesOf(Map.of(
+            assertThat(entity.getLabelByLocale()).containsExactlyInAnyOrderEntriesOf(Map.of(
                 Locale.GERMAN, "jokertag",
-                Locale.ENGLISH, "jokerday"
+                ENGLISH, "jokerday"
             ));
             assertThat(entity.getMessageKey()).isNull();
         });
@@ -238,9 +276,9 @@ class VacationTypeServiceImplTest {
             assertThat(entity.isRequiresApprovalToCancel()).isFalse();
             assertThat(entity.getColor()).isEqualTo(BLUE);
             assertThat(entity.isVisibleToEveryone()).isFalse();
-            assertThat(entity.getLabelByLocale()).containsExactlyEntriesOf(Map.of(
+            assertThat(entity.getLabelByLocale()).containsExactlyInAnyOrderEntriesOf(Map.of(
                 Locale.GERMAN, "familientag",
-                Locale.ENGLISH, "family day"
+                ENGLISH, "family day"
             ));
             assertThat(entity.getMessageKey()).isNull();
         });

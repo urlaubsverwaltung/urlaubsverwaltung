@@ -1,22 +1,31 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * {@linkplain VacationType} created by the user.
  */
 public final class CustomVacationType extends VacationType<CustomVacationType> {
 
-    private final Map<Locale, String> labelByLocale;
+    private final List<VacationTypeLabel> labels;
 
     private CustomVacationType(CustomVacationType.Builder builder) {
         super(builder);
-        this.labelByLocale = builder.labelByLocale;
+        this.labels = builder.labels;
     }
 
-    public Map<Locale, String> getLabelByLocale() {
-        return labelByLocale;
+    public List<VacationTypeLabel> labels() {
+        return labels;
+    }
+
+    public Map<Locale, VacationTypeLabel> labelsByLocale() {
+        return labels.stream().collect(toMap(VacationTypeLabel::locale, identity()));
     }
 
     @Override
@@ -35,7 +44,9 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
     public static Builder builder() {
 
         final VacationTypeLabelResolver<CustomVacationType> labelResolver =
-            (vacationType, locale) -> vacationType.labelByLocale.get(locale);
+            (vacationType, locale) -> Optional.ofNullable(vacationType.labelsByLocale().get(locale))
+                .map(VacationTypeLabel::label)
+                .orElse(null);
 
         return new Builder(labelResolver);
     }
@@ -46,7 +57,7 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
 
     public static final class Builder extends VacationType.Builder<CustomVacationType, Builder> {
 
-        private Map<Locale, String> labelByLocale;
+        private List<VacationTypeLabel> labels;
 
         Builder(VacationTypeLabelResolver<CustomVacationType> labelResolver) {
             super(labelResolver);
@@ -56,8 +67,8 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
             super(vacationType);
         }
 
-        public Builder labelByLocale(Map<Locale, String> labelByLocale) {
-            this.labelByLocale = labelByLocale;
+        public Builder labels(List<VacationTypeLabel> labels) {
+            this.labels = labels;
             return this;
         }
 

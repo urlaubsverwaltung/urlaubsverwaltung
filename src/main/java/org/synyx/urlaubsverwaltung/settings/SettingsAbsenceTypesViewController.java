@@ -19,16 +19,16 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
 import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
@@ -154,11 +154,11 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
 
     private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
         // editing labels is only possible for CustomVacationTypes yet. Not for ProvidedVacationTypes.
-        final List<AbsenceTypeSettingsItemLabelDto> labels = absenceTypeSettingsItemDto.getLabels();
-        final Map<Locale, String> labelByLocale = labels == null ? null : labels.stream().collect(toMap(
-            AbsenceTypeSettingsItemLabelDto::getLocale,
-            AbsenceTypeSettingsItemLabelDto::getLabel
-        ));
+
+        final List<VacationTypeLabel> labels = Optional.ofNullable(absenceTypeSettingsItemDto.getLabels())
+            .map(SettingsAbsenceTypesViewController::toVacationTypeLabels)
+            .orElse(null);
+
         return new VacationTypeUpdate(
             absenceTypeSettingsItemDto.getId(),
             absenceTypeSettingsItemDto.isActive(),
@@ -166,7 +166,7 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             absenceTypeSettingsItemDto.isRequiresApprovalToCancel(),
             absenceTypeSettingsItemDto.getColor(),
             absenceTypeSettingsItemDto.isVisibleToEveryone(),
-            labelByLocale
+            labels
         );
     }
 
@@ -178,10 +178,18 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             .requiresApprovalToCancel(absenceTypeSettingsItemDto.isRequiresApprovalToCancel())
             .color(absenceTypeSettingsItemDto.getColor())
             .visibleToEveryone(absenceTypeSettingsItemDto.isVisibleToEveryone())
-            .labelByLocale(absenceTypeSettingsItemDto.getLabels().stream().collect(toMap(
-                AbsenceTypeSettingsItemLabelDto::getLocale,
-                AbsenceTypeSettingsItemLabelDto::getLabel
-            )))
+            .labels(toVacationTypeLabels(absenceTypeSettingsItemDto.getLabels()))
             .build();
+    }
+
+    private static List<VacationTypeLabel> toVacationTypeLabels(List<AbsenceTypeSettingsItemLabelDto> labelDtos) {
+        return labelDtos
+            .stream()
+            .map(SettingsAbsenceTypesViewController::vacationTypeLabel)
+            .toList();
+    }
+
+    private static VacationTypeLabel vacationTypeLabel(AbsenceTypeSettingsItemLabelDto labelDto) {
+        return new VacationTypeLabel(labelDto.getLocale(), labelDto.getLabel());
     }
 }

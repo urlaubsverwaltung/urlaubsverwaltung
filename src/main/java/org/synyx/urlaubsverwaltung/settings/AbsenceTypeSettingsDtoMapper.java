@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 
 import java.util.List;
 import java.util.Locale;
@@ -42,12 +43,16 @@ public class AbsenceTypeSettingsDtoMapper {
 
     private static List<AbsenceTypeSettingsItemLabelDto> vacationTypeLabelDtos(VacationType<?> vacationType) {
         if (vacationType instanceof CustomVacationType customVacationType) {
-            return customVacationType.getLabelByLocale().entrySet()
+            return customVacationType.labels()
                 .stream()
-                .map(entry -> new AbsenceTypeSettingsItemLabelDto(entry.getKey(), entry.getValue()))
+                .map(AbsenceTypeSettingsDtoMapper::absenceTypeSettingsItemLabelDto)
                 .toList();
         }
         // setting label is only supported by CustomVacationType for now
         return null;
+    }
+
+    private static AbsenceTypeSettingsItemLabelDto absenceTypeSettingsItemLabelDto(VacationTypeLabel vacationTypeLabel) {
+        return new AbsenceTypeSettingsItemLabelDto(vacationTypeLabel.locale(), vacationTypeLabel.label());
     }
 }
