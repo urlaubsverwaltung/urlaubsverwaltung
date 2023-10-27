@@ -117,6 +117,7 @@
                     <details
                       class="tw-my-0.5 tw-flex-1 sm:tw-truncate"
                       th:attrappend="open=${#bools.isTrue(frameNewAbsenceTypeRequested) ? true : null}"
+                      th:aria-label="#{settings.absenceTypes.action.labels.aria-description}"
                     >
                       <summary class="tw-flex tw-items-center tw-shrink-0">
                         <span th:data-title="#{settings.absenceTypes.action.labels.button.tooltip}">
