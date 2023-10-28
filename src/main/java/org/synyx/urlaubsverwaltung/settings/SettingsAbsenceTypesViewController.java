@@ -42,15 +42,19 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
     private final VacationTypeService vacationTypeService;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final MessageSource messageSource;
+    private final SettingsAbsenceTypesDtoValidator validator;
 
     @Autowired
     public SettingsAbsenceTypesViewController(SettingsService settingsService,
                                               VacationTypeService vacationTypeService,
-                                              SpecialLeaveSettingsService specialLeaveService, MessageSource messageSource) {
+                                              SpecialLeaveSettingsService specialLeaveService,
+                                              MessageSource messageSource,
+                                              SettingsAbsenceTypesDtoValidator validator) {
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.specialLeaveSettingsService = specialLeaveService;
         this.messageSource = messageSource;
+        this.validator = validator;
     }
 
     @GetMapping
@@ -107,6 +111,8 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
     @PreAuthorize(IS_OFFICE)
     public String settingsSaved(@Valid @ModelAttribute("settings") SettingsAbsenceTypesDto settingsDto, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
+
+        validator.validate(settingsDto, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("settings", settingsDto);

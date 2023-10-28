@@ -58,10 +58,13 @@ class SettingsAbsenceTypesViewControllerTest {
     private SpecialLeaveSettingsService specialLeaveSettingsService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private SettingsAbsenceTypesDtoValidator validator;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsAbsenceTypesViewController(settingsService, vacationTypeService, specialLeaveSettingsService, messageSource);
+        sut = new SettingsAbsenceTypesViewController(settingsService, vacationTypeService, specialLeaveSettingsService,
+            messageSource, validator);
     }
 
     @Test

@@ -101,19 +101,22 @@
                   </span>
                 </div>
                 <div class="absence-type-card__label">
-                  <th:block th:if="${not isCustomVacationType}">
-                    <input
-                      type="hidden"
-                      th:name="|absenceTypeSettings.items[${index}].label|"
-                      th:value="${absenceType.label}"
-                    />
-                  </th:block>
+                  <input
+                    type="hidden"
+                    th:name="|absenceTypeSettings.items[${index}].label|"
+                    th:value="${absenceType.label}"
+                  />
                   <span th:text="${absenceType.label}" class="tw-break-words md:tw-truncate"></span>
                 </div>
                 <div th:if="${isCustomVacationType}" class="absence-type-card__label-translation">
-                  <th:block>
+                  <th:block
+                    th:with="
+                      labelsFieldname=${'absenceTypeSettings.items[' + index + '].labels'},
+                      hasLabelsErrors=${#bools.isFalse(frameNewAbsenceTypeRequested) and #fields.hasErrors(labelsFieldname)}
+                    "
+                  >
                     <details
-                      th:attrappend="open=${#bools.isTrue(frameNewAbsenceTypeRequested) ? true : null}"
+                      th:attrappend="open=${(absenceType.id eq null or hasLabelsErrors) ? true : null}"
                       th:aria-label="#{settings.absenceTypes.action.labels.aria-description}"
                     >
                       <summary class="tw-flex tw-items-center tw-cursor-pointer md:tw-mt-2">
@@ -135,13 +138,13 @@
                         >
                           <input
                             type="hidden"
-                            th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].locale|"
+                            th:name="${labelsFieldname + '[' + labelStat.index + '].locale'}"
                             th:value="${label.locale}"
                           />
                           <input
                             type="text"
                             th:id="${id}"
-                            th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].label|"
+                            th:name="${labelsFieldname + '[' + labelStat.index + '].label'}"
                             th:value="${label.label}"
                             class="absence-type-translation-inputs__element__input"
                           />
@@ -157,6 +160,13 @@
                         </div>
                       </div>
                     </details>
+                    <th:block th:if="${hasLabelsErrors}">
+                      <p
+                        th:each="error : ${#fields.errors(labelsFieldname)}"
+                        th:text="${error}"
+                        class="error tw-ml-7 md:tw-ml-6"
+                      ></p>
+                    </th:block>
                   </th:block>
                 </div>
                 <div class="absence-type-card__approve-to-apply">
