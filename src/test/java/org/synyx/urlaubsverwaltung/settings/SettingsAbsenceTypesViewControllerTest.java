@@ -56,10 +56,12 @@ class SettingsAbsenceTypesViewControllerTest {
     private VacationTypeService vacationTypeService;
     @Mock
     private SpecialLeaveSettingsService specialLeaveSettingsService;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsAbsenceTypesViewController(settingsService, vacationTypeService, specialLeaveSettingsService);
+        sut = new SettingsAbsenceTypesViewController(settingsService, vacationTypeService, specialLeaveSettingsService, messageSource);
     }
 
     @Test
@@ -295,7 +297,7 @@ class SettingsAbsenceTypesViewControllerTest {
         verify(vacationTypeService).updateVacationTypes(List.of());
 
         verify(vacationTypeService).createVacationTypes(List.of(
-            CustomVacationType.builder()
+            CustomVacationType.builder(messageSource)
                 .active(true)
                 .category(VacationCategory.OTHER)
                 .requiresApprovalToApply(true)

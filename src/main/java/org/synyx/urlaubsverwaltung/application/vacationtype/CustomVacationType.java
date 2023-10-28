@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import org.springframework.context.MessageSource;
+import org.springframework.util.StringUtils;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,12 +44,13 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
             '}';
     }
 
-    public static Builder builder() {
+    public static Builder builder(MessageSource messageSource) {
 
         final VacationTypeLabelResolver<CustomVacationType> labelResolver =
             (vacationType, locale) -> Optional.ofNullable(vacationType.labelsByLocale().get(locale))
                 .map(VacationTypeLabel::label)
-                .orElse(null);
+                .filter(StringUtils::hasText)
+                .orElseGet(() -> messageSource.getMessage("vacationtype.label.fallback", new Object[]{}, locale));
 
         return new Builder(labelResolver);
     }

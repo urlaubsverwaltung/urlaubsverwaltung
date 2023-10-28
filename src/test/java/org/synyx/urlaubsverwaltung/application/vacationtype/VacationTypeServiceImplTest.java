@@ -32,7 +32,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 @ExtendWith(MockitoExtension.class)
 class VacationTypeServiceImplTest {
 
-    public static final Locale LOCALE_DE_AT = Locale.forLanguageTag("de_AT");
+    public static final Locale LOCALE_DE_AT = Locale.forLanguageTag("de-AT");
     public static final Locale LOCALE_EL = Locale.forLanguageTag("el");
     private VacationTypeServiceImpl sut;
 
@@ -215,7 +215,7 @@ class VacationTypeServiceImplTest {
 
     @Test
     void ensureCreateVacationTypesIgnoresElementsWithIds() {
-        sut.createVacationTypes(List.of(CustomVacationType.builder().id(1L).labels(List.of()).build()));
+        sut.createVacationTypes(List.of(CustomVacationType.builder(messageSource).id(1L).labels(List.of()).build()));
         verify(vacationTypeRepository).saveAll(List.of());
     }
 
@@ -223,7 +223,7 @@ class VacationTypeServiceImplTest {
     void ensureCreateVacationTypes() {
 
         sut.createVacationTypes(List.of(
-            CustomVacationType.builder()
+            CustomVacationType.builder(messageSource)
                 .active(true)
                 .category(OTHER)
                 .requiresApprovalToApply(true)
@@ -235,7 +235,7 @@ class VacationTypeServiceImplTest {
                     new VacationTypeLabel(ENGLISH, "jokerday")
                 ))
                 .build(),
-            CustomVacationType.builder()
+            CustomVacationType.builder(messageSource)
                 .active(false)
                 .category(HOLIDAY)
                 .requiresApprovalToApply(false)

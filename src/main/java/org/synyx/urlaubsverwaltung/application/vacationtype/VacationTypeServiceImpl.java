@@ -126,7 +126,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     public static VacationType<? extends VacationType<?>> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
         if (vacationTypeEntity.isCustom()) {
-            return convertCustomVacationType(vacationTypeEntity);
+            return convertCustomVacationType(vacationTypeEntity, messageSource);
         } else {
             return convertProvidedVacationType(vacationTypeEntity, messageSource);
         }
@@ -202,8 +202,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .build();
     }
 
-    private static CustomVacationType convertCustomVacationType(VacationTypeEntity customVacationTypeEntity) {
-        return CustomVacationType.builder()
+    private static CustomVacationType convertCustomVacationType(VacationTypeEntity customVacationTypeEntity, MessageSource messageSource) {
+        return CustomVacationType.builder(messageSource)
             .id(customVacationTypeEntity.getId())
             .active(customVacationTypeEntity.isActive())
             .category(customVacationTypeEntity.getCategory())

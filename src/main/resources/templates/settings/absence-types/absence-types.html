@@ -52,38 +52,34 @@
           </div>
         </aside>
         <div class="tw-w-full tw-sticky tw-top-0">
-          <div class="absence-type-list-head">
-            <span th:text="#{settings.absenceTypes.table.head.state}"></span>
-            <span th:text="#{settings.absenceTypes.table.head.type}"></span>
-            <span
-              th:text="#{settings.absenceTypes.table.head.approvalToApply}"
-              class="tw-break-normal tw-text-right"
-            ></span>
-            <span
-              th:text="#{settings.absenceTypes.table.head.approvalToCancel}"
-              class="tw-break-normal tw-text-right"
-            ></span>
-            <span
-              th:text="#{settings.absenceTypes.table.head.visibleToEveryone}"
-              class="tw-break-words tw-text-right"
-            ></span>
-            <span th:text="#{settings.absenceTypes.table.head.color}" class="tw-pr-5"></span>
-          </div>
-          <ul id="absence-type-list" class="absence-type-list tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
+          <ul id="absence-type-list" class="tw-relative tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
+            <li role="none" class="absence-type-list-head">
+              <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-list-head__status"></span>
+              <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-list-head__label"></span>
+              <span
+                th:text="#{settings.absenceTypes.table.head.approvalToApply}"
+                class="absence-type-list-head__approve-to-apply tw-break-normal tw-text-right"
+              ></span>
+              <span
+                th:text="#{settings.absenceTypes.table.head.approvalToCancel}"
+                class="absence-type-list-head__approve-to-cancel tw-break-normal tw-text-right"
+              ></span>
+              <span
+                th:text="#{settings.absenceTypes.table.head.visibleToEveryone}"
+                class="absence-type-list-head__visible-to-everyone tw-break-words tw-text-right"
+              ></span>
+              <span th:text="#{settings.absenceTypes.table.head.color}" class="absence-type-list-head__color"></span>
+            </li>
             <th:block th:each="absenceType, loop : ${settings.absenceTypeSettings.items}">
               <li
                 th:fragment="item-absence-type(absenceType,index)"
                 th:with="index=${index ?: loop.index}, isCustomVacationType=${not #lists.isEmpty(absenceType.labels)}"
-                class="absence-type-list-item"
+                class="absence-type-card tw-border tw-rounded tw-p-4 md:tw-border-none md:tw-py-2"
                 th:data-enabled="${absenceType.active}"
               >
-                <div
-                  data-col-status
-                  class="tw-flex"
-                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
-                >
-                  <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-cell-title"> </span>
-                  <span class="absence-type-cell-text tw-flex-1 checkbox-switch">
+                <div data-col-status class="absence-type-card__status tw-flex tw-items-center">
+                  <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-card-cell_title"></span>
+                  <span class="checkbox-switch tw-flex tw-items-center">
                     <input
                       type="hidden"
                       th:name="|absenceTypeSettings.items[${index}].id|"
@@ -94,44 +90,49 @@
                       th:name="|absenceTypeSettings.items[${index}].active|"
                       th:checked="${absenceType.active}"
                       th:id="|absenceType-active-${index}|"
+                      class="tw-shrink-0 tw-m-0"
                     />
                     <label
                       th:text="#{settings.absenceTypes.action.state.label}"
                       th:for="|absenceType-active-${index}|"
-                      class="tw-sr-only"
+                      class="tw-m-0 tw-sr-only"
                     >
                     </label>
                   </span>
                 </div>
-                <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
-                  <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
+                <div class="absence-type-card__label">
                   <th:block th:if="${not isCustomVacationType}">
                     <input
                       type="hidden"
-                      th:name="|absenceTypeSettings.items${index}].label|"
+                      th:name="|absenceTypeSettings.items[${index}].label|"
                       th:value="${absenceType.label}"
                     />
-                    <span th:text="${absenceType.label}" class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
                   </th:block>
-                  <th:block th:if="${isCustomVacationType}">
+                  <span th:text="${absenceType.label}" class="tw-break-words md:tw-truncate"></span>
+                </div>
+                <div th:if="${isCustomVacationType}" class="absence-type-card__label-translation">
+                  <th:block>
                     <details
-                      class="tw-my-0.5 tw-flex-1 sm:tw-truncate"
                       th:attrappend="open=${#bools.isTrue(frameNewAbsenceTypeRequested) ? true : null}"
                       th:aria-label="#{settings.absenceTypes.action.labels.aria-description}"
                     >
-                      <summary class="tw-flex tw-items-center tw-shrink-0">
-                        <span th:data-title="#{settings.absenceTypes.action.labels.button.tooltip}">
-                          <svg
-                            th:replace="~{icon/languages::svg(className='tw-text-blue-400 tw-mr-2 tw-cursor-pointer')}"
-                          ></svg>
-                        </span>
+                      <summary class="tw-flex tw-items-center tw-cursor-pointer md:tw-mt-2">
+                        <svg
+                          th:replace="~{icon/languages::svg(className='tw-w-5 tw-h-5 tw-text-blue-400 tw-mr-2 md:tw-w-4 md:tw-h-4')}"
+                        ></svg>
                         <span
-                          th:text="${absenceType.label}"
-                          class="absence-type-cell-text tw-flex-1 tw-cursor-default sm:tw-truncate"
-                        ></span>
+                          th:text="#{settings.absenceTypes.action.labels.translation.summary}"
+                          class="md:tw-text-sm"
+                        >
+                          Übersetzungen
+                        </span>
                       </summary>
-                      <div class="tw-mt-2">
-                        <div th:each="label : ${absenceType.labels}" class="tw-mt-0.5">
+                      <div class="absence-type-translation-inputs tw-ml-7 tw-mt-4 md:tw-ml-6 md:tw-mt-2">
+                        <div
+                          th:each="label : ${absenceType.labels}"
+                          class="absence-type-translation-inputs__element"
+                          th:with="id=|absenceType-label-translation-${index}-${labelStat.index}|"
+                        >
                           <input
                             type="hidden"
                             th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].locale|"
@@ -139,32 +140,30 @@
                           />
                           <input
                             type="text"
+                            th:id="${id}"
                             th:name="|absenceTypeSettings.items[${index}].labels[${labelStat.index}].label|"
                             th:value="${label.label}"
-                            class="tw-px-1"
+                            class="absence-type-translation-inputs__element__input"
                           />
-                          <span>
+                          <label th:for="${id}" class="absence-type-translation-inputs__element__label">
                             <img
                               th:src="@{/images/flags/{locale}.svg (locale=${label.locale})}"
                               alt=""
                               width="16"
                               height="16"
                             />
-                            <span class="tw-text-sm" th:text="${#messages.msg('locale.' + label.locale)}"></span>
-                          </span>
+                            <span th:text="${#messages.msg('locale.' + label.locale)}"></span>
+                          </label>
                         </div>
                       </div>
                     </details>
                   </th:block>
                 </div>
-                <div
-                  class="tw-flex sm:tw-justify-end"
-                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
-                >
+                <div class="absence-type-card__approve-to-apply">
                   <label
                     th:text="#{settings.absenceTypes.action.approveToApply.label}"
                     th:for="${'absenceType-approval-to-apply-' + index}"
-                    class="absence-type-cell-title tw-m-0"
+                    class="absence-type-card-cell_title tw-m-0"
                   >
                   </label>
                   <input
@@ -172,17 +171,14 @@
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToApply|"
                     th:checked="${absenceType.requiresApprovalToApply}"
                     th:id="${'absenceType-approval-to-apply-' + index}"
-                    class="uv-checkbox"
+                    class="uv-checkbox tw-shrink-0 tw-m-0"
                   />
                 </div>
-                <div
-                  class="tw-flex sm:tw-justify-end"
-                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
-                >
+                <div class="absence-type-card__approve-to-cancel">
                   <label
                     th:text="#{settings.absenceTypes.action.approveToCancel.label}"
                     th:for="${'absenceType-approval-to-cancel-' + index}"
-                    class="absence-type-cell-title tw-m-0"
+                    class="absence-type-card-cell_title tw-m-0"
                   >
                   </label>
                   <input
@@ -190,17 +186,14 @@
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToCancel|"
                     th:checked="${absenceType.requiresApprovalToCancel}"
                     th:id="${'absenceType-approval-to-cancel-' + index}"
-                    class="uv-checkbox"
+                    class="uv-checkbox tw-shrink-0 tw-m-0"
                   />
                 </div>
-                <div
-                  class="tw-flex sm:tw-justify-end"
-                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
-                >
+                <div class="absence-type-card__visible-to-everyone">
                   <label
                     th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
                     th:for="|absenceType-visible-to-everyone-${index}|"
-                    class="absence-type-cell-title tw-m-0"
+                    class="absence-type-card-cell_title tw-m-0"
                   >
                   </label>
                   <input
@@ -208,24 +201,21 @@
                     th:name="|absenceTypeSettings.items[${index}].visibleToEveryone|"
                     th:checked="${absenceType.visibleToEveryone}"
                     th:id="|absenceType-visible-to-everyone-${index}|"
-                    class="uv-checkbox"
+                    class="uv-checkbox tw-shrink-0 tw-m-0"
                   />
                 </div>
-                <div
-                  class="tw-flex"
-                  th:classappend="${isCustomVacationType ? 'sm:tw-items-start' : 'sm:tw-items-center'}"
-                >
+                <div class="absence-type-card__color">
                   <label
                     th:text="#{settings.absenceTypes.action.color.label}"
                     th:for="|color-${index}|"
-                    class="absence-type-cell-title tw-pr-4 tw-m-0"
+                    class="absence-type-card-cell_title tw-m-0"
                   >
                   </label>
-                  <div is="uv-color-picker" class="tw-mt-[4px]">
+                  <div is="uv-color-picker">
                     <label
                       th:id="|color-picker-label-${index}|"
                       th:for="|color-picker-${index}|"
-                      class="color-picker-button"
+                      class="tw-m-0 color-picker-button"
                     >
                       <span
                         class="color-picker-button-color"
@@ -233,14 +223,14 @@
                       ></span>
                       <span th:text="#{settings.absenceTypes.action.color.label}" class="tw-sr-only"></span>
                     </label>
-                    <input type="checkbox" th:id="|color-picker-${index}|" />
+                    <input type="checkbox" th:id="|color-picker-${index}|" class="tw-shrink-0 tw-m-0" />
                     <ul th:id="|color-popup-${index}|" class="color-picker-dialog tw-list-none">
                       <li
                         th:each="selectableColor, selectableColorLoop: ${settings.absenceTypeSettings.colors}"
                         class="color-picker-option"
                         th:style="|background-color:var(--absence-color-__${selectableColor}__)|"
                       >
-                        <label th:for="|color-${index}-radio-${selectableColorLoop.index}|">
+                        <label th:for="|color-${index}-radio-${selectableColorLoop.index}|" class="tw-m-0">
                           <input
                             th:checked="${absenceType.color == selectableColor}"
                             th:value="${selectableColor}"

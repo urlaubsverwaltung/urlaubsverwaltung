@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.settings;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,14 +41,16 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
+    private final MessageSource messageSource;
 
     @Autowired
     public SettingsAbsenceTypesViewController(SettingsService settingsService,
                                               VacationTypeService vacationTypeService,
-                                              SpecialLeaveSettingsService specialLeaveService) {
+                                              SpecialLeaveSettingsService specialLeaveService, MessageSource messageSource) {
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.specialLeaveSettingsService = specialLeaveService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
@@ -121,7 +124,7 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         final List<VacationType<?>> newVacationTypes = settingsDto.getAbsenceTypeSettings().getItems()
             .stream()
             .filter(dto -> dto.getId() == null)
-            .map(SettingsAbsenceTypesViewController::customVacationType)
+            .map(dto -> customVacationType(dto, messageSource))
             .collect(toList());
         vacationTypeService.createVacationTypes(newVacationTypes);
 
@@ -170,8 +173,8 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         );
     }
 
-    private static VacationType<?> customVacationType(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
-        return CustomVacationType.builder()
+    private static VacationType<?> customVacationType(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto, MessageSource messageSource) {
+        return CustomVacationType.builder(messageSource)
             .active(absenceTypeSettingsItemDto.isActive())
             .category(VacationCategory.OTHER)
             .requiresApprovalToApply(absenceTypeSettingsItemDto.isRequiresApprovalToApply())
