@@ -36,9 +36,13 @@ public class ApplicationPage {
         page.locator(FROM_INPUT_SELECTOR).fill(dateString);
     }
 
+    public Locator vacationTypeSelect() {
+        return page.locator(VACATION_TYPE_SELECT_SELECTOR);
+    }
+
     public void selectVacationTypeOfName(String vacationTypeName) {
         final Locator option = page.locator("option").and(page.getByText(vacationTypeName));
-        page.locator(VACATION_TYPE_SELECT_SELECTOR).selectOption(option.elementHandle());
+        vacationTypeSelect().selectOption(option.elementHandle());
     }
 
     public void reason(String reasonText) {

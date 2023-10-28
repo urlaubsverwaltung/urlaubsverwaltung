@@ -66,6 +66,7 @@
                 th:with="index=${index ?: loop.index}, isCustomVacationType=${not #lists.isEmpty(absenceType.labels)}"
                 class="absence-type-card tw-border tw-rounded tw-p-4 md:tw-border-none md:tw-py-2"
                 th:data-enabled="${absenceType.active}"
+                data-test-id="vacation-type"
               >
                 <div data-col-status class="absence-type-card__status tw-flex tw-items-center">
                   <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-card-cell_title"></span>
@@ -81,6 +82,7 @@
                       th:checked="${absenceType.active}"
                       th:id="|absenceType-active-${index}|"
                       class="tw-shrink-0 tw-m-0"
+                      data-test-id="vacation-type-active"
                     />
                     <label
                       th:text="#{settings.absenceTypes.action.state.label}"
@@ -137,6 +139,7 @@
                             th:name="${labelsFieldname + '[' + labelStat.index + '].label'}"
                             th:value="${label.label}"
                             class="absence-type-translation-inputs__element__input"
+                            th:data-test-id="${'vacation-type-label-translation-' + label.locale}"
                           />
                           <label th:for="${id}" class="absence-type-translation-inputs__element__label">
                             <img
@@ -155,6 +158,7 @@
                         th:each="error : ${#fields.errors(labelsFieldname)}"
                         th:text="${error}"
                         class="error tw-ml-7 md:tw-ml-6"
+                        data-test-id="vacation-type-translation-error"
                       ></p>
                     </th:block>
                   </th:block>
