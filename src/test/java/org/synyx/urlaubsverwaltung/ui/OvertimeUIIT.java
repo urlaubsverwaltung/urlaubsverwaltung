@@ -91,9 +91,6 @@ class OvertimeUIIT {
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
-        page.waitForLoadState();
-
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
@@ -116,7 +113,6 @@ class OvertimeUIIT {
 
         overtimePage.submit();
 
-        page.context().waitForCondition(overtimeDetailPage::isVisible);
         page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
 
         // overtime created info vanishes sometime

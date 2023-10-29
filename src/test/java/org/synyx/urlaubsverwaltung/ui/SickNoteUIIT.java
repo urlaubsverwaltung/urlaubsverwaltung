@@ -106,11 +106,8 @@ class SickNoteUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
-
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        page.context().waitForCondition(navigationPage::isVisible);
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
         sickNote(page, person);
@@ -130,7 +127,6 @@ class SickNoteUIIT {
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -140,7 +136,6 @@ class SickNoteUIIT {
         assertThat(sickNotePage.showsToDate(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
 
         sickNotePage.submit();
-        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
@@ -154,7 +149,6 @@ class SickNoteUIIT {
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -167,7 +161,6 @@ class SickNoteUIIT {
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MARCH, 11))).isTrue();
 
         sickNotePage.submit();
-        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MARCH, 10))).isTrue();
@@ -183,7 +176,6 @@ class SickNoteUIIT {
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -194,7 +186,6 @@ class SickNoteUIIT {
         sickNotePage.toDate(LocalDate.of(2022, APRIL, 12));
 
         sickNotePage.submit();
-        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, APRIL, 11))).isTrue();
@@ -209,7 +200,6 @@ class SickNoteUIIT {
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -223,7 +213,6 @@ class SickNoteUIIT {
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MAY, 11))).isTrue();
 
         sickNotePage.submit();
-        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MAY, 10))).isTrue();
@@ -238,7 +227,6 @@ class SickNoteUIIT {
         final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(page, messageSource, GERMAN);
 
         navigationPage.clickSickNotes();
-        page.context().waitForCondition(sickNoteOverviewPage::isVisible);
 
         assertThat(sickNoteOverviewPage.showsSickNoteStatistic(person.getFirstName(), person.getLastName(), 3, 1)).isTrue();
         assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic(person.getFirstName(), person.getLastName(), 4, 1)).isTrue();
