@@ -1,8 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
-
-import java.util.regex.Pattern;
+import com.microsoft.playwright.Response;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
@@ -26,8 +25,8 @@ public class SettingsPage {
     }
 
     public void clickWorkingTimeTab() {
-        page.locator(WORKING_TIME_TAB_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/settings/working-time$"));
+        page.waitForResponse(Response::ok, () -> page.locator(WORKING_TIME_TAB_SELECTOR).click());
+        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void enableOvertime() {
@@ -37,12 +36,8 @@ public class SettingsPage {
         page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
-    /**
-     * Submits the setting form. Note that this method doesn't wait until something happens (e.g. submit button is stale for instance).
-     * You may have to add a wait yourself after calling this method.
-     */
     public void saveSettings() {
-        page.locator(SAVE_BUTTON_SELECTOR).first().click();
+        page.waitForResponse(Response::ok, () -> page.locator(SAVE_BUTTON_SELECTOR).first().click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

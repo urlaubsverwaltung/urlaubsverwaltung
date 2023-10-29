@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 import org.springframework.context.MessageSource;
 
 import java.util.Locale;
@@ -35,8 +36,7 @@ public class LoginPage {
     public void login(Credentials credentials) {
         page.fill(USERNAME_SELECTOR, credentials.username);
         page.fill(PASSWORD_SELECTOR, credentials.password);
-        page.locator(SUBMIT_SELECTOR).click();
-        page.waitForURL(url -> url.contains("/web/")); // next part of application is unknown here
+        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

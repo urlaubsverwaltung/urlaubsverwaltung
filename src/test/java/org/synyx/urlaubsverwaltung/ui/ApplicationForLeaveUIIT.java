@@ -399,7 +399,6 @@ class ApplicationForLeaveUIIT {
 
         settingsPage.clickDisableHalfDayAbsence();
         settingsPage.saveSettings();
-        page.context().waitForCondition(navigationPage::isVisible);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();

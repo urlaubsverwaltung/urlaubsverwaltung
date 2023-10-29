@@ -2,8 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-
-import java.util.regex.Pattern;
+import com.microsoft.playwright.Response;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
@@ -31,18 +30,15 @@ public class NavigationPage {
 
     public void logout() {
         avatarMenu.logout();
-        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickSickNotes() {
-        page.locator(SICK_NOTES_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/web/sickdays$"));
+        page.waitForResponse(Response::ok, () -> page.locator(SICK_NOTES_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickSettings() {
-        page.locator(SETTINGS_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/web/settings/absences"));
+        page.waitForResponse(Response::ok, () -> page.locator(SETTINGS_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
@@ -82,27 +78,23 @@ public class NavigationPage {
                 page.locator(BUTTON_SELECTOR).click();
             }
             else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
-                page.locator(PLAIN_APPLICATION_SELECTOR).click();
-                page.waitForURL(Pattern.compile("/web/application/new$"));
+                page.waitForResponse(Response::ok, () -> page.locator(PLAIN_APPLICATION_SELECTOR).click());
                 page.waitForLoadState(DOMCONTENTLOADED);
             }
         }
 
         public void newApplication() {
-            page.locator(APPLICATION_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/application/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(APPLICATION_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newOvertime() {
-            page.locator(OVERTIME_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/overtime/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newSickNote() {
-            page.locator(SICKNOTE_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/sicknote/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(SICKNOTE_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }
@@ -121,7 +113,7 @@ public class NavigationPage {
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();
-            page.locator(LOGOUT_SELECTOR).click();
+            page.waitForResponse(Response::ok, () -> page.locator(LOGOUT_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }

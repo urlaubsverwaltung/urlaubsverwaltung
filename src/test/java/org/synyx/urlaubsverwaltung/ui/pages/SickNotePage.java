@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 
 import java.time.LocalDate;
 
@@ -63,7 +64,7 @@ public class SickNotePage {
      * You may have to add a wait yourself after calling this method.
      */
     public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -123,7 +124,7 @@ public class ApplicationPage {
     }
 
     public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
