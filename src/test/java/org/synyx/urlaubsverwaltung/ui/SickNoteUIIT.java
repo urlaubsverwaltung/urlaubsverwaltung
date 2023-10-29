@@ -115,9 +115,6 @@ class SickNoteUIIT {
         childSickNote(page, person);
         childSickNoteWithIncapacityCertificate(page, person);
         sickNoteStatisticListView(page, person);
-
-        navigationPage.logout();
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private void sickNote(Page page, Person person) {

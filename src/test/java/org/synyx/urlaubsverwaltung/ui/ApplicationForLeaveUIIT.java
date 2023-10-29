@@ -162,11 +162,6 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.newApplication();
 
         page.context().waitForCondition(applicationPage::isVisible);
-
-        navigationPage.logout();
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
@@ -218,11 +213,6 @@ class ApplicationForLeaveUIIT {
 
         assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
-
-        navigationPage.logout();
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
@@ -263,9 +253,6 @@ class ApplicationForLeaveUIIT {
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
-
-        navigationPage.logout();
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
@@ -314,9 +301,6 @@ class ApplicationForLeaveUIIT {
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
-
-        navigationPage.logout();
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
@@ -383,11 +367,6 @@ class ApplicationForLeaveUIIT {
 
         assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
-
-        navigationPage.logout();
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {

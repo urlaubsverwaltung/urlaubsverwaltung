@@ -117,8 +117,6 @@ class OvertimeUIIT {
         assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
         assertThat(overtimeDetailPage.showsHours(2)).isTrue();
         assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
-
-        navigationPage.logout();
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
