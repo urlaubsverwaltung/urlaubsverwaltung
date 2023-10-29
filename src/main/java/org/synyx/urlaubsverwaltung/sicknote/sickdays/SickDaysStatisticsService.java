@@ -26,7 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -65,7 +64,7 @@ public class SickDaysStatisticsService {
 
         final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
-        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
         final List<SickNote> sickNotes = getSickNotes(person, relevantMembers, from, to);
 
         final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream().collect(groupingBy(SickNote::getPerson));
@@ -90,7 +89,7 @@ public class SickDaysStatisticsService {
 
         final List<SickDaysDetailedStatistics> content = statisticsStream
             .sorted(new SortComparator<>(SickDaysDetailedStatistics.class, pageable.getSort()))
-            .collect(toList());
+            .toList();
 
         return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
     }

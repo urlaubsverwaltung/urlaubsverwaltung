@@ -35,7 +35,6 @@ import java.util.stream.IntStream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
@@ -84,7 +83,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
             .map(statistic -> toSickDaysOverviewDto(statistic, period.getStartDate(), period.getEndDate()))
-            .collect(toList());
+            .toList();
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
         model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
@@ -93,7 +92,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final PageImpl<SickDaysOverviewDto> statisticsPage = new PageImpl<>(sickDaysOverviewDtos, pageable, sickDaysStatisticsPage.getTotalElements());
 
         model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix));
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().collect(toList()));
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
