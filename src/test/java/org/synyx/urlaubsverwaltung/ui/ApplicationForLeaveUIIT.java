@@ -96,9 +96,8 @@ class ApplicationForLeaveUIIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
@@ -134,7 +133,7 @@ class ApplicationForLeaveUIIT {
         final Person officePerson = createPerson("Alfred", "Pennyworth the second", List.of(USER, OFFICE));
         final Person userPerson = createPerson("The", "Joker the second", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);
@@ -176,7 +175,7 @@ class ApplicationForLeaveUIIT {
         final Person batman = createPerson("Bruce", "Wayne the third", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck the third", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
@@ -230,7 +229,7 @@ class ApplicationForLeaveUIIT {
     void ensureCreatingApplicationForLeaveOfTypeSpecialLeave(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth the fifth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
@@ -273,7 +272,7 @@ class ApplicationForLeaveUIIT {
     void ensureCreatingApplicationForLeaveOfTypeOvertime(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth the sixth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
@@ -327,7 +326,7 @@ class ApplicationForLeaveUIIT {
         final Person batman = createPerson("Bruce", "Wayne the fourth", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck the fourth", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);

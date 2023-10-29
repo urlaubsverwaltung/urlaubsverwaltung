@@ -102,7 +102,7 @@ class SickNoteUIIT {
     void ensureSickNote(Page page) {
         final Person person = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");

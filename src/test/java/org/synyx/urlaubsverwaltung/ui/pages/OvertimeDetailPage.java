@@ -19,10 +19,6 @@ public class OvertimeDetailPage {
         return page.locator(PERSON_SELECTOR).textContent().strip().startsWith(username);
     }
 
-    public boolean isVisible() {
-        return page.locator(PERSON_SELECTOR) != null && page.locator(DURATION_SELECTOR) != null;
-    }
-
     public boolean showsOvertimeCreatedInfo() {
         final Locator element = page.locator(ALERT_SUCCESS_SELECTOR);
         return element != null && element.isVisible();

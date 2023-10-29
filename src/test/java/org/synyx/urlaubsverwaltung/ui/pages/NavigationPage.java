@@ -10,7 +10,6 @@ import static com.microsoft.playwright.options.WaitForSelectorState.DETACHED;
 
 public class NavigationPage {
 
-    private static final String NEW_APPLICATION_SELECTOR = "#application-new-link";
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String SETTINGS_SELECTOR = "[data-test-id=navigation-settings-link]";
 
@@ -22,10 +21,6 @@ public class NavigationPage {
         this.avatarMenu = new AvatarMenu(page);
         this.quickAdd = new QuickAdd(page);
         this.page = page;
-    }
-
-    public boolean isVisible() {
-        return newApplicationLinkVisible(page);
     }
 
     public void logout() {
@@ -40,10 +35,6 @@ public class NavigationPage {
     public void clickSettings() {
         page.waitForResponse(Response::ok, () -> page.locator(SETTINGS_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
-    }
-
-    private static boolean newApplicationLinkVisible(Page page) {
-        return page.locator(NEW_APPLICATION_SELECTOR).isVisible();
     }
 
     public static class QuickAdd {
@@ -102,7 +93,6 @@ public class NavigationPage {
     private static class AvatarMenu {
 
         private static final String AVATAR_SELECTOR = "[data-test-id=avatar]";
-        private static final String AVATAR_POPUPMENU_SELECTOR = "[data-test-id=avatar-popupmenu]";
         private static final String LOGOUT_SELECTOR = "[data-test-id=logout]";
 
         private final Page page;

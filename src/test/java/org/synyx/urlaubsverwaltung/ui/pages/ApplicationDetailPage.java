@@ -26,10 +26,6 @@ public class ApplicationDetailPage {
         return page.title().equals(title(username));
     }
 
-    public boolean isVisible() {
-        return page.title().startsWith(title(""));
-    }
-
     public boolean showsApplicationCreatedInfo() {
         final String text = messageSource.getMessage("application.action.apply.success", new Object[]{}, locale);
         return page.getByText(text).isVisible();

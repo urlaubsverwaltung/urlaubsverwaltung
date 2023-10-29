@@ -14,8 +14,6 @@ public class SickNotePage {
     private static final String PERSON_SELECTOR = "[data-test-id=person-select]";
     private static final String SICKNOTE_TYPE_SELECTOR = "[data-test-id=sicknote-type-select]";
     private static final String DAY_TYPE_FULL_SELECTOR = "[data-test-id=day-type-full]";
-    private static final String DAY_TYPE_MORNING_SELECTOR = "[data-test-id=day-type-morning]";
-    private static final String DAY_TYPE_NOON_SELECTOR = "[data-test-id=day-type-noon]";
     private static final String FROM_SELECTOR = "[data-test-id=sicknote-from-date]";
     private static final String TO_SELECTOR = "[data-test-id=sicknote-to-date]";
     private static final String AUB_FROM_SELECTOR = "[data-test-id=sicknote-aub-from]";
@@ -37,10 +35,6 @@ public class SickNotePage {
 
     public SickNotePage(Page page) {
         this.page = page;
-    }
-
-    public boolean isVisible() {
-        return page.locator(SUBMIT_SELECTOR).isVisible();
     }
 
     public void startDate(LocalDate startDate) {

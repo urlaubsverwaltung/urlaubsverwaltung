@@ -23,11 +23,6 @@ public class SickNoteOverviewPage {
         this.messageSource = messageSource;
     }
 
-    public boolean isVisible() {
-        final String sickNoteHeaderTitle = messageSource.getMessage("sicknotes.header.title", new Object[]{}, locale);
-        return page.title().equals(sickNoteHeaderTitle);
-    }
-
     public boolean showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
         final String sickDaysText = messageSource.getMessage("sicknotes.daysOverview.sickDays.number", new Object[]{}, locale);
         final String sickDaysAubText = messageSource.getMessage("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate}, locale);

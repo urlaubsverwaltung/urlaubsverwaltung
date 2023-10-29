@@ -22,13 +22,6 @@ public class OvertimePage {
         this.page = page;
     }
 
-    public boolean isVisible() {
-        page.locator(DUET_START_DATE_SELECTOR).waitFor();
-        page.locator(DUET_END_DATE_SELECTOR).waitFor();
-        page.locator(SUBMIT_SELECTOR).waitFor();
-        return true;
-    }
-
     public void startDate(LocalDate startDate) {
         final String dateString = ofPattern("dd.MM.yyyy").format(startDate);
         page.locator(DUET_START_DATE_SELECTOR).fill(dateString);
