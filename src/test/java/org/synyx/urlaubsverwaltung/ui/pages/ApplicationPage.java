@@ -183,13 +183,6 @@ public class ApplicationPage {
         return null;
     }
 
-    private static class HolidayReplacementRowElement {
-        final Locator rowElement;
-        final int position;
-
-        HolidayReplacementRowElement(Locator rowElement, int position) {
-            this.rowElement = rowElement;
-            this.position = position;
-        }
+    private record HolidayReplacementRowElement(Locator rowElement, int position) {
     }
 }

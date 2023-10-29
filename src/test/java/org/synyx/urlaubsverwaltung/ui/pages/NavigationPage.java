@@ -90,16 +90,10 @@ public class NavigationPage {
         }
     }
 
-    private static class AvatarMenu {
+    private record AvatarMenu(Page page) {
 
         private static final String AVATAR_SELECTOR = "[data-test-id=avatar]";
         private static final String LOGOUT_SELECTOR = "[data-test-id=logout]";
-
-        private final Page page;
-
-        AvatarMenu(Page page) {
-            this.page = page;
-        }
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();

@@ -41,14 +41,6 @@ public class LoginPage {
         return page.locator(PASSWORD_SELECTOR) != null;
     }
 
-    public static class Credentials {
-
-        public final String username;
-        public final String password;
-
-        public Credentials(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
+    public record Credentials(String username, String password) {
     }
 }
