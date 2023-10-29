@@ -25,10 +25,6 @@ public class SickNoteDetailPage {
         this.locale = locale;
     }
 
-    public boolean isVisible() {
-        return page.locator(PERSON_SELECTOR).isVisible() && page.locator(DATE_SELECTOR).isVisible();
-    }
-
     public boolean showsSickNoteForPerson(String name) {
         final String typeText = messageSource.getMessage("application.data.sicknotetype.sicknote", new Object[]{}, locale);
 

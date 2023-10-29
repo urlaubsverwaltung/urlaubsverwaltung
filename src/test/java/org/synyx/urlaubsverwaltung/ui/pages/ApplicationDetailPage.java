@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -25,10 +26,6 @@ public class ApplicationDetailPage {
         return page.title().equals(title(username));
     }
 
-    public boolean isVisible() {
-        return page.title().startsWith(title(""));
-    }
-
     public boolean showsApplicationCreatedInfo() {
         final String text = messageSource.getMessage("application.action.apply.success", new Object[]{}, locale);
         return page.getByText(text).isVisible();
@@ -40,7 +37,7 @@ public class ApplicationDetailPage {
     }
 
     public void selectEdit() {
-        page.locator("[data-test-id=application-edit-button]").click();
+        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=application-edit-button]").click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

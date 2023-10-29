@@ -7,8 +7,6 @@ import java.util.Locale;
 
 public class OverviewPage {
 
-    private static final String DATEPICKER_SELECTOR = "#datepicker";
-
     private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -17,14 +15,6 @@ public class OverviewPage {
         this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
-    }
-
-    public boolean isVisible() {
-        return datepickerExists(page);
-    }
-
-    private static boolean datepickerExists(Page page) {
-        return page.locator(DATEPICKER_SELECTOR).isVisible();
     }
 
     public boolean isVisibleForPerson(String username, int year) {

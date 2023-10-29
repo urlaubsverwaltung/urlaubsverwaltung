@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
-import org.springframework.context.MessageSource;
-
-import java.util.Locale;
+import com.microsoft.playwright.Response;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
@@ -14,13 +12,9 @@ public class LoginPage {
     private static final String SUBMIT_SELECTOR = "#kc-login";
 
     private final Page page;
-    private final MessageSource messageSource;
-    private final Locale locale;
 
-    public LoginPage(Page page, MessageSource messageSource, Locale locale) {
+    public LoginPage(Page page) {
         this.page = page;
-        this.messageSource = messageSource;
-        this.locale = locale;
     }
 
     public boolean isVisible() {
@@ -35,14 +29,8 @@ public class LoginPage {
     public void login(Credentials credentials) {
         page.fill(USERNAME_SELECTOR, credentials.username);
         page.fill(PASSWORD_SELECTOR, credentials.password);
-        page.locator(SUBMIT_SELECTOR).click();
-        page.waitForURL(url -> url.contains("/web/")); // next part of application is unknown here
+        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
-    }
-
-    private boolean webpageTitleIsShown(Page page) {
-        final String loginText = messageSource.getMessage("login.title", new Object[]{}, locale);
-        return page.title().equals(loginText);
     }
 
     private static boolean usernameElementExists(Page page) {
@@ -53,14 +41,6 @@ public class LoginPage {
         return page.locator(PASSWORD_SELECTOR) != null;
     }
 
-    public static class Credentials {
-
-        public final String username;
-        public final String password;
-
-        public Credentials(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
+    public record Credentials(String username, String password) {
     }
 }

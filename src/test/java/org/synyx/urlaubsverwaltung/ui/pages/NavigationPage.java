@@ -2,8 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-
-import java.util.regex.Pattern;
+import com.microsoft.playwright.Response;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
@@ -11,7 +10,6 @@ import static com.microsoft.playwright.options.WaitForSelectorState.DETACHED;
 
 public class NavigationPage {
 
-    private static final String NEW_APPLICATION_SELECTOR = "#application-new-link";
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String SETTINGS_SELECTOR = "[data-test-id=navigation-settings-link]";
 
@@ -25,29 +23,18 @@ public class NavigationPage {
         this.page = page;
     }
 
-    public boolean isVisible() {
-        return newApplicationLinkVisible(page);
-    }
-
     public void logout() {
         avatarMenu.logout();
-        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickSickNotes() {
-        page.locator(SICK_NOTES_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/web/sickdays$"));
+        page.waitForResponse(Response::ok, () -> page.locator(SICK_NOTES_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickSettings() {
-        page.locator(SETTINGS_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/web/settings/absences"));
+        page.waitForResponse(Response::ok, () -> page.locator(SETTINGS_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
-    }
-
-    private static boolean newApplicationLinkVisible(Page page) {
-        return page.locator(NEW_APPLICATION_SELECTOR).isVisible();
     }
 
     public static class QuickAdd {
@@ -82,46 +69,35 @@ public class NavigationPage {
                 page.locator(BUTTON_SELECTOR).click();
             }
             else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
-                page.locator(PLAIN_APPLICATION_SELECTOR).click();
-                page.waitForURL(Pattern.compile("/web/application/new$"));
+                page.waitForResponse(Response::ok, () -> page.locator(PLAIN_APPLICATION_SELECTOR).click());
                 page.waitForLoadState(DOMCONTENTLOADED);
             }
         }
 
         public void newApplication() {
-            page.locator(APPLICATION_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/application/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(APPLICATION_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newOvertime() {
-            page.locator(OVERTIME_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/overtime/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newSickNote() {
-            page.locator(SICKNOTE_SELECTOR).click();
-            page.waitForURL(Pattern.compile("/web/sicknote/new$"));
+            page.waitForResponse(Response::ok, () -> page.locator(SICKNOTE_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }
 
-    private static class AvatarMenu {
+    private record AvatarMenu(Page page) {
 
         private static final String AVATAR_SELECTOR = "[data-test-id=avatar]";
-        private static final String AVATAR_POPUPMENU_SELECTOR = "[data-test-id=avatar-popupmenu]";
         private static final String LOGOUT_SELECTOR = "[data-test-id=logout]";
-
-        private final Page page;
-
-        AvatarMenu(Page page) {
-            this.page = page;
-        }
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();
-            page.locator(LOGOUT_SELECTOR).click();
+            page.waitForResponse(Response::ok, () -> page.locator(LOGOUT_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Response;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -123,7 +124,7 @@ public class ApplicationPage {
     }
 
     public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
@@ -182,13 +183,6 @@ public class ApplicationPage {
         return null;
     }
 
-    private static class HolidayReplacementRowElement {
-        final Locator rowElement;
-        final int position;
-
-        HolidayReplacementRowElement(Locator rowElement, int position) {
-            this.rowElement = rowElement;
-            this.position = position;
-        }
+    private record HolidayReplacementRowElement(Locator rowElement, int position) {
     }
 }

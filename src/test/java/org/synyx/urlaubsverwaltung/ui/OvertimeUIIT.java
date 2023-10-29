@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.MessageSource;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
@@ -44,7 +43,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
-import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -77,23 +75,18 @@ class OvertimeUIIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
-    @Autowired
-    private MessageSource messageSource;
 
     @Test
     void ensureOvertimeCreation(Page page) {
         final Person person = createPerson("dBradley", "Donald", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        page.context().waitForCondition(loginPage::isVisible);
-        page.waitForLoadState();
-
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
@@ -116,7 +109,6 @@ class OvertimeUIIT {
 
         overtimePage.submit();
 
-        page.context().waitForCondition(overtimeDetailPage::isVisible);
         page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
 
         // overtime created info vanishes sometime
@@ -125,8 +117,6 @@ class OvertimeUIIT {
         assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
         assertThat(overtimeDetailPage.showsHours(2)).isTrue();
         assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
-
-        navigationPage.logout();
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
