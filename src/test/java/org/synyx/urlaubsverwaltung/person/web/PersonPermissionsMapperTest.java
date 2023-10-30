@@ -52,7 +52,8 @@ class PersonPermissionsMapperTest {
     void ensurePermissionsMappingToRolesContainsAllRolesInSortedOrder() {
         final List<PersonPermissionsRoleDto> permissions = Arrays.asList(PersonPermissionsRoleDto.values());
         final List<Role> roles = mapPermissionsDtoToRole(permissions);
-        assertThat(roles).containsExactlyElementsOf(Arrays.asList(Role.values()));
+        final List<Role> defaultRoles = Arrays.stream(Role.values()).filter(role -> !role.equals(Role.PERSON_ADD)).toList();
+        assertThat(roles).containsExactlyElementsOf(defaultRoles);
     }
 
     static Stream<Arguments> roleMapping() {

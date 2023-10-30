@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,7 +19,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,6 +75,40 @@ class PersonApiControllerTest {
             .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1"))))
             .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
             .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))));
+    }
+
+    @Test
+    void ensureToCreateNewPerson() throws Exception {
+
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.empty());
+
+        perform(post("/api/persons")
+            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+        )
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    void ensureToReturnConflictIfPersonDoesAlreadyExists() throws Exception {
+
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(new Person()));
+
+        perform(post("/api/persons")
+            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+        )
+            .andExpect(status().isConflict());
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

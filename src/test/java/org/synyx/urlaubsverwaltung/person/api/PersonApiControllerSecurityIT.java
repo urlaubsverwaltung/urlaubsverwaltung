@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,10 +19,13 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -80,6 +84,49 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
         perform(get("/api/persons/1")
             .with(user("office").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
         ).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureAccessIsUnAuthorizedIfPersonWantsToCreateNewUserWithoutAuthorization() throws Exception {
+        perform(
+            post("/api/persons")
+                .with(csrf())
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
+    void ensureAccessIsForbiddenForUserWithoutRolePersonAdd(final String role) throws Exception {
+        perform(post("/api/persons")
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(csrf())
+            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void ensureAccessIsAllowedForPersonWithRolePersonAdd() throws Exception {
+
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.empty());
+
+        perform(post("/api/persons")
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
+            .with(csrf())
+            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+        ).andExpect(status().isCreated());
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
