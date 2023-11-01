@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMapper;
 import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Configuration
 class RestApiSecurityConfig {
@@ -20,12 +21,11 @@ class RestApiSecurityConfig {
     SecurityFilterChain apiSecurityFilterChain(final HttpSecurity http,
                                                final PersonService personService,
                                                final List<RolesFromClaimMapper> claimMappers) throws Exception {
-
         return http
-            .securityMatcher("/api/**", "/api/", "/api")
+            .securityMatcher("/api/**")
             .authorizeHttpRequests(authorizeHttpRequests ->
                 authorizeHttpRequests
-                    .requestMatchers("/api/**", "/api/", "/api").permitAll()
+                    .requestMatchers("/api/**").hasAuthority(USER.name())
                     .anyRequest().authenticated()
             ).sessionManagement(
                 sessionManagement -> sessionManagement.sessionCreationPolicy(NEVER)
