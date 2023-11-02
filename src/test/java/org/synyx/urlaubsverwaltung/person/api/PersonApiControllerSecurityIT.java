@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -90,7 +89,6 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     void ensureAccessIsUnAuthorizedIfPersonWantsToCreateNewUserWithoutAuthorization() throws Exception {
         perform(
             post("/api/persons")
-                .with(csrf())
         )
             .andExpect(status().is4xxClientError());
     }
@@ -100,7 +98,6 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     void ensureAccessIsForbiddenForUserWithoutRolePersonAdd(final String role) throws Exception {
         perform(post("/api/persons")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
-            .with(csrf())
             .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
@@ -114,7 +111,6 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
 
         perform(post("/api/persons")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
-            .with(csrf())
             .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
