@@ -49,9 +49,15 @@
             <li
               class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
               th:each="department : ${departments}"
-              th:text="${department.name}"
             >
-              Geschäftsführung
+              <a
+                href="#"
+                th:href="@{/web/absences (department=${department.name})}"
+                th:text="${department.name}"
+                class="icon-link print:no-link"
+              >
+                Geschäftsführung
+              </a>
             </li>
           </ul>
         </th:block>
