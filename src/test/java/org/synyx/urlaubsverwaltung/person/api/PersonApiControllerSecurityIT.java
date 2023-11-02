@@ -109,6 +109,10 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
 
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.empty());
 
+        final Person createdPerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        createdPerson.setId(2L);
+        when(personService.create("shane@example.org", "shane", "last", "shane@example.org")).thenReturn(createdPerson);
+
         perform(post("/api/persons")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
             .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))

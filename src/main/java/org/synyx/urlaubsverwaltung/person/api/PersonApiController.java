@@ -34,7 +34,6 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -82,16 +81,16 @@ public class PersonApiController {
     @PreAuthorize("hasAuthority('PERSON_ADD')")
     @Operation(summary = "Creates a new person with the given parameters", description = "Creates a new person with the given parameters of firstName, lastName and email. The authority 'USER' and 'PERSON_ADD' is needed to execute this method.")
     @ApiResponses(value = {@ApiResponse(description = "successful operation", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PersonProvisionDto.class))})})
-    @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
+    @PostMapping
+    public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
 
         final String predictedUsername = personProvisionDto.getEmail();
         if (personService.getPersonByUsername(predictedUsername).isPresent()) {
             throw new ResponseStatusException(CONFLICT);
         }
 
-        personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
-        return new ResponseEntity<>(CREATED);
+        final Person person = personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
+        return new ResponseEntity<>(createPersonResponse(person), CREATED);
     }
 
     private PersonDto createPersonResponse(Person person) {
