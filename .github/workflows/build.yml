@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  MAVEN_ARGS: "--batch-mode --errors --fail-at-end --show-version"
+  MAVEN_ARGS: "--no-transfer-progress --errors --fail-at-end --show-version"
 
 jobs:
   build:

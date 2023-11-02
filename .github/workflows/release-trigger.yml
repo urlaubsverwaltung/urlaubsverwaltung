@@ -17,7 +17,7 @@ on:
         default: 'x.xx.x-SNAPSHOT'
 
 env:
-  MAVEN_ARGS: "--batch-mode --errors --fail-at-end --show-version"
+  MAVEN_ARGS: "--no-transfer-progress --errors --fail-at-end --show-version"
 
 jobs:
   trigger-release:
