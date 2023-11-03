@@ -17,6 +17,16 @@ public interface SickNoteInteractionService {
      * @return the saved sicknote in SUBMITTED state
      */
     SickNote submit(SickNote sickNote, Person submitter, String comment);
+
+    /**
+     * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts a sicknote which was submitted by user
+     * @param sickNote
+     * @param maintainer with role OFFICE or SICK_NOTE_VIEW_ADD_EDIT
+     * @param comment
+     * @return the saved sicknote in ACTIVE state
+     */
+    SickNote accept(SickNote sickNote, Person maintainer);
+
     /**
      * Creates a new sick note.
      *
