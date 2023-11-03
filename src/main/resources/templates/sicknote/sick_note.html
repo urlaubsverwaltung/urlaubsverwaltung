@@ -30,6 +30,19 @@
           <th:block th:ref="sicknote-heading-actions">
             <th:block th:if="${sickNote.submittedOrActive}">
               <div class="tw-flex tw-flex-row">
+                <th:block th:if="${canAcceptSickNote}"> </th:block>
+
+                <th:block th:if="${canAcceptSickNote && !sickNote.active}">
+                  <form method="post" th:action="@{/web/sicknote/__${sickNote.id}__/accept}">
+                    <button
+                      class="icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                    >
+                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
+                      <span th:text="#{action.acceptSicknote}" class="tw-sr-only"></span>
+                    </button>
+                  </form>
+                </th:block>
+
                 <th:block th:if="${canEditSickNote}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/edit}"
@@ -146,7 +159,7 @@
               <td th:text="#{absence.period.duration}"></td>
               <td>
                 <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
-                <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
+                <span th:if="${sickNote.submittedOrActive == false}" th:text="#{sicknote.data.inactive}"></span>
               </td>
             </tr>
             <tr>
