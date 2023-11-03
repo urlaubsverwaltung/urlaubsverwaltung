@@ -51,6 +51,19 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
+    public SickNote submit(SickNote sickNote, Person submitter, String comment) {
+        final SickNote submittedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(SUBMITTED).build());
+        LOG.info("New sick note {} was submitted by user {}", submittedSickNote, submitter);
+
+        commentService.create(submittedSickNote, SickNoteCommentAction.SUBMITTED, submitter, comment);
+
+        // TODO:
+        //sickNoteMailService.sendSubmittedSickNoteToPerson(submittedSickNote);
+        //sickNoteMailService.sendSubmittedSickNoteToOfficeAndDeparmentHeadWithSickNoteMaintenanceRole(submittedSickNote);
+
+        return submittedSickNote;
+    }
+    @Override
     public SickNote create(SickNote sickNote, Person creator) {
         return this.create(sickNote, creator, null);
     }

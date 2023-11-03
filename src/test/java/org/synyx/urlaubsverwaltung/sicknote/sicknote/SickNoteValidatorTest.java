@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
@@ -76,6 +78,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureApplierWithWrongRoleReturnsError() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
@@ -97,6 +100,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureValidOfficeApplierHasNoErrors() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -123,6 +127,7 @@ class SickNoteValidatorTest {
     @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
     void ensureBossApplierWithValidPermissionsHasNoErrors(final Role role) {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -148,6 +153,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureBossApplierWithInvalidPermissionsHasErrors() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("boss", "boss", "boss", "boss@example.org");
@@ -170,6 +176,7 @@ class SickNoteValidatorTest {
     @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
     void ensureDepartmentHeadWithValidPermissionsHasNoErrors(final Role role) {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -198,6 +205,7 @@ class SickNoteValidatorTest {
     @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
     void ensureDepartmentHeadWithValidPermissionsButForWrongMemberHasError(final Role role) {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
@@ -221,6 +229,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureDepartmentHeadWithInvalidPermissionsHasError() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
@@ -243,6 +252,7 @@ class SickNoteValidatorTest {
     @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
     void ensureSecondStageAuthorityWithValidPermissionsHasNoErrors(final Role role) {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -271,6 +281,7 @@ class SickNoteValidatorTest {
     @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
     void ensureSecondStageAuthorityWithValidPermissionsButForWrongMemberHasError(final Role role) {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
@@ -294,6 +305,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureSecondStageAuthorityWithInvalidPermissionsHasError() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
@@ -315,6 +327,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureValidDatesHaveNoErrors() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -338,6 +351,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureDayLengthMayNotBeNull() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -357,6 +371,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartDateMayNotBeNull() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -376,6 +391,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureEndDateMayNotBeNull() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -395,6 +411,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriod() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -416,6 +433,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartAndEndDateMustBeEqualsDatesForDayLengthNoon() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -435,6 +453,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartAndEndDateMustBeEqualsDatesForDayLengthMorning() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -454,6 +473,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthMorning() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -473,6 +493,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureStartDateMustBeBeforeEndDateToHaveAValidPeriodForDayLengthNoon() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -492,6 +513,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -517,6 +539,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureValidAUPeriodHasNoErrors() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -542,6 +565,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -567,6 +591,8 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
 
+        userIsAllowedToSubmitSickNotes(false);
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -592,6 +618,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -617,6 +644,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -642,6 +670,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -667,6 +696,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -693,6 +723,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -717,7 +748,7 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
-
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -743,6 +774,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureSickNoteMustNotHaveAnyOverlapping() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
@@ -766,6 +798,8 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureWorkingTimeConfigurationMustExistForPeriodOfSickNote() {
+
+        userIsAllowedToSubmitSickNotes(false);
         final LocalDate startDate = LocalDate.of(2015, MARCH, 1);
 
         final Person applier = new Person("office", "office", "office", "office@example.org");
@@ -790,6 +824,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureInvalidPeriodWithValidAUBPeriodIsNotValid() {
 
+        userIsAllowedToSubmitSickNotes(false);
         final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
 
@@ -811,6 +846,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
 
+        userIsAllowedToSubmitSickNotes(false);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -831,5 +867,13 @@ class SickNoteValidatorTest {
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+    }
+
+    private void userIsAllowedToSubmitSickNotes(boolean allowed) {
+        var sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(allowed);
+        var settings = new Settings();
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 }
