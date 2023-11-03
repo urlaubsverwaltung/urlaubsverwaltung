@@ -9,6 +9,24 @@ import org.synyx.urlaubsverwaltung.person.Person;
 public interface SickNoteInteractionService {
 
     /**
+     * Creates a new sicknote in SUBMITTED state if a user submits the sicknote for him/herself
+     *
+     * @param sickNote
+     * @param submitter
+     * @param comment
+     * @return the saved sicknote in SUBMITTED state
+     */
+    SickNote submit(SickNote sickNote, Person submitter, String comment);
+
+    /**
+     * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts a sicknote which was submitted by user
+     * @param sickNote
+     * @param maintainer with role OFFICE or SICK_NOTE_VIEW_ADD_EDIT
+     * @return the saved sicknote in ACTIVE state
+     */
+    SickNote accept(SickNote sickNote, Person maintainer);
+
+    /**
      * Creates a new sick note.
      *
      * @param sickNote to be saved
