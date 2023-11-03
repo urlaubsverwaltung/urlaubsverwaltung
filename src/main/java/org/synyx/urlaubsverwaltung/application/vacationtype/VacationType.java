@@ -83,7 +83,7 @@ public abstract class VacationType<T extends VacationType<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public static abstract class Builder<T extends VacationType<T>, B extends Builder<T, B>> {
+    public abstract static class Builder<T extends VacationType<T>, B extends Builder<T, B>> {
 
         protected Long id;
         protected boolean active;
