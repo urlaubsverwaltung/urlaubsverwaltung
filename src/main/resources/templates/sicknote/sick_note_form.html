@@ -59,7 +59,7 @@
             </div>
 
             <div class="col-md-8 col-md-pull-4">
-              <div class="form-group is-required">
+              <div th:if="${canAddSickNote}" class="form-group is-required">
                 <label th:text="|#{sicknote.data.person}:|" class="control-label col-md-3" for="employee"> </label>
 
                 <div class="col-md-9">
@@ -85,6 +85,9 @@
                   </th:block>
                 </div>
               </div>
+              <th:block th:if="${!canAddSickNote}">
+                <input type="hidden" name="person" th:value="${person.id}" />
+              </th:block>
 
               <div class="form-group is-required">
                 <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType"> </label>
