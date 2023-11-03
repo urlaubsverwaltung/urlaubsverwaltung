@@ -66,7 +66,7 @@ class ApplicationForLeaveCsvExportService implements CsvExportService<Applicatio
                 applicationCsvRow[4] = applicationForLeave.getStartDate().format(dateTimeFormatter);
                 applicationCsvRow[5] = applicationForLeave.getEndDate().format(dateTimeFormatter);
                 applicationCsvRow[6] = getTranslation(locale, applicationForLeave.getDayLength().name());
-                applicationCsvRow[7] = getTranslation(locale, applicationForLeave.getVacationType().getMessageKey());
+                applicationCsvRow[7] = applicationForLeave.getVacationType().getLabel(locale);
                 applicationCsvRow[8] = decimalFormat.format(applicationForLeave.getWorkDays());
 
                 csvWriter.writeNext(applicationCsvRow);

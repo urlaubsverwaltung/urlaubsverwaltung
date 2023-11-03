@@ -29,7 +29,12 @@
           </a>
         </li>
         <li th:class="${activeElement == 'absence-types' ? 'active' : ''}">
-          <a href="#absenceTypes" th:href="@{/web/settings/absence-types}" th:text="#{settings.tabs.absenceTypes}">
+          <a
+            href="#"
+            th:href="@{/web/settings/absence-types}"
+            th:text="#{settings.tabs.absenceTypes}"
+            data-test-id="settings-tab-absence-types"
+          >
             Abwesenheitsarten
           </a>
         </li>
@@ -72,6 +77,7 @@
             type="submit"
             class="button-main-green"
             data-test-id="settings-save-button"
+            data-turbo="false"
           ></button>
         </div>
       </div>

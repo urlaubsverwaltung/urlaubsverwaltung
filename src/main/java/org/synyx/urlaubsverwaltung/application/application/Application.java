@@ -86,7 +86,7 @@ public class Application {
     /**
      * Type of vacation, e.g. holiday, special leave etc.
      */
-    private VacationType vacationType;
+    private VacationType<?> vacationType;
 
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
@@ -282,11 +282,11 @@ public class Application {
         this.status = status;
     }
 
-    public VacationType getVacationType() {
+    public VacationType<?> getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationType vacationType) {
+    public void setVacationType(VacationType<?> vacationType) {
         this.vacationType = vacationType;
     }
 

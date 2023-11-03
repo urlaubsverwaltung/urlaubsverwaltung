@@ -1,10 +1,15 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.springframework.context.MessageSource;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 
+import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 final class ApplicationForLeaveStatisticsMapper {
 
@@ -21,14 +26,25 @@ final class ApplicationForLeaveStatisticsMapper {
             statistics.getPerson().getGravatarURL(),
             statistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse(""),
             statistics.getTotalAllowedVacationDays(),
-            statistics.getAllowedVacationDays(),
+            toVacationDaysDtoMap(statistics.getAllowedVacationDays(), locale),
             statistics.getTotalWaitingVacationDays(),
-            statistics.getWaitingVacationDays(),
+            toVacationDaysDtoMap(statistics.getWaitingVacationDays(), locale),
             statistics.getLeftVacationDaysForPeriod(),
             statistics.getLeftRemainingVacationDaysForPeriod(),
             statistics.getLeftVacationDaysForYear(),
             statistics.getLeftRemainingVacationDaysForYear(),
             DurationFormatter.toDurationString(statistics.getLeftOvertimeForYear(), messageSource, locale),
             DurationFormatter.toDurationString(statistics.getLeftOvertimeForPeriod(), messageSource, locale));
+    }
+
+    private static Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> toVacationDaysDtoMap(Map<VacationType<?>, BigDecimal> source, Locale locale) {
+        return source.entrySet().stream().collect(toMap(
+            entry -> vacationTypeDto(entry.getKey(), locale),
+            Map.Entry::getValue
+        ));
+    }
+
+    private static ApplicationForLeaveStatisticsVacationTypeDto vacationTypeDto(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale));
     }
 }

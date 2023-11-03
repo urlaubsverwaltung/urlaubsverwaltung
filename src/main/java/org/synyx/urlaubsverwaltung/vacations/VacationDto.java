@@ -30,7 +30,7 @@ class VacationDto {
         this.person = PersonMapper.mapToDto(application.getPerson());
         this.status = application.getStatus().name();
 
-        VacationType vacationType = application.getVacationType();
+        VacationType<?> vacationType = application.getVacationType();
         this.type = vacationType.getCategory().toString();
     }
 

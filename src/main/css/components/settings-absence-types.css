@@ -1,93 +1,179 @@
-.absence-type-list {
-  position: relative;
-  @apply tw-space-y-1;
-}
-
 .absence-type-list-head {
-  @apply tw-hidden;
-  @apply sm:tw-sticky;
-  z-index: 1; /* color-picker should not cover the sticky header */
-  top: var(--uv-header-height);
-  @apply tw-bg-white;
-  @apply dark:tw-bg-zinc-900;
-  @apply tw-py-1;
-  @apply tw-px-4;
-  @apply tw-text-sm;
+  display: none;
+}
+
+.absence-type-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows:
+    /* item row followed by empty row to use custom row-gap */
+    /* since gap between label and translation has another value */
+    [status-and-color] auto
+    1rem
+    [label] auto
+    0.5rem
+    [translation] auto
+    1rem
+    [apply] auto
+    1rem
+    [cancel] auto
+    1rem
+    [everyone] auto;
+}
+
+.absence-type-card:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.absence-type-card-cell_title {
+  @apply tw-text-base;
+  @apply tw-font-normal;
+}
+
+.absence-type-card label {
+  line-height: 1.2;
+}
+
+.absence-type-card__status {
+  grid-column: 1 / span 2;
+  grid-row: status-and-color;
+}
+
+.absence-type-card__label,
+.absence-type-card__label-translation {
+  grid-column: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  @apply tw-overflow-hidden;
+}
+
+.absence-type-card__label {
+  grid-row: label;
   @apply tw-font-bold;
+  @apply tw-text-lg;
 }
 
-.absence-type-cell-title {
-  @apply tw-py-1;
-  @apply tw-pl-2;
-  @apply tw-pr-4;
-  @apply tw-text-sm;
-  @apply tw-font-medium;
-  @apply tw-block;
-  @apply tw-truncate;
-  width: 40%;
+.absence-type-card__label-translation {
+  grid-row: translation;
 }
 
-@media only screen and (max-width: 639px) {
-  .absence-type-list {
-    @apply tw-space-y-4;
-  }
+.absence-type-card__label .absence-type-card-cell_title {
+  @apply tw-sr-only;
+}
 
-  .absence-type-list-item {
-    @apply tw-rounded;
-    @apply tw-border;
-    @apply tw-p-2;
-    @apply tw-transition-colors;
+.absence-type-translation-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.absence-type-translation-inputs__element {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  @apply md:tw-flex-row;
+}
+
+.absence-type-translation-inputs__element__input {
+  @apply tw-flex-1;
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply md:tw-max-w-sm;
+  @apply tw-rounded;
+  @apply tw-border;
+}
+
+.absence-type-translation-inputs__element__label {
+  @apply tw-whitespace-nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.absence-type-card__approve-to-apply {
+  grid-column: 1 / span 3;
+  grid-row: apply;
+}
+
+.absence-type-card__approve-to-cancel {
+  grid-column: 1 / span 3;
+  grid-row: cancel;
+}
+
+.absence-type-card__visible-to-everyone {
+  grid-column: 1 / span 3;
+  grid-row: everyone;
+}
+
+.absence-type-card__color {
+  grid-column: 3;
+  grid-row: status-and-color;
+}
+
+.absence-type-card__status,
+.absence-type-card__approve-to-apply,
+.absence-type-card__approve-to-cancel,
+.absence-type-card__visible-to-everyone,
+.absence-type-card__color {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.absence-type-card__status,
+.absence-type-card__approve-to-apply,
+.absence-type-card__approve-to-cancel,
+.absence-type-card__visible-to-everyone {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.absence-type-card__color {
+  justify-content: flex-end;
+}
+
+@screen md {
+  .absence-type-list-head {
+    z-index: 1; /* place above color picker */
+    position: sticky;
+    top: var(--uv-header-height);
+    padding: 0 1rem;
     @apply tw-bg-white;
-    @apply dark:tw-border-zinc-800;
-    @apply dark:tw-bg-zinc-800;
-    @apply dark:tw-bg-opacity-20;
+    @apply dark:tw-bg-zinc-900;
+    @apply tw-font-bold;
+    @apply tw-text-sm;
   }
 
-  .absence-type-list-item[data-enabled="true"] {
-    @apply tw-border-blue-100;
-    @apply tw-bg-blue-50;
-    @apply tw-bg-opacity-20;
-    @apply dark:tw-border-zinc-800;
-    @apply dark:tw-bg-zinc-800;
-    @apply dark:tw-bg-opacity-20;
-  }
-
-  .absence-type-list-item .absence-type-cell-text {
-    @apply tw-text-black-almost;
-    @apply dark:tw-text-zinc-100;
-  }
-
-  .absence-type-list-item[data-enabled="false"] .absence-type-cell-text {
-    @apply tw-text-opacity-75;
-  }
-}
-
-@screen sm {
   .absence-type-list-head,
-  .absence-type-list-item {
+  .absence-type-card {
     display: grid;
-    grid-column-gap: 1rem;
-    grid-template-columns: 2.5rem 1fr 10rem 10rem 4rem 4rem;
-    @apply tw-py-1;
-    @apply tw-px-2;
+    grid-template-columns: 2.5rem 1fr 10rem 10rem 7rem 4rem;
+    grid-template-rows: auto;
+    column-gap: 1rem;
   }
 
-  .absence-type-list-item {
-    @apply tw-rounded;
+  .absence-type-card {
     @apply tw-transition-colors;
   }
 
-  .absence-type-list-item[data-enabled="false"] {
+  .absence-type-card:not(:first-child) {
+    margin-top: 0.25rem;
+  }
+
+  .absence-type-card[data-enabled="false"] {
     @apply tw-text-zinc-500;
     @apply dark:tw-text-zinc-300;
   }
 
-  .absence-type-list-item[data-enabled="false"]:hover {
+  .absence-type-card[data-enabled="false"]:hover {
     @apply tw-bg-zinc-100;
     @apply dark:tw-bg-zinc-800;
   }
 
-  .absence-type-list-item[data-enabled="true"] {
+  .absence-type-card[data-enabled="true"] {
     @apply tw-text-blue-900;
     @apply tw-bg-blue-50;
     @apply dark:tw-text-zinc-300;
@@ -95,43 +181,90 @@
     @apply tw-bg-opacity-75;
   }
 
-  .absence-type-list-item[data-enabled="true"]:hover {
+  .absence-type-card[data-enabled="true"]:hover {
     @apply tw-bg-blue-100;
-    @apply dark:tw-bg-zinc-700;
     @apply tw-bg-opacity-70;
+    @apply dark:tw-bg-zinc-800;
+    @apply dark:tw-bg-opacity-60;
   }
 
-  .absence-type-cell-title {
-    display: none;
+  .absence-type-card-cell_title {
+    @apply tw-sr-only;
   }
-}
 
-@screen md {
-  .absence-type-list-head,
-  .absence-type-list-item {
-    grid-column-gap: 1.5rem;
-    grid-template-columns: 2.5rem 1fr 10rem 10rem 4rem 4rem;
+  .absence-type-card__status {
+    grid-column: 1;
+    grid-row: 1;
   }
-}
 
-@media only screen and (min-width: 992px) {
-  /* bootstrap view breakpoint. list is stretched to full width now */
+  .absence-type-card__status .checkbox-switch {
+    display: flex;
+    align-items: center;
+  }
 
-  .absence-type-list-head,
-  .absence-type-list-item {
+  .absence-type-card__label,
+  .absence-type-card__label-translation {
+    grid-column: 2;
+    grid-row: 1;
+    @apply tw-font-normal;
+    @apply tw-text-base;
+  }
+
+  .absence-type-card__label-translation {
+    grid-column: 2 / span 5;
+    grid-row: 2;
+  }
+
+  .absence-type-card__label .absence-type-card-cell_title {
+    @apply tw-not-sr-only;
+  }
+
+  .absence-type-translation-inputs {
+    gap: 0.25rem;
+  }
+
+  .absence-type-translation-inputs__element__label {
+    font-weight: normal;
+  }
+
+  .absence-type-translation-inputs__element__input {
+    @apply tw-transition-colors;
+    @apply tw-px-2;
     @apply tw-py-1;
-    @apply tw-px-4;
-    grid-template-columns: 2.5rem 1fr 10rem 10rem 7rem 4rem;
+  }
+
+  .absence-type-card__approve-to-apply {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .absence-type-card__approve-to-cancel {
+    grid-column: 4;
+    grid-row: 1;
+  }
+
+  .absence-type-card__visible-to-everyone {
+    grid-column: 5;
+    grid-row: 1;
+  }
+
+  .absence-type-card__color {
+    grid-column: 6;
+    grid-row: 1;
+  }
+
+  .absence-type-card__status,
+  .absence-type-card__approve-to-apply,
+  .absence-type-card__approve-to-cancel,
+  .absence-type-card__visible-to-everyone {
+    flex-direction: row;
+    justify-content: flex-end;
   }
 }
 
 @screen lg {
-  .absence-type-list-head {
-    top: var(--uv-header-height);
-  }
-
   .absence-type-list-head,
-  .absence-type-list-item {
-    grid-column-gap: 2rem;
+  .absence-type-card {
+    column-gap: 2rem;
   }
 }

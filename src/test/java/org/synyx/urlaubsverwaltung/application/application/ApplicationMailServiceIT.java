@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
@@ -91,6 +92,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
     private MailProperties mailProperties;
     @Autowired
     private Clock clock;
+    @Autowired
+    private MessageSource messageSource;
 
     @MockBean
     private MailRecipientService mailRecipientService;
@@ -3822,7 +3825,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = new Application();
         application.setId(1234L);
         application.setPerson(person);
-        application.setVacationType(createVacationType(1L, HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(createVacationType(1L, HOLIDAY, "application.data.vacationType.holiday", messageSource));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

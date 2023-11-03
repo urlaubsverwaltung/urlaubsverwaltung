@@ -310,7 +310,7 @@
                   ></div>
                   <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
                 </td>
-                <td class="vacationOverview-legend-text" th:text="${#messages.msg(vacationTypeColor.messageKey)}"></td>
+                <td class="vacationOverview-legend-text" th:text="${vacationTypeColor.label}"></td>
               </tr>
               <tr th:if="${sickNoteLegendVisible}">
                 <td class="vacationOverview-legend-colorbox">

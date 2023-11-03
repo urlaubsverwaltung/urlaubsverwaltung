@@ -64,7 +64,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(hans)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -90,7 +90,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -119,7 +119,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
@@ -149,7 +149,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
@@ -172,7 +172,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .build();
         sut.send(mail);
 
@@ -196,7 +196,7 @@ class MailServiceImplTest {
             .withTechnicalRecipient(true)
             .withRecipient(List.of(franz))
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -219,7 +219,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(List.of(franz, franz))
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, new HashMap<>())
+            .withTemplate(templateName, locale -> new HashMap<>())
             .build();
 
         sut.send(mail);

@@ -143,6 +143,7 @@ label.is-required:after,
 
 .error {
   @apply tw-text-red-800;
+  @apply dark:tw-text-red-400;
 }
 
 input.error,

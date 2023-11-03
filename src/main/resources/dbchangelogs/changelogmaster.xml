@@ -4,4 +4,5 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
   <include relativeToChangelogFile="true" file="changelog-5.0.0-M1-initial.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.0.0-M4-add-custom-vacation-type.xml"/>
 </databaseChangeLog>

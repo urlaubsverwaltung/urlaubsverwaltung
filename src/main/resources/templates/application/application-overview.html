@@ -165,7 +165,7 @@
                     <th:block th:if="${not #strings.isEmpty(userRequestForLeave.duration)}">
                       <th:block th:text="${userRequestForLeave.duration}" />
                     </th:block>
-                    <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
+                    <th:block th:text="${userRequestForLeave.vacationType.label}"></th:block>
                   </span>
                   <span
                     class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
@@ -386,7 +386,7 @@
                     <th:block th:case="false">
                       <th:block th:text="${otherRequestForLeave.duration}" />
                     </th:block>
-                    <th:block th:text="#{${otherRequestForLeave.vacationType.messageKey}}" />
+                    <th:block th:text="${otherRequestForLeave.vacationType.label}" />
                   </span>
                   <span
                     class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
@@ -524,7 +524,7 @@
                       <th:block th:case="false">
                         <th:block th:text="${cancellationRequest.duration}" />
                       </th:block>
-                      <th:block th:text="#{${cancellationRequest.vacationType.messageKey}}" />
+                      <th:block th:text="${cancellationRequest.vacationType.label}" />
                     </span>
                     <span
                       class="tw-block tw-text-black-almost dark:tw-text-zinc-200"

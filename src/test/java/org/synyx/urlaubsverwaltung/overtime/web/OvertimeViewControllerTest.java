@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -218,7 +219,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final Application applicationNonEditable = createApplication(person, createVacationType(1L, OVERTIME), today.plusDays(5), today.plusDays(5), FULL);
+        final Application applicationNonEditable = createApplication(person, createVacationType(1L, OVERTIME, new StaticMessageSource()), today.plusDays(5), today.plusDays(5), FULL);
         applicationNonEditable.setHours(Duration.ofHours(8));
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);

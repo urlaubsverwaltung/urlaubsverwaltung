@@ -3,7 +3,7 @@
 [(#{application.remind.cron_to_management(${numberOfApplications})})]
 [# th:each="entry : ${applicationsByPerson}"]
 [(#{application.remind.cron_to_management.person.entry.header(${entry.value.size}, ${entry.key.niceName})})][# th:each="application : ${entry.value}"]
-  [(#{application.remind.cron_to_management.person.entry(#{__${application.vacationType.messageKey}__}, ${#temporals.format(application.startDate, "dd.MM.yyyy")}, ${#temporals.format(application.endDate, "dd.MM.yyyy")}, #{__${application.dayLength.name}__})})] [(${baseLinkURL})]web/application/[(${application.id})]
+  [(#{application.remind.cron_to_management.person.entry(${application.vacationTypeLabel}, ${#temporals.format(application.startDate, "dd.MM.yyyy")}, ${#temporals.format(application.endDate, "dd.MM.yyyy")}, #{__${application.dayLength.name}__})})] [(${baseLinkURL})]web/application/[(${application.id})]
 [/][/]
 
 [(#{application.remind.cron_to_management.overview})] [(${baseLinkURL})]web/application#waiting-requests

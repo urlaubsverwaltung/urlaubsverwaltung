@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung;
 
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -76,18 +78,19 @@ public final class TestDataCreator {
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
-    public static Application createApplication(Person person, VacationType vacationType) {
+    public static Application createApplication(Person person, VacationType<?> vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
         return createApplication(person, vacationType, now, now.plusDays(3), FULL);
     }
 
-    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+    public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength, MessageSource messageSource) {
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setPerson(person);
@@ -100,7 +103,7 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
+    public static Application createApplication(Person person, VacationType<?> vacationType, LocalDate startDate,
                                                 LocalDate endDate, DayLength dayLength) {
 
         Application application = new Application();
@@ -190,38 +193,62 @@ public final class TestDataCreator {
         return workingTime;
     }
 
-    public static VacationType createVacationType(Long id, VacationCategory category) {
-        return createVacationType(id, category, "application.data.vacationType.holiday");
+    public static VacationType<?> createVacationType(Long id, VacationCategory category, MessageSource messageSource) {
+        return createVacationType(id, category, "application.data.vacationType.holiday", messageSource);
     }
 
-    public static VacationType createVacationType(Long id, VacationCategory category, String messageKey) {
-
-        VacationType vacationType = new VacationType();
-        vacationType.setId(id);
-        vacationType.setCategory(category);
-        vacationType.setMessageKey(messageKey);
-        vacationType.setColor(ORANGE);
-
-        return vacationType;
+    public static VacationType<?> createVacationType(Long id, VacationCategory category, String messageKey, MessageSource messageSource) {
+        return ProvidedVacationType.builder(messageSource)
+            .id(id)
+            .category(category)
+            .messageKey(messageKey)
+            .color(ORANGE)
+            .build();
     }
 
-    public static List<VacationType> createVacationTypes() {
-
-        final List<VacationType> vacationTypes = new ArrayList<>();
-
-        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
-        vacationTypes.add(holidayType);
-
-        final VacationType specialLeaveType = new VacationType(2000L, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
-        vacationTypes.add(specialLeaveType);
-
-        final VacationType vacationType3 = new VacationType(3000L, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
-        vacationTypes.add(vacationType3);
-
-        final VacationType vacationType4 = new VacationType(4000L, true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
-        vacationTypes.add(vacationType4);
-
-        return vacationTypes;
+    public static List<VacationType<?>> createVacationTypes(MessageSource messageSource) {
+        return List.of(
+            ProvidedVacationType.builder(messageSource)
+                .id(1000L)
+                .active(true)
+                .category(HOLIDAY)
+                .messageKey("application.data.vacationType.holiday")
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(false)
+                .build(),
+            ProvidedVacationType.builder(messageSource)
+                .id(2000L)
+                .active(true)
+                .category(SPECIALLEAVE)
+                .messageKey("application.data.vacationType.specialleave")
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(false)
+                .build(),
+            ProvidedVacationType.builder(messageSource)
+                .id(3000L)
+                .active(true)
+                .category(UNPAIDLEAVE)
+                .messageKey("application.data.vacationType.unpaidleave")
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(false)
+                .build(),
+            ProvidedVacationType.builder(messageSource)
+                .id(4000L)
+                .active(true)
+                .category(OVERTIME)
+                .messageKey("application.data.vacationType.overtime")
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(YELLOW)
+                .visibleToEveryone(false)
+                .build()
+        );
     }
 
     public static List<VacationTypeEntity> createVacationTypesEntities() {

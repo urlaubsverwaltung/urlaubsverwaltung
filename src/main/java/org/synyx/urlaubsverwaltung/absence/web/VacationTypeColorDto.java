@@ -4,20 +4,20 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 public class VacationTypeColorDto {
 
-    private final String messageKey;
+    private final String label;
     private final VacationTypeColor color;
 
-    VacationTypeColorDto(String messageKey, VacationTypeColor color) {
-        this.messageKey = messageKey;
+    VacationTypeColorDto(String label, VacationTypeColor color) {
+        this.label = label;
         this.color = color;
     }
 
-    public String getMessageKey() {
-        return messageKey;
+    public String getLabel() {
+        return label;
     }
 
     public String getMessageAbbreviationKey() {
-        return messageKey + ".abbr";
+        return label + ".abbr";
     }
 
     public VacationTypeColor getColor() {

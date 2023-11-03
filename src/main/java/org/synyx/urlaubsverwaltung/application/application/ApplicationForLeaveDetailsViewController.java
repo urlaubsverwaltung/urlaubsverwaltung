@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -38,6 +39,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -118,7 +120,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     public String showApplicationDetail(@PathVariable("applicationId") Long applicationId,
                                         @RequestParam(value = "year", required = false) Integer requestedYear,
                                         @RequestParam(value = "action", required = false) String action,
-                                        @RequestParam(value = "shortcut", required = false) boolean shortcut, Model model)
+                                        @RequestParam(value = "shortcut", required = false) boolean shortcut,
+                                        Model model, Locale locale)
         throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
@@ -133,7 +136,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         }
 
         final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
-        prepareDetailView(application, year, action, shortcut, model, signedInUser);
+        prepareDetailView(application, year, action, shortcut, model, locale, signedInUser);
 
         return "application/application-detail";
     }
@@ -387,7 +390,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
-    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Person signedInUser) {
+    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Locale locale, Person signedInUser) {
 
         // signed in user
         model.addAttribute("signedInUser", signedInUser);
@@ -402,7 +405,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("app", new ApplicationForLeave(application, workDaysCountService));
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        model.addAttribute("app", applicationForLeaveDetailDto(applicationForLeave, locale));
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
                 application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
@@ -481,5 +485,40 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             .filter(not(isEqual(signedInUser)))
             .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || (person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING)))
             .collect(toList());
+    }
+
+    private ApplicationForLeaveDetailDto applicationForLeaveDetailDto(ApplicationForLeave applicationForLeave, Locale locale) {
+        final ApplicationForLeaveDetailDto dto = new ApplicationForLeaveDetailDto();
+        dto.setId(applicationForLeave.getId());
+        dto.setPerson(applicationForLeave.getPerson());
+        dto.setStatus(applicationForLeave.getStatus());
+        dto.setVacationType(applicationForLeaveDetailVacationTypeDto(applicationForLeave.getVacationType(), locale));
+        dto.setApplicationDate(applicationForLeave.getApplicationDate());
+        dto.setStartDate(applicationForLeave.getStartDate());
+        dto.setEndDate(applicationForLeave.getEndDate());
+        dto.setStartTime(applicationForLeave.getStartTime());
+        dto.setEndTime(applicationForLeave.getEndTime());
+        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
+        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
+        dto.setDayLength(applicationForLeave.getDayLength());
+        dto.setWorkDays(applicationForLeave.getWorkDays());
+        dto.setHours(applicationForLeave.getHours());
+        dto.setEditedDate(applicationForLeave.getEditedDate());
+        dto.setCancelDate(applicationForLeave.getCancelDate());
+        dto.setTwoStageApproval(applicationForLeave.isTwoStageApproval());
+        dto.setReason(applicationForLeave.getReason());
+        dto.setHolidayReplacements(applicationForLeave.getHolidayReplacements());
+        dto.setTeamInformed(applicationForLeave.isTeamInformed());
+        dto.setAddress(applicationForLeave.getAddress());
+        return dto;
+    }
+
+    private ApplicationForLeaveDetailVacationTypeDto applicationForLeaveDetailVacationTypeDto(VacationType<?> vacationType, Locale locale) {
+        return new ApplicationForLeaveDetailVacationTypeDto(
+            vacationType.getLabel(locale),
+            vacationType.getCategory(),
+            vacationType.getColor(),
+            vacationType.isRequiresApprovalToCancel()
+        );
     }
 }

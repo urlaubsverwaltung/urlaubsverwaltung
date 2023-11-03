@@ -10,10 +10,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -494,9 +496,10 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to))
             .thenReturn(List.of(overtimeOne, overtimeTwo));
 
-        final VacationType overtimeVacationType = new VacationType();
-        overtimeVacationType.setId(1L);
-        overtimeVacationType.setCategory(VacationCategory.OVERTIME);
+        final VacationType<?> overtimeVacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L)
+            .category(OVERTIME)
+            .build();
 
         final Application personOvertimeReduction = new Application();
         personOvertimeReduction.setId(1L);
@@ -560,20 +563,6 @@ class OvertimeServiceImplTest {
         final InOrder inOrder = inOrder(overtimeCommentRepository, overtimeRepository);
         inOrder.verify(overtimeCommentRepository).deleteByOvertimePerson(person);
         inOrder.verify(overtimeRepository).deleteByPerson(person);
-    }
-
-    private static OvertimeDurationSum overtimeDurationSum(Person person, Double duration) {
-        return new OvertimeDurationSum() {
-            @Override
-            public Person getPerson() {
-                return person;
-            }
-
-            @Override
-            public Double getDurationDouble() {
-                return duration;
-            }
-        };
     }
 
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {

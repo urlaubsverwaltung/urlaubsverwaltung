@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.MailTemplateModelSupplier;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
@@ -26,7 +27,7 @@ class OvertimeMailService {
 
     void sendOvertimeNotificationToApplicantFromApplicant(Overtime overtime, OvertimeComment overtimeComment) {
 
-        final Map<String, Object> model = Map.of(
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,
             "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
             "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
@@ -36,14 +37,14 @@ class OvertimeMailService {
         final Mail toPerson = Mail.builder()
             .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED)
             .withSubject("subject.overtime.created.applicant")
-            .withTemplate("overtime_to_applicant_from_applicant", model)
+            .withTemplate("overtime_to_applicant_from_applicant", modelSupplier)
             .build();
         mailService.send(toPerson);
     }
 
     void sendOvertimeNotificationToApplicantFromManagement(Overtime overtime, OvertimeComment overtimeComment, Person author) {
 
-        final Map<String, Object> model = Map.of(
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,
             "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
             "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
@@ -54,14 +55,14 @@ class OvertimeMailService {
         final Mail toPerson = Mail.builder()
             .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT)
             .withSubject("subject.overtime.created.applicant_from_management")
-            .withTemplate("overtime_to_applicant_from_management", model)
+            .withTemplate("overtime_to_applicant_from_management", modelSupplier)
             .build();
         mailService.send(toPerson);
     }
 
     void sendOvertimeNotificationToManagement(Overtime overtime, OvertimeComment overtimeComment) {
 
-        final Map<String, Object> model = Map.of(
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,
             "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
             "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
@@ -73,7 +74,7 @@ class OvertimeMailService {
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.overtime.created.management", overtime.getPerson().getNiceName())
-            .withTemplate("overtime_to_management", model)
+            .withTemplate("overtime_to_management", modelSupplier)
             .build();
         mailService.send(mailToRelevantPersons);
     }

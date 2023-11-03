@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -451,7 +452,7 @@ class VacationDaysServiceTest {
         final Application application = anyApplication(person);
         application.setStartDate(LocalDate.of(year, JANUARY, 3));
         application.setEndDate(LocalDate.of(year, JANUARY, 28));
-        application.setVacationType(createVacationType(1L, category));
+        application.setVacationType(createVacationType(1L, category, new StaticMessageSource()));
 
         final List<ApplicationStatus> applicationStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
@@ -753,7 +754,7 @@ class VacationDaysServiceTest {
         final Application application = new Application();
         application.setId(1L);
         application.setPerson(person);
-        application.setVacationType(createVacationType(1L, HOLIDAY));
+        application.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         application.setDayLength(FULL);
         return application;
     }

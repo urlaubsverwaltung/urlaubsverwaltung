@@ -374,8 +374,8 @@ class SickNoteViewController implements HasLaunchpad {
             .collect(toList());
     }
 
-    private List<VacationType> getActiveVacationTypes() {
-        final List<VacationType> vacationTypes;
+    private List<VacationType<?>> getActiveVacationTypes() {
+        final List<VacationType<?>> vacationTypes;
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         if (overtimeActive) {
@@ -411,7 +411,7 @@ class SickNoteViewController implements HasLaunchpad {
     private Application generateApplicationForLeave(SickNoteConvertForm sickNoteConvertForm) {
 
         final Long vacationTypeId = sickNoteConvertForm.getVacationType();
-        final VacationType vacationType = vacationTypeService.getById(vacationTypeId)
+        final VacationType<?> vacationType = vacationTypeService.getById(vacationTypeId)
             .orElseThrow(() -> new IllegalStateException("vacationType with id=%s does not exist.".formatted(vacationTypeId)));
 
         final Application applicationForLeave = new Application();

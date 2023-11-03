@@ -21,6 +21,7 @@ import java.util.Optional;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verify;
@@ -117,7 +118,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.remindForCurrentlyLeftVacationDays");
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_currently_left_vacation_days");
-        assertThat(capturedMail.getTemplateModel()).contains(
+        assertThat(capturedMail.getTemplateModel(GERMAN)).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42L),
             entry("vacationDaysLeft", TEN),
@@ -193,7 +194,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.remindForRemainingVacationDays");
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_remind_remaining_vacation_days");
-        assertThat(capturedMail.getTemplateModel()).contains(
+        assertThat(capturedMail.getTemplateModel(GERMAN)).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42L),
             entry("remainingVacationDays", TEN),
@@ -327,7 +328,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.notifyForExpiredRemainingVacationDays");
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_expired_remaining_vacation_days");
-        assertThat(capturedMail.getTemplateModel()).contains(
+        assertThat(capturedMail.getTemplateModel(GERMAN)).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42L),
             entry("expiredRemainingVacationDays", BigDecimal.valueOf(9L)),

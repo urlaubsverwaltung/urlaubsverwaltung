@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -33,7 +34,7 @@ class ApplicationForLeaveTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application = createApplication(person, of(2015, 3, 3), of(2015, 3, 6), FULL);
+        final Application application = createApplication(person, of(2015, 3, 3), of(2015, 3, 6), FULL, new StaticMessageSource());
 
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(TEN);
@@ -52,7 +53,7 @@ class ApplicationForLeaveTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application = createApplication(person, of(2016, 3, 1), of(2016, 3, 4), FULL);
+        final Application application = createApplication(person, of(2016, 3, 1), of(2016, 3, 4), FULL, new StaticMessageSource());
 
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));

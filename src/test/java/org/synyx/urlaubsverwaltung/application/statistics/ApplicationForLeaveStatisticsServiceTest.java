@@ -7,11 +7,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -30,8 +32,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -77,8 +77,9 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        final List<VacationType> activeVacationTypes = List.of(vacationType);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final List<VacationType<?>> activeVacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
         when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, activeVacationTypes))
@@ -116,8 +117,9 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(2L), "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(List.of(2L))).thenReturn(Map.of(new PersonId(2L), personBasedata));
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        final List<VacationType> vacationTypes = List.of(vacationType);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, vacationTypes);
@@ -154,8 +156,9 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, personSearchQuery)).thenReturn(new PageImpl<>(List.of(departmentMember)));
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        final List<VacationType> vacationTypes = List.of(vacationType);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember), startDate, endDate, vacationTypes))
@@ -190,8 +193,9 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PageableSearchQuery activePersonsPageableSearchQuery = new PageableSearchQuery(activePersonsPageRequest, "");
         when(personService.getActivePersons(activePersonsPageableSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        final List<VacationType> vacationTypes = List.of(vacationType);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes))
@@ -229,8 +233,9 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(notBossOrOfficePerson, new PageableSearchQuery(Pageable.unpaged(), "")))
             .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
-        final List<VacationType> vacationTypes = List.of(vacationType);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes))

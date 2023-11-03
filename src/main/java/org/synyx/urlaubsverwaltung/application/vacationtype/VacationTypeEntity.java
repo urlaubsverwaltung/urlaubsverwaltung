@@ -1,13 +1,20 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
 /**
  * Describes a type of vacation.
@@ -18,6 +25,9 @@ import static jakarta.persistence.EnumType.STRING;
 public class VacationTypeEntity {
 
     @Id
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "vacation_type_generator")
+    @SequenceGenerator(name = "vacation_type_generator", sequenceName = "vacation_type_id_seq")
     private Long id;
 
     @NotNull
@@ -26,9 +36,6 @@ public class VacationTypeEntity {
     @NotNull
     @Enumerated(STRING)
     private VacationCategory category;
-
-    @NotNull
-    private String messageKey;
 
     @NotNull
     private boolean requiresApprovalToApply;
@@ -42,6 +49,24 @@ public class VacationTypeEntity {
 
     @NotNull
     private boolean visibleToEveryone;
+
+
+    /**
+     * defines whether the vacationType is a provided one (custom=false) or the user has created it (custom=true)
+     */
+    private boolean custom;
+
+    /**
+     * messageKey can be {@code null} and is only defined for ProvidedVacationType.
+     */
+    private String messageKey;
+
+    /**
+     * labelByLocale can be {@code null} and is only defined for CustomVacationType.
+     */
+    @Column(name = "label_by_locale")
+    @Convert(converter = VacationTypeLabelJpaConverter.class)
+    private Map<Locale, String> labelByLocale;
 
     public boolean isActive() {
         return active;
@@ -69,14 +94,6 @@ public class VacationTypeEntity {
 
     public boolean isOfCategory(VacationCategory category) {
         return getCategory().equals(category);
-    }
-
-    public String getMessageKey() {
-        return messageKey;
-    }
-
-    public void setMessageKey(String messageKey) {
-        this.messageKey = messageKey;
     }
 
     public boolean isRequiresApprovalToApply() {
@@ -111,17 +128,44 @@ public class VacationTypeEntity {
         this.visibleToEveryone = visibleToEveryone;
     }
 
+    public boolean isCustom() {
+        return custom;
+    }
+
+    public void setCustom(boolean custom) {
+        this.custom = custom;
+    }
+
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
+    public Map<Locale, String> getLabelByLocale() {
+        return labelByLocale;
+    }
+
+    public VacationTypeEntity setLabelByLocale(Map<Locale, String> labelByLocale) {
+        this.labelByLocale = labelByLocale;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "VacationTypeEntity{" +
             "id=" + id +
             ", active=" + active +
             ", category=" + category +
-            ", messageKey='" + messageKey + '\'' +
             ", requiresApprovalToApply=" + requiresApprovalToApply +
             ", requiresApprovalToCancel=" + requiresApprovalToCancel +
             ", color=" + color +
             ", visibleToEveryone=" + visibleToEveryone +
+            ", custom=" + custom +
+            ", messageKey=" + messageKey +
+            ", labelByLocale=" + labelByLocale +
             '}';
     }
 

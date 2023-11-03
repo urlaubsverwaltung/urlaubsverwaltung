@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -18,10 +16,10 @@ public final class ApplicationForLeaveStatisticsDto {
     private final String personnelNumber;
 
     private final BigDecimal totalAllowedVacationDays;
-    private final Map<VacationType, BigDecimal> allowedVacationDays;
+    private final Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> allowedVacationDays;
 
     private final BigDecimal totalWaitingVacationDays;
-    private final Map<VacationType, BigDecimal> waitingVacationDays;
+    private final Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> waitingVacationDays;
 
     private final BigDecimal leftVacationDaysForPeriod;
     private final BigDecimal remainingLeftVacationDaysForPeriod;
@@ -33,8 +31,8 @@ public final class ApplicationForLeaveStatisticsDto {
     private final String leftOvertimeForPeriod;
 
     ApplicationForLeaveStatisticsDto(Long id, String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
-                                     BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
-                                     BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
+                                     BigDecimal totalAllowedVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> allowedVacationDays,
+                                     BigDecimal totalWaitingVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> waitingVacationDays,
                                      BigDecimal leftVacationDaysForPeriod, BigDecimal remainingLeftVacationDaysForPeriod, BigDecimal leftVacationDays,
                                      BigDecimal remainingLeftVacationDays, String leftOvertime, String leftOvertimeForPeriod) {
         this.id = id;
@@ -83,7 +81,7 @@ public final class ApplicationForLeaveStatisticsDto {
         return totalAllowedVacationDays;
     }
 
-    public Map<VacationType, BigDecimal> getAllowedVacationDays() {
+    public Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> getAllowedVacationDays() {
         return allowedVacationDays;
     }
 
@@ -91,7 +89,7 @@ public final class ApplicationForLeaveStatisticsDto {
         return totalWaitingVacationDays;
     }
 
-    public Map<VacationType, BigDecimal> getWaitingVacationDays() {
+    public Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> getWaitingVacationDays() {
         return waitingVacationDays;
     }
 
@@ -119,15 +117,15 @@ public final class ApplicationForLeaveStatisticsDto {
         return leftOvertimeForPeriod;
     }
 
-    public boolean hasVacationType(VacationType type) {
+    public boolean hasVacationType(ApplicationForLeaveStatisticsVacationTypeDto type) {
         return waitingVacationDays.containsKey(type) || allowedVacationDays.containsKey(type);
     }
 
-    public BigDecimal getWaitingVacationDays(VacationType type) {
+    public BigDecimal getWaitingVacationDays(ApplicationForLeaveStatisticsVacationTypeDto type) {
         return waitingVacationDays.getOrDefault(type, ZERO);
     }
 
-    public BigDecimal getAllowedVacationDays(VacationType type) {
+    public BigDecimal getAllowedVacationDays(ApplicationForLeaveStatisticsVacationTypeDto type) {
         return allowedVacationDays.getOrDefault(type, ZERO);
     }
 }

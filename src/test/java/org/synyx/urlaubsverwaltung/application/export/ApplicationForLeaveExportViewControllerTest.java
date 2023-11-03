@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -82,11 +84,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -128,11 +131,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -176,11 +180,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -223,11 +228,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);

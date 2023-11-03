@@ -57,7 +57,7 @@ class MailServiceImpl implements MailService {
             final Locale effectiveLocale = effectiveLocales.get(recipient);
 
             final Context context = new Context(effectiveLocale);
-            context.setVariables(mail.getTemplateModel());
+            context.setVariables(mail.getTemplateModel(effectiveLocale));
             context.setVariable("baseLinkURL", getApplicationUrl());
             context.setVariable("rightPadder", RightPadder.getInstance());
             context.setVariable("recipient", recipient);

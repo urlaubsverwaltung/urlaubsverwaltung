@@ -19,7 +19,7 @@
           th:action="@{/web/settings/absence-types}"
           th:object="${settings}"
           class="form-horizontal"
-          role="form"
+          data-turbo="true"
         >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
@@ -31,7 +31,29 @@
           <div id="absenceTypes" class="tw-mt-6">
             <div class="form-section tw-mb-12 tw-relative tw-z-10">
               <div th:replace="~{settings/absence-types/absence-types::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <div class="form-section tw-mb-12 tw-relative tw-z-10">
+                <div class="form-section tw-mt-8">
+                  <div class="tw-mb-16 tw-flex tw-flex-col-reverse tw-gap-4 xs:tw-flex-row xs:tw-gap-4">
+                    <button
+                      th:text="#{action.save}"
+                      type="submit"
+                      class="button-main-green"
+                      data-test-id="settings-save-button"
+                      data-turbo="false"
+                    ></button>
+                    <button
+                      type="submit"
+                      name="add-absence-type"
+                      class="button"
+                      data-test-id="add-absence-type-button"
+                      data-turbo-frame="frame-absence-type"
+                      data-turbo-action="replace"
+                    >
+                      Neue Abwesenheitsart hinzufügen
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="form-section">
               <div th:replace="~{settings/absence-types/special-leave::section}"></div>

@@ -431,6 +431,30 @@ Wir nutzen das großartige Lucide Icon Set. Vielen Dank! ♥️
 
 Die Urlaubsverwaltung verfügt über eine API, die unter [http://localhost:8080/api](http://localhost:8080/api) erreichbar ist.
 
+### UI Tests mit Playwright
+
+Im [test ui](src/test/java/org/synyx/urlaubsverwaltung/ui) Package befinden sich UI Tests. Diese testen einige
+End to End Anwendungsfälle wie z. B. in den Einstellungen etwas aktivieren/deaktivieren und dessen Auswirkungen.
+
+Als Testrunner und auch Assertion Lib wird [Playwright-Java](https://playwright.dev/java/) verwendet.  
+Details siehe [Playwright for Java Getting Started](https://playwright.dev/java/docs/intro). 
+
+#### Headless Browser
+
+Die Tests laufen standardmäßig ohne sichtbaren Browser (headless).
+Das kann im [PageParameterResolver](src/test/java/org/synyx/urlaubsverwaltung/ui/extension/PageParameterResolver.java)
+mit `BrowserType.LaunchOptions` entsprechend konfiguriert werden.  
+
+```java
+final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+```
+
+#### Debugging
+
+Playwright bietet einen eigenen Inspector an. Siehe [Playwright Debugging Tests](https://playwright.dev/java/docs/debug)
+für weitere Informationen.
+
+Um diesen zu nutzen, muss beim Starten des Tests die Umgebungsvariable `PWDEBUG=1` gesetzt werden.
 
 ### Release
 

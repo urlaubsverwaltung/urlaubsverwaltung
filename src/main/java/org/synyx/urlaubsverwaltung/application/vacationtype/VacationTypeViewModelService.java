@@ -21,7 +21,7 @@ public class VacationTypeViewModelService {
             .collect(toList());
     }
 
-    private static VacationTypeDto toVacationTypeDto(VacationType vacationType) {
+    private static VacationTypeDto toVacationTypeDto(VacationType<?> vacationType) {
         return new VacationTypeDto(vacationType.getId(), vacationType.getColor());
     }
 }

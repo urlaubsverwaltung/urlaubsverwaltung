@@ -131,7 +131,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("statistics", statisticsDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
-        model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
+        model.addAttribute("vacationTypes", vacationTypeDtos(locale));
 
         final boolean turboFrameRequested = hasText(turboFrame);
         model.addAttribute("turboFrameRequested", turboFrameRequested);
@@ -141,6 +141,12 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         } else {
             return "application/application-statistics";
         }
+    }
+
+    private List<ApplicationForLeaveStatisticsVacationTypeDto> vacationTypeDtos(Locale locale) {
+        return vacationTypeService.getAllVacationTypes().stream()
+            .map(vacationType -> new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale)))
+            .toList();
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)

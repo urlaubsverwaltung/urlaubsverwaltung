@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
@@ -37,15 +39,17 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
 class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final MessageSource messageSource;
 
     @Autowired
-    ApplicationServiceImpl(ApplicationRepository applicationRepository) {
+    ApplicationServiceImpl(ApplicationRepository applicationRepository, MessageSource messageSource) {
         this.applicationRepository = applicationRepository;
+        this.messageSource = messageSource;
     }
 
     @Override
     public Optional<Application> getApplicationById(Long id) {
-        return applicationRepository.findById(id).map(ApplicationServiceImpl::toApplication);
+        return applicationRepository.findById(id).map(this::toApplication);
     }
 
     @Override
@@ -205,10 +209,14 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     private List<Application> toApplication(Iterable<ApplicationEntity> entityList) {
-        return StreamSupport.stream(entityList.spliterator(), false).map(ApplicationServiceImpl::toApplication).toList();
+        return StreamSupport.stream(entityList.spliterator(), false).map(this::toApplication).toList();
     }
 
-    private static Application toApplication(ApplicationEntity applicationEntity) {
+    private Application toApplication(ApplicationEntity applicationEntity) {
+
+        final VacationType<? extends VacationType<?>> vacationType =
+            convert(applicationEntity.getVacationType(), messageSource);
+
         final Application application = new Application();
         application.setId(applicationEntity.getId());
         application.setAddress(applicationEntity.getAddress());
@@ -227,7 +235,7 @@ class ApplicationServiceImpl implements ApplicationService {
         application.setReason(applicationEntity.getReason());
         application.setStartDate(applicationEntity.getStartDate());
         application.setStatus(applicationEntity.getStatus());
-        application.setVacationType(convert(applicationEntity.getVacationType()));
+        application.setVacationType(vacationType);
         application.setRemindDate(applicationEntity.getRemindDate());
         application.setTeamInformed(applicationEntity.isTeamInformed());
         application.setHours(applicationEntity.getHours());

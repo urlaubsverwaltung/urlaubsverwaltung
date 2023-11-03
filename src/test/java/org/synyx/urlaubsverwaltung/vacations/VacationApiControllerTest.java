@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.support.StaticMessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
@@ -58,10 +59,10 @@ class VacationApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application vacation1 = createApplication(person,
-            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL);
+            LocalDate.of(2016, 5, 19), LocalDate.of(2016, 5, 20), DayLength.FULL, new StaticMessageSource());
         vacation1.setStatus(ALLOWED);
         final Application vacation2 = createApplication(person,
-            LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL);
+            LocalDate.of(2016, 4, 5), LocalDate.of(2016, 4, 10), DayLength.FULL, new StaticMessageSource());
         vacation2.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndState(any(LocalDate.class), any(LocalDate.class), eq(person), eq(ALLOWED)))
@@ -159,10 +160,10 @@ class VacationApiControllerTest {
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
+            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED);
         final Application vacationWaiting = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
+            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(WAITING);
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(List.of(vacationAllowed, vacationWaiting));
@@ -189,13 +190,13 @@ class VacationApiControllerTest {
         when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
+            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED);
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class), any(LocalDate.class), eq(ALLOWED)))
             .thenReturn(List.of(vacationAllowed));
 
         final Application vacationAllowedCancelRequested = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
-            of(2016, 5, 19), of(2016, 5, 20), FULL);
+            of(2016, 5, 19), of(2016, 5, 20), FULL, new StaticMessageSource());
         vacationAllowed.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         when(applicationService.getApplicationsForACertainPeriodAndState(any(LocalDate.class), any(LocalDate.class), eq(ALLOWED_CANCELLATION_REQUESTED)))
             .thenReturn(List.of(vacationAllowedCancelRequested));

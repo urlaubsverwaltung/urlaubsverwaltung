@@ -63,7 +63,7 @@ class PersonServiceIT extends TestContainersBase {
     void deletePerson() {
 
         final LocalDate now = LocalDate.now();
-        final VacationType vacationType = vacationTypeService.getActiveVacationTypes().get(0);
+        final VacationType<?> vacationType = vacationTypeService.getActiveVacationTypes().get(0);
 
         final Person personWithId = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED), List.of(USER));
         final Long personId = personWithId.getId();
