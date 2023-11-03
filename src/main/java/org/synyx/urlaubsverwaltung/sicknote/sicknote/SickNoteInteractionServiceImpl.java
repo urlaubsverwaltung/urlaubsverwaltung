@@ -19,6 +19,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 /**
  * Implementation for {@link SickNoteInteractionService}.
@@ -63,6 +64,25 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         return submittedSickNote;
     }
+
+    @Override
+    public SickNote accept(SickNote sickNote, Person maintainer) {
+        final SickNote acceptedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        LOG.info("Sick note {} was accepted by {}", acceptedSickNote, maintainer);
+
+        commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer);
+
+        // TODO:
+        // sickNoteMailService.sendAcceptedToSickPerson(acceptedSickNote);
+        // sickNoteMailService.sendAcceptedToOfficeAndDeparmentHeadWithSickNoteMaintenanceRole(acceptedSickNote);
+
+        updateAbsence(acceptedSickNote);
+
+        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));
+
+        return acceptedSickNote;
+    }
+
     @Override
     public SickNote create(SickNote sickNote, Person creator) {
         return this.create(sickNote, creator, null);
