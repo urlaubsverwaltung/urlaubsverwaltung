@@ -156,7 +156,7 @@ public class AbsenceTypeSettingsItemDto {
         private boolean requiresApprovalToCancel;
         private VacationTypeColor color;
         private boolean visibleToEveryone;
-        private List<AbsenceTypeSettingsItemLabelDto> labels;
+        private List<AbsenceTypeSettingsItemLabelDto> labels = List.of();
 
         Builder setId(Long id) {
             this.id = id;
