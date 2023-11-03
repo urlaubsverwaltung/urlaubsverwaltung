@@ -42,14 +42,14 @@ public class AbsenceTypeSettingsDtoMapper {
     }
 
     private static List<AbsenceTypeSettingsItemLabelDto> vacationTypeLabelDtos(VacationType<?> vacationType) {
+        // setting label is only supported by CustomVacationType for now
         if (vacationType instanceof CustomVacationType customVacationType) {
             return customVacationType.labels()
                 .stream()
                 .map(AbsenceTypeSettingsDtoMapper::absenceTypeSettingsItemLabelDto)
                 .toList();
         }
-        // setting label is only supported by CustomVacationType for now
-        return null;
+        return List.of();
     }
 
     private static AbsenceTypeSettingsItemLabelDto absenceTypeSettingsItemLabelDto(VacationTypeLabel vacationTypeLabel) {
