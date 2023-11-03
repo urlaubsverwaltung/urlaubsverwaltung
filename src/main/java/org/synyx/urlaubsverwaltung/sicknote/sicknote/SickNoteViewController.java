@@ -53,6 +53,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
@@ -276,6 +277,21 @@ class SickNoteViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteFormDto.getComment());
+
+        return "redirect:/web/sicknote/" + sickNoteId;
+    }
+
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
+    @PostMapping("/sicknote/{id}/accept")
+    public String acceptSickNote(@PathVariable("id") Long sickNoteId) throws UnknownSickNoteException {
+
+        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
+        if (maybeSickNote.isEmpty()) {
+            throw new UnknownSickNoteException(sickNoteId);
+        }
+
+        final Person signedInUser = personService.getSignedInUser();
+        sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser);
 
         return "redirect:/web/sicknote/" + sickNoteId;
     }
