@@ -173,9 +173,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         List<VacationTypeColorDto> vacationTypeColorDtos;
 
-        final Function<VacationType<?>, VacationTypeColorDto> toVacationTypeColorsDto =
-            (vacationType) -> toVacationTypeColorsDto(vacationType, locale);
-
+        final Function<VacationType<?>, VacationTypeColorDto> toVacationTypeColorsDto = vacationType -> toVacationTypeColorsDto(vacationType, locale);
         final List<VacationType<?>> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).toList();
 
         if (isSignedInUserAllowedToSeeAbsences) {
