@@ -62,12 +62,4 @@ public class PersonProvisionDto {
     public int hashCode() {
         return Objects.hash(firstName, lastName, email);
     }
-
-    @Override
-    public String toString() {
-        return "PersonProvisionDto[" +
-            "firstName=" + firstName + ", " +
-            "lastName=" + lastName + ", " +
-            "email=" + email + ']';
-    }
 }
