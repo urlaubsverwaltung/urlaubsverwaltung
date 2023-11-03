@@ -46,12 +46,15 @@
             class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
             th:aria-label="#{overview.person.departments.list.label(${person.niceName})}"
           >
-            <li
-              class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
-              th:each="department : ${departments}"
-              th:text="${department.name}"
-            >
-              Geschäftsführung
+            <li th:each="department : ${departments}">
+              <a
+                href="#"
+                th:href="@{/web/absences (department=${department.name})}"
+                th:text="${department.name}"
+                class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+              >
+                Geschäftsführung
+              </a>
             </li>
           </ul>
         </th:block>
