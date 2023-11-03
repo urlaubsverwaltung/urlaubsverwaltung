@@ -1,14 +1,22 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
@@ -20,9 +28,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
@@ -35,11 +44,8 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController
 @RestControllerAdviceMarker
 @Tag(name = "persons", description = "Persons: Get information about the persons of the application")
 @RestController
-@RequestMapping(PersonApiController.ROOT_URL)
+@RequestMapping("/api/persons")
 public class PersonApiController {
-
-    static final String ROOT_URL = "/api/persons";
-    private static final String PERSON_URL = "/{id}";
 
     private final PersonService personService;
 
@@ -56,21 +62,35 @@ public class PersonApiController {
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<List<PersonDto>> persons() {
 
-        List<PersonDto> persons = personService.getActivePersons().stream()
+        final List<PersonDto> persons = personService.getActivePersons().stream()
             .map(this::createPersonResponse)
-            .collect(toList());
+            .toList();
 
         return new ResponseEntity<>(persons, OK);
     }
 
     @Operation(summary = "Get one active person by id", description = "Get one active person by id")
-    @GetMapping(PERSON_URL)
+    @GetMapping("/{id}")
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
-
         return personService.getPersonByID(id)
             .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))
             .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @PreAuthorize("hasAuthority('PERSON_ADD')")
+    @Operation(summary = "Creates a new person with the given parameters", description = "Creates a new person with the given parameters of firstName, lastName and email. The authority 'USER' and 'PERSON_ADD' is needed to execute this method.")
+    @ApiResponses(value = {@ApiResponse(description = "successful operation", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PersonProvisionDto.class))})})
+    @PostMapping
+    public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
+
+        final String predictedUsername = personProvisionDto.getEmail();
+        if (personService.getPersonByUsername(predictedUsername).isPresent()) {
+            throw new ResponseStatusException(CONFLICT);
+        }
+
+        final Person person = personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
+        return new ResponseEntity<>(createPersonResponse(person), CREATED);
     }
 
     private PersonDto createPersonResponse(Person person) {

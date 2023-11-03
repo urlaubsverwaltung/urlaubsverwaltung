@@ -66,7 +66,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -127,7 +127,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .with(oidcLogin().idToken(builder -> builder.subject("department head")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -165,7 +165,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("BOSS")))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")
@@ -181,7 +181,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         perform(
             get("/api/persons/1/workdays")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("OFFICE")))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
                 .param("from", "2016-01-04")
                 .param("to", "2016-01-04")
                 .param("length", "FULL")

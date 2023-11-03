@@ -9,6 +9,6 @@ public final class PersonMapper {
     }
 
     public static PersonDto mapToDto(Person person) {
-        return new PersonDto(person.getEmail(), person.getFirstName(), person.getLastName(), person.getNiceName());
+        return new PersonDto(person.getId(), person.getEmail(), person.getFirstName(), person.getLastName(), person.getNiceName());
     }
 }

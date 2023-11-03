@@ -169,7 +169,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
             get("/api/persons/1/sicknotes")
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(5)))
-                .with(oidcLogin().idToken(builder -> builder.subject("user")))
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
         ).andExpect(status().isOk());
     }
 
@@ -191,7 +191,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         perform(get("/api/persons/1/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-            .with(oidcLogin().idToken(builder -> builder.subject("differentUser")))
+            .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
         ).andExpect(status().isForbidden());
     }
 

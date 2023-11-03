@@ -15,9 +15,11 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Configuration
 @EnableMethodSecurity
@@ -43,6 +45,9 @@ class SecurityWebConfiguration {
         http
             .authorizeHttpRequests(authorizeHttpRequests ->
                 authorizeHttpRequests
+                    // Swagger API
+                    .requestMatchers("/api", "/api/", "/swagger-ui/index.html").hasAuthority(USER.name())
+                    // Assets
                     .requestMatchers("/favicons/**").permitAll()
                     .requestMatchers("/browserconfig.xml").permitAll()
                     .requestMatchers("/manifest.json").permitAll()
@@ -50,26 +55,25 @@ class SecurityWebConfiguration {
                     .requestMatchers("/fonts/**").permitAll()
                     .requestMatchers("/images/**").permitAll()
                     .requestMatchers("/assets/**").permitAll()
-                    // WEB
+                    // Web
                     .requestMatchers("/login*").permitAll()
                     .requestMatchers(GET, "/web/company/persons/*/calendar").permitAll()
                     .requestMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
                     .requestMatchers(GET, "/web/persons/*/calendar").permitAll()
-                    .requestMatchers("/web/absences/**").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/application/**").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/department/**").hasAnyAuthority(Role.BOSS.name(), Role.OFFICE.name())
-                    .requestMatchers("/web/google-api-handshake/**").hasAuthority(Role.OFFICE.name())
-                    .requestMatchers("/web/overview").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/overtime/**").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/person/**").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/sicknote/**").hasAuthority(Role.USER.name())
-                    .requestMatchers("/web/settings/**").hasAuthority(Role.OFFICE.name())
+                    .requestMatchers("/web/absences/**").hasAuthority(USER.name())
+                    .requestMatchers("/web/application/**").hasAuthority(USER.name())
+                    .requestMatchers("/web/department/**").hasAnyAuthority(BOSS.name(), OFFICE.name())
+                    .requestMatchers("/web/google-api-handshake/**").hasAuthority(OFFICE.name())
+                    .requestMatchers("/web/overview").hasAuthority(USER.name())
+                    .requestMatchers("/web/overtime/**").hasAuthority(USER.name())
+                    .requestMatchers("/web/person/**").hasAuthority(USER.name())
+                    .requestMatchers("/web/sicknote/**").hasAuthority(USER.name())
+                    .requestMatchers("/web/settings/**").hasAuthority(OFFICE.name())
                     .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
                     .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
                     // TODO muss konfigurierbar werden!
                     .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority("ADMIN")
-                    .anyRequest()
-                    .authenticated()
+                    .anyRequest().authenticated()
             );
 
         http.oauth2Login(

@@ -4,16 +4,26 @@ import org.springframework.hateoas.RepresentationModel;
 
 public class PersonDto extends RepresentationModel<PersonDto> {
 
+    private Long id;
     private String email;
     private String firstName;
     private String lastName;
     private String niceName;
 
-    PersonDto(String email, String firstName, String lastName, String niceName) {
+    PersonDto(Long id, String email, String firstName, String lastName, String niceName) {
+        this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
