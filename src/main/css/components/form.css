@@ -146,9 +146,19 @@ label.is-required:after,
   @apply dark:tw-text-red-400;
 }
 
+input,
+select,
+textarea,
+.details-dropdown-input .details-dropdown_summary {
+  @apply dark:tw-border-zinc-600 !important;
+  @apply dark:tw-bg-zinc-700 !important;
+  @apply dark:tw-text-zinc-50 !important;
+}
+
 input.error,
 textarea.error {
-  @apply tw-border-red-700;
+  @apply tw-border-red-700 !important;
+  @apply dark:tw-border-red-500 !important;
 }
 
 .info {
@@ -239,15 +249,6 @@ textarea.error {
 
 .select-caret {
   @apply tw-text-zinc-700;
-}
-
-input,
-select,
-textarea,
-.details-dropdown-input .details-dropdown_summary {
-  @apply dark:tw-border-zinc-600 !important;
-  @apply dark:tw-bg-zinc-700 !important;
-  @apply dark:tw-text-zinc-50 !important;
 }
 
 .select-caret {
