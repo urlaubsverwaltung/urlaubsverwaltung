@@ -181,8 +181,8 @@ class SettingsAbsenceTypesViewControllerTest {
             new AbsenceTypeSettingsItemLabelDto(ENGLISH, ""),
             new AbsenceTypeSettingsItemLabelDto(LOCALE_EL, "")
         ));
-        newAbsenceType.setRequiresApprovalToApply(false);
-        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setRequiresApprovalToApply(true);
+        newAbsenceType.setRequiresApprovalToCancel(true);
         newAbsenceType.setVisibleToEveryone(false);
         newAbsenceType.setColor(YELLOW);
 
@@ -240,8 +240,8 @@ class SettingsAbsenceTypesViewControllerTest {
             new AbsenceTypeSettingsItemLabelDto(ENGLISH, ""),
             new AbsenceTypeSettingsItemLabelDto(LOCALE_EL, "")
         ));
-        newAbsenceType.setRequiresApprovalToApply(false);
-        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setRequiresApprovalToApply(true);
+        newAbsenceType.setRequiresApprovalToCancel(true);
         newAbsenceType.setVisibleToEveryone(false);
         newAbsenceType.setColor(YELLOW);
 
