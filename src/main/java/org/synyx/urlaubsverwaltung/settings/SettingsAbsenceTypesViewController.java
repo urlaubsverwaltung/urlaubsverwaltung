@@ -85,8 +85,8 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, ""),
             new AbsenceTypeSettingsItemLabelDto(Locale.forLanguageTag("el"), "")
         ));
-        newAbsenceType.setRequiresApprovalToApply(false);
-        newAbsenceType.setRequiresApprovalToCancel(false);
+        newAbsenceType.setRequiresApprovalToApply(true);
+        newAbsenceType.setRequiresApprovalToCancel(true);
         newAbsenceType.setVisibleToEveryone(false);
         newAbsenceType.setColor(VacationTypeColor.YELLOW);
 
