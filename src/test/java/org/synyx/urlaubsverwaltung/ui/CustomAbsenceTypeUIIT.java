@@ -96,19 +96,28 @@ class CustomAbsenceTypeUIIT {
         settingsPage.clickAbsenceTypesTab();
         settingsPage.addNewVacationType();
 
+        // ensure at least one translation required error hint
         settingsPage.saveSettings();
-        assertThat(settingsPage.vacationTypeTranslationError(settingsPage.lastVacationType())).isVisible();
+        assertThat(settingsPage.vacationTypeMissingTranslationError(settingsPage.lastVacationType())).isVisible();
 
+        // ensure saving valid vacation type succeeds
         settingsPage.setVacationTypeLabel(settingsPage.lastVacationType(), GERMAN, "Biertag");
         settingsPage.saveSettings();
-        assertThat(settingsPage.vacationTypeTranslationError(settingsPage.lastVacationType())).not().isVisible();
+        assertThat(settingsPage.vacationTypeMissingTranslationError(settingsPage.lastVacationType())).not().isVisible();
 
+        // enable vacation type to ensure selecting it later creating a new application for leave
         final Locator status = settingsPage.vacationTypeStatusCheckbox(settingsPage.lastVacationType());
         assertThat(status).not().isChecked();
         status.check();
-
         settingsPage.saveSettings();
 
+        // ensure unique vacation type name error hint
+        settingsPage.addNewVacationType();
+        settingsPage.setVacationTypeLabel(settingsPage.lastVacationType(), GERMAN, "Biertag");
+        settingsPage.saveSettings();
+        assertThat(settingsPage.vacationTypeUniqueTranslationError(settingsPage.lastVacationType(), GERMAN)).isVisible();
+
+        // ensure vacation type is selectable creating a new application for leave
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
         page.context().waitForCondition(applicationPage::isVisible);

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 
@@ -31,6 +32,7 @@ public class AbsenceTypeSettingsDtoMapper {
         return AbsenceTypeSettingsItemDto.builder()
             .setId(vacationType.getId())
             .setLabel(vacationType.getLabel(locale))
+            .setMessageKey(messageKey(vacationType))
             .setCategory(vacationType.getCategory())
             .setActive(vacationType.isActive())
             .setRequiresApprovalToApply(vacationType.isRequiresApprovalToApply())
@@ -39,6 +41,14 @@ public class AbsenceTypeSettingsDtoMapper {
             .setVisibleToEveryone(vacationType.isVisibleToEveryone())
             .setLabels(vacationTypeLabelDtos(vacationType))
             .build();
+    }
+
+    private static String messageKey(VacationType<?> vacationType) {
+        if (vacationType instanceof ProvidedVacationType providedVacationType) {
+            return providedVacationType.getMessageKey();
+        } else {
+            return null;
+        }
     }
 
     private static List<AbsenceTypeSettingsItemLabelDto> vacationTypeLabelDtos(VacationType<?> vacationType) {

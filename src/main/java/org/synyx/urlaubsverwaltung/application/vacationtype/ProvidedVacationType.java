@@ -14,7 +14,7 @@ public final class ProvidedVacationType extends VacationType<ProvidedVacationTyp
         this.messageKey = builder.messageKey;
     }
 
-    String getMessageKey() {
+    public String getMessageKey() {
         return messageKey;
     }
 

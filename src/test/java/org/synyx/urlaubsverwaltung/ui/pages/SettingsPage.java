@@ -55,8 +55,12 @@ public class SettingsPage {
         absenceTypeLocator.locator(selector).fill(value);
     }
 
-    public Locator vacationTypeTranslationError(Locator absencetypeLocator) {
-        return absencetypeLocator.locator("[data-test-id=vacation-type-translation-error]");
+    public Locator vacationTypeMissingTranslationError(Locator absencetypeLocator) {
+        return absencetypeLocator.locator("[data-test-id=vacation-type-missing-translation-error]");
+    }
+
+    public Locator vacationTypeUniqueTranslationError(Locator absencetypeLocator, Locale locale) {
+        return absencetypeLocator.locator("[data-test-id=vacation-type-unique-translation-error-%s]".formatted(locale));
     }
 
     public Locator vacationTypeStatusCheckbox(Locator absenceTypeLocator) {

@@ -97,6 +97,7 @@ class SettingsAbsenceTypesViewControllerTest {
                 .setId(1L)
                 .setActive(true)
                 .setLabel("label-1")
+                .setMessageKey("message-key-1")
                 .setCategory(HOLIDAY)
                 .setRequiresApprovalToApply(true)
                 .setRequiresApprovalToCancel(true)
