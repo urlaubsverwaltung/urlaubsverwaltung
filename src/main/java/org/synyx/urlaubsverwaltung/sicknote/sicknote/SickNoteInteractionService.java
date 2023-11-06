@@ -22,7 +22,6 @@ public interface SickNoteInteractionService {
      * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts a sicknote which was submitted by user
      * @param sickNote
      * @param maintainer with role OFFICE or SICK_NOTE_VIEW_ADD_EDIT
-     * @param comment
      * @return the saved sicknote in ACTIVE state
      */
     SickNote accept(SickNote sickNote, Person maintainer);

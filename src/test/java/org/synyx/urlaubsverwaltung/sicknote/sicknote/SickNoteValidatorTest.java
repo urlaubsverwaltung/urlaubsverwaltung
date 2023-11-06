@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -53,9 +54,12 @@ class SickNoteValidatorTest {
     @Mock
     private DepartmentService departmentService;
 
+    @Mock
+    private SettingsService settingsService;
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService, departmentService);
+        sut = new SickNoteValidator(overlapService, workingTimeService, departmentService, settingsService);
     }
 
     @Test
