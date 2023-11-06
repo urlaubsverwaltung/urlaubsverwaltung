@@ -116,34 +116,35 @@ class SickNoteViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         final SickNote sickNote = getSickNote(id);
+        final Person sickNotePerson = sickNote.getPerson();
 
-        final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
+        final boolean isSamePerson = sickNotePerson.equals(signedInUser);
 
         if (isSamePerson
             || signedInUser.hasRole(OFFICE)
-                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote.getPerson())
-            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())) {
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote.getPerson()));
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote.getPerson()));
+            model.addAttribute("canAcceptSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
-            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote.getPerson()));
-            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote.getPerson()));
+            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
+            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
 
-            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
+            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
             return "sicknote/sick_note";
         }
 
         throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to see the sick note of user '%s'",
-            signedInUser.getId(), sickNote.getPerson().getId()));
+            signedInUser.getId(), sickNotePerson.getId()));
     }
 
     @GetMapping("/sicknote/new")
@@ -151,7 +152,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!signedInUser.hasRole(OFFICE) && !signedInUser.hasRole(SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
+        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
             throw new AccessDeniedException(
                     "User '%s' has not the correct permissions to create a sick note".formatted(
                     signedInUser.getId()));
@@ -169,7 +170,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
-        model.addAttribute("canAddSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, person));
+        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, person));
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         addVacationTypeColorsToModel(model);
@@ -182,10 +183,11 @@ class SickNoteViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
+        final Person sickNotePerson = sickNoteFormDto.getPerson();
 
         final SickNote sickNote = SickNote.builder()
             .id(sickNoteFormDto.getId())
-            .person(sickNoteFormDto.getPerson())
+                .person(sickNotePerson)
             .applier(signedInUser)
             .sickNoteType(sickNoteFormDto.getSickNoteType())
             .startDate(sickNoteFormDto.getStartDate())
@@ -200,9 +202,9 @@ class SickNoteViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
             model.addAttribute("sickNote", sickNoteFormDto);
-            model.addAttribute("person", sickNoteFormDto.getPerson());
+            model.addAttribute("person", sickNotePerson);
             model.addAttribute("persons", getManagedPersons(signedInUser));
-            model.addAttribute("canAddSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNoteFormDto.getPerson()));
+            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             addVacationTypeColorsToModel(model);
@@ -231,17 +233,18 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote.getPerson())) {
-            throw new AccessDeniedException(format(
+        final Person sickNotePerson = sickNote.getPerson();
+
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)) {            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit the sick note of user '%s'",
-                signedInUser.getId(), sickNote.getPerson().getId()));
+                    signedInUser.getId(), sickNotePerson.getId()));
         }
 
         final SickNoteFormDto sickNoteFormDto = toSickNoteForm(sickNote);
 
         model.addAttribute("sickNote", sickNoteFormDto);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
-        model.addAttribute("canAddSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNoteFormDto.getPerson()));
+        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
 
         addVacationTypeColorsToModel(model);
 
@@ -268,7 +271,7 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             final Person signedInUser = personService.getSignedInUser();
-            model.addAttribute("canAddSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNoteFormDto.getPerson()));
+            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, editedSickNote.getPerson()));
 
             addVacationTypeColorsToModel(model);
 
@@ -379,6 +382,10 @@ class SickNoteViewController implements HasLaunchpad {
 
         final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser);
         return "redirect:/web/sicknote/" + cancelledSickNote.getId();
+    }
+
+    private boolean canAddSickNote(Person person, Person sickNotePerson) {
+        return person.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(person, SICK_NOTE_ADD, sickNotePerson);
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
