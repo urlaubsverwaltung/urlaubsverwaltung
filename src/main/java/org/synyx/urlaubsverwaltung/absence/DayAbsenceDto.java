@@ -66,4 +66,17 @@ public class DayAbsenceDto {
     public Long getVacationTypeId() {
         return vacationTypeId;
     }
+
+    @Override
+    public String toString() {
+        return "DayAbsenceDto{" +
+            "date='" + date + '\'' +
+            ", dayLength=" + dayLength +
+            ", absencePeriodName='" + absencePeriodName + '\'' +
+            ", type='" + type + '\'' +
+            ", status='" + status + '\'' +
+            ", href='" + href + '\'' +
+            ", vacationTypeId=" + vacationTypeId +
+            '}';
+    }
 }

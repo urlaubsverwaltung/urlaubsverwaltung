@@ -33,7 +33,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.SICK_NOTE;
@@ -119,7 +118,7 @@ public class AbsenceApiController {
             .stream()
             .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
             .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
-            .collect(toList());
+            .toList();
 
         if (!includeNonWorkingDays) {
             return absences;
@@ -152,7 +151,9 @@ public class AbsenceApiController {
     }
 
     private List<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
-        return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).collect(toList());
+        return absences.stream()
+            .filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate))
+            .toList();
     }
 
     private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
