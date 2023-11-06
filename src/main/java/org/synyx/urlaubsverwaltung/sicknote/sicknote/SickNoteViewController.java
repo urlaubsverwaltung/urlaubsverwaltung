@@ -77,7 +77,6 @@ class SickNoteViewController implements HasLaunchpad {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final SickNoteValidator sickNoteValidator;
-    private final SickNoteSubmissionValidator sickNoteSubmissionValidator;
     private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
     private final SettingsService settingsService;
@@ -88,7 +87,7 @@ class SickNoteViewController implements HasLaunchpad {
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
                            DepartmentService departmentService, SickNoteValidator sickNoteValidator,
-                           SickNoteSubmissionValidator sickNoteSubmissionValidator, SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
+                           SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
@@ -100,7 +99,6 @@ class SickNoteViewController implements HasLaunchpad {
         this.personService = personService;
         this.departmentService = departmentService;
         this.sickNoteValidator = sickNoteValidator;
-        this.sickNoteSubmissionValidator = sickNoteSubmissionValidator;
         this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
         this.settingsService = settingsService;
@@ -197,13 +195,8 @@ class SickNoteViewController implements HasLaunchpad {
             .aubEndDate(sickNoteFormDto.getAubEndDate())
             .build();
 
-        var isSubmission = sickNote.getApplier().equals(sickNote.getPerson());
 
-        if (isSubmission) {
-            sickNoteSubmissionValidator.validate(sickNote, errors);
-        } else {
-            sickNoteValidator.validate(sickNote, errors);
-        }
+        sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
             model.addAttribute("sickNote", sickNoteFormDto);
@@ -218,6 +211,7 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final SickNote updatedSickNote;
+        var isSubmission = sickNote.getPerson().equals(sickNote.getApplier()) && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
         if (isSubmission) {
             updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
         } else {
