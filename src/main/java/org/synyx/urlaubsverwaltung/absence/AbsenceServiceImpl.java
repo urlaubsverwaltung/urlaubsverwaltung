@@ -96,6 +96,8 @@ public class AbsenceServiceImpl implements AbsenceService {
         final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(bySickNoteStatus, persons, start, end);
         final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
+        // TODO Add No Work days and Public Holidays based on workingTimeCalendarByPerson if we had the type of the day length
+
         return concat(applicationAbsences.stream(), sickNoteAbsences.stream()).toList();
     }
 
