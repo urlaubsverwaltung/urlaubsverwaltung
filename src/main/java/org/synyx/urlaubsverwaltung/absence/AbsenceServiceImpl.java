@@ -20,10 +20,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -67,18 +67,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end) {
-
-        final DateRange askedDateRange = new DateRange(start, end);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
-
-        final List<Application> openApplications = applicationService.getForStatesAndPerson(APPLICATION_STATUSES, persons, start, end);
-        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeCalendarByPerson::get);
-
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(SICK_NOTE_STATUSES, persons, start, end);
-        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
-
-        return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
+        return getAbsences(persons, start, end, APPLICATION_STATUSES, SICK_NOTE_STATUSES);
     }
 
     @Override
@@ -89,19 +78,25 @@ public class AbsenceServiceImpl implements AbsenceService {
     @Override
     public List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end) {
 
+        final List<ApplicationStatus> closedApplicationStatuses = List.of(REJECTED, CANCELLED, REVOKED);
+        final List<SickNoteStatus> closedSickNoteStatuses = List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED);
+
+        return getAbsences(persons, start, end, closedApplicationStatuses, closedSickNoteStatuses);
+    }
+
+    private List<AbsencePeriod> getAbsences(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> byApplicationStatus, List<SickNoteStatus> bySickNoteStatus) {
+
         final DateRange askedDateRange = new DateRange(start, end);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
 
-        List<ApplicationStatus> closedAppStatus = List.of(REJECTED, CANCELLED, REVOKED);
-        final List<Application> closedApplications = applicationService.getForStatesAndPerson(closedAppStatus, persons, start, end);
-        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(closedApplications, askedDateRange, workingTimeCalendarByPerson::get);
+        final List<Application> openApplications = applicationService.getForStatesAndPerson(byApplicationStatus, persons, start, end);
+        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeCalendarByPerson::get);
 
-        List<SickNoteStatus> closedSickNoteStatus = List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED);
-        final List<SickNote> closedSickNotes = sickNoteService.getForStatesAndPerson(closedSickNoteStatus, persons, start, end);
-        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(closedSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(bySickNoteStatus, persons, start, end);
+        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
-        return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
+        return concat(applicationAbsences.stream(), sickNoteAbsences.stream()).toList();
     }
 
     @Override
@@ -133,14 +128,6 @@ public class AbsenceServiceImpl implements AbsenceService {
             .collect(toList());
     }
 
-    private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications,
-                                                                     DateRange askedDateRange,
-                                                                     Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
-        return applications.stream()
-            .map(application -> toAbsencePeriod(application, askedDateRange, workingTimeCalendarSupplier))
-            .collect(toList());
-    }
-
     private List<Absence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
@@ -148,12 +135,20 @@ public class AbsenceServiceImpl implements AbsenceService {
             .collect(toList());
     }
 
+    private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications,
+                                                                     DateRange askedDateRange,
+                                                                     Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
+        return applications.stream()
+            .map(application -> toAbsencePeriod(application, askedDateRange, workingTimeCalendarSupplier))
+            .toList();
+    }
+
     private List<AbsencePeriod> generateAbsencePeriodFromSickNotes(List<SickNote> sickNotes,
                                                                    DateRange askedDateRange,
                                                                    Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
         return sickNotes.stream()
             .map(sickNote -> toAbsencePeriod(sickNote, askedDateRange, workingTimeCalendarSupplier))
-            .collect(toList());
+            .toList();
     }
 
     private AbsencePeriod toAbsencePeriod(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
@@ -169,7 +164,6 @@ public class AbsenceServiceImpl implements AbsenceService {
             case REVOKED -> AbsencePeriod.AbsenceStatus.REVOKED;
             case REJECTED -> AbsencePeriod.AbsenceStatus.REJECTED;
             case CANCELLED -> AbsencePeriod.AbsenceStatus.CANCELLED;
-            default -> throw new IllegalStateException("application status not expected here.");
         };
     }
 
@@ -185,7 +179,7 @@ public class AbsenceServiceImpl implements AbsenceService {
             .map(date -> Map.entry(date, workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO)))
             .filter(entry -> !entry.getValue().equals(DayLength.ZERO))
             .map(entry -> toVacationAbsencePeriodRecord(entry.getKey(), entry.getValue(), application))
-            .collect(toList());
+            .toList();
     }
 
     private AbsencePeriod.Record toVacationAbsencePeriodRecord(LocalDate date, DayLength workingDayLength, Application application) {
@@ -254,7 +248,7 @@ public class AbsenceServiceImpl implements AbsenceService {
             .map(date -> Map.entry(date, workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO)))
             // sickNotes are
             .map(entry -> toSickAbsencePeriodRecord(entry.getKey(), entry.getValue(), sickNote))
-            .collect(toList());
+            .toList();
     }
 
     private AbsencePeriod.Record toSickAbsencePeriodRecord(LocalDate date, DayLength workingTimeDayLength, SickNote sickNote) {
