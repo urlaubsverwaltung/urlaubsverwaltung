@@ -158,7 +158,7 @@ public class AbsenceApiController {
 
     private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(start, end)).entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .map(federalStateEntry -> publicHolidaysService.getPublicHolidays(federalStateEntry.getKey().getStartDate(), federalStateEntry.getKey().getEndDate(), federalStateEntry.getValue()))
             .flatMap(List::stream)
             .collect(toMap(PublicHoliday::getDate, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.getDate(), publicHoliday.getDayLength(), publicHoliday.getDescription().concat("/").concat(publicHoliday2.getDescription()))));
     }
