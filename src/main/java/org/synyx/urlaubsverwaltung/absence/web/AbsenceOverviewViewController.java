@@ -461,7 +461,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     }
 
     private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Long, VacationType<?>> vacationTypById) {
-        return recordInfo.getVacationTypeId()
+        return recordInfo.getTypeId()
             .map(vacationTypById)
             .map(VacationType::getColor)
             // sick-note does not have a vacationTypeId, but is handled separately. therefore just throw.

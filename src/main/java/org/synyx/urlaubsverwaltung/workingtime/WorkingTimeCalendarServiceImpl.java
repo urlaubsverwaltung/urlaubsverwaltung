@@ -7,6 +7,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -60,7 +62,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 .filter(workingTime -> !workingTime.getValidFrom().isAfter(end))
                 .toList();
 
-            final Map<LocalDate, DayLength> dayLengthByDate = new HashMap<>();
+            final Map<LocalDate, WorkingDayInformation> dayLengthByDate = new HashMap<>();
 
             LocalDate nextEnd = end;
 
@@ -88,33 +90,83 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private DayLength getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
         final FederalState federalState = workingTime.getFederalState();
 
-        DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+        final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
 
-        if (dayLengthForWeekDay.getDuration().signum() > 0) {
+        DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? DayLength.MORNING : DayLength.ZERO;
+        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WorkingTimeCalendarEntryType.WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+
+        DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : DayLength.ZERO;
+        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WorkingTimeCalendarEntryType.WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+
+        if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
             final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
 
             if (maybePublicHoliday.isPresent()) {
+
                 final PublicHoliday publicHoliday = maybePublicHoliday.get();
-                if (dayLengthForWeekDay.isFull()) {
-                    dayLengthForWeekDay = publicHoliday.getDayLength().getInverse();
+
+                if (configuredWorkingTimeForDayOfWeek.isFull()) {
+                    if (publicHoliday.getDayLength().isFull()) {
+                        morning = DayLength.ZERO;
+                        morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        noon = DayLength.ZERO;
+                        noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                    } else if (publicHoliday.getDayLength().isMorning()) {
+                        morning = DayLength.ZERO;
+                        morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        noon = DayLength.NOON;
+                        noonType = WorkingTimeCalendarEntryType.WORKDAY;
+                    } else {
+                        morning = DayLength.MORNING;
+                        morningType = WorkingTimeCalendarEntryType.WORKDAY;
+                        noon = DayLength.ZERO;
+                        noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                    }
                 } else {
-                    if (dayLengthForWeekDay.isMorning()) {
+                    if (configuredWorkingTimeForDayOfWeek.isMorning()) {
+
+                        noon = DayLength.ZERO;
+                        noonType = WorkingTimeCalendarEntryType.NO_WORKDAY;
+
                         if (publicHoliday.isFull() || publicHoliday.isMorning()) {
-                            dayLengthForWeekDay = DayLength.ZERO;
+                            morning = DayLength.ZERO;
+                            morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        } else {
+                            morning = DayLength.MORNING;
+                            morningType = WorkingTimeCalendarEntryType.WORKDAY;
                         }
                     } else {
+
+                        morning = DayLength.ZERO;
+                        morningType = WorkingTimeCalendarEntryType.NO_WORKDAY;
+
                         if (publicHoliday.isFull() || publicHoliday.isNoon()) {
-                            dayLengthForWeekDay = DayLength.ZERO;
+                            noon = DayLength.ZERO;
+                            noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        } else {
+                            noon = DayLength.NOON;
+                            noonType = WorkingTimeCalendarEntryType.WORKDAY;
                         }
                     }
                 }
             }
-
         }
-        return dayLengthForWeekDay;
+
+        DayLength calculatedDayLength = configuredWorkingTimeForDayOfWeek;
+        if (morning.isMorning() && noon.isNoon()) {
+            calculatedDayLength = DayLength.FULL;
+        } else if(morning == DayLength.ZERO && noon == DayLength.ZERO){
+            calculatedDayLength = DayLength.ZERO;
+        } else if(morning == DayLength.ZERO && noon.isNoon()) {
+            calculatedDayLength = DayLength.NOON;
+        } else if(morning.isMorning() && noon == DayLength.ZERO){
+            calculatedDayLength = DayLength.MORNING;
+        }
+
+        return new WorkingDayInformation(calculatedDayLength, morningType, noonType);
     }
 
     private static WorkingTime toWorkingTime(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {

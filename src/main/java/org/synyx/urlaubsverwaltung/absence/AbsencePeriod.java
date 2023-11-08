@@ -24,6 +24,8 @@ public class AbsencePeriod {
     public enum GenericAbsenceType {
         VACATION,
         SICK,
+        PUBLIC_HOLIDAY,
+        NO_WORKDAY
     }
 
     public enum AbsenceStatus {
@@ -162,7 +164,7 @@ public class AbsencePeriod {
 
         AbsenceStatus getStatus();
 
-        Long getId();
+        Optional<Long> getId();
 
         boolean hasStatusTemporaryAllowed();
 
@@ -172,7 +174,9 @@ public class AbsencePeriod {
 
         boolean hasStatusAllowedCancellationRequested();
 
-        Optional<Long> getVacationTypeId();
+        Optional<String> getTypeCategory();
+
+        Optional<Long> getTypeId();
 
         boolean isVisibleToEveryone();
     }
@@ -198,20 +202,25 @@ public class AbsencePeriod {
         private final GenericAbsenceType genericType;
         private final Long id;
         private final AbsenceStatus status;
-        private final Long vacationTypeId;
-
+        private final String typeCategory;
+        private final Long typeId;
         private final boolean visibleToEveryone;
 
-        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status) {
-            this(person, genericType, id, status, null, false);
+        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, AbsenceStatus status) {
+            this(person, genericType, null, status, null, null, false);
         }
 
-        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
+        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status) {
+            this(person, genericType, id, status, null, null, false);
+        }
+
+        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
             this.person = person;
             this.genericType = genericType;
             this.id = id;
             this.status = status;
-            this.vacationTypeId = vacationTypeId;
+            this.typeCategory = typeCategory;
+            this.typeId = typeId;
             this.visibleToEveryone = visibleToEveryone;
         }
 
@@ -226,8 +235,8 @@ public class AbsencePeriod {
         }
 
         @Override
-        public Long getId() {
-            return id;
+        public Optional<Long> getId() {
+            return Optional.ofNullable(id);
         }
 
         @Override
@@ -255,8 +264,12 @@ public class AbsencePeriod {
             return hasStatusOneOf(AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
         }
 
-        public Optional<Long> getVacationTypeId() {
-            return Optional.ofNullable(vacationTypeId);
+        public Optional<String> getTypeCategory() {
+            return Optional.ofNullable(typeCategory);
+        }
+
+        public Optional<Long> getTypeId() {
+            return Optional.ofNullable(typeId);
         }
 
         public boolean isVisibleToEveryone() {
@@ -285,8 +298,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
-            super(person, GenericAbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
+        public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
+            super(person, GenericAbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
         }
     }
 
@@ -296,15 +309,39 @@ public class AbsencePeriod {
         }
     }
 
+    public static class RecordMorningNoWorkday extends AbstractRecordInfo implements RecordMorning {
+        public RecordMorningNoWorkday(Person person) {
+            super(person, GenericAbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
+        }
+    }
+
+    public static class RecordMorningPublicHoliday extends AbstractRecordInfo implements RecordMorning {
+        public RecordMorningPublicHoliday(Person person) {
+            super(person, GenericAbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
+        }
+    }
+
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
-            super(person, GenericAbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
+        public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
+            super(person, GenericAbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status) {
             super(person, GenericAbsenceType.SICK, sickNoteId, status);
+        }
+    }
+
+    public static class RecordNoonNoWorkday extends AbstractRecordInfo implements RecordNoon {
+        public RecordNoonNoWorkday(Person person) {
+            super(person, GenericAbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
+        }
+    }
+
+    public static class RecordNoonPublicHoliday extends AbstractRecordInfo implements RecordNoon {
+        public RecordNoonPublicHoliday(Person person) {
+            super(person, GenericAbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
         }
     }
 }

@@ -14,16 +14,18 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -34,6 +36,8 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 
 
 @Service
@@ -96,9 +100,11 @@ public class AbsenceServiceImpl implements AbsenceService {
         final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(bySickNoteStatus, persons, start, end);
         final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
-        // TODO Add No Work days and Public Holidays based on workingTimeCalendarByPerson if we had the type of the day length
+        final List<AbsencePeriod> noWorkingDaysAndPublicHolidays = generateAbsencePeriodFromWorkingTimes(workingTimeCalendarByPerson);
 
-        return concat(applicationAbsences.stream(), sickNoteAbsences.stream()).toList();
+        return Stream.of(applicationAbsences.stream(), sickNoteAbsences.stream(), noWorkingDaysAndPublicHolidays.stream())
+            .reduce(Stream.of(), Stream::concat)
+            .toList();
     }
 
     @Override
@@ -137,19 +143,58 @@ public class AbsenceServiceImpl implements AbsenceService {
             .collect(toList());
     }
 
-    private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications,
-                                                                     DateRange askedDateRange,
-                                                                     Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
+    private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
         return applications.stream()
             .map(application -> toAbsencePeriod(application, askedDateRange, workingTimeCalendarSupplier))
             .toList();
     }
 
-    private List<AbsencePeriod> generateAbsencePeriodFromSickNotes(List<SickNote> sickNotes,
-                                                                   DateRange askedDateRange,
-                                                                   Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
+    private List<AbsencePeriod> generateAbsencePeriodFromSickNotes(List<SickNote> sickNotes, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
         return sickNotes.stream()
             .map(sickNote -> toAbsencePeriod(sickNote, askedDateRange, workingTimeCalendarSupplier))
+            .toList();
+    }
+
+    private List<AbsencePeriod> generateAbsencePeriodFromWorkingTimes(Map<Person, WorkingTimeCalendar> workingTimeCalendars) {
+        return workingTimeCalendars.entrySet().stream()
+            .map(this::toAbsencePeriod)
+            .flatMap(Collection::stream)
+            .toList();
+    }
+
+    private List<AbsencePeriod> toAbsencePeriod(Map.Entry<Person, WorkingTimeCalendar> workingTimeCalendarEntry) {
+
+        final Person person = workingTimeCalendarEntry.getKey();
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarEntry.getValue();
+
+        return workingTimeCalendar.getWorkingDays().entrySet().stream()
+            .<AbsencePeriod>mapMulti((workingDayInformationEntry, consumer) -> {
+                final LocalDate date = workingDayInformationEntry.getKey();
+                final WorkingDayInformation workingDayInformation = workingDayInformationEntry.getValue();
+
+                if (!workingDayInformation.dayLength().isFull()) {
+                    if (workingDayInformation.morning() == workingDayInformation.noon()) {
+                        if (workingDayInformation.morning() == NO_WORKDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningNoWorkday(person), new AbsencePeriod.RecordNoonNoWorkday(person)))));
+                        } else if (workingDayInformation.morning() == PUBLIC_HOLIDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningPublicHoliday(person), new AbsencePeriod.RecordNoonPublicHoliday(person)))));
+                        }
+                    } else {
+                        if (workingDayInformation.morning() == NO_WORKDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningNoWorkday(person)))));
+                        } else if (workingDayInformation.morning() == PUBLIC_HOLIDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordMorningPublicHoliday(person)))));
+                        }
+
+                        if (workingDayInformation.noon() == NO_WORKDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordNoonNoWorkday(person)))));
+                        } else if (workingDayInformation.noon() == PUBLIC_HOLIDAY) {
+                            consumer.accept(new AbsencePeriod(List.of(new AbsencePeriod.Record(date, person, new AbsencePeriod.RecordNoonPublicHoliday(person)))));
+                        }
+                    }
+                }
+
+            })
             .toList();
     }
 
@@ -189,7 +234,8 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Person person = application.getPerson();
         final Long applicationId = application.getId();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
-        final Long vacationTypeId = application.getVacationType().getId();
+        final String typeCategory = application.getVacationType().getCategory().name();
+        final Long typeId = application.getVacationType().getId();
         final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
         final DayLength applicationDayLength = application.getDayLength();
 
@@ -199,7 +245,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (workingDayLength.isMorning()) {
             noon = null;
             if (applicationDayLength.isFull() || applicationDayLength.isMorning()) {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
             } else {
                 LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={}", workingDayLength, applicationDayLength, applicationId);
                 morning = null;
@@ -207,20 +253,20 @@ public class AbsenceServiceImpl implements AbsenceService {
         } else if (workingDayLength.isNoon()) {
             morning = null;
             if (applicationDayLength.isFull() || applicationDayLength.isNoon()) {
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
             } else {
                 LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={} ", workingDayLength, applicationDayLength, applicationId);
                 noon = null;
             }
         } else if (applicationDayLength.isMorning()) {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
             noon = null;
         } else if (applicationDayLength.isNoon()) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
         } else {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, typeCategory, typeId, visibleToEveryone);
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);

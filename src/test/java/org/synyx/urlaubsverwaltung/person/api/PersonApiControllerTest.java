@@ -56,7 +56,7 @@ class PersonApiControllerTest {
                   },
                   {
                     "rel": "absences",
-                    "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"
+                    "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&types=VACATION%2C%20SICK_NOTE%2C%20PUBLIC_HOLIDAY%2C%20NO_WORKDAY"
                   },
                   {
                     "rel": "sicknotes",
@@ -85,7 +85,7 @@ class PersonApiControllerTest {
                   },
                   {
                     "rel": "absences",
-                    "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"
+                    "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&types=VACATION%2C%20SICK_NOTE%2C%20PUBLIC_HOLIDAY%2C%20NO_WORKDAY"
                   },
                   {
                     "rel": "sicknotes",
@@ -131,7 +131,7 @@ class PersonApiControllerTest {
                 },
                 {
                   "rel": "absences",
-                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"
+                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&types=VACATION%2C%20SICK_NOTE%2C%20PUBLIC_HOLIDAY%2C%20NO_WORKDAY"
                 },
                 {
                   "rel": "sicknotes",
@@ -181,7 +181,7 @@ class PersonApiControllerTest {
                 },
                 {
                   "rel": "absences",
-                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"
+                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&types=VACATION%2C%20SICK_NOTE%2C%20PUBLIC_HOLIDAY%2C%20NO_WORKDAY"
                 },
                 {
                   "rel": "sicknotes",

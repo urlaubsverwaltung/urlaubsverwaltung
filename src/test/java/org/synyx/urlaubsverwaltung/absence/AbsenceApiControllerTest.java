@@ -11,23 +11,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
-import static java.time.DayOfWeek.THURSDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
@@ -38,11 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_RHEINLAND_PFALZ;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceApiControllerTest {
@@ -53,18 +36,14 @@ class AbsenceApiControllerTest {
     private PersonService personService;
     @Mock
     private AbsenceService absenceService;
-    @Mock
-    private PublicHolidaysService publicHolidaysService;
-    @Mock
-    private WorkingTimeService workingTimeService;
 
     @BeforeEach
     void setUp() {
-        sut = new AbsenceApiController(personService, absenceService, publicHolidaysService, workingTimeService);
+        sut = new AbsenceApiController(personService, absenceService);
     }
 
     @Test
-    void ensureCorrectConversionOfNonWorkingdays() throws Exception {
+    void ensureEmptyAbsences() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
@@ -73,20 +52,9 @@ class AbsenceApiControllerTest {
         final LocalDate endDate = LocalDate.of(2016, JANUARY, 7);
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of());
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
-
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, true);
-        workingTime.setDayLengthForWeekDay(MONDAY, FULL);
-        workingTime.setDayLengthForWeekDay(TUESDAY, FULL);
-        workingTime.setDayLengthForWeekDay(WEDNESDAY, ZERO);
-        workingTime.setDayLengthForWeekDay(THURSDAY, FULL);
-        workingTime.setDayLengthForWeekDay(FRIDAY, FULL);
-        workingTime.setDayLengthForWeekDay(SATURDAY, ZERO);
-        workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
-        when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
         perform(
-            get("/api/persons/23/absences?noWorkdaysInclusive=true")
+            get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-01-07")
         )
@@ -94,105 +62,7 @@ class AbsenceApiControllerTest {
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
             {
-              "absences": [
-                {
-                  "date": "2016-01-02",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "NO_WORKDAY",
-                  "status": "",
-                  "href": "",
-                  "vacationTypeId": null
-                },
-                {
-                  "date": "2016-01-03",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "NO_WORKDAY",
-                  "status": "",
-                  "href": "",
-                  "vacationTypeId": null
-                },
-                {
-                  "date": "2016-01-06",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "NO_WORKDAY",
-                  "status": "",
-                  "href": "",
-                  "vacationTypeId": null
-                }
-              ]
-            }
-            """, true));
-    }
-
-    @Test
-    void ensureCorrectVacationOverridesNonWorkingdays() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, JANUARY, 7);
-
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.Record recordOne = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
-        final AbsencePeriod.Record recordTwo = new AbsencePeriod.Record(startDate.plusDays(2), person, recordMorningVacation, recordNoonVacation);
-        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(recordOne, recordTwo));
-
-        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
-
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, true);
-        workingTime.setDayLengthForWeekDay(MONDAY, FULL);
-        workingTime.setDayLengthForWeekDay(TUESDAY, FULL);
-        workingTime.setDayLengthForWeekDay(WEDNESDAY, ZERO);
-        workingTime.setDayLengthForWeekDay(THURSDAY, FULL);
-        workingTime.setDayLengthForWeekDay(FRIDAY, FULL);
-        workingTime.setDayLengthForWeekDay(SATURDAY, ZERO);
-        workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
-        when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
-
-        perform(
-            get("/api/persons/23/absences?noWorkdaysInclusive=true")
-                .param("from", "2016-01-01")
-                .param("to", "2016-01-07")
-        )
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(content().json("""
-            {
-              "absences": [
-                {
-                  "date": "2016-01-02",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "VACATION",
-                  "status": "WAITING",
-                  "href": "42",
-                  "vacationTypeId": 1
-                },
-                {
-                  "date": "2016-01-03",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "VACATION",
-                  "status": "WAITING",
-                  "href": "42",
-                  "vacationTypeId": 1
-                },
-                {
-                  "date": "2016-01-06",
-                  "dayLength": 1,
-                  "absencePeriodName": "FULL",
-                  "type": "NO_WORKDAY",
-                  "status": "",
-                  "href": "",
-                  "vacationTypeId": null
-                }
-              ]
+              "absences": []
             }
             """, true));
     }
@@ -207,13 +77,12 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -227,12 +96,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "FULL",
+                      "absentNumeric": 1,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     }
                 ]
             }
@@ -248,12 +119,11 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -267,12 +137,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     }
                 ]
             }
@@ -288,12 +160,11 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -307,12 +178,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "NOON",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     }
                 ]
             }
@@ -335,7 +208,6 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -349,12 +221,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "FULL",
+                      "absentNumeric": 1,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
@@ -375,7 +249,6 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -389,12 +262,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
@@ -415,7 +290,6 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(noonSickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -429,12 +303,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "NOON",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
@@ -451,13 +327,12 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -471,21 +346,25 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "NOON",
-                      "type": "SICK_NOTE",
-                      "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "id": 1337,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
+                      "status": "WAITING",
+                      "links": []
                     },
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "VACATION",
-                      "status": "WAITING",
-                      "href": "1337",
-                      "vacationTypeId": 1
+                      "id": 42,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
+                      "status": "ACTIVE",
+                      "links": []
                     }
                 ]
             }
@@ -502,12 +381,11 @@ class AbsenceApiControllerTest {
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
         final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -521,21 +399,25 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     },
                     {
                       "date": "2016-01-02",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "NOON",
-                      "type": "VACATION",
+                      "id": 1337,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "1337",
-                      "vacationTypeId": 1
+                      "links": []
                     }
                 ]
             }
@@ -543,52 +425,6 @@ class AbsenceApiControllerTest {
     }
 
     // VACATION / PUBLIC-HOLIDAY - COMBINATION -------------------------------------------------------------------------
-    @Test
-    void ensureCorrectConversionOfVacationFullDayWithHalfDayChristmasEve() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
-
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation, recordNoonVacation);
-        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
-
-        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-
-        final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(christmasEve));
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
-
-        perform(
-            get("/api/persons/23/absences")
-                .param("from", "2016-01-01")
-                .param("to", "2016-12-31")
-        )
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-12-24",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "VACATION",
-                      "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
-                    }
-                ]
-            }
-            """, true));
-    }
-
     @Test
     void ensureCorrectConversionOfVacationMorningWithHalfDayChristmasEve() throws Exception {
 
@@ -598,18 +434,13 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonPublicHoliday = new AbsencePeriod.RecordNoonPublicHoliday(person);
+        final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation, recordNoonPublicHoliday);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
-        final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(christmasEve));
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
-
         perform(
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
@@ -622,161 +453,31 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-12-24",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
-                    }
-                ]
-            }
-            """, true));
-    }
-
-    @Test
-    void ensureCorrectConversionOfVacationWithMultipleWorkingTimes() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
-
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
-        final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
-        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
-
-        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-        final DateRange dateRangeBW = new DateRange(LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, JANUARY, 31));
-        final DateRange dateRangeRP = new DateRange(LocalDate.of(2016, FEBRUARY, 1), LocalDate.of(2016, DECEMBER, 31));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange))
-            .thenReturn(Map.of(
-                dateRangeBW, GERMANY_BADEN_WUERTTEMBERG,
-                dateRangeRP, GERMANY_RHEINLAND_PFALZ
-            ));
-
-        final PublicHoliday sixthOfJanuary = new PublicHoliday(LocalDate.of(2016, JANUARY, 6), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(dateRangeBW.getStartDate(), dateRangeBW.getEndDate(), GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(sixthOfJanuary));
-
-        final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(dateRangeRP.getStartDate(), dateRangeRP.getEndDate(), GERMANY_RHEINLAND_PFALZ)).thenReturn(List.of(christmasEve));
-
-        perform(
-            get("/api/persons/23/absences")
-                .param("from", "2016-01-01")
-                .param("to", "2016-12-31")
-        )
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(content().json("""
-            {
-                "absences": [
+                      "links": []
+                    },
                     {
                       "date": "2016-12-24",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "VACATION",
-                      "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
-                    }
-                ]
-            }
-            """, true));
-    }
-
-    // SICK / PUBLIC-HOLIDAY - COMBINATION -----------------------------------------------------------------------------
-    @Test
-    void ensureCorrectConversionOfSickFullDayWithHalfDayChristmasEve() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
-
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE);
-        final AbsencePeriod.Record fullDaySick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick, recordNoonSick);
-        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySick));
-
-        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-
-        final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(christmasEve));
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
-
-        perform(
-            get("/api/persons/23/absences")
-                .param("from", "2016-01-01")
-                .param("to", "2016-12-31")
-        )
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-12-24",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "SICK_NOTE",
+                      "id": null,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "PUBLIC_HOLIDAY",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
             """, true));
     }
 
-    @Test
-    void ensureCorrectConversionOfSickMorningWithHalfDayChristmasEve() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
-
-        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
-
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
-        final AbsencePeriod.Record morningSick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick);
-        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSick));
-
-        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-
-        final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(christmasEve));
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
-
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-12-24",
-                      "dayLength": 1,
-                      "absencePeriodName": "FULL",
-                      "type": "SICK_NOTE",
-                      "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
-                    }
-                ]
-            }
-            """, true));
-    }
 
     // PARAMETER HANDLING ----------------------------------------------------------------------------------------------
     @Test
@@ -793,13 +494,12 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(vacationRecord, sickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
-                .param("type", "VACATION")
+                .param("types", "VACATION")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -808,12 +508,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-12",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     }
                 ]
             }
@@ -834,13 +536,12 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(vacationRecord, sickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
-                .param("type", "SICK_NOTE")
+                .param("types", "SICK_NOTE")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -849,12 +550,14 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-02-12",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
@@ -875,7 +578,6 @@ class AbsenceApiControllerTest {
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(vacationRecord, sickRecord));
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
         perform(
             get("/api/persons/23/absences")
@@ -889,21 +591,25 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-12",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     },
                     {
                       "date": "2016-02-12",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "SICK_NOTE",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "SICK_NOTE",
+                      "typeCategory": null,
+                      "typeId": null,
                       "status": "ACTIVE",
-                      "href": "42",
-                      "vacationTypeId": null
+                      "links": []
                     }
                 ]
             }
@@ -918,15 +624,14 @@ class AbsenceApiControllerTest {
 
         final LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record recordMorning = new AbsencePeriod.Record(date, person, morning);
         final AbsencePeriod absencePeriodMorning = new AbsencePeriod(List.of(recordMorning));
-        final AbsencePeriod.RecordNoon noon = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon noon = new AbsencePeriod.RecordNoonVacation(person, 43L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record recordNoon = new AbsencePeriod.Record(date, person, noon);
         final AbsencePeriod absencePeriodNoon = new AbsencePeriod(List.of(recordNoon));
 
         when(absenceService.getOpenAbsences(person, date, date)).thenReturn(List.of(absencePeriodMorning, absencePeriodNoon));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(date, date))).thenReturn(Map.of());
 
         perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
@@ -939,21 +644,25 @@ class AbsenceApiControllerTest {
                 "absences": [
                     {
                       "date": "2016-01-01",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "MORNING",
-                      "type": "VACATION",
+                      "id": 42,
+                      "absent": "MORNING",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "links": []
                     },
                     {
                       "date": "2016-01-01",
-                      "dayLength": 0.5,
-                      "absencePeriodName": "NOON",
-                      "type": "VACATION",
+                      "id": 43,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "genericType": "VACATION",
                       "status": "WAITING",
-                      "href": "42",
-                      "vacationTypeId": 1
+                      "typeCategory": "HOLIDAY",
+                      "typeId": 1,
+                      "links": []
                     }
                 ]
             }
@@ -1025,7 +734,7 @@ class AbsenceApiControllerTest {
         perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-            .param("type", "FOO"))
+            .param("types", "FOO"))
             .andExpect(status().isBadRequest());
     }
 
@@ -1038,7 +747,7 @@ class AbsenceApiControllerTest {
     }
 
     private static AbsencePeriod.Record anyVacationRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, "HOLIDAY", 1L, false);
         return new AbsencePeriod.Record(date, person, morning);
     }
 

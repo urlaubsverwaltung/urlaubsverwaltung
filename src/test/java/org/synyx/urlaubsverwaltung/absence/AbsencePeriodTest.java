@@ -18,14 +18,14 @@ class AbsencePeriodTest {
     @Test
     void ensureRecordMorningVacationToStringDoesNotPrintAnyInfo() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.WAITING, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.WAITING, "Erholungsurlaub", 1L, false);
         assertThat(morning).hasToString("AbstractRecordInfo{id=1}");
     }
 
     @Test
     void ensureRecordNoonVacationToStringDoesNotPrintAnyInfo() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.WAITING, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.WAITING, "Erholungsurlaub", 1L, false);
         assertThat(noon).hasToString("AbstractRecordInfo{id=1}");
     }
 
@@ -94,7 +94,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationMorningIsAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = morning.hasStatusOneOf(ALLOWED);
         assertThat(isAllowed).isTrue();
     }
@@ -102,7 +102,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationMorningIsAllowedMultiple() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = morning.hasStatusOneOf(ALLOWED_CANCELLATION_REQUESTED, ALLOWED);
         assertThat(isAllowed).isTrue();
     }
@@ -110,7 +110,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationMorningIsNotAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = morning.hasStatusOneOf(ALLOWED_CANCELLATION_REQUESTED);
         assertThat(isAllowed).isFalse();
     }
@@ -118,7 +118,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationNoonIsAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = noon.hasStatusOneOf(ALLOWED);
         assertThat(isAllowed).isTrue();
     }
@@ -126,7 +126,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationNoonIsAllowedMultiple() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = noon.hasStatusOneOf(ALLOWED_CANCELLATION_REQUESTED, ALLOWED);
         assertThat(isAllowed).isTrue();
     }
@@ -134,7 +134,7 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationNoonIsNotAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         final boolean isAllowed = noon.hasStatusOneOf(ALLOWED_CANCELLATION_REQUESTED);
         assertThat(isAllowed).isFalse();
     }
@@ -142,63 +142,63 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationMorningHasStatusWaiting() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, WAITING, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, WAITING, "Erholungsurlaub", 1L, false);
         assertThat(morning.hasStatusWaiting()).isTrue();
     }
 
     @Test
     void ensureVacationMorningHasNotStatusWaiting() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(morning.hasStatusWaiting()).isFalse();
     }
 
     @Test
     void ensureVacationNoonHasStatusWaiting() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, WAITING, "Erholungsurlaub", 1L, false);
         assertThat(noon.hasStatusWaiting()).isTrue();
     }
 
     @Test
     void ensureVacationNoonHasNotStatusWaiting() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(noon.hasStatusWaiting()).isFalse();
     }
 
     @Test
     void ensureVacationMorningHasStatusAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(morning.hasStatusAllowed()).isTrue();
     }
 
     @Test
     void ensureVacationMorningHasStatusAllowedCancellationRequested() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED_CANCELLATION_REQUESTED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         assertThat(morning.hasStatusAllowedCancellationRequested()).isTrue();
     }
 
     @Test
     void ensureVacationMorningHasNotStatusAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, TEMPORARY_ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, TEMPORARY_ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(morning.hasStatusAllowed()).isFalse();
     }
 
     @Test
     void ensureVacationNoonHasStatusAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(noon.hasStatusAllowed()).isTrue();
     }
 
     @Test
     void ensureVacationNoonHasNotStatusAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, TEMPORARY_ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, TEMPORARY_ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(noon.hasStatusAllowed()).isFalse();
     }
 
@@ -236,28 +236,28 @@ class AbsencePeriodTest {
     @Test
     void isVisibleToEverybodyMorning() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, true);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, true);
         assertThat(morning.isVisibleToEveryone()).isTrue();
     }
 
     @Test
     void isNotVisibleToEverybodyMorning() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(morning.isVisibleToEveryone()).isFalse();
     }
 
     @Test
     void isVisibleToEverybodyNoon() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, true);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, true);
         assertThat(noon.isVisibleToEveryone()).isTrue();
     }
 
     @Test
     void isNotVisibleToEverybodyNoon() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, ALLOWED, "Erholungsurlaub", 1L, false);
         assertThat(noon.isVisibleToEveryone()).isFalse();
     }
 
