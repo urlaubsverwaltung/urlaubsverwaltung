@@ -110,7 +110,7 @@ class OvertimeMailServiceTest {
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(mailRecipientService.getRecipientsOfInterest(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED)).thenReturn(List.of(office));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);

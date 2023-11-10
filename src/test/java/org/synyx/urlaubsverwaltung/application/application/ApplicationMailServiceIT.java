@@ -133,7 +133,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, boss, "OK, Urlaub kann genommen werden");
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(boss, office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(boss, office));
 
         final Person colleague = new Person("colleague", "Dampf", "Hans", "dampf@example.org");
         colleague.setId(42L);
@@ -298,7 +298,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, boss, "OK, Urlaub kann genommen werden");
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(office));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -401,7 +401,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, boss, "OK, Urlaub kann genommen werden");
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(office));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -498,7 +498,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
         departmentHead.setId(3L);
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(boss, departmentHead));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
 
@@ -629,7 +629,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setId(1337L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -706,7 +706,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCEL_REQUESTED, person, "Bitte stornieren!");
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(office));
 
         sut.sendCancellationRequest(application, comment);
 
@@ -776,7 +776,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         relevantPerson.setId(2L);
         relevantPerson.setPermissions(List.of(BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
@@ -973,7 +973,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setId(1L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(relevantPerson));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "OK, Urlaub kann genommen werden");
@@ -1582,7 +1582,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -1633,7 +1633,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -1686,7 +1686,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         recipientOfInterest.setId(1L);
         recipientOfInterest.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(recipientOfInterest));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(recipientOfInterest));
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
@@ -1899,7 +1899,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setId(2L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
         colleague.setId(42L);
@@ -2006,7 +2006,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -2103,7 +2103,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, secondStage, "Hätte gerne Urlaub");
 
         when(departmentService.getApplicationsFromColleaguesOf(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -2202,7 +2202,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, departmentHead, "Hätte gerne Urlaub");
 
         when(departmentService.getApplicationsFromColleaguesOf(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, secondStage));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -2295,7 +2295,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "");
@@ -2361,7 +2361,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "");
@@ -2424,7 +2424,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "");
@@ -2489,7 +2489,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "");
@@ -2548,7 +2548,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.TEMPORARY_ALLOWED, secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2646,7 +2646,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(List.of(application));
 
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2732,7 +2732,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(List.of(application));
 
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2810,7 +2810,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2884,7 +2884,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             1L, Instant.now(clock), application, ApplicationCommentAction.TEMPORARY_ALLOWED, secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -3018,9 +3018,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         departmentHeadB.setId(3L);
         departmentHeadB.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
-        when(mailRecipientService.getRecipientsOfInterest(personA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
-        when(mailRecipientService.getRecipientsOfInterest(personB, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadB));
-        when(mailRecipientService.getRecipientsOfInterest(personC, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(personA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(personB, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadB));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(personC, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationAA, applicationA, applicationB, applicationC));
 
@@ -3123,7 +3123,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         relevantPerson.setId(2L);
         relevantPerson.setPermissions(List.of(BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
         sut.sendEditedNotification(application, editor);
 
@@ -3180,7 +3180,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         relevantPerson.setId(2L);
         relevantPerson.setPermissions(List.of(BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
         sut.sendEditedNotification(application, office);
 
