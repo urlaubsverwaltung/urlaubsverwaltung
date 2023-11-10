@@ -72,7 +72,7 @@ class MailRecipientServiceImplTest {
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAndOffice));
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(bossAndOffice));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind)
             .containsOnly(bossAndOffice);
     }
@@ -121,7 +121,7 @@ class MailRecipientServiceImplTest {
         when(userNotificationSettingsService.findNotificationSettings(List.of(bossAllId)))
             .thenReturn(Map.of(bossAllId, new UserNotificationSettings(bossAllId, false)));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind)
             .doesNotContain(secondStageWithoutMailtNotification)
             .containsOnly(bossAll, departmentHead, secondStage);
@@ -151,7 +151,7 @@ class MailRecipientServiceImplTest {
         when(userNotificationSettingsService.findNotificationSettings(List.of(officeAllId)))
             .thenReturn(Map.of(officeAllId, new UserNotificationSettings(officeAllId, true)));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).isEmpty();
     }
 
@@ -182,7 +182,7 @@ class MailRecipientServiceImplTest {
         when(userNotificationSettingsService.findNotificationSettings(List.of(officeAllId)))
             .thenReturn(Map.of(officeAllId, new UserNotificationSettings(officeAllId, true)));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).containsExactly(officeAll);
     }
 
@@ -202,7 +202,7 @@ class MailRecipientServiceImplTest {
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
 
         verifyNoInteractions(userNotificationSettingsService);
@@ -223,7 +223,7 @@ class MailRecipientServiceImplTest {
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
     }
 
@@ -237,7 +237,7 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1L);
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         verify(personService).getActivePersonsByRole(role);
     }
 
@@ -252,7 +252,7 @@ class MailRecipientServiceImplTest {
 
         when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser)).thenReturn(List.of());
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
 
         verify(responsiblePersonService).getResponsibleDepartmentHeads(normalUser);
         verify(personService, never()).getActivePersonsByRole(DEPARTMENT_HEAD);
@@ -269,7 +269,7 @@ class MailRecipientServiceImplTest {
 
         when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser)).thenReturn(List.of());
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
 
         verify(responsiblePersonService).getResponsibleSecondStageAuthorities(normalUser);
         verify(personService, never()).getActivePersonsByRole(SECOND_STAGE_AUTHORITY);
@@ -285,7 +285,7 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1L);
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
+        sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
         verify(personService, never()).getActivePersonsByRole(role);
     }
 
@@ -299,7 +299,7 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1L);
 
-        sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        sut.getRecipientsOfInterestForApplications(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         verify(personService, never()).getActivePersonsByRole(role);
     }
 

@@ -22,7 +22,7 @@ public interface MailRecipientService {
     List<Person> getResponsibleManagersOf(Person personOfInterest);
 
     /**
-     * Returns a list of recipients of interest for a given person based on
+     * Returns a list of recipients of interest for a given person of an application based on
      * <ul>
      *     <li>is Office and the given mail notification is active</li>
      *     <li>is Boss and the given mail notification is active</li>
@@ -31,11 +31,27 @@ public interface MailRecipientService {
      *     <li>is Boss in the same Department and the given mail notification is active</li>
      * </ul>
      *
-     * @param personOfInterest person to get recipients from
+     * @param personOfInterest person of application to get recipients from
      * @param mailNotification given notification that one of must be active
      * @return list of recipients of interest
      */
-    List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification);
+    List<Person> getRecipientsOfInterestForApplications(Person personOfInterest, MailNotification mailNotification);
+
+    /**
+     * Returns a list of recipients of interest for a given person of an sick note based on
+     * <ul>
+     *     <li>is Office and the given mail notification is active</li>
+     *     <li>is Boss and the given mail notification is active</li>
+     *     <li>is Department Head responsible for sick notes and the given mail notification is active</li>
+     *     <li>is Second Stage Authority responsible for sick notes and the given mail notification is active</li>
+     *     <li>is Boss responsible for sick notes and the given mail notification is active</li>
+     * </ul>
+     *
+     * @param personOfInterest person of application to get recipients from
+     * @param mailNotification given notification that one of must be active
+     * @return list of recipients of interest
+     */
+    List<Person> getRecipientsOfInterestForSickNotes(Person personOfInterest, MailNotification mailNotification);
 
     /**
      * Returns a list of colleagues for a given person based on

@@ -26,6 +26,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
@@ -114,7 +116,7 @@ class SickNoteMailService {
      * Sends information about an anonym sick note to the colleagues
      * to inform them about an absence
      *
-     * @param sickNote that has been created
+     * @param sickNote that has been submitted or created
      */
     @Async
     void sendCreatedToColleagues(SickNote sickNote) {
@@ -178,5 +180,29 @@ class SickNoteMailService {
             .withTemplate("sick_note_cancel_to_colleagues", modelColleaguesSupplier)
             .build();
         mailService.send(mailToRelevantColleagues);
+    }
+
+    @Async
+    void sendSickNoteSubmittedNotificationToSickPerson(SickNote submittedSickNote) {
+        final Mail mailToApplicant = Mail.builder()
+                .withRecipient(submittedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER)
+                .withSubject("subject.sicknote.submitted_by_user.to_applicant")
+                .withTemplate("sick_note_submitted_by_user_to_applicant", locale -> Map.of("sickNote", submittedSickNote))
+                .build();
+        mailService.send(mailToApplicant);
+    }
+
+    @Async
+    void sendSickNoteSubmittedNotificationToOfficeAndManagementWithSickNoteEditRole(SickNote submittedSickNote) {
+
+        final List<Person> recipients =
+                mailRecipientService.getRecipientsOfInterestForSickNotes(submittedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+                .withRecipient(recipients)
+                .withSubject("subject.sicknote.submitted_by_user.to_management", submittedSickNote.getPerson().getNiceName())
+                .withTemplate("sick_note_submitted_by_user_to_management", locale -> Map.of("sickNote", submittedSickNote))
+                .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
     }
 }

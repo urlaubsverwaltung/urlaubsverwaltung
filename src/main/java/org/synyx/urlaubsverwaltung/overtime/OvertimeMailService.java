@@ -70,7 +70,7 @@ class OvertimeMailService {
         );
 
         // send overtime to all interested managers
-        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterestForApplications(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.overtime.created.management", overtime.getPerson().getNiceName())
