@@ -37,11 +37,14 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 
 final class PersonNotificationsMapper {
 
@@ -89,12 +92,13 @@ final class PersonNotificationsMapper {
         );
         addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), notificationEmailAbsenceColleagues);
 
-        final List<MailNotification> notificationEmailSickNoteByManagement = List.of(
+        final List<MailNotification> notificationEmailOwnSickNote = List.of(
+            NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER,
             NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT,
             NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT
         );
-        addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedEditedCancelledByManagement(), notificationEmailSickNoteByManagement);
+        addIfActive(mailNotifications, personNotificationsDto.getOwnSickNoteSubmittedCreatedEditedCancelled(), notificationEmailOwnSickNote);
 
         return mailNotifications;
     }
@@ -121,9 +125,11 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING, personNotificationsDto::setHolidayReplacementUpcoming);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCreatedEditedCancelledByManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCreatedEditedCancelledByManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCreatedEditedCancelledByManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
 
         // department notifications
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
@@ -133,6 +139,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED, personNotificationsDto::setApplicationCancellationForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION, personNotificationsDto::setApplicationCancellationForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, personNotificationsDto::setApplicationAllowedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT, personNotificationsDto::setApplicationAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED, personNotificationsDto::setApplicationTemporaryAllowedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, personNotificationsDto::setApplicationWaitingReminderForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED, personNotificationsDto::setApplicationCancellationRequestedForManagement);
@@ -170,7 +177,7 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getHolidayReplacementUpcoming(),
             personNotificationsDto.getOvertimeAppliedByManagement(),
             personNotificationsDto.getOvertimeApplied(),
-            personNotificationsDto.getSickNoteCreatedEditedCancelledByManagement()
+            personNotificationsDto.getOwnSickNoteSubmittedCreatedEditedCancelled()
         );
 
         final List<PersonNotificationDtoDepartmentAware> visiblePersonal = dtoPersonalNotifications.stream()

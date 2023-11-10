@@ -31,7 +31,7 @@ public class PersonNotificationsDto {
     private PersonNotificationDto overtimeAppliedByManagement;
     private PersonNotificationDto overtimeApplied;
     private PersonNotificationDto absenceForColleagues;
-    private PersonNotificationDto sickNoteCreatedEditedCancelledByManagement;
+    private PersonNotificationDto ownSickNoteSubmittedCreatedEditedCancelled;
 
     PersonNotificationsDto() {
         // ok
@@ -197,11 +197,11 @@ public class PersonNotificationsDto {
         this.absenceForColleagues = absenceForColleagues;
     }
 
-    public PersonNotificationDto getSickNoteCreatedEditedCancelledByManagement() {
-        return sickNoteCreatedEditedCancelledByManagement;
+    public PersonNotificationDto getOwnSickNoteSubmittedCreatedEditedCancelled() {
+        return ownSickNoteSubmittedCreatedEditedCancelled;
     }
 
-    public void setSickNoteCreatedEditedCancelledByManagement(PersonNotificationDto sickNoteCreatedEditedCancelledByManagement) {
-        this.sickNoteCreatedEditedCancelledByManagement = sickNoteCreatedEditedCancelledByManagement;
+    public void setOwnSickNoteSubmittedCreatedEditedCancelled(PersonNotificationDto ownSickNoteSubmittedCreatedEditedCancelled) {
+        this.ownSickNoteSubmittedCreatedEditedCancelled = ownSickNoteSubmittedCreatedEditedCancelled;
     }
 }
