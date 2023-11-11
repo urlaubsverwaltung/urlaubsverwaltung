@@ -331,20 +331,20 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
 
-        final AbsencePeriod.AbsenceType morningAbsenceType = morning.map(AbsencePeriod.RecordInfo::getType).orElse(null);
-        final AbsencePeriod.AbsenceType noonAbsenceType = noon.map(AbsencePeriod.RecordInfo::getType).orElse(null);
+        final AbsencePeriod.GenericAbsenceType morningGenericAbsenceType = morning.map(AbsencePeriod.RecordInfo::getGenericType).orElse(null);
+        final AbsencePeriod.GenericAbsenceType noonGenericAbsenceType = noon.map(AbsencePeriod.RecordInfo::getGenericType).orElse(null);
 
         final boolean anonymizeMorning = morning.map(shouldAnonymizeAbsenceType).orElse(false);
         final boolean anonymizeNoon = noon.map(shouldAnonymizeAbsenceType).orElse(false);
 
-        if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
+        if (AbsencePeriod.GenericAbsenceType.SICK.equals(morningGenericAbsenceType)) {
             if (anonymizeMorning) {
                 return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
             } else {
                 return builder.sickNoteMorning();
             }
         }
-        if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
+        if (AbsencePeriod.GenericAbsenceType.SICK.equals(noonGenericAbsenceType)) {
             if (anonymizeNoon) {
                 return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
             } else {
@@ -410,11 +410,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType, Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.GenericAbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.GenericAbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getGenericType);
 
-        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
+        final boolean sickMorning = morningType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
+        final boolean sickNoon = noonType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
         // morning and noon should both exist, actually. otherwise this method is not called.

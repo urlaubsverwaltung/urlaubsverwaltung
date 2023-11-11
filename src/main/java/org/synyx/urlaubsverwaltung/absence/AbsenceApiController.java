@@ -187,13 +187,13 @@ public class AbsenceApiController {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.GenericAbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.GenericAbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getGenericType);
 
         final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
         final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
+        final boolean sickMorning = morningType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
+        final boolean sickNoon = noonType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull || (sickMorning && publicHolidayNoon) || (sickNoon && publicHolidayMorning)) {
@@ -214,13 +214,13 @@ public class AbsenceApiController {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.GenericAbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.GenericAbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getGenericType);
 
         final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
         final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean vacationMorning = morningType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationNoon = noonType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
+        final boolean vacationMorning = morningType.map(AbsencePeriod.GenericAbsenceType.VACATION::equals).orElse(false);
+        final boolean vacationNoon = noonType.map(AbsencePeriod.GenericAbsenceType.VACATION::equals).orElse(false);
         final boolean vacationFull = vacationMorning && vacationNoon;
 
         if (vacationFull || (vacationMorning && publicHolidayNoon) || (vacationNoon && publicHolidayMorning)) {
@@ -237,7 +237,7 @@ public class AbsenceApiController {
     }
 
     private DayAbsenceDto toDayAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
-        final String type = toType(recordInfo.getType()).map(DayAbsenceDto.Type::name).orElse("");
+        final String type = toType(recordInfo.getGenericType()).map(DayAbsenceDto.Type::name).orElse("");
         final String status = recordInfo.getStatus().name();
         return new DayAbsenceDto(date, dayLength.getDuration(), dayLength.name(), type, status, recordInfo.getId(), recordInfo.getVacationTypeId().orElse(null));
     }
@@ -253,8 +253,8 @@ public class AbsenceApiController {
         }
     }
 
-    private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
-        return switch (absenceType) {
+    private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.GenericAbsenceType genericAbsenceType) {
+        return switch (genericAbsenceType) {
             case VACATION -> Optional.of(VACATION);
             case SICK -> Optional.of(SICK_NOTE);
         };

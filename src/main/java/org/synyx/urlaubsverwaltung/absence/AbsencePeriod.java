@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public class AbsencePeriod {
 
-    public enum AbsenceType {
+    public enum GenericAbsenceType {
         VACATION,
         SICK,
     }
@@ -158,7 +158,7 @@ public class AbsencePeriod {
     public interface RecordInfo {
         Person getPerson();
 
-        AbsenceType getType();
+        GenericAbsenceType getGenericType();
 
         AbsenceStatus getStatus();
 
@@ -195,20 +195,20 @@ public class AbsencePeriod {
     public abstract static class AbstractRecordInfo implements RecordInfo {
 
         private final Person person;
-        private final AbsenceType type;
+        private final GenericAbsenceType genericType;
         private final Long id;
         private final AbsenceStatus status;
         private final Long vacationTypeId;
 
         private final boolean visibleToEveryone;
 
-        private AbstractRecordInfo(Person person, AbsenceType type, Long id, AbsenceStatus status) {
-            this(person, type, id, status, null, false);
+        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status) {
+            this(person, genericType, id, status, null, false);
         }
 
-        private AbstractRecordInfo(Person person, AbsenceType type, Long id, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
+        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
             this.person = person;
-            this.type = type;
+            this.genericType = genericType;
             this.id = id;
             this.status = status;
             this.vacationTypeId = vacationTypeId;
@@ -221,8 +221,8 @@ public class AbsencePeriod {
         }
 
         @Override
-        public AbsenceType getType() {
-            return type;
+        public GenericAbsenceType getGenericType() {
+            return genericType;
         }
 
         @Override
@@ -268,12 +268,12 @@ public class AbsencePeriod {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             AbstractRecordInfo that = (AbstractRecordInfo) o;
-            return type == that.type && status == that.status;
+            return genericType == that.genericType && status == that.status;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(type, status);
+            return Objects.hash(genericType, status);
         }
 
         @Override
@@ -286,25 +286,25 @@ public class AbsencePeriod {
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
-            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
+            super(person, GenericAbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
         }
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, AbsenceType.SICK, sickNoteId, status);
+            super(person, GenericAbsenceType.SICK, sickNoteId, status);
         }
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, Long vacationTypeId, boolean visibleToEveryone) {
-            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
+            super(person, GenericAbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, AbsenceType.SICK, sickNoteId, status);
+            super(person, GenericAbsenceType.SICK, sickNoteId, status);
         }
     }
 }
