@@ -31,13 +31,10 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
@@ -73,7 +70,7 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 7);
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of());
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
@@ -88,29 +85,46 @@ class AbsenceApiControllerTest {
         workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
-        perform(get("/api/persons/23/absences?noWorkdaysInclusive=true")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"))
+        perform(
+            get("/api/persons/23/absences?noWorkdaysInclusive=true")
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-07")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(14)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("NO_WORKDAY")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("")))
-            .andExpect(jsonPath("$.absences[1].date", is("2016-01-03")))
-            .andExpect(jsonPath("$.absences[1].type", is("NO_WORKDAY")))
-            .andExpect(jsonPath("$.absences[1].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[1].href", is("")))
-            .andExpect(jsonPath("$.absences[2].date", is("2016-01-06")))
-            .andExpect(jsonPath("$.absences[2].type", is("NO_WORKDAY")))
-            .andExpect(jsonPath("$.absences[2].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[2].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[2].href", is("")))
-        ;
+            .andExpect(content().json("""
+            {
+              "absences": [
+                {
+                  "date": "2016-01-02",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "NO_WORKDAY",
+                  "status": "",
+                  "href": "",
+                  "vacationTypeId": null
+                },
+                {
+                  "date": "2016-01-03",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "NO_WORKDAY",
+                  "status": "",
+                  "href": "",
+                  "vacationTypeId": null
+                },
+                {
+                  "date": "2016-01-06",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "NO_WORKDAY",
+                  "status": "",
+                  "href": "",
+                  "vacationTypeId": null
+                }
+              ]
+            }
+            """, true));
     }
 
     @Test
@@ -120,7 +134,7 @@ class AbsenceApiControllerTest {
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 7);
 
         final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
@@ -141,24 +155,46 @@ class AbsenceApiControllerTest {
         workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
-        perform(get("/api/persons/23/absences?noWorkdaysInclusive=true")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"))
+        perform(
+            get("/api/persons/23/absences?noWorkdaysInclusive=true")
+                .param("from", "2016-01-01")
+                .param("to", "2016-01-07")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(14)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-            .andExpect(jsonPath("$.absences[1].date", is("2016-01-03")))
-            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[1].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[1].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+              "absences": [
+                {
+                  "date": "2016-01-02",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "VACATION",
+                  "status": "WAITING",
+                  "href": "42",
+                  "vacationTypeId": 1
+                },
+                {
+                  "date": "2016-01-03",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "VACATION",
+                  "status": "WAITING",
+                  "href": "42",
+                  "vacationTypeId": 1
+                },
+                {
+                  "date": "2016-01-06",
+                  "dayLength": 1,
+                  "absencePeriodName": "FULL",
+                  "type": "NO_WORKDAY",
+                  "status": "",
+                  "href": "",
+                  "vacationTypeId": null
+                }
+              ]
+            }
+            """, true));
     }
 
     // VACATION --------------------------------------------------------------------------------------------------------
@@ -179,19 +215,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -210,19 +255,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("MORNING")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -241,19 +295,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("NOON")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "NOON",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     // SICK ------------------------------------------------------------------------------------------------------------
@@ -274,19 +337,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -305,19 +377,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("MORNING")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -336,19 +417,28 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("NOON")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "NOON",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     // VACATION / SICK - COMBINATION -----------------------------------------------------------------------------------
@@ -369,24 +459,37 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(2)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("NOON")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-            .andExpect(jsonPath("$.absences[1].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[1].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("MORNING")))
-            .andExpect(jsonPath("$.absences[1].href", is("1337")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "NOON",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    },
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "1337",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -406,24 +509,37 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(2)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("MORNING")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-            .andExpect(jsonPath("$.absences[1].date", is("2016-01-02")))
-            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[1].dayLength", is(0.5)))
-            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("NOON")))
-            .andExpect(jsonPath("$.absences[1].href", is("1337")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    },
+                    {
+                      "date": "2016-01-02",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "NOON",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "1337",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     // VACATION / PUBLIC-HOLIDAY - COMBINATION -------------------------------------------------------------------------
@@ -449,19 +565,28 @@ class AbsenceApiControllerTest {
         final DateRange dateRange = new DateRange(startDate, endDate);
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-12-24")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-12-24",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -485,19 +610,28 @@ class AbsenceApiControllerTest {
         final DateRange dateRange = new DateRange(startDate, endDate);
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-12-24")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-12-24",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -530,19 +664,28 @@ class AbsenceApiControllerTest {
         final PublicHoliday christmasEve = new PublicHoliday(LocalDate.of(2016, DECEMBER, 24), NOON, "");
         when(publicHolidaysService.getPublicHolidays(dateRangeRP.getStartDate(), dateRangeRP.getEndDate(), GERMANY_RHEINLAND_PFALZ)).thenReturn(List.of(christmasEve));
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-12-24")))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-12-24",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     // SICK / PUBLIC-HOLIDAY - COMBINATION -----------------------------------------------------------------------------
@@ -568,19 +711,28 @@ class AbsenceApiControllerTest {
         final DateRange dateRange = new DateRange(startDate, endDate);
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-12-24")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-12-24",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -609,14 +761,21 @@ class AbsenceApiControllerTest {
             .param("to", "2016-12-31"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].date", is("2016-12-24")))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
-            .andExpect(jsonPath("$.absences[0].href", is("42")))
-        ;
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-12-24",
+                      "dayLength": 1,
+                      "absencePeriodName": "FULL",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     // PARAMETER HANDLING ----------------------------------------------------------------------------------------------
@@ -636,15 +795,29 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31")
-            .param("type", "VACATION"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+                .param("type", "VACATION")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")));
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-12",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -663,15 +836,29 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31")
-            .param("type", "SICK_NOTE"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+                .param("type", "SICK_NOTE")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(1)))
-            .andExpect(jsonPath("$.absences[0].type", is("SICK_NOTE")));
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-02-12",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -690,15 +877,37 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
 
-        perform(get("/api/persons/23/absences")
-            .param("from", "2016-01-01")
-            .param("to", "2016-12-31"))
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(2)))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[1].type", is("SICK_NOTE")));
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-12",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    },
+                    {
+                      "date": "2016-02-12",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "SICK_NOTE",
+                      "status": "ACTIVE",
+                      "href": "42",
+                      "vacationTypeId": null
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
@@ -725,14 +934,30 @@ class AbsenceApiControllerTest {
             .param("noWorkdaysInclusive", "true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(2)))
-            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[0].status", is("WAITING")))
-            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("MORNING")))
-            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[1].status", is("WAITING")))
-            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("NOON")));
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-01",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "MORNING",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    },
+                    {
+                      "date": "2016-01-01",
+                      "dayLength": 0.5,
+                      "absencePeriodName": "NOON",
+                      "type": "VACATION",
+                      "status": "WAITING",
+                      "href": "42",
+                      "vacationTypeId": 1
+                    }
+                ]
+            }
+            """, true));
     }
 
     @Test
