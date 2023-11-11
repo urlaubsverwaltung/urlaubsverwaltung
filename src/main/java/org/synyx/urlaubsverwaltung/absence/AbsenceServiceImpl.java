@@ -264,11 +264,11 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         if (workingTimeDayLength.isHalfDay()) {
             if (workingTimeDayLength.isMorning()) {
-                morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
-            } else {
                 morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
                 noon = null;
+            } else {
+                morning = null;
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
             }
             return new AbsencePeriod.Record(date, person, morning, noon);
         }
