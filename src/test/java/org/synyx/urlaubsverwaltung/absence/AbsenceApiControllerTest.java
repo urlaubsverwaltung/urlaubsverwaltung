@@ -565,6 +565,68 @@ class AbsenceApiControllerTest {
     }
 
     @Test
+    void ensureTypeFilterIsWorkingForMultipleTypes() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
+
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+
+        final AbsencePeriod.Record vacationRecord = anyVacationRecord(person, LocalDate.of(2016, JANUARY, 12));
+        final AbsencePeriod.Record sickRecord = anySickRecord(person, LocalDate.of(2016, FEBRUARY, 12));
+
+        final AbsencePeriod.RecordMorning publicHolidayMorning = new AbsencePeriod.RecordMorningPublicHoliday(person);
+        final AbsencePeriod.RecordNoon publicHolidayNoon = new AbsencePeriod.RecordNoonPublicHoliday(person);
+        final AbsencePeriod.Record publicHoliday = new AbsencePeriod.Record(LocalDate.of(2016, JANUARY, 6), person, publicHolidayMorning, publicHolidayNoon);
+
+        final AbsencePeriod.RecordMorning noWorkdayMorning = new AbsencePeriod.RecordMorningNoWorkday(person);
+        final AbsencePeriod.RecordNoon noWorkdayNoon = new AbsencePeriod.RecordNoonNoWorkday(person);
+        final AbsencePeriod.Record noWorkday = new AbsencePeriod.Record(LocalDate.of(2016, JANUARY, 7), person, noWorkdayMorning, noWorkdayNoon);
+
+        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(vacationRecord, sickRecord, publicHoliday, noWorkday));
+
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
+
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+                .param("types", "PUBLIC_HOLIDAY", "NO_WORKDAY")
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-06",
+                      "id": null,
+                      "absent": "FULL",
+                      "absentNumeric": 1,
+                      "genericType": "PUBLIC_HOLIDAY",
+                      "typeCategory": null,
+                      "typeId": null,
+                      "status": "ACTIVE",
+                      "links": []
+                    },
+                    {
+                      "date": "2016-01-07",
+                      "id": null,
+                      "absent": "FULL",
+                      "absentNumeric": 1,
+                      "genericType": "NO_WORKDAY",
+                      "typeCategory": null,
+                      "typeId": null,
+                      "status": "ACTIVE",
+                      "links": []
+                    }
+                ]
+            }
+            """, true));
+    }
+
+    @Test
     void ensureTypeFilterFallbackIsEverything() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
