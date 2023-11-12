@@ -25,21 +25,21 @@ import tooltip from "../tooltip";
 import { getJSON } from "../../js/fetch";
 import {
   isNoWorkday,
+  isPersonalHolidayApprovedFull,
+  isPersonalHolidayApprovedMorning,
+  isPersonalHolidayApprovedNoon,
+  isPersonalHolidayCancellationRequestedFull,
+  isPersonalHolidayCancellationRequestedMorning,
+  isPersonalHolidayCancellationRequestedNoon,
+  isPersonalHolidayTemporaryFull,
+  isPersonalHolidayTemporaryMorning,
+  isPersonalHolidayTemporaryNoon,
+  isPersonalHolidayWaitingFull,
+  isPersonalHolidayWaitingMorning,
+  isPersonalHolidayWaitingNoon,
+  isSickNoteFull,
   isSickNoteMorning,
   isSickNoteNoon,
-  isSickNoteFull,
-  isPersonalHolidayWaitingFull,
-  isPersonalHolidayTemporaryFull,
-  isPersonalHolidayApprovedFull,
-  isPersonalHolidayCancellationRequestedFull,
-  isPersonalHolidayWaitingMorning,
-  isPersonalHolidayTemporaryMorning,
-  isPersonalHolidayApprovedMorning,
-  isPersonalHolidayCancellationRequestedMorning,
-  isPersonalHolidayWaitingNoon,
-  isPersonalHolidayApprovedNoon,
-  isPersonalHolidayCancellationRequestedNoon,
-  isPersonalHolidayTemporaryNoon,
 } from "../../js/absence";
 import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
 import "./calendar.css";
@@ -192,10 +192,10 @@ const Assertion = (function () {
       return holidayService.getAbsenceId(date);
     },
     absenceType: function (date) {
-      return holidayService.getAbsenceType(date);
+      return holidayService.getAbsenceGenericType(date);
     },
-    vacationTypeId: function (date) {
-      return holidayService.getVacationTypeId(date);
+    typeId: function (date) {
+      return holidayService.getTypeId(date);
     },
   };
 
@@ -363,30 +363,30 @@ const HolidayService = (function () {
     getAbsenceId: function (date) {
       const absences = getAbsencesForDate(date);
       if (absences[0]) {
-        return absences[0].href;
+        return absences[0].id;
       }
       return "-1";
     },
 
-    getAbsenceType: function (date) {
+    getAbsenceGenericType: function (date) {
       const absences = getAbsencesForDate(date);
       if (absences[0]) {
-        return absences[0].type;
+        return absences[0].genericType;
       }
       return "";
     },
 
-    getVacationTypeId: function (date) {
+    getTypeId: function (date) {
       let morningOrFull;
       let noon;
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (absence.type === "VACATION") {
-          if (absence.absencePeriodName === "NOON") {
-            noon = absence.vacationTypeId;
+        if (absence.genericType === "VACATION") {
+          if (absence.absent === "NOON") {
+            noon = absence.typeId;
           } else {
-            morningOrFull = absence.vacationTypeId;
+            morningOrFull = absence.typeId;
           }
         }
       }
@@ -451,7 +451,7 @@ const HolidayService = (function () {
       return fetch("/persons/" + personId + "/absences", {
         from: firstDayOfYear,
         to: lastDayOfYear,
-        noWorkdaysInclusive: true,
+        types: "VACATION,SICK_NOTE,NO_WORKDAY",
       }).then(cacheAbsences(year));
     },
   };
@@ -611,7 +611,7 @@ const View = (function () {
 
     function style() {
       // could be morning=sick and noon=vacation
-      const [idMorningOrFull, idNoon] = assert.vacationTypeId(date);
+      const [idMorningOrFull, idNoon] = assert.typeId(date);
       const colorMorningOrFull = `var(--absence-color-${window.uv.vacationTypes.colors[idMorningOrFull]})`;
       const colorNoon = `var(--absence-color-${window.uv.vacationTypes.colors[idNoon]})`;
       return [

@@ -1,4 +1,4 @@
-import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
+import { cleanup, setup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
 import fetchMock from "fetch-mock";
 
 describe("calendar", () => {
@@ -60,15 +60,15 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&types=VACATION%2CSICK_NOTE%2CNO_WORKDAY", {
           absences: [
             {
               date: "2017-11-01",
-              dayLength: 1,
-              absencePeriodName: "FULL",
-              type: "VACATION",
+              genericType: "VACATION",
+              absent: "FULL",
+              absentNumeric: 1,
               status: givenStatus,
-              vacationTypeId: 1,
+              typeId: 1,
             },
           ],
         });
@@ -97,15 +97,15 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&types=VACATION%2CSICK_NOTE%2CNO_WORKDAY", {
           absences: [
             {
               date: "2017-12-05",
-              dayLength: 1,
-              absencePeriodName: "FULL",
-              type: "VACATION",
+              genericType: "VACATION",
+              absent: "FULL",
+              absentNumeric: 1,
               status: givenStatus,
-              vacationTypeId: 1,
+              typeId: 1,
             },
           ],
         });
@@ -134,15 +134,15 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&types=VACATION%2CSICK_NOTE%2CNO_WORKDAY", {
           absences: [
             {
               date: "2017-12-01",
-              dayLength: 1,
-              absencePeriodName: "FULL",
-              type: "VACATION",
+              genericType: "VACATION",
+              absent: "FULL",
+              absentNumeric: 1,
               status: givenStatus,
-              vacationTypeId: 1,
+              typeId: 1,
             },
           ],
         });
@@ -174,45 +174,45 @@ describe("calendar", () => {
       // personId -> createHolidayService (param)
       // year -> holidayService.fetchPersonal (param)
       // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&noWorkdaysInclusive=true", {
+      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&types=VACATION%2CSICK_NOTE%2CNO_WORKDAY", {
         absences: [
           {
             date: "2020-12-05",
-            absencePeriodName: "FULL",
-            type: "VACATION",
+            absent: "FULL",
+            genericType: "VACATION",
             status: "ALLOWED",
-            vacationTypeId: 1,
+            typeId: 1,
           },
           {
             date: "2020-12-06",
-            absencePeriodName: "MORNING",
-            type: "VACATION",
+            absent: "MORNING",
+            genericType: "VACATION",
             status: "ALLOWED",
-            vacationTypeId: 1,
+            typeId: 1,
           },
           {
             date: "2020-12-06",
-            absencePeriodName: "NOON",
-            type: "SICK_NOTE",
+            absent: "NOON",
+            genericType: "SICK_NOTE",
             status: "ACTIVE",
           },
           {
             date: "2020-12-12",
-            absencePeriodName: "MORNING",
-            type: "SICK_NOTE",
+            absent: "MORNING",
+            genericType: "SICK_NOTE",
             status: "ACTIVE",
           },
           {
             date: "2020-12-12",
-            absencePeriodName: "NOON",
-            type: "VACATION",
+            absent: "NOON",
+            genericType: "VACATION",
             status: "ALLOWED",
-            vacationTypeId: 1,
+            typeId: 1,
           },
           {
             date: "2020-12-13",
-            absencePeriodName: "FULL",
-            type: "SICK_NOTE",
+            absent: "FULL",
+            genericType: "SICK_NOTE",
             status: "ACTIVE",
           },
         ],
@@ -258,27 +258,27 @@ describe("calendar", () => {
     // personId -> createHolidayService (param)
     // year -> holidayService.fetchPersonal (param)
     // type -> holidayService.fetchPersonal (implementation detail)
-    fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&noWorkdaysInclusive=true", {
+    fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&types=VACATION%2CSICK_NOTE%2CNO_WORKDAY", {
       absences: [
         {
           // saturday
           date: "2020-12-05",
-          absencePeriodName: "FULL",
-          type: "NO_WORKDAY",
+          absent: "FULL",
+          genericType: "NO_WORKDAY",
           status: "",
         },
         {
           // sunday
           date: "2020-12-06",
-          absencePeriodName: "FULL",
-          type: "NO_WORKDAY",
+          absent: "FULL",
+          genericType: "NO_WORKDAY",
           status: "",
         },
         {
           // wednesday
           date: "2020-12-09",
-          absencePeriodName: "FULL",
-          type: "NO_WORKDAY",
+          absent: "FULL",
+          genericType: "NO_WORKDAY",
           status: "",
         },
       ],

@@ -128,7 +128,7 @@ function hydrateDatepicker(duetDateElement, options) {
         pick("publicHolidays"),
       ),
       getJSON(
-        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}&noWorkdaysInclusive=true`,
+        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}&types=VACATION,SICK_NOTE,NO_WORKDAY`,
       ).then(pick("absences")),
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
