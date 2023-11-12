@@ -223,7 +223,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 monthValue -> initializeAbsenceOverviewMonthDto(date, personList, locale));
 
-            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState, today, locale);
+            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, today, locale);
             monthView.getDays().add(tableHeadDay);
 
             final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
@@ -534,20 +534,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return selectedMonth;
     }
 
-    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState, LocalDate today, Locale locale) {
-        final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, defaultFederalState);
-        final DayLength publicHolidayDayLength = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getDayLength() : DayLength.ZERO;
-
-        AbsenceOverviewDayType publicHolidayType = null;
-        if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
-            publicHolidayType = getPublicHolidayType(publicHolidayDayLength).build();
-        }
+    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, LocalDate today, Locale locale) {
 
         final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
         final String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
         final boolean isToday = date.isEqual(today);
 
-        return new AbsenceOverviewMonthDayDto(publicHolidayType, tableHeadDayText, dayOfWeek, isWeekend(date), isToday);
+        return new AbsenceOverviewMonthDayDto(null, tableHeadDayText, dayOfWeek, isWeekend(date), isToday);
     }
 
     private String getMonthText(LocalDate date, Locale locale) {
