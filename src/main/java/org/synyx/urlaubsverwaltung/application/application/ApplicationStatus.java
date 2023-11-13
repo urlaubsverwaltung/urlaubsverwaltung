@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import java.util.List;
+
 /**
  * Enum describing which states an {@link Application} may have.
  */
@@ -45,5 +47,25 @@ public enum ApplicationStatus {
     /**
      * If an application for leave has been allowed and is cancelled afterward, it gets this status.
      */
-    CANCELLED
+    CANCELLED;
+
+    /**
+     * Returns all active statuses of an application.
+     * Hint: Applications with one of these statuses will be used for calculations and shown as active on the ui.
+     *
+     * @return a list of all active statuses
+     */
+    public static List<ApplicationStatus> activeStatuses() {
+        return List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+    }
+
+    /**
+     * Returns all inactive statuses of an application.
+     * Hint: Applications with one of these statuses will not be used for calculations and shown as inactive on the ui.
+     *
+     * @return a list of all inactive statuses
+     */
+    public static List<ApplicationStatus> inactiveStatuses() {
+        return List.of(REJECTED, CANCELLED, REVOKED);
+    }
 }

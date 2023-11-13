@@ -27,15 +27,6 @@ import java.util.stream.Stream;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 
@@ -45,9 +36,6 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-
-    private static final List<ApplicationStatus> APPLICATION_STATUSES = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-    private static final List<SickNoteStatus> SICK_NOTE_STATUSES = List.of(ACTIVE);
 
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
@@ -71,7 +59,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end) {
-        return getAbsences(persons, start, end, APPLICATION_STATUSES, SICK_NOTE_STATUSES);
+        return getAbsences(persons, start, end, ApplicationStatus.activeStatuses(), SickNoteStatus.activeStatuses());
     }
 
     @Override
@@ -81,11 +69,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end) {
-
-        final List<ApplicationStatus> closedApplicationStatuses = List.of(REJECTED, CANCELLED, REVOKED);
-        final List<SickNoteStatus> closedSickNoteStatuses = List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED);
-
-        return getAbsences(persons, start, end, closedApplicationStatuses, closedSickNoteStatuses);
+        return getAbsences(persons, start, end, ApplicationStatus.inactiveStatuses(), SickNoteStatus.inactiveStatuses());
     }
 
     private List<AbsencePeriod> getAbsences(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> byApplicationStatus, List<SickNoteStatus> bySickNoteStatus) {
@@ -109,10 +93,10 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<Absence> getOpenAbsencesSince(List<Person> persons, LocalDate since) {
-        final List<Application> openApplications = applicationService.getForStatesAndPersonSince(APPLICATION_STATUSES, persons, since);
+        final List<Application> openApplications = applicationService.getForStatesAndPersonSince(ApplicationStatus.activeStatuses(), persons, since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersonSince(SICK_NOTE_STATUSES, persons, since);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersonSince(SickNoteStatus.activeStatuses(), persons, since);
         final List<Absence> sickNoteAbsences = generateAbsencesFromSickNotes(openSickNotes);
 
         return ListUtils.union(applicationAbsences, sickNoteAbsences);
@@ -120,10 +104,10 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<Absence> getOpenAbsencesSince(LocalDate since) {
-        final List<Application> openApplications = applicationService.getForStatesSince(APPLICATION_STATUSES, since);
+        final List<Application> openApplications = applicationService.getForStatesSince(ApplicationStatus.activeStatuses(), since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesSince(SICK_NOTE_STATUSES, since);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesSince(SickNoteStatus.activeStatuses(), since);
         final List<Absence> sickNoteAbsences = generateAbsencesFromSickNotes(openSickNotes);
 
         return ListUtils.union(applicationAbsences, sickNoteAbsences);
