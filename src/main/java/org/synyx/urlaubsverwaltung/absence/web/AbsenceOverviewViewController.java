@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -508,15 +507,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             // sick-note does not have a vacationTypeId, but is handled separately. therefore just throw.
             // same for public-holiday and no-workday.
             .orElseThrow();
-    }
-
-    private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {
-        final AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
-        return switch (dayLength) {
-            case MORNING -> builder.publicHolidayMorning();
-            case NOON -> builder.publicHolidayNoon();
-            default -> builder.publicHolidayFull();
-        };
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
