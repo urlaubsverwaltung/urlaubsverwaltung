@@ -25,8 +25,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -73,7 +71,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     private final MessageSource messageSource;
     private final Clock clock;
     private final PublicHolidaysService publicHolidaysService;
-    private final SettingsService settingsService;
     private final AbsenceService absenceService;
     private final WorkingTimeService workingTimeService;
     private final VacationTypeService vacationTypeService;
@@ -81,7 +78,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     @Autowired
     public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
                                          MessageSource messageSource, Clock clock,
-                                         PublicHolidaysService publicHolidaysService, SettingsService settingsService,
+                                         PublicHolidaysService publicHolidaysService,
                                          AbsenceService absenceService, WorkingTimeService workingTimeService,
                                          VacationTypeService vacationTypeService) {
         this.personService = personService;
@@ -89,7 +86,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         this.messageSource = messageSource;
         this.clock = clock;
         this.publicHolidaysService = publicHolidaysService;
-        this.settingsService = settingsService;
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
         this.vacationTypeService = vacationTypeService;
@@ -207,7 +203,6 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
         final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
             .map(AbsencePeriod::getAbsenceRecords)
