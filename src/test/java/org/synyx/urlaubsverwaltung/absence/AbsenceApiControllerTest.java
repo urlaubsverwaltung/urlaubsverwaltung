@@ -99,7 +99,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "FULL",
                       "absentNumeric": 1,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -140,7 +140,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -181,7 +181,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -224,7 +224,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "FULL",
                       "absentNumeric": 1,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -265,7 +265,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -306,7 +306,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -349,7 +349,7 @@ class AbsenceApiControllerTest {
                       "id": 1337,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -360,7 +360,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -402,7 +402,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -413,7 +413,7 @@ class AbsenceApiControllerTest {
                       "id": 1337,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -456,7 +456,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -467,7 +467,7 @@ class AbsenceApiControllerTest {
                       "id": null,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "PUBLIC_HOLIDAY",
+                      "absenceType": "PUBLIC_HOLIDAY",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -499,7 +499,7 @@ class AbsenceApiControllerTest {
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
-                .param("types", "VACATION")
+                .param("absence-types", "VACATION")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -511,7 +511,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -541,7 +541,7 @@ class AbsenceApiControllerTest {
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
-                .param("types", "SICK_NOTE")
+                .param("absence-types", "SICK_NOTE")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -553,7 +553,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -592,7 +592,7 @@ class AbsenceApiControllerTest {
             get("/api/persons/23/absences")
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
-                .param("types", "PUBLIC_HOLIDAY", "NO_WORKDAY")
+                .param("absence-types", "PUBLIC_HOLIDAY", "NO_WORKDAY")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
@@ -604,7 +604,7 @@ class AbsenceApiControllerTest {
                       "id": null,
                       "absent": "FULL",
                       "absentNumeric": 1,
-                      "genericType": "PUBLIC_HOLIDAY",
+                      "absenceType": "PUBLIC_HOLIDAY",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -615,7 +615,7 @@ class AbsenceApiControllerTest {
                       "id": null,
                       "absent": "FULL",
                       "absentNumeric": 1,
-                      "genericType": "NO_WORKDAY",
+                      "absenceType": "NO_WORKDAY",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -656,7 +656,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -667,7 +667,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "SICK_NOTE",
+                      "absenceType": "SICK_NOTE",
                       "typeCategory": null,
                       "typeId": null,
                       "status": "ACTIVE",
@@ -709,7 +709,7 @@ class AbsenceApiControllerTest {
                       "id": 42,
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
@@ -720,7 +720,7 @@ class AbsenceApiControllerTest {
                       "id": 43,
                       "absent": "NOON",
                       "absentNumeric": 0.5,
-                      "genericType": "VACATION",
+                      "absenceType": "VACATION",
                       "status": "WAITING",
                       "typeCategory": "HOLIDAY",
                       "typeId": 1,
@@ -796,7 +796,7 @@ class AbsenceApiControllerTest {
         perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-            .param("types", "FOO"))
+            .param("absence-types", "FOO"))
             .andExpect(status().isBadRequest());
     }
 

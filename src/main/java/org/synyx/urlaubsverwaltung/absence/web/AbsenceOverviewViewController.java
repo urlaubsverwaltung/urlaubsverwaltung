@@ -339,20 +339,20 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
 
-        final AbsencePeriod.GenericAbsenceType morningGenericAbsenceType = morning.map(AbsencePeriod.RecordInfo::getGenericType).orElse(null);
-        final AbsencePeriod.GenericAbsenceType noonGenericAbsenceType = noon.map(AbsencePeriod.RecordInfo::getGenericType).orElse(null);
+        final AbsencePeriod.AbsenceType morningGenericAbsenceType = morning.map(AbsencePeriod.RecordInfo::getAbsenceType).orElse(null);
+        final AbsencePeriod.AbsenceType noonGenericAbsenceType = noon.map(AbsencePeriod.RecordInfo::getAbsenceType).orElse(null);
 
         final boolean anonymizeMorning = morning.map(shouldAnonymizeAbsenceType).orElse(false);
         final boolean anonymizeNoon = noon.map(shouldAnonymizeAbsenceType).orElse(false);
 
-        if (AbsencePeriod.GenericAbsenceType.SICK.equals(morningGenericAbsenceType)) {
+        if (AbsencePeriod.AbsenceType.SICK.equals(morningGenericAbsenceType)) {
             if (anonymizeMorning) {
                 return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
             } else {
                 return builder.sickNoteMorning();
             }
         }
-        if (AbsencePeriod.GenericAbsenceType.SICK.equals(noonGenericAbsenceType)) {
+        if (AbsencePeriod.AbsenceType.SICK.equals(noonGenericAbsenceType)) {
             if (anonymizeNoon) {
                 return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
             } else {
@@ -361,10 +361,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         }
 
         // public holiday and no_workday both don't need morning or noon colors
-        boolean ignoreMorning = hasGenericAbsenceType(morning, AbsencePeriod.GenericAbsenceType.NO_WORKDAY)
-            || hasGenericAbsenceType(morning, AbsencePeriod.GenericAbsenceType.PUBLIC_HOLIDAY);
-        boolean ignoreNoon = hasGenericAbsenceType(noon, AbsencePeriod.GenericAbsenceType.NO_WORKDAY)
-            || hasGenericAbsenceType(morning, AbsencePeriod.GenericAbsenceType.PUBLIC_HOLIDAY);
+        boolean ignoreMorning = hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.NO_WORKDAY)
+            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
+        boolean ignoreNoon = hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.NO_WORKDAY)
+            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
 
         if (!ignoreMorning && morning.isPresent()) {
             if (anonymizeMorning) {
@@ -427,8 +427,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return builder;
     }
 
-    private boolean hasGenericAbsenceType(Optional<AbsencePeriod.RecordInfo> recordInfo, AbsencePeriod.GenericAbsenceType genericAbsenceType) {
-        return recordInfo.map(AbsencePeriod.RecordInfo::getGenericType).map(genericAbsenceType::equals).orElse(false);
+    private boolean hasGenericAbsenceType(Optional<AbsencePeriod.RecordInfo> recordInfo, AbsencePeriod.AbsenceType genericAbsenceType) {
+        return recordInfo.map(AbsencePeriod.RecordInfo::getAbsenceType).map(genericAbsenceType::equals).orElse(false);
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder,
@@ -438,11 +438,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.GenericAbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getGenericType);
-        final Optional<AbsencePeriod.GenericAbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getAbsenceType);
+        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getAbsenceType);
 
-        final boolean sickMorning = morningType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.GenericAbsenceType.SICK::equals).orElse(false);
+        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
+        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
         // morning and noon should both exist, actually. otherwise this method is not called.
@@ -458,11 +458,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         }
 
         if (morningType.isPresent()) {
-            if (morningType.get().equals(AbsencePeriod.GenericAbsenceType.NO_WORKDAY)) {
+            if (morningType.get().equals(AbsencePeriod.AbsenceType.NO_WORKDAY)) {
                 // no workday is highlighted differently as an absenceFull day. no color required to be set.
                 return builder;
             }
-            if (morningType.get().equals(AbsencePeriod.GenericAbsenceType.PUBLIC_HOLIDAY)) {
+            if (morningType.get().equals(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY)) {
                 // public holiday is not required to be handled here currently.
                 // however, this has to be handled as soon as a person could work despite public holiday.
                 return builder;

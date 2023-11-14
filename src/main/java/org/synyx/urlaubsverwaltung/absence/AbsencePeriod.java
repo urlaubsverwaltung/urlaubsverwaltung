@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public class AbsencePeriod {
 
-    public enum GenericAbsenceType {
+    public enum AbsenceType {
         VACATION,
         SICK,
         PUBLIC_HOLIDAY,
@@ -160,7 +160,7 @@ public class AbsencePeriod {
     public interface RecordInfo {
         Person getPerson();
 
-        GenericAbsenceType getGenericType();
+        AbsenceType getAbsenceType();
 
         AbsenceStatus getStatus();
 
@@ -199,24 +199,24 @@ public class AbsencePeriod {
     public abstract static class AbstractRecordInfo implements RecordInfo {
 
         private final Person person;
-        private final GenericAbsenceType genericType;
+        private final AbsenceType absenceType;
         private final Long id;
         private final AbsenceStatus status;
         private final String typeCategory;
         private final Long typeId;
         private final boolean visibleToEveryone;
 
-        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, AbsenceStatus status) {
-            this(person, genericType, null, status, null, null, false);
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, AbsenceStatus status) {
+            this(person, absenceType, null, status, null, null, false);
         }
 
-        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status) {
-            this(person, genericType, id, status, null, null, false);
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status) {
+            this(person, absenceType, id, status, null, null, false);
         }
 
-        private AbstractRecordInfo(Person person, GenericAbsenceType genericType, Long id, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
             this.person = person;
-            this.genericType = genericType;
+            this.absenceType = absenceType;
             this.id = id;
             this.status = status;
             this.typeCategory = typeCategory;
@@ -230,8 +230,8 @@ public class AbsencePeriod {
         }
 
         @Override
-        public GenericAbsenceType getGenericType() {
-            return genericType;
+        public AbsenceType getAbsenceType() {
+            return absenceType;
         }
 
         @Override
@@ -281,12 +281,12 @@ public class AbsencePeriod {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             AbstractRecordInfo that = (AbstractRecordInfo) o;
-            return genericType == that.genericType && status == that.status;
+            return absenceType == that.absenceType && status == that.status;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(genericType, status);
+            return Objects.hash(absenceType, status);
         }
 
         @Override
@@ -299,49 +299,49 @@ public class AbsencePeriod {
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningVacation(Person person, Long applicationId, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
-            super(person, GenericAbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            super(person, AbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
         }
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, GenericAbsenceType.SICK, sickNoteId, status);
+            super(person, AbsenceType.SICK, sickNoteId, status);
         }
     }
 
     public static class RecordMorningNoWorkday extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningNoWorkday(Person person) {
-            super(person, GenericAbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
+            super(person, AbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
         }
     }
 
     public static class RecordMorningPublicHoliday extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningPublicHoliday(Person person) {
-            super(person, GenericAbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
+            super(person, AbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
         }
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonVacation(Person person, Long applicationId, AbsenceStatus status, String typeCategory, Long typeId, boolean visibleToEveryone) {
-            super(person, GenericAbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
+            super(person, AbsenceType.VACATION, applicationId, status, typeCategory, typeId, visibleToEveryone);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, GenericAbsenceType.SICK, sickNoteId, status);
+            super(person, AbsenceType.SICK, sickNoteId, status);
         }
     }
 
     public static class RecordNoonNoWorkday extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonNoWorkday(Person person) {
-            super(person, GenericAbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
+            super(person, AbsenceType.NO_WORKDAY, AbsenceStatus.ACTIVE);
         }
     }
 
     public static class RecordNoonPublicHoliday extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonPublicHoliday(Person person) {
-            super(person, GenericAbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
+            super(person, AbsenceType.PUBLIC_HOLIDAY, AbsenceStatus.ACTIVE);
         }
     }
 }

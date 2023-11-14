@@ -192,7 +192,7 @@ const Assertion = (function () {
       return holidayService.getAbsenceId(date);
     },
     absenceType: function (date) {
-      return holidayService.getAbsenceGenericType(date);
+      return holidayService.getAbsenceType(date);
     },
     typeId: function (date) {
       return holidayService.getTypeId(date);
@@ -368,10 +368,10 @@ const HolidayService = (function () {
       return "-1";
     },
 
-    getAbsenceGenericType: function (date) {
+    getAbsenceType: function (date) {
       const absences = getAbsencesForDate(date);
       if (absences[0]) {
-        return absences[0].genericType;
+        return absences[0].absenceType;
       }
       return "";
     },
@@ -382,7 +382,7 @@ const HolidayService = (function () {
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (absence.genericType === "VACATION") {
+        if (absence.absenceType === "VACATION") {
           if (absence.absent === "NOON") {
             noon = absence.typeId;
           } else {
@@ -451,7 +451,7 @@ const HolidayService = (function () {
       return fetch("/persons/" + personId + "/absences", {
         from: firstDayOfYear,
         to: lastDayOfYear,
-        types: "VACATION,SICK_NOTE,NO_WORKDAY",
+        "absence-types": "vacation,sick_note,no_workday",
       }).then(cacheAbsences(year));
     },
   };

@@ -100,7 +100,7 @@ describe("absence-style-properties", () => {
 function morningWaiting(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "WAITING",
     absent: "MORNING",
   };
@@ -108,7 +108,7 @@ function morningWaiting(typeId) {
 function morningApproved(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "ALLOWED",
     absent: "MORNING",
   };
@@ -116,7 +116,7 @@ function morningApproved(typeId) {
 function morningTemporary(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
     absent: "MORNING",
   };
@@ -124,7 +124,7 @@ function morningTemporary(typeId) {
 function noonWaiting(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "WAITING",
     absent: "NOON",
   };
@@ -132,7 +132,7 @@ function noonWaiting(typeId) {
 function noonApproved(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "ALLOWED",
     absent: "NOON",
   };
@@ -140,7 +140,7 @@ function noonApproved(typeId) {
 function noonTemporary(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
     absent: "NOON",
   };
@@ -148,7 +148,7 @@ function noonTemporary(typeId) {
 function fullWaiting(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "WAITING",
     absent: "FULL",
   };
@@ -156,7 +156,7 @@ function fullWaiting(typeId) {
 function fullApproved(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "ALLOWED",
     absent: "FULL",
   };
@@ -164,7 +164,7 @@ function fullApproved(typeId) {
 function fullTemporary(typeId) {
   return {
     typeId,
-    genericType: "VACATION",
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
     absent: "FULL",
   };

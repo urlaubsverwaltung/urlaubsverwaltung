@@ -150,7 +150,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -186,7 +186,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -208,7 +208,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -230,7 +230,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -250,7 +250,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -281,7 +281,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -308,7 +308,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -330,7 +330,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -352,7 +352,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -372,7 +372,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -390,7 +390,7 @@ describe("create-datepicker", () => {
     describe("highlights days", () => {
       function mockAbsences(absences) {
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences,
           },
@@ -403,7 +403,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -458,37 +458,37 @@ describe("create-datepicker", () => {
           {
             date: "2020-12-05",
             absent: "FULL",
-            genericType: "VACATION",
+            absenceType: "VACATION",
             status: "ALLOWED",
           },
           {
             date: "2020-12-06",
             absent: "MORNING",
-            genericType: "VACATION",
+            absenceType: "VACATION",
             status: "ALLOWED",
           },
           {
             date: "2020-12-12",
             absent: "NOON",
-            genericType: "VACATION",
+            absenceType: "VACATION",
             status: "ALLOWED",
           },
           {
             date: "2020-12-06",
             absent: "NOON",
-            genericType: "SICK_NOTE",
+            absenceType: "SICK_NOTE",
             status: "ACTIVE",
           },
           {
             date: "2020-12-12",
             absent: "MORNING",
-            genericType: "SICK_NOTE",
+            absenceType: "SICK_NOTE",
             status: "ACTIVE",
           },
           {
             date: "2020-12-13",
             absent: "FULL",
-            genericType: "SICK_NOTE",
+            absenceType: "SICK_NOTE",
             status: "ACTIVE",
           },
         ]);
@@ -577,7 +577,7 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
           },
@@ -610,7 +610,7 @@ describe("create-datepicker", () => {
 
         beforeEach(async () => {
           fetchMock.mock(
-            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences: [],
             },
@@ -672,7 +672,7 @@ describe("create-datepicker", () => {
       describe("vacation waiting", () => {
         function mockVacationWaitingAbsences(absences) {
           fetchMock.mock(
-            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
             },
@@ -699,7 +699,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "FULL",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "WAITING",
             },
           ]);
@@ -727,7 +727,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "MORNING",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "WAITING",
             },
           ]);
@@ -755,7 +755,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "NOON",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "WAITING",
             },
           ]);
@@ -782,7 +782,7 @@ describe("create-datepicker", () => {
       describe("vacation approved", () => {
         function mockVacationApprovedAbsences(absences) {
           fetchMock.mock(
-            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
             },
@@ -809,7 +809,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "FULL",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "ALLOWED",
             },
           ]);
@@ -837,7 +837,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "MORNING",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "ALLOWED",
             },
           ]);
@@ -865,7 +865,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "NOON",
-              genericType: "VACATION",
+              absenceType: "VACATION",
               status: "ALLOWED",
             },
           ]);
@@ -892,7 +892,7 @@ describe("create-datepicker", () => {
       describe("sick day", () => {
         function mockSickDayAbsences(absences) {
           fetchMock.mock(
-            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+            `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
             },
@@ -919,7 +919,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "FULL",
-              genericType: "SICK_NOTE",
+              absenceType: "SICK_NOTE",
             },
           ]);
 
@@ -937,7 +937,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "MORNING",
-              genericType: "SICK_NOTE",
+              absenceType: "SICK_NOTE",
             },
           ]);
 
@@ -955,7 +955,7 @@ describe("create-datepicker", () => {
             {
               date: "2020-12-24",
               absent: "NOON",
-              genericType: "SICK_NOTE",
+              absenceType: "SICK_NOTE",
             },
           ]);
 
@@ -975,13 +975,13 @@ describe("create-datepicker", () => {
         });
 
         fetchMock.mock(
-          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&types=VACATION,SICK_NOTE,NO_WORKDAY`,
+          `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [
               {
                 date: "2020-12-24",
                 absent: "FULL",
-                genericType: "NO_WORKDAY",
+                absenceType: "NO_WORKDAY",
               },
             ],
           },

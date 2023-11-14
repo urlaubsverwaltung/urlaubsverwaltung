@@ -13,7 +13,7 @@ import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
  */
 public class AbsenceDto extends RepresentationModel<AbsenceDto> {
 
-    public enum GenericAbsenceType {
+    public enum AbsenceType {
         VACATION,
         SICK_NOTE,
         NO_WORKDAY,
@@ -21,7 +21,7 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     }
 
     private final String date;
-    private final GenericAbsenceType genericType;
+    private final AbsenceType absenceType;
     private final Long id;
     private final String status;
     private final String absent;
@@ -29,13 +29,13 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     private final String typeCategory;
     private final Long typeId;
 
-    AbsenceDto(LocalDate date, GenericAbsenceType genericType, String status, DayLength dayLength, String typeCategory, Long typeId) {
-        this(date, genericType, null, status, dayLength, typeCategory, typeId);
+    AbsenceDto(LocalDate date, AbsenceType absenceType, String status, DayLength dayLength, String typeCategory, Long typeId) {
+        this(date, absenceType, null, status, dayLength, typeCategory, typeId);
     }
 
-    AbsenceDto(LocalDate date, GenericAbsenceType genericType, Long id, String status, DayLength dayLength, String typeCategory, Long typeId) {
+    AbsenceDto(LocalDate date, AbsenceType absenceType, Long id, String status, DayLength dayLength, String typeCategory, Long typeId) {
         this.date = date.format(ofPattern(DATE_PATTERN));
-        this.genericType = genericType;
+        this.absenceType = absenceType;
         this.id = id;
         this.status = status;
         this.absent = dayLength.name();
@@ -48,8 +48,8 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
         return date;
     }
 
-    public GenericAbsenceType getGenericType() {
-        return genericType;
+    public AbsenceType getAbsenceType() {
+        return absenceType;
     }
 
     public Long getId() {

@@ -25,10 +25,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.GenericAbsenceType.NO_WORKDAY;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.GenericAbsenceType.PUBLIC_HOLIDAY;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.GenericAbsenceType.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.GenericAbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.VACATION;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
@@ -70,8 +70,8 @@ public class AbsenceApiController {
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
         @Parameter(description = "Type of absences like vacation, sick_note, public_holiday and no_workday")
-        @RequestParam(value = "types", required = false, defaultValue = "VACATION, SICK_NOTE, PUBLIC_HOLIDAY, NO_WORKDAY")
-        List<String> types) {
+        @RequestParam(value = "absence-types", required = false, defaultValue = "vacation, sick_note, public_holiday, no_workday")
+        List<String> absenceTypes) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -82,21 +82,21 @@ public class AbsenceApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final List<AbsenceDto> absences = getAbsences(startDate, endDate, optionalPerson.get(), toGenericTypes(types));
+        final List<AbsenceDto> absences = getAbsences(startDate, endDate, optionalPerson.get(), toAbsenceTypes(absenceTypes));
         return new AbsencesDto(absences);
     }
 
-    private List<AbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, List<AbsenceDto.GenericAbsenceType> types) {
+    private List<AbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, List<AbsenceDto.AbsenceType> types) {
 
         final Predicate<AbsenceDto> vacationAsked = dto -> types.contains(VACATION);
         final Predicate<AbsenceDto> sickAsked = dto -> types.contains(SICK_NOTE);
         final Predicate<AbsenceDto> noWorkDayAsked = dto -> types.contains(NO_WORKDAY);
         final Predicate<AbsenceDto> publicHolidayAsked = dto -> types.contains(PUBLIC_HOLIDAY);
 
-        final Predicate<AbsenceDto> isVacation = dto -> dto.getGenericType().equals(VACATION);
-        final Predicate<AbsenceDto> isSick = dto -> dto.getGenericType().equals(SICK_NOTE);
-        final Predicate<AbsenceDto> isNoWorkDay = dto -> dto.getGenericType().equals(NO_WORKDAY);
-        final Predicate<AbsenceDto> isPublicHoliday = dto -> dto.getGenericType().equals(PUBLIC_HOLIDAY);
+        final Predicate<AbsenceDto> isVacation = dto -> dto.getAbsenceType().equals(VACATION);
+        final Predicate<AbsenceDto> isSick = dto -> dto.getAbsenceType().equals(SICK_NOTE);
+        final Predicate<AbsenceDto> isNoWorkDay = dto -> dto.getAbsenceType().equals(NO_WORKDAY);
+        final Predicate<AbsenceDto> isPublicHoliday = dto -> dto.getAbsenceType().equals(PUBLIC_HOLIDAY);
 
         return absenceService.getOpenAbsences(person, start, end)
             .stream()
@@ -121,10 +121,10 @@ public class AbsenceApiController {
         final LocalDate date = absenceRecord.getDate();
 
         final Optional<AbsencePeriod.RecordInfo> maybeMorning = absenceRecord.getMorning();
-        final Optional<AbsencePeriod.GenericAbsenceType> maybeMorningType = maybeMorning.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.AbsenceType> maybeMorningType = maybeMorning.map(AbsencePeriod.RecordInfo::getAbsenceType);
 
         final Optional<AbsencePeriod.RecordInfo> maybeNoon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.GenericAbsenceType> maybeNoonType = maybeNoon.map(AbsencePeriod.RecordInfo::getGenericType);
+        final Optional<AbsencePeriod.AbsenceType> maybeNoonType = maybeNoon.map(AbsencePeriod.RecordInfo::getAbsenceType);
 
         if (maybeMorningType.isPresent() && maybeNoonType.isPresent()) {
             if (maybeMorningType.equals(maybeNoonType)) {
@@ -142,12 +142,12 @@ public class AbsenceApiController {
     }
 
     private AbsenceDto toAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
-        final AbsenceDto.GenericAbsenceType type = toGenericTypes(recordInfo.getGenericType());
+        final AbsenceDto.AbsenceType type = toAbsenceTypes(recordInfo.getAbsenceType());
         final String status = recordInfo.getStatus().name();
         return new AbsenceDto(date, type, recordInfo.getId().orElse(null), status, dayLength, recordInfo.getTypeCategory().orElse(null), recordInfo.getTypeId().orElse(null));
     }
 
-    private List<AbsenceDto.GenericAbsenceType> toGenericTypes(List<String> dayAbsenceTypes) {
+    private List<AbsenceDto.AbsenceType> toAbsenceTypes(List<String> dayAbsenceTypes) {
         if (dayAbsenceTypes.isEmpty()) {
             return List.of();
         }
@@ -155,14 +155,14 @@ public class AbsenceApiController {
         try {
             return dayAbsenceTypes.stream()
                 .map(String::toUpperCase)
-                .map(AbsenceDto.GenericAbsenceType::valueOf)
+                .map(AbsenceDto.AbsenceType::valueOf)
                 .toList();
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
 
-    private AbsenceDto.GenericAbsenceType toGenericTypes(AbsencePeriod.GenericAbsenceType genericAbsenceType) {
+    private AbsenceDto.AbsenceType toAbsenceTypes(AbsencePeriod.AbsenceType genericAbsenceType) {
         return switch (genericAbsenceType) {
             case VACATION -> VACATION;
             case SICK -> SICK_NOTE;
