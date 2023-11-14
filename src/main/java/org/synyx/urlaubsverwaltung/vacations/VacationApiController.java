@@ -49,8 +49,7 @@ public class VacationApiController {
     }
 
     @Operation(
-        deprecated = true,
-        summary = "Get all allowed vacations for a person and a certain period of time",
+        summary = "Returns all allowed vacations for a person and a certain period of time",
         description = "Get all allowed vacations for a person and a certain period of time. "
             + "Information only reachable for users with role office and for your own data."
     )

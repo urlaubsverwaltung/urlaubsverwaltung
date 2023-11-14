@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 
-class VacationDto {
+public class VacationDto {
 
     private static final DateTimeFormatter formatter = ofPattern(DATE_PATTERN);
 
