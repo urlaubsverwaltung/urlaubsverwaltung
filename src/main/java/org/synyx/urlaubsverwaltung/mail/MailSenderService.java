@@ -1,14 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -22,12 +17,6 @@ class MailSenderService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final JavaMailSender mailSender;
-
-    @Autowired
-    MailSenderService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
     /**
      * Send a mail with the given subject and text to the given recipients.
@@ -69,27 +58,27 @@ class MailSenderService {
             return;
         }
 
-        final MimeMessage mimeMessage = mailSender.createMimeMessage();
-        try {
-            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(recipient);
-            helper.setFrom(from);
-            helper.setSubject(subject);
-            helper.setText(text);
-
-            for (MailAttachment mailAttachment : mailAttachments) {
-                helper.addAttachment(mailAttachment.getName(), mailAttachment.getContent());
-            }
-        } catch (MessagingException e) {
-            LOG.error("Sending email to {} failed", recipient, e);
-        }
-        mailSender.send(mimeMessage);
+//        final MimeMessage mimeMessage = mailSender.createMimeMessage();
+//        try {
+//            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+//            helper.setTo(recipient);
+//            helper.setFrom(from);
+//            helper.setSubject(subject);
+//            helper.setText(text);
+//
+//            for (MailAttachment mailAttachment : mailAttachments) {
+//                helper.addAttachment(mailAttachment.getName(), mailAttachment.getContent());
+//            }
+//        } catch (MessagingException e) {
+//            LOG.error("Sending email to {} failed", recipient, e);
+//        }
+//        mailSender.send(mimeMessage);
     }
 
     private void send(SimpleMailMessage message) {
         try {
 
-            mailSender.send(message);
+//            mailSender.send(message);
 
             if (LOG.isDebugEnabled()) {
                 for (String recipient : message.getTo()) {

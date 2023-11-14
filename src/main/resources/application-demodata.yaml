@@ -11,8 +11,45 @@ uv:
       create: true
       # Should demo data persons created for local development
       local-development: true
+  extensions:
+    enabled: true
+    tenancy:
+      tenantId: default
+    vacationtype:
+      republish:
+        enabled: true
+
+integration:
+  events:
+    keycloak:
+      users:
+        enabled: true
+        manage-topology: true
+        tenant-id: default
+
+events:
+  common:
+    publish:
+      enabled: true
+      manage-topology: true
+  person:
+    enabled: true
+  sicknote:
+    enabled: true
+  application:
+    enabled: true
+  vacationtype:
+    enabled: true
+    publish:
+      enabled: true
 
 spring:
+  rabbitmq:
+    host: localhost
+    password: guest
+    port: 5672
+    username: guest
+    virtual-host: /
   security:
     oauth2:
       resourceserver:
