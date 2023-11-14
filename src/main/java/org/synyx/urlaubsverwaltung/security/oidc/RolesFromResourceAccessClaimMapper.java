@@ -25,7 +25,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
  *   "resource_access": {
  *     "$clientName": {
  *       "roles": [
- *         "urlaubsverwaltung_user"
+ *         "urlaubsverwaltung_user",
  *         "urlaubsverwaltung_office",
  *         ...
  *       ]

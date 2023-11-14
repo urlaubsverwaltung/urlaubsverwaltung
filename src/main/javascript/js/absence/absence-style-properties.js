@@ -69,20 +69,20 @@ function getStylePropertiesForDate(absences) {
  * @returns {string[]}
  */
 function getVacationTypeColors(absences) {
-  let vacationTypeIdMorningOrFull;
-  let vacationTypeIdNoon;
+  let typeIdMorningOrFull;
+  let typeIdNoon;
 
   for (let absence of absences) {
-    if (absence.absencePeriodName === "FULL" || absence.absencePeriodName === "MORNING") {
-      vacationTypeIdMorningOrFull = absence.vacationTypeId;
+    if (absence.absent === "FULL" || absence.absent === "MORNING") {
+      typeIdMorningOrFull = absence.typeId;
     }
-    if (absence.absencePeriodName === "NOON") {
-      vacationTypeIdNoon = absence.vacationTypeId;
+    if (absence.absent === "NOON") {
+      typeIdNoon = absence.typeId;
     }
   }
 
-  const colorMorningOrFull = window.uv.vacationTypes.colors[vacationTypeIdMorningOrFull];
-  const colorNoon = window.uv.vacationTypes.colors[vacationTypeIdNoon];
+  const colorMorningOrFull = window.uv.vacationTypes.colors[typeIdMorningOrFull];
+  const colorNoon = window.uv.vacationTypes.colors[typeIdNoon];
 
   return [colorMorningOrFull, colorNoon];
 }

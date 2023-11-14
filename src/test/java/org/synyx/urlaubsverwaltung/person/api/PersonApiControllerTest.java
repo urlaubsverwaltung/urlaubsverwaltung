@@ -14,16 +14,11 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -46,36 +41,69 @@ class PersonApiControllerTest {
         perform(get("/api/persons"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$.[0].id", is(1)))
-            .andExpect(jsonPath("$.[0].firstName", is("shane")))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1"))))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("absences")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"))))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("sicknotes")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/sicknotes?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("vacations")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/vacations?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[0].links..rel", hasItem("workdays")))
-            .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/workdays?from={from}&to={to}{&length}"))))
-            .andExpect(jsonPath("$.[1].id", is(2)))
-            .andExpect(jsonPath("$.[1].firstName", is("carl")))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2"))))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("absences")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"))))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("sicknotes")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2/sicknotes?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("vacations")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2/vacations?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[1].links..rel", hasItem("workdays")))
-            .andExpect(jsonPath("$.[1].links..href", hasItem(endsWith("/api/persons/2/workdays?from={from}&to={to}{&length}"))))
-            .andReturn();
+            .andExpect(content().json("""
+            [
+              {
+                "id": 1,
+                "email": "shane@example.org",
+                "firstName": "shane",
+                "lastName": "shane",
+                "niceName": "shane shane",
+                "links": [
+                  {
+                    "rel": "self",
+                    "href": "http://localhost/api/persons/1"
+                  },
+                  {
+                    "rel": "absences",
+                    "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday"
+                  },
+                  {
+                    "rel": "sicknotes",
+                    "href": "http://localhost/api/persons/1/sicknotes?from={from}&to={to}"
+                  },
+                  {
+                    "rel": "vacations",
+                    "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}"
+                  },
+                  {
+                    "rel": "workdays",
+                    "href": "http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}"
+                  }
+                ]
+              },
+              {
+                "id": 2,
+                "email": "carl@example.org",
+                "firstName": "carl",
+                "lastName": "carl",
+                "niceName": "carl carl",
+                "links": [
+                  {
+                    "rel": "self",
+                    "href": "http://localhost/api/persons/2"
+                  },
+                  {
+                    "rel": "absences",
+                    "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday"
+                  },
+                  {
+                    "rel": "sicknotes",
+                    "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}"
+                  },
+                  {
+                    "rel": "vacations",
+                    "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}"
+                  },
+                  {
+                    "rel": "workdays",
+                    "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}"
+                  }
+                ]
+              }
+            ]
+            """, true))
+        ;
     }
 
     @Test
@@ -89,22 +117,37 @@ class PersonApiControllerTest {
         perform(get("/api/persons/1"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.firstName", is("shane")))
-            .andExpect(jsonPath("$.lastName", is("shane")))
-            .andExpect(jsonPath("$.email", is("shane@example.org")))
-            .andExpect(jsonPath("$.links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("absences")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("sicknotes")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/sicknotes?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("vacations")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/vacations?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("workdays")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/workdays?from={from}&to={to}{&length}"))));
+            .andExpect(content().json("""
+            {
+              "id": 1,
+              "email": "shane@example.org",
+              "firstName": "shane",
+              "lastName": "shane",
+              "niceName": "shane shane",
+              "links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost/api/persons/1"
+                },
+                {
+                  "rel": "absences",
+                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday"
+                },
+                {
+                  "rel": "sicknotes",
+                  "href": "http://localhost/api/persons/1/sicknotes?from={from}&to={to}"
+                },
+                {
+                  "rel": "vacations",
+                  "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}"
+                },
+                {
+                  "rel": "workdays",
+                  "href": "http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}"
+                }
+              ]
+            }
+            """, true));
     }
 
     @Test
@@ -116,29 +159,45 @@ class PersonApiControllerTest {
         createdPerson.setId(1L);
         when(personService.create("shane@example.org", "shane", "last", "shane@example.org")).thenReturn(createdPerson);
 
-        perform(post("/api/persons")
-            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON)
+        perform(
+            post("/api/persons")
+                .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
         )
             .andExpect(status().isCreated())
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(1)))
-            .andExpect(jsonPath("$.firstName", is("shane")))
-            .andExpect(jsonPath("$.lastName", is("last")))
-            .andExpect(jsonPath("$.email", is("shane@example.org")))
-            .andExpect(jsonPath("$.links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("absences")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/absences?from={from}&to={to}&noWorkdaysInclusive=false{&type}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("sicknotes")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/sicknotes?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("vacations")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/vacations?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.links..rel", hasItem("workdays")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/workdays?from={from}&to={to}{&length}"))));
+            .andExpect(content().json("""
+            {
+              "id": 1,
+              "email": "shane@example.org",
+              "firstName": "shane",
+              "lastName": "last",
+              "niceName": "shane last",
+              "links": [
+                {
+                  "rel": "self",
+                  "href": "http://localhost/api/persons/1"
+                },
+                {
+                  "rel": "absences",
+                  "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday"
+                },
+                {
+                  "rel": "sicknotes",
+                  "href": "http://localhost/api/persons/1/sicknotes?from={from}&to={to}"
+                },
+                {
+                  "rel": "vacations",
+                  "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}"
+                },
+                {
+                  "rel": "workdays",
+                  "href": "http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}"
+                }
+              ]
+            }
+            """, true));
     }
 
     @Test
@@ -146,10 +205,11 @@ class PersonApiControllerTest {
 
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(new Person()));
 
-        perform(post("/api/persons")
-            .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
-            .contentType(APPLICATION_JSON)
-            .accept(APPLICATION_JSON)
+        perform(
+            post("/api/persons")
+                .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
         )
             .andExpect(status().isConflict());
     }

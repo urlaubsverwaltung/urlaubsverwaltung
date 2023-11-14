@@ -13,34 +13,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.VACATION;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.VACATION;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
@@ -53,16 +41,11 @@ public class AbsenceApiController {
 
     private final PersonService personService;
     private final AbsenceService absenceService;
-    private final PublicHolidaysService publicHolidaysService;
-    private final WorkingTimeService workingTimeService;
 
     @Autowired
-    public AbsenceApiController(PersonService personService, AbsenceService absenceService,
-                                PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
+    public AbsenceApiController(PersonService personService, AbsenceService absenceService) {
         this.personService = personService;
         this.absenceService = absenceService;
-        this.publicHolidaysService = publicHolidaysService;
-        this.workingTimeService = workingTimeService;
     }
 
     @Operation(
@@ -74,7 +57,7 @@ public class AbsenceApiController {
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
-    public DayAbsencesDto personsAbsences(
+    public AbsencesDto personsAbsences(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
         Long personId,
@@ -86,12 +69,9 @@ public class AbsenceApiController {
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
         LocalDate endDate,
-        @Parameter(description = "Type of absences, vacation or sick notes")
-        @RequestParam(value = "type", required = false)
-        String type,
-        @Parameter(description = "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays.")
-        @RequestParam(value = "noWorkdaysInclusive", required = false, defaultValue = "false")
-        boolean noWorkdaysInclusive) {
+        @Parameter(description = "Type of absences like vacation, sick_note, public_holiday and no_workday")
+        @RequestParam(value = "absence-types", required = false, defaultValue = "vacation, sick_note, public_holiday, no_workday")
+        List<String> absenceTypes) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -102,160 +82,92 @@ public class AbsenceApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final Person person = optionalPerson.get();
-        final List<DayAbsenceDto> absences = getAbsences(startDate, endDate, person, toType(type), noWorkdaysInclusive);
-        return new DayAbsencesDto(absences);
+        final List<AbsenceDto> absences = getAbsences(startDate, endDate, optionalPerson.get(), toAbsenceTypes(absenceTypes));
+        return new AbsencesDto(absences);
     }
 
-    private List<DayAbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, DayAbsenceDto.Type type, boolean includeNonWorkingDays) {
-        final Predicate<DayAbsenceDto> vacationAsked = dto -> type == null || type.equals(VACATION);
-        final Predicate<DayAbsenceDto> sickAsked = dto -> type == null || type.equals(SICK_NOTE);
-        final Predicate<DayAbsenceDto> isVacation = dto -> dto.getType().equals(VACATION.name());
-        final Predicate<DayAbsenceDto> isSick = dto -> dto.getType().equals(SICK_NOTE.name());
+    private List<AbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, List<AbsenceDto.AbsenceType> types) {
 
-        final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByDate(person, start, end);
+        final Predicate<AbsenceDto> vacationAsked = dto -> types.contains(VACATION);
+        final Predicate<AbsenceDto> sickAsked = dto -> types.contains(SICK_NOTE);
+        final Predicate<AbsenceDto> noWorkDayAsked = dto -> types.contains(NO_WORKDAY);
+        final Predicate<AbsenceDto> publicHolidayAsked = dto -> types.contains(PUBLIC_HOLIDAY);
 
-        final List<DayAbsenceDto> absences = absenceService.getOpenAbsences(person, start, end)
+        final Predicate<AbsenceDto> isVacation = dto -> dto.getAbsenceType().equals(VACATION);
+        final Predicate<AbsenceDto> isSick = dto -> dto.getAbsenceType().equals(SICK_NOTE);
+        final Predicate<AbsenceDto> isNoWorkDay = dto -> dto.getAbsenceType().equals(NO_WORKDAY);
+        final Predicate<AbsenceDto> isPublicHoliday = dto -> dto.getAbsenceType().equals(PUBLIC_HOLIDAY);
+
+        return absenceService.getOpenAbsences(person, start, end)
             .stream()
-            .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
-            .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
-            .collect(toList());
-
-        if (!includeNonWorkingDays) {
-            return absences;
-        }
-
-        final List<DayAbsenceDto> absencesWithNoWorkdays = new ArrayList<>();
-
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-        final List<WorkingTime> workingTimeList = workingTimeService.getByPerson(person);
-
-        for (LocalDate date : new DateRange(start, end)) {
-            final List<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(dateTimeFormatter.format(date), absences);
-            if (!maybeAbsenceDto.isEmpty()) {
-                absencesWithNoWorkdays.addAll(maybeAbsenceDto);
-            } else if (!isWorkday(date, workingTimeList)) {
-                absencesWithNoWorkdays.add(new DayAbsenceDto(date, FULL.getDuration(), FULL.name(), DayAbsenceDto.Type.NO_WORKDAY.name(), "", null));
-            }
-        }
-
-        return absencesWithNoWorkdays;
+            .flatMap(this::toAbsenceDto)
+            .filter(
+                vacationAsked.and(isVacation)
+                    .or(sickAsked.and(isSick))
+                    .or(noWorkDayAsked.and(isNoWorkDay))
+                    .or(publicHolidayAsked.and(isPublicHoliday))
+            )
+            .toList();
     }
 
-    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
-        return workingTimeList
-            .stream()
-            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
-            .findFirst()
-            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
-            .orElse(false);
-    }
-
-    private List<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
-        return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).collect(toList());
-    }
-
-    private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
-        return workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(start, end)).entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
-            .flatMap(List::stream)
-            .collect(toMap(PublicHoliday::getDate, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.getDate(), publicHoliday.getDayLength(), publicHoliday.getDescription().concat("/").concat(publicHoliday2.getDescription()))));
-    }
-
-    private Stream<DayAbsenceDto> toDayAbsenceDto(AbsencePeriod absence, Map<LocalDate, PublicHoliday> holidaysByDate) {
-        return absence.getAbsenceRecords()
-            .stream()
-            .map(day -> this.toDayAbsenceDto(day, holidaysByDate.get(day.getDate())))
+    private Stream<AbsenceDto> toAbsenceDto(AbsencePeriod absence) {
+        return absence.getAbsenceRecords().stream()
+            .map(this::toAbsenceDto)
             .flatMap(List::stream);
     }
 
-    private List<DayAbsenceDto> toDayAbsenceDto(AbsencePeriod.Record absenceRecord, PublicHoliday publicHoliday) {
-        final List<DayAbsenceDto> result = new ArrayList<>(2);
+    private List<AbsenceDto> toAbsenceDto(AbsencePeriod.Record absenceRecord) {
 
-        sickToDayAbsenceDto(absenceRecord, publicHoliday)
-            .ifPresent(result::add);
-
-        vacationToDayAbsenceDto(absenceRecord, publicHoliday)
-            .ifPresent(result::add);
-
-        return result;
-    }
-
-    private Optional<DayAbsenceDto> sickToDayAbsenceDto(AbsencePeriod.Record absenceRecord, PublicHoliday publicHoliday) {
         final LocalDate date = absenceRecord.getDate();
 
-        final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
-        final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.RecordInfo> maybeMorning = absenceRecord.getMorning();
+        final Optional<AbsencePeriod.AbsenceType> maybeMorningType = maybeMorning.map(AbsencePeriod.RecordInfo::getAbsenceType);
 
-        final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
-        final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickFull = sickMorning && sickNoon;
+        final Optional<AbsencePeriod.RecordInfo> maybeNoon = absenceRecord.getNoon();
+        final Optional<AbsencePeriod.AbsenceType> maybeNoonType = maybeNoon.map(AbsencePeriod.RecordInfo::getAbsenceType);
 
-        if (sickFull || (sickMorning && publicHolidayNoon) || (sickNoon && publicHolidayMorning)) {
-            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, FULL, morningOrNoon));
-        }
-        if (sickMorning) {
-            return morning.map(morningRecord -> toDayAbsenceDto(date, MORNING, morningRecord));
-        }
-        if (sickNoon) {
-            return noon.map(noonRecord -> toDayAbsenceDto(date, NOON, noonRecord));
+        if (maybeMorningType.isPresent() && maybeNoonType.isPresent()) {
+            if (maybeMorningType.equals(maybeNoonType)) {
+                return List.of(toAbsenceDto(date, DayLength.FULL, maybeMorning.orElseThrow()));
+            } else {
+                return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow()), toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow()));
+            }
+        } else if (maybeMorningType.isPresent()) {
+            return List.of(toAbsenceDto(date, DayLength.MORNING, maybeMorning.orElseThrow()));
+        } else if (maybeNoonType.isPresent()) {
+            return List.of(toAbsenceDto(date, DayLength.NOON, maybeNoon.orElseThrow()));
         }
 
-        return Optional.empty();
+        return List.of();
     }
 
-    private Optional<DayAbsenceDto> vacationToDayAbsenceDto(AbsencePeriod.Record absenceRecord, PublicHoliday publicHoliday) {
-        final LocalDate date = absenceRecord.getDate();
-
-        final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
-        final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
-
-        final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
-        final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean vacationMorning = morningType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationNoon = noonType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationFull = vacationMorning && vacationNoon;
-
-        if (vacationFull || (vacationMorning && publicHolidayNoon) || (vacationNoon && publicHolidayMorning)) {
-            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, FULL, morningOrNoon));
-        }
-        if (vacationMorning) {
-            return morning.map(morningRecord -> toDayAbsenceDto(date, MORNING, morningRecord));
-        }
-        if (vacationNoon) {
-            return noon.map(noonRecord -> toDayAbsenceDto(date, NOON, noonRecord));
-        }
-
-        return Optional.empty();
-    }
-
-    private DayAbsenceDto toDayAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
-        final String type = toType(recordInfo.getType()).map(DayAbsenceDto.Type::name).orElse("");
+    private AbsenceDto toAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
+        final AbsenceDto.AbsenceType type = toAbsenceTypes(recordInfo.getAbsenceType());
         final String status = recordInfo.getStatus().name();
-        return new DayAbsenceDto(date, dayLength.getDuration(), dayLength.name(), type, status, recordInfo.getId(), recordInfo.getVacationTypeId().orElse(null));
+        return new AbsenceDto(date, type, recordInfo.getId().orElse(null), status, dayLength, recordInfo.getCategory().orElse(null), recordInfo.getTypeId().orElse(null));
     }
 
-    private DayAbsenceDto.Type toType(String dayAbsenceType) {
-        if (dayAbsenceType == null) {
-            return null;
+    private List<AbsenceDto.AbsenceType> toAbsenceTypes(List<String> dayAbsenceTypes) {
+        if (dayAbsenceTypes.isEmpty()) {
+            return List.of();
         }
+
         try {
-            return DayAbsenceDto.Type.valueOf(dayAbsenceType);
+            return dayAbsenceTypes.stream()
+                .map(String::toUpperCase)
+                .map(AbsenceDto.AbsenceType::valueOf)
+                .toList();
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
 
-    private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
-        return switch (absenceType) {
-            case VACATION -> Optional.of(VACATION);
-            case SICK -> Optional.of(SICK_NOTE);
+    private AbsenceDto.AbsenceType toAbsenceTypes(AbsencePeriod.AbsenceType genericAbsenceType) {
+        return switch (genericAbsenceType) {
+            case VACATION -> VACATION;
+            case SICK -> SICK_NOTE;
+            case NO_WORKDAY -> NO_WORKDAY;
+            case PUBLIC_HOLIDAY -> PUBLIC_HOLIDAY;
         };
     }
 }

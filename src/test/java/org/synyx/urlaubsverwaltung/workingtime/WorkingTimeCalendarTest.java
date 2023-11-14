@@ -2,10 +2,12 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,8 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 class WorkingTimeCalendarTest {
 
@@ -24,7 +32,7 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Application application = new Application();
@@ -43,7 +51,7 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Application application = new Application();
@@ -57,13 +65,13 @@ class WorkingTimeCalendarTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-    void ensureWorkingTimeForApplicationFullDayWhenWorkingWith(DayLength workingDayLength) {
+    @MethodSource("morningAndNoonWorkingTimeInformation")
+    void ensureWorkingTimeForApplicationFullDayWhenWorkingWith(WorkingDayInformation workingDayInformation) {
 
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayLength);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Application application = new Application();
@@ -82,7 +90,7 @@ class WorkingTimeCalendarTest {
         final DateRange marchDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 31));
 
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Application application = new Application();
@@ -102,7 +110,7 @@ class WorkingTimeCalendarTest {
         final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
         final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Application application = new Application();
@@ -120,7 +128,7 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         final Optional<BigDecimal> actual = sut.workingTime(LocalDate.of(2022, 8, 10));
@@ -133,7 +141,7 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         assertThat(sut.workingTime(LocalDate.of(2022, 7, 31))).isEmpty();
@@ -145,7 +153,7 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(31));
@@ -157,19 +165,19 @@ class WorkingTimeCalendarTest {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
     }
 
     @ParameterizedTest
-    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-    void ensureWorkingTimeForDateRangeWhenWorkingNotFull(DayLength workingDayLength) {
+    @MethodSource("morningAndNoonWorkingTimeInformation")
+    void ensureWorkingTimeForDateRangeWhenWorkingNotFull(WorkingDayInformation workingDayInformation) {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayLength);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(15.5));
@@ -177,19 +185,30 @@ class WorkingTimeCalendarTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-    void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingNotFull(DayLength workingDayLength) {
+    @MethodSource("morningAndNoonWorkingTimeInformation")
+    void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingNotFull(WorkingDayInformation workingDayInformation) {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
-        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayLength);
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
         final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
         assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
     }
 
-    private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
-        Map<LocalDate, DayLength> map = new HashMap<>();
+    static Stream<Arguments> morningAndNoonWorkingTimeInformation() {
+        return Stream.of(
+            Arguments.of(new WorkingDayInformation(MORNING, WORKDAY, NO_WORKDAY)),
+            Arguments.of(new WorkingDayInformation(NOON, NO_WORKDAY, WORKDAY))
+        );
+    }
+
+    private static WorkingDayInformation fullWorkingDayInformation() {
+        return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
+    }
+
+    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
+        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
         for (LocalDate date : new DateRange(from, to)) {
             map.put(date, dayLengthProvider.apply(date));
         }

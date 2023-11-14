@@ -185,10 +185,7 @@
                   th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
                   th:style="${day.today ? '--vacation-overview-rows: ' + #lists.size(month.persons) : ''}"
                 >
-                  <div
-                    class="tw-p-2 tw-leading-none tw-text-center"
-                    th:classappend="|${day.type != null && day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type != null && day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type != null && day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}|"
-                  >
+                  <div class="tw-p-2 tw-leading-none tw-text-center">
                     <span class="tw-font-bold tw-block" th:text="${day.dayOfMonth}"></span>
                     <span class="tw-text-sm tw-block tw-text-zinc-500" th:text="${day.dayOfWeek}"></span>
                   </div>

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.avatar;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class AvatarController {
         this.svgService = svgService;
     }
 
+    @Hidden
     @GetMapping(value = "/web/avatar", produces = "image/svg+xml")
     @ResponseBody
     public ResponseEntity<String> avatar(@RequestParam(value = "name", defaultValue = UNKNOWN_PERSON) String name, Locale locale) {

@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteServiceImplTest {
@@ -145,7 +147,7 @@ class SickNoteServiceImplTest {
 
         when(sickNoteRepository.findById(1L)).thenReturn(Optional.of(entity));
 
-        final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> FULL);
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
 
@@ -211,7 +213,7 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to))
             .thenReturn(List.of(entity, entity2));
 
-        final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> FULL);
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(from, to))).thenReturn(Map.of(person, workingTimeCalendar));
 
@@ -335,7 +337,7 @@ class SickNoteServiceImplTest {
 
         when(sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(ACTIVE), since)).thenReturn(List.of(entity));
 
-        final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> FULL);
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
 
@@ -390,7 +392,7 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(openSickNoteStatuses, persons, since))
             .thenReturn(List.of(entity));
 
-        final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(since, now, date -> FULL);
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(since, now, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
 
@@ -436,8 +438,12 @@ class SickNoteServiceImplTest {
         verify(sickNoteRepository).deleteByPerson(person);
     }
 
-    private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
-        Map<LocalDate, DayLength> map = new HashMap<>();
+    private static WorkingDayInformation fullWorkingDayInformation() {
+        return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
+    }
+
+    private static Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
+        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
         for (LocalDate date : new DateRange(from, to)) {
             map.put(date, dayLengthProvider.apply(date));
         }

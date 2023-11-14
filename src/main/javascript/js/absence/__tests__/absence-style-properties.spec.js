@@ -97,75 +97,75 @@ describe("absence-style-properties", () => {
   });
 });
 
-function morningWaiting(vacationTypeId) {
+function morningWaiting(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "WAITING",
-    absencePeriodName: "MORNING",
+    absent: "MORNING",
   };
 }
-function morningApproved(vacationTypeId) {
+function morningApproved(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "ALLOWED",
-    absencePeriodName: "MORNING",
+    absent: "MORNING",
   };
 }
-function morningTemporary(vacationTypeId) {
+function morningTemporary(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
-    absencePeriodName: "MORNING",
+    absent: "MORNING",
   };
 }
-function noonWaiting(vacationTypeId) {
+function noonWaiting(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "WAITING",
-    absencePeriodName: "NOON",
+    absent: "NOON",
   };
 }
-function noonApproved(vacationTypeId) {
+function noonApproved(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "ALLOWED",
-    absencePeriodName: "NOON",
+    absent: "NOON",
   };
 }
-function noonTemporary(vacationTypeId) {
+function noonTemporary(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
-    absencePeriodName: "NOON",
+    absent: "NOON",
   };
 }
-function fullWaiting(vacationTypeId) {
+function fullWaiting(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "WAITING",
-    absencePeriodName: "FULL",
+    absent: "FULL",
   };
 }
-function fullApproved(vacationTypeId) {
+function fullApproved(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "ALLOWED",
-    absencePeriodName: "FULL",
+    absent: "FULL",
   };
 }
-function fullTemporary(vacationTypeId) {
+function fullTemporary(typeId) {
   return {
-    vacationTypeId,
-    type: "VACATION",
+    typeId,
+    absenceType: "VACATION",
     status: "TEMPORARY_ALLOWED",
-    absencePeriodName: "FULL",
+    absent: "FULL",
   };
 }
