@@ -288,30 +288,32 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Long sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(sickNote.getStatus());
+        final String typeCategory = sickNote.getSickNoteType().getCategory().name();
+        final Long typeId = sickNote.getSickNoteType().getId();
 
         final AbsencePeriod.RecordMorningSick morning;
         final AbsencePeriod.RecordNoonSick noon;
 
         if (workingTimeDayLength.isHalfDay()) {
             if (workingTimeDayLength.isMorning()) {
-                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
                 noon = null;
             } else {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
             }
             return new AbsencePeriod.Record(date, person, morning, noon);
         }
 
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
             noon = null;
         } else if (DayLength.NOON.equals(sickNote.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
         } else {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status, typeCategory, typeId);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status, typeCategory, typeId);
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);

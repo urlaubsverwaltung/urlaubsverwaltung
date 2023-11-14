@@ -32,21 +32,21 @@ class AbsencePeriodTest {
     @Test
     void ensureRecordMorningSickToStringDoesNotPrintAnyInfo() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         assertThat(morning).hasToString("AbstractRecordInfo{id=1}");
     }
 
     @Test
     void ensureRecordNoonSickToStringDoesNotPrintAnyInfo() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         assertThat(noon).hasToString("AbstractRecordInfo{id=1}");
     }
 
     @Test
     void ensureNoonSickIsActive() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = noon.hasStatusOneOf(ACTIVE);
         assertThat(isActive).isTrue();
     }
@@ -54,7 +54,7 @@ class AbsencePeriodTest {
     @Test
     void ensureNoonSickIsActiveWithMultiple() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = noon.hasStatusOneOf(ACTIVE, ALLOWED);
         assertThat(isActive).isTrue();
     }
@@ -62,7 +62,7 @@ class AbsencePeriodTest {
     @Test
     void ensureNoonSickIsNotActive() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = noon.hasStatusOneOf(ALLOWED);
         assertThat(isActive).isFalse();
     }
@@ -70,7 +70,7 @@ class AbsencePeriodTest {
     @Test
     void ensureMorningSickIsActive() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = morning.hasStatusOneOf(ACTIVE);
         assertThat(isActive).isTrue();
     }
@@ -78,7 +78,7 @@ class AbsencePeriodTest {
     @Test
     void ensureMorningSickIsActiveWithMultiple() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = morning.hasStatusOneOf(ACTIVE, ALLOWED);
         assertThat(isActive).isTrue();
     }
@@ -86,7 +86,7 @@ class AbsencePeriodTest {
     @Test
     void ensureMorningSickIsNotActive() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final boolean isActive = morning.hasStatusOneOf(ALLOWED);
         assertThat(isActive).isFalse();
     }
@@ -205,8 +205,8 @@ class AbsencePeriodTest {
     @Test
     void isHalfDayAbsenceIsFullDay() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning, noon);
         assertThat(record.isHalfDayAbsence()).isFalse();
     }
@@ -220,7 +220,7 @@ class AbsencePeriodTest {
     @Test
     void isHalfDayAbsenceIsMorning() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning);
         assertThat(record.isHalfDayAbsence()).isTrue();
     }
@@ -228,7 +228,7 @@ class AbsencePeriodTest {
     @Test
     void isHalfDayAbsenceIsNoon() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), noon);
         assertThat(record.isHalfDayAbsence()).isTrue();
     }

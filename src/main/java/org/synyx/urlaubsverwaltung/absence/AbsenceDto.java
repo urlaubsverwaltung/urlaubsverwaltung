@@ -29,10 +29,6 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     private final String category;
     private final Long typeId;
 
-    AbsenceDto(LocalDate date, AbsenceType absenceType, String status, DayLength dayLength, String category, Long typeId) {
-        this(date, absenceType, null, status, dayLength, category, typeId);
-    }
-
     AbsenceDto(LocalDate date, AbsenceType absenceType, Long id, String status, DayLength dayLength, String category, Long typeId) {
         this.date = date.format(ofPattern(DATE_PATTERN));
         this.absenceType = absenceType;

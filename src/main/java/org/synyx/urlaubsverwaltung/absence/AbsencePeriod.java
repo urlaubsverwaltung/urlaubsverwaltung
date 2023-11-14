@@ -210,8 +210,8 @@ public class AbsencePeriod {
             this(person, absenceType, null, status, null, null, false);
         }
 
-        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status) {
-            this(person, absenceType, id, status, null, null, false);
+        private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId) {
+            this(person, absenceType, id, status, category, typeId, false);
         }
 
         private AbstractRecordInfo(Person person, AbsenceType absenceType, Long id, AbsenceStatus status, String category, Long typeId, boolean visibleToEveryone) {
@@ -304,8 +304,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, AbsenceType.SICK, sickNoteId, status);
+        public RecordMorningSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId) {
+            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId);
         }
     }
 
@@ -328,8 +328,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status) {
-            super(person, AbsenceType.SICK, sickNoteId, status);
+        public RecordNoonSick(Person person, Long sickNoteId, AbsenceStatus status, String category, Long typeId) {
+            super(person, AbsenceType.SICK, sickNoteId, status, category, typeId);
         }
     }
 

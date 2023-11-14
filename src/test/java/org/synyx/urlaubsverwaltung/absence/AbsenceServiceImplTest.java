@@ -16,8 +16,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -189,10 +191,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(true)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(true)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -233,10 +235,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(false)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(false)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -277,10 +279,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(false)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(false)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -334,10 +336,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(false)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(false)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -412,13 +414,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(ACTIVE)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(DayLength.MORNING)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(ACTIVE)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(DayLength.MORNING)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -447,13 +450,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(ACTIVE)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(DayLength.NOON)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(ACTIVE)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(DayLength.NOON)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -482,13 +486,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(ACTIVE)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(FULL)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(ACTIVE)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(FULL)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -535,13 +540,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(ACTIVE)
-            .startDate(LocalDate.of(2021, DECEMBER, 24))
-            .endDate(LocalDate.of(2021, DECEMBER, 24))
-            .dayLength(FULL)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(ACTIVE)
+                .sickNoteType(anySickNoteType())
+                .startDate(LocalDate.of(2021, DECEMBER, 24))
+                .endDate(LocalDate.of(2021, DECEMBER, 24))
+                .dayLength(FULL)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -558,8 +564,8 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.SICK);
-                    assertThat(morning.getCategory()).isEmpty();
-                    assertThat(morning.getTypeId()).isEmpty();
+                    assertThat(morning.getCategory()).hasValue(SickNoteCategory.SICK_NOTE.name());
+                    assertThat(morning.getTypeId()).hasValue(1L);
                     assertThat(morning.isVisibleToEveryone()).isFalse();
                     assertThat(morning.hasStatusAllowed()).isFalse();
                     assertThat(morning.hasStatusWaiting()).isFalse();
@@ -610,13 +616,14 @@ class AbsenceServiceImplTest {
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
         final SickNote sickNote = SickNote.builder()
-            .id(1337L)
-            .person(batman)
-            .status(SickNoteStatus.CANCELLED)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(DayLength.NOON)
-            .build();
+                .id(1337L)
+                .person(batman)
+                .status(SickNoteStatus.CANCELLED)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(DayLength.NOON)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -691,6 +698,7 @@ class AbsenceServiceImplTest {
             .id(42L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
+            .sickNoteType(anySickNoteType())
             .startDate(LocalDate.of(2021, MAY, 31))
             .endDate(LocalDate.of(2021, JUNE, 10))
             .dayLength(FULL)
@@ -1021,10 +1029,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(true)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(true)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -1065,10 +1073,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(false)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(false)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -1109,10 +1117,10 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .visibleToEveryone(false)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .visibleToEveryone(false)
+                .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -1159,13 +1167,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(SickNoteStatus.CANCELLED)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(DayLength.MORNING)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(SickNoteStatus.CANCELLED)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(DayLength.MORNING)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -1194,13 +1203,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(SickNoteStatus.CANCELLED)
-            .startDate(start.plusDays(1))
-            .endDate(start.plusDays(1))
-            .dayLength(DayLength.NOON)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(SickNoteStatus.CANCELLED)
+                .sickNoteType(anySickNoteType())
+                .startDate(start.plusDays(1))
+                .endDate(start.plusDays(1))
+                .dayLength(DayLength.NOON)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -1242,6 +1252,7 @@ class AbsenceServiceImplTest {
             .id(1337L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
+                .sickNoteType(anySickNoteType())
             .startDate(start.plusDays(1))
             .endDate(start.plusDays(1))
             .dayLength(DayLength.NOON)
@@ -1317,13 +1328,14 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .person(batman)
-            .status(SickNoteStatus.CANCELLED)
-            .startDate(LocalDate.of(2021, MAY, 31))
-            .endDate(LocalDate.of(2021, JUNE, 10))
-            .dayLength(FULL)
-            .build();
+                .id(42L)
+                .person(batman)
+                .status(SickNoteStatus.CANCELLED)
+                .sickNoteType(anySickNoteType())
+                .startDate(LocalDate.of(2021, MAY, 31))
+                .endDate(LocalDate.of(2021, JUNE, 10))
+                .dayLength(FULL)
+                .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -1587,15 +1599,15 @@ class AbsenceServiceImplTest {
                 assertThat(absenceRecord.getDate()).isEqualTo(LocalDate.of(2021, DECEMBER, 24));
                 assertThat(absenceRecord.getMorning()).isPresent();
                 assertThat(absenceRecord.getMorning().get()).satisfies(morning -> {
-                   assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
-                   assertThat(morning.getId()).isEmpty();
-                   assertThat(morning.getTypeId()).isEmpty();
-                   assertThat(morning.getCategory()).isEmpty();
-                   assertThat(morning.hasStatusAllowed()).isFalse();
-                   assertThat(morning.hasStatusWaiting()).isFalse();
-                   assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
-                   assertThat(morning.hasStatusAllowedCancellationRequested()).isFalse();
-                   assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
+                    assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
+                    assertThat(morning.getId()).isEmpty();
+                    assertThat(morning.getTypeId()).isEmpty();
+                    assertThat(morning.getCategory()).isEmpty();
+                    assertThat(morning.hasStatusAllowed()).isFalse();
+                    assertThat(morning.hasStatusWaiting()).isFalse();
+                    assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
+                    assertThat(morning.hasStatusAllowedCancellationRequested()).isFalse();
+                    assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                 });
                 assertThat(absenceRecord.getNoon()).isEmpty();
             });
@@ -1604,9 +1616,16 @@ class AbsenceServiceImplTest {
 
     private static VacationType<?> anyVacationType() {
         return ProvidedVacationType.builder(new StaticMessageSource())
-            .id(1L)
-            .category(VacationCategory.HOLIDAY)
-            .build();
+                .id(1L)
+                .category(VacationCategory.HOLIDAY)
+                .build();
+    }
+
+    private static SickNoteType anySickNoteType() {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setId(1L);
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        return sickNoteType;
     }
 
     private static WorkingDayInformation fullWorkDay() {

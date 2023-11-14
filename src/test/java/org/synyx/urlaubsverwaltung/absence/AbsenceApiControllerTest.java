@@ -202,8 +202,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record fullDaySickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySickRecord));
 
@@ -225,8 +225,8 @@ class AbsenceApiControllerTest {
                       "absent": "FULL",
                       "absentNumeric": 1,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -244,7 +244,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record morningSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSickRecord));
 
@@ -266,8 +266,8 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -285,7 +285,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record noonSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(noonSickRecord));
 
@@ -307,8 +307,8 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -328,7 +328,7 @@ class AbsenceApiControllerTest {
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
         final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337L, WAITING, "HOLIDAY", 1L, false);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
@@ -361,8 +361,8 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -380,7 +380,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337L, WAITING, "HOLIDAY", 1L, false);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
@@ -403,8 +403,8 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     },
@@ -554,8 +554,8 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -668,8 +668,8 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "category": null,
-                      "typeId": null,
+                      "category": "SICK_NOTE",
+                      "typeId": 1,
                       "status": "ACTIVE",
                       "links": []
                     }
@@ -814,7 +814,7 @@ class AbsenceApiControllerTest {
     }
 
     private static AbsencePeriod.Record anySickRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(person, 42L, ACTIVE, "SICK_NOTE", 1L);
         return new AbsencePeriod.Record(date, person, morning);
     }
 
