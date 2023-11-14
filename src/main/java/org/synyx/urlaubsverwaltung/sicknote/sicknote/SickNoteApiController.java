@@ -81,7 +81,7 @@ public class SickNoteApiController {
 
         final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), managedPersons, startDate, endDate).stream()
             .map(SickNoteDto::new)
-            .collect(toList());
+            .toList();
 
         return new SickNotesDto(sickNoteResponse);
     }

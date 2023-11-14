@@ -1,6 +1,19 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
 import org.springframework.hateoas.RepresentationModel;
+import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController;
+import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
+
+import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController.SICKNOTES;
+import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 public class PersonDto extends RepresentationModel<PersonDto> {
 
@@ -16,6 +29,12 @@ public class PersonDto extends RepresentationModel<PersonDto> {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+
+        this.add(linkTo(methodOn(PersonApiController.class).getPerson(id)).withSelfRel());
+        this.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(id, null, null, List.of("vacation, sick_note, public_holiday, no_workday"))).withRel(ABSENCES));
+        this.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(id, null, null)).withRel(SICKNOTES));
+        this.add(linkTo(methodOn(VacationApiController.class).getVacations(id, null, null)).withRel(VACATIONS));
+        this.add(linkTo(methodOn(WorkDaysCountApiController.class).personsWorkDays(id, null, null, null)).withRel(WORKDAYS));
     }
 
     public Long getId() {

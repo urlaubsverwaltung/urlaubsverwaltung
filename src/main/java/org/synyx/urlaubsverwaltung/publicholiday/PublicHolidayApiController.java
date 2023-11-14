@@ -30,7 +30,6 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
 @Tag(name = "public holidays", description = "Public Holidays: Get information about public holidays")
@@ -59,7 +58,7 @@ public class PublicHolidayApiController {
             + "Information only reachable for users with role office."
     )
     @GetMapping("public-holidays")
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAuthority('USER')")
     public PublicHolidaysDto getPublicHolidays(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")

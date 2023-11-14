@@ -32,7 +32,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @RestControllerAdviceMarker
 @Tag(name = "vacations", description = "Vacations: Get all vacations for a certain period")
 @RestController
-@RequestMapping("/api/persons/{id}/vacations")
+@RequestMapping("/api/persons/{personId}/vacations")
 public class VacationApiController {
 
     public static final String VACATIONS = "vacations";
@@ -49,8 +49,7 @@ public class VacationApiController {
     }
 
     @Operation(
-        deprecated = true,
-        summary = "Get all allowed vacations for a person and a certain period of time",
+        summary = "Returns all allowed vacations for a person and a certain period of time",
         description = "Get all allowed vacations for a person and a certain period of time. "
             + "Information only reachable for users with role office and for your own data."
     )
@@ -61,7 +60,7 @@ public class VacationApiController {
         " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacations(
         @Parameter(description = "ID of the person")
-        @PathVariable("id")
+        @PathVariable("personId")
         Long personId,
         @Parameter(description = "end of interval to get vacations from (inclusive)")
         @RequestParam("from")
@@ -97,7 +96,7 @@ public class VacationApiController {
         " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacationsOfOthersOrDepartmentColleagues(
         @Parameter(description = "ID of the person")
-        @PathVariable("id")
+        @PathVariable("personId")
         Long personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")

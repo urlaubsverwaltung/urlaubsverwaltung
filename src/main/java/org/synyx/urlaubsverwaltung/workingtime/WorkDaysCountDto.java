@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-class WorkDaysCountDto {
+public class WorkDaysCountDto {
 
     private final String workDays;
 

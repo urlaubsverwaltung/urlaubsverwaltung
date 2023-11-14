@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.vacations;
 
 import java.util.List;
 
-class VacationsDto {
+public class VacationsDto {
 
     private final List<VacationDto> vacations;
 

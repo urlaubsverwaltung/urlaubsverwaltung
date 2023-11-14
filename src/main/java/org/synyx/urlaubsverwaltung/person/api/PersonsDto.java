@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.List;
 
+public class PersonsDto extends RepresentationModel<PersonsDto> {
 
-public class PersonsDto {
-
-    private List<PersonDto> persons;
+    private final List<PersonDto> persons;
 
     public PersonsDto(List<PersonDto> persons) {
         this.persons = persons;
@@ -13,9 +14,5 @@ public class PersonsDto {
 
     public List<PersonDto> getPersons() {
         return persons;
-    }
-
-    public void setPersons(List<PersonDto> persons) {
-        this.persons = persons;
     }
 }
