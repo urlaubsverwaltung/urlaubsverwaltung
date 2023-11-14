@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +42,7 @@ import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATI
 import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 @RestControllerAdviceMarker
-@Tag(name = "persons", description = "Persons: Get information about the persons of the application")
+@Tag(name = "persons", description = "Persons: Returns information about the persons and provides links to further information like absences, sick notes, ...")
 @RestController
 @RequestMapping("/api/persons")
 public class PersonApiController {
@@ -52,29 +54,36 @@ public class PersonApiController {
         this.personService = personService;
     }
 
-    @Operation(
-        summary = "Get all active persons of the application",
-        description = "Get all active persons of the application"
-    )
-    @GetMapping
-    @PreAuthorize(IS_OFFICE)
-    public ResponseEntity<List<PersonDto>> persons() {
-
-        final List<PersonDto> persons = personService.getActivePersons().stream()
-            .map(this::createPersonResponse)
-            .toList();
-
-        return new ResponseEntity<>(persons, OK);
+    @Operation(summary = "Returns the person by current authentication", description = "Returns the current logged in person.")
+    @GetMapping("/me")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<PersonDto> me(@AuthenticationPrincipal OidcUser oidcUser) {
+        return personService.getPersonByUsername(oidcUser.getSubject())
+                .map(person -> new ResponseEntity<>(createPersonResponse(person), OK))
+                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @Operation(summary = "Get one active person by id", description = "Get one active person by id")
+    @Operation(summary = "Return person by id", description = "Returns the person with the given id.")
     @GetMapping("/{id}")
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
         return personService.getPersonByID(id)
-            .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))
-            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+                .map(person -> new ResponseEntity<>(createPersonResponse(person), OK))
+                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
+
+    @Operation(summary = "Returns all active persons", description = "Returns all active persons.")
+    @GetMapping
+    @PreAuthorize(IS_OFFICE)
+    public ResponseEntity<PersonsDto> persons() {
+
+        final List<PersonDto> persons = personService.getActivePersons().stream()
+                .map(this::createPersonResponse)
+                .toList();
+
+        return new ResponseEntity<>(new PersonsDto(persons), OK);
+    }
+
 
     @PreAuthorize("hasAuthority('PERSON_ADD')")
     @Operation(summary = "Creates a new person with the given parameters", description = "Creates a new person with the given parameters of firstName, lastName and email. The authority 'USER' and 'PERSON_ADD' is needed to execute this method.")
@@ -93,7 +102,6 @@ public class PersonApiController {
 
     private PersonDto createPersonResponse(Person person) {
         final PersonDto personDto = PersonMapper.mapToDto(person);
-
         personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
         personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, List.of("vacation, sick_note, public_holiday, no_workday"))).withRel(ABSENCES));
         personDto.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(person.getId(), null, null)).withRel(SICKNOTES));

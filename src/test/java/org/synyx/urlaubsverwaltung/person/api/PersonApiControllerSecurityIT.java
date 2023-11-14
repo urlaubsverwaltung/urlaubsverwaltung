@@ -37,6 +37,50 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     private PersonService personService;
 
     @Test
+    void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnCurrentPerson() throws Exception {
+        perform(
+                get("/api/persons/me")
+        )
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void ensureAccessIsOkAsOfficeForOtherOnCurrentPerson() throws Exception {
+
+        when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(new Person()));
+
+        perform(get("/api/persons/me")
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnSpecificPerson() throws Exception {
+        perform(
+                get("/api/persons/1")
+        )
+                .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
+    void ensureAccessIsForbiddenForOtherUsersOnSpecificPerson(final String role) throws Exception {
+        perform(get("/api/persons/1")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void ensureAccessIsOkAsOfficeForOtherOnSpecificPerson() throws Exception {
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
+
+        perform(get("/api/persons/1")
+                .with(user("office").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        ).andExpect(status().isOk());
+    }
+
+    @Test
     void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnPersonsUsers() throws Exception {
         perform(
             get("/api/persons")
@@ -55,32 +99,6 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     @Test
     void ensureAccessIsOkAsOfficeForOtherOnPersonsUsers() throws Exception {
         perform(get("/api/persons")
-            .with(user("office").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
-        ).andExpect(status().isOk());
-    }
-
-    @Test
-    void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnSpecificPerson() throws Exception {
-        perform(
-            get("/api/persons/1")
-        )
-            .andExpect(status().is4xxClientError());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
-    void ensureAccessIsForbiddenForOtherUsersOnSpecificPerson(final String role) throws Exception {
-        perform(get("/api/persons/1")
-            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
-        ).andExpect(status().isForbidden());
-    }
-
-    @Test
-    void ensureAccessIsOkAsOfficeForOtherOnSpecificPerson() throws Exception {
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
-
-        perform(get("/api/persons/1")
             .with(user("office").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
         ).andExpect(status().isOk());
     }
