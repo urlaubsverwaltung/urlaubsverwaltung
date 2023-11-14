@@ -19,13 +19,13 @@ class ApplicationStatusTest {
     @Test
     void ensureActiveApplicationStatusAreCorrectlyDefined() {
         assertThat(ApplicationStatus.activeStatuses())
-            .containsExactly(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+            .containsExactly(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
     }
 
     @Test
     void ensureInactiveApplicationStatusAreCorrectlyDefined() {
         assertThat(ApplicationStatus.inactiveStatuses())
-            .containsExactly(REJECTED, CANCELLED, REVOKED);
+            .containsExactly(REVOKED, REJECTED, CANCELLED);
     }
 
     @Test

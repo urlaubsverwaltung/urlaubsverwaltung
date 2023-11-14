@@ -93,7 +93,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDate = LocalDate.of(2019, 12, 10);
         final LocalDate endDate = LocalDate.of(2019, 12, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
-        when(applicationService.getForStatesAndPersonSince(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(person), since)).thenReturn(List.of(application));
+        when(applicationService.getForStatesAndPersonSince(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(person), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
@@ -126,7 +126,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDate = LocalDate.of(2019, 11, 10);
         final LocalDate endDate = LocalDate.of(2019, 11, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
-        when(applicationService.getForStatesSince(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), since)).thenReturn(List.of(application));
+        when(applicationService.getForStatesSince(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
@@ -157,7 +157,7 @@ class AbsenceServiceImplTest {
 
         sut.getOpenAbsences(List.of(batman, superman), start, end);
 
-        verify(applicationService).getForStatesAndPerson(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(batman, superman), start, end);
+        verify(applicationService).getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(batman, superman), start, end);
     }
 
     @Test
@@ -995,7 +995,7 @@ class AbsenceServiceImplTest {
 
         sut.getClosedAbsences(List.of(batman, superman), start, end);
 
-        verify(applicationService).getForStatesAndPerson(List.of(REJECTED, CANCELLED, REVOKED), List.of(batman, superman), start, end);
+        verify(applicationService).getForStatesAndPerson(List.of(REVOKED, REJECTED, CANCELLED), List.of(batman, superman), start, end);
     }
 
     @Test

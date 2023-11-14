@@ -56,7 +56,7 @@ public enum ApplicationStatus {
      * @return a list of all active statuses
      */
     public static List<ApplicationStatus> activeStatuses() {
-        return List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
     }
 
     /**
@@ -66,6 +66,6 @@ public enum ApplicationStatus {
      * @return a list of all inactive statuses
      */
     public static List<ApplicationStatus> inactiveStatuses() {
-        return List.of(REJECTED, CANCELLED, REVOKED);
+        return List.of(REVOKED, REJECTED, CANCELLED);
     }
 }
