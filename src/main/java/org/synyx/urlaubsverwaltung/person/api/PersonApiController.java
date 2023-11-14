@@ -36,7 +36,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController.SICKNOTES;
 import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
@@ -64,17 +64,20 @@ public class PersonApiController {
     }
 
     @Operation(summary = "Return person by id", description = "Returns the person with the given id.")
-    @GetMapping("/{id}")
-    @PreAuthorize(IS_OFFICE)
-    public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
-        return personService.getPersonByID(id)
+    @GetMapping("/{personId}")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
+            " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+            " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+            " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
+    public ResponseEntity<PersonDto> getPerson(@PathVariable Long personId) {
+        return personService.getPersonByID(personId)
                 .map(person -> new ResponseEntity<>(createPersonResponse(person), OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
     @Operation(summary = "Returns all active persons", description = "Returns all active persons.")
     @GetMapping
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize(IS_BOSS_OR_OFFICE)
     public ResponseEntity<PersonsDto> persons() {
 
         final List<PersonDto> persons = personService.getActivePersons().stream()
