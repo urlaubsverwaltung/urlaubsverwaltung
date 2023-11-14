@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
@@ -34,11 +35,15 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final VacationTypeRepository vacationTypeRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final MessageSource messageSource;
 
     @Autowired
-    VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository, MessageSource messageSource) {
+    VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository,
+                            ApplicationEventPublisher applicationEventPublisher,
+                            MessageSource messageSource) {
         this.vacationTypeRepository = vacationTypeRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.messageSource = messageSource;
     }
 
@@ -94,7 +99,15 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(VacationTypeServiceImpl::convert)
             .collect(toList());
 
-        vacationTypeRepository.saveAll(updatedEntities);
+        final List<VacationType<?>> updatedVacationTypes = vacationTypeRepository.saveAll(updatedEntities)
+            .stream()
+            .map(entity -> convert(entity, messageSource))
+            .collect(toList());
+
+        updatedVacationTypes
+            .stream()
+            .map(VacationTypeUpdatedEvent::of)
+            .forEach(applicationEventPublisher::publishEvent);
     }
 
     @Override
@@ -124,7 +137,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         }
     }
 
-    public static VacationType<? extends VacationType<?>> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
+    public static VacationType<?> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
         if (vacationTypeEntity.isCustom()) {
             return convertCustomVacationType(vacationTypeEntity, messageSource);
         } else {
