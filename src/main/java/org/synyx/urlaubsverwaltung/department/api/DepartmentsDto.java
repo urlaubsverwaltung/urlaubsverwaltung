@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.List;
 
-class DepartmentsDto {
+public class DepartmentsDto extends RepresentationModel<DepartmentsDto> {
 
     private final List<DepartmentDto> departments;
 

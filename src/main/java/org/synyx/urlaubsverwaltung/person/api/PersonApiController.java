@@ -19,27 +19,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController;
-import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
 
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
+import static org.synyx.urlaubsverwaltung.person.api.PersonMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController.SICKNOTES;
-import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 @RestControllerAdviceMarker
 @Tag(name = "persons", description = "Persons: Returns information about the persons and provides links to further information like absences, sick notes, ...")
@@ -59,7 +50,7 @@ public class PersonApiController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PersonDto> me(@AuthenticationPrincipal OidcUser oidcUser) {
         return personService.getPersonByUsername(oidcUser.getSubject())
-                .map(person -> new ResponseEntity<>(createPersonResponse(person), OK))
+                .map(person -> new ResponseEntity<>(mapToDto(person), OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
@@ -71,7 +62,7 @@ public class PersonApiController {
             " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public ResponseEntity<PersonDto> getPerson(@PathVariable Long personId) {
         return personService.getPersonByID(personId)
-                .map(person -> new ResponseEntity<>(createPersonResponse(person), OK))
+                .map(person -> new ResponseEntity<>(mapToDto(person), OK))
                 .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
@@ -81,7 +72,7 @@ public class PersonApiController {
     public ResponseEntity<PersonsDto> persons() {
 
         final List<PersonDto> persons = personService.getActivePersons().stream()
-                .map(this::createPersonResponse)
+                .map(PersonMapper::mapToDto)
                 .toList();
 
         return new ResponseEntity<>(new PersonsDto(persons), OK);
@@ -100,16 +91,7 @@ public class PersonApiController {
         }
 
         final Person person = personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
-        return new ResponseEntity<>(createPersonResponse(person), CREATED);
+        return new ResponseEntity<>(mapToDto(person), CREATED);
     }
 
-    private PersonDto createPersonResponse(Person person) {
-        final PersonDto personDto = PersonMapper.mapToDto(person);
-        personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, List.of("vacation, sick_note, public_holiday, no_workday"))).withRel(ABSENCES));
-        personDto.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(person.getId(), null, null)).withRel(SICKNOTES));
-        personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));
-        personDto.add(linkTo(methodOn(WorkDaysCountApiController.class).personsWorkDays(person.getId(), null, null, null)).withRel(WORKDAYS));
-        return personDto;
-    }
 }
