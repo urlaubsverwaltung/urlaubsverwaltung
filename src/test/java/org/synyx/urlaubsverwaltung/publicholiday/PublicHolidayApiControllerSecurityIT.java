@@ -58,25 +58,11 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
-    void ensureGetHolidaysForOtherUserIsForbidden(final String role) throws Exception {
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE", "ADMIN", "INACTIVE"})
+    void ensureGetHolidaysForOtherUserIsOk(final String role) throws Exception {
         perform(
             get("/api/public-holidays")
                 .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
-                .param("from", "2016-01-01")
-                .param("to", "2016-01-31")
-        )
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void getHolidaysWithOfficeRoleIsOk() throws Exception {
-
-        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
-
-        perform(
-            get("/api/public-holidays")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-01-31")
         )
