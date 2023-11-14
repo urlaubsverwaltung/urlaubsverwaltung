@@ -26,21 +26,21 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
     private final String status;
     private final String absent;
     private final double absentNumeric;
-    private final String typeCategory;
+    private final String category;
     private final Long typeId;
 
-    AbsenceDto(LocalDate date, AbsenceType absenceType, String status, DayLength dayLength, String typeCategory, Long typeId) {
-        this(date, absenceType, null, status, dayLength, typeCategory, typeId);
+    AbsenceDto(LocalDate date, AbsenceType absenceType, String status, DayLength dayLength, String category, Long typeId) {
+        this(date, absenceType, null, status, dayLength, category, typeId);
     }
 
-    AbsenceDto(LocalDate date, AbsenceType absenceType, Long id, String status, DayLength dayLength, String typeCategory, Long typeId) {
+    AbsenceDto(LocalDate date, AbsenceType absenceType, Long id, String status, DayLength dayLength, String category, Long typeId) {
         this.date = date.format(ofPattern(DATE_PATTERN));
         this.absenceType = absenceType;
         this.id = id;
         this.status = status;
         this.absent = dayLength.name();
         this.absentNumeric = dayLength.getDuration().doubleValue();
-        this.typeCategory = typeCategory;
+        this.category = category;
         this.typeId = typeId;
     }
 
@@ -68,8 +68,8 @@ public class AbsenceDto extends RepresentationModel<AbsenceDto> {
         return absentNumeric;
     }
 
-    public String getTypeCategory() {
-        return typeCategory;
+    public String getCategory() {
+        return category;
     }
 
     public Long getTypeId() {

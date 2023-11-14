@@ -213,7 +213,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().flatMap(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(true);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
@@ -258,7 +258,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().flatMap(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
@@ -301,14 +301,14 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().flatMap(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().flatMap(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
@@ -363,7 +363,7 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ALLOWED);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.VACATION);
-                    assertThat(morning.getTypeCategory()).hasValue("HOLIDAY");
+                    assertThat(morning.getCategory()).hasValue("HOLIDAY");
                     assertThat(morning.getTypeId()).hasValue(1L);
                     assertThat(morning.isVisibleToEveryone()).isFalse();
                     assertThat(morning.hasStatusAllowed()).isTrue();
@@ -386,7 +386,7 @@ class AbsenceServiceImplTest {
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
-                    assertThat(noon.getTypeCategory()).isEmpty();
+                    assertThat(noon.getCategory()).isEmpty();
                     assertThat(noon.getTypeId()).isEmpty();
                     assertThat(noon.isVisibleToEveryone()).isFalse();
                     assertThat(noon.hasStatusAllowed()).isFalse();
@@ -558,7 +558,7 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.SICK);
-                    assertThat(morning.getTypeCategory()).isEmpty();
+                    assertThat(morning.getCategory()).isEmpty();
                     assertThat(morning.getTypeId()).isEmpty();
                     assertThat(morning.isVisibleToEveryone()).isFalse();
                     assertThat(morning.hasStatusAllowed()).isFalse();
@@ -780,7 +780,7 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(morning.getId()).isEmpty();
                     assertThat(morning.getTypeId()).isEmpty();
-                    assertThat(morning.getTypeCategory()).isEmpty();
+                    assertThat(morning.getCategory()).isEmpty();
                     assertThat(morning.hasStatusAllowed()).isFalse();
                     assertThat(morning.hasStatusWaiting()).isFalse();
                     assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
@@ -792,7 +792,7 @@ class AbsenceServiceImplTest {
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getTypeId()).isEmpty();
-                    assertThat(noon.getTypeCategory()).isEmpty();
+                    assertThat(noon.getCategory()).isEmpty();
                     assertThat(noon.hasStatusAllowed()).isFalse();
                     assertThat(noon.hasStatusWaiting()).isFalse();
                     assertThat(noon.hasStatusTemporaryAllowed()).isFalse();
@@ -877,7 +877,7 @@ class AbsenceServiceImplTest {
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getTypeId()).isEmpty();
-                    assertThat(noon.getTypeCategory()).isEmpty();
+                    assertThat(noon.getCategory()).isEmpty();
                     assertThat(noon.hasStatusAllowed()).isFalse();
                     assertThat(noon.hasStatusWaiting()).isFalse();
                     assertThat(noon.hasStatusTemporaryAllowed()).isFalse();
@@ -961,7 +961,7 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(morning.getId()).isEmpty();
                     assertThat(morning.getTypeId()).isEmpty();
-                    assertThat(morning.getTypeCategory()).isEmpty();
+                    assertThat(morning.getCategory()).isEmpty();
                     assertThat(morning.hasStatusAllowed()).isFalse();
                     assertThat(morning.hasStatusWaiting()).isFalse();
                     assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
@@ -1046,7 +1046,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(true);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
     }
@@ -1091,7 +1091,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -1134,14 +1134,14 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isPresent();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().flatMap(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getAbsenceType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeId)).hasValue(Optional.of(1L));
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getTypeCategory)).hasValue(Optional.of("HOLIDAY"));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getCategory)).hasValue(Optional.of("HOLIDAY"));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -1409,7 +1409,7 @@ class AbsenceServiceImplTest {
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(morning.getId()).isEmpty();
                     assertThat(morning.getTypeId()).isEmpty();
-                    assertThat(morning.getTypeCategory()).isEmpty();
+                    assertThat(morning.getCategory()).isEmpty();
                     assertThat(morning.hasStatusAllowed()).isFalse();
                     assertThat(morning.hasStatusWaiting()).isFalse();
                     assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
@@ -1421,7 +1421,7 @@ class AbsenceServiceImplTest {
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getTypeId()).isEmpty();
-                    assertThat(noon.getTypeCategory()).isEmpty();
+                    assertThat(noon.getCategory()).isEmpty();
                     assertThat(noon.hasStatusAllowed()).isFalse();
                     assertThat(noon.hasStatusWaiting()).isFalse();
                     assertThat(noon.hasStatusTemporaryAllowed()).isFalse();
@@ -1506,7 +1506,7 @@ class AbsenceServiceImplTest {
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getTypeId()).isEmpty();
-                    assertThat(noon.getTypeCategory()).isEmpty();
+                    assertThat(noon.getCategory()).isEmpty();
                     assertThat(noon.hasStatusAllowed()).isFalse();
                     assertThat(noon.hasStatusWaiting()).isFalse();
                     assertThat(noon.hasStatusTemporaryAllowed()).isFalse();
@@ -1590,7 +1590,7 @@ class AbsenceServiceImplTest {
                    assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
                    assertThat(morning.getId()).isEmpty();
                    assertThat(morning.getTypeId()).isEmpty();
-                   assertThat(morning.getTypeCategory()).isEmpty();
+                   assertThat(morning.getCategory()).isEmpty();
                    assertThat(morning.hasStatusAllowed()).isFalse();
                    assertThat(morning.hasStatusWaiting()).isFalse();
                    assertThat(morning.hasStatusTemporaryAllowed()).isFalse();

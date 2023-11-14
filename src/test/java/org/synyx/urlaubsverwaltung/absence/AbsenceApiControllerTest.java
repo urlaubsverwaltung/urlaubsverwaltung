@@ -100,7 +100,7 @@ class AbsenceApiControllerTest {
                       "absent": "FULL",
                       "absentNumeric": 1,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -141,7 +141,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -182,7 +182,7 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -225,7 +225,7 @@ class AbsenceApiControllerTest {
                       "absent": "FULL",
                       "absentNumeric": 1,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -266,7 +266,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -307,7 +307,7 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -350,7 +350,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -361,7 +361,7 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -403,7 +403,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -414,7 +414,7 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -457,7 +457,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -468,7 +468,7 @@ class AbsenceApiControllerTest {
                       "absent": "NOON",
                       "absentNumeric": 0.5,
                       "absenceType": "PUBLIC_HOLIDAY",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -512,7 +512,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -554,7 +554,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -605,7 +605,7 @@ class AbsenceApiControllerTest {
                       "absent": "FULL",
                       "absentNumeric": 1,
                       "absenceType": "PUBLIC_HOLIDAY",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -616,7 +616,7 @@ class AbsenceApiControllerTest {
                       "absent": "FULL",
                       "absentNumeric": 1,
                       "absenceType": "NO_WORKDAY",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -657,7 +657,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -668,7 +668,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "SICK_NOTE",
-                      "typeCategory": null,
+                      "category": null,
                       "typeId": null,
                       "status": "ACTIVE",
                       "links": []
@@ -710,7 +710,7 @@ class AbsenceApiControllerTest {
                       "absent": "MORNING",
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "status": "WAITING",
                       "links": []
@@ -722,7 +722,7 @@ class AbsenceApiControllerTest {
                       "absentNumeric": 0.5,
                       "absenceType": "VACATION",
                       "status": "WAITING",
-                      "typeCategory": "HOLIDAY",
+                      "category": "HOLIDAY",
                       "typeId": 1,
                       "links": []
                     }
