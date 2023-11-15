@@ -29,6 +29,6 @@ changelog:
       names: ["dependabot[bot]"]
   external_links:
     - name: "Docker Images (GitHub)"
-      location: "https://github.com/urlaubsverwaltung/urlaubsverwaltung/pkgs/container/urlaubsverwaltung"
+      location: "https://github.com/urlaubsverwaltung/urlaubsverwaltung/pkgs/container/urlaubsverwaltung%2Furlaubsverwaltung"
     - name: "Docker Images (Docker Hub)"
       location: "https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung"
