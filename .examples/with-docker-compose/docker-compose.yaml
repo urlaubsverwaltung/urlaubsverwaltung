@@ -68,11 +68,6 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
 
 volumes:
   db:
