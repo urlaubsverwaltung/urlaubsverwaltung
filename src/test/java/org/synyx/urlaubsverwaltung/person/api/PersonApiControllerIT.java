@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -49,10 +50,10 @@ class PersonApiControllerIT extends TestContainersBase {
         perform(
                 get("/api/persons/me")
                         .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
-                        .accept(APPLICATION_JSON)
+                        .accept(HAL_JSON_VALUE)
         )
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(content().json("""
                         {
                           "id": 1,
@@ -95,10 +96,10 @@ class PersonApiControllerIT extends TestContainersBase {
 
         perform(get("/api/persons/1")
                 .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
-                .accept(APPLICATION_JSON)
+                .accept(HAL_JSON_VALUE)
         )
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(content().json("""
                         {
                           "id": 1,
@@ -144,10 +145,10 @@ class PersonApiControllerIT extends TestContainersBase {
 
         perform(get("/api/persons")
                 .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
-                .accept(APPLICATION_JSON)
+                .accept(HAL_JSON_VALUE)
         )
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(content().json("""
                         {
                            "persons": [
@@ -226,10 +227,10 @@ class PersonApiControllerIT extends TestContainersBase {
                         .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
                         .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
                         .contentType(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
+                        .accept(HAL_JSON_VALUE)
         )
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().contentType(HAL_JSON_VALUE))
                 .andExpect(content().json("""
                         {
                           "id": 1,
@@ -272,7 +273,7 @@ class PersonApiControllerIT extends TestContainersBase {
                         .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
                         .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
                         .contentType(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
+                        .accept(HAL_JSON_VALUE)
         )
                 .andExpect(status().isConflict());
     }

@@ -1,10 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +21,22 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.person.api.PersonMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
+@Tag(
+    name = "persons",
+    description = """
+        Returns information about persons and provides links to further information like absences, sick notes, ...
+        """
+)
 @RestControllerAdviceMarker
-@Tag(name = "persons", description = "Persons: Returns information about the persons and provides links to further information like absences, sick notes, ...")
 @RestController
 @RequestMapping("/api/persons")
 public class PersonApiController {
@@ -45,44 +48,88 @@ public class PersonApiController {
         this.personService = personService;
     }
 
-    @Operation(summary = "Returns the person by current authentication", description = "Returns the current logged in person.")
-    @GetMapping("/me")
+    @Operation(
+        summary = "Returns the person by current authentication",
+        description = """
+            Returns the current authenticated person.
+
+            Needed basic authorities:
+            * user
+            """
+    )
+    @GetMapping(path = "/me", produces = HAL_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PersonDto> me(@AuthenticationPrincipal OidcUser oidcUser) {
         return personService.getPersonByUsername(oidcUser.getSubject())
-                .map(person -> new ResponseEntity<>(mapToDto(person), OK))
-                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+            .map(person -> new ResponseEntity<>(mapToDto(person), OK))
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @Operation(summary = "Return person by id", description = "Returns the person with the given id.")
-    @GetMapping("/{personId}")
+    @Operation(
+        summary = "Return the person with the given id",
+        description = """
+            Returns the person with the given id.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested person id is the one of the authenticated user
+            * department_head        - if the requested person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested person id is any id but not of the authenticated user
+            """
+    )
+    @GetMapping(path = "/{personId}", produces = HAL_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
-            " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
-            " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
-            " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public ResponseEntity<PersonDto> getPerson(@PathVariable Long personId) {
         return personService.getPersonByID(personId)
-                .map(person -> new ResponseEntity<>(mapToDto(person), OK))
-                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+            .map(person -> new ResponseEntity<>(mapToDto(person), OK))
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
-    @Operation(summary = "Returns all active persons", description = "Returns all active persons.")
-    @GetMapping
+    @Operation(
+        summary = "Returns all active persons",
+        description = """
+            Returns all active persons.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * boss
+            * office
+            """
+    )
+    @GetMapping(produces = HAL_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     public ResponseEntity<PersonsDto> persons() {
 
         final List<PersonDto> persons = personService.getActivePersons().stream()
-                .map(PersonMapper::mapToDto)
-                .toList();
+            .map(PersonMapper::mapToDto)
+            .toList();
 
         return new ResponseEntity<>(new PersonsDto(persons), OK);
     }
 
 
+    @Operation(
+        summary = "Creates a new person",
+        description = """
+            Creates a new person with the given parameters of firstName, lastName and email.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * person_add
+            """
+    )
     @PreAuthorize("hasAuthority('PERSON_ADD')")
-    @Operation(summary = "Creates a new person with the given parameters", description = "Creates a new person with the given parameters of firstName, lastName and email. The authority 'USER' and 'PERSON_ADD' is needed to execute this method.")
-    @ApiResponses(value = {@ApiResponse(description = "successful operation", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PersonProvisionDto.class))})})
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = HAL_JSON_VALUE)
     public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
 
         final String predictedUsername = personProvisionDto.getEmail();
@@ -93,5 +140,4 @@ public class PersonApiController {
         final Person person = personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
         return new ResponseEntity<>(mapToDto(person), CREATED);
     }
-
 }
