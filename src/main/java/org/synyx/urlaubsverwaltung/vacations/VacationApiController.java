@@ -29,8 +29,13 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
+@Tag(
+    name = "vacations",
+    description = """
+        Vacations: Returns all vacations for a certain period
+        """
+)
 @RestControllerAdviceMarker
-@Tag(name = "vacations", description = "Vacations: Get all vacations for a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}/vacations")
 public class VacationApiController {
@@ -50,8 +55,18 @@ public class VacationApiController {
 
     @Operation(
         summary = "Returns all allowed vacations for a person and a certain period of time",
-        description = "Get all allowed vacations for a person and a certain period of time. "
-            + "Information only reachable for users with role office and for your own data."
+        description = """
+            Get all allowed vacations for a person and a certain period of time.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested vacations of the person id is the one of the authenticated user
+            * department_head        - if the requested vacations of the person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested vacations of the person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
+            """
     )
     @GetMapping
     @PreAuthorize(IS_BOSS_OR_OFFICE +
@@ -84,10 +99,21 @@ public class VacationApiController {
     }
 
     @Operation(
+        hidden = true,
         summary = "Get all allowed vacations for department members for the given person and the certain period",
-        description = "Get all allowed vacations for department members for the given person and the certain period. "
-            + "All the waiting and allowed vacations of the departments the person is assigned to, are fetched. "
-            + "Information only reachable for users with role office and for your own data."
+        description = """
+            Returns all allowed vacations for department members for the given person and the certain period.
+            All the waiting and allowed vacations of the departments the person is assigned to, are fetched.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested vacations of the person id is the one of the authenticated user
+            * department_head        - if the requested vacations of the person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested vacations of the person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
+            """
     )
     @GetMapping(params = "ofDepartmentMembers")
     @PreAuthorize(IS_BOSS_OR_OFFICE +
