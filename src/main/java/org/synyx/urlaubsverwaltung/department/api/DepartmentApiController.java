@@ -16,8 +16,13 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
+@Tag(
+    name = "departments",
+    description = """
+        Departments: Returns information about the departments
+        """
+)
 @RestControllerAdviceMarker
-@Tag(name = "departments", description = "Departments: Returns information about the departments")
 @RestController
 @RequestMapping("/api")
 public class DepartmentApiController {
@@ -29,7 +34,17 @@ public class DepartmentApiController {
         this.departmentService = departmentService;
     }
 
-    @Operation(summary = "Returns all departments", description = "Returns all departments. Office permission is needed.")
+    @Operation(
+        summary = "Returns all departments",
+        description = """
+            Returns all departments.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * office
+            """)
     @GetMapping("/departments")
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<DepartmentsDto> departments() {
