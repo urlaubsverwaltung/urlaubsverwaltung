@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 
 import java.math.BigDecimal;
 
-final class PublicHolidayDto {
+public final class PublicHolidayDto {
 
     private final String date;
     private final String description;

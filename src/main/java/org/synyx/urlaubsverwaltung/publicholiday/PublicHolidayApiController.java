@@ -27,12 +27,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
+@Tag(
+    name = "public holidays",
+    description = """
+        Public Holidays: Returns information about public holidays
+        """
+)
 @RestControllerAdviceMarker
-@Tag(name = "public holidays", description = "Public Holidays: Get information about public holidays")
 @RestController
 @RequestMapping("/api")
 public class PublicHolidayApiController {
@@ -45,7 +49,6 @@ public class PublicHolidayApiController {
     @Autowired
     public PublicHolidayApiController(PublicHolidaysService publicHolidaysService, PersonService personService,
                                       WorkingTimeService workingTimeService, SettingsService settingsService) {
-
         this.publicHolidaysService = publicHolidaysService;
         this.personService = personService;
         this.workingTimeService = workingTimeService;
@@ -54,8 +57,12 @@ public class PublicHolidayApiController {
 
     @Operation(
         summary = "Get all public holidays for a certain period",
-        description = "Get all public holidays for a certain period. "
-            + "Information only reachable for users with role office."
+        description = """
+            Returns all global public holidays for a certain period based on the global public holiday regulations
+
+            Needed basic authorities:
+            * user
+            """
     )
     @GetMapping("public-holidays")
     @PreAuthorize("hasAuthority('USER')")
@@ -79,8 +86,19 @@ public class PublicHolidayApiController {
     }
 
     @Operation(
-        summary = "Get all public holidays for a certain period", description = "Get all public holidays for a certain period. "
-        + "Information only reachable for users with role office and for own public holidays."
+        summary = "Returns all public holidays for a certain period and given person",
+        description = """
+            Returns all public holidays for a certain period based on the specific public holiday regulations of the given person
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested public holidays of the person id is the one of the authenticated user
+            * department_head        - if the requested public holidays of the person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested public holidays of the person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested public holidays of the person id is any id but not of the authenticated user
+            """
     )
     @GetMapping("/persons/{personId}/public-holidays")
     @PreAuthorize(IS_BOSS_OR_OFFICE +
@@ -117,7 +135,7 @@ public class PublicHolidayApiController {
             .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue(), workingTimeSettings))
             .flatMap(List::stream)
             .sorted(Comparator.comparing(PublicHolidayDto::getDate))
-            .collect(toList());
+            .toList();
 
         return new PublicHolidaysDto(publicHolidays);
     }
@@ -125,7 +143,7 @@ public class PublicHolidayApiController {
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
         return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState, workingTimeSettings).stream()
             .map(this::mapPublicHolidayToDto)
-            .collect(toList());
+            .toList();
     }
 
     private void checkValidPeriod(LocalDate startDate, LocalDate endDate) {
