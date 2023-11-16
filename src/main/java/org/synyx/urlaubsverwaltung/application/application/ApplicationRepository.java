@@ -49,15 +49,6 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
     List<ApplicationEntity> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
     @Query(
-        "select x from application x "
-            + "where x.person = ?3 "
-            + "and x.status = ?4 "
-            + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
-            + "order by x.startDate"
-    )
-    List<ApplicationEntity> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
-
-    @Query(
         "SELECT SUM(a.hours) FROM application a WHERE a.person = :person "
             + "AND a.vacationType.category = 'OVERTIME' "
             + "AND (a.status = 'WAITING' OR a.status = 'TEMPORARY_ALLOWED' OR a.status = 'ALLOWED' OR a.status = 'ALLOWED_CANCELLATION_REQUESTED')"

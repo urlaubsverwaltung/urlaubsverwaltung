@@ -94,11 +94,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status) {
-        return toApplication(applicationRepository.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status));
-    }
-
-    @Override
     public List<Application> getForStates(List<ApplicationStatus> statuses) {
         return toApplication(applicationRepository.findByStatusIn(statuses));
     }
