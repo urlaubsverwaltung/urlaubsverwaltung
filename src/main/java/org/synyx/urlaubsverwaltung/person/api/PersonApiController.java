@@ -80,7 +80,7 @@ public class PersonApiController {
             * boss or office         - if the requested person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(path = "/{personId}", produces = HAL_JSON_VALUE)
+    @GetMapping(path = "/{personId}", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
@@ -104,7 +104,7 @@ public class PersonApiController {
             * office
             """
     )
-    @GetMapping(produces = HAL_JSON_VALUE)
+    @GetMapping(produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     public ResponseEntity<PersonsDto> persons() {
 
@@ -129,7 +129,7 @@ public class PersonApiController {
             """
     )
     @PreAuthorize("hasAuthority('PERSON_ADD')")
-    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = HAL_JSON_VALUE)
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     public ResponseEntity<PersonDto> create(@RequestBody @Valid PersonProvisionDto personProvisionDto) {
 
         final String predictedUsername = personProvisionDto.getEmail();

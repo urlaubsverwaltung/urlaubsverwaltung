@@ -25,6 +25,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -71,7 +72,7 @@ public class WorkDaysCountApiController {
             * boss or office         - if the requested work days of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(WORKDAYS)
+    @GetMapping(path = WORKDAYS, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +

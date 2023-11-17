@@ -13,7 +13,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 
 import java.util.List;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Tag(
@@ -45,7 +47,7 @@ public class DepartmentApiController {
             Needed additional authorities:
             * office
             """)
-    @GetMapping("/departments")
+    @GetMapping(value = "/departments", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<DepartmentsDto> departments() {
 

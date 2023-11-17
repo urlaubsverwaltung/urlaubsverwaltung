@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -64,7 +65,7 @@ public class PublicHolidayApiController {
             * user
             """
     )
-    @GetMapping("public-holidays")
+    @GetMapping(path = "public-holidays", produces = APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public PublicHolidaysDto getPublicHolidays(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
@@ -100,7 +101,7 @@ public class PublicHolidayApiController {
             * boss or office         - if the requested public holidays of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping("/persons/{personId}/public-holidays")
+    @GetMapping(path = "/persons/{personId}/public-holidays", produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +

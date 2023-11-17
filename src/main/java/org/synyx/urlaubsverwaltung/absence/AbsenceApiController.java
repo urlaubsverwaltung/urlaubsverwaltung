@@ -24,7 +24,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
@@ -66,7 +68,7 @@ public class AbsenceApiController {
             * boss or office         - if the requested absences of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(ABSENCES)
+    @GetMapping(value = ABSENCES, produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
@@ -68,7 +69,7 @@ public class VacationApiController {
             * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
@@ -115,7 +116,7 @@ public class VacationApiController {
             * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(params = "ofDepartmentMembers")
+    @GetMapping(params = "ofDepartmentMembers", produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
