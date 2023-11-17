@@ -66,7 +66,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "href":"http://localhost/api/persons/1"
                             },
                             "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday",
+                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
                               "templated":true
                               },
                             "sicknotes":{
@@ -74,7 +74,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "templated":true
                             },
                             "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}",
+                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
                               "templated":true
                             },
                             "workdays":{
@@ -112,7 +112,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "href":"http://localhost/api/persons/1"
                             },
                             "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday",
+                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
                               "templated":true
                               },
                             "sicknotes":{
@@ -120,7 +120,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "templated":true
                             },
                             "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}",
+                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
                               "templated":true
                             },
                             "workdays":{
@@ -163,7 +163,7 @@ class PersonApiControllerIT extends TestContainersBase {
                                    "href": "http://localhost/api/persons/1"
                                  },
                                  "absences": {
-                                   "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday",
+                                   "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
                                    "templated": true
                                  },
                                  "sicknotes": {
@@ -171,7 +171,7 @@ class PersonApiControllerIT extends TestContainersBase {
                                    "templated": true
                                  },
                                  "vacations": {
-                                   "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}",
+                                   "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
                                    "templated": true
                                  },
                                  "workdays": {
@@ -191,7 +191,7 @@ class PersonApiControllerIT extends TestContainersBase {
                                    "href": "http://localhost/api/persons/2"
                                  },
                                  "absences": {
-                                   "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday",
+                                   "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
                                    "templated": true
                                  },
                                  "sicknotes": {
@@ -199,7 +199,7 @@ class PersonApiControllerIT extends TestContainersBase {
                                    "templated": true
                                  },
                                  "vacations": {
-                                   "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}",
+                                   "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
                                    "templated": true
                                  },
                                  "workdays": {
@@ -243,7 +243,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "href":"http://localhost/api/persons/1"
                             },
                             "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation%2C%20sick_note%2C%20public_holiday%2C%20no_workday",
+                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
                               "templated":true
                               },
                             "sicknotes":{
@@ -251,7 +251,7 @@ class PersonApiControllerIT extends TestContainersBase {
                               "templated":true
                             },
                             "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}",
+                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
                               "templated":true
                             },
                             "workdays":{

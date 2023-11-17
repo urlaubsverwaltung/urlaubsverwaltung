@@ -31,9 +31,9 @@ public class PersonDto extends RepresentationModel<PersonDto> {
         this.niceName = niceName;
 
         this.add(linkTo(methodOn(PersonApiController.class).getPerson(id)).withSelfRel());
-        this.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(id, null, null, List.of("vacation, sick_note, public_holiday, no_workday"))).withRel(ABSENCES));
+        this.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(id, null, null, List.of("vacation", "sick_note", "public_holiday", "no_workday"))).withRel(ABSENCES));
         this.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(id, null, null)).withRel(SICKNOTES));
-        this.add(linkTo(methodOn(VacationApiController.class).getVacations(id, null, null)).withRel(VACATIONS));
+        this.add(linkTo(methodOn(VacationApiController.class).getVacations(id, null, null, List.of("waiting", "temporary_allowed", "allowed", "allowed_cancellation_requested"))).withRel(VACATIONS));
         this.add(linkTo(methodOn(WorkDaysCountApiController.class).personsWorkDays(id, null, null, null)).withRel(WORKDAYS));
     }
 

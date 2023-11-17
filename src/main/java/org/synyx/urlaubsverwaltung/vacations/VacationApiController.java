@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -55,9 +57,9 @@ public class VacationApiController {
     }
 
     @Operation(
-        summary = "Returns all allowed vacations for a person and a certain period of time",
+        summary = "Returns all active vacations for a person and a certain period of time",
         description = """
-            Get all allowed vacations for a person and a certain period of time.
+            Get all active vacations for a person and a certain period of time.
 
             Needed basic authorities:
             * user
@@ -69,7 +71,7 @@ public class VacationApiController {
             * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
@@ -85,26 +87,28 @@ public class VacationApiController {
         @Parameter(description = "end of interval to get vacations from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-        LocalDate endDate) {
+        LocalDate endDate,
+        @Parameter(description = "List of the vacation status to return. Default are all active status - waiting, temporary_allowed, allowed, allowed_cancellation_requested")
+        @RequestParam(value = "status", required = false, defaultValue = "waiting, temporary_allowed, allowed, allowed_cancellation_requested")
+        List<String> applicationStatus) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final Person person = getPerson(personId);
-        final List<Application> applications = new ArrayList<>();
-        applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED));
-        applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED_CANCELLATION_REQUESTED));
+        final List<ApplicationStatus> requestedApplicationStatus = toApplicationStatus(applicationStatus);
+        final List<Person> requestedPerson = List.of(getPerson(personId));
 
+        final List<Application> applications = applicationService.getForStatesAndPerson(requestedApplicationStatus, requestedPerson, startDate, endDate);
         return mapToVacationResponse(applications);
     }
 
     @Operation(
         hidden = true,
-        summary = "Get all allowed vacations for department members for the given person and the certain period",
+        summary = "Get all active vacations for department members for the given person and the certain period",
         description = """
-            Returns all allowed vacations for department members for the given person and the certain period.
-            All the waiting and allowed vacations of the departments the person is assigned to, are fetched.
+            Returns all active vacations for department members for the given person and the certain period.
+            All active vacations of the departments the person is assigned to, are fetched.
 
             Needed basic authorities:
             * user
@@ -116,7 +120,7 @@ public class VacationApiController {
             * boss or office         - if the requested vacations of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(params = "ofDepartmentMembers", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(params = "ofDepartmentMembers", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
@@ -162,5 +166,20 @@ public class VacationApiController {
 
     private VacationsDto mapToVacationResponse(List<Application> applications) {
         return new VacationsDto(applications.stream().map(VacationDto::new).toList());
+    }
+
+    private List<ApplicationStatus> toApplicationStatus(List<String> applicationStatus) {
+        if (applicationStatus.isEmpty()) {
+            return List.of();
+        }
+
+        try {
+            return applicationStatus.stream()
+                .map(String::toUpperCase)
+                .map(ApplicationStatus::valueOf)
+                .toList();
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+        }
     }
 }
