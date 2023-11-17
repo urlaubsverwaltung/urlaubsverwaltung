@@ -37,8 +37,14 @@ public class SwaggerConfig {
                 new Info()
                     .title("Urlaubsverwaltung API")
                     .version(version)
-                    .description("This rest API provides the possibility to fetch information about absences," +
-                        " availabilities, persons, public holidays, sicknotes, vacations and many more...")
+                    .description(
+                        """
+                        This API provides the functionality to
+
+                        * fetch absences, vacations, sick notes, public holidays, persons, and many more...
+                        * create persons
+                        """
+                    )
                     .contact(
                         new Contact()
                             .name("Urlaubsverwaltung")

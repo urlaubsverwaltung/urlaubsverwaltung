@@ -13,11 +13,18 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 
 import java.util.List;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
+@Tag(
+    name = "departments",
+    description = """
+        Departments: Returns information about the departments
+        """
+)
 @RestControllerAdviceMarker
-@Tag(name = "departments", description = "Departments: Returns information about the departments")
 @RestController
 @RequestMapping("/api")
 public class DepartmentApiController {
@@ -29,8 +36,18 @@ public class DepartmentApiController {
         this.departmentService = departmentService;
     }
 
-    @Operation(summary = "Returns all departments", description = "Returns all departments. Office permission is needed.")
-    @GetMapping("/departments")
+    @Operation(
+        summary = "Returns all departments",
+        description = """
+            Returns all departments.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * office
+            """)
+    @GetMapping(value = "/departments", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<DepartmentsDto> departments() {
 

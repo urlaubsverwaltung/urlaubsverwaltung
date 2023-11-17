@@ -28,6 +28,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -60,7 +61,7 @@ public class SickNoteApiController {
         description = "Get all sick notes for a certain period. "
             + "Information only reachable for users with role office or for users with the 'SICK_NOTE_VIEW' role."
     )
-    @GetMapping(SICKNOTES)
+    @GetMapping(path = SICKNOTES, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     public SickNotesDto getSickNotes(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
@@ -91,7 +92,7 @@ public class SickNoteApiController {
         description = "Get all sick notes for a certain period and person. "
             + "Information only reachable for users with role office and for own sick notes."
     )
-    @GetMapping("/persons/{personId}/" + SICKNOTES)
+    @GetMapping(path = "/persons/{personId}/" + SICKNOTES, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public SickNotesDto personsSickNotes(
         @Parameter(description = "ID of the person")
@@ -123,7 +124,7 @@ public class SickNoteApiController {
 
         final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), startDate, endDate).stream()
             .map(SickNoteDto::new)
-            .collect(toList());
+            .toList();
 
         return new SickNotesDto(sickNoteResponse);
     }

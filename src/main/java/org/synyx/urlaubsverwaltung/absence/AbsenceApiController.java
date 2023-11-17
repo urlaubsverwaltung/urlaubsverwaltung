@@ -24,15 +24,20 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.VACATION;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
+@Tag(
+    name = "absences",
+    description = "Absences: Returns all absences for a certain period"
+)
 @RestControllerAdviceMarker
-@Tag(name = "absences", description = "Absences: Get all absences for a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 public class AbsenceApiController {
@@ -49,10 +54,21 @@ public class AbsenceApiController {
     }
 
     @Operation(
-        summary = "Get all absences for a certain period and person",
-        description = "Get all absences for a certain period and person"
+        summary = "Returns all absences for a certain period and a given person",
+        description = """
+            Returns all absences for a certain period and a given person person, that can be filtered by the 'types' parameter.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested absences of the person id is from the authenticated user
+            * department_head        - if the requested absences of the person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested absences of the person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested absences of the person id is any id but not of the authenticated user
+            """
     )
-    @GetMapping(ABSENCES)
+    @GetMapping(value = ABSENCES, produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +

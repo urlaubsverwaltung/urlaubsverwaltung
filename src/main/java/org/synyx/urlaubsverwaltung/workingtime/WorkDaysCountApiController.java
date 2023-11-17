@@ -25,10 +25,14 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
+@Tag(
+    name = "work days",
+    description = "Work Days: Returns information about work day in a certain period"
+)
 @RestControllerAdviceMarker
-@Tag(name = "work days", description = "Work Days: Get information about work day in a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 public class WorkDaysCountApiController {
@@ -55,9 +59,20 @@ public class WorkDaysCountApiController {
      */
     @Operation(
         summary = "Calculate the work days for a certain period and person",
-        description = "The calculation depends on the working time of the person."
+        description = """
+            Calculate the work days for a certain period and person
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * user                   - if the requested work days of the person id is from the authenticated user
+            * department_head        - if the requested work days of the person id is a managed person of the department head and not of the authenticated user
+            * second_stage_authority - if the requested work days of the person id is a managed person of the second stage authority and not of the authenticated user
+            * boss or office         - if the requested work days of the person id is any id but not of the authenticated user
+            """
     )
-    @GetMapping(WORKDAYS)
+    @GetMapping(path = WORKDAYS, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
