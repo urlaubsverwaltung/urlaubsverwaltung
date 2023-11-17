@@ -1110,7 +1110,7 @@ class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -1162,7 +1162,7 @@ class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsFromColleaguesOf(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);

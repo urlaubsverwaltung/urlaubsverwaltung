@@ -415,9 +415,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("dateRangeWorkingTimes", workingTime);
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
-        final List<Application> departmentApplications =
-            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
-                application.getStartDate(), application.getEndDate());
+        final List<Application> departmentApplications = departmentService.getApplicationsFromColleaguesOf(application.getPerson(), application.getStartDate(), application.getEndDate());
         model.addAttribute("departmentApplications", departmentApplications);
 
         // HOLIDAY ACCOUNT

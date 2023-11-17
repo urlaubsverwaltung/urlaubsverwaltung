@@ -26,6 +26,8 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
 
     List<ApplicationEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
 
+    List<ApplicationEntity> findByStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, LocalDate start, LocalDate end);
+
     List<ApplicationEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
 
     List<ApplicationEntity> findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> statuses);

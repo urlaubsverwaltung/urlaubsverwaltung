@@ -38,10 +38,7 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -323,19 +320,24 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
-        final Predicate<Application> allowed = application -> application.hasStatus(ALLOWED);
-        final Predicate<Application> temporaryAllowed = application -> application.hasStatus(TEMPORARY_ALLOWED);
-        final Predicate<Application> waiting = application -> application.hasStatus(WAITING);
-        final Predicate<Application> allowedCancellationRequested = application -> application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
+    public List<Application> getApplicationsFromColleaguesOf(Person person, LocalDate startDate, LocalDate endDate) {
 
-        return getMembersOfAssignedDepartments(member).stream()
-            .filter(not(isEqual(member)))
-            .map(departmentMember -> applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember))
-            .flatMap(Collection::stream)
-            .filter(allowed.or(temporaryAllowed).or(waiting).or(allowedCancellationRequested))
+        final List<Application> colleaguesApplications;
+
+        if (getNumberOfDepartments() == 0) {
+            colleaguesApplications = applicationService.getForStates(activeStatuses(), startDate, endDate).stream()
+                .filter(application -> !application.getPerson().equals(person))
+                .toList();
+        } else {
+            final List<Person> colleagues = getMembersOfAssignedDepartments(person).stream()
+                .filter(not(isEqual(person)))
+                .toList();
+            colleaguesApplications = applicationService.getForStatesAndPerson(activeStatuses(), colleagues, startDate, endDate);
+        }
+
+        return colleaguesApplications.stream()
             .sorted(comparing(Application::getStartDate))
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -578,7 +580,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     private boolean isSecondStageAuthorityAllowedToAccessPersonData(Person secondStageAuthority, Person person) {

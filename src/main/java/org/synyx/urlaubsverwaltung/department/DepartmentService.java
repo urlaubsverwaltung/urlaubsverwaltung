@@ -117,7 +117,7 @@ public interface DepartmentService {
      * @param endDate   of the period
      * @return list of waiting or allowed applications for leave of departments members
      */
-    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate);
+    List<Application> getApplicationsFromColleaguesOf(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
      * Get all distinct members of the departments where the given person is department head.

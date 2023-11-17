@@ -22,14 +22,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Tag(
@@ -145,18 +142,10 @@ public class VacationApiController {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final Person person = getPerson(personId);
+        final Person requestedPerson = getPerson(personId);
 
-        final List<Application> applications = new ArrayList<>();
-        final long numberOfDepartments = departmentService.getNumberOfDepartments();
-        if (numberOfDepartments == 0) {
-            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED));
-            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED_CANCELLATION_REQUESTED));
-        } else {
-            applications.addAll(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, startDate, endDate));
-        }
-
-        return mapToVacationResponse(applications);
+        final List<Application> applicationsOfColleagues = departmentService.getApplicationsFromColleaguesOf(requestedPerson, startDate, endDate);
+        return mapToVacationResponse(applicationsOfColleagues);
     }
 
     private Person getPerson(Long personId) {
