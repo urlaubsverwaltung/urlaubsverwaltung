@@ -1,6 +1,62 @@
 version: '3.9'
 services:
 
+  urlaubsverwaltung:
+    image: urlaubsverwaltung/urlaubsverwaltung:5.0.0-M5
+    network_mode: "host"
+    environment:
+      SERVER_PORT: 8080
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5434/urlaubsverwaltung
+      SPRING_DATASOURCE_USERNAME: urlaubsverwaltung
+      SPRING_DATASOURCE_PASSWORD: urlaubsverwaltung
+      # Mail
+      UV_MAIL_SENDER: urlaubsverwaltung@example.org
+      UV_MAIL_SENDERDISPLAYNAME: urlaubsverwaltung
+      UV_MAIL_APPLICATIONURL: http://localhost:8080
+      UV_MAIL_ADMINISTRATOR: admin@example.org
+      SPRING_MAIL_HOST: localhost
+      SPRING_MAIL_PORT: 1025
+      # Calendar
+      UV_CALENDAR_ORGANIZER: organizer@example.org
+      # OpenID Connect identity provider
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-ID: urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-SECRET: urlaubsverwaltung-secret
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-NAME: urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_PROVIDER: default
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_SCOPE: openid,profile,email,roles
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION-GRANT-TYPE: authorization_code
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT-URI: http://localhost:8080/login/oauth2/code/{registrationId}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER-URI: http://localhost:8090/realms/urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://keycloak:8090/realms/urlaubsverwaltung
+    depends_on:
+      keycloak:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+
+  postgres:
+    image: postgres:15.3
+    environment:
+      POSTGRES_DB: urlaubsverwaltung
+      POSTGRES_USER: urlaubsverwaltung
+      POSTGRES_PASSWORD: urlaubsverwaltung
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 1s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: [ "start-dev", "--import-realm" ]
@@ -16,59 +72,3 @@ services:
       - '8090:8090'
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
-    healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8090;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres:
-    image: postgres:15.3-alpine
-    environment:
-      POSTGRES_DB: 'urlaubsverwaltung'
-      POSTGRES_USER: 'urlaubsverwaltung'
-      POSTGRES_PASSWORD: 'urlaubsverwaltung'
-    ports:
-      - "5434:5432"
-    volumes:
-      - db:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 3s
-      timeout: 1s
-      retries: 5
-
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
-    ports:
-      - '1025:1025'
-      - '8025:8025'
-
-  urlaubsverwaltung:
-    image: urlaubsverwaltung/urlaubsverwaltung:5.0.0-M4
-    ports:
-      - '8080:8080'
-    environment:
-      SPRING_PROFILES_ACTIVE: 'demodata'
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/urlaubsverwaltung'
-      SPRING_DATASOURCE_USERNAME: 'urlaubsverwaltung'
-      SPRING_DATASOURCE_PASSWORD: 'urlaubsverwaltung'
-      SPRING_MAIL_HOST: 'mailhog'
-      SPRING_MAIL_PORT: '1025'
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://keycloak:8090/realms/urlaubsverwaltung
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-ID: urlaubsverwaltung
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-SECRET: urlaubsverwaltung-secret
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_PROVIDER: default
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_SCOPE: openid,profile,email,roles
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION-GRANT-TYPE: authorization_code
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT-URI: http://localhost:8080/login/oauth2/code/{registrationId}
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER-URI: http://keycloak:8090/realms/urlaubsverwaltung
-    depends_on:
-      postgres:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
-
-volumes:
-  db:
-    driver: local
