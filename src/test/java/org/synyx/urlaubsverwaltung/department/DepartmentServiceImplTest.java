@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -40,7 +41,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -48,8 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -1387,6 +1386,8 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
+        when(departmentRepository.count()).thenReturn(1L);
+
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
@@ -1394,15 +1395,16 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByMembersPerson(person)).thenReturn(emptyList());
 
-        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        final List<Application> applications = sut.getApplicationsFromColleaguesOf(person, date, date);
         assertThat(applications).isEmpty();
 
-        verify(departmentRepository).findByMembersPerson(person);
-        verifyNoInteractions(applicationService);
+        verify(applicationService).getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(), date, date);
     }
 
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
+
+        when(departmentRepository.count()).thenReturn(1L);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
@@ -1434,29 +1436,18 @@ class DepartmentServiceImplTest {
         marketing.setMembers(List.of(marketing1Member, marketing2Member, marketing3Member, personMember));
 
         when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(admins, marketing));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(applicationService.getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(admin1, admin2, marketing1Person, marketing2Person, marketing3Person), date, date))
             .thenReturn(emptyList());
 
-        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        final List<Application> applications = sut.getApplicationsFromColleaguesOf(person, date, date);
         assertThat(applications).isEmpty();
-
-        // Ensure fetches departments of person
-        verify(departmentRepository).findByMembersPerson(person);
-
-        // Ensure fetches applications for leave for every department member
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, admin1);
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, admin2);
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing1Person);
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing2Person);
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing3Person);
-
-        // Ensure does not fetch applications for leave for the given person
-        verify(applicationService, never()).getApplicationsForACertainPeriodAndPerson(date, date, person);
     }
 
 
     @Test
     void ensureReturnsOnlyWaitingAndAllowedAndCancellationRequestDepartmentApplicationsForLeave() {
+
+        when(departmentRepository.count()).thenReturn(1L);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
@@ -1480,7 +1471,7 @@ class DepartmentServiceImplTest {
         marketing.setMembers(List.of(marketing1Member, personMember));
 
         final Application waitingApplication = new Application();
-        waitingApplication.setStatus(TEMPORARY_ALLOWED);
+        waitingApplication.setStatus(WAITING);
         waitingApplication.setStartDate(LocalDate.of(2022, 10, 2));
 
         final Application allowedApplication = new Application();
@@ -1491,42 +1482,33 @@ class DepartmentServiceImplTest {
         cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         cancellationRequestApplication.setStartDate(LocalDate.of(2022, 9, 12));
 
-        final Application otherApplication = new Application();
-        otherApplication.setStatus(REJECTED);
-        otherApplication.setStartDate(LocalDate.of(2022, 9, 10));
-
         when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(admins, marketing));
+        when(applicationService.getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(admin1, marketing1), date, date))
+            .thenReturn(List.of(waitingApplication, allowedApplication, cancellationRequestApplication));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(admin1)))
-            .thenReturn(List.of(waitingApplication, otherApplication));
-
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(marketing1)))
-            .thenReturn(List.of(allowedApplication, cancellationRequestApplication));
-
-        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
-        assertThat(applications)
-            .hasSize(3)
-            .contains(waitingApplication, allowedApplication, cancellationRequestApplication)
-            .doesNotContain(otherApplication);
+        final List<Application> applications = sut.getApplicationsFromColleaguesOf(person, date, date);
+        assertThat(applications).containsExactly(cancellationRequestApplication, waitingApplication, allowedApplication);
     }
 
     @Test
     void ensuresApplicationsFromOthersInDepartmentAreSortedByStartDate() {
+
+        when(departmentRepository.count()).thenReturn(1L);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
         final LocalDate date = LocalDate.now(UTC);
 
-        final Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
-        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable(marketing1);
+        final Person marketingPerson = new Person("carl", "carl", "carl", "carl@example.org");
+        final DepartmentMemberEmbeddable memberEmbeddable = departmentMemberEmbeddable(marketingPerson);
 
         final DepartmentEntity marketing = new DepartmentEntity();
         marketing.setName("marketing");
-        marketing.setMembers(List.of(marketing1Member, departmentMemberEmbeddable(person)));
+        marketing.setMembers(List.of(memberEmbeddable, departmentMemberEmbeddable(person)));
 
         final Application waitingApplication = new Application();
-        waitingApplication.setStatus(TEMPORARY_ALLOWED);
+        waitingApplication.setStatus(WAITING);
         waitingApplication.setStartDate(LocalDate.of(2022, 10, 2));
 
         final Application allowedApplication = new Application();
@@ -1538,11 +1520,47 @@ class DepartmentServiceImplTest {
         cancellationRequestApplication.setStartDate(LocalDate.of(2022, 9, 12));
 
         when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(marketing));
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(marketing1)))
+        when(applicationService.getForStatesAndPerson(ApplicationStatus.activeStatuses(), List.of(marketingPerson), date, date))
             .thenReturn(List.of(waitingApplication, allowedApplication, cancellationRequestApplication));
 
-        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        final List<Application> applications = sut.getApplicationsFromColleaguesOf(person, date, date);
         assertThat(applications).containsExactly(cancellationRequestApplication, waitingApplication, allowedApplication);
+    }
+
+    @Test
+    void ensuresApplicationsFromOthersIfNoDepartmentIsAllApplicationsWithoutApplicationFromRequestedPerson() {
+
+        when(departmentRepository.count()).thenReturn(0L);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        final Person colleague = new Person();
+        colleague.setId(2L);
+
+        final LocalDate date = LocalDate.now(UTC);
+
+        final Application waitingApplication = new Application();
+        waitingApplication.setPerson(colleague);
+        waitingApplication.setStatus(WAITING);
+        waitingApplication.setStartDate(LocalDate.of(2022, 10, 2));
+
+        final Application allowedApplication = new Application();
+        allowedApplication.setPerson(person);
+        allowedApplication.setStatus(ALLOWED);
+        allowedApplication.setStartDate(LocalDate.of(2022, 11, 2));
+
+        final Application cancellationRequestApplication = new Application();
+        cancellationRequestApplication.setPerson(colleague);
+        cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        cancellationRequestApplication.setStartDate(LocalDate.of(2022, 9, 12));
+
+        when(applicationService.getForStates(ApplicationStatus.activeStatuses(), date, date))
+            .thenReturn(List.of(waitingApplication, allowedApplication, cancellationRequestApplication));
+
+        final List<Application> applications = sut.getApplicationsFromColleaguesOf(person, date, date);
+        assertThat(applications).containsExactly(cancellationRequestApplication, waitingApplication);
     }
 
     @Test

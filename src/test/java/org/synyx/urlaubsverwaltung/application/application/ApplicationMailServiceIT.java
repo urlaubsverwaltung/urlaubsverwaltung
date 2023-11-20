@@ -1957,7 +1957,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
@@ -2054,7 +2054,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, secondStage, "Hätte gerne Urlaub");
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
@@ -2153,7 +2153,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, departmentHead, "Hätte gerne Urlaub");
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, secondStage));
 
         sut.sendAppliedNotificationToManagement(application, comment);
@@ -2246,7 +2246,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
@@ -2312,7 +2312,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
@@ -2375,7 +2375,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
@@ -2440,7 +2440,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
 
         final ApplicationComment comment = new ApplicationComment(
@@ -2499,7 +2499,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.TEMPORARY_ALLOWED, secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
@@ -2595,7 +2595,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(List.of(application));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
@@ -2681,7 +2681,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(List.of(application));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
@@ -2761,7 +2761,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         applicationSecond.setStartDate(LocalDate.of(2021, APRIL, 17));
         applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
@@ -2835,7 +2835,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.TEMPORARY_ALLOWED, secondStage, "OK, spricht von meiner Seite aus nix dagegen");
 
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
+        when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);

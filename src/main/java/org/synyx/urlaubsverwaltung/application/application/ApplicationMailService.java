@@ -795,7 +795,7 @@ class ApplicationMailService {
     void sendAppliedNotificationToManagement(Application application, ApplicationComment comment) {
 
         final List<Application> applicationsForLeave =
-            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
+            departmentService.getApplicationsFromColleaguesOf(application.getPerson(), application.getStartDate(), application.getEndDate());
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -841,7 +841,7 @@ class ApplicationMailService {
 
         // Inform second stage authorities that there is an application for leave that must be allowed
         final List<Application> applicationsForLeave =
-            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
+            departmentService.getApplicationsFromColleaguesOf(application.getPerson(), application.getStartDate(), application.getEndDate());
 
         final MailTemplateModelSupplier modelSecondStageSupplier = locale -> Map.of(
             APPLICATION, application,

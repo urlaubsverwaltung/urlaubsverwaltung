@@ -119,6 +119,11 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getForStates(List<ApplicationStatus> statuses, LocalDate start, LocalDate end) {
+        return toApplication(applicationRepository.findByStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, start, end));
+    }
+
+    @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
