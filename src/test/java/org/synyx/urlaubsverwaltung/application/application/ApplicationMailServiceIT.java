@@ -1225,7 +1225,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
         assertThat(from.length).isOne();
-        assertThat(from[0]).hasToString(String.format("%s <%s>", mailProperties.getSenderDisplayName(), mailProperties.getSender()));
+        assertThat(from[0]).hasToString(String.format("%s <%s>", mailProperties.getFromDisplayName(), mailProperties.getFrom()));
     }
 
     @Test

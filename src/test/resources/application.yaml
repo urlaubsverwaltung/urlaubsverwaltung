@@ -3,9 +3,11 @@ uv:
     organizer: organizer@example.org
   mail:
     application-url: https://localhost:8080
-    sender: sender@example.org
     administrator: administrators@example.org
-    senderDisplayName: Urlaubsverwaltung
+    from: sender@example.org
+    fromDisplayName: Urlaubsverwaltung
+    replyTo: sender@example.org
+    replyToDisplayName: Urlaubsverwaltung
 
 spring:
   security:

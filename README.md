@@ -138,8 +138,10 @@ uv.development.demodata.additional-inactive-user=0
 # mail
 uv.mail.administrator
 uv.mail.application-url
-uv.mail.sender
-uv.mail.senderDisplayName=Urlaubsverwaltung
+uv.mail.from
+uv.mail.fromDisplayName=Urlaubsverwaltung
+uv.mail.replyTo
+uv.mail.replyToDisplayName=Urlaubsverwaltung
 
 # security - openid connect
 uv.security.oidc.post-logout-redirect-uri={baseUrl}

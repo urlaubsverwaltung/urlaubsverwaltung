@@ -1,6 +1,7 @@
 uv:
   mail:
-    senderDisplayName: Urlaubsverwaltung
+    fromDisplayName: Urlaubsverwaltung
+    replyToDisplayName: Urlaubsverwaltung
 
 spring:
   web:

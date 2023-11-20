@@ -1,7 +1,8 @@
 uv:
   mail:
+    from: sender@example.org
+    replyTo: no-reply@example.org
     application-url: http://localhost:8080
-    sender: sender@example.org
     administrator: administrators@example.org
   calendar:
     organizer: organizer@example.org
