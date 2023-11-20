@@ -9,7 +9,7 @@ zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krank
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
 **Version 4.x**  
-Diese Readme bezieht sich auf die 5er Version der Urlaubsverwaltung. Wenn du Informationen zu der 4er Version erhalten
+Diese Readme bezieht sich auf die 5er-Version der Urlaubsverwaltung. Wenn du Informationen zu der 4er-Version erhalten
 möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverwaltung/urlaubsverwaltung/tree/v4.x).
 
 * [Demo-System](#demo-system)
@@ -44,7 +44,7 @@ Urlaubsverwaltung stellen. Daher gibt es für den ein oder anderen nicht nur gut
 * Wir werden in der 5.x keine Unterstützung für MariaDB und MySQL anbieten und komplett auf [PostgreSQL](https://www.postgresql.org/) setzen. Einen Migrationspfad ist bereits im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) vorhanden.
 * Wir werden die security provider LDAP und Active Directory entfernen und dafür OIDC noch stärker unterstützen. Hierzu haben wir auch eine Umfrage in [den Discussions](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/3616) aufgesetzt. Wir freuen uns über eine rege Teilnahme!
 
-Dies sind bisher die größeren Maßnahmen für die kommende 5er Version - kleine Anpassungen findet ihr dann im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) 
+Dies sind bisher die größeren Maßnahmen für die kommende 5er-Version - kleine Anpassungen findet ihr dann im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) 
 
 ## Berechtigungen
 
@@ -117,44 +117,56 @@ nachgelesen werden.
 
 Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung mit ihren Standartwerten.
 
-```properties
-# account
-uv.account.update.cron=0 0 5 1 1 *
+```yaml
+uv:
 
-# application
-uv.application.reminder-notification.cron=0 0 7 * * *
-uv.application.upcoming-holiday-replacement-notification.cron=0 0 7 * * *
-uv.application.upcoming-notification.cron=0 0 7 * * *
+  mail:
+    from: ''
+    fromDisplayName: Urlaubsverwaltung
+    replyTo: ''
+    replyToDisplayName: Urlaubsverwaltung
+    application-url: ''
+    administrator: ''
 
-# ical calendar
-uv.calendar.organizer
-uv.calendar.refresh-interval=P1D
+  development:
+    demodata:
+      create: 'false'
+      additional-active-user: '0'
+      additional-inactive-user: '0'
 
-# development
-uv.development.demodata.create=false
-uv.development.demodata.additional-active-user=0
-uv.development.demodata.additional-inactive-user=0
+  calendar:
+    organizer: ''
+    refresh-interval: P1D
 
-# mail
-uv.mail.administrator
-uv.mail.application-url
-uv.mail.from
-uv.mail.fromDisplayName=Urlaubsverwaltung
-uv.mail.replyTo
-uv.mail.replyToDisplayName=Urlaubsverwaltung
+  security:
+    oidc:
+      claim-mappers:
+        group-claim:
+          enabled: 'false'
+          claim-name: groups
+        resource-access-claim:
+          enabled: 'false'
+          resource-app: urlaubsverwaltung
+        role-prefix: urlaubsverwaltung_
+      post-logout-redirect-uri: '{baseUrl}'
 
-# security - openid connect
-uv.security.oidc.post-logout-redirect-uri={baseUrl}
-uv.security.oidc.claim-mappers.role-prefix=urlaubsverwaltung_
-uv.security.oidc.claim-mappers.group-claim.enabled=false
-uv.security.oidc.claim-mappers.group-claim.claim-name=groups
-uv.security.oidc.claim-mappers.resource-access-claim.enabled=false
-uv.security.oidc.claim-mappers.resource-access-claim.resource-app=urlaubsverwaltung
+  application:
+    upcoming-holiday-replacement-notification:
+      cron: 0 0 7 * * *
+    reminder-notification:
+      cron: 0 0 7 * * *
+    upcoming-notification:
+      cron: 0 0 7 * * *
 
-# sick-note
-uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
+  account:
+    update:
+      cron: 0 0 5 1 1 *
+
+  sick-note:
+    end-of-pay-notification:
+      cron: 0 0 6 * * *
+
 ```
-
 
 #### Security Provider konfigurieren
 
@@ -171,10 +183,12 @@ Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet,
 Die Anwendung verwendet zur Speicherung der Daten ein PostgreSQL-Datenbankmanagementsystem. 
 Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
-```properties
-spring.datasource.url=jdbc:postgresql://$HOST:$PORT/$NAME_DER_DATENBANK
-spring.datasource.username=$BENUTZER
-spring.datasource.password=$PASSWORT
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://$HOST:$PORT/$NAME_DER_DATENBANK
+    username: $BENUTZER
+    password: $PASSWORT
 ```
 Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Datenbanktabellen angelegt.
 
@@ -183,16 +197,21 @@ Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Da
 
 Um den E-Mail-Server zu konfigurieren, müssen folgende Konfigurationen vorgenommen werden.
 
-```properties
-uv.mail.sender=absender@example.org         # Absender der E-Mails
-uv.mail.senderDisplayName=Urlaubsverwaltung # Schönere Darstellung im Postfach
-uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
-uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link-Generierung verwendet
-
-spring.mail.host=$HOST
-spring.mail.port=$PORT
-spring.mail.username=$USERNAME
-spring.mail.password=$PASSWORT
+```yaml
+uv:
+  mail:
+    from: absender@example.org
+    fromDisplayName: Urlaubsverwaltung
+    replyTo: no-reply@example.org
+    replyToDisplayName: Urlaubsverwaltung
+    administrator: admin@example.org
+    application-url: https://example.org
+spring:
+  mail:
+    host: $HOST
+    port: $PORT
+    username: $USERNAME
+    password: $PASSWORT
 ```
 
 Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
@@ -208,15 +227,17 @@ sondern nur noch beim Login der jeweiligen Person in der Urlaubsverwaltung angel
 Sollten beim Starten der Anwendung Probleme auftreten, lässt sich in der Konfigurationsdatei eine
 ausführliche Debug-Ausgabe konfigurieren, indem das `logging.level.*` pro Paket konfiguriert wird,
 
-```properties
-logging.level.org.synyx.urlaubsverwaltung=TRACE
-logging.level.org.springframework.security=TRACE
+```yaml
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.synyx.urlaubsverwaltung: TRACE
 ```
 
 sowie eine Logdatei
 
-```properties
-logging.file.name=logs/urlaubsverwaltung.log
+```yaml
+logging.file.name: logs/urlaubsverwaltung.log
 ```
 
 geschrieben wird.
@@ -225,18 +246,21 @@ geschrieben wird.
 
 Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 
 
-```properties
-launchpad.name-default-locale=de
-
-launchpad.apps[0].url=https://example.org
-launchpad.apps[0].name.de=Anwendung 1
-launchpad.apps[0].name.en=App 1
-launchpad.apps[0].icon=
-
-launchpad.apps[1].url=https://example-2.org
-launchpad.apps[1].name.de=Anwendung 2
-launchpad.apps[1].name.en=App 2
-launchpad.apps[1].icon=
+```yaml
+launchpad:
+  name-default-locale: de
+  apps[1]:
+    icon: ''
+    name:
+      de: Anwendung 2
+      en: App 2
+    url: https://example-2.org
+  apps[0]:
+    icon: ''
+    name:
+      en: App 1
+      de: Anwendung 1
+    url: https://example.org
 ```
 
 | Property                        | Type     | Description                                                                                                                                                |
@@ -248,8 +272,8 @@ launchpad.apps[1].icon=
 
 Das Launchpad hat eigene Übersetzungen. Spring muss entsprechend konfiguriert werden, damit die messages.properties gefunden wird:
 
-```properties
-spring.messages.basename=messages,launchpad-core
+```yaml
+spring.messages.basename: messages,launchpad-core
 ```
 
 * **(required)** `messages` standardmäßige application messages properties
@@ -416,10 +440,18 @@ Während der Weiterentwicklung ist es sinnvoll das Caching zu deaktivieren. Wird
 nichts weiter getan werden. Verwendest du das Profil nicht, kannst du das Caching mit folgenden application Properties
 deaktivieren:
 
-```properties
-spring.web.resources.chain.cache=false
-spring.web.resources.cache.cachecontrol.max-age=0
-spring.web.resources.chain.strategy.content.enabled=false
+```yaml
+spring:
+  web:
+    resources:
+      chain:
+        cache: 'false'
+        strategy:
+          content:
+            enabled: 'false'
+        cache:
+          cachecontrol:
+            max-age: '0'
 ```
 
 #### Icons
