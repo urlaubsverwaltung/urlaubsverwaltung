@@ -37,7 +37,7 @@ class MailSenderService {
      * @param subject   mail subject
      * @param text      mail body
      */
-    void sendEmail(String from, @Nullable String recipient, String subject, String text) {
+    void sendEmail(String from, String replyTo, @Nullable String recipient, String subject, String text) {
 
         if (recipient == null || recipient.isBlank()) {
             LOG.warn("Could not send email to empty recipients!");
@@ -46,11 +46,26 @@ class MailSenderService {
 
         final SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
+        mailMessage.setReplyTo(replyTo);
         mailMessage.setTo(recipient);
         mailMessage.setSubject(subject);
         mailMessage.setText(text);
 
-        send(mailMessage);
+        try {
+            mailSender.send(mailMessage);
+
+            if (LOG.isDebugEnabled()) {
+                for (String recipient1 : mailMessage.getTo()) {
+                    LOG.debug("Sent email to {}", recipient1);
+                }
+                LOG.debug("To={}\n\nSubject={}\n\nText={}",
+                    Arrays.toString(mailMessage.getTo()), mailMessage.getSubject(), mailMessage.getText());
+            }
+        } catch (MailException ex) {
+            for (String recipient1 : mailMessage.getTo()) {
+                LOG.error("Sending email to {} failed", recipient1, ex);
+            }
+        }
     }
 
     /**
@@ -62,7 +77,7 @@ class MailSenderService {
      * @param text            mail body
      * @param mailAttachments List of attachments to add to the mail
      */
-    void sendEmail(String from, @Nullable String recipient, String subject, String text, List<MailAttachment> mailAttachments) {
+    void sendEmail(String from, String replyTo, @Nullable String recipient, String subject, String text, List<MailAttachment> mailAttachments) {
 
         if (recipient == null || recipient.isBlank()) {
             LOG.warn("Could not send email to empty recipients!");
@@ -72,8 +87,9 @@ class MailSenderService {
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
             final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(recipient);
             helper.setFrom(from);
+            helper.setReplyTo(replyTo);
+            helper.setTo(recipient);
             helper.setSubject(subject);
             helper.setText(text);
 
@@ -84,24 +100,5 @@ class MailSenderService {
             LOG.error("Sending email to {} failed", recipient, e);
         }
         mailSender.send(mimeMessage);
-    }
-
-    private void send(SimpleMailMessage message) {
-        try {
-
-            mailSender.send(message);
-
-            if (LOG.isDebugEnabled()) {
-                for (String recipient : message.getTo()) {
-                    LOG.debug("Sent email to {}", recipient);
-                }
-                LOG.debug("To={}\n\nSubject={}\n\nText={}",
-                    Arrays.toString(message.getTo()), message.getSubject(), message.getText());
-            }
-        } catch (MailException ex) {
-            for (String recipient : message.getTo()) {
-                LOG.error("Sending email to {} failed", recipient, ex);
-            }
-        }
     }
 }

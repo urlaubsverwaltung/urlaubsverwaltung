@@ -12,10 +12,17 @@ public class MailProperties {
 
     @Email
     @NotEmpty
-    private String sender;
+    private String from;
 
     @NotEmpty
-    private String senderDisplayName;
+    private String fromDisplayName;
+
+    @Email
+    @NotEmpty
+    private String replyTo;
+
+    @NotEmpty
+    private String replyToDisplayName;
 
     @Email
     @NotEmpty
@@ -24,20 +31,36 @@ public class MailProperties {
     @URL
     private String applicationUrl;
 
-    public String getSender() {
-        return sender;
+    public String getFrom() {
+        return from;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public String getSenderDisplayName() {
-        return senderDisplayName;
+    public String getFromDisplayName() {
+        return fromDisplayName;
     }
 
-    public void setSenderDisplayName(String senderDisplayName) {
-        this.senderDisplayName = senderDisplayName;
+    public void setFromDisplayName(String fromDisplayName) {
+        this.fromDisplayName = fromDisplayName;
+    }
+
+    public String getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
+    }
+
+    public String getReplyToDisplayName() {
+        return replyToDisplayName;
+    }
+
+    public void setReplyToDisplayName(String replyToDisplayName) {
+        this.replyToDisplayName = replyToDisplayName;
     }
 
     public String getAdministrator() {

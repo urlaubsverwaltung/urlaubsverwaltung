@@ -11,8 +11,10 @@ services:
       SPRING_DATASOURCE_USERNAME: urlaubsverwaltung
       SPRING_DATASOURCE_PASSWORD: urlaubsverwaltung
       # Mail
-      UV_MAIL_SENDER: urlaubsverwaltung@example.org
-      UV_MAIL_SENDERDISPLAYNAME: urlaubsverwaltung
+      UV_MAIL_FROM: urlaubsverwaltung@example.org
+      UV_MAIL_FROMDISPLAYNAME: urlaubsverwaltung
+      UV_MAIL_REPLYTO: urlaubsverwaltung@example.org
+      UV_MAIL_REPLYTODISPLAYNAME: urlaubsverwaltung
       UV_MAIL_APPLICATIONURL: http://localhost:8080
       UV_MAIL_ADMINISTRATOR: admin@example.org
       SPRING_MAIL_HOST: localhost

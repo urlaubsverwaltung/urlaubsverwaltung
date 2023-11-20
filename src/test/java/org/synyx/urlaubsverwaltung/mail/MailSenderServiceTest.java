@@ -48,8 +48,9 @@ class MailSenderServiceTest {
         final String subject = "subject";
         final String body = "text";
         final String from = "from@example.org";
+        final String replyTo = "replyTo@example.org";
 
-        sut.sendEmail(from, recipient, subject, body);
+        sut.sendEmail(from, replyTo, recipient, subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
         final SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
@@ -63,7 +64,7 @@ class MailSenderServiceTest {
     @NullSource
     @ValueSource(strings = {"", " "})
     void doesNotSendMailForNullRecipients(final String recipient) {
-        sut.sendEmail("from@example.org", recipient, "subject", "text");
+        sut.sendEmail("from@example.org", "replyTo@example.org", recipient, "subject", "text");
         verifyNoInteractions(javaMailSender);
     }
 
@@ -75,11 +76,13 @@ class MailSenderServiceTest {
         final String subject = "subject";
         final String body = "text";
         final String from = "from@example.org";
+        final String replyTo = "replyTo@example.org";
+        final List<MailAttachment> mailAttachments = List.of(new MailAttachment("name", new ByteArrayResource(new byte[]{})));
 
         final MimeMessage msg = new MimeMessage(getInstance(new Properties(), null));
         when(javaMailSender.createMimeMessage()).thenReturn(msg);
 
-        sut.sendEmail(from, recipient, subject, body, List.of(new MailAttachment("name", new ByteArrayResource(new byte[]{}))));
+        sut.sendEmail(from, replyTo, recipient, subject, body, mailAttachments);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
         final MimeMessage mailMessage = mailMessageArgumentCaptor.getValue();
@@ -93,7 +96,7 @@ class MailSenderServiceTest {
     @NullSource
     @ValueSource(strings = {"", " "})
     void doesNotSendMailWithAttachmentToNullRecipients(final String recipient) {
-        sut.sendEmail("from@example.org", recipient, "subject", "text", List.of());
+        sut.sendEmail("from@example.org", "replyTo@example.org", recipient, "subject", "text", List.of());
         verifyNoInteractions(javaMailSender);
     }
 
