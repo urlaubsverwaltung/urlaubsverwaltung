@@ -59,7 +59,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         commentService.create(submittedSickNote, SickNoteCommentAction.SUBMITTED, submitter, comment);
 
         sickNoteMailService.sendSickNoteSubmittedNotificationToSickPerson(submittedSickNote);
-        sickNoteMailService.sendSickNoteSubmittedNotificationToOfficeAndManagementWithSickNoteEditRole(submittedSickNote);
+        sickNoteMailService.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(submittedSickNote);
 
         return submittedSickNote;
     }
