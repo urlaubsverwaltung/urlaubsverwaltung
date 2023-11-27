@@ -167,6 +167,20 @@
               ></li>
             </ul>
           </section>
+          <section th:if="${personNotificationsDto.sickNoteSubmittedByUserForManagement.visible}">
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.sicknote.management.title}"
+            >
+              Krankmeldungen meiner Kolleg:innen
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteSubmittedByUserForManagement.visible},active=${personNotificationsDto.sickNoteSubmittedByUserForManagement.active},name='sickNoteSubmittedByUserForManagement.active',label='person.notifications.section.sicknote.submitted.management.label',info='person.notifications.section.sicknote.submitted.management.info')}"
+              ></li>
+            </ul>
+          </section>
           <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">
             <h2
               class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"

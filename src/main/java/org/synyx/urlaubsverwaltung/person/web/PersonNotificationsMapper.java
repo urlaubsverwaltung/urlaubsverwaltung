@@ -101,6 +101,7 @@ final class PersonNotificationsMapper {
         );
         addIfActive(mailNotifications, personNotificationsDto.getOwnSickNoteSubmittedCreatedEditedCancelled(), notificationEmailOwnSickNote);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteSubmittedByUserForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
 
         return mailNotifications;
     }
@@ -141,7 +142,6 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED, personNotificationsDto::setApplicationCancellationForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION, personNotificationsDto::setApplicationCancellationForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, personNotificationsDto::setApplicationAllowedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT, personNotificationsDto::setApplicationAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED, personNotificationsDto::setApplicationTemporaryAllowedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, personNotificationsDto::setApplicationWaitingReminderForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED, personNotificationsDto::setApplicationCancellationRequestedForManagement);
@@ -149,6 +149,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteCreatedByManagementForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT, personNotificationsDto::setSickNoteSubmittedByUserForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 
