@@ -193,6 +193,16 @@ class SickNoteMailService {
     }
 
     @Async
+    void sendSickNoteAcceptedNotificationToSickPerson(SickNote acceptedSickNote, Person maintainer) {
+        final Mail mailToApplicant = Mail.builder()
+                .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER)
+                .withSubject("subject.sicknote.accepted_by_management.to_applicant")
+                .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+                .build();
+        mailService.send(mailToApplicant);
+    }
+
+    @Async
     void sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(SickNote submittedSickNote) {
 
         final List<Person> recipients =
@@ -201,6 +211,20 @@ class SickNoteMailService {
                 .withRecipient(recipients)
                 .withSubject("subject.sicknote.submitted_by_user.to_management", submittedSickNote.getPerson().getNiceName())
                 .withTemplate("sick_note_submitted_by_user_to_management", locale -> Map.of("sickNote", submittedSickNote))
+                .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
+    }
+
+
+    @Async
+    void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer) {
+        final List<Person> recipients =
+                mailRecipientService.getRecipientsOfInterestForSickNotes(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+                .withRecipient(recipients)
+                .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
+                .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
                 .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);

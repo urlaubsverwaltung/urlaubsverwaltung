@@ -71,9 +71,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer);
 
-        // TODO:
-        // sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote);
-        // sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndManagementWithSickNoteEditRole(acceptedSickNote);
+        sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote, maintainer);
+        sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
         sickNoteMailService.sendCreatedToColleagues(acceptedSickNote);
 
         updateAbsence(acceptedSickNote);
