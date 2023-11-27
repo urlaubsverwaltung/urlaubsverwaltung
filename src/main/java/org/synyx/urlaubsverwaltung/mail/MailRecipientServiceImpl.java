@@ -82,16 +82,12 @@ class MailRecipientServiceImpl implements MailRecipientService {
     @Override
     public List<Person> getRecipientsOfInterestForSickNotes(Person personOfInterest, MailNotification mailNotification) {
 
-        final List<Person> officeAndBosses = new ArrayList<>();
+        final List<Person> officeUsers = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
-            officeAndBosses.addAll(getOfficeWith(mailNotification));
-        }
-        if (mailNotification.isValidWith(List.of(USER, BOSS))) {
-            officeAndBosses.addAll(getBossWithAndSickNoteEditRole(mailNotification));
+            officeUsers.addAll(getOfficeWith(mailNotification));
         }
 
-        // TODO: Do we need this match to departments?
-        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
+        final List<Person> interestedOfficeUsers = getOfficeBossWithDepartmentMatch(personOfInterest, officeUsers);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
@@ -107,7 +103,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             recipientsOfInterestForDepartment.addAll(responsibleSecondStageAuthorities);
         }
 
-        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
+        return Stream.concat(interestedOfficeUsers.stream(), recipientsOfInterestForDepartment.stream())
                 .distinct()
                 .filter(recipient -> recipient.getNotifications().contains(mailNotification))
                 .toList();
