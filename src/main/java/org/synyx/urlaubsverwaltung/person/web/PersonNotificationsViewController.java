@@ -34,8 +34,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
-import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
 @Controller
 @RequestMapping("/web")
@@ -87,7 +85,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
 
-        final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
+        final PersonNotificationsDto personNotificationsDto = PersonNotificationsMapper.mapToPersonNotificationsDto(person);
         personNotificationsDto.setRestrictToDepartments(new PersonNotificationDto(person.hasAnyRole(OFFICE, BOSS), notificationSettings.isRestrictToDepartments()));
 
         model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
@@ -143,7 +141,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             LOG.error("Could not save e-mail-notifications of user {}", person.getId());
 
             final PersonNotificationsDto mergedPersonNotificationsDto = new PersonNotificationsDto();
-            BeanUtils.copyProperties(mapToPersonNotificationsDto(person), mergedPersonNotificationsDto);
+            BeanUtils.copyProperties(PersonNotificationsMapper.mapToPersonNotificationsDto(person), mergedPersonNotificationsDto);
             model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
             model.addAttribute("error", true);
 
@@ -158,7 +156,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             return "person/person_notifications";
         }
 
-        person.setNotifications(mapToMailNotifications(newPersonNotificationsDto));
+        person.setNotifications(PersonNotificationsMapper.mapToMailNotifications(newPersonNotificationsDto));
 
         personService.update(person);
 
