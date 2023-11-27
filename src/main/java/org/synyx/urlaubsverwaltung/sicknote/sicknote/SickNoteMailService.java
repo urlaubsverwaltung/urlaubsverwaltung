@@ -194,7 +194,7 @@ class SickNoteMailService {
     }
 
     @Async
-    void sendSickNoteSubmittedNotificationToOfficeAndManagementWithSickNoteEditRole(SickNote submittedSickNote) {
+    void sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(SickNote submittedSickNote) {
 
         final List<Person> recipients =
             mailRecipientService.getRecipientsOfInterest(submittedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
