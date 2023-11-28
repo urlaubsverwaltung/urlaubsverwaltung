@@ -192,14 +192,14 @@ class SickNoteMailServiceTest {
         colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED));
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED)).thenReturn(List.of(colleague));
 
-        sut.sendCreatedToColleagues(sickNote);
+        sut.sendCreatedOrAcceptedToColleagues(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_colleagues");
-        assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_to_colleagues");
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.createdOrAccepted.to_colleagues");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_or_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
 
