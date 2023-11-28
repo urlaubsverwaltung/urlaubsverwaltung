@@ -234,7 +234,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         when(mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED))
             .thenReturn(List.of(colleague));
 
-        sut.sendCreatedToColleagues(sickNote);
+        sut.sendCreatedOrAcceptedToColleagues(sickNote);
 
         // check email of colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
