@@ -73,7 +73,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote, maintainer);
         sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
-        sickNoteMailService.sendCreatedToColleagues(acceptedSickNote);
+        sickNoteMailService.sendCreatedOrAcceptedToColleagues(acceptedSickNote);
 
         applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));
 
@@ -94,7 +94,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         commentService.create(createdSickNote, SickNoteCommentAction.CREATED, applier, comment);
 
         sickNoteMailService.sendCreatedToSickPerson(createdSickNote);
-        sickNoteMailService.sendCreatedToColleagues(createdSickNote);
+        sickNoteMailService.sendCreatedOrAcceptedToColleagues(createdSickNote);
         sickNoteMailService.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(createdSickNote, comment);
 
         applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(createdSickNote));

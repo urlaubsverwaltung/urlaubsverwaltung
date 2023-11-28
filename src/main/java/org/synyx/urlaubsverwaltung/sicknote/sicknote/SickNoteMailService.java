@@ -118,18 +118,18 @@ class SickNoteMailService {
      * Sends information about an anonym sick note to the colleagues
      * to inform them about an absence
      *
-     * @param sickNote that has been submitted or created
+     * @param sickNote that has been accepted or created
      */
     @Async
-    void sendCreatedToColleagues(SickNote sickNote) {
+    void sendCreatedOrAcceptedToColleagues(SickNote sickNote) {
 
         // Inform colleagues of applicant which are in same department
         final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.sicknote.created.to_colleagues", sickNote.getPerson().getNiceName())
-            .withTemplate("sick_note_created_to_colleagues", modelColleaguesSupplier)
+            .withSubject("subject.sicknote.createdOrAccepted.to_colleagues", sickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_created_or_accepted_to_colleagues", modelColleaguesSupplier)
             .build();
         mailService.send(mailToRelevantColleagues);
     }

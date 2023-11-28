@@ -149,7 +149,7 @@ class SickNoteInteractionServiceImplTest {
         sut.create(sickNote, creator, comment);
 
         verify(sickNoteMailService).sendCreatedToSickPerson(sickNote);
-        verify(sickNoteMailService).sendCreatedToColleagues(sickNote);
+        verify(sickNoteMailService).sendCreatedOrAcceptedToColleagues(sickNote);
         verify(sickNoteMailService).sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
     }
 
