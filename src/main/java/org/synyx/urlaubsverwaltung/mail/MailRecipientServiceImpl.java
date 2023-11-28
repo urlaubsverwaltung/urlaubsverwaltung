@@ -82,28 +82,35 @@ class MailRecipientServiceImpl implements MailRecipientService {
     @Override
     public List<Person> getRecipientsOfInterestForSickNotes(Person personOfInterest, MailNotification mailNotification) {
 
-        final List<Person> officeUsers = new ArrayList<>();
+        final List<Person> officeAndBosses = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
-            officeUsers.addAll(getOfficeWith(mailNotification));
+            officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
 
-        final List<Person> interestedOfficeUsers = getOfficeBossWithDepartmentMatch(personOfInterest, officeUsers);
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
+            final List<Person> bossesWithSickNoteEdit = getBossWith(mailNotification).stream()
+                    .filter(person -> person.hasRole(SICK_NOTE_EDIT))
+                    .toList();
+            officeAndBosses.addAll(bossesWithSickNoteEdit);
+        }
+
+        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
             final List<Person> responsibleDepartmentHeads = responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest).stream()
                     .filter(departmentHead -> departmentHead.hasRole(SICK_NOTE_EDIT))
                     .toList();
             recipientsOfInterestForDepartment.addAll(responsibleDepartmentHeads);
         }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
             final List<Person> responsibleSecondStageAuthorities = responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest).stream()
                     .filter(secondStageAuthority -> secondStageAuthority.hasRole(SICK_NOTE_EDIT))
                     .toList();
             recipientsOfInterestForDepartment.addAll(responsibleSecondStageAuthorities);
         }
 
-        return Stream.concat(interestedOfficeUsers.stream(), recipientsOfInterestForDepartment.stream())
+        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
                 .distinct()
                 .filter(recipient -> recipient.getNotifications().contains(mailNotification))
                 .toList();
