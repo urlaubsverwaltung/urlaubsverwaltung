@@ -50,7 +50,7 @@ class SecurityWebConfiguration {
                     // Assets
                     .requestMatchers("/favicons/**").permitAll()
                     .requestMatchers("/browserconfig.xml").permitAll()
-                    .requestMatchers("/manifest.json").permitAll()
+                    .requestMatchers("/site.webmanifest").permitAll()
                     .requestMatchers("/css/**").permitAll()
                     .requestMatchers("/fonts/**").permitAll()
                     .requestMatchers("/images/**").permitAll()
