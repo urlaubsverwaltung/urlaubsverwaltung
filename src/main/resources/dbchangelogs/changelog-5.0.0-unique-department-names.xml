@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="unique-department-names">
+
+    <preConditions>
+      <tableExists tableName="department"/>
+      <columnExists tableName="department" columnName="id"/>
+      <columnExists tableName="department" columnName="name"/>
+    </preConditions>
+
+    <sql>
+      WITH DuplicateRows AS (
+        SELECT
+          id,
+          name,
+          ROW_NUMBER() OVER (PARTITION BY name ORDER BY name) AS rn,
+          COUNT(*) OVER (PARTITION BY name) AS cnt
+        FROM
+          department
+      )
+      UPDATE
+        department
+      SET
+        name = CONCAT(department.name, ' ', (DuplicateRows.cnt - DuplicateRows.rn) + 1)
+        FROM
+    DuplicateRows
+      WHERE
+        department.id = DuplicateRows.id
+        AND DuplicateRows.cnt > 1;
+    </sql>
+
+    <addUniqueConstraint columnNames="name"
+                         constraintName="unique_department_name"
+                         tableName="department"/>
+
+  </changeSet>
+</databaseChangeLog>

@@ -6,14 +6,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,9 +28,12 @@ class DepartmentViewValidatorTest {
     @Mock
     private Errors errors;
 
+    @Mock
+    private DepartmentService departmentService;
+
     @BeforeEach
     void setUp() {
-        sut = new DepartmentViewValidator();
+        sut = new DepartmentViewValidator(departmentService);
     }
 
     @Test
@@ -40,6 +47,17 @@ class DepartmentViewValidatorTest {
         final DepartmentForm departmentForm = new DepartmentForm();
         sut.validate(departmentForm, errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
+    }
+
+    @Test
+    void ensureNameIsNotADuplicate() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("duplicateName");
+
+        when(departmentService.getDepartmentByName("duplicateName")).thenReturn(Optional.of(new Department()));
+
+        sut.validate(departmentForm, errors);
+        verify(errors).rejectValue("name", "department.error.name.duplicate");
     }
 
     @Test

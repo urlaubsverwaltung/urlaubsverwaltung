@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -28,15 +29,23 @@ public class DepartmentViewValidator implements Validator {
     private static final String ATTRIBUTE_SECOND_STAGE_AUTHORITIES = "secondStageAuthorities";
     private static final String ATTRIBUTE_TWO_STAGE_APPROVAL = "twoStageApproval";
 
-    private static final String ERROR_REASON = "error.entry.mandatory";
+    private static final String ERROR_MANDATORY = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_DELIMITER = "error.entry.delimiterFound";
+
+    private static final String ERROR_DUPLICATED_NAME = "department.error.name.duplicate";
     private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED = "department.members.error.departmentHeadNotAssigned";
     private static final String ERROR_DEPARTMENT_HEAD_NO_ACCESS = "department.members.error.departmentHeadHasNoAccess";
 
     private static final String ERROR_SECOND_STAGE_AUTHORITY_MISSING = "department.members.error.secondStageAuthorityMissing";
     private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING = "department.members.error.twoStageApprovalFlagMissing";
     private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS = "department.members.error.secondStageHasNoAccess";
+
+    private final DepartmentService departmentService;
+
+    DepartmentViewValidator(DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
@@ -58,7 +67,11 @@ public class DepartmentViewValidator implements Validator {
         final boolean hasText = StringUtils.hasText(name);
 
         if (!hasText) {
-            errors.rejectValue(ATTRIBUTE_NAME, ERROR_REASON);
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_MANDATORY);
+        }
+
+        if (hasText && departmentService.getDepartmentByName(name).isPresent()) {
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_DUPLICATED_NAME);
         }
 
         if (hasText && name.length() > MAX_CHARS_NAME) {
