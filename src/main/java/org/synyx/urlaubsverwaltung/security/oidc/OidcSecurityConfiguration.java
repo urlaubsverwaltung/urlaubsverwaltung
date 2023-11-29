@@ -17,24 +17,18 @@ import java.util.List;
 @EnableConfigurationProperties({OidcSecurityProperties.class, RolesFromClaimMappersProperties.class})
 class OidcSecurityConfiguration {
 
-    private final OidcSecurityProperties properties;
-
-    OidcSecurityConfiguration(OidcSecurityProperties properties) {
-        this.properties = properties;
-    }
-
     @Bean
-    PersonOnSuccessfullyOidcLoginEventHandler personOnSuccessfullyOidcLoginEventHandler(PersonService personService) {
+    PersonOnSuccessfullyOidcLoginEventHandler personOnSuccessfullyOidcLoginEventHandler(final PersonService personService) {
         return new PersonOnSuccessfullyOidcLoginEventHandler(personService);
     }
 
     @Bean
-    OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
+    OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(final PersonService personService) {
         return new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Bean
-    OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService(List<RolesFromClaimMapper> rolesFromClaimMappers) {
+    OAuth2UserService<OidcUserRequest, OidcUser> oidcUserOAuth2UserService(final List<RolesFromClaimMapper> rolesFromClaimMappers) {
         final OidcUserService defaultOidcUserService = new OidcUserService();
         return new RolesFromClaimMappersInfusedOAuth2UserService(defaultOidcUserService, rolesFromClaimMappers);
     }
@@ -45,9 +39,9 @@ class OidcSecurityConfiguration {
     }
 
     @Bean
-    OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+    OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(final ClientRegistrationRepository clientRegistrationRepository, final OidcSecurityProperties securityConfigurationProperties) {
         final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri(properties.getPostLogoutRedirectUri());
+        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri(securityConfigurationProperties.getPostLogoutRedirectUri());
         return oidcClientInitiatedLogoutSuccessHandler;
     }
 }
