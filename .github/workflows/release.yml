@@ -32,7 +32,6 @@ jobs:
           body_path: .chglog/${{ steps.vars.outputs.version }}.md
           files: |
             ./target/urlaubsverwaltung-*.jar
-          prerelease: true
 
   container-upload-github:
     needs:
