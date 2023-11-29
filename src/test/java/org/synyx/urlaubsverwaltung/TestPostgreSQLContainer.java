@@ -9,7 +9,7 @@ public class TestPostgreSQLContainer extends PostgreSQLContainer<TestPostgreSQLC
 
     public TestPostgreSQLContainer() {
         super(IMAGE + ":" + VERSION);
-        withCommand("--max_connections=1000", "--shared_buffers=240MB");
+        this.withCommand("--max_connections=1000", "--shared_buffers=240MB");
     }
 
     /**

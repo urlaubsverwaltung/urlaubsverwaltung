@@ -22,7 +22,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
 
     public TestKeycloakContainer() {
         super(IMAGE + ":" + VERSION);
-        withRealmImportFiles(
+        this.withRealmImportFiles(
             "/docker/keycloak-export/master-realm.json",
             "/docker/keycloak-export/master-users-0.json",
             "/docker/keycloak-export/urlaubsverwaltung-realm.json"
@@ -40,7 +40,7 @@ public class TestKeycloakContainer extends KeycloakContainer {
         user.setEmail(email);
         user.setEmailVerified(true);
 
-        final Keycloak keycloak = adminClient();
+        final Keycloak keycloak = this.adminClient();
 
         // Get realm
         final RealmResource realmResource = keycloak.realm(REALM_URLAUBSVERWALTUNG);
