@@ -34,7 +34,7 @@ public enum SickNoteStatus {
      * @return a list of all active statuses
      */
     public static List<SickNoteStatus> activeStatuses() {
-        return List.of(ACTIVE);
+        return List.of(SUBMITTED, ACTIVE);
     }
 
     /**
