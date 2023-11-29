@@ -8,7 +8,7 @@ public abstract class TestContainersBase {
     static final TestPostgreSQLContainer postgre = new TestPostgreSQLContainer();
 
     @DynamicPropertySource
-    static void postgreDBProperties(DynamicPropertyRegistry registry) {
+    static void registerProperties(DynamicPropertyRegistry registry) {
         postgre.start();
         postgre.configureSpringDataSource(registry);
     }
