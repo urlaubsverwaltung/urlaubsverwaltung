@@ -16,7 +16,7 @@
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <form
         method="post"
-        th:with="action=${department.id == null ? '/web/department' : '/web/department/' + department.id}"
+        th:with="action=${department.id == null ? '/web/department/new' : '/web/department/' + department.id}"
         th:action="@{__${action}__}"
         th:object="${department}"
         class="form-horizontal"
@@ -166,7 +166,7 @@
                       id="member-search-submit"
                       class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-flex tw-items-center"
                       name="do-member-search"
-                      th:formaction="${department.id == null ? '/web/department' : '/web/department/' + department.id + '/edit'}"
+                      th:formaction="${department.id == null ? '/web/department/new' : '/web/department/' + department.id + '/edit'}"
                       data-turbo-frame="frame-department-members"
                       data-turbo-action="replace"
                     >

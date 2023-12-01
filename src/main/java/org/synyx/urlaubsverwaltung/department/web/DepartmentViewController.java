@@ -83,7 +83,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/department")
+    @PostMapping("/department/new")
     public String newDepartment(@ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
 
@@ -142,7 +142,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping(value = {"/department", "/department/{departmentId}/edit"}, params = "do-member-search")
+    @PostMapping(value = {"/department/new", "/department/{departmentId}/edit"}, params = "do-member-search")
     public String updateDepartment(@PathVariable(value = "departmentId", required = false) Long departmentId,
                                    @RequestParam("memberQuery") String memberQuery,
                                    @ModelAttribute("department") DepartmentForm departmentForm,

@@ -138,7 +138,7 @@ class DepartmentViewControllerTest {
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
         expectedDepartmentForm.setName("fight club");
 
-        perform(post("/web/department")
+        perform(post("/web/department/new")
             .param("do-member-search", "")
             .param("memberQuery", givenQuery)
             .param("name", "fight club")
@@ -171,7 +171,7 @@ class DepartmentViewControllerTest {
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
         expectedDepartmentForm.setName("fight club");
 
-        perform(post("/web/department")
+        perform(post("/web/department/new")
             .header("Turbo-Frame", "awesome-turbo-frame")
             .param("do-member-search", "")
             .param("memberQuery", givenQuery)
@@ -219,7 +219,7 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
         expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
 
-        perform(post("/web/department")
+        perform(post("/web/department/new")
             .param("do-member-search", "")
             .param("memberQuery", "bruce")
             .param("name", "fight club")
@@ -275,7 +275,7 @@ class DepartmentViewControllerTest {
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
         expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
 
-        perform(post("/web/department")
+        perform(post("/web/department/new")
             .header("Turbo-Frame", "awesome-turbo-frame")
             .param("do-member-search", "")
             .param("memberQuery", "bruce")
@@ -565,7 +565,7 @@ class DepartmentViewControllerTest {
 
         }).when(validator).validate(any(), any());
 
-        perform(post("/web/department"))
+        perform(post("/web/department/new"))
             .andExpect(view().name("department/department_form"));
 
         verify(departmentService, never()).create(any());
@@ -576,7 +576,7 @@ class DepartmentViewControllerTest {
 
         when(departmentService.create(any())).thenReturn(new Department());
 
-        perform(post("/web/department"));
+        perform(post("/web/department/new"));
 
         verify(departmentService).create(any(Department.class));
     }
@@ -588,7 +588,7 @@ class DepartmentViewControllerTest {
         department.setName("department");
         when(departmentService.create(any())).thenReturn(department);
 
-        perform(post("/web/department"))
+        perform(post("/web/department/new"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("createdDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department"));
