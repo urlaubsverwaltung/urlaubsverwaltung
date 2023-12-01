@@ -167,13 +167,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
-    private List<Person> getBossWithAndSickNoteEditRole(MailNotification concerningMailNotification) {
-        return personService.getActivePersonsByRole(BOSS).stream()
-                .filter(boss -> boss.hasRole(SICK_NOTE_EDIT))
-                .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
-                .toList();
-    }
-
 
     private List<Person> getOfficeWith(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(OFFICE).stream()
