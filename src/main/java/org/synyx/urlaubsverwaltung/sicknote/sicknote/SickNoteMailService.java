@@ -22,6 +22,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
@@ -196,7 +197,7 @@ class SickNoteMailService {
     @Async
     void sendSickNoteAcceptedNotificationToSickPerson(SickNote acceptedSickNote, Person maintainer) {
         final Mail mailToApplicant = Mail.builder()
-                .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER)
+                .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
                 .withSubject("subject.sicknote.accepted_by_management.to_applicant")
                 .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
                 .build();
