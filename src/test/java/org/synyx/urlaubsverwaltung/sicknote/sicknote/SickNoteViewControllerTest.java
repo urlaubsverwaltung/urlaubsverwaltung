@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.List.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -69,6 +71,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteViewControllerTest {
@@ -135,6 +138,44 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("signedInUser", personWithRole))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewUserIfSubmissionIsActive() throws Exception {
+
+        final Person personWithRole = personWithRole(USER);
+        personWithRole.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithRole));
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new").param("person", "1"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
+                .andExpect(model().attribute("persons", empty()))
+                .andExpect(model().attribute("person", personWithRole))
+                .andExpect(model().attribute("signedInUser", personWithRole))
+                .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+                .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteReturnsAccessDeniedIfSubmissionIsDeactivated() {
+
+        final Person personWithRole = personWithRole(USER);
+        personWithRole.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        userIsAllowedToSubmitSickNotes(false);
+
+        assertThatThrownBy(() ->
+                perform(get("/web/sicknote/new").param("person", "1"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @ParameterizedTest
@@ -976,6 +1017,46 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/").param("person.id", "1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/sicknote/42"));
+    }
+
+    @Test
+    void ensurePostNewSickNoteSubmitsSickNoteIfValidationSuccessfulAndSubmissionIsActive() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.submit(any(SickNote.class), eq(signedInPerson), eq(null)))
+                .thenReturn(SickNote.builder().id(42L).build());
+
+        perform(post("/web/sicknote/").param("person.id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/web/sicknote/42"));
+    }
+
+    @Test
+    void acceptSubmittedSickNote() throws Exception {
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(SUBMITTED).build()));
+
+        final Person signedInPerson = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/accept"));
+
+        verify(sickNoteInteractionService).accept(any(SickNote.class), eq(signedInPerson));
+    }
+
+    @Test
+    void acceptSickNoteThrowsUnknownSickNoteException() {
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+                perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/accept"))
+        ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @ParameterizedTest
