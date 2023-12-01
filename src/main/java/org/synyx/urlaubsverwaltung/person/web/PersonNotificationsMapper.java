@@ -37,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
@@ -133,7 +133,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
-        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT, personNotificationsDto::setOwnSickNoteSubmittedCreatedEditedCancelled);
 
         // department notifications
