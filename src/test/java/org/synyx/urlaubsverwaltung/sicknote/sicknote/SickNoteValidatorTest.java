@@ -329,6 +329,49 @@ class SickNoteValidatorTest {
     }
 
     @Test
+    void ensureSickNoteOfSamePersonIsAllowedIfSettingForSubmissionIsActive() {
+        userIsAllowedToSubmitSickNotes(true);
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+                any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
+
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .applier(person)
+                .startDate(LocalDate.of(2013, NOVEMBER, 19))
+                .endDate(LocalDate.of(2013, NOVEMBER, 20))
+                .dayLength(FULL)
+                .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    void ensureSickNoteOfSamePersonIsNotAllowedIfSettingForSubmissionIsDeactivated() {
+        userIsAllowedToSubmitSickNotes(false);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER));
+
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .applier(person)
+                .startDate(LocalDate.of(2013, NOVEMBER, 19))
+                .endDate(LocalDate.of(2013, NOVEMBER, 20))
+                .dayLength(FULL)
+                .build();
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
     void ensureValidDatesHaveNoErrors() {
 
         userIsAllowedToSubmitSickNotes(false);
