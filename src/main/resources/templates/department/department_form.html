@@ -20,6 +20,7 @@
         th:action="@{__${action}__}"
         th:object="${department}"
         class="form-horizontal"
+        data-turbo="true"
       >
         <button type="submit" class="tw-hidden"></button>
 
@@ -169,6 +170,7 @@
                       th:formaction="${department.id == null ? '/web/department/new' : '/web/department/' + department.id + '/edit'}"
                       data-turbo-frame="frame-department-members"
                       data-turbo-action="replace"
+                      data-turbo="true"
                     >
                       <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
                       <span class="tw-sr-only" th:text="#{action.search}">Suche</span>

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -26,10 +27,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
@@ -37,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOve
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.TURBO_STREAM_MEDIA_TYPE;
 
 @Controller
 @RequestMapping(value = "/web")
@@ -87,19 +91,20 @@ public class DepartmentViewController implements HasLaunchpad {
     public String newDepartment(@ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
 
-        validator.validate(departmentForm, errors);
+        return createNewDepartment(departmentForm, errors, model, redirectAttributes,
+            () -> "department/department_form",
+            () -> "redirect:/web/department");
+    }
 
-        if (errors.hasErrors()) {
-            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
-            model.addAttribute("persons", persons);
+    @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = "/department/new", produces = TURBO_STREAM_MEDIA_TYPE)
+    public ModelAndView newDepartmentAjax(@ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
+                                          Model model, RedirectAttributes redirectAttributes) {
 
-            return "department/department_form";
-        }
+        return createNewDepartment(departmentForm, errors, model, redirectAttributes,
+            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
+            () -> new ModelAndView("redirect:/web/department"));
 
-        final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
-        redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
-
-        return "redirect:/web/department";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -126,19 +131,20 @@ public class DepartmentViewController implements HasLaunchpad {
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) {
 
-        validator.validate(departmentForm, errors);
+        return editDepartment(departmentForm, errors, model, redirectAttributes,
+            () -> "department/department_form",
+            () -> "redirect:/web/department");
+    }
 
-        if (errors.hasErrors()) {
-            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
-            model.addAttribute("persons", persons);
+    @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = "/department/{departmentId}", produces = TURBO_STREAM_MEDIA_TYPE)
+    public String updateDepartmentAjax(@PathVariable("departmentId") Long departmentId,
+                                   @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
+                                   Model model, RedirectAttributes redirectAttributes) {
 
-            return "department/department_form";
-        }
-
-        final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
-        redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
-
-        return "redirect:/web/department";
+        return editDepartment(departmentForm, errors, model, redirectAttributes,
+            () -> "department/department_form",
+            () -> "redirect:/web/department");
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -191,6 +197,44 @@ public class DepartmentViewController implements HasLaunchpad {
         });
 
         return "redirect:/web/department";
+    }
+
+    private <T> T createNewDepartment(DepartmentForm departmentForm, Errors errors,
+                                      Model model, RedirectAttributes redirectAttributes,
+                                      Supplier<T> errorReturn, Supplier<T> successReturn) {
+
+        validator.validate(departmentForm, errors);
+
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
+
+            return errorReturn.get();
+        }
+
+        final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
+        redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
+
+        return successReturn.get();
+    }
+
+    private <T> T editDepartment(DepartmentForm departmentForm, Errors errors,
+                                 Model model, RedirectAttributes redirectAttributes,
+                                 Supplier<T> errorReturn, Supplier<T> successReturn) {
+
+        validator.validate(departmentForm, errors);
+
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
+
+            return errorReturn.get();
+        }
+
+        final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
+        redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
+
+        return successReturn.get();
     }
 
     private List<Person> getDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
