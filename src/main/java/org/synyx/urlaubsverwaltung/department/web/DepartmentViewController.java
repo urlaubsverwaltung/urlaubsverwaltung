@@ -147,15 +147,15 @@ public class DepartmentViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = "/department/{departmentId}", produces = TURBO_STREAM_MEDIA_TYPE)
-    public String updateDepartmentAjax(@PathVariable("departmentId") Long departmentId,
+    public ModelAndView updateDepartmentAjax(@PathVariable("departmentId") Long departmentId,
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) {
 
         return editDepartment(departmentForm, errors, model,
-            () -> "department/department_form",
+            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
             (department) -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
-                return "redirect:/web/department";
+                return new ModelAndView("redirect:/web/department");
             });
     }
 
