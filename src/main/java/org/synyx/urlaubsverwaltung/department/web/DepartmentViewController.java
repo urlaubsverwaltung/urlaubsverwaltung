@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
@@ -94,7 +95,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
         return createNewDepartment(departmentForm, errors, model,
             () -> "department/department_form",
-            (department) -> {
+            department -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
                 return "redirect:/web/department";
             });
@@ -107,7 +108,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
         return createNewDepartment(departmentForm, errors, model,
             () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
-            (department) -> {
+            department -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
                 return new ModelAndView("redirect:/web/department");
             });
@@ -139,7 +140,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
         return editDepartment(departmentForm, errors, model,
             () -> "department/department_form",
-            (department) -> {
+            department -> {
                 redirectAttributes.addFlashAttribute("updatedDepartmentName", department.getName());
                 return "redirect:/web/department";
             });
@@ -148,12 +149,12 @@ public class DepartmentViewController implements HasLaunchpad {
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = "/department/{departmentId}", produces = TURBO_STREAM_MEDIA_TYPE)
     public ModelAndView updateDepartmentAjax(@PathVariable("departmentId") Long departmentId,
-                                   @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
-                                   Model model, RedirectAttributes redirectAttributes) {
+                                             @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
+                                             Model model, RedirectAttributes redirectAttributes) {
 
         return editDepartment(departmentForm, errors, model,
             () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
-            (department) -> {
+            department -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
                 return new ModelAndView("redirect:/web/department");
             });
@@ -224,8 +225,8 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     private <T> T createOrEditDepartment(DepartmentForm departmentForm, Errors errors, Model model,
-                                        Function<Department, Department> departmentFunction,
-                                        Supplier<T> errorReturn, Function<Department, T> successReturn) {
+                                         UnaryOperator<Department> departmentFunction,
+                                         Supplier<T> errorReturn, Function<Department, T> successReturn) {
 
         validator.validate(departmentForm, errors);
         if (errors.hasErrors()) {
