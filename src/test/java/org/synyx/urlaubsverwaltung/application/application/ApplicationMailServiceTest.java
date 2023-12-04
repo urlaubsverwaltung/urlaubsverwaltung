@@ -487,7 +487,7 @@ class ApplicationMailServiceTest {
     }
 
     @Test
-    void notifyHolidayReplacementAboutEdit() {
+    void ensureToNotifyHolidayReplacementAboutEditAndStatusIsWaiting() {
 
         final Person holidayReplacement = new Person();
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
@@ -501,6 +501,7 @@ class ApplicationMailServiceTest {
         applicant.setLastName("Fritz");
 
         final Application application = new Application();
+        application.setStatus(WAITING);
         application.setPerson(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
@@ -518,6 +519,43 @@ class ApplicationMailServiceTest {
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.edit");
+        assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
+    }
+
+    @Test
+    void ensureToNotifyHolidayReplacementAboutEditAndStatusIsAllowed() {
+
+        final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome note");
+
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
+        final Application application = new Application();
+        application.setStatus(ALLOWED);
+        application.setPerson(applicant);
+        application.setHolidayReplacements(List.of(replacementEntity));
+        application.setDayLength(FULL);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
+        model.put("holidayReplacementNote", "awesome note");
+        model.put("dayLength", "FULL");
+
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow.edit");
         assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
     }

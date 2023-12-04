@@ -46,6 +46,8 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
@@ -1171,10 +1173,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementEditMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsWaiting() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStatus(WAITING);
         application.setStartDate(LocalDate.of(2020, 12, 18));
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
@@ -1189,21 +1192,66 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
         // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.");
-        assertThat(content).contains("Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
-        assertThat(content).contains("Eine Nachricht an die Vertretung");
+            der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
+            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsAllowed() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+        application.setStatus(ALLOWED);
+        application.setStartDate(LocalDate.of(2020, 12, 18));
+        application.setEndDate(LocalDate.of(2020, 12, 18));
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("Eine Nachricht an die Vertretung");
+
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        final Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Deine geplante Vertretung für Lieschen Müller wurde bearbeitet");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
+
+            der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
+            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test

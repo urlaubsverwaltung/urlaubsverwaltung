@@ -543,9 +543,12 @@ class ApplicationMailService {
             DAY_LENGTH, application.getDayLength().name()
         );
 
+        final List<ApplicationStatus> allowedStatuses = List.of(ApplicationStatus.ALLOWED, ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED);
+        final String messageKey = allowedStatuses.contains(application.getStatus()) ? "subject.application.holidayReplacement.allow.edit" : "subject.application.holidayReplacement.edit";
+
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
-            .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
+            .withSubject(messageKey, application.getPerson().getNiceName())
             .withTemplate("application_edited_to_holiday_replacement", modelSupplier)
             .build();
         mailService.send(mailToReplacement);
