@@ -26,6 +26,7 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
@@ -457,9 +458,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     @Override
-    public Application edit(Application oldApplication, Application editedApplication, Person person, Optional<String> comment) {
+    public Application edit(Application oldApplication, Application editedApplication, Person editor, Optional<String> comment) {
 
-        if (oldApplication.getStatus().compareTo(WAITING) != 0) {
+        if (!isAllowedToEditApplication(oldApplication, editor)) {
             throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
                 "with id %d because the status is %s and not waiting.", oldApplication.getId(), oldApplication.getStatus()));
         }
@@ -468,13 +469,12 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             throw new EditApplicationForLeaveNotAllowedException("Cannot change person of exiting application during edit.");
         }
 
-        editedApplication.setStatus(WAITING);
         editedApplication.setEditedDate(LocalDate.now(clock));
         final Application savedEditedApplication = applicationService.save(editedApplication);
 
-        commentService.create(savedEditedApplication, EDITED, comment, person);
+        commentService.create(savedEditedApplication, EDITED, comment, editor);
 
-        applicationMailService.sendEditedNotification(savedEditedApplication, person);
+        applicationMailService.sendEditedNotification(savedEditedApplication, editor);
 
         final List<HolidayReplacementEntity> addedReplacements = replacementAdded(oldApplication, savedEditedApplication);
         final List<HolidayReplacementEntity> deletedReplacements = replacementDeleted(oldApplication, savedEditedApplication);

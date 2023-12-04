@@ -204,6 +204,7 @@ class ApplicationMailService {
     @Async
     void sendEditedNotification(Application application, Person editor) {
 
+        /* TODO */
         final Mail mailToEditor = Mail.builder()
             .withRecipient(editor, NOTIFICATION_EMAIL_APPLICATION_EDITED)
             .withSubject("subject.application.edited", application.getPerson().getNiceName())

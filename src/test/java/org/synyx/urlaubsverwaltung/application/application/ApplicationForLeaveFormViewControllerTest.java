@@ -1268,7 +1268,52 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
-    void editApplicationFormForAnotherUserIsDenied() {
+    void editApplicationFormForOtherWithOfficePermission() throws Exception {
+
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("message-key")
+            .build();
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationType);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(locale)
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application_form"));
+    }
+
+    @Test
+    void editApplicationFormForAnotherUserIsDenied() throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -1283,9 +1328,9 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         when(applicationInteractionService.get(1L)).thenReturn(Optional.of(application));
 
-        assertThatThrownBy(() ->
-            perform(get("/web/application/1/edit"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application-notwaiting"));
     }
 
     @Test
@@ -1390,20 +1435,6 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureUnknownApplicationEditingShowsNotEditablePage() throws Exception {
 
         when(applicationInteractionService.get(1L)).thenReturn(Optional.empty());
-
-        perform(get("/web/application/1/edit"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("application/application-notwaiting"));
-    }
-
-    @Test
-    void editApplicationFormNotWaiting() throws Exception {
-
-        final Long applicationId = 1L;
-        final Application application = new Application();
-        application.setId(applicationId);
-        application.setStatus(ALLOWED);
-        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
@@ -1596,6 +1627,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
+        application.setPerson(person);
 
         final Application editedApplication = new Application();
         editedApplication.setId(applicationId);
@@ -1604,7 +1636,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
 
-        perform(post("/web/application/1")
+        perform(post("/web/application/1/edit")
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
@@ -1626,6 +1658,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
+        application.setPerson(person);
 
         final Application editedApplication = new Application();
         editedApplication.setId(applicationId);
@@ -1634,7 +1667,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
 
-        perform(post("/web/application/1")
+        perform(post("/web/application/1/edit")
             .param("person.id", "1")
             .param("startDate", givenDate)
             .param("endDate", givenDate)
@@ -1649,13 +1682,17 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void sendEditApplicationFormIsNotWaiting() throws Exception {
 
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
         final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(ALLOWED);
+        application.setPerson(person);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
-        perform(post("/web/application/1")
+        perform(post("/web/application/1/edit")
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
@@ -1678,7 +1715,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
-            perform(post("/web/application/1")
+            perform(post("/web/application/1/edit")
                 .param("person.id", "1")
                 .param("startDate", "28.10.2020")
                 .param("endDate", "28.10.2020")
@@ -1697,6 +1734,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
+        application.setPerson(person);
         final Application editedApplication = new Application();
         editedApplication.setId(applicationId);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
@@ -1704,7 +1742,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
 
-        perform(post("/web/application/1")
+        perform(post("/web/application/1/edit")
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
@@ -1727,12 +1765,15 @@ class ApplicationForLeaveFormViewControllerTest {
             .messageKey("message-key")
             .build();
 
+        final Person person = new Person();
+
         final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
+        application.setPerson(person);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
-        when(personService.getSignedInUser()).thenReturn(new Person());
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
@@ -1747,7 +1788,7 @@ class ApplicationForLeaveFormViewControllerTest {
         }).when(applicationForLeaveFormValidator).validate(any(), any());
 
         perform(
-            post("/web/application/1")
+            post("/web/application/1/edit")
                 .locale(locale)
                 .param("person.id", "1")
                 .param("startDate", "28.10.2020")
@@ -1797,6 +1838,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Application application = new Application();
         application.setId(7L);
+        application.setPerson(signedInPerson);
         application.setApplier(signedInPerson);
         application.setStatus(WAITING);
         when(applicationInteractionService.get(7L)).thenReturn(Optional.of(application));
@@ -1804,7 +1846,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         perform(
-            post("/web/application/7")
+            post("/web/application/7/edit")
                 .locale(locale)
                 .param("vacationType.id", "1")
                 .param("person.id", "1")
