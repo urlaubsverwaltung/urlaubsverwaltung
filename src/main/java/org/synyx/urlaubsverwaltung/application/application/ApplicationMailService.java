@@ -204,13 +204,21 @@ class ApplicationMailService {
     @Async
     void sendEditedNotification(Application application, Person editor) {
 
-        /* TODO */
-        final Mail mailToEditor = Mail.builder()
-            .withRecipient(editor, NOTIFICATION_EMAIL_APPLICATION_EDITED)
-            .withSubject("subject.application.edited", application.getPerson().getNiceName())
-            .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
-            .build();
-        mailService.send(mailToEditor);
+        final Mail mailToApplicant;
+        if (application.getPerson().equals(editor)) {
+            mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
+                .withSubject("subject.application.edited", application.getPerson().getNiceName())
+                .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
+                .build();
+        } else {
+            mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
+                .withSubject("subject.application.edited.to_applicant_by_management", editor.getNiceName())
+                .withTemplate("application_edited_by_management_to_applicant", locale -> Map.of(APPLICATION, application, "editor", editor))
+                .build();
+        }
+        mailService.send(mailToApplicant);
 
         final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED);
         final Mail mailToManagement = Mail.builder()
