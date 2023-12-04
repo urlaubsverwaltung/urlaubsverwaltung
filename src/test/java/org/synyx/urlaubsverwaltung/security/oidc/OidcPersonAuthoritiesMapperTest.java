@@ -48,6 +48,26 @@ class OidcPersonAuthoritiesMapperTest {
         sut = new OidcPersonAuthoritiesMapper(personService);
     }
 
+
+    @Test
+    void ensureToCombineAuthoritiesFromOIDCWithDatabaseAuthorities() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        final Person personForLogin = new Person();
+        personForLogin.setPermissions(List.of(USER));
+        final Optional<Person> person = Optional.of(personForLogin);
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority, new SimpleGrantedAuthority("OFFICE")));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER", OFFICE.name());
+    }
+
     @Test
     void mapAuthoritiesFromIdToken() {
         final String uniqueID = "uniqueID";
@@ -64,7 +84,7 @@ class OidcPersonAuthoritiesMapperTest {
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
-        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER");
     }
 
     @Test
@@ -85,7 +105,7 @@ class OidcPersonAuthoritiesMapperTest {
         when(personService.getPersonByMailAddress(email)).thenReturn(person);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
-        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), "OIDC_USER");
     }
 
     @Test

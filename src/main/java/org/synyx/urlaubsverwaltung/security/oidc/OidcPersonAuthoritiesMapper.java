@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -38,13 +39,16 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     @Override
     public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        return authorities
+
+        final Collection<? extends GrantedAuthority> applicationAuthorities = authorities
             .stream()
             .filter(OidcUserAuthority.class::isInstance)
             .findFirst()
             .map(OidcUserAuthority.class::cast)
             .map(this::mapAuthorities)
             .orElseThrow(() -> new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped."));
+
+        return Stream.concat(applicationAuthorities.stream(), authorities.stream()).toList();
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
