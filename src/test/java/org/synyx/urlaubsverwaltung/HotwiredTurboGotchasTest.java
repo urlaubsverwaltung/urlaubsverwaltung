@@ -85,6 +85,6 @@ class HotwiredTurboGotchasTest {
     }
 
     private static Predicate<List<JavaClass>> javaClassesContains(Class<?> clazz) {
-        return javaClasses -> javaClasses.stream().anyMatch(javaClass -> javaClass.isAssignableFrom(clazz));
+        return javaClasses -> javaClasses.stream().anyMatch(javaClass -> javaClass.isAssignableTo(clazz));
     }
 }
