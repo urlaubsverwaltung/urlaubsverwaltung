@@ -53,13 +53,13 @@ springdoc:
     disable-swagger-default-url: true
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
   endpoint:
     prometheus:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: info, health
 
 info:
   app:

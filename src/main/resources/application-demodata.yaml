@@ -55,3 +55,14 @@ launchpad:
       en: urlaubsverwaltung.cloud
     url: https://urlaubsverwaltung.cloud
   name-default-locale: de
+
+management:
+  server:
+    port: 8081
+  endpoint:
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, metrics
