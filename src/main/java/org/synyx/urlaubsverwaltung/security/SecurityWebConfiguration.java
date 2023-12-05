@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
@@ -40,11 +39,20 @@ class SecurityWebConfiguration {
     }
 
     @Bean
+    @Order(2)
+    SecurityFilterChain actuatorSecurityFilterChain(final HttpSecurity http) throws Exception {
+        return http
+            .securityMatcher(EndpointRequest.toAnyEndpoint())
+            .authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
+            .build();
+    }
+
+    @Bean
     SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
 
         http
-            .authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
+            .authorizeHttpRequests(requests ->
+                requests
                     // Swagger API
                     .requestMatchers("/api", "/api/", "/swagger-ui/index.html").hasAuthority(USER.name())
                     // Assets
@@ -69,10 +77,6 @@ class SecurityWebConfiguration {
                     .requestMatchers("/web/person/**").hasAuthority(USER.name())
                     .requestMatchers("/web/sicknote/**").hasAuthority(USER.name())
                     .requestMatchers("/web/settings/**").hasAuthority(OFFICE.name())
-                    .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
-                    .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
-                    // TODO muss konfigurierbar werden!
-                    .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority("ADMIN")
                     .anyRequest().authenticated()
             );
 

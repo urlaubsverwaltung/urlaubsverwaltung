@@ -25,8 +25,8 @@ class RestApiSecurityConfig {
         return http
             .securityMatcher("/api/**")
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
+            .authorizeHttpRequests(requests ->
+                requests
                     .requestMatchers("/api/**").hasAuthority(USER.name())
                     .anyRequest().authenticated()
             ).sessionManagement(
