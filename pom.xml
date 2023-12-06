@@ -20,7 +20,7 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>21</java.version>
     <uv-extension-api.version>0.9.0</uv-extension-api.version>
-    <jollyday.version>0.21.0</jollyday.version>
+    <jollyday.version>0.22.0</jollyday.version>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>

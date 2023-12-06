@@ -19,7 +19,8 @@
     <ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
     <ChristianHoliday type="EASTER_MONDAY" validFrom="1642" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
   </Holidays>
-  <SubConfigurations hierarchy="bz" description="Südtirol">
+
+  <SubConfigurations hierarchy="32" description="Südtirol">
     <Holidays>
       <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
     </Holidays>
