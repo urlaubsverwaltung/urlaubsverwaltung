@@ -22,56 +22,56 @@
     <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
   </Holidays>
 
-  <SubConfigurations hierarchy="b" description="Burgenland">
+  <SubConfigurations hierarchy="1" description="Burgenland">
     <Holidays>
       <Fixed month="NOVEMBER" day="11" descriptionPropertiesKey="MARTINS_DAY"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="k" description="Kärnten">
+  <SubConfigurations hierarchy="2" description="Kärnten">
     <Holidays>
       <Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
       <Fixed month="OCTOBER" day="10" descriptionPropertiesKey="PLEBISCITE"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="la" description="Niederösterreich">
+  <SubConfigurations hierarchy="3" description="Niederösterreich">
     <Holidays>
       <Fixed month="NOVEMBER" day="15" descriptionPropertiesKey="LEOPOLD"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="ua" description="Oberösterreich">
+  <SubConfigurations hierarchy="4" description="Oberösterreich">
     <Holidays>
       <Fixed month="MAY" day="4" descriptionPropertiesKey="FLORIAN"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="s" description="Salzburg">
+  <SubConfigurations hierarchy="5" description="Salzburg">
     <Holidays>
       <Fixed month="SEPTEMBER" day="24" descriptionPropertiesKey="RUPERT"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="st" description="Steiermark">
+  <SubConfigurations hierarchy="6" description="Steiermark">
     <Holidays>
       <Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="t" description="Tirol">
+  <SubConfigurations hierarchy="7" description="Tirol">
     <Holidays>
       <Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="va" description="Vorarlberg">
+  <SubConfigurations hierarchy="8" description="Vorarlberg">
     <Holidays>
       <Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </Holidays>
   </SubConfigurations>
 
-  <SubConfigurations hierarchy="w" description="Wien">
+  <SubConfigurations hierarchy="9" description="Wien">
     <Holidays>
       <Fixed month="NOVEMBER" day="15" descriptionPropertiesKey="LEOPOLD"/>
     </Holidays>
