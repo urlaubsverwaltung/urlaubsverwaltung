@@ -7,10 +7,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSyncProvider;
 
 @Component
 public class SettingsCalendarSyncValidator implements Validator {
@@ -26,13 +26,17 @@ public class SettingsCalendarSyncValidator implements Validator {
     }
 
     @Override
-    public void validate(Object o, @NonNull Errors errors) {
-        final SettingsCalendarSyncDto settings = (SettingsCalendarSyncDto) o;
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
+        final SettingsCalendarSyncDto settings = (SettingsCalendarSyncDto) target;
         validateCalendarSettings(settings.getCalendarSettings(), errors);
     }
 
 
     private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
+
+        if (calendarSettings.getProvider() == null) {
+            return;
+        }
 
         if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
             validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);

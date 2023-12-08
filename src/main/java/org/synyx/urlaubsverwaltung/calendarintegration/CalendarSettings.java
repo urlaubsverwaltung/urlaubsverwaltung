@@ -7,7 +7,6 @@ import jakarta.persistence.Embeddable;
 /**
  * Settings to sync absences with a calendar provider.
  */
-@Deprecated(since = "4.0.0", forRemoval = true)
 @Embeddable
 public class CalendarSettings {
 
@@ -16,7 +15,7 @@ public class CalendarSettings {
     private ExchangeCalendarSettings exchangeCalendarSettings = new ExchangeCalendarSettings();
 
     @Column(name = "calendar_provider")
-    private String provider = "NoopCalendarSyncProvider";
+    private String provider;
 
     public ExchangeCalendarSettings getExchangeCalendarSettings() {
         return exchangeCalendarSettings;

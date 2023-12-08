@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.providers.google;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.util.DateTime;
@@ -10,10 +10,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +21,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
 
-@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class GoogleCalendarSyncProvider implements CalendarProvider {
 
@@ -39,14 +34,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     private Optional<Calendar> maybeCalendarClient;
 
     @Autowired
-    public GoogleCalendarSyncProvider(CalendarMailService calendarMailService, GoogleCalendarClientProvider googleCalendarClientProvider) {
+    GoogleCalendarSyncProvider(CalendarMailService calendarMailService, GoogleCalendarClientProvider googleCalendarClientProvider) {
         this.calendarMailService = calendarMailService;
         this.googleCalendarClientProvider = googleCalendarClientProvider;
-    }
-
-    @Override
-    public boolean isRealProviderConfigured() {
-        return true;
     }
 
     @Override
@@ -105,7 +95,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     }
 
     @Override
-    public void delete(String eventId, CalendarSettings calendarSettings) {
+    public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
@@ -115,11 +105,14 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             try {
                 maybeCalendarClient.get().events().delete(calendarId, eventId).execute();
                 LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
+                return Optional.of(eventId);
             } catch (IOException ex) {
                 LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
                 calendarMailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
+                return Optional.empty();
             }
         }
+        return Optional.empty();
     }
 
     @Override

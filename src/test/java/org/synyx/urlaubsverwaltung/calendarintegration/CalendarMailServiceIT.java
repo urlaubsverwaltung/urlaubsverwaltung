@@ -45,21 +45,21 @@ class CalendarMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
-        Absence absence = mock(Absence.class);
+        final Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Synchronisieren des Kalenders");
 
-        String content = (String) msg.getContent();
+        final String content = (String) msg.getContent();
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("Calendar sync failed");
         assertThat(content).contains(person.getNiceName());
@@ -72,21 +72,21 @@ class CalendarMailServiceIT extends TestContainersBase {
         final Person person = new Person();
         person.setFirstName("Henry");
 
-        Absence absence = mock(Absence.class);
+        final Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Aktualisieren eines Kalendereintrags");
 
-        String content = (String) msg.getContent();
+        final String content = (String) msg.getContent();
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("ID-123456");
         assertThat(content).contains("event update failed");
@@ -99,14 +99,14 @@ class CalendarMailServiceIT extends TestContainersBase {
 
         sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Löschen eines Kalendereintrags");
 
-        String content = (String) msg.getContent();
+        final String content = (String) msg.getContent();
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("ID-123456");
         assertThat(content).contains("event delete failed");

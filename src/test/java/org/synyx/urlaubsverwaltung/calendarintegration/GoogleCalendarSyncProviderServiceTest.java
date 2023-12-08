@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.providers.google;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -11,9 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -39,12 +36,6 @@ class GoogleCalendarSyncProviderServiceTest {
 
     @Captor
     private ArgumentCaptor<Event> eventArgumentCaptor;
-
-    @Test
-    void isRealProviderConfigured() {
-        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(calendarMailService, googleCalendarClientProvider);
-        assertThat(sut.isRealProviderConfigured()).isTrue();
-    }
 
     @Test
     void ensureAddAbsence() throws IOException {

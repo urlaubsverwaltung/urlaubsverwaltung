@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
 import java.time.Clock;
 import java.util.List;
@@ -266,11 +266,6 @@ class SettingsCalendarSyncViewControllerTest {
     private static class SomeCalendarProvider implements CalendarProvider {
 
         @Override
-        public boolean isRealProviderConfigured() {
-            return true;
-        }
-
-        @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
@@ -281,7 +276,7 @@ class SettingsCalendarSyncViewControllerTest {
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
@@ -294,11 +289,6 @@ class SettingsCalendarSyncViewControllerTest {
     private static class AnotherCalendarProvider implements CalendarProvider {
 
         @Override
-        public boolean isRealProviderConfigured() {
-            return true;
-        }
-
-        @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
@@ -309,7 +299,7 @@ class SettingsCalendarSyncViewControllerTest {
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 

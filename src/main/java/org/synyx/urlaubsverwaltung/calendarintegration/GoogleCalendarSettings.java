@@ -9,7 +9,6 @@ import java.util.Objects;
 /**
  * Settings to sync absences with a Google calendar.
  */
-@Deprecated(since = "4.0.0", forRemoval = true)
 @Embeddable
 public class GoogleCalendarSettings {
 

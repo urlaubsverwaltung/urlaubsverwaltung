@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.exception.service.remote.ServiceRequestException;

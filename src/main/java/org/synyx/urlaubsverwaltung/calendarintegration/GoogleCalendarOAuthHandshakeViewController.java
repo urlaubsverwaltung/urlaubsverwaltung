@@ -35,7 +35,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Controller
 @RequestMapping("/web")
-@Deprecated
 public class GoogleCalendarOAuthHandshakeViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -75,8 +74,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
         try {
             TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
             Credential credential = flow.createAndStoreCredential(response, "userID");
-            com.google.api.services.calendar.Calendar client =
-                new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
+            Calendar client = new Calendar.Builder(httpTransport, JSON_FACTORY, credential)
                     .setApplicationName(APPLICATION_NAME).build();
 
             Settings settings = settingsService.getSettings();

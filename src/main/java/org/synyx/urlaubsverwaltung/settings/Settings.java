@@ -38,7 +38,6 @@ public class Settings {
     private TimeSettings timeSettings = new TimeSettings();
     private SickNoteSettings sickNoteSettings = new SickNoteSettings();
     private AvatarSettings avatarSettings = new AvatarSettings();
-    @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings = new CalendarSettings();
 
 
@@ -86,7 +85,6 @@ public class Settings {
         return calendarSettings;
     }
 
-    @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
         this.calendarSettings = calendarSettings;
     }

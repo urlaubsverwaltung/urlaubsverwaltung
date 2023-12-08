@@ -5,13 +5,12 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.MailTemplateModelSupplier;
 
-import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
-public class CalendarMailService {
+class CalendarMailService {
 
     private static final String CALENDAR = "calendar";
     private static final String EXCEPTION = "exception";
@@ -30,17 +29,18 @@ public class CalendarMailService {
      * @param exception    describes the error
      */
     @Async
-    public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
+    void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(CALENDAR, calendarName);
-        model.put("absence", absence);
-        model.put(EXCEPTION, exception);
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+            CALENDAR, calendarName,
+            "absence", absence,
+            EXCEPTION, exception
+        );
 
         final Mail mailToTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.sync")
-            .withTemplate("calendar_error_sync", locale -> model)
+            .withTemplate("calendar_error_sync", modelSupplier)
             .build();
         mailService.send(mailToTechnical);
     }
@@ -54,19 +54,19 @@ public class CalendarMailService {
      * @param exception    describes the error
      */
     @Async
-    public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
-                                                    String exception) {
+    void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId, String exception) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(CALENDAR, calendarName);
-        model.put("absence", absence);
-        model.put("eventId", eventId);
-        model.put(EXCEPTION, exception);
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+            CALENDAR, calendarName,
+            "absence", absence,
+            "eventId", eventId,
+            EXCEPTION, exception
+        );
 
         final Mail toTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.update")
-            .withTemplate("calendar_error_update", locale -> model)
+            .withTemplate("calendar_error_update", modelSupplier)
             .build();
         mailService.send(toTechnical);
     }
@@ -79,17 +79,18 @@ public class CalendarMailService {
      * @param exception    describes the error
      */
     @Async
-    public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
+    void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(CALENDAR, calendarName);
-        model.put("eventId", eventId);
-        model.put(EXCEPTION, exception);
+        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+            CALENDAR, calendarName,
+            "eventId", eventId,
+            EXCEPTION, exception
+        );
 
         final Mail toTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.delete")
-            .withTemplate("calendar_error_delete", locale -> model)
+            .withTemplate("calendar_error_delete", modelSupplier)
             .build();
         mailService.send(toTechnical);
     }

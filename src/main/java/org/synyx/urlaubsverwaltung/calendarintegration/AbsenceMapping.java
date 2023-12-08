@@ -15,7 +15,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
  */
-@Deprecated(since = "4.26.0", forRemoval = true)
 @Entity
 public class AbsenceMapping {
 
@@ -39,7 +38,7 @@ public class AbsenceMapping {
         /* OK */
     }
 
-    public AbsenceMapping(Long absenceId, AbsenceMappingType absenceMappingType, String eventId) {
+    AbsenceMapping(Long absenceId, AbsenceMappingType absenceMappingType, String eventId) {
         this.absenceId = absenceId;
         this.absenceMappingType = absenceMappingType;
         this.eventId = eventId;
