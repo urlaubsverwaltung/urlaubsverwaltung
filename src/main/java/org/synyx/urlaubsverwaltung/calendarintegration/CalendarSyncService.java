@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -49,56 +50,67 @@ class CalendarSyncService {
         LOG.debug("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
     }
 
+    @Async
     @EventListener
     void consumeApplicationAppliedEvent(ApplicationAppliedEvent event) {
         addCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeApplicationAllowedEvent(ApplicationAllowedEvent event) {
         addCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeApplicationRejectedEvent(ApplicationRejectedEvent event) {
         deleteCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeApplicationRevokedEvent(ApplicationRevokedEvent event) {
         deleteCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeApplicationCancelledEvent(ApplicationCancelledEvent event) {
         deleteCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeApplicationDeletedEvent(ApplicationDeletedEvent event) {
         deleteCalendarEntry(event.getApplication());
     }
 
+    @Async
     @EventListener
     void consumeSickNoteCancelledEvent(SickNoteCancelledEvent event) {
         deleteCalendarEntry(event.getSickNote());
     }
 
+    @Async
     @EventListener
     void consumeSickNoteDeletedEvent(SickNoteDeletedEvent event) {
         deleteCalendarEntry(event.getSickNote());
     }
 
+    @Async
     @EventListener
     void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
         update(event.getSickNote());
     }
 
+    @Async
     @EventListener
     void consumeSickNoteCreatedEvent(SickNoteCreatedEvent event) {
         addCalendarEntry(event.getSickNote());
     }
 
+    @Async
     @EventListener
     void consumeSickNoteToApplicationConvertedEvent(SickNoteToApplicationConvertedEvent event) {
         deleteCalendarEntry(event.getSickNote());
