@@ -99,7 +99,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void linkCompanyCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -180,7 +180,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void unlinkCompanyCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -243,7 +243,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void enableCompanyCalendarFeatureIsForbidden(final String role) throws Exception {
 
         perform(

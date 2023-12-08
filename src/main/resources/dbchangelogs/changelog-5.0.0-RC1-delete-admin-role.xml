@@ -3,8 +3,14 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-  <include relativeToChangelogFile="true" file="changelog-5.0.0-M1-initial.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-5.0.0-M4-add-custom-vacation-type.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-5.0.0-unique-department-names.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-5.0.0-RC1-delete-admin-role.xml"/>
+  <changeSet author="schneider" id="delete-admin-role">
+
+    <preConditions>
+      <tableExists tableName="person_permissions"/>
+    </preConditions>
+
+    <delete tableName="person_permissions">
+      <where>permissions = 'ADMIN'</where>
+    </delete>
+  </changeSet>
 </databaseChangeLog>

@@ -142,7 +142,6 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes(EMAIL_DAMPF);
                 createDemoApplicationsAndSickNotes(EMAIL_SCHMIDT);
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
-
                 break;
             case EMAIL_OFFICE:
                 final Person office = personDataProvider.updateTestPerson(5, email, List.of(Role.USER, Role.OFFICE), PERSON_NOTIFICATIONS);
@@ -155,35 +154,35 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
                 break;
             case "admin@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(5, email, List.of(Role.USER, Role.ADMIN), List.of());
+                personDataProvider.updateTestPerson(5, email, List.of(Role.USER), List.of());
                 break;
             case EMAIL_DAMPF:
-                final Person dampf = personDataProvider.updateTestPerson(6, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person dampf = personDataProvider.updateTestPerson(6, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, dampf);
                 createDemoApplicationsAndSickNotes(EMAIL_DAMPF);
                 break;
             case "baier@urlaubsverwaltung.cloud":
-                final Person baier = personDataProvider.updateTestPerson(7, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person baier = personDataProvider.updateTestPerson(7, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, baier);
                 break;
             case "schneider@urlaubsverwaltung.cloud":
-                final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, schneider);
                 break;
             case "haendel@urlaubsverwaltung.cloud":
-                final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, haendel);
                 break;
             case EMAIL_SCHMIDT:
-                final Person schmidt = personDataProvider.updateTestPerson(10, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person schmidt = personDataProvider.updateTestPerson(10, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, schmidt);
                 createDemoApplicationsAndSickNotes(EMAIL_SCHMIDT);
                 break;
             case "hdieter@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(11, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(11, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 break;
             default:
-                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 break;
         }
     }

@@ -24,7 +24,6 @@ class PersonPermissionsMapperTest {
             arguments(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY, List.of(Role.SECOND_STAGE_AUTHORITY)),
             arguments(PersonPermissionsRoleDto.BOSS, List.of(Role.BOSS)),
             arguments(PersonPermissionsRoleDto.OFFICE, List.of(Role.OFFICE)),
-            arguments(PersonPermissionsRoleDto.ADMIN, List.of(Role.ADMIN)),
             arguments(PersonPermissionsRoleDto.INACTIVE, List.of(Role.INACTIVE)),
             arguments(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT, List.of(
                 Role.SICK_NOTE_VIEW,
@@ -63,7 +62,6 @@ class PersonPermissionsMapperTest {
             arguments(Role.SECOND_STAGE_AUTHORITY, List.of(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY)),
             arguments(Role.BOSS, List.of(PersonPermissionsRoleDto.BOSS)),
             arguments(Role.OFFICE, List.of(PersonPermissionsRoleDto.OFFICE)),
-            arguments(Role.ADMIN, List.of(PersonPermissionsRoleDto.ADMIN)),
             arguments(Role.INACTIVE, List.of(PersonPermissionsRoleDto.INACTIVE)),
             arguments(Role.SICK_NOTE_VIEW, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
             arguments(Role.SICK_NOTE_ADD, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),

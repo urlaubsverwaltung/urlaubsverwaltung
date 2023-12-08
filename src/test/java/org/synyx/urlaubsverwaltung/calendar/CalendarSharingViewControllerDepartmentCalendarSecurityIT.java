@@ -77,7 +77,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void indexIsForbidden(final String role) throws Exception {
 
         perform(
@@ -212,7 +212,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void linkDepartmentCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -299,7 +299,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void unlinkDepartmentCalendarIsForbidden(final String role) throws Exception {
 
         perform(post("/web/calendars/share/persons/1/departments/2")

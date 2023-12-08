@@ -48,7 +48,7 @@ class PersonBasedataViewControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE", "USER"})
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "INACTIVE", "USER"})
     void ensuresAuthorizedPersonWithIncorrectRoleCannotAccess(final String role) throws Exception {
         perform(get("/web/person/1/basedata")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role))))
@@ -84,7 +84,7 @@ class PersonBasedataViewControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE", "USER"})
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "INACTIVE", "USER"})
     void ensuresAuthorizedPersonWithoutRoleCannotPost(final String role) throws Exception {
         perform(
             post("/web/person/1/basedata")

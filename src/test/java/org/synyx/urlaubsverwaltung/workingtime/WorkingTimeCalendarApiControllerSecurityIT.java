@@ -98,7 +98,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "INACTIVE"})
     void getWorkdaysIsForbiddenFor(final String role) throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
