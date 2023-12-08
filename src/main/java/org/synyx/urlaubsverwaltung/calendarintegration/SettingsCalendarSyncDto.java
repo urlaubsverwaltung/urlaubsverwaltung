@@ -1,6 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
-
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import java.util.Objects;
 

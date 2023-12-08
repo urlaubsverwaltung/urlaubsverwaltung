@@ -1,13 +1,8 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSyncProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

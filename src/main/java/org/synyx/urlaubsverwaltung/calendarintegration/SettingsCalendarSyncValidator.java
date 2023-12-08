@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.lang.NonNull;
@@ -6,11 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSyncProvider;
 
 @Component
 public class SettingsCalendarSyncValidator implements Validator {

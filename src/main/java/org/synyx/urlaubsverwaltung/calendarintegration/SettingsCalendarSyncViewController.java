@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.util.List;
