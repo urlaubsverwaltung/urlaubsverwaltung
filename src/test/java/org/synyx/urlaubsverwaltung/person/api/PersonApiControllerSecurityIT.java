@@ -68,7 +68,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "INACTIVE"})
     void ensureAccessIsForbiddenForOtherUsersOnSpecificPerson(final String role) throws Exception {
         perform(get("/api/persons/1")
                 .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
@@ -157,7 +157,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void ensureAccessIsForbiddenForOtherOnPersonsUsers(final String role) throws Exception {
         perform(get("/api/persons")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
@@ -181,7 +181,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "INACTIVE"})
     void ensureAccessIsForbiddenForUserWithoutRolePersonAdd(final String role) throws Exception {
         perform(post("/api/persons")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))

@@ -40,7 +40,6 @@ final class PersonPermissionsMapper {
                 case SECOND_STAGE_AUTHORITY -> mappedToRoles.add(Role.SECOND_STAGE_AUTHORITY);
                 case BOSS -> mappedToRoles.add(Role.BOSS);
                 case OFFICE -> mappedToRoles.add(Role.OFFICE);
-                case ADMIN -> mappedToRoles.add(Role.ADMIN);
                 case INACTIVE -> mappedToRoles.add(Role.INACTIVE);
                 case SICK_NOTE_VIEW_ADD_EDIT -> {
                     mappedToRoles.add(Role.SICK_NOTE_VIEW);
@@ -69,7 +68,6 @@ final class PersonPermissionsMapper {
                 case SECOND_STAGE_AUTHORITY -> mappedToRolesDto.add(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY);
                 case BOSS -> mappedToRolesDto.add(PersonPermissionsRoleDto.BOSS);
                 case OFFICE -> mappedToRolesDto.add(PersonPermissionsRoleDto.OFFICE);
-                case ADMIN -> mappedToRolesDto.add(PersonPermissionsRoleDto.ADMIN);
                 case INACTIVE -> mappedToRolesDto.add(PersonPermissionsRoleDto.INACTIVE);
                 case SICK_NOTE_VIEW, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT);

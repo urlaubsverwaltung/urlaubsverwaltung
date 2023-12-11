@@ -58,7 +58,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE", "INACTIVE"})
     void ensureGetHolidaysForOtherUserIsOk(final String role) throws Exception {
         perform(
             get("/api/public-holidays")
@@ -78,7 +78,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "INACTIVE"})
     void ensuresPersonsPublicHolidaysForOtherUserIsForbidden(final String role) throws Exception {
         perform(
             get("/api/persons/1/public-holidays")

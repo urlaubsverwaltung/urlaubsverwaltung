@@ -7,7 +7,6 @@ public enum PersonPermissionsRoleDto {
     SECOND_STAGE_AUTHORITY,
     BOSS,
     OFFICE,
-    ADMIN,
     INACTIVE,
     APPLICATION_ADD_CANCEL,
     SICK_NOTE_VIEW_ADD_EDIT

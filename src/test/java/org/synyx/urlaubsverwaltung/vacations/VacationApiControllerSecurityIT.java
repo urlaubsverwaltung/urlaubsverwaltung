@@ -114,7 +114,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "INACTIVE"})
     void getVacationsForOtherUserIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
 
@@ -299,7 +299,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"INACTIVE"})
     void getVacationsOfDepartmentMembersAsAdminUserForOtherUserIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
 

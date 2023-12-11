@@ -71,7 +71,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void ensureIndexAsWithIncorrectRoleIsForbidden(final String role) throws Exception {
         perform(get("/web/calendars/share/persons/1")
             .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role))))
@@ -124,7 +124,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void linkPrivateCalendarIsForbidden(final String role) throws Exception {
 
         perform(
@@ -136,7 +136,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "OFFICE", "BOSS", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "OFFICE", "BOSS", "INACTIVE"})
     void linkPrivateCalendarAsOfficeUserForOtherUserIsOk(final String role) throws Exception {
 
         final Person person = new Person();
@@ -181,7 +181,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void unlinkPrivateCalendarAsDepartmentHeadIsForbidden(final String role) throws Exception {
 
         perform(

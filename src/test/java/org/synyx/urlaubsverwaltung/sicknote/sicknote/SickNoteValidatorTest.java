@@ -34,7 +34,6 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.person.Role.ADMIN;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -84,7 +83,7 @@ class SickNoteValidatorTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
-        applier.setPermissions(List.of(USER, ADMIN));
+        applier.setPermissions(List.of(USER));
 
         final SickNote sickNote = SickNote.builder()
             .person(person)

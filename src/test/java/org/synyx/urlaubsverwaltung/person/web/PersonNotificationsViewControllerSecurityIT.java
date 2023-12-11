@@ -96,7 +96,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void personNotificationIsForbidden(final String role) throws Exception {
         perform(
             get("/web/person/1/notifications")
@@ -196,7 +196,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE"})
     void personChangeNotificationIsForbidden(final String role) throws Exception {
         perform(
             post("/web/person/1/notifications")
