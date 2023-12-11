@@ -7,7 +7,6 @@ import org.springframework.validation.Errors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 class SettingsCalendarSyncValidatorTest {
 
@@ -26,77 +25,6 @@ class SettingsCalendarSyncValidatorTest {
     @Test
     void ensureOtherClassThanSettingsIsNotSupported() {
         assertThat(sut.supports(Object.class)).isFalse();
-    }
-
-    // Exchange calendar settings --------------------------------------------------------------------------------------
-    @Test
-    void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
-
-        final ExchangeCalendarSettings exchangeCalendarSettings = new ExchangeCalendarSettings();
-        exchangeCalendarSettings.setEmail(null);
-        exchangeCalendarSettings.setPassword(null);
-        exchangeCalendarSettings.setCalendar(null);
-
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        calendarSettings.setExchangeCalendarSettings(exchangeCalendarSettings);
-
-        final SettingsCalendarSyncDto dto = new SettingsCalendarSyncDto();
-        dto.setCalendarSettings(calendarSettings);
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verifyNoInteractions(mockError);
-    }
-
-    @Test
-    void ensureExchangeCalendarSettingsAreMandatory() {
-
-        final ExchangeCalendarSettings exchangeCalendarSettings = new ExchangeCalendarSettings();
-        exchangeCalendarSettings.setEmail(null);
-        exchangeCalendarSettings.setPassword(null);
-        exchangeCalendarSettings.setCalendar(null);
-
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        calendarSettings.setExchangeCalendarSettings(exchangeCalendarSettings);
-        calendarSettings.setProvider(ExchangeCalendarProvider.class.getSimpleName());
-
-        final SettingsCalendarSyncDto dto = new SettingsCalendarSyncDto();
-        dto.setCalendarSettings(calendarSettings);
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
-    }
-
-    @Test
-    void ensureExchangeCalendarEmailMustHaveValidFormat() {
-
-        final ExchangeCalendarSettings exchangeCalendarSettings = new ExchangeCalendarSettings();
-        exchangeCalendarSettings.setEmail("synyx");
-        exchangeCalendarSettings.setPassword("top-secret");
-        exchangeCalendarSettings.setCalendar("Urlaub");
-
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        calendarSettings.setExchangeCalendarSettings(exchangeCalendarSettings);
-        calendarSettings.setProvider(ExchangeCalendarProvider.class.getSimpleName());
-
-        final SettingsCalendarSyncDto dto = new SettingsCalendarSyncDto();
-        dto.setCalendarSettings(calendarSettings);
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
     }
 
     @Test

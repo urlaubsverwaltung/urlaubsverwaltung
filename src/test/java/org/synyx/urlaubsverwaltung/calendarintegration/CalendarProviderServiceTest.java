@@ -16,8 +16,7 @@ class CalendarProviderServiceTest {
 
     static Stream<Arguments> data() {
         return Stream.of(
-            arguments(GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class),
-            arguments(ExchangeCalendarProvider.class, ExchangeCalendarProvider.class)
+            arguments(GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class)
         );
     }
 
@@ -43,7 +42,6 @@ class CalendarProviderServiceTest {
 
     private List<CalendarProvider> getTypicalProviderList() {
         return List.of(
-            new ExchangeCalendarProvider(null),
             new GoogleCalendarSyncProvider(null, null)
         );
     }

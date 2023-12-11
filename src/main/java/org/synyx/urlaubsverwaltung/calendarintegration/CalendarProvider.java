@@ -6,7 +6,7 @@ import java.util.Optional;
 
 
 /**
- * Syncs vacations and sick notes with calendar providers like Exchange or Google Calendar.
+ * Syncs vacations and sick notes with calendar providers like Google Calendar.
  */
 interface CalendarProvider {
 

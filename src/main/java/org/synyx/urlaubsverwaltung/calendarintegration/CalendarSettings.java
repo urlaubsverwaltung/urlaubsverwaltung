@@ -20,8 +20,6 @@ public class CalendarSettings {
 
     private GoogleCalendarSettings googleCalendarSettings = new GoogleCalendarSettings();
 
-    private ExchangeCalendarSettings exchangeCalendarSettings = new ExchangeCalendarSettings();
-
     @Column(name = "provider")
     private String provider;
 
@@ -31,14 +29,6 @@ public class CalendarSettings {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ExchangeCalendarSettings getExchangeCalendarSettings() {
-        return exchangeCalendarSettings;
-    }
-
-    public void setExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings) {
-        this.exchangeCalendarSettings = exchangeCalendarSettings;
     }
 
     public GoogleCalendarSettings getGoogleCalendarSettings() {

@@ -61,7 +61,7 @@ class SettingsCalendarSyncViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock);
+        sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
     }
 
     @Test
@@ -84,8 +84,8 @@ class SettingsCalendarSyncViewControllerTest {
 
         perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute("settings", allOf(
-                    hasProperty("id", is(42L)),
-                    hasProperty("calendarSettings", sameInstance(calendarSettings))
+                hasProperty("id", is(42L)),
+                hasProperty("calendarSettings", sameInstance(calendarSettings))
             )))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
@@ -136,34 +136,6 @@ class SettingsCalendarSyncViewControllerTest {
     }
 
     @Test
-    void ensureSettingsDetailsSetsDefaultExchangeTimeZoneIfNoneConfigured() throws Exception {
-
-        final CalendarSettings settings = someSettingsWithNoExchangeTimezone();
-        when(calendarSettingsService.getCalendarSettings()).thenReturn(settings);
-
-        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isNull();
-
-        perform(get("/web/settings/calendar-sync"));
-
-        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId())
-            .isEqualTo(clock.getZone().getId());
-    }
-
-    @Test
-    void ensureSettingsDetailsDoesNotAlterExchangeTimeZoneIfAlreadyConfigured() throws Exception {
-
-        final String timeZoneId = "XYZ";
-        final CalendarSettings settings = someSettingsWithExchangeTimeZone(timeZoneId);
-        when(calendarSettingsService.getCalendarSettings()).thenReturn(someSettingsWithExchangeTimeZone(timeZoneId));
-
-        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
-
-        perform(get("/web/settings/calendar-sync"));
-
-        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
-    }
-
-    @Test
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
         when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
         perform(get("/web/settings/calendar-sync"))
@@ -182,11 +154,6 @@ class SettingsCalendarSyncViewControllerTest {
         perform(
             post("/web/settings/calendar-sync")
                 .param("calendarSettings.provider", "NoopCalendarSyncProvider")
-                .param("calendarSettings.exchangeCalendarSettings.email", "")
-                .param("calendarSettings.exchangeCalendarSettings.password", "")
-                .param("calendarSettings.exchangeCalendarSettings.ewsUrl", "")
-                .param("calendarSettings.exchangeCalendarSettings.calendar", "")
-                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
                 .param("calendarSettings.googleCalendarSettings.clientId", "")
                 .param("calendarSettings.googleCalendarSettings.clientSecret", "")
                 .param("calendarSettings.googleCalendarSettings.calendarId", "")
@@ -231,16 +198,6 @@ class SettingsCalendarSyncViewControllerTest {
         )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/settings/calendar-sync"));
-    }
-
-    private static CalendarSettings someSettingsWithNoExchangeTimezone() {
-        return new CalendarSettings();
-    }
-
-    private static CalendarSettings someSettingsWithExchangeTimeZone(String timeZoneId) {
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        calendarSettings.getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
-        return calendarSettings;
     }
 
     private static CalendarSettings someSettingsWithoutGoogleCalendarRefreshToken() {

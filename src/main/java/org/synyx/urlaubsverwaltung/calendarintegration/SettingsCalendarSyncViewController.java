@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -30,19 +29,16 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
     private final CalendarSettingsService calendarSettingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsCalendarSyncValidator calendarSyncValidator;
-    private final Clock clock;
 
     @Autowired
     SettingsCalendarSyncViewController(
         CalendarSettingsService calendarSettingsService,
         List<CalendarProvider> calendarProviders,
-        SettingsCalendarSyncValidator calendarSyncValidator,
-        Clock clock
+        SettingsCalendarSyncValidator calendarSyncValidator
     ) {
         this.calendarSettingsService = calendarSettingsService;
         this.calendarProviders = calendarProviders;
         this.calendarSyncValidator = calendarSyncValidator;
-        this.clock = clock;
     }
 
     @GetMapping
@@ -112,11 +108,6 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
             .sorted(reverseOrder())
             .collect(toList());
         model.addAttribute("providers", providers);
-
-        final ExchangeCalendarSettings exchangeCalendarSettings = settingsDto.getCalendarSettings().getExchangeCalendarSettings();
-        if (exchangeCalendarSettings.getTimeZoneId() == null) {
-            exchangeCalendarSettings.setTimeZoneId(clock.getZone().getId());
-        }
     }
 
     private SettingsCalendarSyncDto settingsToDto(CalendarSettings calendarSettings) {
@@ -131,7 +122,6 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         final CalendarSettings calendarSettings = calendarSettingsService.getCalendarSettings();
         calendarSettings.setId(dto.getId());
         calendarSettings.setProvider(dto.getCalendarSettings().getProvider());
-        calendarSettings.setExchangeCalendarSettings(dto.getCalendarSettings().getExchangeCalendarSettings());
         calendarSettings.setGoogleCalendarSettings(dto.getCalendarSettings().getGoogleCalendarSettings());
         return calendarSettings;
     }

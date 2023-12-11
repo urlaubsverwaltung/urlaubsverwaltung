@@ -32,12 +32,6 @@
         <constraints nullable="false" primaryKey="true" primaryKeyName="calendar_integration_settings_pkey"/>
       </column>
       <column name="provider" type="text"/>
-      <column name="ews_calendar" type="text"/>
-      <column name="ews_email" type="text"/>
-      <column name="ews_url" type="text"/>
-      <column name="ews_password" type="text"/>
-      <column name="ews_send_invitation_active" type="boolean"/>
-      <column name="ews_timezoneid" type="text"/>
       <column name="google_calendar_id" type="text"/>
       <column name="google_client_id" type="text"/>
       <column name="google_client_secret" type="text"/>
@@ -47,16 +41,25 @@
     <insert tableName="calendar_integration_settings">
       <column name="id" valueNumeric="1"/>
       <column name="provider" valueComputed="(select calendar_provider from settings where id=1)"/>
-      <column name="ews_calendar" valueComputed="(select calendar_ews_calendar from settings where id=1)"/>
-      <column name="ews_email" valueComputed="(select calendar_ews_email from settings where id=1)"/>
-      <column name="ews_url" valueComputed="(select calendar_ews_url from settings where id=1)"/>
-      <column name="ews_password" valueComputed="(select calendar_ews_password from settings where id=1)"/>
-      <column name="ews_send_invitation_active" valueComputed="(select calendar_ews_send_invitation_active from settings where id=1)"/>
-      <column name="ews_timezoneid" valueComputed="(select calendar_ews_timezoneid from settings where id=1)"/>
       <column name="google_calendar_id" valueComputed="(select calendar_google_calendar_id from settings where id=1)"/>
       <column name="google_client_id" valueComputed="(select calendar_google_client_id from settings where id=1)"/>
-      <column name="google_client_secret" valueComputed="(select calendar_google_client_secret from settings where id=1)"/>
-      <column name="google_refresh_token" valueComputed="(select calendar_google_refresh_token from settings where id=1)"/>
+      <column name="google_client_secret"
+              valueComputed="(select calendar_google_client_secret from settings where id=1)"/>
+      <column name="google_refresh_token"
+              valueComputed="(select calendar_google_refresh_token from settings where id=1)"/>
     </insert>
+
+    <dropColumn tableName="settings" columnName="calendar_provider"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_calendar"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_email"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_url"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_password"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_timezoneid"/>
+    <dropColumn tableName="settings" columnName="calendar_google_calendar_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_secret"/>
+    <dropColumn tableName="settings" columnName="calendar_google_refresh_token"/>
+
   </changeSet>
 </databaseChangeLog>

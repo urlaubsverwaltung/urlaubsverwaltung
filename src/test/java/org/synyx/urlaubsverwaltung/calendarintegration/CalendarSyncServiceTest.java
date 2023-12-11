@@ -28,7 +28,7 @@ class CalendarSyncServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(calendarService.getCalendarProvider()).thenReturn(Optional.of(mock(ExchangeCalendarProvider.class)));
+        when(calendarService.getCalendarProvider()).thenReturn(Optional.of(mock(GoogleCalendarSyncProvider.class)));
         sut = new CalendarSyncService(settingsService, calendarSettingsService, calendarService, absenceMappingRepository);
     }
 
