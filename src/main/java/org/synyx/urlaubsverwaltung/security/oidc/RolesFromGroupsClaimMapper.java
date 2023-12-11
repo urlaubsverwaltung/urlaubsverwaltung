@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.security.oidc.RolesFromClaimMappersProperties.GroupClaimMapperProperties;
@@ -46,13 +45,12 @@ class RolesFromGroupsClaimMapper implements RolesFromClaimMapper {
 
         final GroupClaimMapperProperties groupClaim = properties.getGroupClaim();
 
+        final String neededResourceAccessRole = properties.getRolePrefix().concat(USER.name().toLowerCase());
         if (!claims.containsKey(groupClaim.getClaimName())) {
-            throw new AccessDeniedException(format("claim=%s is missing!", groupClaim.getClaimName()));
+            throw new MissingClaimAuthorityException(format("User has not required permission '%s' to access urlaubsverwaltung! The claim '%s' is missing!", neededResourceAccessRole, groupClaim.getClaimName()));
         }
 
         final List<String> groups = extractRolesFromClaimName(claims, groupClaim.getClaimName());
-        final String neededResourceAccessRole = properties.getRolePrefix().concat(USER.name().toLowerCase());
-
         if (groups.stream().noneMatch(neededResourceAccessRole::equals)) {
             throw new MissingClaimAuthorityException(format("User has not required permission '%s' to access urlaubsverwaltung!", neededResourceAccessRole));
         }

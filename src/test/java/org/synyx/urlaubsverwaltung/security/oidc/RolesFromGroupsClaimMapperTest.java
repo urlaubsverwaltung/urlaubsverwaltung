@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
@@ -95,7 +94,7 @@ class RolesFromGroupsClaimMapperTest {
         );
 
         assertThatThrownBy(() -> sut.mapClaimToRoles(claims))
-            .isInstanceOf(AccessDeniedException.class)
-            .hasMessageContaining("claim=groups is missing");
+            .isInstanceOf(MissingClaimAuthorityException.class)
+            .hasMessageContaining("User has not required permission 'urlaubsverwaltung_user' to access urlaubsverwaltung! The claim 'groups' is missing!");
     }
 }
