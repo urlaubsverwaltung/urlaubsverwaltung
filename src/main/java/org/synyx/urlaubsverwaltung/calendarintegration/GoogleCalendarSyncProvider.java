@@ -28,14 +28,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     private static final String DATE_PATTERN_YYYY_MM_DD = "yyyy-MM-dd";
 
-    private final CalendarMailService calendarMailService;
     private final GoogleCalendarClientProvider googleCalendarClientProvider;
 
     private Optional<Calendar> maybeCalendarClient;
 
     @Autowired
-    GoogleCalendarSyncProvider(CalendarMailService calendarMailService, GoogleCalendarClientProvider googleCalendarClientProvider) {
-        this.calendarMailService = calendarMailService;
+    GoogleCalendarSyncProvider(GoogleCalendarClientProvider googleCalendarClientProvider) {
         this.googleCalendarClientProvider = googleCalendarClientProvider;
     }
 
@@ -60,7 +58,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
             } catch (IOException ex) {
                 LOG.warn("An error occurred while trying to add appointment to calendar {}", calendarId, ex);
-                calendarMailService.sendCalendarSyncErrorNotification(calendarId, absence, ex.toString());
             }
         }
         return Optional.empty();
@@ -89,7 +86,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
             } catch (IOException ex) {
                 LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
-                calendarMailService.sendCalendarUpdateErrorNotification(calendarId, absence, eventId, ex.getMessage());
             }
         }
     }
@@ -108,7 +104,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 return Optional.of(eventId);
             } catch (IOException ex) {
                 LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
-                calendarMailService.sendCalendarDeleteErrorNotification(calendarId, eventId, ex.getMessage());
                 return Optional.empty();
             }
         }

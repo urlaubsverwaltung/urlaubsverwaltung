@@ -100,13 +100,5 @@ public class TurnOfTheYearAccountUpdaterService {
             .withTemplate(templateName, locale -> model)
             .build();
         mailService.send(mailToOffice);
-
-        // send email to manager to notify about update of accounts
-        final Mail mailToTechnical = Mail.builder()
-            .withTechnicalRecipient(true)
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> model)
-            .build();
-        mailService.send(mailToTechnical);
     }
 }

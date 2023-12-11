@@ -42,7 +42,7 @@ class CalendarProviderServiceTest {
 
     private List<CalendarProvider> getTypicalProviderList() {
         return List.of(
-            new GoogleCalendarSyncProvider(null, null)
+            new GoogleCalendarSyncProvider(null)
         );
     }
 }

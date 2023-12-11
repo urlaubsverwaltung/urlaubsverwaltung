@@ -14,7 +14,6 @@ import java.util.Optional;
 public class Mail {
 
     private final List<Person> mailAddressRecipients;
-    private final boolean sendToTechnicalMail;
 
     private final String templateName;
     private final MailTemplateModelSupplier templateModelSupplier;
@@ -24,11 +23,15 @@ public class Mail {
 
     private final List<MailAttachment> mailAttachments;
 
-    Mail(List<Person> mailAddressRecipients, boolean sendToTechnicalMail,
-         String templateName, MailTemplateModelSupplier templateModelSupplier, String subjectMessageKey,
-         Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
+    Mail(
+        List<Person> mailAddressRecipients,
+        String templateName,
+        MailTemplateModelSupplier templateModelSupplier,
+        String subjectMessageKey,
+        Object[] subjectMessageArguments,
+        List<MailAttachment> mailAttachments
+    ) {
         this.mailAddressRecipients = mailAddressRecipients;
-        this.sendToTechnicalMail = sendToTechnicalMail;
         this.templateName = templateName;
         this.templateModelSupplier = templateModelSupplier;
         this.subjectMessageKey = subjectMessageKey;
@@ -38,10 +41,6 @@ public class Mail {
 
     public Optional<List<Person>> getMailAddressRecipients() {
         return Optional.ofNullable(mailAddressRecipients);
-    }
-
-    public boolean isSendToTechnicalMail() {
-        return sendToTechnicalMail;
     }
 
     public String getTemplateName() {
@@ -74,7 +73,6 @@ public class Mail {
     public static class Builder {
 
         private final List<Person> mailAddressRecipients = new ArrayList<>();
-        private boolean sendToTechnicalMail;
 
         private String templateName;
         private MailTemplateModelSupplier templateModelSupplier = locale -> new HashMap<>();
@@ -83,11 +81,6 @@ public class Mail {
         private Object[] subjectMessageArguments;
 
         private List<MailAttachment> mailAttachments;
-
-        public Mail.Builder withTechnicalRecipient(boolean sendToTechnicalMail) {
-            this.sendToTechnicalMail = sendToTechnicalMail;
-            return this;
-        }
 
         public Mail.Builder withRecipient(final Person recipient) {
             withRecipient(List.of(recipient));
@@ -132,9 +125,14 @@ public class Mail {
         }
 
         public Mail build() {
-            return new Mail(mailAddressRecipients, sendToTechnicalMail,
-                templateName, templateModelSupplier, subjectMessageKey, subjectMessageArguments,
-                mailAttachments);
+            return new Mail(
+                mailAddressRecipients,
+                templateName,
+                templateModelSupplier,
+                subjectMessageKey,
+                subjectMessageArguments,
+                mailAttachments
+            );
         }
     }
 }

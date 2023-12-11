@@ -30,8 +30,6 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 class GoogleCalendarSyncProviderServiceTest {
 
     @Mock
-    private CalendarMailService calendarMailService;
-    @Mock
     private GoogleCalendarClientProvider googleCalendarClientProvider;
 
     @Captor
@@ -41,7 +39,7 @@ class GoogleCalendarSyncProviderServiceTest {
     void ensureAddAbsence() throws IOException {
 
         final CalendarSettings calendarSettings = prepareCalendarSettings();
-        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(calendarMailService, googleCalendarClientProvider);
+        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(googleCalendarClientProvider);
 
         final Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         final Period period = new Period(LocalDate.parse("2022-08-25"), LocalDate.parse("2022-08-26"), FULL);
@@ -74,7 +72,7 @@ class GoogleCalendarSyncProviderServiceTest {
     void ensureUpdateAbsence() throws IOException {
 
         final CalendarSettings calendarSettings = prepareCalendarSettings();
-        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(calendarMailService, googleCalendarClientProvider);
+        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(googleCalendarClientProvider);
 
         final Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(new TimeSettings());
@@ -108,10 +106,7 @@ class GoogleCalendarSyncProviderServiceTest {
     void ensureDeleteAbsence() throws IOException {
 
         final CalendarSettings calendarSettings = prepareCalendarSettings();
-        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(calendarMailService, googleCalendarClientProvider);
-
-        final Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
-        final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(new TimeSettings());
+        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(googleCalendarClientProvider);
 
         final Calendar calendarClient = mock(Calendar.class);
         when(googleCalendarClientProvider.getCalendarClient(calendarSettings.getGoogleCalendarSettings())).thenReturn(Optional.of(calendarClient));

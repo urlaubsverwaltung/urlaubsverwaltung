@@ -1,8 +1,0 @@
-[(#{calendar.error.update.first(${eventId})})]
-
-[(${absence.person.niceName})]
-[(${#temporals.format(absence.startDate, "dd.MM.yyyy")})] - [(${#temporals.format(absence.endDate, "dd.MM.yyyy")})]
-
-[(#{calendar.error.update.second(${calendar})})]
-
-[(${exception})]
