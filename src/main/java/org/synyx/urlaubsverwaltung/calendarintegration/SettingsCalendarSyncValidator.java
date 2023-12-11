@@ -76,7 +76,7 @@ class SettingsCalendarSyncValidator implements Validator {
     private void validateExchangeCalendarName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
-        String calendar = exchangeCalendarSettings.getPassword();
+        String calendar = exchangeCalendarSettings.getCalendar();
 
         validateMandatoryTextField(calendar, calendarAttribute, errors);
     }
