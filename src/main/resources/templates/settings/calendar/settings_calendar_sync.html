@@ -29,10 +29,6 @@
           <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='calendar-sync')}" />
 
           <div id="calendar" class="tw-mt-6">
-            <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-              <svg th:replace="~{icon/megaphone::svg(className='tw-w-4 tw-h-4')}"></svg>
-              &nbsp;<th:block th:text="#{settings.calendar.deprecated}" />
-            </div>
             <div class="form-section">
               <div th:replace="~{settings/calendar/integration::section}"></div>
             </div>
