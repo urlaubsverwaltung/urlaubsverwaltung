@@ -5,23 +5,19 @@ import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
-
-/**
- * Settings to sync absences with a Google calendar.
- */
 @Embeddable
 public class GoogleCalendarSettings {
 
-    @Column(name = "calendar_google_client_id")
+    @Column(name = "google_client_id")
     private String clientId = null;
 
-    @Column(name = "calendar_google_client_secret")
+    @Column(name = "google_client_secret")
     private String clientSecret = null;
 
-    @Column(name = "calendar_google_calendar_id")
+    @Column(name = "google_calendar_id")
     private String calendarId = null;
 
-    @Column(name = "calendar_google_refresh_token")
+    @Column(name = "google_refresh_token")
     private String refreshToken = null;
 
     public String getRefreshToken() {

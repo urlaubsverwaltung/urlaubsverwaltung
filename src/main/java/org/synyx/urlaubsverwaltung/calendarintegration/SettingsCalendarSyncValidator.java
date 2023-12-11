@@ -8,7 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class SettingsCalendarSyncValidator implements Validator {
+class SettingsCalendarSyncValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_EMAIL = "error.entry.mail";

@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -26,24 +24,21 @@ class CalendarProviderServiceTest {
     @ParameterizedTest
     @MethodSource("data")
     void testResult(Class input, Class expected) {
-        final SettingsService settingsService = getPreparedSettingsServiceForProvider(input);
+        final CalendarSettingsService settingsService = getPreparedSettingsServiceForProvider(input);
         final List<CalendarProvider> calendarProviders = getTypicalProviderList();
         final CalendarProviderService sut = new CalendarProviderService(calendarProviders, settingsService);
 
         assertThat(sut.getCalendarProvider().get().getClass().getName()).isEqualTo(expected.getName());
     }
 
-    private SettingsService getPreparedSettingsServiceForProvider(Class provider) {
-        final SettingsService settingsService = mock(SettingsService.class);
-        final Settings settings = mock(Settings.class);
-        when(settingsService.getSettings()).thenReturn(settings);
-
+    private CalendarSettingsService getPreparedSettingsServiceForProvider(Class provider) {
+        final CalendarSettingsService calendarSettingsService = mock(CalendarSettingsService.class);
         final CalendarSettings calendarSettings = mock(CalendarSettings.class);
-        when(settings.getCalendarSettings()).thenReturn(calendarSettings);
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(calendarSettings);
 
         when(calendarSettings.getProvider()).thenReturn(provider.getSimpleName());
 
-        return settingsService;
+        return calendarSettingsService;
     }
 
     private List<CalendarProvider> getTypicalProviderList() {

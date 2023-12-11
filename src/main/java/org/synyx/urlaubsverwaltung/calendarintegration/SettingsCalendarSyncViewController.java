@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.util.List;
@@ -29,17 +27,19 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping("/web/settings/calendar-sync")
 public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
-    private final SettingsService settingsService;
+    private final CalendarSettingsService calendarSettingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsCalendarSyncValidator settingsValidator;
     private final Clock clock;
 
     @Autowired
-    public SettingsCalendarSyncViewController(SettingsService settingsService,
-                                              List<CalendarProvider> calendarProviders,
-                                              SettingsCalendarSyncValidator settingsValidator,
-                                              Clock clock) {
-        this.settingsService = settingsService;
+    SettingsCalendarSyncViewController(
+        CalendarSettingsService calendarSettingsService,
+        List<CalendarProvider> calendarProviders,
+        SettingsCalendarSyncValidator settingsValidator,
+        Clock clock
+    ) {
+        this.calendarSettingsService = calendarSettingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
         this.clock = clock;
@@ -53,7 +53,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         final String requestURL = request.getRequestURL().toString();
         final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
 
-        final Settings settings = settingsService.getSettings();
+        final CalendarSettings settings = calendarSettingsService.getCalendarSettings();
         final SettingsCalendarSyncDto settingsDto = settingsToDto(settings);
         fillModel(model, settingsDto, authorizedRedirectUrl);
 
@@ -85,8 +85,8 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
             return "settings/calendar/settings_calendar_sync";
         }
 
-        final Settings settings = settingsDtoToSettings(settingsDto);
-        settingsService.save(processGoogleRefreshToken(settings));
+        final CalendarSettings settings = settingsDtoToSettings(settingsDto);
+        calendarSettingsService.save(processGoogleRefreshToken(settings));
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -119,28 +119,28 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         }
     }
 
-    private SettingsCalendarSyncDto settingsToDto(Settings settings) {
+    private SettingsCalendarSyncDto settingsToDto(CalendarSettings calendarSettings) {
         // TODO use DTOs for settings
         final SettingsCalendarSyncDto dto = new SettingsCalendarSyncDto();
-        dto.setId(settings.getId());
-        dto.setCalendarSettings(settings.getCalendarSettings());
+        dto.setId(calendarSettings.getId());
+        dto.setCalendarSettings(calendarSettings);
         return dto;
     }
 
-    private Settings settingsDtoToSettings(SettingsCalendarSyncDto dto) {
-        final Settings settings = settingsService.getSettings();
-        settings.setId(dto.getId());
-        settings.setCalendarSettings(dto.getCalendarSettings());
-        return settings;
+    private CalendarSettings settingsDtoToSettings(SettingsCalendarSyncDto dto) {
+        final CalendarSettings calendarSettings = calendarSettingsService.getCalendarSettings();
+        calendarSettings.setId(dto.getId());
+        calendarSettings.setExchangeCalendarSettings(dto.getCalendarSettings().getExchangeCalendarSettings());
+        calendarSettings.setGoogleCalendarSettings(dto.getCalendarSettings().getGoogleCalendarSettings());
+        return calendarSettings;
     }
 
-    private Settings processGoogleRefreshToken(Settings settingsUpdate) {
+    private CalendarSettings processGoogleRefreshToken(CalendarSettings settingsUpdate) {
 
-        final GoogleCalendarSettings storedGoogleSettings = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
-        final CalendarSettings updatedCalendarSettings = settingsUpdate.getCalendarSettings();
+        final GoogleCalendarSettings storedGoogleSettings = calendarSettingsService.getCalendarSettings().getGoogleCalendarSettings();
 
-        if (storedGoogleSettings != null && updatedCalendarSettings != null) {
-            final GoogleCalendarSettings updateGoogleSettings = updatedCalendarSettings.getGoogleCalendarSettings();
+        if (storedGoogleSettings != null && settingsUpdate != null) {
+            final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getGoogleCalendarSettings();
             updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
 
             if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
@@ -161,9 +161,9 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         return !oldSettings.equals(newSettings);
     }
 
-    private boolean shouldShowOAuthError(String googleOAuthError, Settings settings) {
+    private boolean shouldShowOAuthError(String googleOAuthError, CalendarSettings calendarSettings) {
         return googleOAuthError != null
             && !googleOAuthError.isEmpty()
-            && settings.getCalendarSettings().getGoogleCalendarSettings().getRefreshToken() == null;
+            && calendarSettings.getGoogleCalendarSettings().getRefreshToken() == null;
     }
 }

@@ -8,7 +8,6 @@ import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -38,7 +37,6 @@ public class Settings {
     private TimeSettings timeSettings = new TimeSettings();
     private SickNoteSettings sickNoteSettings = new SickNoteSettings();
     private AvatarSettings avatarSettings = new AvatarSettings();
-    private CalendarSettings calendarSettings = new CalendarSettings();
 
 
     public Long getId() {
@@ -79,14 +77,6 @@ public class Settings {
 
     public void setOvertimeSettings(OvertimeSettings overtimeSettings) {
         this.overtimeSettings = overtimeSettings;
-    }
-
-    public CalendarSettings getCalendarSettings() {
-        return calendarSettings;
-    }
-
-    public void setCalendarSettings(CalendarSettings calendarSettings) {
-        this.calendarSettings = calendarSettings;
     }
 
     public TimeSettings getTimeSettings() {

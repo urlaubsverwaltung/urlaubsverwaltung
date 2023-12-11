@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
@@ -89,14 +88,12 @@ class SettingsWorkingTimeViewControllerTest {
         final AccountSettings accountSettings = new AccountSettings();
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
         final AvatarSettings avatarSettings = new AvatarSettings();
-        final CalendarSettings calendarSettings = new CalendarSettings();
 
         final Settings settings = new Settings();
         settings.setApplicationSettings(applicationSettings);
         settings.setAccountSettings(accountSettings);
         settings.setSickNoteSettings(sickNoteSettings);
         settings.setAvatarSettings(avatarSettings);
-        settings.setCalendarSettings(calendarSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -125,6 +122,7 @@ class SettingsWorkingTimeViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/settings/working-time"))
             .andExpect(flash().attribute("success", true));
+
 
         final ArgumentCaptor<Settings> captor = ArgumentCaptor.forClass(Settings.class);
         verify(settingsService).save(captor.capture());
@@ -159,7 +157,6 @@ class SettingsWorkingTimeViewControllerTest {
         assertThat(actualSettings.getAccountSettings()).isSameAs(accountSettings);
         assertThat(actualSettings.getSickNoteSettings()).isSameAs(sickNoteSettings);
         assertThat(actualSettings.getAvatarSettings()).isSameAs(avatarSettings);
-        assertThat(actualSettings.getCalendarSettings()).isSameAs(calendarSettings);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

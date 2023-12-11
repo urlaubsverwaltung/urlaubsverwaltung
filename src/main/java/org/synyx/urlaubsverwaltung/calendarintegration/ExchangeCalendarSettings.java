@@ -5,29 +5,25 @@ import jakarta.persistence.Embeddable;
 
 import java.util.Base64;
 
-
-/**
- * Settings to sync absences with a Microsoft Exchange calendar.
- */
 @Embeddable
 public class ExchangeCalendarSettings {
 
-    @Column(name = "calendar_ews_email")
+    @Column(name = "ews_email")
     private String email = null;
 
-    @Column(name = "calendar_ews_password")
+    @Column(name = "ews_password")
     private String password = null;
 
-    @Column(name = "calendar_ews_calendar")
+    @Column(name = "ews_calendar")
     private String calendar = "";
 
-    @Column(name = "calendar_ews_sendInvitationActive")
+    @Column(name = "ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
 
-    @Column(name = "calendar_ews_url")
+    @Column(name = "ews_url")
     private String ewsUrl = null;
 
-    @Column(name = "calendar_ews_timezoneid")
+    @Column(name = "ews_timezoneid")
     private String timeZoneId = null;
 
 

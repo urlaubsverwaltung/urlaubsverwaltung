@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -73,14 +72,12 @@ class SettingsAbsencesViewControllerTest {
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        final CalendarSettings calendarSettings = new CalendarSettings();
         final TimeSettings timeSettings = new TimeSettings();
         final AvatarSettings avatarSettings = new AvatarSettings();
 
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         settings.setOvertimeSettings(overtimeSettings);
-        settings.setCalendarSettings(calendarSettings);
         settings.setTimeSettings(timeSettings);
         settings.setAvatarSettings(avatarSettings);
 
@@ -133,7 +130,6 @@ class SettingsAbsencesViewControllerTest {
         });
         assertThat(actualSettings.getWorkingTimeSettings()).isSameAs(workingTimeSettings);
         assertThat(actualSettings.getOvertimeSettings()).isSameAs(overtimeSettings);
-        assertThat(actualSettings.getCalendarSettings()).isSameAs(calendarSettings);
         assertThat(actualSettings.getTimeSettings()).isSameAs(timeSettings);
         assertThat(actualSettings.getAvatarSettings()).isSameAs(avatarSettings);
     }

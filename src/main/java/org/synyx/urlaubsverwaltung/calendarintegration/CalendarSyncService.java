@@ -35,16 +35,19 @@ class CalendarSyncService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
+    private final CalendarSettingsService calendarSettingsService;
     private final CalendarProviderService calendarService;
     private final AbsenceMappingRepository absenceMappingRepository;
 
     @Autowired
     CalendarSyncService(
-        SettingsService settingsService,
-        CalendarProviderService calendarService,
-        AbsenceMappingRepository absenceMappingRepository
+            SettingsService settingsService,
+            CalendarSettingsService calendarSettingsService,
+            CalendarProviderService calendarService,
+            AbsenceMappingRepository absenceMappingRepository
     ) {
         this.settingsService = settingsService;
+        this.calendarSettingsService = calendarSettingsService;
         this.calendarService = calendarService;
         this.absenceMappingRepository = absenceMappingRepository;
         LOG.debug("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
@@ -179,7 +182,7 @@ class CalendarSyncService {
     }
 
     private CalendarSettings getCalendarSettings() {
-        return this.settingsService.getSettings().getCalendarSettings();
+        return calendarSettingsService.getCalendarSettings();
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
