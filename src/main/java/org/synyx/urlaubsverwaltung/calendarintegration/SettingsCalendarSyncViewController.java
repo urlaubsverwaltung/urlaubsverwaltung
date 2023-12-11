@@ -29,19 +29,19 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
     private final CalendarSettingsService calendarSettingsService;
     private final List<CalendarProvider> calendarProviders;
-    private final SettingsCalendarSyncValidator settingsValidator;
+    private final SettingsCalendarSyncValidator calendarSyncValidator;
     private final Clock clock;
 
     @Autowired
     SettingsCalendarSyncViewController(
         CalendarSettingsService calendarSettingsService,
         List<CalendarProvider> calendarProviders,
-        SettingsCalendarSyncValidator settingsValidator,
+        SettingsCalendarSyncValidator calendarSyncValidator,
         Clock clock
     ) {
         this.calendarSettingsService = calendarSettingsService;
         this.calendarProviders = calendarProviders;
-        this.settingsValidator = settingsValidator;
+        this.calendarSyncValidator = calendarSyncValidator;
         this.clock = clock;
     }
 
@@ -71,7 +71,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-        settingsValidator.validate(calendarSettingsDto, errors);
+        calendarSyncValidator.validate(calendarSettingsDto, errors);
 
         if (errors.hasErrors()) {
 

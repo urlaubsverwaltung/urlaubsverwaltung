@@ -44,7 +44,6 @@ class SettingsCalendarSyncValidator implements Validator {
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
         validateExchangeEmail(exchangeCalendarSettings, errors);
         validateExchangePassword(exchangeCalendarSettings, errors);
-        validateExchangeCalendarName(exchangeCalendarSettings, errors);
     }
 
     private void validateGoogleCalendarSettings(GoogleCalendarSettings googleCalendarSettings, Errors errors) {
@@ -71,14 +70,6 @@ class SettingsCalendarSyncValidator implements Validator {
         String password = exchangeCalendarSettings.getPassword();
 
         validateMandatoryTextField(password, passwordAttribute, errors);
-    }
-
-    private void validateExchangeCalendarName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
-
-        String calendarAttribute = "calendarSettings.exchangeCalendarSettings.calendar";
-        String calendar = exchangeCalendarSettings.getCalendar();
-
-        validateMandatoryTextField(calendar, calendarAttribute, errors);
     }
 
     private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
