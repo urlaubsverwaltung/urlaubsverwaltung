@@ -9,11 +9,13 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedTemporarilyEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAppliedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationDeletedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRejectedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRevokedEvent;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
@@ -41,10 +43,10 @@ class CalendarSyncService {
 
     @Autowired
     CalendarSyncService(
-            SettingsService settingsService,
-            CalendarSettingsService calendarSettingsService,
-            CalendarProviderService calendarService,
-            AbsenceMappingRepository absenceMappingRepository
+        SettingsService settingsService,
+        CalendarSettingsService calendarSettingsService,
+        CalendarProviderService calendarService,
+        AbsenceMappingRepository absenceMappingRepository
     ) {
         this.settingsService = settingsService;
         this.calendarSettingsService = calendarSettingsService;
@@ -61,8 +63,20 @@ class CalendarSyncService {
 
     @Async
     @EventListener
+    void consumeApplicationUpdatedEvent(ApplicationAllowedTemporarilyEvent event) {
+        update(event.getApplication());
+    }
+
+    @Async
+    @EventListener
     void consumeApplicationAllowedEvent(ApplicationAllowedEvent event) {
-        addCalendarEntry(event.getApplication());
+        update(event.getApplication());
+    }
+
+    @Async
+    @EventListener
+    void consumeApplicationUpdatedEvent(ApplicationUpdatedEvent event) {
+        update(event.getApplication());
     }
 
     @Async
@@ -91,6 +105,18 @@ class CalendarSyncService {
 
     @Async
     @EventListener
+    void consumeSickNoteCreatedEvent(SickNoteCreatedEvent event) {
+        addCalendarEntry(event.getSickNote());
+    }
+
+    @Async
+    @EventListener
+    void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
+        update(event.getSickNote());
+    }
+
+    @Async
+    @EventListener
     void consumeSickNoteCancelledEvent(SickNoteCancelledEvent event) {
         deleteCalendarEntry(event.getSickNote());
     }
@@ -103,36 +129,24 @@ class CalendarSyncService {
 
     @Async
     @EventListener
-    void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
-        update(event.getSickNote());
-    }
-
-    @Async
-    @EventListener
-    void consumeSickNoteCreatedEvent(SickNoteCreatedEvent event) {
-        addCalendarEntry(event.getSickNote());
-    }
-
-    @Async
-    @EventListener
     void consumeSickNoteToApplicationConvertedEvent(SickNoteToApplicationConvertedEvent event) {
         deleteCalendarEntry(event.getSickNote());
         addCalendarEntry(event.getApplication());
     }
 
-    public void addCalendarEntry(Application application) {
+    private void addCalendarEntry(Application application) {
         calendarService.getCalendarProvider()
             .flatMap(calendarProvider -> calendarProvider.add(new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(application.getId(), VACATION, eventId));
     }
 
-    public void addCalendarEntry(SickNote sickNote) {
+    private void addCalendarEntry(SickNote sickNote) {
         calendarService.getCalendarProvider()
             .flatMap(calendarProvider -> calendarProvider.add(new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId));
     }
 
-    public void update(Application application) {
+    private void update(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
             .ifPresent(absenceMapping ->
                 calendarService.getCalendarProvider()
@@ -143,7 +157,7 @@ class CalendarSyncService {
             );
     }
 
-    public void update(SickNote sickNote) {
+    private void update(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), VACATION)
             .ifPresent(absenceMapping ->
                 calendarService.getCalendarProvider()
@@ -154,21 +168,21 @@ class CalendarSyncService {
             );
     }
 
-    public void deleteCalendarEntry(Application application) {
+    private void deleteCalendarEntry(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
             .flatMap(absenceMapping -> calendarService.getCalendarProvider()
                 .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
             .ifPresent(absenceMappingRepository::deleteByEventId);
     }
 
-    public void deleteCalendarEntry(SickNote sickNote) {
+    private void deleteCalendarEntry(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
             .flatMap(absenceMapping -> calendarService.getCalendarProvider()
                 .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
             .ifPresent(absenceMappingRepository::deleteByEventId);
     }
 
-    public void checkCalendarSyncSettings() {
+    void checkCalendarSyncSettings() {
         calendarService.getCalendarProvider()
             .ifPresent(calendarProvider -> calendarProvider.checkCalendarSyncSettings(getCalendarSettings()));
     }
@@ -177,7 +191,7 @@ class CalendarSyncService {
         absenceMappingRepository.save(new AbsenceMapping(id, absenceMappingType, eventId));
     }
 
-    Optional<AbsenceMapping> getAbsenceByIdAndType(Long id, AbsenceMappingType absenceMappingType) {
+    private Optional<AbsenceMapping> getAbsenceByIdAndType(Long id, AbsenceMappingType absenceMappingType) {
         return absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceMappingType(id, absenceMappingType);
     }
 
