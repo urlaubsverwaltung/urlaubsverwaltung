@@ -67,26 +67,26 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsCalendarSyncDto settingsDto, Errors errors,
+    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsCalendarSyncDto calendarSettingsDto, Errors errors,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-        settingsValidator.validate(settingsDto, errors);
+        settingsValidator.validate(calendarSettingsDto, errors);
 
         if (errors.hasErrors()) {
 
             final StringBuffer requestURL = request.getRequestURL();
             final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
 
-            fillModel(model, settingsDto, authorizedRedirectUrl);
+            fillModel(model, calendarSettingsDto, authorizedRedirectUrl);
 
             model.addAttribute("errors", errors);
 
             return "settings/calendar/settings_calendar_sync";
         }
 
-        final CalendarSettings settings = settingsDtoToSettings(settingsDto);
-        calendarSettingsService.save(processGoogleRefreshToken(settings));
+        final CalendarSettings calendarSettings = settingsDtoToSettings(calendarSettingsDto);
+        calendarSettingsService.save(processGoogleRefreshToken(calendarSettings));
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -130,6 +130,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
     private CalendarSettings settingsDtoToSettings(SettingsCalendarSyncDto dto) {
         final CalendarSettings calendarSettings = calendarSettingsService.getCalendarSettings();
         calendarSettings.setId(dto.getId());
+        calendarSettings.setProvider(dto.getCalendarSettings().getProvider());
         calendarSettings.setExchangeCalendarSettings(dto.getCalendarSettings().getExchangeCalendarSettings());
         calendarSettings.setGoogleCalendarSettings(dto.getCalendarSettings().getGoogleCalendarSettings());
         return calendarSettings;
