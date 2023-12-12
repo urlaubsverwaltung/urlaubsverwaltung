@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -104,7 +105,9 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())
             .sorted(reverseOrder())
-            .toList();
+            .collect(toList());
+        providers.addFirst("NoSyncProvider");
+
         model.addAttribute("providers", providers);
     }
 
