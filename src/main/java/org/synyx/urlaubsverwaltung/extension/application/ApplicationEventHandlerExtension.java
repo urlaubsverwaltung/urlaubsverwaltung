@@ -88,25 +88,25 @@ public class ApplicationEventHandlerExtension {
 
     private static Function<AbsencePeriod, Optional<ApplicationCreatedFromSickNoteEventDTO>> toApplicationCreatedFromSickNoteEventDTO(String tenantId, ApplicationCreatedFromSickNoteEvent event) {
         return absencePeriod ->
-            toVacationType(event.getApplication().getVacationType()).map(vacationType -> {
-                final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-                final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
-                final ApplicationPeriodDTO period = toPeriod(event.getApplication());
-                final String status = toStatus(event.getApplication());
+            toVacationType(event.application().getVacationType()).map(vacationType -> {
+                final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+                final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+                final ApplicationPeriodDTO period = toPeriod(event.application());
+                final String status = toStatus(event.application());
                 final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
 
                 return ApplicationCreatedFromSickNoteEventDTO.builder()
-                    .id(event.getId())
-                    .sourceId(event.getApplication().getId())
-                    .createdAt(event.getCreatedAt())
+                    .id(event.id())
+                    .sourceId(event.application().getId())
+                    .createdAt(event.createdAt())
                     .tenantId(tenantId)
                     .person(person)
                     .appliedBy(appliedBy)
                     .period(period)
                     .vacationType(vacationType)
-                    .reason(event.getApplication().getReason())
+                    .reason(event.application().getReason())
                     .status(status)
-                    .teamInformed(event.getApplication().isTeamInformed())
+                    .teamInformed(event.application().isTeamInformed())
                     .absentWorkingDays(absentWorkingDays)
                     .build();
             });
@@ -114,28 +114,28 @@ public class ApplicationEventHandlerExtension {
 
     private static Function<AbsencePeriod, Optional<ApplicationAllowedEventDTO>> toApplicationAllowedEventDTO(String tenantId, ApplicationAllowedEvent event) {
         return absencePeriod ->
-            toVacationType(event.getApplication().getVacationType()).map(vacationType -> {
-                final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-                final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
-                final ApplicationPersonDTO allowedBy = event.getApplication().getBoss() != null ? toApplicationPersonDTO(event.getApplication().getBoss()) : null;
-                final ApplicationPeriodDTO period = toPeriod(event.getApplication());
-                final String status = toStatus(event.getApplication());
+            toVacationType(event.application().getVacationType()).map(vacationType -> {
+                final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+                final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+                final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
+                final ApplicationPeriodDTO period = toPeriod(event.application());
+                final String status = toStatus(event.application());
                 final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
 
                 return ApplicationAllowedEventDTO.builder()
-                    .id(event.getId())
-                    .sourceId(event.getApplication().getId())
-                    .createdAt(event.getCreatedAt())
+                    .id(event.id())
+                    .sourceId(event.application().getId())
+                    .createdAt(event.createdAt())
                     .tenantId(tenantId)
                     .person(person)
                     .appliedBy(appliedBy)
                     .allowedBy(allowedBy)
-                    .twoStageApproval(event.getApplication().isTwoStageApproval())
+                    .twoStageApproval(event.application().isTwoStageApproval())
                     .period(period)
                     .vacationType(vacationType)
-                    .reason(event.getApplication().getReason())
+                    .reason(event.application().getReason())
                     .status(status)
-                    .teamInformed(event.getApplication().isTeamInformed())
+                    .teamInformed(event.application().isTeamInformed())
                     .absentWorkingDays(absentWorkingDays)
                     .build();
             });
@@ -143,28 +143,28 @@ public class ApplicationEventHandlerExtension {
 
     private static Function<AbsencePeriod, Optional<ApplicationCancelledEventDTO>> toApplicationCancelledEventDTO(String tenantId, ApplicationCancelledEvent event) {
         return absencePeriod ->
-            toVacationType(event.getApplication().getVacationType()).map(vacationType -> {
-                final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-                final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
-                final ApplicationPersonDTO cancelledBy = event.getApplication().getCanceller() != null ? toApplicationPersonDTO(event.getApplication().getCanceller()) : null;
-                final ApplicationPeriodDTO period = toPeriod(event.getApplication());
-                final String status = toStatus(event.getApplication());
+            toVacationType(event.application().getVacationType()).map(vacationType -> {
+                final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+                final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+                final ApplicationPersonDTO cancelledBy = event.application().getCanceller() != null ? toApplicationPersonDTO(event.application().getCanceller()) : null;
+                final ApplicationPeriodDTO period = toPeriod(event.application());
+                final String status = toStatus(event.application());
                 final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
 
                 return ApplicationCancelledEventDTO.builder()
-                    .id(event.getId())
-                    .sourceId(event.getApplication().getId())
-                    .createdAt(event.getCreatedAt())
+                    .id(event.id())
+                    .sourceId(event.application().getId())
+                    .createdAt(event.createdAt())
                     .tenantId(tenantId)
                     .person(person)
                     .appliedBy(appliedBy)
                     .cancelledBy(cancelledBy)
-                    .twoStageApproval(event.getApplication().isTwoStageApproval())
+                    .twoStageApproval(event.application().isTwoStageApproval())
                     .period(period)
                     .vacationType(vacationType)
-                    .reason(event.getApplication().getReason())
+                    .reason(event.application().getReason())
                     .status(status)
-                    .teamInformed(event.getApplication().isTeamInformed())
+                    .teamInformed(event.application().isTeamInformed())
                     .absentWorkingDays(absentWorkingDays)
                     .build();
             });
@@ -196,7 +196,7 @@ public class ApplicationEventHandlerExtension {
     @EventListener
     @Async
     void on(ApplicationAllowedEvent event) {
-        getAbsencePeriods(event.getApplication())
+        getAbsencePeriods(event.application())
             .map(toApplicationAllowedEventDTO(tenantSupplier.get(), event))
             .ifPresent(applicationEventPublisher::publishEvent);
     }
@@ -204,7 +204,7 @@ public class ApplicationEventHandlerExtension {
     @EventListener
     @Async
     void on(ApplicationCancelledEvent event) {
-        getClosedAbsencePeriods(event.getApplication())
+        getClosedAbsencePeriods(event.application())
             .map(toApplicationCancelledEventDTO(tenantSupplier.get(), event))
             .ifPresent(applicationEventPublisher::publishEvent);
     }
@@ -212,7 +212,7 @@ public class ApplicationEventHandlerExtension {
     @EventListener
     @Async
     void on(ApplicationCreatedFromSickNoteEvent event) {
-        getAbsencePeriods(event.getApplication())
+        getAbsencePeriods(event.application())
             .map(toApplicationCreatedFromSickNoteEventDTO(tenantSupplier.get(), event))
             .ifPresent(applicationEventPublisher::publishEvent);
     }

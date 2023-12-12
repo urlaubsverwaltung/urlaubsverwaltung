@@ -50,7 +50,7 @@ public class ApplicationEventRepublisher {
             .stream()
             .map(ApplicationAllowedEvent::of)
             .forEach(event -> {
-                LOG.info("Publishing ApplicationAllowedEvent with id={} for personId={} with startDate={} and endDate={}", event.getApplication().getId(), event.getApplication().getPerson().getId(), event.getApplication().getStartDate(), event.getApplication().getEndDate());
+                LOG.info("Publishing ApplicationAllowedEvent with id={} for personId={} with startDate={} and endDate={}", event.application().getId(), event.application().getPerson().getId(), event.application().getStartDate(), event.application().getEndDate());
                 applicationEventHandlerExtension.on(event);
             });
 

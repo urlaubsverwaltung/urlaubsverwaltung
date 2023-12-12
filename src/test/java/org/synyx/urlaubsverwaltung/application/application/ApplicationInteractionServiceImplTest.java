@@ -136,9 +136,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAppliedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAppliedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAppliedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -273,9 +273,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAllowedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -376,9 +376,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAllowedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -527,9 +527,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAllowedTemporarilyEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedTemporarilyEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAllowedTemporarilyEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -613,9 +613,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAllowedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -706,9 +706,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationAllowedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -874,9 +874,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationRejectedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationRejectedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationRejectedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -949,9 +949,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationRevokedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationRevokedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationRevokedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1001,9 +1001,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationCancellationRequestedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancellationRequestedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationCancellationRequestedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1035,9 +1035,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationCancelledEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancelledEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationCancelledEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1192,9 +1192,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationCancelledEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancelledEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationCancelledEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1263,9 +1263,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationDeclinedCancellationRequestEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationDeclinedCancellationRequestEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationDeclinedCancellationRequestEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1321,9 +1321,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationCreatedFromSickNoteEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCreatedFromSickNoteEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationCreatedFromSickNoteEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(applicationForLeave);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     // REMIND ----------------------------------------------------------------------------------------------------------
@@ -1438,9 +1438,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationUpdatedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(editedApplication);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(editedApplication);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     @Test
@@ -1666,9 +1666,9 @@ class ApplicationInteractionServiceImplTest {
         ArgumentCaptor<ApplicationDeletedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationDeletedEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
         final ApplicationDeletedEvent event = argumentCaptor.getValue();
-        assertThat(event.getApplication()).isEqualTo(application);
-        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(event.getId()).isNotNull();
+        assertThat(event.application()).isEqualTo(application);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
     }
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
