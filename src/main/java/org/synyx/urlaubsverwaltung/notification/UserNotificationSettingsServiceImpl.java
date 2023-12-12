@@ -24,14 +24,14 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
 
     @Override
     public UserNotificationSettings findNotificationSettings(PersonId personId) {
-        return repository.findById(personId.getValue()).map(UserNotificationSettingsServiceImpl::toNotification)
+        return repository.findById(personId.value()).map(UserNotificationSettingsServiceImpl::toNotification)
             .orElseGet(() -> defaultNotificationSettings(personId));
     }
 
     @Override
     public Map<PersonId, UserNotificationSettings> findNotificationSettings(Collection<PersonId> personIds) {
 
-        final List<Long> personIdValues = personIds.stream().map(PersonId::getValue).collect(toList());
+        final List<Long> personIdValues = personIds.stream().map(PersonId::value).collect(toList());
 
         final Map<PersonId, UserNotificationSettings> notificationsByPerson = repository.findAllById(personIdValues).stream()
             .map(UserNotificationSettingsServiceImpl::toNotification)
@@ -49,7 +49,7 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
     public UserNotificationSettings updateNotificationSettings(PersonId personId, boolean restrictToDepartments) {
 
         final UserNotificationSettingsEntity entity = new UserNotificationSettingsEntity();
-        entity.setPersonId(personId.getValue());
+        entity.setPersonId(personId.value());
         entity.setRestrictToDepartments(restrictToDepartments);
 
         return toNotification(repository.save(entity));
