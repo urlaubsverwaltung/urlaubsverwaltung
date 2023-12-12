@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -57,8 +56,6 @@ class SettingsCalendarSyncViewControllerTest {
     @Mock
     private SettingsCalendarSyncValidator settingsValidator;
 
-    private final Clock clock = Clock.systemUTC();
-
     @BeforeEach
     void setUp() {
         sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
@@ -87,7 +84,7 @@ class SettingsCalendarSyncViewControllerTest {
                 hasProperty("id", is(42L)),
                 hasProperty("calendarSettings", sameInstance(calendarSettings))
             )))
-            .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
+            .andExpect(model().attribute("providers", contains("NoSyncProvider", "SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("authorizedRedirectUrl",
                 sut.getAuthorizedRedirectUrl("http://localhost/web/settings/calendar-sync", OATUH_REDIRECT_REL)));
