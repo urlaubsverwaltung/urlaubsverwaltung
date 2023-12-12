@@ -271,7 +271,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             .entrySet().stream()
             .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
             .flatMap(List::stream)
-            .collect(toMap(PublicHoliday::getDate, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.getDate(),publicHoliday.getDayLength(), publicHoliday.getDescription().concat("/").concat(publicHoliday2.getDescription()))));
+            .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(),publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 
     }
 
@@ -300,13 +300,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
                                                                      Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
 
         AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType, recordInfoToColor);
-        if (publicHoliday.getDayLength().isMorning()) {
+        if (publicHoliday.dayLength().isMorning()) {
             builder = builder.publicHolidayMorning();
         }
-        if (publicHoliday.getDayLength().isNoon()) {
+        if (publicHoliday.dayLength().isNoon()) {
             builder = builder.publicHolidayNoon();
         }
-        if (publicHoliday.getDayLength().isFull()) {
+        if (publicHoliday.dayLength().isFull()) {
             builder = builder.publicHolidayFull();
         }
         return builder;

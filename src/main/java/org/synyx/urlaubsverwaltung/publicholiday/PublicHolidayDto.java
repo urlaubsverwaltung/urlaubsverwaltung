@@ -10,8 +10,8 @@ public final class PublicHolidayDto {
     private final String absencePeriodName;
 
     PublicHolidayDto(PublicHoliday publicHoliday, BigDecimal dayLength, String absencePeriodName) {
-        this.date = publicHoliday.getDate().toString();
-        this.description = publicHoliday.getDescription();
+        this.date = publicHoliday.date().toString();
+        this.description = publicHoliday.description();
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
     }

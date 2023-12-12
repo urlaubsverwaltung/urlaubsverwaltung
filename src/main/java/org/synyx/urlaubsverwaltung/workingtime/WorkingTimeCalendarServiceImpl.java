@@ -109,12 +109,12 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 final PublicHoliday publicHoliday = maybePublicHoliday.get();
 
                 if (configuredWorkingTimeForDayOfWeek.isFull()) {
-                    if (publicHoliday.getDayLength().isFull()) {
+                    if (publicHoliday.dayLength().isFull()) {
                         morning = DayLength.ZERO;
                         morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
                         noon = DayLength.ZERO;
                         noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
-                    } else if (publicHoliday.getDayLength().isMorning()) {
+                    } else if (publicHoliday.dayLength().isMorning()) {
                         morning = DayLength.ZERO;
                         morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
                         noon = DayLength.NOON;

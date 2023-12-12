@@ -154,6 +154,6 @@ public class PublicHolidayApiController {
     }
 
     private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday) {
-        return new PublicHolidayDto(publicHoliday, publicHoliday.getDayLength().getDuration(), publicHoliday.getDayLength().name());
+        return new PublicHolidayDto(publicHoliday, publicHoliday.dayLength().getDuration(), publicHoliday.dayLength().name());
     }
 }

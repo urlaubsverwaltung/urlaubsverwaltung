@@ -14,29 +14,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
  * Describes a public holiday with the UV specific setting if it is a half public holiday or not.
  * (e.g. christmas eve can be configured to be a NOON public holiday for instance.)
  */
-public final class PublicHoliday {
-
-    private final LocalDate date;
-    private final DayLength dayLength;
-    private final String description;
-
-    public PublicHoliday(LocalDate date, DayLength dayLength, String description) {
-        this.date = date;
-        this.dayLength = dayLength;
-        this.description = description;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public DayLength getDayLength() {
-        return dayLength;
-    }
-
-    public String getDescription() {
-        return description;
-    }
+public record PublicHoliday(LocalDate date, DayLength dayLength, String description) {
 
     public boolean isMorning() {
         return dayLength.equals(MORNING);
@@ -65,14 +43,5 @@ public final class PublicHoliday {
     @Override
     public int hashCode() {
         return Objects.hash(date);
-    }
-
-    @Override
-    public String toString() {
-        return "PublicHoliday{" +
-            "date=" + date +
-            ", dayLength=" + dayLength +
-            ", description='" + description + '\'' +
-            '}';
     }
 }
