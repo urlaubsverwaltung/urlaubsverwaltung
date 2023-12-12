@@ -158,11 +158,11 @@ class OvertimeServiceImpl implements OvertimeService {
 
                 // overall
                 final Duration yearDuration = yearOvertimeSumByPerson.getOrDefault(person, ZERO);
-                final Duration finalOverallDuration = overallOvertimeBeforeYear.plus(yearDuration).minus(personOvertimeReduction.getReductionOverall());
+                final Duration finalOverallDuration = overallOvertimeBeforeYear.plus(yearDuration).minus(personOvertimeReduction.reductionOverall());
 
                 // date range
                 final Duration dateRangeDuration = dateRangeOvertimeSumByPerson.getOrDefault(person, ZERO);
-                final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.getReductionDateRange());
+                final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.reductionDateRange());
 
                 return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
             })
@@ -283,23 +283,7 @@ class OvertimeServiceImpl implements OvertimeService {
             .orElse(ZERO);
     }
 
-    private static class OvertimeReduction {
-
-        private final Duration reductionOverall;
-        private final Duration reductionDateRange;
-
-        OvertimeReduction(Duration reductionOverall, Duration reductionDateRange) {
-            this.reductionOverall = reductionOverall;
-            this.reductionDateRange = reductionDateRange;
-        }
-
-        Duration getReductionOverall() {
-            return reductionOverall;
-        }
-
-        Duration getReductionDateRange() {
-            return reductionDateRange;
-        }
+    private record OvertimeReduction(Duration reductionOverall, Duration reductionDateRange) {
 
         static OvertimeReduction identity() {
             return new OvertimeReduction(ZERO, ZERO);
