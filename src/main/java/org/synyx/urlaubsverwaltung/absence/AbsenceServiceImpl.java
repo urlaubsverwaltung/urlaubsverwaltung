@@ -151,7 +151,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Person person = workingTimeCalendarEntry.getKey();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarEntry.getValue();
 
-        return workingTimeCalendar.getWorkingDays().entrySet().stream()
+        return workingTimeCalendar.workingDays().entrySet().stream()
             .<AbsencePeriod>mapMulti((workingDayInformationEntry, consumer) -> {
                 final LocalDate date = workingDayInformationEntry.getKey();
                 final WorkingDayInformation workingDayInformation = workingDayInformationEntry.getValue();
