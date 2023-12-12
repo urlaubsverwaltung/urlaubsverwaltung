@@ -47,7 +47,10 @@ public class AccountViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, VacationTypeViewModelService vacationTypeViewModelService, AccountFormValidator validator, Clock clock) {
+    AccountViewController(PersonService personService, AccountService accountService,
+                          AccountInteractionService accountInteractionService,
+                          VacationTypeViewModelService vacationTypeViewModelService,
+                          AccountFormValidator validator, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;

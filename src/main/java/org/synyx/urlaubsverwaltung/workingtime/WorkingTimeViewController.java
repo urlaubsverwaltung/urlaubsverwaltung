@@ -49,11 +49,15 @@ public class WorkingTimeViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     WorkingTimeWriteService workingTimeWriteService,
-                                     VacationTypeViewModelService vacationTypeViewModelService,
-                                     SettingsService settingsService, WorkingTimeValidator validator,
-                                     Clock clock) {
+    WorkingTimeViewController(
+        PersonService personService,
+        WorkingTimeService workingTimeService,
+        WorkingTimeWriteService workingTimeWriteService,
+        VacationTypeViewModelService vacationTypeViewModelService,
+        SettingsService settingsService,
+        WorkingTimeValidator validator,
+        Clock clock
+    ) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.workingTimeWriteService = workingTimeWriteService;

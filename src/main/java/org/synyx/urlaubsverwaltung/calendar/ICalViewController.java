@@ -27,9 +27,11 @@ public class ICalViewController {
     private final CompanyCalendarService companyCalendarService;
 
     @Autowired
-    public ICalViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
-                              CompanyCalendarService companyCalendarService) {
-
+    ICalViewController(
+        PersonCalendarService personCalendarService,
+        DepartmentCalendarService departmentCalendarService,
+        CompanyCalendarService companyCalendarService
+    ) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
         this.companyCalendarService = companyCalendarService;

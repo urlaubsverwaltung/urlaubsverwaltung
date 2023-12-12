@@ -12,7 +12,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
  * A not yet existent {@link Account} containing information taken from the previous year.
  * Can be used to manually create a new {@link Account} for instance.
  */
-final class AccountDraft {
+public final class AccountDraft {
 
     private final Person person;
     private final Year year;
