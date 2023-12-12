@@ -38,21 +38,21 @@ class CalendarSyncService {
 
     private final SettingsService settingsService;
     private final CalendarSettingsService calendarSettingsService;
-    private final CalendarProviderService calendarService;
+    private final CalendarProviderService calendarProviderService;
     private final AbsenceMappingRepository absenceMappingRepository;
 
     @Autowired
     CalendarSyncService(
         SettingsService settingsService,
         CalendarSettingsService calendarSettingsService,
-        CalendarProviderService calendarService,
+        CalendarProviderService calendarProviderService,
         AbsenceMappingRepository absenceMappingRepository
     ) {
         this.settingsService = settingsService;
         this.calendarSettingsService = calendarSettingsService;
-        this.calendarService = calendarService;
+        this.calendarProviderService = calendarProviderService;
         this.absenceMappingRepository = absenceMappingRepository;
-        LOG.debug("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+        LOG.debug("The following calendar provider is configured: {}", calendarProviderService.getCalendarProvider().getClass());
     }
 
     @Async
@@ -63,20 +63,20 @@ class CalendarSyncService {
 
     @Async
     @EventListener
-    public void consumeApplicationUpdatedEvent(ApplicationAllowedTemporarilyEvent event) {
-        update(event.getApplication());
+    public void consumeApplicationAllowedTemporarilyEvent(ApplicationAllowedTemporarilyEvent event) {
+        updateCalendarEntry(event.getApplication());
     }
 
     @Async
     @EventListener
     public void consumeApplicationAllowedEvent(ApplicationAllowedEvent event) {
-        update(event.getApplication());
+        updateCalendarEntry(event.getApplication());
     }
 
     @Async
     @EventListener
     public void consumeApplicationUpdatedEvent(ApplicationUpdatedEvent event) {
-        update(event.getApplication());
+        updateCalendarEntry(event.getApplication());
     }
 
     @Async
@@ -112,7 +112,7 @@ class CalendarSyncService {
     @Async
     @EventListener
     public void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
-        update(event.getSickNote());
+        updateCalendarEntry(event.getSickNote());
     }
 
     @Async
@@ -135,21 +135,21 @@ class CalendarSyncService {
     }
 
     private void addCalendarEntry(Application application) {
-        calendarService.getCalendarProvider()
+        calendarProviderService.getCalendarProvider()
             .flatMap(calendarProvider -> calendarProvider.add(new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(application.getId(), VACATION, eventId));
     }
 
     private void addCalendarEntry(SickNote sickNote) {
-        calendarService.getCalendarProvider()
+        calendarProviderService.getCalendarProvider()
             .flatMap(calendarProvider -> calendarProvider.add(new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId));
     }
 
-    private void update(Application application) {
+    private void updateCalendarEntry(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
             .ifPresent(absenceMapping ->
-                calendarService.getCalendarProvider()
+                calendarProviderService.getCalendarProvider()
                     .ifPresent(calendarProvider -> {
                         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
                         calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
@@ -157,33 +157,32 @@ class CalendarSyncService {
             );
     }
 
-    private void update(SickNote sickNote) {
+    private void updateCalendarEntry(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), VACATION)
-            .ifPresent(absenceMapping ->
-                calendarService.getCalendarProvider()
-                    .ifPresent(calendarProvider -> {
-                        final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
-                        calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
-                    })
+            .ifPresent(absenceMapping -> calendarProviderService.getCalendarProvider()
+                .ifPresent(calendarProvider -> {
+                    final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
+                    calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
+                })
             );
     }
 
     private void deleteCalendarEntry(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
-            .flatMap(absenceMapping -> calendarService.getCalendarProvider()
+            .flatMap(absenceMapping -> calendarProviderService.getCalendarProvider()
                 .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
             .ifPresent(absenceMappingRepository::deleteByEventId);
     }
 
     private void deleteCalendarEntry(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
-            .flatMap(absenceMapping -> calendarService.getCalendarProvider()
+            .flatMap(absenceMapping -> calendarProviderService.getCalendarProvider()
                 .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
             .ifPresent(absenceMappingRepository::deleteByEventId);
     }
 
     void checkCalendarSyncSettings() {
-        calendarService.getCalendarProvider()
+        calendarProviderService.getCalendarProvider()
             .ifPresent(calendarProvider -> calendarProvider.checkCalendarSyncSettings(getCalendarSettings()));
     }
 
