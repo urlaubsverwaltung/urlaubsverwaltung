@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -71,8 +70,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
         if (errors.hasErrors()) {
 
-            final StringBuffer requestURL = request.getRequestURL();
-            final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
+            final String authorizedRedirectUrl = getAuthorizedRedirectUrl(request.getRequestURL().toString(), "oautherrors");
 
             fillModel(model, calendarSettingsDto, authorizedRedirectUrl);
 
@@ -106,7 +104,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())
             .sorted(reverseOrder())
-            .collect(toList());
+            .toList();
         model.addAttribute("providers", providers);
     }
 
@@ -143,9 +141,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
     }
 
     private boolean refreshTokenGotInvalid(GoogleCalendarSettings oldSettings, GoogleCalendarSettings newSettings) {
-        if (oldSettings.getClientSecret() == null
-            || oldSettings.getClientId() == null
-            || oldSettings.getCalendarId() == null) {
+        if (oldSettings.getClientSecret() == null || oldSettings.getClientId() == null || oldSettings.getCalendarId() == null) {
             return true;
         }
 
