@@ -47,6 +47,6 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
      */
     @EventListener
     void delete(PersonDeletedEvent event) {
-        personBasedataRepository.deleteByPerson(event.getPerson());
+        personBasedataRepository.deleteByPerson(event.person());
     }
 }

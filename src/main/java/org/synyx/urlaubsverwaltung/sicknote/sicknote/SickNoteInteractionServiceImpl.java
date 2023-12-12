@@ -165,7 +165,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
      */
     @EventListener
     void deleteAll(PersonDeletedEvent event) {
-        final Person personToBeDeleted = event.getPerson();
+        final Person personToBeDeleted = event.person();
         commentService.deleteAllBySickNotePerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);
         final List<SickNote> deletedSickNotes = sickNoteService.deleteAllByPerson(personToBeDeleted);

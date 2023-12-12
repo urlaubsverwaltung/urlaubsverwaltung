@@ -404,7 +404,7 @@ class PersonServiceImplTest {
 
         inOrder.verify(personRepository).existsById(42L);
         inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
-        assertThat(personDeletedEventArgumentCaptor.getValue().getPerson())
+        assertThat(personDeletedEventArgumentCaptor.getValue().person())
             .isEqualTo(person);
 
         inOrder.verify(accountInteractionService).deleteAllByPerson(person);

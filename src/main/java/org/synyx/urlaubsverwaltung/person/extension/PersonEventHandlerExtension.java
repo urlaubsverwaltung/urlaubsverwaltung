@@ -67,7 +67,7 @@ class PersonEventHandlerExtension {
     @Async
     @EventListener
     void on(PersonDeletedEvent event) {
-        final Person person = event.getPerson();
+        final Person person = event.person();
         final PersonDeletedEventDTO eventToPublish = PersonDeletedEventDTO.create(tenantSupplier.get(), person.getId(), person.getUsername(), person.getLastName(), person.getFirstName(), person.getEmail(), person.isActive());
         applicationEventPublisher.publishEvent(eventToPublish);
     }

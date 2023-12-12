@@ -1,14 +1,5 @@
 package org.synyx.urlaubsverwaltung.person;
 
-public class PersonDeletedEvent {
+public record PersonDeletedEvent(Person person) {
 
-    private final Person person;
-
-    public PersonDeletedEvent(Person person) {
-        this.person = person;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
 }

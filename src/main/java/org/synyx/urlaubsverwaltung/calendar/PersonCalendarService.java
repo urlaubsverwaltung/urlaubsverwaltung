@@ -99,7 +99,7 @@ class PersonCalendarService {
     @EventListener
     void deletePersonalCalendar(PersonDeletedEvent event) {
 
-        personCalendarRepository.deleteByPerson(event.getPerson());
+        personCalendarRepository.deleteByPerson(event.person());
     }
 
     private Person getPersonOrThrow(Long personId) {

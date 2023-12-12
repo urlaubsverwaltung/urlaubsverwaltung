@@ -554,7 +554,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
      */
     @EventListener
     void deleteAllByPerson(PersonDeletedEvent event) {
-        final Person personToBeDeleted = event.getPerson();
+        final Person personToBeDeleted = event.person();
         commentService.deleteByApplicationPerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);
 

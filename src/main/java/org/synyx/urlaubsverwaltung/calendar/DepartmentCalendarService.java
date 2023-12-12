@@ -120,7 +120,7 @@ class DepartmentCalendarService {
     @EventListener
     void deleteCalendarForPerson(PersonDeletedEvent event) {
 
-        departmentCalendarRepository.deleteByPerson(event.getPerson());
+        departmentCalendarRepository.deleteByPerson(event.person());
     }
 
     private Department getDepartmentOrThrow(Long departmentId) {
