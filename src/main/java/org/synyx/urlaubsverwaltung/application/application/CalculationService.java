@@ -164,8 +164,8 @@ class CalculationService {
     }
 
     private BigDecimal calculateWorkDaysBeforeExpiryDate(Application application, List<DateRange> beforeExpiryDate) {
-        final LocalDate start = beforeExpiryDate.getFirst().getStartDate();
-        final LocalDate end = beforeExpiryDate.getFirst().getEndDate();
+        final LocalDate start = beforeExpiryDate.getFirst().startDate();
+        final LocalDate end = beforeExpiryDate.getFirst().endDate();
 
         return workDaysCountService.getWorkDaysCount(
             application.getDayLength(),

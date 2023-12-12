@@ -103,8 +103,8 @@ public class VacationDaysService {
                                                                         Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson,
                                                                         DateRange dateRange) {
 
-        final LocalDate from = dateRange.getStartDate();
-        final LocalDate to = dateRange.getEndDate();
+        final LocalDate from = dateRange.startDate();
+        final LocalDate to = dateRange.endDate();
 
         if (to.getYear() != from.getYear()) {
             throw new IllegalArgumentException(String.format("date range must be in the same year but was from=%s to=%s", from, to));
@@ -161,8 +161,8 @@ public class VacationDaysService {
 
     private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
-        final LocalDate firstDayOfYear = dateRange.getStartDate().with(firstDayOfYear());
-        final LocalDate lastDayOfYear = dateRange.getEndDate().with(lastDayOfYear());
+        final LocalDate firstDayOfYear = dateRange.startDate().with(firstDayOfYear());
+        final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
 
         final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().collect(toList());
         final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
@@ -213,8 +213,8 @@ public class VacationDaysService {
         final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), holidayAccountValidFrom.with(firstDayOfYear()));
         final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), holidayAccountValidFrom.with(lastDayOfYear()));
 
-        final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(applicationStartOrFirstDayOfYear, dateRange.getStartDate());
-        final LocalDate applicationEndOrLastDayOfYearOrTo = min(applicationEndOrLastDayOfYear, dateRange.getEndDate());
+        final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(applicationStartOrFirstDayOfYear, dateRange.startDate());
+        final LocalDate applicationEndOrLastDayOfYearOrTo = min(applicationEndOrLastDayOfYear, dateRange.endDate());
 
         // use vacation days scoped to from/to date range
         final BigDecimal dateRangeWorkDaysCountBeforeExpiryDate;

@@ -53,8 +53,8 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
             .map(entity -> toWorkingTime(entity, federalStateCachedSupplier))
             .collect(groupingBy(WorkingTime::getPerson));
 
-        final LocalDate start = dateRange.getStartDate();
-        final LocalDate end = dateRange.getEndDate();
+        final LocalDate start = dateRange.startDate();
+        final LocalDate end = dateRange.endDate();
 
         return persons.stream().map(person -> {
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
@@ -79,7 +79,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                     dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, workingTimeSettings));
                 }
 
-                if (workingTimeDateRange.getStartDate().equals(start)) {
+                if (workingTimeDateRange.startDate().equals(start)) {
                     break;
                 }
 

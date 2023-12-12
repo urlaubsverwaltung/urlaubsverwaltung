@@ -199,7 +199,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final LocalDate today = LocalDate.now(clock);
         final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
-        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
+        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.startDate(), dateRange.endDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
@@ -269,7 +269,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
             .flatMap(List::stream)
             .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(),publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 

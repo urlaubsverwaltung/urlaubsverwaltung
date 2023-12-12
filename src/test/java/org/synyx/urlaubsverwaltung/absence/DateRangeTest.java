@@ -116,8 +116,8 @@ class DateRangeTest {
         final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
 
         final Optional<DateRange> maybeOverlap = rangeOne.overlap(rangeTwo);
-        assertThat(maybeOverlap.get().getStartDate()).isEqualTo(overlapStartDate);
-        assertThat(maybeOverlap.get().getEndDate()).isEqualTo(overlapEndDate);
+        assertThat(maybeOverlap.get().startDate()).isEqualTo(overlapStartDate);
+        assertThat(maybeOverlap.get().endDate()).isEqualTo(overlapEndDate);
     }
 
     static Stream<Arguments> gapDateRanges() {
@@ -137,8 +137,8 @@ class DateRangeTest {
 
         final Optional<DateRange> maybeGap = rangeOne.gap(rangeTwo);
         assertThat(maybeGap)
-            .hasValueSatisfying(localDates -> assertThat(localDates.getStartDate()).isEqualTo(gapStartDate))
-            .hasValueSatisfying(localDates -> assertThat(localDates.getEndDate()).isEqualTo(gapEndDate));
+            .hasValueSatisfying(localDates -> assertThat(localDates.startDate()).isEqualTo(gapStartDate))
+            .hasValueSatisfying(localDates -> assertThat(localDates.endDate()).isEqualTo(gapEndDate));
     }
 
     static Stream<Arguments> gapDateRangesEmpty() {
@@ -209,11 +209,5 @@ class DateRangeTest {
             .isNotEqualTo(commentTwo)
             .isNotEqualTo(new Object())
             .isNotEqualTo(null);
-    }
-
-    @Test
-    void hashCodeTest() {
-        final DateRange dateRange = new DateRange(LocalDate.MIN, LocalDate.MAX);
-        assertThat(dateRange.hashCode()).isEqualTo(-1163458881);
     }
 }
