@@ -102,9 +102,9 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteCreatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteCreatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteCreatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
-        assertThat(sickNoteCreatedEvent.getSickNote()).isEqualTo(createdSickNote);
-        assertThat(sickNoteCreatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteCreatedEvent.getId()).isNotNull();
+        assertThat(sickNoteCreatedEvent.sickNote()).isEqualTo(createdSickNote);
+        assertThat(sickNoteCreatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCreatedEvent.id()).isNotNull();
     }
 
     @Test
@@ -221,9 +221,9 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteUpdatedEvent sickNoteUpdatedEvent = eventCaptor.getValue();
-        assertThat(sickNoteUpdatedEvent.getSickNote()).isEqualTo(sickNote);
-        assertThat(sickNoteUpdatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteUpdatedEvent.getId()).isNotNull();
+        assertThat(sickNoteUpdatedEvent.sickNote()).isEqualTo(sickNote);
+        assertThat(sickNoteUpdatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteUpdatedEvent.id()).isNotNull();
 
         verify(sickNoteMailService).sendEditedToSickPerson(sickNote);
     }
@@ -261,9 +261,9 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteCancelledEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteCancelledEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteCancelledEvent sickNoteCancelledEvent = eventCaptor.getValue();
-        assertThat(sickNoteCancelledEvent.getSickNote()).isEqualTo(cancelledSickNote);
-        assertThat(sickNoteCancelledEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteCancelledEvent.getId()).isNotNull();
+        assertThat(sickNoteCancelledEvent.sickNote()).isEqualTo(cancelledSickNote);
+        assertThat(sickNoteCancelledEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCancelledEvent.id()).isNotNull();
     }
 
     @Test
@@ -357,10 +357,10 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteToApplicationConvertedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteToApplicationConvertedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteToApplicationConvertedEvent sickNoteToApplicationConvertedEvent = eventCaptor.getValue();
-        assertThat(sickNoteToApplicationConvertedEvent.getSickNote()).isEqualTo(convertedSickNote);
-        assertThat(sickNoteToApplicationConvertedEvent.getApplication()).isEqualTo(applicationForLeave);
-        assertThat(sickNoteToApplicationConvertedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteToApplicationConvertedEvent.getId()).isNotNull();
+        assertThat(sickNoteToApplicationConvertedEvent.sickNote()).isEqualTo(convertedSickNote);
+        assertThat(sickNoteToApplicationConvertedEvent.application()).isEqualTo(applicationForLeave);
+        assertThat(sickNoteToApplicationConvertedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteToApplicationConvertedEvent.id()).isNotNull();
     }
 
     @Test
@@ -449,8 +449,8 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteDeletedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteDeletedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteDeletedEvent sickNoteDeletedEvent = eventCaptor.getValue();
-        assertThat(sickNoteDeletedEvent.getSickNote()).isEqualTo(sickNote);
-        assertThat(sickNoteDeletedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteDeletedEvent.getId()).isNotNull();
+        assertThat(sickNoteDeletedEvent.sickNote()).isEqualTo(sickNote);
+        assertThat(sickNoteDeletedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteDeletedEvent.id()).isNotNull();
     }
 }
