@@ -83,11 +83,11 @@ class ApplicationForLeaveStatisticsBuilder {
                 if (holidayAccountVacationDaysByAccount.containsKey(account)) {
                     final HolidayAccountVacationDays holidayAccountVacationDays = holidayAccountVacationDaysByAccount.get(account);
 
-                    final VacationDaysLeft vacationDaysLeftYear = holidayAccountVacationDays.getVacationDaysYear();
+                    final VacationDaysLeft vacationDaysLeftYear = holidayAccountVacationDays.vacationDaysYear();
                     statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
                     statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
 
-                    final VacationDaysLeft vacationDaysLeftPeriod = holidayAccountVacationDays.getVacationDaysDateRange();
+                    final VacationDaysLeft vacationDaysLeftPeriod = holidayAccountVacationDays.vacationDaysDateRange();
                     statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
                     statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
                 }

@@ -144,7 +144,7 @@ public class VacationDaysService {
 
                 return new HolidayAccountVacationDays(account, vacationDaysLeftYear, vacationDaysLeftDateRange);
             })
-            .collect(toMap(HolidayAccountVacationDays::getAccount, identity()));
+            .collect(toMap(HolidayAccountVacationDays::account, identity()));
     }
 
     BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
