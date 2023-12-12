@@ -402,7 +402,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
-        model.addAttribute("lastComment", comments.get(comments.size() - 1));
+        model.addAttribute("lastComment", comments.getLast());
 
         // APPLICATION FOR LEAVE
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);

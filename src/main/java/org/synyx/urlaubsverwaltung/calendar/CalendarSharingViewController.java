@@ -253,7 +253,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         }
 
         if (!departmentCalendarDtos.isEmpty() && departmentCalendarDtos.stream().noneMatch(DepartmentCalendarDto::isActive)) {
-            departmentCalendarDtos.get(0).setActive(true);
+            departmentCalendarDtos.getFirst().setActive(true);
         }
 
         return departmentCalendarDtos;

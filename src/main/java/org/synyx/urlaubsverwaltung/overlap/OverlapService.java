@@ -218,8 +218,8 @@ public class OverlapService {
             return List.of();
         }
 
-        final LocalDate firstOverlapStart = listOfOverlaps.get(0).getStartDate();
-        final LocalDate lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEndDate();
+        final LocalDate firstOverlapStart = listOfOverlaps.getFirst().getStartDate();
+        final LocalDate lastOverlapEnd = listOfOverlaps.getLast().getEndDate();
 
         final List<DateRange> listOfGaps = new ArrayList<>();
         if (startDate.isBefore(firstOverlapStart)) {

@@ -188,7 +188,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
         final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
-        return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
+        return preparedSelectedDepartments.isEmpty() ? List.of(departments.getFirst().getName()) : preparedSelectedDepartments;
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,
