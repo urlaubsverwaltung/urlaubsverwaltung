@@ -124,7 +124,7 @@ class SettingsWorkingTimeViewControllerTest {
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/settings/working-time"))
-            .andExpect(flash().attribute("success", true));;
+            .andExpect(flash().attribute("success", true));
 
         final ArgumentCaptor<Settings> captor = ArgumentCaptor.forClass(Settings.class);
         verify(settingsService).save(captor.capture());
