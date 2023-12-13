@@ -58,80 +58,80 @@ class CalendarSyncService {
     @Async
     @EventListener
     public void consumeApplicationAppliedEvent(ApplicationAppliedEvent event) {
-        addCalendarEntry(event.getApplication());
+        addCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationAllowedTemporarilyEvent(ApplicationAllowedTemporarilyEvent event) {
-        updateCalendarEntry(event.getApplication());
+        updateCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationAllowedEvent(ApplicationAllowedEvent event) {
-        updateCalendarEntry(event.getApplication());
+        updateCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationUpdatedEvent(ApplicationUpdatedEvent event) {
-        updateCalendarEntry(event.getApplication());
+        updateCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationRejectedEvent(ApplicationRejectedEvent event) {
-        deleteCalendarEntry(event.getApplication());
+        deleteCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationRevokedEvent(ApplicationRevokedEvent event) {
-        deleteCalendarEntry(event.getApplication());
+        deleteCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationCancelledEvent(ApplicationCancelledEvent event) {
-        deleteCalendarEntry(event.getApplication());
+        deleteCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeApplicationDeletedEvent(ApplicationDeletedEvent event) {
-        deleteCalendarEntry(event.getApplication());
+        deleteCalendarEntry(event.application());
     }
 
     @Async
     @EventListener
     public void consumeSickNoteCreatedEvent(SickNoteCreatedEvent event) {
-        addCalendarEntry(event.getSickNote());
+        addCalendarEntry(event.sickNote());
     }
 
     @Async
     @EventListener
     public void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
-        updateCalendarEntry(event.getSickNote());
+        updateCalendarEntry(event.sickNote());
     }
 
     @Async
     @EventListener
     public void consumeSickNoteCancelledEvent(SickNoteCancelledEvent event) {
-        deleteCalendarEntry(event.getSickNote());
+        deleteCalendarEntry(event.sickNote());
     }
 
     @Async
     @EventListener
     public void consumeSickNoteDeletedEvent(SickNoteDeletedEvent event) {
-        deleteCalendarEntry(event.getSickNote());
+        deleteCalendarEntry(event.sickNote());
     }
 
     @Async
     @EventListener
     public void consumeSickNoteToApplicationConvertedEvent(SickNoteToApplicationConvertedEvent event) {
-        deleteCalendarEntry(event.getSickNote());
-        addCalendarEntry(event.getApplication());
+        deleteCalendarEntry(event.sickNote());
+        addCalendarEntry(event.application());
     }
 
     private void addCalendarEntry(Application application) {
