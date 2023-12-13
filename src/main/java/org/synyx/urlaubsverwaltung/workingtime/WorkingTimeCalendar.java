@@ -23,13 +23,7 @@ import java.util.Optional;
  * <p>
  * Should be used in combination with a {@link Map} to keep relation to a {@link org.synyx.urlaubsverwaltung.person.Person} for example.
  */
-public class WorkingTimeCalendar {
-
-    private final Map<LocalDate, WorkingDayInformation> workingDays;
-
-    public WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingDays) {
-        this.workingDays = workingDays;
-    }
+public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingDays) {
 
     /**
      * @param application
@@ -113,10 +107,6 @@ public class WorkingTimeCalendar {
         }
 
         return sum;
-    }
-
-    public Map<LocalDate, WorkingDayInformation> getWorkingDays() {
-        return workingDays;
     }
 
     public record WorkingDayInformation(

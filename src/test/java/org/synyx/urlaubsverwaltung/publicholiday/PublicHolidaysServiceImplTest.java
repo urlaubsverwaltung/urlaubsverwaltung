@@ -162,7 +162,7 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, MAY, 30), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL));
     }
 
     @Test
@@ -171,7 +171,7 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BAYERN_MUENCHEN);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL));
     }
 
     @Test
@@ -198,7 +198,7 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.NOON));
     }
 
     @Test
@@ -207,7 +207,7 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.NOON));
     }
 
     @Test
@@ -218,7 +218,7 @@ class PublicHolidaysServiceImplTest {
         final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2019, DECEMBER, 30), of(2019, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(publicHolidays)
             .hasSize(1)
-            .extracting(p -> p.getDayLength()).containsExactly(DayLength.NOON);
+            .extracting(p -> p.dayLength()).containsExactly(DayLength.NOON);
     }
 
     // CHRISTMAS EVE
@@ -236,8 +236,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(christmasEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON);
+            assertThat(publicHoliday.date()).isEqualTo(christmasEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.NOON);
         });
     }
 
@@ -253,8 +253,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(christmasEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.MORNING);
+            assertThat(publicHoliday.date()).isEqualTo(christmasEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.MORNING);
         });
     }
 
@@ -270,8 +270,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(christmasEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.ZERO);
+            assertThat(publicHoliday.date()).isEqualTo(christmasEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.ZERO);
         });
     }
 
@@ -287,8 +287,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(christmasEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL);
+            assertThat(publicHoliday.date()).isEqualTo(christmasEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL);
         });
     }
 
@@ -307,8 +307,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(newYearsEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON);
+            assertThat(publicHoliday.date()).isEqualTo(newYearsEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.NOON);
         });
     }
 
@@ -324,8 +324,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(newYearsEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.MORNING);
+            assertThat(publicHoliday.date()).isEqualTo(newYearsEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.MORNING);
         });
     }
 
@@ -341,8 +341,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(newYearsEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.ZERO);
+            assertThat(publicHoliday.date()).isEqualTo(newYearsEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.ZERO);
         });
     }
 
@@ -358,8 +358,8 @@ class PublicHolidaysServiceImplTest {
 
         assertThat(actual).isPresent();
         assertThat(actual.get()).satisfies(publicHoliday -> {
-            assertThat(publicHoliday.getDate()).isEqualTo(newYearsEveDate);
-            assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL);
+            assertThat(publicHoliday.date()).isEqualTo(newYearsEveDate);
+            assertThat(publicHoliday.dayLength()).isEqualTo(DayLength.FULL);
         });
     }
 

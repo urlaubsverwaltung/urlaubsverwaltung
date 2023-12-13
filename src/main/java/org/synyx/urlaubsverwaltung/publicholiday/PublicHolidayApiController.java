@@ -133,7 +133,7 @@ public class PublicHolidayApiController {
 
         final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
-            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue(), workingTimeSettings))
+            .map(entry -> getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue(), workingTimeSettings))
             .flatMap(List::stream)
             .sorted(Comparator.comparing(PublicHolidayDto::getDate))
             .toList();
@@ -154,6 +154,6 @@ public class PublicHolidayApiController {
     }
 
     private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday) {
-        return new PublicHolidayDto(publicHoliday, publicHoliday.getDayLength().getDuration(), publicHoliday.getDayLength().name());
+        return new PublicHolidayDto(publicHoliday, publicHoliday.dayLength().getDuration(), publicHoliday.dayLength().name());
     }
 }

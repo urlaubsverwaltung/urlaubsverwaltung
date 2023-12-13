@@ -88,9 +88,9 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("text", "csv", UTF_8));
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName(), UTF_8).build());
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.fileName(), UTF_8).build());
 
-        return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
+        return ResponseEntity.status(OK).headers(headers).body(csvFile.resource());
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {

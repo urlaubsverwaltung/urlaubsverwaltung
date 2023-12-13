@@ -188,7 +188,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
         final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
-        return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
+        return preparedSelectedDepartments.isEmpty() ? List.of(departments.getFirst().getName()) : preparedSelectedDepartments;
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,
@@ -199,7 +199,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final LocalDate today = LocalDate.now(clock);
         final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
-        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
+        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.startDate(), dateRange.endDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
@@ -269,9 +269,9 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
             .flatMap(List::stream)
-            .collect(toMap(PublicHoliday::getDate, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.getDate(),publicHoliday.getDayLength(), publicHoliday.getDescription().concat("/").concat(publicHoliday2.getDescription()))));
+            .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(),publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 
     }
 
@@ -300,13 +300,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
                                                                      Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
 
         AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType, recordInfoToColor);
-        if (publicHoliday.getDayLength().isMorning()) {
+        if (publicHoliday.dayLength().isMorning()) {
             builder = builder.publicHolidayMorning();
         }
-        if (publicHoliday.getDayLength().isNoon()) {
+        if (publicHoliday.dayLength().isNoon()) {
             builder = builder.publicHolidayNoon();
         }
-        if (publicHoliday.getDayLength().isFull()) {
+        if (publicHoliday.dayLength().isFull()) {
             builder = builder.publicHolidayFull();
         }
         return builder;

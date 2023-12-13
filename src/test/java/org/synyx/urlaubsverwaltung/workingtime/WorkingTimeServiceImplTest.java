@@ -351,8 +351,8 @@ class WorkingTimeServiceImplTest {
             .isNotEmpty()
             .hasSize(2)
             .containsExactly(
-                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), GERMANY_RHEINLAND_PFALZ),
-                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), GERMANY_BADEN_WUERTTEMBERG)
+                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), GERMANY_BADEN_WUERTTEMBERG),
+                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), GERMANY_RHEINLAND_PFALZ)
             );
     }
 
@@ -469,8 +469,8 @@ class WorkingTimeServiceImplTest {
             .isNotEmpty()
             .hasSize(2)
             .containsExactly(
-                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), new WorkingTime(person, LocalDate.of(2021, 11, 15), GERMANY_RHEINLAND_PFALZ, false)),
-                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), new WorkingTime(person, LocalDate.of(2020, 9, 1), GERMANY_BADEN_WUERTTEMBERG, false))
+                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), new WorkingTime(person, LocalDate.of(2020, 9, 1), GERMANY_BADEN_WUERTTEMBERG, false)),
+                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), new WorkingTime(person, LocalDate.of(2021, 11, 15), GERMANY_RHEINLAND_PFALZ, false))
             );
     }
 

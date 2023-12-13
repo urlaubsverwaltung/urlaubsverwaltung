@@ -43,7 +43,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     @EventListener
     void delete(PersonDeletedEvent event) {
-        userSettingsRepository.deleteByPerson(event.getPerson());
+        userSettingsRepository.deleteByPerson(event.person());
     }
 
     @EventListener

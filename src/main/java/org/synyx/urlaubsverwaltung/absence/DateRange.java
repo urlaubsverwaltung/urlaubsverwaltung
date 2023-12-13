@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -19,28 +18,13 @@ import static java.time.temporal.ChronoUnit.DAYS;
  * A date range represents a period of time between two LocalDates.
  * Date range are inclusive of the start and the end date.
  * The end date is always greater than or equal to the start date.
- * <p>
  */
-public final class DateRange implements Iterable<LocalDate> {
+public record DateRange(LocalDate startDate, LocalDate endDate) implements Iterable<LocalDate> {
 
-    private final LocalDate startDate;
-    private final LocalDate endDate;
-
-    public DateRange(LocalDate startDate, LocalDate endDate) {
+    public DateRange {
         if (startDate != null && endDate != null) {
             Assert.isTrue(!startDate.isAfter(endDate), "The end date must be greater than or equal to the start date.");
         }
-
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
     }
 
     /**
@@ -147,7 +131,6 @@ public final class DateRange implements Iterable<LocalDate> {
         return Duration.ofDays(startDate.until(endDate, DAYS)).plusDays(1);
     }
 
-
     @Override
     public Iterator<LocalDate> iterator() {
         return new DateRangeIterator(startDate, endDate);
@@ -155,19 +138,6 @@ public final class DateRange implements Iterable<LocalDate> {
 
     public Stream<LocalDate> stream() {
         return StreamSupport.stream(spliterator(), false);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DateRange that = (DateRange) o;
-        return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(startDate, endDate);
     }
 
     private static final class DateRangeIterator implements Iterator<LocalDate> {

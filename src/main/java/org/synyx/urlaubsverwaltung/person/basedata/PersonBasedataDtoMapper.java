@@ -10,7 +10,7 @@ final class PersonBasedataDtoMapper {
 
     static PersonBasedataDto mapToPersonBasedataDto(PersonBasedata personBasedata, Person person) {
         final PersonBasedataDto personBasedataDto = new PersonBasedataDto();
-        personBasedataDto.setPersonId(personBasedata.getPersonId().getValue());
+        personBasedataDto.setPersonId(personBasedata.getPersonId().value());
         personBasedataDto.setPersonnelNumber(personBasedata.getPersonnelNumber());
         personBasedataDto.setAdditionalInfo(personBasedata.getAdditionalInformation());
         personBasedataDto.setNiceName(person.getNiceName());

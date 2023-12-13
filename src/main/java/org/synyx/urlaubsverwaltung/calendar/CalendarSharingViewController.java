@@ -44,9 +44,14 @@ public class CalendarSharingViewController implements HasLaunchpad {
     private final CalendarAccessibleService calendarAccessibleService;
 
     @Autowired
-    public CalendarSharingViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
-                                         CompanyCalendarService companyCalendarService, PersonService personService, DepartmentService departmentService,
-                                         CalendarAccessibleService calendarAccessibleService) {
+    CalendarSharingViewController(
+        PersonCalendarService personCalendarService,
+        DepartmentCalendarService departmentCalendarService,
+        CompanyCalendarService companyCalendarService,
+        PersonService personService,
+        DepartmentService departmentService,
+        CalendarAccessibleService calendarAccessibleService
+    ) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
         this.companyCalendarService = companyCalendarService;
@@ -253,7 +258,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         }
 
         if (!departmentCalendarDtos.isEmpty() && departmentCalendarDtos.stream().noneMatch(DepartmentCalendarDto::isActive)) {
-            departmentCalendarDtos.get(0).setActive(true);
+            departmentCalendarDtos.getFirst().setActive(true);
         }
 
         return departmentCalendarDtos;

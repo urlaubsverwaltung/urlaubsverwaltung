@@ -350,7 +350,7 @@ public class Application {
 
     public Map<Integer, Duration> getHoursByYear() {
         return this.splitByYear().stream().collect(Collectors.toMap(
-            dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
+            dateRangeForYear -> dateRangeForYear.startDate().getYear(),
             this::getHoursForDateRange));
     }
 

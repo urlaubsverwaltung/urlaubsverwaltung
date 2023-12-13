@@ -215,9 +215,9 @@ class DepartmentServiceImpl implements DepartmentService {
     @EventListener
     void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
 
-        getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
+        getAssignedDepartmentsOfMember(event.person()).forEach(department -> {
             department.setMembers(department.getMembers().stream()
-                .filter(not(isEqual(event.getPerson())))
+                .filter(not(isEqual(event.person())))
                 .collect(toList()));
             update(department);
         });
@@ -231,9 +231,9 @@ class DepartmentServiceImpl implements DepartmentService {
     @EventListener
     void deleteDepartmentHead(PersonDeletedEvent event) {
 
-        getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
+        getManagedDepartmentsOfDepartmentHead(event.person()).forEach(department -> {
             department.setDepartmentHeads(department.getDepartmentHeads().stream()
-                .filter(person -> !person.equals(event.getPerson()))
+                .filter(person -> !person.equals(event.person()))
                 .collect(toList()));
             update(department);
         });
@@ -248,9 +248,9 @@ class DepartmentServiceImpl implements DepartmentService {
     @EventListener
     void deleteSecondStageAuthority(PersonDeletedEvent event) {
 
-        getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
+        getManagedDepartmentsOfSecondStageAuthority(event.person()).forEach(department -> {
             department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
-                .filter(person -> !person.equals(event.getPerson()))
+                .filter(person -> !person.equals(event.person()))
                 .collect(toList()));
             update(department);
         });

@@ -45,11 +45,13 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
     private final SettingsAbsenceTypesDtoValidator validator;
 
     @Autowired
-    public SettingsAbsenceTypesViewController(SettingsService settingsService,
-                                              VacationTypeService vacationTypeService,
-                                              SpecialLeaveSettingsService specialLeaveService,
-                                              MessageSource messageSource,
-                                              SettingsAbsenceTypesDtoValidator validator) {
+    SettingsAbsenceTypesViewController(
+        SettingsService settingsService,
+        VacationTypeService vacationTypeService,
+        SpecialLeaveSettingsService specialLeaveService,
+        MessageSource messageSource,
+        SettingsAbsenceTypesDtoValidator validator
+    ) {
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.specialLeaveSettingsService = specialLeaveService;

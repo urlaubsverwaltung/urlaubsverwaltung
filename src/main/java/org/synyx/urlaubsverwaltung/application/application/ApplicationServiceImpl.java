@@ -191,8 +191,8 @@ class ApplicationServiceImpl implements ApplicationService {
      */
     @EventListener
     void deleteHolidayReplacements(PersonDeletedEvent event) {
-        final List<ApplicationEntity> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.getPerson()).stream()
-            .map(deleteHolidayReplacement(event.getPerson()))
+        final List<ApplicationEntity> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.person()).stream()
+            .map(deleteHolidayReplacement(event.person()))
             .collect(toList());
         applicationRepository.saveAll(applicationsWithReplacedApplicationReplacements);
     }

@@ -138,7 +138,7 @@ public class Overtime {
 
     public Map<Integer, Duration> getDurationByYear() {
         return this.splitByYear().stream()
-            .collect(toMap(dateRangeForYear -> dateRangeForYear.getStartDate().getYear(), this::getDurationForDateRange));
+            .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
     }
 
     public Duration getTotalDurationBefore(int year) {

@@ -402,7 +402,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
-        model.addAttribute("lastComment", comments.get(comments.size() - 1));
+        model.addAttribute("lastComment", comments.getLast());
 
         // APPLICATION FOR LEAVE
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
@@ -410,7 +410,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
                 application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
-            .sorted(Map.Entry.comparingByKey(comparing(DateRange::getStartDate)))
+            .sorted(Map.Entry.comparingByKey(comparing(DateRange::startDate)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> newValue, LinkedHashMap::new));
         model.addAttribute("dateRangeWorkingTimes", workingTime);
 

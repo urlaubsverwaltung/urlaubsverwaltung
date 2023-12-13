@@ -44,9 +44,13 @@ public class PersonPermissionsViewController implements HasLaunchpad {
     private final SessionService sessionService;
 
     @Autowired
-    public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService,
-                                           PersonMailService personMailService, PersonPermissionsDtoValidator validator,
-                                           SessionService sessionService) {
+    PersonPermissionsViewController(
+        PersonService personService,
+        DepartmentService departmentService,
+        PersonMailService personMailService,
+        PersonPermissionsDtoValidator validator,
+        SessionService sessionService
+    ) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.personMailService = personMailService;

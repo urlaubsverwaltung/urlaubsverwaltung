@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Converter
 final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Locale, String>, String> {
 
     private final TypeReference<Map<Locale, String>> typeReference = new TypeReference<>() {};

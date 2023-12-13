@@ -122,7 +122,7 @@ class PersonServiceIT extends TestContainersBase {
 
         assertThat(personRepository.existsById(personId)).isTrue();
         assertThat(personRepository.findByUsernameIgnoreCase("user").get().getPermissions()).containsExactly(USER);
-        assertThat(personBasedataService.getBasedataByPersonId(personId).get().getPersonId().getValue()).isEqualTo(personId);
+        assertThat(personBasedataService.getBasedataByPersonId(personId).get().getPersonId().value()).isEqualTo(personId);
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).hasSize(1);
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isOne();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);

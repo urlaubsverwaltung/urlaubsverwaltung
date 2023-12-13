@@ -218,8 +218,8 @@ public class OverlapService {
             return List.of();
         }
 
-        final LocalDate firstOverlapStart = listOfOverlaps.get(0).getStartDate();
-        final LocalDate lastOverlapEnd = listOfOverlaps.get(listOfOverlaps.size() - 1).getEndDate();
+        final LocalDate firstOverlapStart = listOfOverlaps.getFirst().startDate();
+        final LocalDate lastOverlapEnd = listOfOverlaps.getLast().endDate();
 
         final List<DateRange> listOfGaps = new ArrayList<>();
         if (startDate.isBefore(firstOverlapStart)) {
@@ -258,8 +258,8 @@ public class OverlapService {
     private boolean intervalsHaveGap(DateRange firstInterval, DateRange secondInterval) {
 
         // test if end of interval is equals resp. one day plus of start of other interval
-        final LocalDate endOfFirstInterval = firstInterval.getEndDate();
-        final LocalDate startOfSecondInterval = secondInterval.getStartDate();
+        final LocalDate endOfFirstInterval = firstInterval.endDate();
+        final LocalDate startOfSecondInterval = secondInterval.startDate();
 
         return !(endOfFirstInterval.equals(startOfSecondInterval) || endOfFirstInterval.plusDays(1).equals(startOfSecondInterval));
     }

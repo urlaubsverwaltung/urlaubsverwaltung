@@ -151,7 +151,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Person person = workingTimeCalendarEntry.getKey();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarEntry.getValue();
 
-        return workingTimeCalendar.getWorkingDays().entrySet().stream()
+        return workingTimeCalendar.workingDays().entrySet().stream()
             .<AbsencePeriod>mapMulti((workingDayInformationEntry, consumer) -> {
                 final LocalDate date = workingDayInformationEntry.getKey();
                 final WorkingDayInformation workingDayInformation = workingDayInformationEntry.getValue();
@@ -200,8 +200,8 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
-        final LocalDate start = maxDate(application.getStartDate(), askedDateRange.getStartDate());
-        final LocalDate end = minDate(application.getEndDate(), askedDateRange.getEndDate());
+        final LocalDate start = maxDate(application.getStartDate(), askedDateRange.startDate());
+        final LocalDate end = minDate(application.getEndDate(), askedDateRange.endDate());
 
         final Person person = application.getPerson();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);
@@ -270,8 +270,8 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
-        final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.getStartDate());
-        final LocalDate end = minDate(sickNote.getEndDate(), askedDateRange.getEndDate());
+        final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.startDate());
+        final LocalDate end = minDate(sickNote.getEndDate(), askedDateRange.endDate());
 
         final Person person = sickNote.getPerson();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);

@@ -29,7 +29,7 @@ class UserPaginationSettingsService {
     }
 
     private UserPaginationSettings findByPersonId(PersonId personId) {
-        return repository.findByPersonId(personId.getValue())
+        return repository.findByPersonId(personId.value())
             .map(UserPaginationSettingsService::toUserPaginationSettings)
             .orElseGet(this::defaultUserPaginationSettings);
     }
@@ -45,7 +45,7 @@ class UserPaginationSettingsService {
     private static UserPaginationSettingsEntity toUserPaginationSettingsEntity(PersonId personId, UserPaginationSettings userPaginationSettings) {
         final UserPaginationSettingsEntity entity = new UserPaginationSettingsEntity();
         entity.setPerson(null);
-        entity.setPersonId(personId.getValue());
+        entity.setPersonId(personId.value());
         entity.setDefaultPageSize(userPaginationSettings.getDefaultPageSize());
         return entity;
     }

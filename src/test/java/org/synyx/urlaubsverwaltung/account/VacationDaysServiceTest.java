@@ -478,9 +478,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 
@@ -522,9 +522,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 
@@ -566,9 +566,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 
@@ -610,9 +610,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 
@@ -654,9 +654,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 
@@ -698,9 +698,9 @@ class VacationDaysServiceTest {
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
-            assertThat(holidayAccountVacationDays.getAccount()).isEqualTo(account);
-            assertThat(holidayAccountVacationDays.getVacationDaysYear()).isEqualTo(expectedDaysLeft);
-            assertThat(holidayAccountVacationDays.getVacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
         });
     }
 

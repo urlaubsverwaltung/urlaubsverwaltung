@@ -49,7 +49,7 @@ public class SickNoteEventRepublisher {
             .stream()
             .map(SickNoteCreatedEvent::of)
             .forEach(event -> {
-                LOG.info("Publishing sickNoteCreatedEvent with id={} for personId={} with startDate={} and endDate={}", event.getSickNote().getId(), event.getSickNote().getPerson().getId(), event.getSickNote().getStartDate(), event.getSickNote().getEndDate());
+                LOG.info("Publishing sickNoteCreatedEvent with id={} for personId={} with startDate={} and endDate={}", event.sickNote().getId(), event.sickNote().getPerson().getId(), event.sickNote().getStartDate(), event.sickNote().getEndDate());
                 sickNoteEventHandlerExtension.on(event);
             });
 

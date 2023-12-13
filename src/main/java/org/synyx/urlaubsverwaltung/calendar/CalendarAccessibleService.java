@@ -27,7 +27,7 @@ class CalendarAccessibleService {
             return false;
         }
 
-        return companyCalendarAccessibleList.get(0).isAccessible();
+        return companyCalendarAccessibleList.getFirst().isAccessible();
     }
 
     void enableCompanyCalendar() {
@@ -47,7 +47,7 @@ class CalendarAccessibleService {
         if (companyCalendarAccessibleList.isEmpty()) {
             companyCalendarAccessible = new CompanyCalendarAccessible();
         } else {
-            companyCalendarAccessible = companyCalendarAccessibleList.get(0);
+            companyCalendarAccessible = companyCalendarAccessibleList.getFirst();
         }
         companyCalendarAccessible.setAccessible(isCompanyCalendarAccessible);
 
