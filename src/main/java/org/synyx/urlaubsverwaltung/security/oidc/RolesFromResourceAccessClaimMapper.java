@@ -61,7 +61,7 @@ class RolesFromResourceAccessClaimMapper implements RolesFromClaimMapper {
         final List<String> resourceAccessRoles = extractRolesFromResourceApp(resourceApp, ROLES);
         final String neededResourceAccessRole = properties.getRolePrefix().concat(USER.name().toLowerCase());
 
-        if (resourceAccessRoles.stream().noneMatch(neededResourceAccessRole::equals)) {
+        if (properties.isAuthorityCheckEnabled() && resourceAccessRoles.stream().noneMatch(neededResourceAccessRole::equals)) {
             throw new MissingClaimAuthorityException(format("User has not required permission '%s' to access urlaubsverwaltung!", neededResourceAccessRole));
         }
 

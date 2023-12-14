@@ -9,6 +9,15 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("uv.security.oidc.claim-mappers")
 public class RolesFromClaimMappersProperties {
 
+
+    /**
+     * Activates or deactivates the authority check of the claim mappers, if they are enabled.
+     * When the authority check is enabled, then you need to provide the {@link RolesFromClaimMappersProperties#rolePrefix}user authority in your iam,
+     * otherwise it can be done via the ui in the application.
+     *
+     */
+    private boolean authorityCheckEnabled = true;
+
     /**
      * Prefix to compare the defined roles/groups against. This role prefix is case-sensitive.
      */
@@ -20,6 +29,14 @@ public class RolesFromClaimMappersProperties {
 
     @NotNull
     private GroupClaimMapperProperties groupClaim = new GroupClaimMapperProperties();
+
+    public boolean isAuthorityCheckEnabled() {
+        return authorityCheckEnabled;
+    }
+
+    public void setAuthorityCheckEnabled(boolean authorityCheckEnabled) {
+        this.authorityCheckEnabled = authorityCheckEnabled;
+    }
 
     public String getRolePrefix() {
         return rolePrefix;
