@@ -163,13 +163,6 @@
       <version>${jollyday.version}</version>
     </dependency>
 
-    <!-- TIME -->
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.12.5</version>
-    </dependency>
-
     <!-- DEVELOPMENT -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
