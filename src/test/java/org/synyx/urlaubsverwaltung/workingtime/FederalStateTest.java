@@ -49,6 +49,26 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.ITALY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.MALTA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NETHERLANDS;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_ANDALUCIA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_ARAGON;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_ASTURIAS;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_BALEARIC_ISLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_BARCELONA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CANARY_ISLANDS;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CANTABRIA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CASTILE_AND_LEON;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CASTILE_LA_MANCHA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CATALONIA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_CEUTA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_EUSKADI;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_EXTREMADURA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_GALICIA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_LA_RIOJA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_MADRID;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_MELILLA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_MURCIA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_NAVARRA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SPAIN_VALENCIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_AARGAU;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_AUSSERRHODEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_INNERRHODEN;
@@ -168,6 +188,27 @@ class FederalStateTest {
 
             Arguments.of(CROATIA, "hr", null),
 
+            Arguments.of(SPAIN_ANDALUCIA, "an", null),
+            Arguments.of(SPAIN_ARAGON, "ar", null),
+            Arguments.of(SPAIN_CEUTA, "ce", null),
+            Arguments.of(SPAIN_MELILLA, "ml", null),
+            Arguments.of(SPAIN_CASTILE_AND_LEON, "cl", null),
+            Arguments.of(SPAIN_CASTILE_LA_MANCHA, "cm", null),
+            Arguments.of(SPAIN_CANARY_ISLANDS, "cn", null),
+            Arguments.of(SPAIN_CATALONIA, "ct", null),
+            Arguments.of(SPAIN_BARCELONA, "bcn", null),
+            Arguments.of(SPAIN_EXTREMADURA, "ex", null),
+            Arguments.of(SPAIN_GALICIA, "ga", null),
+            Arguments.of(SPAIN_BALEARIC_ISLAND, "ib", null),
+            Arguments.of(SPAIN_LA_RIOJA, "lo", null),
+            Arguments.of(SPAIN_MADRID, "md", null),
+            Arguments.of(SPAIN_MURCIA, "mc", null),
+            Arguments.of(SPAIN_NAVARRA, "nc", null),
+            Arguments.of(SPAIN_ASTURIAS, "as", null),
+            Arguments.of(SPAIN_EUSKADI, "pv", null),
+            Arguments.of(SPAIN_CANTABRIA, "cb", null),
+            Arguments.of(SPAIN_VALENCIA, "vc", null),
+
             Arguments.of(NETHERLANDS, "nl", null)
         );
     }
@@ -261,7 +302,29 @@ class FederalStateTest {
             Arguments.of(UNITED_KINGDOM_JERSEY, "gb"),
             Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "gb"),
             Arguments.of(UNITED_KINGDOM_SCOTLAND, "gb"),
-            Arguments.of(UNITED_KINGDOM_WALES, "gb")
+            Arguments.of(UNITED_KINGDOM_WALES, "gb"),
+
+
+            Arguments.of(SPAIN_ANDALUCIA, "es"),
+            Arguments.of(SPAIN_ARAGON, "es"),
+            Arguments.of(SPAIN_CEUTA, "es"),
+            Arguments.of(SPAIN_MELILLA, "es"),
+            Arguments.of(SPAIN_CASTILE_AND_LEON, "es"),
+            Arguments.of(SPAIN_CASTILE_LA_MANCHA, "es"),
+            Arguments.of(SPAIN_CANARY_ISLANDS, "es"),
+            Arguments.of(SPAIN_CATALONIA, "es"),
+            Arguments.of(SPAIN_BARCELONA, "es"),
+            Arguments.of(SPAIN_EXTREMADURA, "es"),
+            Arguments.of(SPAIN_GALICIA, "es"),
+            Arguments.of(SPAIN_BALEARIC_ISLAND, "es"),
+            Arguments.of(SPAIN_LA_RIOJA, "es"),
+            Arguments.of(SPAIN_MADRID, "es"),
+            Arguments.of(SPAIN_MURCIA, "es"),
+            Arguments.of(SPAIN_NAVARRA, "es"),
+            Arguments.of(SPAIN_ASTURIAS, "es"),
+            Arguments.of(SPAIN_EUSKADI, "es"),
+            Arguments.of(SPAIN_CANTABRIA, "es"),
+            Arguments.of(SPAIN_VALENCIA, "es")
         );
     }
 
@@ -282,9 +345,10 @@ class FederalStateTest {
         final List<FederalState> mtFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "mt".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> itFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "it".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> hrFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "hr".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> esFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "es".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> nlFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "nl".equals(federalState.getCountry())).collect(toList());
 
-        assertThat(federalStatesTypesByCountry).hasSize(9)
+        assertThat(federalStatesTypesByCountry).hasSize(10)
             .contains(entry("de", germanyFederalStates))
             .contains(entry("at", austriaFederalStates))
             .contains(entry("ch", switzerlandFederalStates))
@@ -292,6 +356,8 @@ class FederalStateTest {
             .contains(entry("gr", grFederalStates))
             .contains(entry("mt", mtFederalStates))
             .contains(entry("it", itFederalStates))
+            .contains(entry("hr", hrFederalStates))
+            .contains(entry("es", esFederalStates))
             .contains(entry("hr", hrFederalStates))
             .contains(entry("nl", nlFederalStates));
     }
