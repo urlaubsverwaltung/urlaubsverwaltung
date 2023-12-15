@@ -285,6 +285,21 @@ logging.file.name=logs/urlaubsverwaltung.log
 
 geschrieben wird.
 
+#### Info-Banner
+
+Es kann ein Info-Banner konfiguriert werden, um z. B. Wartungsarbeiten anzukündigen.
+Der Banner ist dann ganz oben zu sehen.
+
+```properties
+uv.info-banner.enabled=true
+uv.info-banner.text.de=Wartungsarbeiten ab Freitag 14:00. Es kann zu Beeinträchtigungen kommen.
+```
+
+| Property                        | Type    | Description                                          |
+|---------------------------------|---------|------------------------------------------------------|
+| uv.info-banner.enabled          | Boolean | (default) `false`, `true` zum aktivieren des Banners |
+| uv.info-banner.text.de          | String  | Text des Info-Banners für das Deutsche Locale.       |
+
 #### Launchpad
 
 Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 

@@ -122,6 +122,7 @@
     <th:block th:replace="${scripts}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">
+    <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="_navigation::nav">navigation block</nav>
 
     <main th:replace="${content}">content block</main>

@@ -1,0 +1,22 @@
+.info-banner {
+  @apply tw-py-2;
+  @apply tw-px-4;
+  @apply tw-bg-sky-900;
+  @apply tw-text-white;
+}
+
+.info-banner-text {
+  width: 100%;
+  margin: 0; /* override bootstrap paragraph margin */
+  text-align: center;
+  @apply tw-text-sm;
+}
+
+.info-banner a {
+  text-decoration: underline;
+  color: white;
+}
+
+.info-banner a:hover {
+  color: white;
+}
