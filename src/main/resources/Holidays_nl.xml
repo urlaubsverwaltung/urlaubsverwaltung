@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration hierarchy="nl" description="Netherlands"
+               xmlns="https://focus_shift.de/jollyday/schema/holiday"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="https://focus_shift.de/jollyday/schema/holiday https://focus_shift.de/jollyday/schema/holiday/holiday.xsd">
+  <Holidays>
+    <Fixed month="JANUARY" day="1" validFrom="1967" descriptionPropertiesKey="NEW_YEAR"/>
+    <Fixed month="APRIL" day="27" validFrom="2014" descriptionPropertiesKey="KINGS_DAY">
+      <MovingCondition substitute="SUNDAY" with="PREVIOUS" weekday="SATURDAY"/>
+    </Fixed>
+    <Fixed month="AUGUST" day="31" validFrom="1885" validTo="1947" descriptionPropertiesKey="QUEENS_BIRTHDAY"/>
+    <Fixed month="APRIL" day="30" validFrom="1948" validTo="1979" descriptionPropertiesKey="QUEENS_BIRTHDAY">
+      <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+    </Fixed>
+    <Fixed month="APRIL" day="30" validFrom="1980" validTo="2013" descriptionPropertiesKey="QUEENS_BIRTHDAY">
+      <MovingCondition substitute="SUNDAY" with="PREVIOUS" weekday="SATURDAY"/>
+    </Fixed>
+    <Fixed month="MAY" day="5" validFrom="1945" validTo="1989" descriptionPropertiesKey="LIBERATION" every="FIVE_YEARS"/>
+    <Fixed month="MAY" day="5" validFrom="1990" descriptionPropertiesKey="LIBERATION"/>
+    <Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
+    <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+    <Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+    <ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+    <ChristianHoliday type="EASTER_MONDAY" validFrom="1642" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    <ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
+    <ChristianHoliday type="PENTECOST" descriptionPropertiesKey="christian.PENTECOST"/>
+    <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+  </Holidays>
+</Configuration>
