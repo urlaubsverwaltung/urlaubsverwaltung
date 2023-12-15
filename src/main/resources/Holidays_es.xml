@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration hierarchy="es" description="Spain"
+               xmlns="https://focus_shift.de/jollyday/schema/holiday"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="https://focus_shift.de/jollyday/schema/holiday https://focus_shift.de/jollyday/schema/holiday/holiday.xsd">
+
+  <Holidays>
+    <Fixed month="JANUARY" day="1" validFrom="1967" descriptionPropertiesKey="NEW_YEAR"/>
+    <Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
+    <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+    <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY">
+      <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+    </Fixed>
+    <Fixed month="OCTOBER" day="12" descriptionPropertiesKey="NATIONAL_DAY"/>
+    <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+    <Fixed month="DECEMBER" day="6" validFrom="1978" descriptionPropertiesKey="CONSTITUTION_DAY"/>
+    <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+    <Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <Fixed month="DECEMBER" day="25" validTo="2021" descriptionPropertiesKey="CHRISTMAS"/>
+    <Fixed month="DECEMBER" day="25" validFrom="2023" descriptionPropertiesKey="CHRISTMAS"/>
+    <Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+  </Holidays>
+
+  <Sources>
+    <Source>https://en.wikipedia.org/wiki/Public_holidays_in_Spain</Source>
+  </Sources>
+
+  <SubConfigurations hierarchy="an" description="Andalusia">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" validFrom="2023" validTo="2023" descriptionPropertiesKey="NEW_YEAR"/>
+      <Fixed month="FEBRUARY" day="28" descriptionPropertiesKey="REGIONAL"/> <!--Day of Andalucía-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ar" description="Aragon">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" validFrom="2023" validTo="2023" descriptionPropertiesKey="NEW_YEAR"/>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2014" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="APRIL" day="23" descriptionPropertiesKey="REGIONAL"> <!--Day of Aragón-->
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="as" description="Principality of Asturias">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" validFrom="2023" validTo="2023" descriptionPropertiesKey="NEW_YEAR"/>
+      <Fixed month="SEPTEMBER" day="8" descriptionPropertiesKey="REGIONAL"/> <!--Day of Asturias-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="cn" description="Canary Islands">
+    <Holidays>
+      <Fixed month="MAY" day="30" descriptionPropertiesKey="REGIONAL"/> <!--Day of the Canary Islands-->
+      <Fixed month="JULY" day="25" validFrom="2017" validTo="2017" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="cb" description="Cantabria">
+    <Holidays>
+      <Fixed month="JULY" day="28" descriptionPropertiesKey="REGIONAL"/> <!--Day of the Cantabrian Institutions-->
+      <Fixed month="SEPTEMBER" day="15" descriptionPropertiesKey="APARECIDA"/>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="cl" description="Castile and León">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" validFrom="2023" validTo="2023" descriptionPropertiesKey="NEW_YEAR"/>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2014" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="APRIL" day="23" validTo="2022" descriptionPropertiesKey="REGIONAL"/> <!--Castile and León Day-->
+      <Fixed month="APRIL" day="23" validFrom="2024" descriptionPropertiesKey="REGIONAL"/> <!--Castile and León Day-->
+      <Fixed month="JULY" day="25" validFrom="2017" validTo="2017" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="JULY" day="25" validFrom="2023" validTo="2023" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="cm" description="Castile-La Mancha">
+    <Holidays>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2015" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2020" validTo="2020" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MAY" day="31" descriptionPropertiesKey="REGIONAL"/> <!--Day of Castilla-La Mancha-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ct" description="Catalonia">
+    <Holidays>
+      <Fixed month="JUNE" day="24" descriptionPropertiesKey="ST_JOHN"/>
+      <Fixed month="SEPTEMBER" day="11" descriptionPropertiesKey="REGIONAL"/> <!--National Day of Catalonia-->
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="BOXING_DAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" validFrom="2022" validTo="2022"
+                        descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    </Holidays>
+
+    <SubConfigurations hierarchy="bcn" description="Barcelona">
+      <Holidays>
+        <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      </Holidays>
+    </SubConfigurations>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ce" description="Ceuta">
+    <Holidays>
+      <Fixed month="SEPTEMBER" day="2" descriptionPropertiesKey="REGIONAL"/>
+      <IslamicHoliday type="ID_UL_ADHA" validFrom="2010" descriptionPropertiesKey="islamic.ID_UL_ADHA"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ex" description="Extremadura">
+    <Holidays>
+      <Fixed month="FEBRUARY" day="2" validFrom="2023" validTo="2023"
+             descriptionPropertiesKey="CARNIVAL"/> <!--Carnival Tuesday-->
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2014" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2017" validTo="2017" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2021" validTo="2021" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="SEPTEMBER" day="8" descriptionPropertiesKey="REGIONAL"/> <!--Day of Extremadura-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ga" description="Galicia">
+    <Holidays>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2014" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2018" validTo="2021" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MAY" day="17" descriptionPropertiesKey="GALICIAN_LITERATURE"/>
+      <Fixed month="JULY" day="25" validFrom="2017" validTo="2020" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="JULY" day="25" validFrom="2022" validTo="2027" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ib" description="Balearic Island">
+    <Holidays>
+      <Fixed month="MARCH" day="1" descriptionPropertiesKey="REGIONAL"/> <!--Day of the Balearic Islands-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ri" description="La Rioja">
+    <Holidays>
+      <Fixed month="JUNE" day="9" descriptionPropertiesKey="REGIONAL"/> <!--Day of La Rioja-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="md" description="Community of Madrid">
+    <Holidays>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2015" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2017" validTo="2017" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2021" validTo="2021" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2023" validTo="2023" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MAY" day="2" descriptionPropertiesKey="REGIONAL"><!--Rename to day of madrid-->
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="JULY" day="25" validFrom="2017" validTo="2017" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="JULY" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+
+    <SubConfigurations hierarchy="mad" description="Madrid city">
+      <Holidays>
+        <Fixed month="MAY" day="15" descriptionPropertiesKey="SAINT_ISIDORE"/>
+        <Fixed month="NOVEMBER" day="9" descriptionPropertiesKey="ALMUDENA_DAY"/>
+      </Holidays>
+    </SubConfigurations>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="ml" description="Melilla">
+    <Holidays>
+      <IslamicHoliday type="ID_UL_ADHA" validFrom="2010" descriptionPropertiesKey="islamic.ID_UL_ADHA"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="mc" description="Region of Murcia">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" validFrom="2023" validTo="2023" descriptionPropertiesKey="NEW_YEAR"/>
+      <Fixed month="JUNE" day="9" descriptionPropertiesKey="REGIONAL"/> <!--Day of Murcia-->
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="nc" description="Chartered Community of Navarre">
+    <Holidays>
+      <Fixed month="DECEMBER" day="25" validFrom="2022" validTo="2022" descriptionPropertiesKey="CHRISTMAS">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="JULY" day="25" validFrom="2023" validTo="2023" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="pv" description="Basque Country">
+    <Holidays>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2016" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2018" validTo="2021" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="JULY" day="25" validFrom="2017" validTo="2017" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="JULY" day="25" validFrom="2019" validTo="2020" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="JULY" day="25" validFrom="2022" validTo="2027" descriptionPropertiesKey="SANTIAGO_APOSTOL"/>
+      <Fixed month="OCTOBER" day="25" validFrom="2011" descriptionPropertiesKey="NATIONAL_DAY"/>
+      <ChristianHoliday type="MAUNDY_THURSDAY" descriptionPropertiesKey="christian.MAUNDY_THURSDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+  <SubConfigurations hierarchy="vc" description="Valencia Community">
+    <Holidays>
+      <Fixed month="MARCH" day="19" validFrom="2000" validTo="2016" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="MARCH" day="19" validFrom="2018" validTo="2022" descriptionPropertiesKey="ST_JOSEPH">
+        <MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      </Fixed>
+      <Fixed month="OCTOBER" day="9" descriptionPropertiesKey="REGIONAL"/> <!--Day of the Valencian Community-->
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
+
+</Configuration>
