@@ -265,12 +265,12 @@
                       th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
                       for="expiryDate"
                     >
-                      Resturlaubstage:
+                      Verfallsdatum des Resturlaubs:
                     </label>
                     <div class="col-md-9">
                       <input
                         id="expiryDate"
-                        th:field="*{expiryDate}"
+                        th:field="*{expiryDateLocally}"
                         th:data-iso-value="${account.expiryDateToIsoValue}"
                         th:data-min="|${year}-01-01|"
                         th:data-max="|${year}-12-31|"
@@ -278,8 +278,8 @@
                         class="form-control"
                         th:errorclass="error"
                       />
-                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('expiryDate')}">
-                        <th:block th:errors="*{expiryDate}"> expiryDate Error </th:block>
+                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('expiryDateLocally')}">
+                        <th:block th:errors="*{expiryDateLocally}"> expiryDate Error </th:block>
                       </div>
                     </div>
                   </div>

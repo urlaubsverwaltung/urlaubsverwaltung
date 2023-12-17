@@ -25,7 +25,9 @@ public class AccountForm {
     private Boolean doRemainingVacationDaysExpireLocally;
     private boolean doRemainingVacationDaysExpireGlobally;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
-    private LocalDate expiryDate;
+    private LocalDate expiryDateLocally;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
+    private LocalDate expiryDateGlobally;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
     private BigDecimal remainingVacationDays;
@@ -35,13 +37,14 @@ public class AccountForm {
     private AccountForm() {
     }
 
+    /* TODO remove - only used in tests */
     AccountForm(int year) {
         this.holidaysAccountYear = year;
         this.holidaysAccountValidFrom = Year.of(year).atDay(1);
         this.holidaysAccountValidTo = holidaysAccountValidFrom.with(lastDayOfYear());
         this.overrideVacationDaysExpire = false;
         this.doRemainingVacationDaysExpireLocally = true;
-        this.expiryDate = LocalDate.of(year, APRIL, 1);
+        this.expiryDateLocally = LocalDate.of(year, APRIL, 1);
     }
 
     AccountForm(Account holidaysAccount) {
@@ -51,7 +54,8 @@ public class AccountForm {
         this.overrideVacationDaysExpire = holidaysAccount.isDoRemainingVacationDaysExpireLocally() != null;
         this.doRemainingVacationDaysExpireLocally = holidaysAccount.isDoRemainingVacationDaysExpireLocally();
         this.doRemainingVacationDaysExpireGlobally = holidaysAccount.isDoRemainingVacationDaysExpireGlobally();
-        this.expiryDate = holidaysAccount.getExpiryDate();
+        this.expiryDateLocally = holidaysAccount.getExpiryDateLocally();
+        this.expiryDateGlobally = holidaysAccount.getExpiryDateGlobally();
         this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
         this.actualVacationDays = holidaysAccount.getActualVacationDays();
         this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
@@ -128,19 +132,27 @@ public class AccountForm {
     }
 
     public String getExpiryDateToIsoValue() {
-        if (expiryDate == null) {
+        if (expiryDateLocally == null) {
             return "";
         }
 
-        return expiryDate.format(DateTimeFormatter.ISO_DATE);
+        return expiryDateLocally.format(DateTimeFormatter.ISO_DATE);
     }
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
+    public LocalDate getExpiryDateLocally() {
+        return expiryDateLocally;
     }
 
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiryDateLocally(LocalDate expiryDateLocally) {
+        this.expiryDateLocally = expiryDateLocally;
+    }
+
+    public LocalDate getExpiryDateGlobally() {
+        return expiryDateGlobally;
+    }
+
+    public void setExpiryDateGlobally(LocalDate expiryDateGlobally) {
+        this.expiryDateGlobally = expiryDateGlobally;
     }
 
     public BigDecimal getAnnualVacationDays() {

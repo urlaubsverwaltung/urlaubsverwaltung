@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-expiry-date-to-account-settings">
+
+    <preConditions>
+      <tableExists tableName="account"/>
+      <columnExists tableName="account" columnName="expiry_date"/>
+
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="account_expiry_date"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="settings">
+      <column name="account_expiry_date_day_of_month" type="number" defaultValue="1">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="settings">
+      <column name="account_expiry_date_month" type="varchar" defaultValue="APRIL">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <dropNotNullConstraint tableName="account" columnDataType="date" columnName="expiry_date"/>
+
+  </changeSet>
+</databaseChangeLog>

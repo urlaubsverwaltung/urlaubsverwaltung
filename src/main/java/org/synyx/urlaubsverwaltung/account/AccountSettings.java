@@ -1,6 +1,14 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Enumerated;
+
+import java.time.Month;
+import java.time.MonthDay;
+
+import static jakarta.persistence.EnumType.STRING;
+import static java.time.Month.APRIL;
 
 /**
  * Settings concerning absence of persons because of vacation or sick days.
@@ -17,6 +25,19 @@ public class AccountSettings {
      * Specifies the maximal number of annual vacation days a person can have.
      */
     private Integer maximumAnnualVacationDays = 40;
+
+    /**
+     * Specifies the day of month of the date, when the vacation will expire globally
+     */
+    @Column(name = "account_expiry_date_day_of_month")
+    private int expiryDateDayOfMonth = 1;
+
+    /**
+     * Specifies the month of the date, when the vacation will expire globally
+     */
+    @Column(name = "account_expiry_date_month")
+    @Enumerated(STRING)
+    private Month expiryDateMonth = APRIL;
 
     /**
      * Specifies if remaining vacation days will expire globally
@@ -37,6 +58,26 @@ public class AccountSettings {
 
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
+    }
+
+    public int getExpiryDateDayOfMonth() {
+        return expiryDateDayOfMonth;
+    }
+
+    public void setExpiryDateDayOfMonth(int expiryDateDayOfMonth) {
+        this.expiryDateDayOfMonth = expiryDateDayOfMonth;
+    }
+
+    public Month getExpiryDateMonth() {
+        return expiryDateMonth;
+    }
+
+    public void setExpiryDateMonth(Month expiryDateMonth) {
+        this.expiryDateMonth = expiryDateMonth;
+    }
+
+    public MonthDay getExpiryDate() {
+        return MonthDay.of(getExpiryDateMonth(), expiryDateDayOfMonth);
     }
 
     public boolean isDoRemainingVacationDaysExpireGlobally() {
