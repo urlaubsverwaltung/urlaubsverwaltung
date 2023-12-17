@@ -186,6 +186,28 @@
               </label>
             </div>
           </div>
+
+          <div class="form-group is-required">
+            <label
+              class="control-label col-md-4"
+              th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
+              for="expiryDate"
+            >
+              Verfallsdatum des Resturlaubs:
+            </label>
+            <div class="col-md-9">
+              <input
+                id="expiryDate"
+                th:field="*{accountSettings.expiryDate}"
+                th:placeholder="#{pattern.date}"
+                class="form-control"
+                th:errorclass="error"
+              />
+              <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('accountSettings.expiryDate')}">
+                <th:block th:errors="*{accountSettings.expiryDate}"> expiryDate Error </th:block>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </th:block>

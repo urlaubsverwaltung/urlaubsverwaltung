@@ -1,6 +1,13 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
+import org.synyx.urlaubsverwaltung.MonthDayDateAttributeConverter;
+
+import java.time.MonthDay;
+
+import static java.time.Month.APRIL;
 
 /**
  * Settings concerning absence of persons because of vacation or sick days.
@@ -17,6 +24,13 @@ public class AccountSettings {
      * Specifies the maximal number of annual vacation days a person can have.
      */
     private Integer maximumAnnualVacationDays = 40;
+
+    /**
+     * Specifies the date, when the vacation will expire globally
+     */
+    @Convert(converter = MonthDayDateAttributeConverter.class)
+    @Column(name = "account_expiry_date")
+    private MonthDay expiryDate = MonthDay.of(APRIL, 1);
 
     /**
      * Specifies if remaining vacation days will expire globally
@@ -37,6 +51,14 @@ public class AccountSettings {
 
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
+    }
+
+    public MonthDay getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(MonthDay expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public boolean isDoRemainingVacationDaysExpireGlobally() {

@@ -55,7 +55,7 @@ class AccountTest {
 
         final String accountToString = account.toString();
         assertThat(accountToString).isEqualTo("Account{id=null, person=Person{id='10'}, validFrom=2014-01-01, " +
-            "validTo=2014-12-31, doRemainingVacationDaysExpireLocally=true, doRemainingVacationDaysExpireGlobally=false, expiryDate=2014-04-01, " +
+            "validTo=2014-12-31, doRemainingVacationDaysExpireLocally=true, doRemainingVacationDaysExpireGlobally=false, expiryDateLocally=2014-04-01, expiryDateGlobally=null, " +
             "expiryNotificationSentDate=null, annualVacationDays=10, actualVacationDays=null, " +
             "remainingVacationDays=10, remainingVacationDaysNotExpiring=10}");
     }

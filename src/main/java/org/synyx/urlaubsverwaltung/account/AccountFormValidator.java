@@ -29,7 +29,7 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
-    private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE = "expiryDate";
+    private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY = "expiryDateLocally";
     private static final String ERROR_ENTRY_MIN = "error.entry.min";
 
     private final SettingsService settingsService;
@@ -53,7 +53,7 @@ class AccountFormValidator implements Validator {
         validatePeriod(form, errors);
         validateAnnualVacation(form, errors, maxAnnualVacationDays);
         validateActualVacation(form, errors);
-        validateExpiryDate(form, errors);
+        validateExpiryDateLocally(form, errors);
         validateRemainingVacationDays(form, errors);
         validateRemainingVacationDaysNotExpiring(form, errors);
         validateComment(form, errors);
@@ -136,21 +136,21 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateExpiryDate(AccountForm form, Errors errors) {
+    void validateExpiryDateLocally(AccountForm form, Errors errors) {
         if (!form.doRemainingVacationDaysExpire()) {
             // feature disabled. nothing has to be validated.
             return;
         }
 
-        final LocalDate expiryDate = form.getExpiryDate();
-        validateDateNotNull(expiryDate, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, errors);
+        final LocalDate expiryDateLocally = form.getExpiryDateLocally();
+        validateDateNotNull(expiryDateLocally, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY, errors);
 
-        if (expiryDate != null) {
+        if (expiryDateLocally != null) {
             final int year = form.getHolidaysAccountYear();
-            final int expiryYear = expiryDate.getYear();
+            final int expiryYear = expiryDateLocally.getYear();
 
             if (expiryYear != year) {
-                reject(errors, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, msg("expiryDate.invalidYear"), String.valueOf(year));
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY, msg("expiryDateLocally.invalidYear"), String.valueOf(year));
             }
         }
     }

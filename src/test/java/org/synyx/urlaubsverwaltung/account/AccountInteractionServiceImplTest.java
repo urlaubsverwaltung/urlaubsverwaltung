@@ -149,18 +149,18 @@ class AccountInteractionServiceImplTest {
     }
 
     @Test
-    void ensureEditHolidayAccountDoesNotOverrideExpiryDateWhenNullIsPassed() {
+    void ensureEditHolidayAccountDoesOverrideExpiryDateWhenNullIsPassed() {
 
         final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
 
         final Account account = new Account();
-        account.setExpiryDate(LocalDate.of(2022, 4, 1));
+        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
 
         when(accountService.save(any(Account.class))).then(returnsFirstArg());
 
         final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, true, null, TEN, ONE, ZERO, TEN, "comment");
-        assertThat(editedAccount.getExpiryDate()).isEqualTo(LocalDate.of(2022, 4, 1));
+        assertThat(editedAccount.getExpiryDate()).isNull();
     }
 
     @Test
@@ -258,7 +258,7 @@ class AccountInteractionServiceImplTest {
         final BigDecimal leftDays = BigDecimal.ONE;
 
         final Account referenceHolidaysAccount = new Account(person, startDate, endDate, null,
-            expiryDate, BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
+            null, BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.empty());
         when(vacationDaysService.calculateTotalLeftVacationDays(referenceHolidaysAccount)).thenReturn(leftDays);
@@ -271,7 +271,7 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
         assertThat(createdHolidaysAccount.getValidFrom()).isEqualTo(LocalDate.of(nextYear, 1, 1));
         assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
-        assertThat(createdHolidaysAccount.getExpiryDate()).isEqualTo(expiryDate.plusYears(1));
+        assertThat(createdHolidaysAccount.getExpiryDateLocally()).isNull();
         assertThat(createdHolidaysAccount.isDoRemainingVacationDaysExpireLocally()).isNull();
         assertThat(createdHolidaysAccount.doRemainingVacationDaysExpire()).isFalse();
 

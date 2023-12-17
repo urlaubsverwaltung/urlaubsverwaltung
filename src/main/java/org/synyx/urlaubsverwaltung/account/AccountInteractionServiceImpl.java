@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
-import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -53,12 +52,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final LocalDate today = LocalDate.now(clock);
         final Integer defaultVacationDays = settingsService.getSettings().getAccountSettings().getDefaultVacationDays();
         final BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today.with(firstDayOfMonth()), defaultVacationDays);
-        this.updateOrCreateHolidaysAccount(
+
+        updateOrCreateHolidaysAccount(
             person,
             today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
             true,
-            today.withMonth(APRIL.getValue()).with(firstDayOfMonth()), // default expiry date on first April
+            null,
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
             ZERO, // For initial user creation there are no remaining vacation days from last year
@@ -68,7 +68,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     @Override
     public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
-                                                 Boolean doRemainingVacationDaysExpire, LocalDate expiryDate,
+                                                 Boolean doRemainingVacationDaysExpireLocally, @Nullable LocalDate expiryDate,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                                  BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                                  String comment) {
@@ -80,14 +80,14 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
-            account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
-            account.setExpiryDate(expiryDate);
+            account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpireLocally);
+            account.setExpiryDateLocally(expiryDate);
             account.setAnnualVacationDays(annualVacationDays);
             account.setRemainingVacationDays(remainingVacationDays);
             account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
             account.setComment(comment);
         } else {
-            account = new Account(person, validFrom, validTo, doRemainingVacationDaysExpire,
+            account = new Account(person, validFrom, validTo, doRemainingVacationDaysExpireLocally,
                 expiryDate, annualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
@@ -101,17 +101,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
-                                       @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
+                                       @Nullable LocalDate expiryDateLocally, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                        BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
-        expiryDate = requireNonNullElseGet(expiryDate, account::getExpiryDate);
         remainingVacationDaysNotExpiring = requireNonNullElseGet(remainingVacationDaysNotExpiring, account::getRemainingVacationDaysNotExpiring);
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
-        account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
-        account.setExpiryDate(expiryDate);
+        account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpireLocally);
+        account.setExpiryDateLocally(expiryDateLocally);
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
@@ -179,7 +178,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final LocalDate validFrom = Year.of(nextYear).atDay(1);
         final LocalDate validTo = validFrom.with(lastDayOfYear());
         final Boolean doRemainingVacationDaysExpireLocally = referenceAccount.isDoRemainingVacationDaysExpireLocally();
-        final LocalDate expiryDate = referenceAccount.getExpiryDate().withYear(nextYear);
+        final LocalDate expiryDateLocally = referenceAccount.getExpiryDateLocally() == null ? null : referenceAccount.getExpiryDateLocally().withYear(nextYear);
         final BigDecimal remainingVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
         return updateOrCreateHolidaysAccount(
@@ -187,7 +186,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             validFrom,
             validTo,
             doRemainingVacationDaysExpireLocally,
-            expiryDate,
+            expiryDateLocally,
             referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(),
             remainingVacationDays,

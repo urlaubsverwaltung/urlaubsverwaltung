@@ -388,27 +388,27 @@ class AccountFormValidatorTest {
     @Test
     void ensureHolidaysAccountExpiryDateMustNotBeNull() {
         final AccountForm form = new AccountForm(2013);
-        form.setExpiryDate(null);
+        form.setExpiryDateLocally(null);
 
-        sut.validateExpiryDate(form, errors);
-        verify(errors).rejectValue("expiryDate", "error.entry.mandatory");
+        sut.validateExpiryDateLocally(form, errors);
+        verify(errors).rejectValue("expiryDateLocally", "error.entry.mandatory");
     }
 
     @Test
     void ensureInvalidExpiryDateWrongYear() {
         final AccountForm form = new AccountForm(2021);
-        form.setExpiryDate(LocalDate.of(2022, Month.MARCH, 1));
+        form.setExpiryDateLocally(LocalDate.of(2022, Month.MARCH, 1));
 
-        sut.validateExpiryDate(form, errors);
-        verify(errors).rejectValue("expiryDate", "person.form.annualVacation.error.expiryDate.invalidYear", new Object[]{"2021"}, "");
+        sut.validateExpiryDateLocally(form, errors);
+        verify(errors).rejectValue("expiryDateLocally", "person.form.annualVacation.error.expiryDateLocally.invalidYear", new Object[]{"2021"}, "");
     }
 
     @Test
     void ensureExpiryDateHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
-        form.setExpiryDate(LocalDate.of(2013, 5, 1));
+        form.setExpiryDateLocally(LocalDate.of(2013, 5, 1));
 
-        sut.validateExpiryDate(form, errors);
+        sut.validateExpiryDateLocally(form, errors);
         verifyNoInteractions(errors);
     }
 

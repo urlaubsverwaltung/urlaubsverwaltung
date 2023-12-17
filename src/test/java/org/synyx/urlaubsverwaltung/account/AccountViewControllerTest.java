@@ -164,7 +164,7 @@ class AccountViewControllerTest {
                 hasProperty("holidaysAccountYear", is(providedYear.getValue())),
                 hasProperty("holidaysAccountValidFrom", is(providedYear.atDay(1))),
                 hasProperty("holidaysAccountValidTo", is(providedYear.atDay(1).with(lastDayOfYear()))),
-                hasProperty("expiryDate", nullValue()),
+                hasProperty("expiryDateLocally", nullValue()),
                 hasProperty("annualVacationDays", is(BigDecimal.valueOf(30)))
             )));
     }
@@ -253,7 +253,7 @@ class AccountViewControllerTest {
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
         final AccountForm accountForm = new AccountForm(account);
-        accountForm.setExpiryDate(expiryDate);
+        accountForm.setExpiryDateLocally(expiryDate);
         accountForm.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(5L));
         accountForm.setOverrideVacationDaysExpire(false);
         accountForm.setDoRemainingVacationDaysExpireLocally(null);
@@ -289,7 +289,7 @@ class AccountViewControllerTest {
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
         final AccountForm accountForm = new AccountForm(account);
-        accountForm.setExpiryDate(expiryDate);
+        accountForm.setExpiryDateLocally(expiryDate);
         accountForm.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(5L));
         accountForm.setOverrideVacationDaysExpire(true);
         accountForm.setDoRemainingVacationDaysExpireLocally(false);
