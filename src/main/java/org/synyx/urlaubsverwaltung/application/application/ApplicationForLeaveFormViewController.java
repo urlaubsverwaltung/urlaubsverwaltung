@@ -314,13 +314,13 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
-            return "application/application-notwaiting";
+            return "application/application-not-editable";
         }
 
         final Person signedInUser = personService.getSignedInUser();
         final Application application = maybeApplication.get();
         if (!isAllowedToEditApplication(application, signedInUser)) {
-            return "application/application-notwaiting";
+            return "application/application-not-editable";
         }
 
         final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application, locale);
@@ -381,7 +381,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {
-            return "application/application-notwaiting";
+            return "application/application-not-editable";
         }
 
         LOG.debug("Edited application with success applied {}", savedApplicationForLeave);

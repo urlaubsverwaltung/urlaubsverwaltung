@@ -1330,7 +1330,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/application-notwaiting"));
+            .andExpect(view().name("application/application-not-editable"));
     }
 
     @Test
@@ -1438,7 +1438,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/application-notwaiting"));
+            .andExpect(view().name("application/application-not-editable"));
     }
 
     @Test
@@ -1751,7 +1751,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("comment", "comment")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("application/application-notwaiting"));
+            .andExpect(view().name("application/application-not-editable"));
     }
 
     @Test
