@@ -87,9 +87,32 @@ public enum FederalState {
 
     MALTA("mt", "mt"),
 
-    ITALY("it","it"),
+    ITALY("it", "it"),
 
-    CROATIA("hr","hr");
+    CROATIA("hr", "hr"),
+
+    SPAIN_ANDALUCIA("es", "an"),
+    SPAIN_ARAGON("es", "ar"),
+    SPAIN_CEUTA("es", "ce"),
+    SPAIN_MELILLA("es", "ml"),
+    SPAIN_CASTILE_AND_LEON("es", "cl"),
+    SPAIN_CASTILE_LA_MANCHA("es", "cm"),
+    SPAIN_CANARY_ISLANDS("es", "cn"),
+    SPAIN_CATALONIA("es", "ct"),
+    SPAIN_BARCELONA("es", "bcn"),
+    SPAIN_EXTREMADURA("es", "ex"),
+    SPAIN_GALICIA("es", "ga"),
+    SPAIN_BALEARIC_ISLAND("es", "ib"),
+    SPAIN_LA_RIOJA("es", "lo"),
+    SPAIN_MADRID("es", "md"),
+    SPAIN_MURCIA("es", "mc"),
+    SPAIN_NAVARRA("es", "nc"),
+    SPAIN_ASTURIAS("es", "as"),
+    SPAIN_EUSKADI("es", "pv"),
+    SPAIN_CANTABRIA("es", "cb"),
+    SPAIN_VALENCIA("es", "vc"),
+
+    NETHERLANDS("nl", "nl");
 
     private final String[] codes;
 
