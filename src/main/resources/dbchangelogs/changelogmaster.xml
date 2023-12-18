@@ -5,7 +5,7 @@
 
   <include relativeToChangelogFile="true" file="changelog-5.0.0-M1-initial.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.0.0-M4-add-custom-vacation-type.xml"/>
-  <include relativeToChangelogFile="true" file="changelog-5.0.0-unique-department-names.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.0.0-RC1-unique-department-names.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.0.0-RC1-delete-admin-role.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.0.0-RC1-migrate-calender-settings.xml"/>
 </databaseChangeLog>
