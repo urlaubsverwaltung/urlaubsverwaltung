@@ -162,52 +162,6 @@ class MailServiceImplTest {
     }
 
     @Test
-    void sendTechnicalMail() {
-
-        setupMockServletRequest();
-
-        final String subjectMessageKey = "subject.overtime.created";
-        final String templateName = "overtime_office";
-        final String to = "admin@example.org";
-        when(mailProperties.getAdministrator()).thenReturn(to);
-
-        final Mail mail = Mail.builder()
-            .withTechnicalRecipient(true)
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
-            .build();
-        sut.send(mail);
-
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", to, "subject", "emailBody");
-    }
-
-    @Test
-    void sendMailToWithPersonsAndAdministrator() {
-
-        when(mailProperties.getAdministrator()).thenReturn("admin@example.org");
-
-        setupMockServletRequest();
-
-        final Person franz = new Person();
-        franz.setEmail("franz@example.org");
-
-        final String subjectMessageKey = "subject.overtime.created";
-        final String templateName = "overtime_office";
-
-        final Mail mail = Mail.builder()
-            .withTechnicalRecipient(true)
-            .withRecipient(List.of(franz))
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
-            .build();
-
-        sut.send(mail);
-
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody");
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Urlaubsverwaltung <no-reply@example.org>", "admin@example.org", "subject", "emailBody");
-    }
-
-    @Test
     void ensureDistinctRecipientsForSendMail() {
 
         setupMockServletRequest();

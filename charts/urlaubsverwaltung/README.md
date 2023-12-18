@@ -146,8 +146,6 @@ extraEnv: |
       value: urlaubsverwaltung@example.org
     - name: UV_MAIL_REPLYTO
       value: no-reply@example.org
-    - name: UV_MAIL_ADMINISTRATOR
-      value: root@example.org
     - name: MANAGEMENT_HEALTH_MAIL_ENABLED
       value: "false"
 

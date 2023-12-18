@@ -5,7 +5,6 @@ import $ from "jquery";
    * updates config section 'calendar sync'
    * shows dependent on Kalenderanbindung
    *   * Anbindung an Google Kalender
-   *   * Anbindung an Microsoft Exchange Kalender
    */
   function updateVisibilityCalendar() {
     const calendarSettingsProvider = document.querySelector("#calendarSettingsProvider");
@@ -14,11 +13,6 @@ import $ from "jquery";
     const googleCalendar = document.querySelector("#google-calendar");
     if (googleCalendar) {
       googleCalendar.hidden = value !== "GoogleCalendarSyncProvider";
-    }
-
-    const exchangeCalendar = document.querySelector("#exchange-calendar");
-    if (exchangeCalendar) {
-      exchangeCalendar.hidden = value !== "ExchangeCalendarProvider";
     }
   }
 

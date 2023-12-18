@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -40,9 +39,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-/**
- * Unit test for {@link SickNoteValidator}.
- */
 @ExtendWith(MockitoExtension.class)
 class SickNoteValidatorTest {
 
@@ -57,7 +53,7 @@ class SickNoteValidatorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService, departmentService, Clock.systemUTC());
+        sut = new SickNoteValidator(overlapService, workingTimeService, departmentService);
     }
 
     @Test

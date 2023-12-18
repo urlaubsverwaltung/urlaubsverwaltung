@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.calendarintegration.providers.google;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
@@ -13,7 +13,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 class GoogleCalendarClientProvider {
 

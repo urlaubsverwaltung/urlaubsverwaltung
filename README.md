@@ -126,7 +126,6 @@ uv:
     replyTo: ''
     replyToDisplayName: Urlaubsverwaltung
     application-url: ''
-    administrator: ''
 
   development:
     demodata:
@@ -204,7 +203,6 @@ uv:
     fromDisplayName: Urlaubsverwaltung
     replyTo: no-reply@example.org
     replyToDisplayName: Urlaubsverwaltung
-    administrator: admin@example.org
     application-url: https://example.org
 spring:
   mail:

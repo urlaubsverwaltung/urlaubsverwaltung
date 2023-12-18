@@ -8,8 +8,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -280,9 +278,5 @@ public final class TestDataCreator {
         vacationTypes.add(vacationType4);
 
         return vacationTypes;
-    }
-
-    public static AbsenceMapping anyAbsenceMapping() {
-        return new AbsenceMapping(null, AbsenceMappingType.VACATION, "eventId");
     }
 }

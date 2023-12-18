@@ -84,10 +84,6 @@ class MailServiceImpl implements MailService {
         final List<Person> recipients = new ArrayList<>();
         mail.getMailAddressRecipients().ifPresent(recipients::addAll);
 
-        if (mail.isSendToTechnicalMail()) {
-            recipients.add(new Person(null, null, "Administrator", mailProperties.getAdministrator()));
-        }
-
         return recipients.stream()
             .distinct()
             .toList();

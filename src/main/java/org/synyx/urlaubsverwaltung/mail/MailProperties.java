@@ -24,10 +24,6 @@ public class MailProperties {
     @NotEmpty
     private String replyToDisplayName;
 
-    @Email
-    @NotEmpty
-    private String administrator;
-
     @URL
     private String applicationUrl;
 
@@ -61,14 +57,6 @@ public class MailProperties {
 
     public void setReplyToDisplayName(String replyToDisplayName) {
         this.replyToDisplayName = replyToDisplayName;
-    }
-
-    public String getAdministrator() {
-        return administrator;
-    }
-
-    public void setAdministrator(String administrator) {
-        this.administrator = administrator;
     }
 
     public String getApplicationUrl() {

@@ -1,0 +1,65 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="migrate-calender-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="id"/>
+      <columnExists tableName="settings" columnName="calendar_provider"/>
+      <columnExists tableName="settings" columnName="calendar_ews_calendar"/>
+      <columnExists tableName="settings" columnName="calendar_ews_email"/>
+      <columnExists tableName="settings" columnName="calendar_ews_url"/>
+      <columnExists tableName="settings" columnName="calendar_ews_password"/>
+      <columnExists tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+      <columnExists tableName="settings" columnName="calendar_ews_timezoneid"/>
+      <columnExists tableName="settings" columnName="calendar_google_calendar_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_secret"/>
+      <columnExists tableName="settings" columnName="calendar_google_refresh_token"/>
+      <not>
+        <tableExists tableName="calendar_integration_settings"/>
+      </not>
+    </preConditions>
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="calendar_settings_id_seq" startValue="1"/>
+
+    <createTable tableName="calendar_integration_settings">
+      <column name="id" type="bigint">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="calendar_integration_settings_pkey"/>
+      </column>
+      <column name="provider" type="text"/>
+      <column name="google_calendar_id" type="text"/>
+      <column name="google_client_id" type="text"/>
+      <column name="google_client_secret" type="text"/>
+      <column name="google_refresh_token" type="text"/>
+    </createTable>
+
+    <insert tableName="calendar_integration_settings">
+      <column name="id" valueNumeric="1"/>
+      <column name="provider" valueComputed="(select calendar_provider from settings where id=1)"/>
+      <column name="google_calendar_id" valueComputed="(select calendar_google_calendar_id from settings where id=1)"/>
+      <column name="google_client_id" valueComputed="(select calendar_google_client_id from settings where id=1)"/>
+      <column name="google_client_secret"
+              valueComputed="(select calendar_google_client_secret from settings where id=1)"/>
+      <column name="google_refresh_token"
+              valueComputed="(select calendar_google_refresh_token from settings where id=1)"/>
+    </insert>
+
+    <dropColumn tableName="settings" columnName="calendar_provider"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_calendar"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_email"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_url"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_password"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_timezoneid"/>
+    <dropColumn tableName="settings" columnName="calendar_google_calendar_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_secret"/>
+    <dropColumn tableName="settings" columnName="calendar_google_refresh_token"/>
+
+  </changeSet>
+</databaseChangeLog>

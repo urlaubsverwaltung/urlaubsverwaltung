@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -55,15 +52,13 @@ class SettingsCalendarSyncViewControllerTest {
     private static final String SOME_GOOGLE_REFRESH_TOKEN = "0815-4711-242";
 
     @Mock
-    private SettingsService settingsService;
+    private CalendarSettingsService calendarSettingsService;
     @Mock
     private SettingsCalendarSyncValidator settingsValidator;
 
-    private final Clock clock = Clock.systemUTC();
-
     @BeforeEach
     void setUp() {
-        sut = new SettingsCalendarSyncViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock);
+        sut = new SettingsCalendarSyncViewController(calendarSettingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
     }
 
     @Test
@@ -77,12 +72,8 @@ class SettingsCalendarSyncViewControllerTest {
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
         final CalendarSettings calendarSettings = new CalendarSettings();
-
-        final Settings settings = new Settings();
-        settings.setId(42L);
-        settings.setCalendarSettings(calendarSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        calendarSettings.setId(42L);
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(calendarSettings);
 
         final SettingsCalendarSyncDto expectedSettingsCalendarSyncDto = new SettingsCalendarSyncDto();
         expectedSettingsCalendarSyncDto.setId(42L);
@@ -90,10 +81,10 @@ class SettingsCalendarSyncViewControllerTest {
 
         perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute("settings", allOf(
-                    hasProperty("id", is(42L)),
-                    hasProperty("calendarSettings", sameInstance(calendarSettings))
+                hasProperty("id", is(42L)),
+                hasProperty("calendarSettings", sameInstance(calendarSettings))
             )))
-            .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
+            .andExpect(model().attribute("providers", contains("NoSyncProvider", "SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("authorizedRedirectUrl",
                 sut.getAuthorizedRedirectUrl("http://localhost/web/settings/calendar-sync", OATUH_REDIRECT_REL)));
@@ -102,7 +93,7 @@ class SettingsCalendarSyncViewControllerTest {
     @Test
     void ensureSettingsDetailsAddsOAuthErrorToModelIfErrorProvidedAndNoCurrentRefreshToken() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
         perform(get("/web/settings/calendar-sync")
             .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
@@ -113,7 +104,7 @@ class SettingsCalendarSyncViewControllerTest {
     @Test
     void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfErrorProvidedAndCurrentRefreshToken() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
         perform(get("/web/settings/calendar-sync")
             .param(OAUTH_ERROR_ATTRIBUTE, OAUTH_ERROR_VALUE))
@@ -124,7 +115,7 @@ class SettingsCalendarSyncViewControllerTest {
     @Test
     void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndNoCurrentRefreshToken() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(someSettingsWithoutGoogleCalendarRefreshToken());
 
         perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
@@ -134,7 +125,7 @@ class SettingsCalendarSyncViewControllerTest {
     @Test
     void ensureSettingsDetailsDoesNotAddOAuthErrorToModelIfNoErrorProvidedAndCurrentRefreshToken() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(someSettingsWithGoogleCalendarRefreshToken());
 
         perform(get("/web/settings/calendar-sync"))
             .andExpect(model().attribute(OAUTH_ERROR_ATTRIBUTE, nullValue()))
@@ -142,36 +133,8 @@ class SettingsCalendarSyncViewControllerTest {
     }
 
     @Test
-    void ensureSettingsDetailsSetsDefaultExchangeTimeZoneIfNoneConfigured() throws Exception {
-
-        final Settings settings = someSettingsWithNoExchangeTimezone();
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isNull();
-
-        perform(get("/web/settings/calendar-sync"));
-
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId())
-            .isEqualTo(clock.getZone().getId());
-    }
-
-    @Test
-    void ensureSettingsDetailsDoesNotAlterExchangeTimeZoneIfAlreadyConfigured() throws Exception {
-
-        final String timeZoneId = "XYZ";
-        final Settings settings = someSettingsWithExchangeTimeZone(timeZoneId);
-        when(settingsService.getSettings()).thenReturn(someSettingsWithExchangeTimeZone(timeZoneId));
-
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
-
-        perform(get("/web/settings/calendar-sync"));
-
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
-    }
-
-    @Test
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
         perform(get("/web/settings/calendar-sync"))
             .andExpect(view().name("settings/calendar/settings_calendar_sync"));
     }
@@ -188,11 +151,6 @@ class SettingsCalendarSyncViewControllerTest {
         perform(
             post("/web/settings/calendar-sync")
                 .param("calendarSettings.provider", "NoopCalendarSyncProvider")
-                .param("calendarSettings.exchangeCalendarSettings.email", "")
-                .param("calendarSettings.exchangeCalendarSettings.password", "")
-                .param("calendarSettings.exchangeCalendarSettings.ewsUrl", "")
-                .param("calendarSettings.exchangeCalendarSettings.calendar", "")
-                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
                 .param("calendarSettings.googleCalendarSettings.clientId", "")
                 .param("calendarSettings.googleCalendarSettings.clientSecret", "")
                 .param("calendarSettings.googleCalendarSettings.calendarId", "")
@@ -204,7 +162,7 @@ class SettingsCalendarSyncViewControllerTest {
     @Test
     void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
 
         perform(
             post("/web/settings/calendar-sync")
@@ -213,13 +171,13 @@ class SettingsCalendarSyncViewControllerTest {
                 .param("calendarSettings.clientId", "clientId")
         );
 
-        verify(settingsService).save(any(Settings.class));
+        verify(calendarSettingsService).save(any(CalendarSettings.class));
     }
 
     @Test
     void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
 
         perform(
             post("/web/settings/calendar-sync")
@@ -239,24 +197,14 @@ class SettingsCalendarSyncViewControllerTest {
             .andExpect(redirectedUrl("/web/settings/calendar-sync"));
     }
 
-    private static Settings someSettingsWithNoExchangeTimezone() {
-        return new Settings();
+    private static CalendarSettings someSettingsWithoutGoogleCalendarRefreshToken() {
+        return new CalendarSettings();
     }
 
-    private static Settings someSettingsWithExchangeTimeZone(String timeZoneId) {
-        final Settings settings = new Settings();
-        settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
-        return settings;
-    }
-
-    private static Settings someSettingsWithoutGoogleCalendarRefreshToken() {
-        return new Settings();
-    }
-
-    private static Settings someSettingsWithGoogleCalendarRefreshToken() {
-        final Settings settings = new Settings();
-        settings.getCalendarSettings().getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
-        return settings;
+    private static CalendarSettings someSettingsWithGoogleCalendarRefreshToken() {
+        final CalendarSettings calendarSettings = new CalendarSettings();
+        calendarSettings.getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
+        return calendarSettings;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
@@ -264,11 +212,6 @@ class SettingsCalendarSyncViewControllerTest {
     }
 
     private static class SomeCalendarProvider implements CalendarProvider {
-
-        @Override
-        public boolean isRealProviderConfigured() {
-            return true;
-        }
 
         @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
@@ -281,7 +224,7 @@ class SettingsCalendarSyncViewControllerTest {
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
@@ -294,11 +237,6 @@ class SettingsCalendarSyncViewControllerTest {
     private static class AnotherCalendarProvider implements CalendarProvider {
 
         @Override
-        public boolean isRealProviderConfigured() {
-            return true;
-        }
-
-        @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
@@ -309,7 +247,7 @@ class SettingsCalendarSyncViewControllerTest {
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
