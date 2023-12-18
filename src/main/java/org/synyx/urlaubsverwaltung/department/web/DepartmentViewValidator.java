@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -56,31 +57,35 @@ public class DepartmentViewValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         final DepartmentForm departmentForm = (DepartmentForm) target;
 
-        validateName(errors, departmentForm.getName());
+        validateName(errors, departmentForm);
         validateDescription(errors, departmentForm.getDescription());
         validateDepartmentHeads(errors, departmentForm.getMembers(), departmentForm.getDepartmentHeads());
         validateSecondStageAuthorities(errors, departmentForm.isTwoStageApproval(), departmentForm.getSecondStageAuthorities());
     }
 
-    private void validateName(Errors errors, String name) {
+    private void validateName(Errors errors, DepartmentForm departmentForm) {
 
-        final boolean hasText = StringUtils.hasText(name);
+        final String departmentName = departmentForm.getName();
+        final boolean hasText = StringUtils.hasText(departmentName);
 
         if (!hasText) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_MANDATORY);
         }
 
-        if (hasText && departmentService.getDepartmentByName(name).isPresent()) {
-            errors.rejectValue(ATTRIBUTE_NAME, ERROR_DUPLICATED_NAME);
-        }
-
-        if (hasText && name.length() > MAX_CHARS_NAME) {
+        if (hasText && departmentName.length() > MAX_CHARS_NAME) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_LENGTH);
         }
 
         final Pattern regex = Pattern.compile(":::");
-        if (hasText && regex.matcher(name).find()) {
+        if (hasText && regex.matcher(departmentName).find()) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_DELIMITER);
+        }
+
+        final boolean isDepartmentNameAlreadyTaken = departmentService.getDepartmentByName(departmentName)
+            .filter(department -> !Objects.equals(department.getId(), departmentForm.getId()))
+            .isPresent();
+        if (hasText && isDepartmentNameAlreadyTaken) {
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_DUPLICATED_NAME);
         }
     }
 

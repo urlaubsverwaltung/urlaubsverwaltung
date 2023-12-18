@@ -54,10 +54,28 @@ class DepartmentViewValidatorTest {
         final DepartmentForm departmentForm = new DepartmentForm();
         departmentForm.setName("duplicateName");
 
-        when(departmentService.getDepartmentByName("duplicateName")).thenReturn(Optional.of(new Department()));
+        final Department department = new Department();
+        department.setName("duplicateName");
+        department.setId(1L);
+        when(departmentService.getDepartmentByName("duplicateName")).thenReturn(Optional.of(department));
 
         sut.validate(departmentForm, errors);
         verify(errors).rejectValue("name", "department.error.name.duplicate");
+    }
+
+    @Test
+    void ensureNameIsNotADuplicateOnEdit() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setId(1L);
+        departmentForm.setName("duplicateName");
+
+        final Department department = new Department();
+        department.setName("duplicateName");
+        department.setId(1L);
+        when(departmentService.getDepartmentByName("duplicateName")).thenReturn(Optional.of(department));
+
+        sut.validate(departmentForm, errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
