@@ -3131,13 +3131,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(editor.getEmail());
         assertThat(inbox.length).isOne();
         final Message msg = inbox[0];
-        assertThat(msg.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Max Muster,
 
-                die Abwesenheit von Max Muster wurde bearbeitet.
+                deine Abwesenheit wurde erfolgreich bearbeitet.
 
                     https://localhost:8080/web/application/1234
 

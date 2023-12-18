@@ -208,7 +208,7 @@ class ApplicationMailService {
         if (application.getPerson().equals(editor)) {
             mailToApplicant = Mail.builder()
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
-                .withSubject("subject.application.edited", application.getPerson().getNiceName())
+                .withSubject("subject.application.edited.to_applicant_by_applicant")
                 .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
                 .build();
         } else {
