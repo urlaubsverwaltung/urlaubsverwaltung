@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Info Banner</title>
+  </head>
+  <body>
+    <th:block th:ref="banner">
+      <th:block th:if="${not #strings.isEmpty(infoBannerText)}">
+        <div class="info-banner">
+          <p class="info-banner-text" th:utext="${infoBannerText}">Info Banner Text</p>
+        </div>
+      </th:block>
+    </th:block>
+  </body>
+</html>
