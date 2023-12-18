@@ -47,7 +47,7 @@
         <form
           id="applicationForm"
           method="post"
-          th:with="actionUrl=${applicationForLeaveForm.id == null ? '/web/application' : '/web/application/__${applicationForLeaveForm.id}__'}"
+          th:with="actionUrl=${applicationForLeaveForm.id == null ? '/web/application' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
           th:action="@{__${actionUrl}__}"
           th:object="${applicationForLeaveForm}"
           class="form-horizontal"

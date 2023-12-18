@@ -59,7 +59,7 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
@@ -314,18 +314,13 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
-            return "application/application-notwaiting";
-        }
-
-        final Application application = maybeApplication.get();
-        if (!WAITING.equals(application.getStatus())) {
-            return "application/application-notwaiting";
+            return "application/application-not-editable";
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final boolean isApplyingForOneSelf = application.getPerson().equals(signedInUser);
-        if (!isApplyingForOneSelf) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), application.getPerson().getId()));
+        final Application application = maybeApplication.get();
+        if (!isAllowedToEditApplication(application, signedInUser)) {
+            return "application/application-not-editable";
         }
 
         final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application, locale);
@@ -346,7 +341,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "application/application_form";
     }
 
-    @PostMapping("/application/{applicationId}")
+    @PostMapping("/application/{applicationId}/edit")
     public String sendEditApplicationForm(@PathVariable("applicationId") Long applicationId,
                                           @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                           Model model, Locale locale, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
@@ -357,18 +352,17 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         }
 
         final Application application = maybeApplication.get();
-        if (application.getStatus().compareTo(WAITING) != 0) {
+        final Person signedInUser = personService.getSignedInUser();
+        if (!isAllowedToEditApplication(application, signedInUser)) {
             redirectAttributes.addFlashAttribute("editError", true);
             return "redirect:/web/application/" + applicationId;
         }
-
-        final Person signedInUser = personService.getSignedInUser();
 
         appForm.setId(application.getId());
         applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareApplicationForLeaveForm(appForm.getPerson(), appForm.getPerson(), appForm, model, locale);
+            prepareApplicationForLeaveForm(signedInUser, appForm.getPerson(), appForm, model, locale);
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
@@ -387,7 +381,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {
-            return "application/application-notwaiting";
+            return "application/application-not-editable";
         }
 
         LOG.debug("Edited application with success applied {}", savedApplicationForLeave);
@@ -404,12 +398,12 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return personService.getPersonByID(personId);
     }
 
-    private void prepareApplicationForLeaveForm(Person applier, Person person, ApplicationForLeaveForm appForm, Model model, Locale locale) {
+    private void prepareApplicationForLeaveForm(Person signedInUser, Person person, ApplicationForLeaveForm appForm, Model model, Locale locale) {
 
         model.addAttribute("person", person);
-        final List<Person> managedPersons = getManagedPersons(applier);
+        final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
-        model.addAttribute("canAddApplicationForLeaveForAnotherUser", !(managedPersons.size() == 1 && managedPersons.contains(applier)));
+        model.addAttribute("canAddApplicationForLeaveForAnotherUser", !(managedPersons.size() == 1 && managedPersons.contains(signedInUser)));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);

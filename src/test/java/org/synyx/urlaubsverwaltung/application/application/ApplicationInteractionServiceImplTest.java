@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -1229,7 +1231,7 @@ class ApplicationInteractionServiceImplTest {
         ImpatientAboutApplicationForLeaveProcessException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application applicationForLeave = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application applicationForLeave = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 
@@ -1274,7 +1276,7 @@ class ApplicationInteractionServiceImplTest {
         final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         application.setId(applicationId);
 
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
@@ -1285,12 +1287,12 @@ class ApplicationInteractionServiceImplTest {
 
     // EDIT -----------------------------------------------------------------------------------------------------------
     @Test
-    void editApplicationForLeave() {
+    void ensureToEditApplicationForLeaveForMyself() {
 
         final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         application.setStatus(WAITING);
         application.setId(applicationId);
         when(applicationService.save(application)).thenReturn(application);
@@ -1302,6 +1304,36 @@ class ApplicationInteractionServiceImplTest {
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+
+        ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationUpdatedEvent event = argumentCaptor.getValue();
+        assertThat(event.application()).isEqualTo(editedApplication);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
+    }
+
+    @Test
+    void ensureToEditApplicationForLeaveForAnotherUserWithOfficePermission() {
+
+        final Long applicationId = 1L;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        application.setStatus(ALLOWED);
+        application.setId(applicationId);
+        when(applicationService.save(application)).thenReturn(application);
+
+        final Optional<String> comment = of("Comment");
+
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        final Application editedApplication = sut.edit(application, application, office, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(ALLOWED);
+
+        verify(commentService).create(editedApplication, EDITED, comment, office);
+        verify(applicationMailService).sendEditedNotification(editedApplication, office);
         verifyNoMoreInteractions(applicationMailService);
 
         ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
@@ -1325,13 +1357,13 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
         newReplacementEntity.setPerson(newHolidayReplacement);
 
-        final Application newApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setHolidayReplacements(List.of(newReplacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
 
         final Optional<String> comment = of("Comment");
 
@@ -1351,7 +1383,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application newApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         when(applicationService.save(newApplication)).thenReturn(newApplication);
@@ -1362,7 +1394,7 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(oldHolidayReplacement);
 
-        final Application oldApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
 
         final Optional<String> comment = of("Comment");
@@ -1389,7 +1421,7 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
 
-        final Application newApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setStartDate(LocalDate.of(2020, 10, 3));
@@ -1397,7 +1429,7 @@ class ApplicationInteractionServiceImplTest {
         newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setStartDate(LocalDate.of(2020, 10, 4));
         oldApplication.setEndDate(LocalDate.of(2020, 10, 4));
@@ -1426,14 +1458,14 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
 
-        final Application newApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application newApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setDayLength(DayLength.FULL);
         newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application oldApplication = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setDayLength(DayLength.NOON);
 
@@ -1449,10 +1481,10 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void editApplicationForLeaveHasWrongStatus() {
+    void editApplicationForLeaveHasWrongStatusAndIsOwnApplication() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         application.setStatus(ALLOWED);
 
         final Optional<String> comment = of("Comment");
@@ -1468,10 +1500,10 @@ class ApplicationInteractionServiceImplTest {
     void editApplicationWithDifferentPerson() {
 
         final Person oldPerson = new Person();
-        final Application oldApplication = createApplication(oldPerson, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application oldApplication = createApplication(oldPerson, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         oldApplication.setStatus(WAITING);
         final Person newPerson = new Person();
-        final Application newApplication = createApplication(newPerson, TestDataCreator.createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        final Application newApplication = createApplication(newPerson, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
         newApplication.setStatus(WAITING);
 
         final Optional<String> comment = of("Comment");

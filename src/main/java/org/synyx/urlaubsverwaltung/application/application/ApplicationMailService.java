@@ -204,12 +204,21 @@ class ApplicationMailService {
     @Async
     void sendEditedNotification(Application application, Person editor) {
 
-        final Mail mailToEditor = Mail.builder()
-            .withRecipient(editor, NOTIFICATION_EMAIL_APPLICATION_EDITED)
-            .withSubject("subject.application.edited", application.getPerson().getNiceName())
-            .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
-            .build();
-        mailService.send(mailToEditor);
+        final Mail mailToApplicant;
+        if (application.getPerson().equals(editor)) {
+            mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
+                .withSubject("subject.application.edited.to_applicant_by_applicant")
+                .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
+                .build();
+        } else {
+            mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
+                .withSubject("subject.application.edited.to_applicant_by_management", editor.getNiceName())
+                .withTemplate("application_edited_by_management_to_applicant", locale -> Map.of(APPLICATION, application, "editor", editor))
+                .build();
+        }
+        mailService.send(mailToApplicant);
 
         final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED);
         final Mail mailToManagement = Mail.builder()
@@ -534,9 +543,12 @@ class ApplicationMailService {
             DAY_LENGTH, application.getDayLength().name()
         );
 
+        final List<ApplicationStatus> allowedStatuses = List.of(ApplicationStatus.ALLOWED, ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED);
+        final String messageKey = allowedStatuses.contains(application.getStatus()) ? "subject.application.holidayReplacement.allow.edit" : "subject.application.holidayReplacement.edit";
+
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
-            .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
+            .withSubject(messageKey, application.getPerson().getNiceName())
             .withTemplate("application_edited_to_holiday_replacement", modelSupplier)
             .build();
         mailService.send(mailToReplacement);

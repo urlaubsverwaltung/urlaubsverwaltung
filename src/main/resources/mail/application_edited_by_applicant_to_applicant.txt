@@ -1,6 +1,6 @@
 [(#{greeting(${recipient.niceName})})],
 
-[(#{application.edited.by_applicant_to_applicant(${application.person.niceName})})]
+[(#{application.edited.by_applicant_to_applicant})]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
 

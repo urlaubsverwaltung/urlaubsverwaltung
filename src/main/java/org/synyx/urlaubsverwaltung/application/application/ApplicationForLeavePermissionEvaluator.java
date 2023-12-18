@@ -62,8 +62,7 @@ class ApplicationForLeavePermissionEvaluator {
     }
 
     static boolean isAllowedToEditApplication(Application application, Person signedInUser) {
-        return application.hasStatus(WAITING)
-            && application.getPerson().equals(signedInUser);
+        return (application.hasStatus(WAITING) && application.getPerson().equals(signedInUser)) || signedInUser.hasRole(OFFICE);
     }
 
     static boolean isAllowedToRemindApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {

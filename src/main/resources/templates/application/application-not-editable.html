@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{})}">
-    <title th:text="#{application.error.notWaiting.title}"></title>
+  <head th:replace="~{_layout::head(~{::title})}">
+    <title th:text="#{application.error.notEditable.title}"></title>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-text-center tw-mt-24">
-      <p class="md:tw-text-2xl" th:text="#{application.error.notWaiting.body}"></p>
+      <p class="md:tw-text-2xl" th:text="#{application.error.notEditable.body}"></p>
     </main>
   </body>
 </html>

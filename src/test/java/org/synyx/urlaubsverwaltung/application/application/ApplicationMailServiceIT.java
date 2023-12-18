@@ -46,6 +46,8 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
@@ -1171,10 +1173,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementEditMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsWaiting() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStatus(WAITING);
         application.setStartDate(LocalDate.of(2020, 12, 18));
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
@@ -1189,21 +1192,66 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
         // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.");
-        assertThat(content).contains("Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
-        assertThat(content).contains("Eine Nachricht an die Vertretung");
+            der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
+            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsAllowed() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+        application.setStatus(ALLOWED);
+        application.setStartDate(LocalDate.of(2020, 12, 18));
+        application.setEndDate(LocalDate.of(2020, 12, 18));
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("Eine Nachricht an die Vertretung");
+
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        final Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Deine geplante Vertretung für Lieschen Müller wurde bearbeitet");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
+
+            der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
+            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -3062,7 +3110,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void sendEditedApplicationNotification() throws Exception {
+    void ensurToSendEditedApplicationNotificationIfEditorIsApplicant() throws Exception {
 
         final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
         editor.setId(1L);
@@ -3083,13 +3131,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(editor.getEmail());
         assertThat(inbox.length).isOne();
         final Message msg = inbox[0];
-        assertThat(msg.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Max Muster,
 
-                die Abwesenheit von Max Muster wurde bearbeitet.
+                deine Abwesenheit wurde erfolgreich bearbeitet.
 
                     https://localhost:8080/web/application/1234
 
@@ -3107,7 +3155,64 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """
                 Hallo Person Relevant,
 
-                die Abwesenheit von Max Muster wurde bearbeitet.
+                die Abwesenheit von Max Muster wurde von Max Muster bearbeitet.
+
+                    https://localhost:8080/web/application/1234
+
+
+                Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen."""
+        );
+    }
+
+    @Test
+    void ensureToSendEditedApplicationNotificationIfEditorIsOffice() throws Exception {
+
+        final Person office = new Person("office", "Muster", "Marlene", "mustermann.marlene@example.org");
+
+        final Person applicant = new Person("editor", "Muster", "Max", "mustermann@example.org");
+        applicant.setId(1L);
+        applicant.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
+
+        final Application application = createApplication(applicant);
+        application.setPerson(applicant);
+
+        final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
+        relevantPerson.setId(2L);
+        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
+
+        sut.sendEditedNotification(application, office);
+
+        // check editor email
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(applicant.getEmail());
+        assertThat(inbox.length).isOne();
+        final Message msg = inbox[0];
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde von Marlene Muster bearbeitet");
+        assertThat(new InternetAddress(applicant.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo(
+            """
+                Hallo Max Muster,
+
+                deine Abwesenheit wurde von Marlene Muster bearbeitet.
+
+                    https://localhost:8080/web/application/1234
+
+
+                Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."""
+        );
+
+        // check relevant person email
+        final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+        final Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgRelevantPerson)).isEqualTo(
+            """
+                Hallo Person Relevant,
+
+                die Abwesenheit von Max Muster wurde von Marlene Muster bearbeitet.
 
                     https://localhost:8080/web/application/1234
 
