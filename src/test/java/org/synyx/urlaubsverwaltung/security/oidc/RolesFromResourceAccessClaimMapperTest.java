@@ -19,6 +19,26 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.G
 class RolesFromResourceAccessClaimMapperTest {
 
     @Test
+    void ensureToNotMapClaimsFromResourceAccessClaim() {
+
+        final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();
+        properties.setAuthorityCheckEnabled(false);
+        final RolesFromClaimMapperConverter converter = new RolesFromClaimMapperConverter(properties);
+        final RolesFromResourceAccessClaimMapper sut = new RolesFromResourceAccessClaimMapper(converter, properties);
+
+        final Map<String, Object> claims = Map.of(
+            SUB, "uniqueID",
+            GIVEN_NAME, "givenName",
+            FAMILY_NAME, "familyNam",
+            EMAIL, "email"
+        );
+
+        final List<GrantedAuthority> authorities = sut.mapClaimToRoles(claims);
+        assertThat(authorities.stream().map(GrantedAuthority::getAuthority))
+            .isEmpty();
+    }
+
+    @Test
     void ensureToMapClaimsFromResourceAccessClaim() {
 
         final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();

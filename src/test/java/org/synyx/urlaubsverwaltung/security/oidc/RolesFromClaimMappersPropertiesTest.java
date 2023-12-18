@@ -31,6 +31,12 @@ class RolesFromClaimMappersPropertiesTest {
     }
 
     @Test
+    void ensureDefaultAuthorityCheckEnabled() {
+        final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();
+        assertThat(properties.isAuthorityCheckEnabled()).isTrue();
+    }
+
+    @Test
     void ensureDefaultOfRolePrefix() {
         final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();
         assertThat(properties.getRolePrefix()).isEqualTo("urlaubsverwaltung_");
