@@ -4,6 +4,7 @@ services:
   urlaubsverwaltung:
     image: urlaubsverwaltung/urlaubsverwaltung:5.0.0-RC1
     network_mode: "host"
+    restart: always
     environment:
       SERVER_PORT: 8080
       # Database
