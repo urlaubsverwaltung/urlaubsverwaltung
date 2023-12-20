@@ -2,7 +2,7 @@ version: '3.9'
 services:
 
   urlaubsverwaltung:
-    image: urlaubsverwaltung/urlaubsverwaltung:5.0.0-M6
+    image: urlaubsverwaltung/urlaubsverwaltung:5.0.0-RC1
     network_mode: "host"
     environment:
       SERVER_PORT: 8080
