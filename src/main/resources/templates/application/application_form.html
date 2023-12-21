@@ -97,6 +97,9 @@
                   </div>
                 </div>
                 <th:block th:if="${not canAddApplicationForLeaveForAnotherUser}">
+                  <th:block th:if="${applicationForLeaveForm.id != null}">
+                    <input type="hidden" th:field="*{id}" />
+                  </th:block>
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
               </div>
