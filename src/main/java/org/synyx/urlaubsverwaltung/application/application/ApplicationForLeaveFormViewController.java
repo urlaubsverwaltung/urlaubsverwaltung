@@ -150,7 +150,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "application/application_form";
     }
 
-    @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "add-holiday-replacement")
+    @PostMapping(value = {"/application/new", "/application/{applicationId}/edit"}, params = "add-holiday-replacement")
     public String addHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm, Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -223,13 +223,13 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         if (applicationForLeaveId == null) {
             model.addAttribute("deleteButtonFormActionValue", "/web/application/new");
         } else {
-            model.addAttribute("deleteButtonFormActionValue", "/web/application/" + applicationForLeaveId);
+            model.addAttribute("deleteButtonFormActionValue", "/web/application/" + applicationForLeaveId + "/edit");
         }
 
         return "application/application-form :: replacement-item";
     }
 
-    @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
+    @PostMapping(value = {"/application/new", "/application/{applicationId}/edit"}, params = "remove-holiday-replacement")
     public String removeHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
                                            @RequestParam(name = "remove-holiday-replacement") Long personIdToRemove,
                                            Model model, Locale locale) {

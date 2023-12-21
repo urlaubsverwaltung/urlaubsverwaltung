@@ -883,7 +883,7 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    @ValueSource(strings = {"/web/application/new", "/web/application/21/edit"})
     void ensureReplacementAddingForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
         final Person signedInUser = new Person();
         signedInUser.setId(42L);
@@ -896,15 +896,13 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
-        assertThatThrownBy(() -> {
-            perform(post(url)
-                .param("holidayReplacementToAdd", "1")
-                .param("person", "1337")
-                .param("vacationType.id", "1")
-                .param("holidayReplacements[0].person.id", "42")
-                .param("holidayReplacements[1].person.id", "1337")
-                .param("add-holiday-replacement", ""));
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> perform(post(url)
+            .param("holidayReplacementToAdd", "1")
+            .param("person", "1337")
+            .param("vacationType.id", "1")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("add-holiday-replacement", ""))).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -999,7 +997,7 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    @ValueSource(strings = {"/web/application/new", "/web/application/21/edit"})
     void ensureAddingReplacementRemovesItFromSelectables(String url) throws Exception {
 
         final Locale locale = GERMAN;
@@ -1104,12 +1102,12 @@ class ApplicationForLeaveFormViewControllerTest {
                 hasProperty("note", nullValue())
             )))
             .andExpect(model().attribute("index", is(2)))
-            .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/7")))
+            .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/7/edit")))
             .andExpect(view().name("application/application-form :: replacement-item"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    @ValueSource(strings = {"/web/application/new", "/web/application/21/edit"})
     void ensureReplacementDeletionForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
         final Person signedInUser = new Person();
         signedInUser.setId(42L);
@@ -1120,12 +1118,10 @@ class ApplicationForLeaveFormViewControllerTest {
         person.setId(1337L);
         when(personService.getPersonByID(1337L)).thenReturn(Optional.of(person));
 
-        assertThatThrownBy(() -> {
-            perform(post(url)
-                .param("remove-holiday-replacement", "1")
-                .param("person", "1337")
-                .param("vacationType.id", "1"));
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> perform(post(url)
+            .param("remove-holiday-replacement", "1")
+            .param("person", "1337")
+            .param("vacationType.id", "1"))).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -1499,7 +1495,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         perform(
-            post("/web/application/7")
+            post("/web/application/7/edit")
                 .locale(locale)
                 .param("vacationType.id", "1")
                 .param("id", "7")
@@ -1546,7 +1542,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         perform(
-            post("/web/application/7")
+            post("/web/application/7/edit")
                 .locale(locale)
                 .param("vacationType.id", "1")
                 .param("id", "7")
@@ -1601,7 +1597,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
 
         perform(
-            post("/web/application/7")
+            post("/web/application/7/edit")
                 .locale(locale)
                 .param("vacationType.id", "1")
                 .param("id", "7")
