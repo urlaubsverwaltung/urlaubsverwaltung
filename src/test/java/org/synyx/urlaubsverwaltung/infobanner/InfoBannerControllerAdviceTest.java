@@ -16,11 +16,8 @@ class InfoBannerControllerAdviceTest {
     @BeforeEach
     void setUp() {
 
-        final InfoBannerConfigProperties.Text text = new InfoBannerConfigProperties.Text();
-        text.setDe("info text");
-
-        final InfoBannerConfigProperties properties = new InfoBannerConfigProperties();
-        properties.setText(text);
+        final InfoBannerConfigProperties.Text infoText = new InfoBannerConfigProperties.Text("info text");
+        final InfoBannerConfigProperties properties = new InfoBannerConfigProperties(true, infoText);
 
         sut = new InfoBannerControllerAdvice(properties);
     }
