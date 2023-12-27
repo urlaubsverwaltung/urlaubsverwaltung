@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -59,6 +60,9 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
+
+    private SickNoteService sickNoteService;
+    @Mock
     private WorkDaysCountService workDaysCountService;
     @Mock
     private DepartmentService departmentService;
@@ -73,7 +77,7 @@ class ApplicationForLeaveViewControllerTest {
     void setUp() {
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
-        sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService,
+        sut = new ApplicationForLeaveViewController(applicationService, sickNoteService, workDaysCountService, departmentService,
             personService, clock, messageSource);
     }
 
