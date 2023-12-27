@@ -43,6 +43,8 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
         @Param("today") LocalDate today
     );
 
+    List<SickNoteEntity> findByStatusInAndPersonIn(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
+
     List<SickNoteEntity> findByStatusInAndEndDateGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, LocalDate since);
 
     List<SickNoteEntity> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, List<Person> persons, LocalDate sinceStartDate);
@@ -57,4 +59,5 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
     List<SickNoteEntity> deleteByPerson(Person person);
 
     List<SickNoteEntity> findByApplier(Person applier);
+
 }

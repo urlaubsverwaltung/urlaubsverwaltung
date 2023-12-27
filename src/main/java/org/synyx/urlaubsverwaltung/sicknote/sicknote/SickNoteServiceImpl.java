@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -57,13 +58,13 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public Optional<SickNote> getById(Long id) {
         return sickNoteRepository.findById(id)
-            .map(SickNoteServiceImpl::toSickNote)
-            .map(sickNote -> {
-                final Person person = sickNote.getPerson();
-                final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
-                final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange);
-                return SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build();
-            });
+                .map(SickNoteServiceImpl::toSickNote)
+                .map(sickNote -> {
+                    final Person person = sickNote.getPerson();
+                    final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
+                    final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange);
+                    return SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build();
+                });
     }
 
     @Override
@@ -83,9 +84,9 @@ class SickNoteServiceImpl implements SickNoteService {
         final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();
 
         return sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today)
-            .stream()
-            .map(SickNoteServiceImpl::toSickNote)
-            .collect(toList());
+                .stream()
+                .map(SickNoteServiceImpl::toSickNote)
+                .collect(toList());
     }
 
     @Override
@@ -98,6 +99,19 @@ class SickNoteServiceImpl implements SickNoteService {
     public List<SickNote> getForStatesSince(List<SickNoteStatus> sickNoteStatuses, LocalDate since) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(sickNoteStatuses, since);
         return toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
+    }
+
+    @Override
+    public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
+        final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonIn(sickNoteStatuses, persons);
+
+        final Optional<LocalDate> min = entities.stream().min(comparing(SickNoteEntity::getStartDate)).map(SickNoteEntity::getStartDate);
+        final Optional<LocalDate> max = entities.stream().max(comparing(SickNoteEntity::getEndDate)).map(SickNoteEntity::getEndDate);
+        if (min.isEmpty() || max.isEmpty()) {
+            return List.of();
+        }
+
+        return toSickNoteWithWorkDays(entities, new DateRange(min.get(), max.get()));
     }
 
     @Override
@@ -122,8 +136,8 @@ class SickNoteServiceImpl implements SickNoteService {
     public void setEndOfSickPayNotificationSend(SickNote sickNote) {
 
         final SickNote sickNoteWithNewNotificationSendDate = SickNote.builder(sickNote)
-            .endOfSickPayNotificationSend(LocalDate.now(clock))
-            .build();
+                .endOfSickPayNotificationSend(LocalDate.now(clock))
+                .build();
 
         sickNoteRepository.save(toSickNoteEntity(sickNoteWithNewNotificationSendDate));
     }
@@ -131,28 +145,28 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> deleteAllByPerson(Person person) {
         return sickNoteRepository.deleteByPerson(person)
-            .stream()
-            .map(SickNoteServiceImpl::toSickNote)
-            .collect(toList());
+                .stream()
+                .map(SickNoteServiceImpl::toSickNote)
+                .collect(toList());
     }
 
     @Override
     public void deleteSickNoteApplier(Person applier) {
 
         final List<SickNoteEntity> sickNoteEntities = sickNoteRepository.findByApplier(applier)
-            .stream()
-            .map(SickNoteServiceImpl::toSickNote)
-            .map(SickNoteServiceImpl::sickNoteWithoutApplier)
-            .map(SickNoteServiceImpl::toSickNoteEntity)
-            .collect(toList());
+                .stream()
+                .map(SickNoteServiceImpl::toSickNote)
+                .map(SickNoteServiceImpl::sickNoteWithoutApplier)
+                .map(SickNoteServiceImpl::toSickNoteEntity)
+                .collect(toList());
 
         sickNoteRepository.saveAll(sickNoteEntities);
     }
 
     private static SickNote sickNoteWithoutApplier(SickNote sickNote) {
         return SickNote.builder(sickNote)
-            .applier(null)
-            .build();
+                .applier(null)
+                .build();
     }
 
     private static SickNoteEntity toSickNoteEntity(SickNote sickNote) {
@@ -179,19 +193,19 @@ class SickNoteServiceImpl implements SickNoteService {
         final DayLength dayLength = entity.getDayLength();
 
         return SickNote.builder()
-            .id(entity.getId())
-            .person(entity.getPerson())
-            .applier(entity.getApplier())
-            .sickNoteType(entity.getSickNoteType())
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(dayLength)
-            .aubStartDate(entity.getAubStartDate())
-            .aubEndDate(entity.getAubEndDate())
-            .lastEdited(entity.getLastEdited())
-            .endOfSickPayNotificationSend(entity.getEndOfSickPayNotificationSend())
-            .status(entity.getStatus())
-            .build();
+                .id(entity.getId())
+                .person(entity.getPerson())
+                .applier(entity.getApplier())
+                .sickNoteType(entity.getSickNoteType())
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(dayLength)
+                .aubStartDate(entity.getAubStartDate())
+                .aubEndDate(entity.getAubEndDate())
+                .lastEdited(entity.getLastEdited())
+                .endOfSickPayNotificationSend(entity.getEndOfSickPayNotificationSend())
+                .status(entity.getStatus())
+                .build();
     }
 
     private List<SickNote> toSickNoteWithWorkDays(Collection<SickNoteEntity> entities, DateRange dateRange) {
@@ -203,9 +217,9 @@ class SickNoteServiceImpl implements SickNoteService {
         final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(personsWithSickNotes, dateRange);
 
         return entities
-            .stream()
-            .map(SickNoteServiceImpl::toSickNote)
-            .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
-            .collect(toList());
+                .stream()
+                .map(SickNoteServiceImpl::toSickNote)
+                .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
+                .collect(toList());
     }
 }
