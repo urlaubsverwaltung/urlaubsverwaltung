@@ -97,6 +97,9 @@
                   </div>
                 </div>
                 <th:block th:if="${not canAddApplicationForLeaveForAnotherUser}">
+                  <th:block th:if="${applicationForLeaveForm.id != null}">
+                    <input type="hidden" th:field="*{id}" />
+                  </th:block>
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
               </div>
@@ -452,7 +455,7 @@
                                   name="remove-holiday-replacement"
                                   th:value="${holidayReplacement.person.id}"
                                   formmethod="post"
-                                  th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
+                                  th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
                                 >
                                   <span
                                     class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
