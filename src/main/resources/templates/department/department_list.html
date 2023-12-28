@@ -173,13 +173,13 @@
                       </div>
                     </form>
 
-                    <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                      <a class="action-link" th:href="@{/web/department/__${department.id}__/edit}">
+                    <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
+                      <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
                         <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                         <th:block th:text="#{action.edit}" />
                       </a>
                       <a
-                        class="action-link"
+                        class="button"
                         data-toggle="modal"
                         th:href="@{/web/department#modal-cancel-__${department.id}__}"
                       >
