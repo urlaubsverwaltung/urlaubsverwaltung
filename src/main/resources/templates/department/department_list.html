@@ -4,16 +4,6 @@
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{departments.header.title}"></title>
-    <th:block th:fragment="scripts">
-      <script>
-        (function () {
-          // hide uv-popover arrow on safari.
-          const style = document.createElement("style");
-          style.innerHTML = `[is="uv-popover"] summary::-webkit-details-marker { display: none; }`;
-          document.head.append(style);
-        })();
-      </script>
-    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('department_list.js')}" />
     </th:block>
@@ -92,9 +82,15 @@
                     data-sort-direction="asc"
                   ></th>
                   <th th:text="#{department.members}" scope="col" data-sortable data-sort-type="numeric"></th>
-                  <th th:text="#{department.data.twoStageApproval}" scope="col" data-sortable></th>
+                  <th
+                    th:text="#{department.data.twoStageApproval}"
+                    class="tw-whitespace-nowrap"
+                    scope="col"
+                    data-sortable
+                  ></th>
                   <th
                     th:text="#{department.data.lastModification}"
+                    class="tw-whitespace-nowrap"
                     scope="col"
                     data-sortable
                     data-sort-type="date"
@@ -107,19 +103,12 @@
               <tbody>
                 <tr th:each="department : ${departments}">
                   <td>
-                    <details th:if="${not #strings.isEmpty(department.description)}" is="uv-popover">
-                      <summary class="overflow tw-flex tw-items-center">
-                        <th:block th:text="${department.name}"></th:block>
-                        <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
-                          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                        </span>
-                      </summary>
-                      <p>
-                        <span data-uv-popover-title th:text="#{department.data.info}"></span>:
-                        <span data-uv-popover-content th:text="${department.description}"></span>
-                      </p>
-                    </details>
-                    <div th:if="${#strings.isEmpty(department.description)}" th:text="${department.name}"></div>
+                    <div class="tw-font-bold">
+                      <th:block th:text="${department.name}"></th:block>
+                    </div>
+                    <div class="tw-text-xs">
+                      <span th:text="${department.description}"></span>
+                    </div>
                   </td>
                   <td class="hidden-xs">
                     <a
