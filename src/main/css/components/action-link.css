@@ -1,4 +1,5 @@
 .action-link {
+  @apply tw-whitespace-nowrap;
   @apply tw-no-underline !important;
   @apply tw-flex !important;
   @apply tw-items-center !important;
