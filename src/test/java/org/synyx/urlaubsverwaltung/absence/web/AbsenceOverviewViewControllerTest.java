@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -68,6 +69,8 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -3817,6 +3820,132 @@ class AbsenceOverviewViewControllerTest {
 
     // ---
     // half VACATION, half SICK
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureChristmasEveOnMorningForPrivilegedPerson(Role role) throws Exception {
+
+        final LocalDate december24 = LocalDate.of(2024, DECEMBER, 24);
+        final LocalDate firstOfMonth = LocalDate.of(2024, DECEMBER, 1);
+        final LocalDate lastOfMonth = LocalDate.of(2024, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange))
+            .thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+
+        when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(december24, MORNING, "Heiligabend")));
+
+        final AbsencePeriod.RecordMorningPublicHoliday christmasEveMorning = new AbsencePeriod.RecordMorningPublicHoliday(person);
+        final AbsencePeriod.Record christmasEveRecord = new AbsencePeriod.Record(december24, person, christmasEveMorning, null);
+        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(christmasEveRecord));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriod));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final ResultActions perform = perform(
+            get("/web/absences").locale(Locale.GERMANY)
+                .param("year", "2024")
+                .param("month", "12")
+        );
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("publicHolidayMorning", is(true)),
+                                    hasProperty("publicHolidayNoon", is(false)),
+                                    hasProperty("publicHolidayFull", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureChristmasEveOnNoonForPrivilegedPerson(Role role) throws Exception {
+
+        final LocalDate december24 = LocalDate.of(2024, DECEMBER, 24);
+        final LocalDate firstOfMonth = LocalDate.of(2024, DECEMBER, 1);
+        final LocalDate lastOfMonth = LocalDate.of(2024, DECEMBER, 31);
+        final DateRange dateRange = new DateRange(firstOfMonth, lastOfMonth);
+
+        final var person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of());
+
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange))
+            .thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+
+        when(publicHolidaysService.getPublicHolidays(firstOfMonth, lastOfMonth, GERMANY_BADEN_WUERTTEMBERG))
+            .thenReturn(List.of(new PublicHoliday(december24, NOON, "Heiligabend")));
+
+        final AbsencePeriod.RecordNoonPublicHoliday christmasEveNoon = new AbsencePeriod.RecordNoonPublicHoliday(person);
+        final AbsencePeriod.Record christmasEveRecord = new AbsencePeriod.Record(december24, person, null, christmasEveNoon);
+        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(christmasEveRecord));
+
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriod));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(
+            get("/web/absences").locale(Locale.GERMANY)
+                .param("year", "2024")
+                .param("month", "12")
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("publicHolidayMorning", is(false)),
+                                    hasProperty("publicHolidayNoon", is(true)),
+                                    hasProperty("publicHolidayFull", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
