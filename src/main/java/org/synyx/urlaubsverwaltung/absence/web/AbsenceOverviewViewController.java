@@ -364,7 +364,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         boolean ignoreMorning = hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.NO_WORKDAY)
             || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
         boolean ignoreNoon = hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.NO_WORKDAY)
-            || hasGenericAbsenceType(morning, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
+            || hasGenericAbsenceType(noon, AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
 
         if (!ignoreMorning && morning.isPresent()) {
             if (anonymizeMorning) {
@@ -383,7 +383,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             }
         }
 
-        if (!ignoreMorning) {
+        if (!ignoreMorning && morning.isPresent()) {
             final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
             if (morningWaiting) {
                 return anonymizeMorning ? builder.absenceMorning() : builder.waitingAbsenceMorning();
@@ -405,7 +405,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             }
         }
 
-        if (!ignoreNoon) {
+        if (!ignoreNoon && noon.isPresent()) {
             final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
             if (noonWaiting) {
                 return anonymizeNoon ? builder.absenceNoon() : builder.waitingAbsenceNoon();
