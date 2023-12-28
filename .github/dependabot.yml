@@ -7,25 +7,6 @@ updates:
     labels:
       - "type: dependencies"
       - "javascript"
-    ignore:
-      - dependency-name: "bootstrap"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "node-fetch"
-        update-types: ["version-update:semver-major"]
-
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    target-branch: "v4.x"
-    labels:
-      - "type: dependencies"
-      - "javascript"
-    ignore:
-      - dependency-name: "bootstrap"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "node-fetch"
-        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "maven"
     directory: "/"
@@ -34,35 +15,11 @@ updates:
     labels:
       - "type: dependencies"
       - "java"
-    ignore:
-      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
-        update-types: ["version-update:semver-major"]
-
-  - package-ecosystem: "maven"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    target-branch: "v4.x"
-    labels:
-      - "type: dependencies"
-      - "java"
-    ignore:
-      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
-        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "type: dependencies"
-      - "github_actions"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    target-branch: "v4.x"
     labels:
       - "type: dependencies"
       - "github_actions"
