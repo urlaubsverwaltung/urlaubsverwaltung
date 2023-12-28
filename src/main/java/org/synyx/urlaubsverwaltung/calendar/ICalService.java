@@ -166,9 +166,12 @@ public class ICalService {
     }
 
     private ByteArrayResource writeCalenderIntoRessource(Calendar calendar) {
+
+        final boolean validation = !calendar.getComponents().isEmpty();
+
         final ByteArrayResource byteArrayResource;
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            final CalendarOutputter calendarOutputter = new CalendarOutputter();
+            final CalendarOutputter calendarOutputter = new CalendarOutputter(validation);
             calendarOutputter.output(calendar, byteArrayOutputStream);
             byteArrayResource = new ByteArrayResource(byteArrayOutputStream.toByteArray());
         } catch (ValidationException | IOException e) {
