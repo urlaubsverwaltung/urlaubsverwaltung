@@ -24,27 +24,27 @@ möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverw
 ## Demo-System
 
 Möchtest du die Urlaubsverwaltung **ohne** eine langwierige **Registrierung** ausprobieren?  
-Dann steige über unsere [Landingpage] direkt in das [Demo-System](https://urlaubsverwaltung.cloud/demo) ein.
+Dann steige über unsere [Landingpage] direkt in das [Demo-System] ein.
 
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe](https://urlaubsverwaltung.cloud/hilfe/).  
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe].  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
 [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
 
 ## 🎉 Version 5.x 
 
-Die nächste große Version der Urlaubsverwaltung ist im [ersten Milestone](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/tag/urlaubsverwaltung-5.0.0-M1) verfügbar. 
-In den [Milestones](https://github.com/urlaubsverwaltung/urlaubsverwaltung/milestones) werden wir größere Anpassungen 
-an der Datenbank und den Security-Providern vornehmen, sowie die Weichen für die weitere Entwicklung der 
+Die Version 5.0.0 der Urlaubsverwaltung ist verfügbar!
+
+Wir haben größere Anpassungen an der Datenbank und den Security-Providern vorgenommen, sowie die Weichen für die weitere Entwicklung der 
 Urlaubsverwaltung stellen. Daher gibt es für den ein oder anderen nicht nur gute Nachrichten.
 
-* Wir werden in der 5.x keine Unterstützung für MariaDB und MySQL anbieten und komplett auf [PostgreSQL](https://www.postgresql.org/) setzen. Einen Migrationspfad ist bereits im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) vorhanden.
-* Wir werden die security provider LDAP und Active Directory entfernen und dafür OIDC noch stärker unterstützen. Hierzu haben wir auch eine Umfrage in [den Discussions](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/3616) aufgesetzt. Wir freuen uns über eine rege Teilnahme!
+* Keine Unterstützung für MariaDB und MySQL. Wir wechseln komplett auf [PostgreSQL]. Einen Migrationspfad ist bereits im [Migration-Guide-v5] vorhanden.
+* Wir haben die security provider LDAP und Active Directory entfernt und unterstützen dafür OIDC noch stärker.
 
-Dies sind bisher die größeren Maßnahmen für die kommende 5er-Version - kleine Anpassungen findet ihr dann im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) 
+Alle Informationen zum Migrieren von 4.72.1 auf 5.0.0 findet ihr im [Migration-Guide-v5]
 
 ## Berechtigungen
 
@@ -515,6 +515,9 @@ Go to the GitHub action with the name [release trigger][github-action-release-tr
 * Run the workflow
 
 
-[Landingpage]: https://urlaubsverwaltung.cloud
+[Landingpage]: https://urlaubsverwaltung.cloud "Landingpage"
+[Demo-System]: https://urlaubsverwaltung.cloud/demo "Demo-System"
+[Hilfe]: https://urlaubsverwaltung.cloud/hilfe/ "Hilfe"
+[Migration-Guide-v5]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide "Migration Guide v5"
 [github-action-release-trigger]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/release-trigger.yml "Release Trigger"
-
+[PostgreSQL]: https://www.postgresql.org/ "PostgreSQL"
