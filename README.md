@@ -29,16 +29,6 @@ Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein 
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
 [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
-
-## 🎉 Version 5.x 
-
-Die nächste große Version der Urlaubsverwaltung 5.0.0 wird zeitnah mit den ersten Milestone zur Verfügung gestellt. In den [Milestones](https://github.com/urlaubsverwaltung/urlaubsverwaltung/milestones) werden wir größere Anpassungen an der Datenbank und den Security Providern vornehmen, sowie die weichen für die weitere Entwicklung der Urlaubsverwaltung stellen. Daher gibt es für den ein oder anderen nicht nur gute Nachrichten.
-
-* Wir werden in der 5.x keine Unterstützung für MariaDB und MySQL anbieten und komplett auf PostgreSQL setzen. Einen Migrationspfad ist bereits im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) vorhanden.
-* Wir werden die security provider LDAP und active directory entfernen und nur noch OIDC unterstützen. Hierzu haben wir auch eine Umfrage in [den Discussions](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/3616) aufgesetzt. Wir freuen uns über eine rege Teilnahme!
-
-Dies sind bisher die größeren Maßnahmen für die 5.x - kleine Anpassungen findet ihr dann im [Migration Guide](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki/Urlaubsverwaltung-5.0-Migration-Guide) 
-
 ## Berechtigungen
 
 In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
