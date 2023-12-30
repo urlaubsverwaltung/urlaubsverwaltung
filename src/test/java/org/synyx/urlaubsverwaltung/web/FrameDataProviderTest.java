@@ -96,7 +96,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -134,7 +133,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -172,7 +170,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -211,7 +208,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -248,7 +244,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -285,7 +280,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
@@ -322,7 +316,6 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),

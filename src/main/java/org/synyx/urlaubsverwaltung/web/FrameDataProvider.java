@@ -74,7 +74,6 @@ public class FrameDataProvider implements HandlerInterceptor {
         final ArrayList<NavigationItemDto> elements = new ArrayList<>();
 
         elements.add(new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"));
-        elements.add(new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"));
         elements.add(new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"));
 
         final boolean overtime = overtimeEnabled(user);
