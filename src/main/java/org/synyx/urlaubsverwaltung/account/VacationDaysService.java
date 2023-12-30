@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -29,10 +28,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 
@@ -153,8 +149,7 @@ public class VacationDaysService {
             return ZERO;
         }
 
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY).stream()
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, activeStatuses(), HOLIDAY).stream()
             .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone))
             .reduce(ZERO, BigDecimal::add);
     }
@@ -165,8 +160,7 @@ public class VacationDaysService {
         final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
 
         final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().collect(toList());
-        final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(status, persons, firstDayOfYear, lastDayOfYear);
+        final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(activeStatuses(), persons, firstDayOfYear, lastDayOfYear);
 
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
     }

@@ -51,6 +51,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
@@ -118,7 +119,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final List<Application> applications = List.of(applicationForLeave);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), activeStatuses())).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
@@ -178,7 +179,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final List<Application> applications = List.of(applicationForLeave);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(firstDayOfYear, lastDayOfYear, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(firstDayOfYear, lastDayOfYear, List.of(person), activeStatuses())).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
@@ -236,7 +237,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final List<Application> applications = List.of(applicationForLeave);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), activeStatuses())).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
@@ -304,7 +305,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final List<Application> applications = List.of(applicationForLeave);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), activeStatuses())).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
@@ -420,7 +421,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final List<Application> applications = List.of(holidayWaiting, holidayTemporaryAllowed, holidayAllowed,
             holidayAllowedCancellationRequested, specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), activeStatuses())).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
@@ -475,7 +476,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final List<Application> applications = List.of();
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())).thenReturn(applications);
 
         final LeftOvertime personLeftOvertime = new LeftOvertime(Duration.ofHours(9), Duration.ofHours(3));
         final Map<Person, LeftOvertime> leftOvertimeByPerson = Map.of(person, personLeftOvertime);
