@@ -152,6 +152,7 @@
                     th:href="@{__${navigationItem.href}__}"
                     th:id="${navigationItem.id}"
                     class="flex items-center main-nav-link tw-no-underline"
+                    th:classappend="${navigationItem.active ? 'current' : ''}"
                     th:data-test-id="${navigationItem.dataTestId}"
                     th:title="${#messages.msg(navigationItem.messageKey)}"
                   >

@@ -87,6 +87,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -95,12 +97,12 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users", false)
                 );
             });
 
@@ -124,6 +126,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -132,12 +136,12 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users", false)
                 );
             });
 
@@ -161,6 +165,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -169,13 +175,13 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"),
-                    new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", "navigation-settings-link")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users", false),
+                    new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", false, "navigation-settings-link")
                 );
             });
 
@@ -199,6 +205,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -207,11 +215,11 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false)
                 );
             });
 
@@ -235,6 +243,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -243,11 +253,11 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false)
                 );
             });
 
@@ -271,6 +281,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -279,11 +291,11 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false)
                 );
             });
 
@@ -307,6 +319,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -315,11 +329,11 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home", true),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar", false),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", false, "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", false)
                 );
             });
 
@@ -371,6 +385,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -379,7 +395,7 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).contains(
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock")
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false)
                 );
             });
 
@@ -399,6 +415,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -408,7 +426,7 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements())
                     .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
@@ -470,6 +488,8 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/web/person/10/overview");
+
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
@@ -479,7 +499,7 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements())
                     .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock", false));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
