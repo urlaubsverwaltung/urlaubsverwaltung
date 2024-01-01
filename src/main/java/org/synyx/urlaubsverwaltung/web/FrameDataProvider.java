@@ -61,7 +61,8 @@ public class FrameDataProvider implements HandlerInterceptor {
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
 
-            modelAndView.addObject("navigation", createNavigation(user, request));
+            modelAndView.addObject("addThingNavigation", addThingNavigation(user, request));
+            modelAndView.addObject("navigation", navigation(user, request));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationSickNoteAddAccess", user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
@@ -69,7 +70,27 @@ public class FrameDataProvider implements HandlerInterceptor {
         }
     }
 
-    private NavigationDto createNavigation(Person user, HttpServletRequest request) {
+    private NavigationDto addThingNavigation(Person user, HttpServletRequest request) {
+
+        final boolean overtime = overtimeEnabled(user);
+        final boolean sickNote = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
+
+        final ArrayList<NavigationItemDto> elements = new ArrayList<>();
+
+        elements.add(new NavigationItemDto("add-application", "/web/application/new", "nav.add.vacation", "plus", false));
+
+        if (sickNote) {
+            elements.add(new NavigationItemDto("add-sick-note", "/web/sicknote/new", "nav.add.sicknote", "plus", false));
+        }
+
+        if (overtime) {
+            elements.add(new NavigationItemDto("add-overtime", "/web/overtime/new", "nav.add.overtime", "plus", false));
+        }
+
+        return new NavigationDto(elements);
+    }
+
+    private NavigationDto navigation(Person user, HttpServletRequest request) {
 
         final String url = request.getRequestURI();
         final ArrayList<NavigationItemDto> elements = new ArrayList<>();

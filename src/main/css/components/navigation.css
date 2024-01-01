@@ -149,7 +149,11 @@
     }
   }
 
-  .main-nav-link {
+  .main-nav-link,
+  .add-thing-nav-link {
+    @apply tw-flex;
+    @apply tw-items-center;
+    @apply tw-gap-3.5;
     @apply tw-text-2xl;
     @apply lg:tw-text-lg;
     @apply lg:tw-pl-1;
@@ -159,13 +163,20 @@
     @apply focus:tw-text-gray-800;
     @apply tw-transition-colors;
   }
-  .main-nav-link svg {
+
+  .add-thing-nav-link {
+    @apply lg:tw-text-sm;
+  }
+
+  .main-nav-link svg,
+  .add-thing-nav-link svg {
     @apply tw-w-8;
     @apply tw-h-8;
     @apply lg:tw-w-5;
     @apply lg:tw-h-5;
+  }
+  .main-nav-link svg {
     @apply lg:tw-stroke-gray-800;
-    @apply tw-mr-3.5;
   }
   .main-nav-link:hover svg {
     @apply tw-fill-blue-500;

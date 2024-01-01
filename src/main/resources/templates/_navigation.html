@@ -145,13 +145,40 @@
             </div>
             <nav class="tw-mt-8 lg:tw-mt-12">
               <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-4 lg:tw-gap-2">
-                <li th:each="navigationItem : ${navigation.elements}">
+                <li th:each="navigationItem : ${addThingNavigation.elements}">
+                  <a
+                    th:fragment="add-thing-navigation-item(id, href, text, icon)"
+                    href="#"
+                    th:href="@{__${navigationItem.href}__}"
+                    th:id="${navigationItem.id}"
+                    class="tw-group add-thing-nav-link tw-no-underline"
+                    th:classappend="${navigationItem.active ? 'current' : ''}"
+                    th:data-test-id="${navigationItem.dataTestId}"
+                    th:title="${#messages.msg(navigationItem.messageKey)}"
+                  >
+                    <span
+                      class="tw-p-px tw-rounded-md tw-bg-green-100 tw-transition-colors group-hover:tw-bg-green-200 tw-flex tw-items-center"
+                      th:with="className=${'tw-text-green-700 group-hover:tw-text-green-800'}"
+                    >
+                      <svg th:replace="~{__${'icon/' + navigationItem.iconName + '::svg'}__}"></svg>
+                    </span>
+                    <span
+                      class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
+                      style="min-width: 0"
+                      th:text="${#messages.msg(navigationItem.messageKey)}"
+                    ></span>
+                  </a>
+                </li>
+                <li
+                  th:each="navigationItem : ${navigation.elements}"
+                  th:classappend="${navigationItemStat.first ? 'tw-mt-8' : ''}"
+                >
                   <a
                     th:fragment="navigation-item(id, href, text, icon)"
                     href="#"
                     th:href="@{__${navigationItem.href}__}"
                     th:id="${navigationItem.id}"
-                    class="flex items-center main-nav-link tw-no-underline"
+                    class="main-nav-link tw-no-underline"
                     th:classappend="${navigationItem.active ? 'current' : ''}"
                     th:data-test-id="${navigationItem.dataTestId}"
                     th:title="${#messages.msg(navigationItem.messageKey)}"
