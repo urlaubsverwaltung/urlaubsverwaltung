@@ -21,7 +21,7 @@
               <span></span>
             </span>
           </label>
-          <div>
+          <div class="tw-flex tw-flex-col lg:tw-block">
             <div class="tw-flex tw-items-center tw-gap-2 lg:tw-relative">
               <div th:replace="~{launchpad/launchpad::navigation-item}"></div>
               <a
@@ -143,7 +143,7 @@
                 </div>
               </div>
             </div>
-            <nav class="tw-mt-8 lg:tw-mt-12">
+            <nav class="tw-mt-4 tw-pt-4 tw-pb-8 tw-overflow-y-scroll lg:tw-overflow-y-hidden lg:tw-mt-8 lg:tw-pb-0">
               <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-4 lg:tw-gap-2">
                 <li th:each="navigationItem : ${addThingNavigation.elements}">
                   <a
