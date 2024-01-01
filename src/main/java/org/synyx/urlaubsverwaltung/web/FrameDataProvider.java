@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -63,7 +64,8 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
 
             final Settings settings = settingsService.getSettings();
-            modelAndView.addObject("navigation", createNavigation(user, settings));
+            modelAndView.addObject("addThingNavigation", addThingNavigation(user, settings));
+            modelAndView.addObject("navigation", navigation(user, settings, request));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user, settings));
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
             modelAndView.addObject("navigationOvertimeAddAccess", isUserAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
@@ -71,36 +73,73 @@ public class FrameDataProvider implements DataProviderInterface {
         }
     }
 
-    private NavigationDto createNavigation(Person user, Settings settings) {
+    private NavigationDto addThingNavigation(Person user, Settings settings) {
+
+        final boolean overtime = overtimeEnabled(settings.getOvertimeSettings());
+        final boolean sickNote = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
 
         final ArrayList<NavigationItemDto> elements = new ArrayList<>();
 
-        elements.add(new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"));
-        elements.add(new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"));
+        elements.add(new NavigationItemDto("add-application", "/web/application/new", "nav.add.vacation", "plus", false));
+
+        if (sickNote) {
+            elements.add(new NavigationItemDto("add-sick-note", "/web/sicknote/new", "nav.add.sicknote", "plus", false));
+        }
+
+        if (overtime) {
+            elements.add(new NavigationItemDto("add-overtime", "/web/overtime/new", "nav.add.overtime", "plus", false));
+        }
+
+        return new NavigationDto(elements);
+    }
+
+    private NavigationDto navigation(Person user, Settings settings, HttpServletRequest request) {
+
+        final String url = request.getRequestURI();
+        final ArrayList<NavigationItemDto> elements = new ArrayList<>();
+
+        final String homePath = "/web/overview";
+        final boolean homeActive = url.matches("/web/person/.+/overview");
+        elements.add(new NavigationItemDto("home-link", homePath, "nav.home.title", "home", homeActive));
+
+        final String applicationPath = "/web/application";
+        final boolean applicationActive = url.startsWith(applicationPath);
+        elements.add(new NavigationItemDto("application-link", applicationPath, "nav.vacation.title", "calendar", applicationActive));
 
         final boolean overtimeIsEnabled = overtimeEnabled(settings.getOvertimeSettings());
         if (overtimeIsEnabled) {
-            elements.add(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+            final String overtimePath = "/web/overtime";
+            final boolean overtimeActive = url.startsWith(overtimePath);
+            elements.add(new NavigationItemDto("overtime-link", overtimePath, "nav.overtime.title", "clock", overtimeActive));
         }
 
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
         if (canViewSickNotes) {
-            elements.add(new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"));
+            final String sickNotesPath = "/web/sickdays";
+            final boolean sickNotesActive = url.startsWith(sickNotesPath);
+            elements.add(new NavigationItemDto("sicknote-link", sickNotesPath, "nav.sicknote.title", "medkit", sickNotesActive, "navigation-sick-notes-link"));
         }
 
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
-            elements.add(new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"));
+            final String personsPath = "/web/person";
+            final boolean personsActive = !homeActive && url.startsWith(personsPath);
+            elements.add(new NavigationItemDto("person-link", personsPath, "nav.person.title", "user", personsActive));
         }
 
         final boolean canViewDepartments = user.hasRole(OFFICE) || user.hasRole(BOSS);
         if (canViewDepartments) {
-            elements.add(new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"));
+            final String departmentsPath = "/web/department";
+            final boolean departmentsActive = url.startsWith(departmentsPath);
+            elements.add(new NavigationItemDto("department-link", departmentsPath, "nav.department.title", "users", departmentsActive));
         }
 
         final boolean canViewSettings = user.hasRole(OFFICE);
         if (canViewSettings) {
-            elements.add(new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", "navigation-settings-link"));
+            final String settingsPath = "/web/settings";
+            final boolean settingsActive = url.startsWith(settingsPath);
+            final NavigationDto subnav = settingsSubNavigation(url);
+            elements.add(new NavigationItemDto("settings-link", settingsPath, "nav.settings.title", "settings", settingsActive, subnav, "navigation-settings-link"));
         }
 
         return new NavigationDto(elements);
@@ -122,5 +161,24 @@ public class FrameDataProvider implements DataProviderInterface {
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {
         var userIsAllowedToSubmitSickNotes = sickNoteSettings.getUserIsAllowedToSubmitSickNotes();
         return user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD) || userIsAllowedToSubmitSickNotes;
+    }
+
+    private NavigationDto settingsSubNavigation(String url) {
+
+        final String absencesLink = "/web/settings/absences";
+        final String absenceTypesLink = "/web/settings/absence-types";
+        final String workingTimeLink = "/web/settings/working-time";
+        final String avatarLink = "/web/settings/avatar";
+        final String calendarSyncLink = "/web/settings/calendar-sync";
+
+        final List<NavigationItemDto> elements =  List.of(
+            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.absences.title", "circle", url.equals(absencesLink)),
+            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.absence-types.title", "circle", url.equals(absenceTypesLink)),
+            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.working-time.title", "circle", url.equals(workingTimeLink)),
+            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.avatar.title", "circle", url.equals(avatarLink)),
+            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.calendar-sync.title", "circle", url.equals(calendarSyncLink))
+        );
+
+        return new NavigationDto(elements);
     }
 }

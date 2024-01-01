@@ -38,7 +38,6 @@
   @apply sm:-tw-ml-2;
   @apply tw-flex;
   @apply tw-items-center;
-  @apply lg:-tw-translate-x-full;
 }
 
 .datepicker-next {
@@ -53,7 +52,6 @@
   @apply tw-flex;
   @apply tw-items-center;
   @apply tw-flex-row-reverse;
-  @apply lg:tw-translate-x-full;
 }
 
 /* MONTHS */
@@ -66,14 +64,6 @@
   overflow: hidden;
   width: 100%;
   height: 19.688rem;
-}
-
-/* 1024px */
-@screen lg {
-  .calendar-container {
-    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
-    @apply -tw-mx-6;
-  }
 }
 
 /* MONTH */
@@ -152,12 +142,7 @@
   }
 }
 
-/* 1024px */
 @screen lg {
-  .calendar-container {
-    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
-    @apply -tw-mx-6;
-  }
   .calendar-month-container {
     --gap: 2.6rem;
   }
