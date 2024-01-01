@@ -162,6 +162,14 @@
     @apply hover:tw-text-gray-800;
     @apply focus:tw-text-gray-800;
     @apply tw-transition-colors;
+    @apply tw-py-2;
+    @apply tw-px-2;
+    @apply lg:tw-py-1;
+    @apply lg:tw-pl-2;
+    @apply lg:tw-pr-3;
+    @apply hover:tw-bg-blue-50;
+    @apply focus:tw-bg-blue-50;
+    @apply tw-rounded-md;
   }
 
   .add-thing-nav-link {
@@ -175,17 +183,21 @@
     @apply lg:tw-w-5;
     @apply lg:tw-h-5;
   }
+
   .main-nav-link svg {
-    @apply lg:tw-stroke-gray-800;
+    @apply lg:tw-stroke-gray-400;
   }
-  .main-nav-link:hover svg {
-    @apply tw-fill-blue-500;
-    @apply tw-fill-blue-500;
-  }
+
+  .main-nav-link:hover svg,
+  .main-nav-link:focus svg,
   .main-nav-link.current svg,
   .main-nav-link[aria-current="page"] svg {
-    @apply tw-fill-blue-500;
-    @apply tw-fill-blue-500;
+    @apply lg:tw-stroke-blue-950;
+  }
+
+  .main-nav-link.current,
+  .main-nav-link[aria-current="page"] {
+    @apply tw-bg-blue-50;
   }
 
   .nav-popup-menu {
