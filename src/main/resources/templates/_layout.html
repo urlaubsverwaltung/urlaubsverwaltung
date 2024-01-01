@@ -38,20 +38,19 @@
       window.uv.language = /*[[${language}]]*/ "de";
     </script>
     <script>
-      !(function () {
-        function injectStyle(r, t) {
-          t === void 0 && (t = {});
-          var e = t.insertAt;
-          if (!(!r || typeof document == "undefined")) {
-            var d = document.head || document.getElementsByTagName("head")[0],
-              a = document.createElement("style");
-            (a.type = "text/css"),
-              e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
-              a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r));
-          }
+      function injectStyle(r, t) {
+        t === void 0 && (t = {});
+        var e = t.insertAt;
+        if (!(!r || typeof document == "undefined")) {
+          var d = document.head || document.getElementsByTagName("head")[0],
+            a = document.createElement("style");
+          (a.type = "text/css"),
+            e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
+            a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r));
+          return a;
         }
-        injectStyle("[data-js-hidden] { display: none !important; }");
-      })();
+      }
+      injectStyle("[data-js-hidden] { display: none !important; }");
     </script>
     <script th:if="${theme eq 'system'}">
       (function () {
@@ -127,10 +126,14 @@
   <body th:fragment="body(content, scripts)">
     <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="~{_navigation::nav}">navigation block</nav>
+    <div th:replace="~{_top::row}"></div>
 
-    <main th:replace="${content}">content block</main>
-
-    <footer th:replace="~{_footer::footer}">footer block</footer>
+    <div class="pb-16 flex flex-col" style="grid-area: content">
+      <main th:replace="${content}">content block</main>
+    </div>
+    <div class="pb-16 flex flex-col" style="grid-area: footer">
+      <footer th:replace="~{_footer::footer}">footer block</footer>
+    </div>
 
     <th:block th:replace="${scripts}"></th:block>
   </body>

@@ -38,7 +38,7 @@
         th:with="actionUrl=${editMode ? '/web/sicknote/__${sickNote.id}__/edit' : '/web/sicknote'}"
         th:action="@{__${actionUrl}__}"
         th:object="${sickNote}"
-        class="form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
+        class="tw-mt-4 form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
       >
         <div class="row">
           <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>

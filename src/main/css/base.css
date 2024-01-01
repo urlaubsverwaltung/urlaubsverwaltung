@@ -1,4 +1,12 @@
 @layer base {
+  :root {
+    /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
+    --info-banner-height: 0px;
+    --top-bar-height: 3.25rem;
+    --info-banner-sticky-top: 0;
+    --navigation-sticky-top: var(--info-banner-height);
+  }
+
   html {
     height: -webkit-fill-available;
   }
@@ -24,16 +32,37 @@
     @apply dark:tw-bg-zinc-900;
     @apply dark:tw-text-zinc-200;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
-    display: flex;
-    flex-direction: column;
+    min-height: --webkit-fill-available;
+    background-image: linear-gradient(#ffffff, #fafafa);
+    background-attachment: fixed;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "banner banner"
+      "navigation topbar"
+      "content content"
+      "footer footer";
   }
 
-  body > [class*="max-w"][class*="mx-auto"] {
-    /* since width is controlled by the body:flex container we have to define 100% now. */
-    /* otherwise `margin: 0 auto` to center something would have a width of 'auto' instead of the maximum available space. */
-    width: 100%;
+  @screen lg {
+    body {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "banner banner"
+        "navigation topbar"
+        "navigation content"
+        "navigation footer";
+    }
   }
+
+  /*body > [class*="max-w"][class*="mx-auto"] {*/
+  /*  !* since width is controlled by the body:flex container we have to define 100% now. *!*/
+  /*  !* otherwise `margin: 0 auto` to center something would have a width of 'auto' instead of the maximum available space. *!*/
+  /*  width: 100%;*/
+  /*}*/
 
   @font-face {
     font-family: "KaushanScript";

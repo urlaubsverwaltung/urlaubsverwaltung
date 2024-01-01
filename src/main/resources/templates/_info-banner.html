@@ -7,8 +7,8 @@
   <body>
     <th:block th:ref="banner">
       <th:block th:if="${not #strings.isEmpty(infoBannerText)}">
-        <div class="info-banner">
-          <p class="info-banner-text" th:utext="${infoBannerText}">Info Banner Text</p>
+        <div id="info-banner" class="info-banner tw-sticky tw-top-0 tw-z-50" style="grid-area: banner">
+          <p class="info-banner-text tw-m-0" th:utext="${infoBannerText}">Info Banner Text</p>
         </div>
       </th:block>
     </th:block>
