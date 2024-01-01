@@ -63,7 +63,8 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
 
             final Settings settings = settingsService.getSettings();
-            modelAndView.addObject("navigation", createNavigation(user, settings, request));
+            modelAndView.addObject("addThingNavigation", addThingNavigation(user, settings));
+            modelAndView.addObject("navigation", navigation(user, settings, request));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user, settings));
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
             modelAndView.addObject("navigationOvertimeAddAccess", isUserAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
@@ -71,7 +72,27 @@ public class FrameDataProvider implements DataProviderInterface {
         }
     }
 
-    private NavigationDto createNavigation(Person user, Settings settings, HttpServletRequest request) {
+    private NavigationDto addThingNavigation(Person user, Settings settings) {
+
+        final boolean overtime = overtimeEnabled(settings.getOvertimeSettings());
+        final boolean sickNote = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
+
+        final ArrayList<NavigationItemDto> elements = new ArrayList<>();
+
+        elements.add(new NavigationItemDto("add-application", "/web/application/new", "nav.add.vacation", "plus", false));
+
+        if (sickNote) {
+            elements.add(new NavigationItemDto("add-sick-note", "/web/sicknote/new", "nav.add.sicknote", "plus", false));
+        }
+
+        if (overtime) {
+            elements.add(new NavigationItemDto("add-overtime", "/web/overtime/new", "nav.add.overtime", "plus", false));
+        }
+
+        return new NavigationDto(elements);
+    }
+
+    private NavigationDto navigation(Person user, Settings settings, HttpServletRequest request) {
 
         final String url = request.getRequestURI();
         final ArrayList<NavigationItemDto> elements = new ArrayList<>();
