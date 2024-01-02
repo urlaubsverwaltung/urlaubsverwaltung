@@ -157,10 +157,9 @@
     @apply tw-text-2xl;
     @apply lg:tw-text-lg;
     @apply lg:tw-pl-1;
-    @apply tw-font-medium;
-    @apply tw-text-gray-800;
-    @apply hover:tw-text-gray-800;
-    @apply focus:tw-text-gray-800;
+    @apply tw-text-gray-700;
+    @apply hover:tw-text-blue-950;
+    @apply focus:tw-text-blue-950;
     @apply tw-transition-colors;
     @apply tw-py-2;
     @apply tw-px-2;
