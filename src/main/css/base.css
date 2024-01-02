@@ -5,6 +5,7 @@
     --top-bar-height: 3.25rem;
     --info-banner-sticky-top: 0;
     --navigation-sticky-top: var(--info-banner-height);
+    --content-sticky-top: calc(var(--navigation-sticky-top) + var(--top-bar-height));
   }
 
   html {
