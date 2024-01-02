@@ -75,11 +75,23 @@ module.exports = {
     },
   },
   plugins: [
-    plugin(function ({ addVariant }) {
+    plugin(function ({ addVariant, addUtilities }) {
       addVariant(
         "supports-backdrop-blur",
         "@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))",
       );
+      addUtilities({
+        ".sticky-top": {
+          position: "sticky",
+          top: "var(--navigation-sticky-top)",
+        },
+      });
+      addUtilities({
+        ".sticky-top-content": {
+          position: "sticky",
+          top: "var(--content-sticky-top)",
+        },
+      });
     }),
   ],
 };
