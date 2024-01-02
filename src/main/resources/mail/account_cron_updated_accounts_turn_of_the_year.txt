@@ -1,9 +1,7 @@
 [(#{greeting(${recipient.niceName})})],
 
-[(#{account.remaining_vacation_days(${today.format("yyyy")})}]
-
+[(#{account.remaining_vacation_days(${#temporals.format(today, "dd.MM.yyyy")})})]
 [# th:each="account : ${accounts}"]
 [(${account.person.niceName})]: [(${account.remainingVacationDays})]
 [/]
-
 [(#{account.remaining_vacation_days.last_year})] [(${totalRemainingVacationDays})]

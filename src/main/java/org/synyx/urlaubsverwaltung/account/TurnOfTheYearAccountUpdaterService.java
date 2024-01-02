@@ -13,7 +13,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,9 +38,8 @@ public class TurnOfTheYearAccountUpdaterService {
     private final Clock clock;
 
     @Autowired
-    public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
+    TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
                                               AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
-
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
@@ -85,11 +83,11 @@ public class TurnOfTheYearAccountUpdaterService {
      */
     private void sendSuccessfullyUpdatedAccountsNotification(List<Account> updatedAccounts) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("accounts", updatedAccounts);
-        model.put("totalRemainingVacationDays", updatedAccounts.stream().map(Account::getRemainingVacationDays).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
-        model.put("today", LocalDate.now(clock));
-
+        final Map<String, Object> model = Map.of(
+            "accounts", updatedAccounts,
+            "totalRemainingVacationDays", updatedAccounts.stream().map(Account::getRemainingVacationDays).reduce(BigDecimal::add).orElse(BigDecimal.ZERO),
+            "today", LocalDate.now(clock)
+        );
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
         final String templateName = "account_cron_updated_accounts_turn_of_the_year";
 
