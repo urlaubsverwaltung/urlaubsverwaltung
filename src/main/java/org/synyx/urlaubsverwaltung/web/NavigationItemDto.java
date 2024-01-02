@@ -9,18 +9,20 @@ class NavigationItemDto {
     private final String messageKey;
     private final String iconName;
     private final boolean active;
+    private final NavigationDto subnavigation;
     private final String dataTestId;
 
-    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active) {
-        this(id, href, messageKey, iconName, active, null);
+    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, NavigationDto subnavigation) {
+        this(id, href, messageKey, iconName, active, subnavigation, null);
     }
 
-    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, String dataTestId) {
+    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, NavigationDto subnavigation, String dataTestId) {
         this.id = id;
         this.href = href;
         this.messageKey = messageKey;
         this.iconName = iconName;
         this.active = active;
+        this.subnavigation = subnavigation;
         this.dataTestId = dataTestId;
     }
 
@@ -44,6 +46,10 @@ class NavigationItemDto {
         return active;
     }
 
+    public NavigationDto getSubnavigation() {
+        return subnavigation;
+    }
+
     public String getDataTestId() {
         return dataTestId;
     }
@@ -58,12 +64,13 @@ class NavigationItemDto {
             && Objects.equals(href, that.href)
             && Objects.equals(messageKey, that.messageKey)
             && Objects.equals(iconName, that.iconName)
+            && Objects.equals(subnavigation, that.subnavigation)
             && Objects.equals(dataTestId, that.dataTestId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, href, messageKey, iconName, active, dataTestId);
+        return Objects.hash(id, href, messageKey, iconName, active, subnavigation, dataTestId);
     }
 
     @Override
@@ -74,6 +81,7 @@ class NavigationItemDto {
             ", messageKey='" + messageKey + '\'' +
             ", iconName='" + iconName + '\'' +
             ", active='" + active + '\'' +
+            ", subnavigation='" + subnavigation + '\'' +
             ", dataTestId='" + dataTestId + '\'' +
             '}';
     }
