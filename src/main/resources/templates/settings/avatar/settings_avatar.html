@@ -24,14 +24,14 @@
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
-          <th:block th:replace="~{/settings/fragments::save-feedback}" />
+          <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='avatar')}" />
+          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='avatar')}" />
 
           <div id="avatar" class="tw-mt-6">
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/avatar/avatar::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>
         </form>

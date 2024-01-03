@@ -24,26 +24,26 @@
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
-          <th:block th:replace="~{/settings/fragments::save-feedback}" />
+          <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='working-time')}" />
+          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='working-time')}" />
 
           <div id="publicHolidays" class="tw-mt-6">
             <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/default-workingtime::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/time::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/public-holidays::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/overtime::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>
         </form>
