@@ -194,6 +194,26 @@
                       th:text="${#messages.msg(navigationItem.messageKey)}"
                     ></span>
                   </a>
+                  <ul
+                    class="tw-list-none tw-m-0 tw-p-0"
+                    th:if="${navigationItem.subnavigation != null}"
+                  >
+                    <li th:each="subNavigationItem : ${navigationItem.subnavigation.elements}">
+                      <a
+                        href="#"
+                        th:replace="~{::navigation-item(
+                          id,
+                          href,
+                          icon,
+                          textMessageKey,
+                          active,
+dataTestId
+                         )}"
+                      >
+                        Subnavigation element
+                      </a>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </nav>
@@ -202,6 +222,27 @@
         <div class="navigation-content-spacer--left tw-h-4 tw-w-4"></div>
       </div>
     </th:block>
+
+    <a
+      th:fragment="navigation-item(id, href, icon, textMessageKey, active, dataTestId)"
+      href="#"
+      th:href="${href}"
+      th:id="${id}"
+      class="main-nav-link tw-no-underline"
+      th:classappend="${active ? 'current' : ''}"
+      th:data-test-id="${dataTestId}"
+    >
+      <th:block
+        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5'"
+      >
+        <svg th:replace="~{__${'icon/' + icon + '::svg'}__}"></svg>
+      </th:block>
+      <span
+        class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
+        style="min-width: 0"
+        th:text="${#messages.msg(textMessageKey)}"
+      ></span>
+    </a>
 
     <a
       th:with="external=${false}"

@@ -145,31 +145,6 @@ public class FrameDataProvider implements DataProviderInterface {
         return new NavigationDto(elements);
     }
 
-    private NavigationDto settingsSubNavigation(String url) {
-
-        final String absencesLink = "/web/settings/absences";
-        final String absenceTypesLink = "/web/settings/absence-types";
-        final String workingTimeLink = "/web/settings/working-time";
-        final String avatarLink = "/web/settings/avatar";
-        final String calendarSyncLink = "/web/settings/calendar-sync";
-
-        final boolean absencesActive = url.equals(absencesLink);
-        final boolean absenceTypesActive = url.equals(absenceTypesLink);
-        final boolean workingTimeActive = url.equals(workingTimeLink);
-        final boolean avatarActive = url.equals(avatarLink);
-        final boolean calendarSyncActive = url.equals(calendarSyncLink);
-
-        final List<NavigationItemDto> elements =  List.of(
-            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.title", "", false),
-            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.title", "", false),
-            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.title", "", false),
-            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.title", "", false),
-            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.title", "", false)
-        );
-
-        return new NavigationDto(elements);
-    }
-
     private boolean popupMenuEnabled(Person signedInUser, Settings settings) {
         return signedInUser.hasRole(OFFICE) || isUserAllowedToWriteOvertime(signedInUser, settings.getOvertimeSettings()) || isAllowedToAddOrSubmitSickNote(signedInUser, settings.getSickNoteSettings());
     }
@@ -186,5 +161,24 @@ public class FrameDataProvider implements DataProviderInterface {
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {
         var userIsAllowedToSubmitSickNotes = sickNoteSettings.getUserIsAllowedToSubmitSickNotes();
         return user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD) || userIsAllowedToSubmitSickNotes;
+    }
+
+    private NavigationDto settingsSubNavigation(String url) {
+
+        final String absencesLink = "/web/settings/absences";
+        final String absenceTypesLink = "/web/settings/absence-types";
+        final String workingTimeLink = "/web/settings/working-time";
+        final String avatarLink = "/web/settings/avatar";
+        final String calendarSyncLink = "/web/settings/calendar-sync";
+
+        final List<NavigationItemDto> elements =  List.of(
+            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.title", "circle", url.equals(absencesLink)),
+            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.title", "circle", url.equals(absenceTypesLink)),
+            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.title", "circle", url.equals(workingTimeLink)),
+            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.title", "circle", url.equals(avatarLink)),
+            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.title", "circle", url.equals(calendarSyncLink))
+        );
+
+        return new NavigationDto(elements);
     }
 }
