@@ -136,6 +136,18 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public Duration getLeftOvertimeForPerson(Person person, List<Long> excludingApplicationIDs) {
+
+        final List<Application> applications = applicationService.findApplicationsByIds(excludingApplicationIDs);
+        final Duration leftOvertimeForPerson = getLeftOvertimeForPerson(person);
+
+        return applications.stream()
+            .filter(application -> application.getVacationType().isOfCategory(OVERTIME))
+            .map(Application::getHours)
+            .reduce(leftOvertimeForPerson, Duration::plus);
+    }
+
+    @Override
     public Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end) {
 
         final Map<Person, List<Application>> overtimeApplicationsByPerson = applications.stream()
