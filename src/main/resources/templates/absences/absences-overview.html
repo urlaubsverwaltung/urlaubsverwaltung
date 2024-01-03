@@ -47,7 +47,7 @@
                 >
                   <th:block th:fragment="year-select-options">
                     <option
-                      th:each="i : ${#numbers.sequence(1,10)}"
+                      th:each="i : ${#numbers.sequence(1,9)}"
                       th:with="year=${currentYear - 10 + i}"
                       th:selected="${#strings.equals(year, selectedYear)}"
                       th:text="${year}"
