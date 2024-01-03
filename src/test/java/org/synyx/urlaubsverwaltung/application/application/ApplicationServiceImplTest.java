@@ -32,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.CYAN;
@@ -340,9 +341,7 @@ class ApplicationServiceImplTest {
         applicationEntity.setId(1L);
         applicationEntity.setVacationType(new VacationTypeEntity());
 
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-
-        when(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, localDate, statuses))
+        when(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, localDate, activeStatuses()))
             .thenReturn(List.of(applicationEntity));
 
         final List<Application> holidayReplacementApplications = sut.getForHolidayReplacement(holidayReplacement, localDate);
@@ -562,7 +561,7 @@ class ApplicationServiceImplTest {
         final List<Person> persons = List.of(batman, robin, alfred);
         final LocalDate until = LocalDate.of(2022, 8, 30);
 
-        when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), until))
+        when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until))
             .thenReturn(List.of());
 
         assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
@@ -595,7 +594,7 @@ class ApplicationServiceImplTest {
         when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
             persons,
             OVERTIME,
-            List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED),
+            activeStatuses(),
             until
         )).thenReturn(List.of(applicationEntity));
 
@@ -626,7 +625,7 @@ class ApplicationServiceImplTest {
         when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
             persons,
             OVERTIME,
-            List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED),
+            activeStatuses(),
             until
         )).thenReturn(List.of(applicationEntity));
 

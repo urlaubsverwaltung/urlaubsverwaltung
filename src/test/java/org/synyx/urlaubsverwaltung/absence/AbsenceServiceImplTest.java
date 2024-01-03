@@ -43,12 +43,10 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -93,7 +91,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDate = LocalDate.of(2019, 12, 10);
         final LocalDate endDate = LocalDate.of(2019, 12, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
-        when(applicationService.getForStatesAndPersonSince(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(person), since)).thenReturn(List.of(application));
+        when(applicationService.getForStatesAndPersonSince(activeStatuses(), List.of(person), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
@@ -126,7 +124,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDate = LocalDate.of(2019, 11, 10);
         final LocalDate endDate = LocalDate.of(2019, 11, 23);
         final Application application = createApplication(person, startDate, endDate, FULL, new StaticMessageSource());
-        when(applicationService.getForStatesSince(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), since)).thenReturn(List.of(application));
+        when(applicationService.getForStatesSince(activeStatuses(), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
@@ -157,7 +155,7 @@ class AbsenceServiceImplTest {
 
         sut.getOpenAbsences(List.of(batman, superman), start, end);
 
-        verify(applicationService).getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(batman, superman), start, end);
+        verify(applicationService).getForStatesAndPerson(activeStatuses(), List.of(batman, superman), start, end);
     }
 
     @Test

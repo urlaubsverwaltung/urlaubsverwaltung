@@ -24,10 +24,7 @@ import java.util.stream.StreamSupport;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
@@ -136,8 +133,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
-        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, waitingAndAllowedStatus, until).stream()
+        final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until).stream()
             .map(application -> {
                 final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
                 final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
@@ -160,8 +156,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date) {
-        final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return toApplication(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, status));
+        return toApplication(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, activeStatuses()));
     }
 
     @Override

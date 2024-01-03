@@ -35,6 +35,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 
 /**
  * Builds a {@link ApplicationForLeaveStatistics} for the given
@@ -71,7 +72,7 @@ class ApplicationForLeaveStatisticsBuilder {
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
 
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, activeStatuses());
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, dateRange);
 
@@ -105,7 +106,7 @@ class ApplicationForLeaveStatisticsBuilder {
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
         final Map<Person, List<Application>> applicationsByPerson =
-            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))
+            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())
                 .stream()
                 .collect(groupingBy(Application::getPerson));
         for (Person person : persons) {
