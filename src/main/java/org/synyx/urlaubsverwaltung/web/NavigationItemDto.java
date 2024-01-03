@@ -12,8 +12,16 @@ class NavigationItemDto {
     private final NavigationDto subnavigation;
     private final String dataTestId;
 
+    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active) {
+        this(id, href, messageKey, iconName, active, null, null);
+    }
+
     NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, NavigationDto subnavigation) {
         this(id, href, messageKey, iconName, active, subnavigation, null);
+    }
+
+    NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, String dataTestId) {
+        this(id, href, messageKey, iconName, active, null, dataTestId);
     }
 
     NavigationItemDto(String id, String href, String messageKey, String iconName, boolean active, NavigationDto subnavigation, String dataTestId) {
