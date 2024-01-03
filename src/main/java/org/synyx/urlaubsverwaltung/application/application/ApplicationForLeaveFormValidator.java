@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -92,11 +93,17 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final Clock clock;
 
     @Autowired
-    ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService workDaysCountService,
-                                     OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                     OvertimeService overtimeService, VacationTypeService vacationTypeService, ApplicationMapper applicationMapper,
-                                     Clock clock) {
-
+    ApplicationForLeaveFormValidator(
+        WorkingTimeService workingTimeService,
+        WorkDaysCountService workDaysCountService,
+        OverlapService overlapService,
+        CalculationService calculationService,
+        SettingsService settingsService,
+        OvertimeService overtimeService,
+        VacationTypeService vacationTypeService,
+        ApplicationMapper applicationMapper,
+        Clock clock
+    ) {
         this.workingTimeService = workingTimeService;
         this.workDaysCountService = workDaysCountService;
         this.overlapService = overlapService;
@@ -445,7 +452,14 @@ class ApplicationForLeaveFormValidator implements Validator {
     private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, OvertimeSettings settings) {
 
         final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
-        final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson());
+
+        final Duration leftOvertimeForPerson;
+        if (applicationForLeaveForm.getId() != null) {
+            leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson(), List.of(applicationForLeaveForm.getId()));
+        } else {
+            leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson());
+        }
+
         final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(Duration.ofHours(applicationForLeaveForm.getHours().longValue()));
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;

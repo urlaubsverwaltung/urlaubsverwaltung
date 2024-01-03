@@ -322,6 +322,30 @@ class OvertimeServiceImplTest {
         assertThat(leftOvertime).isEqualTo(Duration.ZERO);
     }
 
+    @Test
+    void ensureToExcludeApplicationsIdsForLeftOvertimeForPerson() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(Optional.of((double) Duration.ofHours(10L).toMinutes() / 60));
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(Duration.ofHours(5));
+
+        final VacationType<?> overtimeVacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
+        final Application applicationToEdit = new Application();
+        applicationToEdit.setId(1L);
+        applicationToEdit.setPerson(person);
+        applicationToEdit.setStatus(ApplicationStatus.ALLOWED);
+        applicationToEdit.setVacationType(overtimeVacationType);
+        applicationToEdit.setHours(Duration.ofHours(1L));
+        applicationToEdit.setStartDate(LocalDate.now(clock).withMonth(JANUARY.getValue()));
+        applicationToEdit.setEndDate(LocalDate.now(clock).withMonth(JANUARY.getValue()));
+
+        when(applicationService.findApplicationsByIds(List.of(applicationToEdit.getId()))).thenReturn(List.of(applicationToEdit));
+
+        final Duration totalHours = sut.getLeftOvertimeForPerson(person, List.of(overtimeVacationType.getId()));
+        assertThat(totalHours).isEqualTo(Duration.ofHours(6));
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void ensureOfficeIsAllowedToWriteOthersOvertime(boolean overtimeWritePrivilegedOnly) {
