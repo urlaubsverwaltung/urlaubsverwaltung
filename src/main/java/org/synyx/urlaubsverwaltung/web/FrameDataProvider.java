@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -137,8 +138,34 @@ public class FrameDataProvider implements DataProviderInterface {
         if (canViewSettings) {
             final String settingsPath = "/web/settings";
             final boolean settingsActive = url.startsWith(settingsPath);
-            elements.add(new NavigationItemDto("settings-link", settingsPath, "nav.settings.title", "settings", settingsActive, "navigation-settings-link"));
+            final NavigationDto subnav = settingsSubNavigation(url);
+            elements.add(new NavigationItemDto("settings-link", settingsPath, "nav.settings.title", "settings", settingsActive, subnav, "navigation-settings-link"));
         }
+
+        return new NavigationDto(elements);
+    }
+
+    private NavigationDto settingsSubNavigation(String url) {
+
+        final String absencesLink = "/web/settings/absences";
+        final String absenceTypesLink = "/web/settings/absence-types";
+        final String workingTimeLink = "/web/settings/working-time";
+        final String avatarLink = "/web/settings/avatar";
+        final String calendarSyncLink = "/web/settings/calendar-sync";
+
+        final boolean absencesActive = url.equals(absencesLink);
+        final boolean absenceTypesActive = url.equals(absenceTypesLink);
+        final boolean workingTimeActive = url.equals(workingTimeLink);
+        final boolean avatarActive = url.equals(avatarLink);
+        final boolean calendarSyncActive = url.equals(calendarSyncLink);
+
+        final List<NavigationItemDto> elements =  List.of(
+            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.title", "", false),
+            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.title", "", false),
+            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.title", "", false),
+            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.title", "", false),
+            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.title", "", false)
+        );
 
         return new NavigationDto(elements);
     }
