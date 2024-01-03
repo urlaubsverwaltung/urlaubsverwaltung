@@ -172,11 +172,11 @@ public class FrameDataProvider implements DataProviderInterface {
         final String calendarSyncLink = "/web/settings/calendar-sync";
 
         final List<NavigationItemDto> elements =  List.of(
-            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.title", "circle", url.equals(absencesLink)),
-            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.title", "circle", url.equals(absenceTypesLink)),
-            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.title", "circle", url.equals(workingTimeLink)),
-            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.title", "circle", url.equals(avatarLink)),
-            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.title", "circle", url.equals(calendarSyncLink))
+            new NavigationItemDto("settings-absences-link", absencesLink, "nav.settings.absences.title", "circle", url.equals(absencesLink)),
+            new NavigationItemDto("settings-absence-types-link", absenceTypesLink, "nav.settings.absence-types.title", "circle", url.equals(absenceTypesLink)),
+            new NavigationItemDto("settings-working-time-link", workingTimeLink, "nav.settings.working-time.title", "circle", url.equals(workingTimeLink)),
+            new NavigationItemDto("settings-avatar-link", avatarLink, "nav.settings.avatar.title", "circle", url.equals(avatarLink)),
+            new NavigationItemDto("settings-calendar-sync-link", calendarSyncLink, "nav.settings.calendar-sync.title", "circle", url.equals(calendarSyncLink))
         );
 
         return new NavigationDto(elements);

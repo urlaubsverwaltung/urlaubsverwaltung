@@ -174,41 +174,36 @@
                   th:classappend="${navigationItemStat.first ? 'tw-mt-8' : ''}"
                 >
                   <a
-                    th:fragment="navigation-item(id, href, text, icon)"
                     href="#"
-                    th:href="@{__${navigationItem.href}__}"
-                    th:id="${navigationItem.id}"
-                    class="main-nav-link tw-no-underline"
-                    th:classappend="${navigationItem.active ? 'current' : ''}"
-                    th:data-test-id="${navigationItem.dataTestId}"
-                    th:title="${#messages.msg(navigationItem.messageKey)}"
+                    th:replace="~{::navigation-item(
+                      id=${navigationItem.id},
+                      href=${navigationItem.href},
+                      icon=${navigationItem.iconName},
+                      textMessageKey=${navigationItem.messageKey},
+                      active=${navigationItem.active},
+                      dataTestId=${navigationItem.dataTestId}
+                    )}"
                   >
-                    <th:block
-                      th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5'"
-                    >
-                      <svg th:replace="~{__${'icon/' + navigationItem.iconName + '::svg'}__}"></svg>
-                    </th:block>
-                    <span
-                      class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
-                      style="min-width: 0"
-                      th:text="${#messages.msg(navigationItem.messageKey)}"
-                    ></span>
+                    Subnavigation element
                   </a>
                   <ul
-                    class="tw-list-none tw-m-0 tw-p-0"
+                    class="tw-list-none tw-m-0 tw-p-0 tw-ml-8 tw-mt-px tw-flex tw-flex-col tw-gap-px"
                     th:if="${navigationItem.subnavigation != null}"
                   >
-                    <li th:each="subNavigationItem : ${navigationItem.subnavigation.elements}">
+                    <li
+                      th:each="subNavigationItem : ${navigationItem.subnavigation.elements}"
+                      class="tw-text-sm"
+                    >
                       <a
                         href="#"
-                        th:replace="~{::navigation-item(
-                          id,
-                          href,
-                          icon,
-                          textMessageKey,
-                          active,
-dataTestId
-                         )}"
+                        th:replace="~{::sub-navigation-item(
+                          id=${subNavigationItem.id},
+                          href=${subNavigationItem.href},
+                          icon=${subNavigationItem.iconName},
+                          textMessageKey=${subNavigationItem.messageKey},
+                          active=${subNavigationItem.active},
+                          dataTestId=${subNavigationItem.dataTestId}
+                        )}"
                       >
                         Subnavigation element
                       </a>
@@ -234,6 +229,27 @@ dataTestId
     >
       <th:block
         th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5'"
+      >
+        <svg th:replace="~{__${'icon/' + icon + '::svg'}__}"></svg>
+      </th:block>
+      <span
+        class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
+        style="min-width: 0"
+        th:text="${#messages.msg(textMessageKey)}"
+      ></span>
+    </a>
+
+    <a
+      th:fragment="sub-navigation-item(id, href, icon, textMessageKey, active, dataTestId)"
+      href="#"
+      th:href="${href}"
+      th:id="${id}"
+      class="main-nav-link tw-no-underline tw-text-sm tw-gap-2"
+      th:classappend="${active ? 'current' : ''}"
+      th:data-test-id="${dataTestId}"
+    >
+      <th:block
+        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-3 tw-h-3'"
       >
         <svg th:replace="~{__${'icon/' + icon + '::svg'}__}"></svg>
       </th:block>
