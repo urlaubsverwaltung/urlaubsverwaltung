@@ -24,9 +24,9 @@
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
-          <th:block th:replace="~{/settings/fragments::save-feedback}" />
+          <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='absence-types')}" />
+          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absence-types')}" />
 
           <div id="absenceTypes" class="tw-mt-6">
             <div class="form-section tw-mb-12 tw-relative tw-z-10">
@@ -57,7 +57,7 @@
             </div>
             <div class="form-section">
               <div th:replace="~{settings/absence-types/special-leave::section}"></div>
-              <th:block th:replace="~{/settings/fragments::save-button}" />
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>
         </form>
