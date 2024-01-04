@@ -69,7 +69,7 @@
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
     "cssnano": "6.0.5",
-    "date-fns": "2.30.0",
+    "date-fns": "3.0.6",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.1.3",
