@@ -68,7 +68,7 @@
     "babel-jest": "29.7.0",
     "concurrently": "8.2.2",
     "cross-env": "7.0.3",
-    "cssnano": "6.0.2",
+    "cssnano": "6.0.3",
     "date-fns": "2.30.0",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
