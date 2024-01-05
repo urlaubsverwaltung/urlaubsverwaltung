@@ -1,9 +1,9 @@
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import localeDE from "date-fns/locale/de";
+import { de as localeDE } from "date-fns/locale/de";
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import localeDEAT from "date-fns/locale/de-AT";
+import { deAT as localeDEAT } from "date-fns/locale/de-AT";
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import localeEL from "date-fns/locale/el";
+import { el as localeEL } from "date-fns/locale/el";
 
 jest.mock("../../lib/date-fns/locale-resolver");
 
