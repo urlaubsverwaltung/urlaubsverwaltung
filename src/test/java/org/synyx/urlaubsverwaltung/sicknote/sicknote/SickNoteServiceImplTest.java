@@ -360,9 +360,78 @@ class SickNoteServiceImplTest {
         assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
     }
 
-
     @Test
     void getForStatesAndPerson() {
+        final Person person = new Person();
+        final Person applier = new Person();
+        final SickNoteType sickNoteType = new SickNoteType();
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(10);
+        final LocalDate endDate = now.minusDays(6);
+        final LocalDate aubStartDate = endDate.minusDays(2);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setApplier(applier);
+        entity.setSickNoteType(sickNoteType);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
+        entity.setDayLength(DayLength.FULL);
+        entity.setAubStartDate(aubStartDate);
+        entity.setAubEndDate(endDate);
+        entity.setLastEdited(now);
+        entity.setEndOfSickPayNotificationSend(endDate);
+        entity.setStatus(ACTIVE);
+
+        final List<Person> persons = List.of(person);
+        final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
+
+        when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons))
+                .thenReturn(List.of(entity));
+
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
+
+        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        assertThat(sickNotes).hasSize(1);
+
+        final SickNote actual = sickNotes.getFirst();
+        assertThat(actual.getId()).isEqualTo(1);
+        assertThat(actual.getPerson()).isSameAs(person);
+        assertThat(actual.getApplier()).isSameAs(applier);
+        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
+        assertThat(actual.getStartDate()).isEqualTo(startDate);
+        assertThat(actual.getEndDate()).isEqualTo(endDate);
+        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
+        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
+        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
+        assertThat(actual.getLastEdited()).isEqualTo(now);
+        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
+        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
+        assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
+    }
+
+    @Test
+    void getForStatesAndPersonWithEmptyResult() {
+        final Person person = new Person();
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(10);
+        final LocalDate endDate = now.minusDays(6);
+
+        final List<Person> persons = List.of(person);
+        final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
+
+        when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons))
+                .thenReturn(List.of());
+
+        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void getForStatesAndPersonSince() {
         final Person person = new Person();
         final Person applier = new Person();
         final SickNoteType sickNoteType = new SickNoteType();

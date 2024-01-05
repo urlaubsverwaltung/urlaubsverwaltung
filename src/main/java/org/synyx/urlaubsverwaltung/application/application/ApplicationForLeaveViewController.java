@@ -32,7 +32,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;

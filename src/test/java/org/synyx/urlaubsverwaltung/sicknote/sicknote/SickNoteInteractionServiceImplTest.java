@@ -355,10 +355,6 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void accept() {
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         when(sickNoteService.save(any(SickNote.class))).then(returnsFirstArg());
 
         final SickNote sickNote = SickNote.builder()
@@ -388,11 +384,8 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final SickNoteUpdatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
-        assertThat(sickNoteCreatedEvent.getSickNote()).isEqualTo(acceptedSickNote);
-        assertThat(sickNoteCreatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteCreatedEvent.getId()).isNotNull();
-
-        verify(calendarSyncService).addAbsence(any(Absence.class));
-        verify(absenceMappingService).create(eq(sickNote.getId()), eq(SICKNOTE), anyString());
+        assertThat(sickNoteCreatedEvent.sickNote()).isEqualTo(acceptedSickNote);
+        assertThat(sickNoteCreatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCreatedEvent.id()).isNotNull();
     }
 }
