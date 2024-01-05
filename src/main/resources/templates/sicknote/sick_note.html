@@ -31,7 +31,12 @@
             <th:block th:if="${sickNote.submittedOrActive}">
               <div class="tw-flex tw-flex-row">
                 <th:block th:if="${canAcceptSickNote && !sickNote.active}">
-                  <form method="post" th:action="@{/web/sicknote/__${sickNote.id}__/accept}">
+                  <form
+                    id="accept"
+                    th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/accept?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/accept'}"
+                    th:action="@{__${actionUrl}__}"
+                    method="post"
+                  >
                     <button
                       class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                     >
