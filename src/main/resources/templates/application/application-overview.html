@@ -357,7 +357,7 @@
             >
               <a
                 href="#other-sicknotes-block"
-                th:href="@{/web/sicknotes/submitted}"
+                th:href="@{/web/sicknote/submitted}"
                 class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200 tw-gap-2"
                 th:classappend="${activeContent == 'sicknote' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
               >
@@ -374,7 +374,6 @@
       </div>
 
       <div id="other-applications-block" class="tw-mb-10" th:hidden="${activeContent != 'application'}">
-        <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
         <div class="tw-mb-10">
           <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
           <ul

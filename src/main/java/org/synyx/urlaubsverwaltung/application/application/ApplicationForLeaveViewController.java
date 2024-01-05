@@ -91,6 +91,15 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return "application/application-overview";
     }
 
+    @GetMapping("/sicknote/submitted")
+    public String showApplicationWithSickNoteSubmittedContent(Model model, Locale locale) {
+
+        prepareApplicationModels(model, locale);
+        model.addAttribute("activeContent", "sicknote");
+
+        return "application/application-overview";
+    }
+
     private void prepareApplicationModels(Model model, Locale locale) {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
