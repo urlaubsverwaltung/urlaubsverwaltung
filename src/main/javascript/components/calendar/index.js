@@ -429,8 +429,12 @@ const HolidayService = (function () {
         return Promise.resolve(_CACHE["publicHoliday"][year]);
       }
 
-      const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
-      const lastDayOfYear = formatISO(endOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
+      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
+      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
 
       return fetch("/persons/" + personId + "/public-holidays", {
         from: firstDayOfYear,
@@ -445,8 +449,12 @@ const HolidayService = (function () {
         return Promise.resolve(_CACHE["absences"][year]);
       }
 
-      const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
-      const lastDayOfYear = formatISO(endOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
+      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
+      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
 
       return fetch("/persons/" + personId + "/absences", {
         from: firstDayOfYear,
