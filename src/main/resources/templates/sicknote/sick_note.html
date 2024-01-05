@@ -35,7 +35,7 @@
                 <th:block th:if="${canAcceptSickNote && !sickNote.active}">
                   <form method="post" th:action="@{/web/sicknote/__${sickNote.id}__/accept}">
                     <button
-                      class="icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 tw-bg-white"
+                      class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                     >
                       <svg th:replace="~{icon/check::svg}"></svg>
                       <span th:text="#{action.acceptSicknote}" class="tw-sr-only"></span>
