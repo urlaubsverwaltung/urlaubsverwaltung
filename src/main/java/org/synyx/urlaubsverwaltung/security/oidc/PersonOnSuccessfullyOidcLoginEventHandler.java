@@ -66,7 +66,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             personService.update(existentPerson);
 
         } else {
-            final Person createdPerson = personService.create(userUniqueID, lastName, firstName, emailAddress);
+            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
     }
