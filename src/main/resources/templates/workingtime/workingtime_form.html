@@ -88,7 +88,7 @@
                           <option
                             th:text="#{federalState.NONE}"
                             value="NONE"
-                            th:selected="${workingTime.defaultFederalState == false && workingTime.defaultFederalState == 'NONE'}"
+                            th:selected="${workingTime.defaultFederalState == false && workingTime.federalState.name == 'NONE'}"
                           ></option>
                         </optgroup>
 
@@ -102,7 +102,7 @@
                             th:with="countryMessageKey3=|federalState.${federalStateType}|"
                             th:text="#{${countryMessageKey3}}"
                             th:value="${federalStateType}"
-                            th:selected="${workingTime.defaultFederalState== false && workingTime.federalState==federalStateType}"
+                            th:selected="${workingTime.defaultFederalState== false && workingTime.federalState == federalStateType}"
                           ></option>
                         </optgroup>
                       </th:block>
