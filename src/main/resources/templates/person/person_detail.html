@@ -506,11 +506,11 @@
               </th:block>
               <th:block th:ref="person-details-federalstate-box-body">
                 <span
-                  th:if="${federalState == 'NONE'}"
+                  th:if="${federalState.name == 'NONE'}"
                   th:text="#{federalState.NONE}"
                   class="tw-text-base tw-font-medium"
                 ></span>
-                <p th:if="${federalState != 'NONE'}">
+                <p th:if="${federalState.name != 'NONE'}">
                   <span th:text="#{person.account.workingTime.federalState}" class="tw-block tw-mb-1 tw-text-sm"></span>
                   <span
                     th:with="countryCode=|country.${federalState.country}|,federalStateCode=|federalState.${federalState}|"
