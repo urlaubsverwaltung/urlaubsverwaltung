@@ -52,7 +52,7 @@
     "lint-staged": "15.2.0",
     "rimraf": "5.0.5",
     "rollup": "4.9.5",
-    "rollup-plugin-esbuild": "6.1.0",
+    "rollup-plugin-esbuild": "6.1.1",
     "rollup-plugin-postcss": "4.0.2",
     "timepicker": "1.14.1",
     "underscore": "1.13.6"
