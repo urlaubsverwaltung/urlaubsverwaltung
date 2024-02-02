@@ -30,7 +30,9 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION-GRANT-TYPE: authorization_code
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT-URI: http://localhost:8080/login/oauth2/code/{registrationId}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER-URI: http://localhost:8090/realms/urlaubsverwaltung
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://keycloak:8090/realms/urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://localhost:8090/realms/urlaubsverwaltung
+      UV_SECURITY_OIDC_CLAIM-MAPPERS_GROUP-CLAIM_ENABLED: "true"
+      UV_SECURITY_OIDC_CLAIM-MAPPERS_GROUP-CLAIM_CLAIM-NAME: groups
     depends_on:
       keycloak:
         condition: service_started
@@ -70,6 +72,7 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: 'false'
       KC_HEALTH_ENABLED: 'true'
       KC_CACHE: 'local'
+      KC_HOSTNAME: 'localhost'
     ports:
       - '8090:8090'
     volumes:
