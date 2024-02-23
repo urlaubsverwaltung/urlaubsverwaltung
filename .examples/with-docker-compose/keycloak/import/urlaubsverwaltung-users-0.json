@@ -197,7 +197,7 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-urlaubsverwaltung" ],
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "58400ef7-1cc9-48cb-93a8-f45c7af186ad",
     "createdTimestamp" : 1608289715282,
@@ -322,6 +322,6 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   } ]
 }
