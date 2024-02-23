@@ -48,8 +48,8 @@
   "roles": {
     "realm": [
       {
-        "id": "67214dd8-3546-4605-8de4-7dc294f6e901",
-        "name": "urlaubsverwaltung_office",
+        "id": "cfe1e776-1d35-4f0b-a3f4-53bbb51a1cb3",
+        "name": "urlaubsverwaltung_person_add",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -98,6 +98,15 @@
       {
         "id": "9b770d1e-90cd-49d9-8ec0-f89e6e39e38e",
         "name": "urlaubsverwaltung_user",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "urlaubsverwaltung",
+        "attributes": {}
+      },
+      {
+        "id": "67214dd8-3546-4605-8de4-7dc294f6e901",
+        "name": "urlaubsverwaltung_office",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -515,6 +524,7 @@
       "requiredActions": [],
       "realmRoles": [
         "urlaubsverwaltung_office",
+        "urlaubsverwaltung_person_add",
         "default-roles-urlaubsverwaltung",
         "urlaubsverwaltung_user"
       ],
