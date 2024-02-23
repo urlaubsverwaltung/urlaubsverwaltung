@@ -53,7 +53,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         active.setCategory(HOLIDAY);
         active.setMessageKey("message.key.active");
         active.setColor(YELLOW);
-        sut.save(active);
+        final VacationTypeEntity activeSaved = sut.save(active);
 
         final VacationTypeEntity inactive = new VacationTypeEntity();
         inactive.setId(2L);
@@ -66,6 +66,6 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         final List<VacationTypeEntity> activeVacationTypes = sut.findByActiveIsTrueOrderById();
         assertThat(activeVacationTypes)
             .hasSize(1)
-            .contains(active);
+            .contains(activeSaved);
     }
 }
