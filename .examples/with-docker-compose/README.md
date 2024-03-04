@@ -17,8 +17,24 @@ In einer Produktiv-Umgebung wäre ein eigener OIDC-Client genau hierfür schöne
 ACCESS_TOKEN=$(curl -s http://localhost:8090/realms/urlaubsverwaltung/protocol/openid-connect/token \
     --data-urlencode 'client_id=urlaubsverwaltung' \
     --data-urlencode 'client_secret=urlaubsverwaltung-secret' \
-    --data-urlencode 'scope=email' \
+    --data-urlencode 'scope=openid email' \
     --data-urlencode 'grant_type=client_credentials' \
+    | jq -r '.access_token')
+
+# Abfrage mit Bearer Token (geht nur auf API-Endpunkte)
+curl localhost:8080/api/persons -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+Oder als user
+```bash
+# Access token erzeugen (gültig für ein paar Minuten)
+ACCESS_TOKEN=$(curl -s http://localhost:8090/realms/urlaubsverwaltung/protocol/openid-connect/token \
+    --data-urlencode 'client_id=urlaubsverwaltung' \
+    --data-urlencode 'client_secret=urlaubsverwaltung-secret' \
+    --data-urlencode 'scope=openid email' \
+    --data-urlencode 'grant_type=password' \
+    --data-urlencode 'username=office@urlaubsverwaltung.cloud' \
+    --data-urlencode 'password=secret' \
     | jq -r '.access_token')
 
 # Abfrage mit Bearer Token (geht nur auf API-Endpunkte)

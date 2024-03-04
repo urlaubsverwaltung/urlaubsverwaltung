@@ -849,7 +849,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "urlaubsverwaltung-secret",
       "redirectUris": [
-        "http://localhost:8987/*"
+        "http://localhost:8080/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
