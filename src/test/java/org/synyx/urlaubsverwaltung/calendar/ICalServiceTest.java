@@ -39,7 +39,7 @@ class ICalServiceTest {
     }
 
     @Test
-    void getCalendarForPersonAndNoAbsenceFound() {
+    void ensureToGetCalendarForPersonAndNoAbsenceFound() {
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(), null);
         assertThat(convertCalendar(calendar))
@@ -283,7 +283,7 @@ class ICalServiceTest {
     }
 
     @Test
-    void appointmentOfOtherPersonWoithoutEMailAddress() {
+    void appointmentOfOtherPersonWithoutEMailAddress() {
 
         final Person person = new Person("muster", "Muster", "Marlene", null);
         person.setId(1L);
