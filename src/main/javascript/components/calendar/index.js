@@ -14,7 +14,7 @@ import {
   isWeekend,
   isWithinInterval,
   parse,
-  parseISO,
+  parseISO as dateFnsParseISO,
   startOfMonth,
   startOfYear,
   subMonths,
@@ -103,6 +103,11 @@ const icons = {
 
 function getDateFromElement(element) {
   return parseISO(element.dataset[DATA.date]);
+}
+
+function parseISO(dateStringValue) {
+  // date-fns v2.x returned Date(NaN) previously. so just keep using this for falsy argument...
+  return dateStringValue ? dateFnsParseISO(dateStringValue) : new Date(Number.NaN);
 }
 
 const Assertion = (function () {
