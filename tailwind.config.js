@@ -68,6 +68,8 @@ module.exports = {
       },
     },
     screens: {
+      // desktop: visible sidebar navigation, otherwise it is available via hamburger-menu and displayed as overlay
+      desktop: "1280px",
       // cannot use 'extend' as `xs` would override other screens
       // since it's added to the bottom of the css file
       xs: "480px",

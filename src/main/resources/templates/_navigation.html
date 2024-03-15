@@ -7,12 +7,12 @@
   <body>
     <th:block th:ref="nav">
       <div
-        class="tw-flex tw-items-center tw-sticky tw-z-40 tw-bg-gray-100 lg:tw-block lg:tw-bg-white lg:tw-border-r lg:tw-border-zinc-50"
+        class="tw-flex tw-items-center tw-sticky tw-z-40 tw-bg-gray-100 desktop:tw-block desktop:tw-bg-white desktop:tw-border-r desktop:tw-border-zinc-50"
         style="top: var(--navigation-sticky-top); grid-area: navigation"
       >
-        <div class="tw-p-2 lg:tw-sticky-top">
+        <div class="tw-p-2 desktop:tw-sticky-top">
           <input id="menu-toggle-checkbox" type="checkbox" class="hidden" />
-          <label for="menu-toggle-checkbox" class="tw-z-50 tw-flex lg:tw-hidden">
+          <label for="menu-toggle-checkbox" class="tw-z-50 tw-flex desktop:tw-hidden">
             <span class="inline-block">
               <span></span>
               <span></span>
@@ -21,8 +21,8 @@
               <span></span>
             </span>
           </label>
-          <div class="tw-flex tw-flex-col lg:tw-block">
-            <div class="tw-flex tw-items-center tw-gap-2 lg:tw-relative">
+          <div class="tw-flex tw-flex-col desktop:tw-block">
+            <div class="tw-flex tw-items-center tw-gap-2 desktop:tw-relative">
               <div th:replace="~{launchpad/launchpad::navigation-item}"></div>
               <a
                 href="/"
@@ -31,7 +31,7 @@
               >
                 Urlaubsverwaltung
               </a>
-              <div class="tw-ml-auto lg:tw-ml-8">
+              <div class="tw-ml-auto desktop:tw-ml-8">
                 <uv-nav-popup-menu-button>
                   <a
                     href="#avatar-menu"
@@ -43,7 +43,7 @@
                   >
                     <span class="tw-inline-flex tw-text-blue-200">
                       <img
-                        th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='52px',height='52px',personId=null,,className='tw-w-10 tw-h-10 lg:tw-w-9 lg:tw-h-9')}"
+                        th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='52px',height='52px',personId=null,,className='tw-w-10 tw-h-10 desktop:tw-w-9 desktop:tw-h-9')}"
                         alt=""
                       />
                     </span>
@@ -58,7 +58,7 @@
                         th:href="@{/}"
                         class="tw-flex tw-items-center tw-gap-4 hover:tw-no-underline focus:tw-no-underline"
                       >
-                        <span class="tw-text-blue-200 lg:tw-hidden">
+                        <span class="tw-text-blue-200 desktop:tw-hidden">
                           <img
                             th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px',personId=null)}"
                             alt=""
@@ -143,7 +143,7 @@
                 </div>
               </div>
             </div>
-            <nav class="tw-mt-4 tw-pt-4 tw-pb-8 tw-overflow-y-scroll lg:tw-overflow-y-hidden lg:tw-pb-0">
+            <nav class="tw-mt-4 tw-pt-4 tw-pb-8 tw-overflow-y-scroll desktop:tw-overflow-y-hidden desktop:tw-pb-0">
               <ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col tw-gap-px">
                 <li th:each="navigationItem : ${addThingNavigation.elements}">
                   <a
@@ -190,10 +190,7 @@
                     class="tw-list-none tw-m-0 tw-p-0 tw-ml-8 tw-mt-px tw-flex tw-flex-col tw-gap-px"
                     th:if="${navigationItem.subnavigation != null}"
                   >
-                    <li
-                      th:each="subNavigationItem : ${navigationItem.subnavigation.elements}"
-                      class="tw-text-sm"
-                    >
+                    <li th:each="subNavigationItem : ${navigationItem.subnavigation.elements}" class="tw-text-sm">
                       <a
                         href="#"
                         th:replace="~{::sub-navigation-item(
@@ -228,7 +225,7 @@
       th:data-test-id="${dataTestId}"
     >
       <th:block
-        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5'"
+        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 desktop:tw-w-5 desktop:tw-h-5'"
       >
         <svg th:replace="~{__${'icon/' + icon + '::svg'}__}"></svg>
       </th:block>

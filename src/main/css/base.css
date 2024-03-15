@@ -46,7 +46,8 @@
       "footer footer";
   }
 
-  @screen lg {
+  @screen desktop {
+    /* desktop: sidebar navigation always visible */
     body {
       display: grid;
       grid-template-rows: auto auto 1fr auto;

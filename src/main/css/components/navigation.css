@@ -33,7 +33,7 @@
     position: absolute;
     top: 100%;
     @apply tw-bg-gray-100;
-    @apply lg:tw-hidden;
+    @apply desktop:tw-hidden;
   }
 
   .navigation-content-spacer--left {
@@ -50,7 +50,7 @@
     position: absolute;
     @apply tw-inset-0;
     @apply tw-bg-white;
-    @apply lg:tw-hidden;
+    @apply desktop:tw-hidden;
   }
 
   .navigation-content-spacer--left::after {
@@ -136,7 +136,7 @@
     background-color: transparent !important;
   }
 
-  @screen lg {
+  @screen desktop {
     #menu-toggle-checkbox ~ label ~ div,
     #menu-toggle-checkbox:checked ~ label ~ div {
       position: static;
@@ -155,43 +155,43 @@
     @apply tw-items-center;
     @apply tw-gap-3.5;
     @apply tw-text-2xl;
-    @apply lg:tw-text-lg;
-    @apply lg:tw-pl-1;
+    @apply desktop:tw-text-lg;
+    @apply desktop:tw-pl-1;
     @apply tw-text-gray-700;
     @apply hover:tw-text-blue-950;
     @apply focus:tw-text-blue-950;
     @apply tw-transition-colors;
     @apply tw-py-2;
     @apply tw-px-2;
-    @apply lg:tw-py-1;
-    @apply lg:tw-pl-2;
-    @apply lg:tw-pr-3;
+    @apply desktop:tw-py-1;
+    @apply desktop:tw-pl-2;
+    @apply desktop:tw-pr-3;
     @apply hover:tw-bg-blue-50;
     @apply focus:tw-bg-blue-50;
     @apply tw-rounded-md;
   }
 
   .add-thing-nav-link {
-    @apply lg:tw-text-sm;
+    @apply desktop:tw-text-sm;
   }
 
   .main-nav-link svg,
   .add-thing-nav-link svg {
     @apply tw-w-8;
     @apply tw-h-8;
-    @apply lg:tw-w-5;
-    @apply lg:tw-h-5;
+    @apply desktop:tw-w-5;
+    @apply desktop:tw-h-5;
   }
 
   .main-nav-link svg {
-    @apply lg:tw-stroke-gray-400;
+    @apply desktop:tw-stroke-gray-400;
   }
 
   .main-nav-link:hover svg,
   .main-nav-link:focus svg,
   .main-nav-link.current svg,
   .main-nav-link[aria-current="page"] svg {
-    @apply lg:tw-stroke-blue-950;
+    @apply desktop:tw-stroke-blue-950;
   }
 
   .main-nav-link.current,
@@ -237,7 +237,7 @@
     overflow-y: auto;
   }
 
-  @screen lg {
+  @screen desktop {
     .nav-popup-menu {
       position: absolute;
       top: calc(100% + 0.5rem);
