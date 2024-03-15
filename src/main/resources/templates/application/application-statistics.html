@@ -16,7 +16,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-mt-4 tw-pb-32" data-turbo="true">
-      <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-8">
+      <div class="content-container tw-max-w-[93.75rem]">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
         >

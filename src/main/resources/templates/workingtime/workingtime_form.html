@@ -24,7 +24,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-mt-4 tw-max-w-6xl tw-mx-auto tw-px-4">
+      <div class="content-container tw-mt-4">
         <form
           method="post"
           th:action="@{/web/person/__${person.id}__/workingtime}"

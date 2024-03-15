@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-mt-4 tw-max-w-6xl tw-mx-auto tw-px-4">
+    <main th:fragment="main" class="content-container tw-mt-4">
       <header>
         <h1 class="tw-mb-8 tw-text-2xl tw-text-medium">
           <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.title}"></th:block>

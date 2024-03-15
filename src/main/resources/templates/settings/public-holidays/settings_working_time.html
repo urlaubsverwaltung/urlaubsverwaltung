@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="tw-max-w-6xl tw-mx-auto tw-px-4">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
 
         <form

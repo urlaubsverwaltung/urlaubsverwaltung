@@ -15,7 +15,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-grid tw-grid-flow-row">
+    <main th:fragment="main" class="content-container tw-grid tw-grid-flow-row">
       <div class="tw-mt-4">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
