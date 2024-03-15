@@ -77,7 +77,6 @@
 
 @layer components {
   .content-container {
-    @apply tw-max-w-2xl; /* TODO remove me? */
     @apply tw-mx-auto;
     @apply tw-px-4;
     @apply lg:tw-max-w-6xl;
