@@ -1,16 +1,20 @@
 import fetchMock from "fetch-mock";
-import dateParseISOSpy from "date-fns/parseISO";
-import dateFormatSpy from "date-fns/format";
+import { parseISO as dateParseISOSpy } from "date-fns/parseISO";
+import { format as dateFormatSpy } from "date-fns/format";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 jest.mock("date-fns/parseISO", () => {
   const original = jest.requireActual("date-fns/parseISO");
-  return jest.fn(original);
+  return {
+    parseISO: jest.fn(original.parseISO),
+  };
 });
 
 jest.mock("date-fns/format", () => {
   const original = jest.requireActual("date-fns/format");
-  return jest.fn(original);
+  return {
+    format: jest.fn(original.format),
+  };
 });
 
 describe("send-get-department-vacations-request", () => {

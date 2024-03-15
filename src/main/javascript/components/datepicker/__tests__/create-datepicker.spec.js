@@ -1,6 +1,6 @@
 import { createDatepicker } from "../create-datepicker";
 import fetchMock from "fetch-mock";
-import de from "date-fns/locale/de";
+import { de } from "date-fns/locale/de";
 import { setLocale } from "../../../lib/date-fns/locale-resolver";
 
 describe("create-datepicker", () => {

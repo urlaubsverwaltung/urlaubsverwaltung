@@ -2,7 +2,7 @@
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import { format, isAfter } from "date-fns";
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import parseISO from "date-fns/parseISO";
+import { parseISO } from "date-fns/parseISO";
 import { getJSON } from "../js/fetch";
 
 const icons = {

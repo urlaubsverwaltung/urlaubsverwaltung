@@ -1,4 +1,4 @@
-import dateFnsFormat from "date-fns/format";
+import { format as dateFnsFormat } from "date-fns/format";
 import resolveDateFnsLocale from "./locale-resolver";
 
 export default function format(date, formatString, options = {}) {
