@@ -25,7 +25,6 @@ export class NavPopupMenuButton extends HTMLElement {
   connectedCallback() {
     this.addEventListener("click", (event) => {
       event.preventDefault();
-
       const href = this.querySelector("a").getAttribute("href");
       const menu = document.querySelector(href);
 
