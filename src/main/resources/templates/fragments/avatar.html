@@ -10,7 +10,7 @@
         <a
           th:href="@{/web/person/__${personId}__/overview}"
           th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
-          class="tw-text-inherit"
+          class="tw-text-inherit print:no-link"
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">

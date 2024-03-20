@@ -247,7 +247,7 @@
                     <a
                       th:text="${person.firstName}"
                       th:href="@{/web/person/__${person.id}__/overview}"
-                      class="icon-link"
+                      class="icon-link print:no-link"
                       data-turbo="false"
                     ></a>
                   </td>
@@ -255,7 +255,7 @@
                     <a
                       th:text="${person.lastName}"
                       th:href="@{/web/person/__${person.id}__/overview}"
-                      class="icon-link"
+                      class="icon-link print:no-link"
                       data-turbo="false"
                     ></a>
                   </td>

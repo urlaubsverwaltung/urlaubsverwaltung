@@ -115,6 +115,7 @@
                       th:if="${department.activeMembersCount > 0}"
                       th:href="@{/web/person?active=true&department=__${department.id}__}"
                       th:text="|${department.activeMembersCount} #{department.members.active}|"
+                      class="print:no-link"
                     >
                     </a>
                     <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
@@ -123,6 +124,7 @@
                     <a
                       th:if="${department.inactiveMembersCount > 0}"
                       th:href="@{/web/person?active=false&department=__${department.id}__}"
+                      class="print:no-link"
                     >
                       <th:block th:text="${department.inactiveMembersCount}" />
                       <th:block th:text="#{department.members.inactive}" />
