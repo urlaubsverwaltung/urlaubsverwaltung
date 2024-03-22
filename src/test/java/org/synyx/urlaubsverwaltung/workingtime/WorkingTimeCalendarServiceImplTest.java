@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_GENF;
@@ -389,5 +390,42 @@ class WorkingTimeCalendarServiceImplTest {
         for (LocalDate date : dateRange) {
             assertThat(workingTimeCalendar.workingTime(date)).isEmpty();
         }
+    }
+
+    @Test
+    void ensureToHandlePublicHolidaysWithZeroDayLengthToFullWorkday() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final List<Person> persons = List.of(person);
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2024, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(FULL);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(FULL);
+        workingTimeEntity.setSunday(FULL);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity));
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        workingTimeSettings.setWorkingDurationForChristmasEve(FULL);
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2024, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), ZERO, "")));
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2024, 12, 24), LocalDate.of(2024, 12, 24)));
+        assertThat(actual)
+            .hasSize(1)
+            .containsKeys(person);
+
+        assertThat(actual.get(person).workingTime(LocalDate.of(2024, DECEMBER, 24))).hasValue(BigDecimal.ONE);
     }
 }
