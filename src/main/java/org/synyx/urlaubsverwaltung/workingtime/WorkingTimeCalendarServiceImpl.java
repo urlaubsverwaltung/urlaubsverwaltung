@@ -119,11 +119,16 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                         morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
                         noon = DayLength.NOON;
                         noonType = WorkingTimeCalendarEntryType.WORKDAY;
-                    } else {
+                    } else if (publicHoliday.dayLength().isNoon()) {
                         morning = DayLength.MORNING;
                         morningType = WorkingTimeCalendarEntryType.WORKDAY;
                         noon = DayLength.ZERO;
                         noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                    } else {
+                        morning = DayLength.MORNING;
+                        morningType = WorkingTimeCalendarEntryType.WORKDAY;
+                        noon = DayLength.NOON;
+                        noonType = WorkingTimeCalendarEntryType.WORKDAY;
                     }
                 } else {
                     if (configuredWorkingTimeForDayOfWeek.isMorning()) {
@@ -158,11 +163,11 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         DayLength calculatedDayLength = configuredWorkingTimeForDayOfWeek;
         if (morning.isMorning() && noon.isNoon()) {
             calculatedDayLength = DayLength.FULL;
-        } else if(morning == DayLength.ZERO && noon == DayLength.ZERO){
+        } else if (morning == DayLength.ZERO && noon == DayLength.ZERO) {
             calculatedDayLength = DayLength.ZERO;
-        } else if(morning == DayLength.ZERO && noon.isNoon()) {
+        } else if (morning == DayLength.ZERO && noon.isNoon()) {
             calculatedDayLength = DayLength.NOON;
-        } else if(morning.isMorning() && noon == DayLength.ZERO){
+        } else if (morning.isMorning() && noon == DayLength.ZERO) {
             calculatedDayLength = DayLength.MORNING;
         }
 
