@@ -46,7 +46,7 @@
                     <th:block th:fragment="sicknote-vacationtype-select-options">
                       <option
                         th:each="vacationType: ${vacationTypes}"
-                        th:text="#{__${vacationType.label}__}"
+                        th:text="${vacationType.getLabel(currentLocale)}"
                         th:value="${vacationType.id}"
                         th:selected="${sickNoteConvertForm.vacationType != null && sickNoteConvertForm.vacationType.id == vacationType.id}"
                       ></option>
