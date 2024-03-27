@@ -40,7 +40,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -290,7 +289,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/{id}/convert")
-    public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model, Locale locale)
+    public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model)
         throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
@@ -301,7 +300,6 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("sickNote", sickNote);
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", getActiveVacationTypes());
-        model.addAttribute("currentLocale", locale);
 
         return "sicknote/sick_note_convert";
     }
@@ -310,7 +308,7 @@ class SickNoteViewController implements HasLaunchpad {
     @PostMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Long id,
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm,
-                                            Errors errors, Model model, Locale locale)
+                                            Errors errors, Model model)
         throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
@@ -321,7 +319,6 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", getActiveVacationTypes());
-            model.addAttribute("currentLocale", locale);
 
             return "sicknote/sick_note_convert";
         }

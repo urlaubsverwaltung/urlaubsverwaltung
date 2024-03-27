@@ -8,13 +8,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Locale;
+
 @Component
 class LocaleModelInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
         if (attributeRequired(modelAndView)) {
-            modelAndView.addObject("language", LocaleContextHolder.getLocale().toLanguageTag());
+            final Locale currentLocale = LocaleContextHolder.getLocale();
+            modelAndView.addObject("locale", currentLocale);
+            modelAndView.addObject("language", currentLocale.toLanguageTag());
         }
     }
 

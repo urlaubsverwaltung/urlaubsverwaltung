@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class LocaleModelInterceptorTest {
 
     @Test
-    void ensureLanguageModelAttribute() throws Exception {
+    void ensureLanguageModelAttribute() {
         LocaleContextHolder.setLocale(GERMAN);
 
         final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
@@ -25,6 +25,7 @@ class LocaleModelInterceptorTest {
         modelAndView.setViewName("view-name");
         interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
 
+        assertThat(modelAndView.getModelMap().getAttribute("locale")).isEqualTo(GERMAN);
         assertThat(modelAndView.getModelMap().getAttribute("language")).isEqualTo("de");
     }
 
@@ -39,7 +40,7 @@ class LocaleModelInterceptorTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"forward::view-name", "redirect::view-name"})
-    void ensureLanguageModelAttributeIsNotSet(String viewName) throws Exception {
+    void ensureLanguageModelAttributeIsNotSet(String viewName) {
         LocaleContextHolder.setLocale(GERMAN);
 
         final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
