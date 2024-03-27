@@ -16,7 +16,13 @@
     </preConditions>
 
     <addColumn tableName="settings">
-      <column name="account_expiry_date" type="date" defaultValueDate="0001-04-01">
+      <column name="account_expiry_date_day_of_month" type="number" defaultValue="1">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="settings">
+      <column name="account_expiry_date_month" type="number" defaultValue="4">
         <constraints nullable="false"/>
       </column>
     </addColumn>

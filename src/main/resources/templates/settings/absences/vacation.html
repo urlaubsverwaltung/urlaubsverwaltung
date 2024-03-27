@@ -191,18 +191,55 @@
             <label
               class="control-label col-md-4"
               th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
-              for="expiryDate"
+              for="accountSettings.expiryDateDayOfMonth"
             >
               Verfallsdatum des Resturlaubs:
             </label>
-            <div class="col-md-9">
+            <div class="col-md-8">
+              <label
+                for="accountSettings.expiryDateDayOfMonth"
+                th:text="#{settings.vacation.expiryDateDayOfMonth}"
+                class="tw-sr-only"
+              ></label>
               <input
-                id="expiryDate"
-                th:field="*{accountSettings.expiryDate}"
-                th:placeholder="#{pattern.date}"
-                class="form-control"
-                th:errorclass="error"
+                type="text"
+                inputmode="numeric"
+                id="accountSettings.expiryDateDayOfMonth"
+                th:field="*{accountSettings.expiryDateDayOfMonth}"
               />
+              <label
+                for="accountSettings.expiryDateMonth"
+                th:text="#{settings.vacation.expiryDateMonth}"
+                class="tw-sr-only"
+              ></label>
+              <select
+                th:replace="~{fragments/select::one(id='accountSettings.expiryDateMonth', name='accountSettings.expiryDateMonth', options=~{::expiry-date-month-select-options})}"
+              >
+                <th:block th:fragment="expiry-date-month-select-options">
+                  <option value="1" th:selected="${settings.accountSettings.expiryDateMonth.value == 1}">Januar</option>
+                  <option value="2" th:selected="${settings.accountSettings.expiryDateMonth.value == 2}">
+                    Februar
+                  </option>
+                  <option value="3" th:selected="${settings.accountSettings.expiryDateMonth.value == 3}">März</option>
+                  <option value="4" th:selected="${settings.accountSettings.expiryDateMonth.value == 4}">April</option>
+                  <option value="5" th:selected="${settings.accountSettings.expiryDateMonth.value == 5}">Mai</option>
+                  <option value="6" th:selected="${settings.accountSettings.expiryDateMonth.value == 6}">Juni</option>
+                  <option value="7" th:selected="${settings.accountSettings.expiryDateMonth.value == 7}">Juli</option>
+                  <option value="8" th:selected="${settings.accountSettings.expiryDateMonth.value == 8}">August</option>
+                  <option value="9" th:selected="${settings.accountSettings.expiryDateMonth.value == 9}">
+                    September
+                  </option>
+                  <option value="10" th:selected="${settings.accountSettings.expiryDateMonth.value == 10}">
+                    Oktober
+                  </option>
+                  <option value="11" th:selected="${settings.accountSettings.expiryDateMonth.value == 11}">
+                    November
+                  </option>
+                  <option value="12" th:selected="${settings.accountSettings.expiryDateMonth.value == 12}">
+                    Dezember
+                  </option>
+                </th:block>
+              </select>
               <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('accountSettings.expiryDate')}">
                 <th:block th:errors="*{accountSettings.expiryDate}"> expiryDate Error </th:block>
               </div>

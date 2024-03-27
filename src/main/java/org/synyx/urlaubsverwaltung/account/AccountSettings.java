@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
-import org.synyx.urlaubsverwaltung.MonthDayDateAttributeConverter;
 
+import java.time.Month;
 import java.time.MonthDay;
 
 import static java.time.Month.APRIL;
@@ -26,11 +25,16 @@ public class AccountSettings {
     private Integer maximumAnnualVacationDays = 40;
 
     /**
-     * Specifies the date, when the vacation will expire globally
+     * Specifies the day of month of the date, when the vacation will expire globally
      */
-    @Convert(converter = MonthDayDateAttributeConverter.class)
-    @Column(name = "account_expiry_date")
-    private MonthDay expiryDate = MonthDay.of(APRIL, 1);
+    @Column(name = "account_expiry_date_day_of_month")
+    private int expiryDateDayOfMonth = 1;
+
+    /**
+     * Specifies the month of the date, when the vacation will expire globally
+     */
+    @Column(name = "account_expiry_date_month")
+    private Month expiryDateMonth = APRIL;
 
     /**
      * Specifies if remaining vacation days will expire globally
@@ -53,12 +57,29 @@ public class AccountSettings {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
     }
 
-    public MonthDay getExpiryDate() {
-        return expiryDate;
+    public int getExpiryDateDayOfMonth() {
+        return expiryDateDayOfMonth;
     }
 
-    public void setExpiryDate(MonthDay expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiryDateDayOfMonth(int expiryDateDayOfMonth) {
+        this.expiryDateDayOfMonth = expiryDateDayOfMonth;
+    }
+
+    public Month getExpiryDateMonth() {
+        return expiryDateMonth;
+    }
+
+    /**
+     * setter used by the view model to set the {@linkplain Month} of the expiry date.
+     *
+     * @param expiryDateMonthOrdinal numeric value of the month. starting with january=1
+     */
+    public void setExpiryDateMonth(int expiryDateMonthOrdinal) {
+        this.expiryDateMonth = Month.of(expiryDateMonthOrdinal);
+    }
+
+    public MonthDay getExpiryDate() {
+        return MonthDay.of(expiryDateMonth, expiryDateDayOfMonth);
     }
 
     public boolean isDoRemainingVacationDaysExpireGlobally() {
