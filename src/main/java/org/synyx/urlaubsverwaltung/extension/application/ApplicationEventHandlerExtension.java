@@ -197,24 +197,33 @@ public class ApplicationEventHandlerExtension {
     @Async
     void on(ApplicationAllowedEvent event) {
         getAbsencePeriods(event.application())
-            .map(toApplicationAllowedEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
+            .ifPresent(absencePeriod ->
+                toApplicationAllowedEventDTO(tenantSupplier.get(), event)
+                .apply(absencePeriod)
+                .ifPresent(applicationEventPublisher::publishEvent)
+            );
     }
 
     @EventListener
     @Async
     void on(ApplicationCancelledEvent event) {
         getClosedAbsencePeriods(event.application())
-            .map(toApplicationCancelledEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
+            .ifPresent(absencePeriod ->
+                toApplicationCancelledEventDTO(tenantSupplier.get(), event)
+                    .apply(absencePeriod)
+                    .ifPresent(applicationEventPublisher::publishEvent)
+            );
     }
 
     @EventListener
     @Async
     void on(ApplicationCreatedFromSickNoteEvent event) {
         getAbsencePeriods(event.application())
-            .map(toApplicationCreatedFromSickNoteEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
+            .ifPresent(absencePeriod ->
+                toApplicationCreatedFromSickNoteEventDTO(tenantSupplier.get(), event)
+                    .apply(absencePeriod)
+                    .ifPresent(applicationEventPublisher::publishEvent)
+            );
     }
 
     private Optional<AbsencePeriod> getAbsencePeriods(Application application) {
