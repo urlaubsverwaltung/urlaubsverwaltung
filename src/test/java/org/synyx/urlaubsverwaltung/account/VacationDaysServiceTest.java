@@ -740,7 +740,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(year.getValue(), JANUARY, 1));
-        account.setExpiryDate(LocalDate.of(year.getValue(), APRIL, 1));
+        account.setExpiryDateLocally(LocalDate.of(year.getValue(), APRIL, 1));
         account.setAnnualVacationDays(BigDecimal.valueOf(30));
         account.setActualVacationDays(BigDecimal.valueOf(30));
         account.setRemainingVacationDays(ZERO);

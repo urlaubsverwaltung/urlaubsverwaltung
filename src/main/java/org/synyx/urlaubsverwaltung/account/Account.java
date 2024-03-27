@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.springframework.lang.Nullable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -17,7 +18,8 @@ public class Account {
     private LocalDate validTo;
     private Boolean doRemainingVacationDaysExpireLocally;
     private boolean doRemainingVacationDaysExpireGlobally;
-    private LocalDate expiryDate;
+    private LocalDate expiryDateLocally;
+    private LocalDate expiryDateGlobally;
     private LocalDate expiryNotificationSentDate;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
@@ -37,14 +39,14 @@ public class Account {
     }
 
     public Account(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
-                   LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
+                   @Nullable LocalDate expiryDateLocally, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
                    BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
-        this.expiryDate = expiryDate;
+        this.expiryDateLocally = expiryDateLocally;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
@@ -83,6 +85,15 @@ public class Account {
      */
     public boolean doRemainingVacationDaysExpire() {
         return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
+    }
+
+    /**
+     * Returns the expiry date for the remaining vacation days locally if set, otherwise the global expiry date.
+     *
+     * @return the user specific calculated expiry date
+     */
+    public LocalDate getExpiryDate() {
+        return expiryDateLocally != null ? expiryDateLocally : expiryDateGlobally;
     }
 
     public Long getId() {
@@ -165,12 +176,20 @@ public class Account {
         this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
     }
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
+    public LocalDate getExpiryDateLocally() {
+        return expiryDateLocally;
     }
 
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiryDateLocally(LocalDate expiryDateLocally) {
+        this.expiryDateLocally = expiryDateLocally;
+    }
+
+    public LocalDate getExpiryDateGlobally() {
+        return expiryDateGlobally;
+    }
+
+    public void setExpiryDateGlobally(LocalDate expiryDateGlobally) {
+        this.expiryDateGlobally = expiryDateGlobally;
     }
 
     public LocalDate getExpiryNotificationSentDate() {
@@ -202,7 +221,8 @@ public class Account {
             ", validTo=" + validTo +
             ", doRemainingVacationDaysExpireLocally=" + doRemainingVacationDaysExpireLocally +
             ", doRemainingVacationDaysExpireGlobally=" + doRemainingVacationDaysExpireGlobally +
-            ", expiryDate=" + expiryDate +
+            ", expiryDateLocally=" + expiryDateLocally +
+            ", expiryDateGlobally=" + expiryDateGlobally +
             ", expiryNotificationSentDate=" + expiryNotificationSentDate +
             ", annualVacationDays=" + annualVacationDays +
             ", actualVacationDays=" + actualVacationDays +

@@ -18,19 +18,26 @@ public final class AccountDraft {
     private final Year year;
     private final boolean doRemainingVacationDaysExpireGlobally;
     private final Boolean doRemainingVacationDaysExpireLocally;
-    private final LocalDate expiryDate;
+    private final LocalDate expiryDateGlobally;
+    private final LocalDate expiryDateLocally;
     private final BigDecimal annualVacationDays;
     private final BigDecimal remainingVacationDaysNotExpiring;
 
-
-    AccountDraft(Person person, Year year, boolean doRemainingVacationDaysExpireGlobally,
-                 Boolean doRemainingVacationDaysExpireLocally, LocalDate expiryDate, BigDecimal annualVacationDays,
-                 BigDecimal remainingVacationDaysNotExpiring) {
+    AccountDraft(Person person,
+                 Year year,
+                 boolean doRemainingVacationDaysExpireGlobally,
+                 Boolean doRemainingVacationDaysExpireLocally,
+                 LocalDate expiryDateGlobally,
+                 LocalDate expiryDateLocally,
+                 BigDecimal annualVacationDays,
+                 BigDecimal remainingVacationDaysNotExpiring
+    ) {
         this.person = person;
         this.year = year;
         this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
         this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
-        this.expiryDate = expiryDate;
+        this.expiryDateGlobally = expiryDateGlobally;
+        this.expiryDateLocally = expiryDateLocally;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
@@ -51,16 +58,20 @@ public final class AccountDraft {
         return year.atDay(1).with(lastDayOfYear());
     }
 
-    public boolean isDoRemainingVacationDaysExpireGlobally() {
+    public boolean doRemainingVacationDaysExpireGlobally() {
         return doRemainingVacationDaysExpireGlobally;
     }
 
-    public Boolean getDoRemainingVacationDaysExpireLocally() {
+    public Boolean doRemainingVacationDaysExpireLocally() {
         return doRemainingVacationDaysExpireLocally;
     }
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
+    public LocalDate getExpiryDateGlobally() {
+        return expiryDateGlobally;
+    }
+
+    public LocalDate getExpiryDateLocally() {
+        return expiryDateLocally;
     }
 
     public BigDecimal getAnnualVacationDays() {
@@ -80,7 +91,8 @@ public final class AccountDraft {
         private Year year;
         private boolean doRemainingVacationDaysExpireGlobally;
         private Boolean doRemainingVacationDaysExpireLocally;
-        private LocalDate expiryDate;
+        private LocalDate expiryDateGlobally;
+        private LocalDate expiryDateLocally;
         private BigDecimal annualVacationDays;
         private BigDecimal remainingVacationDaysNotExpiring;
 
@@ -104,8 +116,13 @@ public final class AccountDraft {
             return this;
         }
 
-        public Builder expiryDate(LocalDate expiryDate) {
-            this.expiryDate = expiryDate;
+        public Builder expiryDateGlobally(LocalDate expiryDateGlobally) {
+            this.expiryDateGlobally = expiryDateGlobally;
+            return this;
+        }
+
+        public Builder expiryDateLocally(LocalDate expiryDateLocally) {
+            this.expiryDateLocally = expiryDateLocally;
             return this;
         }
 
@@ -120,9 +137,16 @@ public final class AccountDraft {
         }
 
         public AccountDraft build() {
-            return new AccountDraft(person, year, doRemainingVacationDaysExpireGlobally,
-                doRemainingVacationDaysExpireLocally, expiryDate, annualVacationDays,
-                remainingVacationDaysNotExpiring);
+            return new AccountDraft(
+                person,
+                year,
+                doRemainingVacationDaysExpireGlobally,
+                doRemainingVacationDaysExpireLocally,
+                expiryDateGlobally,
+                expiryDateLocally,
+                annualVacationDays,
+                remainingVacationDaysNotExpiring
+            );
         }
     }
 }
