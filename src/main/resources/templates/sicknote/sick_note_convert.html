@@ -48,7 +48,7 @@
                         th:each="vacationType: ${vacationTypes}"
                         th:text="${vacationType.getLabel(locale)}"
                         th:value="${vacationType.id}"
-                        th:selected="${sickNoteConvertForm.vacationType != null && sickNoteConvertForm.vacationType.id == vacationType.id}"
+                        th:selected="${sickNoteConvertForm.vacationType != null && sickNoteConvertForm.vacationType == vacationType.id}"
                       ></option>
                     </th:block>
                   </select>
