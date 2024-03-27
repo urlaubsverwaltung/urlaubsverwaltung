@@ -26,6 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Service
@@ -52,14 +53,14 @@ class MailRecipientServiceImpl implements MailRecipientService {
     }
 
     @Override
-    public List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
+    public List<Person> getRecipientsOfInterestForApplications(Person personOfInterest, MailNotification mailNotification) {
 
         final List<Person> officeAndBosses = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
-            officeAndBosses.addAll(getOfficesWithApplicationManagementAllNotification(mailNotification));
+            officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
         if (mailNotification.isValidWith(List.of(USER, BOSS))) {
-            officeAndBosses.addAll(getBossWithApplicationManagementAllNotification(mailNotification));
+            officeAndBosses.addAll(getBossWith(mailNotification));
         }
 
         final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
@@ -77,6 +78,44 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .filter(recipient -> recipient.getNotifications().contains(mailNotification))
             .collect(toList());
     }
+
+    @Override
+    public List<Person> getRecipientsOfInterestForSickNotes(Person personOfInterest, MailNotification mailNotification) {
+
+        final List<Person> officeAndBosses = new ArrayList<>();
+        if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
+            officeAndBosses.addAll(getOfficeWith(mailNotification));
+        }
+
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
+            final List<Person> bossesWithSickNoteEdit = getBossWith(mailNotification).stream()
+                    .filter(person -> person.hasRole(SICK_NOTE_EDIT))
+                    .toList();
+            officeAndBosses.addAll(bossesWithSickNoteEdit);
+        }
+
+        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
+
+        final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
+            final List<Person> responsibleDepartmentHeads = responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest).stream()
+                    .filter(departmentHead -> departmentHead.hasRole(SICK_NOTE_EDIT))
+                    .toList();
+            recipientsOfInterestForDepartment.addAll(responsibleDepartmentHeads);
+        }
+        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_EDIT))) {
+            final List<Person> responsibleSecondStageAuthorities = responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest).stream()
+                    .filter(secondStageAuthority -> secondStageAuthority.hasRole(SICK_NOTE_EDIT))
+                    .toList();
+            recipientsOfInterestForDepartment.addAll(responsibleSecondStageAuthorities);
+        }
+
+        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
+                .distinct()
+                .filter(recipient -> recipient.getNotifications().contains(mailNotification))
+                .toList();
+    }
+
 
     @Override
     public List<Person> getColleagues(Person personOfInterest, MailNotification mailNotification) {
@@ -122,13 +161,14 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
-    private List<Person> getBossWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
+    private List<Person> getBossWith(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(BOSS).stream()
             .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
             .toList();
     }
 
-    private List<Person> getOfficesWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
+
+    private List<Person> getOfficeWith(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(OFFICE).stream()
             .filter(office -> office.getNotifications().contains(concerningMailNotification))
             .toList();

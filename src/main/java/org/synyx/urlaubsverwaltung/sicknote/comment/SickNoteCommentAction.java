@@ -5,6 +5,8 @@ package org.synyx.urlaubsverwaltung.sicknote.comment;
  */
 public enum SickNoteCommentAction {
 
+    SUBMITTED,
+    ACCEPTED,
     CREATED,
     EDITED,
     CONVERTED_TO_VACATION,

@@ -130,7 +130,7 @@ class ApplicationMailServiceTest {
         boss.setId(1L);
         final Person office = new Person();
         office.setId(2L);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED))
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED))
             .thenReturn(List.of(boss, office));
 
         final Person colleague = new Person();
@@ -205,7 +205,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
         model.put("comment", applicationComment);
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(person));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(person));
 
         sut.sendRejectedNotification(application, applicationComment);
 
@@ -284,7 +284,7 @@ class ApplicationMailServiceTest {
 
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
         sut.sendEditedNotification(application, editor);
 
@@ -324,7 +324,7 @@ class ApplicationMailServiceTest {
 
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
         sut.sendEditedNotification(application, office);
 
@@ -361,7 +361,7 @@ class ApplicationMailServiceTest {
         office.setId(1L);
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -395,7 +395,7 @@ class ApplicationMailServiceTest {
         model.put("comment", applicationComment);
 
         final List<Person> relevantPersons = List.of(new Person());
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(relevantPersons);
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(relevantPersons);
 
         sut.sendCancellationRequest(application, applicationComment);
 
@@ -422,7 +422,7 @@ class ApplicationMailServiceTest {
 
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
@@ -825,7 +825,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
@@ -961,7 +961,7 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         final Person recipientOfInterest = new Person();
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
             .thenReturn(List.of(recipientOfInterest));
 
         sut.sendCancelledDirectlyToManagement(application, comment);
@@ -1122,7 +1122,7 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
             .thenReturn(List.of(person, office));
 
         final Person colleague = new Person();
@@ -1181,7 +1181,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterestForApplications(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
@@ -1233,7 +1233,7 @@ class ApplicationMailServiceTest {
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterestForApplications(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.ALLOWED, person, "");
