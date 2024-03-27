@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -84,6 +85,16 @@ class PersonApiControllerIT extends TestContainersBase {
                           }
                         }
                         """, true));
+    }
+
+    @Test
+    void ensureToReturn404IfOidcIsNull() throws Exception {
+        perform(
+            get("/api/persons/me")
+                .with(oauth2Login().authorities(new SimpleGrantedAuthority("USER")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isNotFound());
     }
 
     @Test

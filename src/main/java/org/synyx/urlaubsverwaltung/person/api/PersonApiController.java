@@ -60,6 +60,10 @@ public class PersonApiController {
     @GetMapping(path = "/me", produces = HAL_JSON_VALUE)
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PersonDto> me(@AuthenticationPrincipal OidcUser oidcUser) {
+        if (oidcUser == null) {
+            return new ResponseEntity<>(NOT_FOUND);
+        }
+
         return personService.getPersonByUsername(oidcUser.getSubject())
             .map(person -> new ResponseEntity<>(mapToDto(person), OK))
             .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
