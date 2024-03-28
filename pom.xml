@@ -307,6 +307,9 @@
             <name>
               ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
             </name>
+            <env>
+              <BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>120%</BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>
+            </env>
           </image>
           <docker>
             <publishRegistry>
