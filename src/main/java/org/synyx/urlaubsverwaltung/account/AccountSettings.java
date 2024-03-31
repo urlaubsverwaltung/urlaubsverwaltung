@@ -3,18 +3,25 @@ package org.synyx.urlaubsverwaltung.account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
+import org.slf4j.Logger;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.Month;
-import java.time.MonthDay;
+import java.time.Year;
 
 import static jakarta.persistence.EnumType.STRING;
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Month.APRIL;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
 public class AccountSettings {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     /**
      * Based on http://www.gesetze-im-internet.de/burlg/__3.html the default is 24 days
@@ -76,8 +83,33 @@ public class AccountSettings {
         this.expiryDateMonth = expiryDateMonth;
     }
 
-    public MonthDay getExpiryDate() {
-        return MonthDay.of(getExpiryDateMonth(), expiryDateDayOfMonth);
+    /**
+     * This method constructs an expiry date of type {@link LocalDate} and handles leap years for instance (february 28 vs 29).
+     *
+     * @param year the year to get the expiry date for
+     * @return expiry date for the given year
+     */
+    public LocalDate getExpiryDateForYear(Year year) {
+
+        // 31. February is (or could be) a valid input in the global settings.
+        // Therefore, just subtract one day until a valid localDate can be parsed.
+        int subtract = 0;
+
+        LocalDate date = null;
+
+        while (date == null) {
+            final Month month = getExpiryDateMonth();
+            final int dayOfMonth = getExpiryDateDayOfMonth() - subtract;
+            try {
+                date = LocalDate.of(year.getValue(), month, dayOfMonth);
+            } catch(DateTimeException e) {
+                LOG.debug("could not create expiry date for month={} dayOfMonth={}", month, dayOfMonth);
+            } finally {
+                subtract++;
+            }
+        }
+
+        return date;
     }
 
     public boolean isDoRemainingVacationDaysExpireGlobally() {

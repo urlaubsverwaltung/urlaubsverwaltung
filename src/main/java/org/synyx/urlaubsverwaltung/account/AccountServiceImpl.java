@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.LocalDate;
-import java.time.MonthDay;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,7 @@ class AccountServiceImpl implements AccountService {
         final boolean expiresGlobally = remainingVacationDaysExpireGlobally();
         final Boolean expiresLocally = prevYearAccount.map(Account::isDoRemainingVacationDaysExpireLocally).orElse(null);
 
-        final MonthDay expiryMonthDay = globallyExpiryDate();
+        final LocalDate expiryMonthDay = globallyExpiryDate(Year.of(year));
         final LocalDate expiryDateGlobally = LocalDate.of(year, expiryMonthDay.getMonth(), expiryMonthDay.getDayOfMonth());
         final LocalDate expiryDateLocally = prevYearAccount.map(Account::getExpiryDateLocally).map(date -> date.withYear(year)).orElse(null);
 
@@ -59,7 +58,7 @@ class AccountServiceImpl implements AccountService {
     public List<Account> getHolidaysAccount(int year, List<Person> persons) {
         final CachedSupplier<Boolean> expireGlobally = new CachedSupplier<>(this::remainingVacationDaysExpireGlobally);
 
-        final CachedSupplier<MonthDay> expiryMonthDayGlobally = new CachedSupplier<>(this::globallyExpiryDate);
+        final CachedSupplier<LocalDate> expiryMonthDayGlobally = new CachedSupplier<>(() -> globallyExpiryDate(Year.of(year)));
         final LocalDate expiryDateGlobally = LocalDate.of(year, expiryMonthDayGlobally.get().getMonth(), expiryMonthDayGlobally.get().getDayOfMonth());
 
         return accountRepository.findAccountByYearAndPersons(year, persons)
@@ -72,7 +71,7 @@ class AccountServiceImpl implements AccountService {
     public Account save(Account account) {
         final AccountEntity accountEntity = mapToAccountEntity(account);
 
-        final MonthDay monthDay = globallyExpiryDate();
+        final LocalDate monthDay = globallyExpiryDate(Year.of(accountEntity.getYear()));
         final LocalDate expiryDateGlobally = LocalDate.of(account.getYear(), monthDay.getMonth(), monthDay.getDayOfMonth());
 
         final AccountEntity savedAccountEntity = accountRepository.save(accountEntity);
@@ -126,8 +125,8 @@ class AccountServiceImpl implements AccountService {
         return settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
     }
 
-    private MonthDay globallyExpiryDate() {
-        return settingsService.getSettings().getAccountSettings().getExpiryDate();
+    private LocalDate globallyExpiryDate(Year year) {
+        return settingsService.getSettings().getAccountSettings().getExpiryDateForYear(year);
     }
 
     private static class CachedSupplier<T> implements Supplier<T> {
