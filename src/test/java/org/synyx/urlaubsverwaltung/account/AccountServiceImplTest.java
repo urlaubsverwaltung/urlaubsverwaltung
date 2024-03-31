@@ -94,9 +94,6 @@ class AccountServiceImplTest {
     @Test
     void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(accountRepository.findAccountByYearAndPersons(2012, List.of(person))).thenReturn(List.of());
 
@@ -169,9 +166,6 @@ class AccountServiceImplTest {
 
     @Test
     void ensureReturnsEmptyListIfNoHolidaysAccountExists() {
-
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(accountRepository.findAccountByYearAndPersons(2012, List.of(person))).thenReturn(List.of());

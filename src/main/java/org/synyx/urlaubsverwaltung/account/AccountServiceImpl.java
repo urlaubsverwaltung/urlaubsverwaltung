@@ -57,24 +57,20 @@ class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> getHolidaysAccount(int year, List<Person> persons) {
         final CachedSupplier<Boolean> expireGlobally = new CachedSupplier<>(this::remainingVacationDaysExpireGlobally);
-
-        final CachedSupplier<LocalDate> expiryMonthDayGlobally = new CachedSupplier<>(() -> globallyExpiryDate(Year.of(year)));
-        final LocalDate expiryDateGlobally = LocalDate.of(year, expiryMonthDayGlobally.get().getMonth(), expiryMonthDayGlobally.get().getDayOfMonth());
+        final CachedSupplier<LocalDate> expiryDateGlobally = new CachedSupplier<>(() -> globallyExpiryDate(Year.of(year)));
 
         return accountRepository.findAccountByYearAndPersons(year, persons)
             .stream()
-            .map(accountEntity -> this.mapToAccount(accountEntity, expireGlobally.get(), expiryDateGlobally))
+            .map(accountEntity -> this.mapToAccount(accountEntity, expireGlobally.get(), expiryDateGlobally.get()))
             .toList();
     }
 
     @Override
     public Account save(Account account) {
         final AccountEntity accountEntity = mapToAccountEntity(account);
-
-        final LocalDate monthDay = globallyExpiryDate(Year.of(accountEntity.getYear()));
-        final LocalDate expiryDateGlobally = LocalDate.of(account.getYear(), monthDay.getMonth(), monthDay.getDayOfMonth());
-
         final AccountEntity savedAccountEntity = accountRepository.save(accountEntity);
+
+        final LocalDate expiryDateGlobally = globallyExpiryDate(Year.of(savedAccountEntity.getYear()));
         return mapToAccount(savedAccountEntity, remainingVacationDaysExpireGlobally(), expiryDateGlobally);
     }
 

@@ -59,7 +59,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(null);
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
     }
 
@@ -73,7 +73,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(-1));
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.min", new Object[]{"0"}, "");
     }
 
@@ -89,7 +89,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(input);
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verifyNoInteractions(errors);
     }
 
@@ -104,7 +104,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(input);
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.integer");
     }
 
@@ -119,7 +119,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(input);
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verifyNoInteractions(errors);
     }
 
@@ -134,7 +134,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(input);
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.fullOrHalfNumber");
     }
 
@@ -149,7 +149,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
-        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays));
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.max", new Object[]{BigDecimal.valueOf(40)}, "");
     }
 
@@ -386,29 +386,55 @@ class AccountFormValidatorTest {
     }
 
     @Test
-    void ensureHolidaysAccountExpiryDateMustNotBeNull() {
+    void ensureHolidaysAccountExpiryDateMustNotBeNullWhenGlobalExpiryIsDisabledAndLocalExpiryEnabled() {
+
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setDoRemainingVacationDaysExpireGlobally(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
+        form.setDoRemainingVacationDaysExpireLocally(true);
         form.setExpiryDateLocally(null);
 
-        sut.validateExpiryDateLocally(form, errors);
+        sut.validateExpiryDateLocally(form, errors, this::getSettings);
         verify(errors).rejectValue("expiryDateLocally", "error.entry.mandatory");
     }
 
     @Test
+    void ensureHolidaysAccountExpiryDateCanBeNull() {
+
+        mockExpiryDateGlobal(LocalDate.of(2013, 2, 1));
+
+        final AccountForm form = new AccountForm(2013);
+        form.setDoRemainingVacationDaysExpireLocally(true);
+        form.setExpiryDateLocally(null);
+
+        sut.validateExpiryDateLocally(form, errors, this::getSettings);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
     void ensureInvalidExpiryDateWrongYear() {
+
+        mockExpiryDateGlobal(LocalDate.of(2021, 4, 1));
+
         final AccountForm form = new AccountForm(2021);
         form.setExpiryDateLocally(LocalDate.of(2022, Month.MARCH, 1));
 
-        sut.validateExpiryDateLocally(form, errors);
+        sut.validateExpiryDateLocally(form, errors, this::getSettings);
         verify(errors).rejectValue("expiryDateLocally", "person.form.annualVacation.error.expiryDateLocally.invalidYear", new Object[]{"2021"}, "");
     }
 
     @Test
     void ensureExpiryDateHasNoValidationError() {
+
+        mockExpiryDateGlobal(LocalDate.of(2013, 4, 1));
+
         final AccountForm form = new AccountForm(2013);
+        form.setDoRemainingVacationDaysExpireLocally(true);
         form.setExpiryDateLocally(LocalDate.of(2013, 5, 1));
 
-        sut.validateExpiryDateLocally(form, errors);
+        sut.validateExpiryDateLocally(form, errors, this::getSettings);
         verifyNoInteractions(errors);
     }
 
@@ -440,5 +466,17 @@ class AccountFormValidatorTest {
 
         sut.validateComment(form, errors);
         verify(errors).rejectValue("comment", "error.entry.commentTooLong");
+    }
+
+    private Settings getSettings() {
+        return settingsService.getSettings();
+    }
+
+    private void mockExpiryDateGlobal(LocalDate date) {
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setDoRemainingVacationDaysExpireGlobally(true);
+        settings.getAccountSettings().setExpiryDateDayOfMonth(date.getDayOfMonth());
+        settings.getAccountSettings().setExpiryDateMonth(date.getMonth());
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 }
