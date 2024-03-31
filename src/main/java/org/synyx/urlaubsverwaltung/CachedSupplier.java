@@ -1,13 +1,13 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung;
 
 import java.util.function.Supplier;
 
-class CachedSupplier<T> implements Supplier<T> {
+public class CachedSupplier<T> implements Supplier<T> {
 
     private T cachedValue;
     private final Supplier<T> supplier;
 
-    CachedSupplier(Supplier<T> supplier) {
+    public CachedSupplier(Supplier<T> supplier) {
         this.supplier = supplier;
     }
 

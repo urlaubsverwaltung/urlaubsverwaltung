@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
