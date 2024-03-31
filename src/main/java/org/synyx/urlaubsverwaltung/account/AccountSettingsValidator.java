@@ -31,5 +31,14 @@ public class AccountSettingsValidator {
         } else if (maximumAnnualVacationDays != null && defaultVacationDays > maximumAnnualVacationDays) {
             errors.rejectValue("accountSettings.defaultVacationDays", ERROR_DEFAULT_DAYS_SMALLER_OR_EQUAL_THAN_MAX_DAYS);
         }
+
+        validateExpiryDateDayOfMonth(errors, accountSettings);
+    }
+
+    private static void validateExpiryDateDayOfMonth(Errors errors, AccountSettings accountSettings) {
+        final int dayOfMonth = accountSettings.getExpiryDateDayOfMonth();
+        if (dayOfMonth < 1 || dayOfMonth > 31) {
+            errors.rejectValue("accountSettings.expiryDateDayOfMonth", ERROR_INVALID_ENTRY);
+        }
     }
 }
