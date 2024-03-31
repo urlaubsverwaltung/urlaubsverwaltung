@@ -2,6 +2,13 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.validation.Errors;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+
+import static java.time.Month.FEBRUARY;
+
 public class AccountSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
@@ -37,8 +44,24 @@ public class AccountSettingsValidator {
 
     private static void validateExpiryDateDayOfMonth(Errors errors, AccountSettings accountSettings) {
         final int dayOfMonth = accountSettings.getExpiryDateDayOfMonth();
-        if (dayOfMonth < 1 || dayOfMonth > 31) {
+        final Month month = accountSettings.getExpiryDateMonth();
+
+        if (dayOfMonth < 1
+            || dayOfMonth > 31
+            || FEBRUARY.equals( month) && dayOfMonth > 29
+            || !validDate(Year.now(), month, dayOfMonth)
+        ) {
             errors.rejectValue("accountSettings.expiryDateDayOfMonth", ERROR_INVALID_ENTRY);
+        }
+    }
+
+    @SuppressWarnings("java:S2201")
+    private static boolean validDate(Year year, Month month, int dayOfMonth) {
+        try {
+            LocalDate.of(year.getValue(), month, dayOfMonth);
+            return true;
+        } catch(DateTimeException e) {
+            return false;
         }
     }
 }
