@@ -64,7 +64,7 @@ class VacationTypeEventHandlerExtension {
         } else if (vacationType instanceof CustomVacationType customVacationType) {
             return toLabels(customVacationType);
         } else {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Unsupported vacation type: " + vacationType);
         }
     }
 
