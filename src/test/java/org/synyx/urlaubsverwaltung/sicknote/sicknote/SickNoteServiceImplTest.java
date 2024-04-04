@@ -417,8 +417,6 @@ class SickNoteServiceImplTest {
     void getForStatesAndPersonWithEmptyResult() {
         final Person person = new Person();
         final LocalDate now = LocalDate.now(fixedClock);
-        final LocalDate startDate = now.minusDays(10);
-        final LocalDate endDate = now.minusDays(6);
 
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
