@@ -36,7 +36,7 @@ public interface AccountInteractionService {
      * @return the created holidays account
      */
     Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
-                                          LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                          @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                           BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                           String comment);
 

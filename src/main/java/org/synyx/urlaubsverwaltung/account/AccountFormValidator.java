@@ -5,11 +5,14 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.function.Supplier;
 
 /**
  * Validates {@link AccountForm}.
@@ -29,7 +32,7 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
-    private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE = "expiryDate";
+    private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY = "expiryDateLocally";
     private static final String ERROR_ENTRY_MIN = "error.entry.min";
 
     private final SettingsService settingsService;
@@ -47,13 +50,14 @@ class AccountFormValidator implements Validator {
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
 
-        final BigDecimal maxAnnualVacationDays = getMaximumAnnualVacationDays();
+        final Supplier<Settings> settingsSupplier = new CachedSupplier<>(this::getSettings);
+        final BigDecimal maxAnnualVacationDays = getMaximumAnnualVacationDays(settingsSupplier);
 
         final AccountForm form = (AccountForm) target;
         validatePeriod(form, errors);
-        validateAnnualVacation(form, errors, maxAnnualVacationDays);
+        validateAnnualVacation(form, errors, maxAnnualVacationDays, settingsSupplier);
         validateActualVacation(form, errors);
-        validateExpiryDate(form, errors);
+        validateExpiryDateLocally(form, errors, settingsSupplier);
         validateRemainingVacationDays(form, errors);
         validateRemainingVacationDaysNotExpiring(form, errors);
         validateComment(form, errors);
@@ -96,14 +100,14 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxAnnualVacationDays) {
+    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxAnnualVacationDays, Supplier<Settings> settingsSupplier) {
 
         final BigDecimal annualVacationDays = form.getAnnualVacationDays();
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
         if (annualVacationDays != null) {
 
-            if (isAllowHalfDaysActive()) {
+            if (isAllowHalfDaysActive(settingsSupplier)) {
                 validateFullOrHalfDay(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
             } else {
                 validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
@@ -136,21 +140,26 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateExpiryDate(AccountForm form, Errors errors) {
+    void validateExpiryDateLocally(AccountForm form, Errors errors, Supplier<Settings> settingsSupplier) {
         if (!form.doRemainingVacationDaysExpire()) {
             // feature disabled. nothing has to be validated.
             return;
         }
 
-        final LocalDate expiryDate = form.getExpiryDate();
-        validateDateNotNull(expiryDate, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, errors);
+        final LocalDate expiryDateLocally = form.getExpiryDateLocally();
+        final boolean expireGlobally = settingsSupplier.get().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
 
-        if (expiryDate != null) {
+        if (!expireGlobally) {
+            // must not be null when expiryDate overrides global one
+            validateDateNotNull(expiryDateLocally, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY, errors);
+        }
+
+        if (expiryDateLocally != null) {
             final int year = form.getHolidaysAccountYear();
-            final int expiryYear = expiryDate.getYear();
+            final int expiryYear = expiryDateLocally.getYear();
 
             if (expiryYear != year) {
-                reject(errors, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, msg("expiryDate.invalidYear"), String.valueOf(year));
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY, msg("expiryDateLocally.invalidYear"), String.valueOf(year));
             }
         }
     }
@@ -262,13 +271,17 @@ class AccountFormValidator implements Validator {
         return "person.form.annualVacation.error." + key;
     }
 
-    private BigDecimal getMaximumAnnualVacationDays() {
-        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
+    private static BigDecimal getMaximumAnnualVacationDays(Supplier<Settings> settingsSupplier) {
+        final AccountSettings accountSettings = settingsSupplier.get().getAccountSettings();
         return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
     }
 
-    private boolean isAllowHalfDaysActive() {
-        final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
+    private static boolean isAllowHalfDaysActive(Supplier<Settings> settingsSupplier) {
+        final ApplicationSettings applicationSettings = settingsSupplier.get().getApplicationSettings();
         return applicationSettings.isAllowHalfDays();
+    }
+
+    private Settings getSettings() {
+        return settingsService.getSettings();
     }
 }

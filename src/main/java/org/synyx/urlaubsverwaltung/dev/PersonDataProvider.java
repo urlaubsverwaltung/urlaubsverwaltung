@@ -27,9 +27,7 @@ import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
-import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -76,7 +74,7 @@ class PersonDataProvider {
 
             final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY)
                 .map(DayOfWeek::getValue)
-                .collect(toList());
+                .toList();
             workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
             accountInteractionService.updateOrCreateHolidaysAccount(
@@ -84,7 +82,7 @@ class PersonDataProvider {
                 firstDayOfYear,
                 lastDayOfYear,
                 null,
-                LocalDate.of(currentYear, APRIL, 1),
+                null,
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(5),
