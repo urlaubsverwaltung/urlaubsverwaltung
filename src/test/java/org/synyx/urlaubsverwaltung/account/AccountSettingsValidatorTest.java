@@ -33,7 +33,7 @@ class AccountSettingsValidatorTest {
         BiFunction<Month, Stream<Integer>, Stream<Arguments>> dayOfMonths =
             (month, days) -> days.map(day -> Arguments.of(month, day));
 
-        return Stream.of(Month.values()).flatMap(month -> switch(month) {
+        return Stream.of(Month.values()).flatMap(month -> switch (month) {
             case JANUARY -> dayOfMonths.apply(JANUARY, Stream.of(-1, 0, 32));
             case FEBRUARY -> dayOfMonths.apply(FEBRUARY, Stream.of(-1, 0, 30));
             case MARCH -> dayOfMonths.apply(MARCH, Stream.of(-1, 0, 32));
@@ -69,7 +69,7 @@ class AccountSettingsValidatorTest {
         BiFunction<Month, IntStream, Stream<Arguments>> dayOfMonths =
             (month, days) -> days.mapToObj(day -> Arguments.of(month, day));
 
-        return Stream.of(Month.values()).flatMap(month -> switch(month) {
+        return Stream.of(Month.values()).flatMap(month -> switch (month) {
             case JANUARY -> dayOfMonths.apply(JANUARY, IntStream.rangeClosed(1, 31));
             case FEBRUARY -> dayOfMonths.apply(FEBRUARY, IntStream.rangeClosed(1, 29));
             case MARCH -> dayOfMonths.apply(MARCH, IntStream.rangeClosed(1, 31));

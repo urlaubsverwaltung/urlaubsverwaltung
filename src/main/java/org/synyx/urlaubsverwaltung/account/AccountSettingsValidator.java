@@ -48,7 +48,7 @@ public class AccountSettingsValidator {
 
         if (dayOfMonth < 1
             || dayOfMonth > 31
-            || FEBRUARY.equals( month) && dayOfMonth > 29
+            || FEBRUARY.equals(month) && dayOfMonth > 29
             || !validDate(Year.now(), month, dayOfMonth)
         ) {
             errors.rejectValue("accountSettings.expiryDateDayOfMonth", ERROR_INVALID_ENTRY);
@@ -60,7 +60,7 @@ public class AccountSettingsValidator {
         try {
             LocalDate.of(year.getValue(), month, dayOfMonth);
             return true;
-        } catch(DateTimeException e) {
+        } catch (DateTimeException e) {
             return false;
         }
     }

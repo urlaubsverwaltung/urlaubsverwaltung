@@ -102,7 +102,7 @@ public class AccountSettings {
             final int dayOfMonth = getExpiryDateDayOfMonth() - subtract;
             try {
                 date = LocalDate.of(year.getValue(), month, dayOfMonth);
-            } catch(DateTimeException e) {
+            } catch (DateTimeException e) {
                 LOG.debug("could not create expiry date for month={} dayOfMonth={}", month, dayOfMonth);
             } finally {
                 subtract++;
