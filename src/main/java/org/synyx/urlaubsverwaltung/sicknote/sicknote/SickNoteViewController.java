@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,9 +45,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -82,6 +85,9 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
     private final SettingsService settingsService;
     private final Clock clock;
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
 
     @Autowired
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
@@ -171,6 +177,12 @@ class SickNoteViewController implements HasLaunchpad {
         final Person person = personId == null
             ? signedInUser
             : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+
+        if (sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person).isPresent()) {
+            LOG.info("sick note of last work day found");
+        } else {
+            LOG.info("no sick note of last work day found");
+        }
 
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("person", person);
