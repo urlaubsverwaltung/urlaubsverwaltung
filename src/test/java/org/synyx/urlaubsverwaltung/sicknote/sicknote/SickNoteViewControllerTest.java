@@ -340,7 +340,9 @@ class SickNoteViewControllerTest {
         office.setId(1L);
         when(personService.getSignedInUser()).thenReturn(office);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        final Person sickNotePerson = new Person();
+        sickNotePerson.setId(2L);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(sickNotePerson).status(ACTIVE).build()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
@@ -349,6 +351,7 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
+            .andExpect(model().attribute("person", sickNotePerson))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
@@ -425,6 +428,25 @@ class SickNoteViewControllerTest {
     }
 
     @Test
+    void ensureGetEditIsAccessibleForSamePersonIfSickNoteStatusIsSubmitted() throws Exception {
+
+        final Person signedInUser = personWithRole(USER);
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder()
+                .person(signedInUser)
+                .status(SUBMITTED)
+                .build();
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, signedInUser)).thenReturn(false);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void ensureGetEditSickNoteForUnknownSickNoteIdThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
@@ -442,8 +464,9 @@ class SickNoteViewControllerTest {
         ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
     }
 
-    @Test
-    void ensureGetSickNoteEditIsNotAccessibleForPerson() {
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "ACTIVE"})
+    void ensureGetSickNoteEditIsNotAccessibleForOtherUser(SickNoteStatus status) {
 
         final Person signedInUser = personWithRole(USER);
         signedInUser.setId(1L);
@@ -454,7 +477,7 @@ class SickNoteViewControllerTest {
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
-            .status(ACTIVE)
+            .status(status)
             .build();
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
@@ -462,6 +485,26 @@ class SickNoteViewControllerTest {
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForSamePersonIfSickNoteStatusIsNotSubmitted() {
+
+        final Person signedInUser = personWithRole(USER);
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = SickNote.builder()
+                .person(signedInUser)
+                .status(ACTIVE)
+                .build();
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, signedInUser)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+                perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
@@ -1106,7 +1149,7 @@ class SickNoteViewControllerTest {
         signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(signedInPerson).status(SUBMITTED).build()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         doAnswer(invocation -> {
@@ -1118,16 +1161,32 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit")
                 .param("person", "1"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
+            .andExpect(model().attribute("person", signedInPerson))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
     @Test
-    void editPostSickNoteUpdatesSickNoteIfValidationSuccessful() throws Exception {
-
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+    void editPostSickNoteUpdatesSickNoteForOfficeIfValidationSuccessful() throws Exception {
 
         final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(signedInPerson).status(ACTIVE).build()));
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"));
+
+        verify(sickNoteInteractionService).update(any(SickNote.class), eq(signedInPerson), any());
+    }
+
+    @Test
+    void editPostSickNoteUpdatesSickNoteForUserIfSickNoteStatusIsSubmitted() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(signedInPerson).status(SUBMITTED).build()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"));
 
@@ -1137,7 +1196,10 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteRedirectsToCreatedSickNote() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        final Person signedInPerson = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(signedInPerson).status(SUBMITTED).build()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isFound())
@@ -1145,13 +1207,38 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void editPostSickNoteThrowsUnknownSickNoteException() {
+    void editPostSickNoteEditThrowsUnknownSickNoteException() {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
-            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "ACTIVE"})
+    void ensurePostSickNoteEditIsNotAccessibleForOtherUser(SickNoteStatus status) {
+        final Person signedInPerson = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(status).build()));
+
+        assertThatThrownBy(() ->
+                perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensurePostSickNoteEditIsNotAccessibleForUserIfSickNoteStatusIsNotSubmitted() {
+        final Person signedInPerson = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+
+        assertThatThrownBy(() ->
+                perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
