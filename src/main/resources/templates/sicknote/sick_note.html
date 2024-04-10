@@ -30,8 +30,6 @@
           <th:block th:ref="sicknote-heading-actions">
             <th:block th:if="${sickNote.submittedOrActive}">
               <div class="tw-flex tw-flex-row">
-                <th:block th:if="${canAcceptSickNote}"> </th:block>
-
                 <th:block th:if="${canAcceptSickNote && !sickNote.active}">
                   <form
                     id="accept"
@@ -47,7 +45,6 @@
                     </button>
                   </form>
                 </th:block>
-
                 <th:block th:if="${canEditSickNote}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/edit}"
