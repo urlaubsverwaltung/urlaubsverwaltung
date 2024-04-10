@@ -105,7 +105,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote update(SickNote sickNote, Person editor, String comment) {
 
-        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).build());
         LOG.info("Updated sick note: {}", updatedSickNote);
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
