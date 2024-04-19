@@ -117,7 +117,7 @@ public class FrameDataProvider implements HandlerInterceptor {
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser);
+        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser) || isAllowedToAddOrSubmitSickNote(signedInUser);
     }
 
     private boolean overtimeEnabled(Person signedInUser) {
