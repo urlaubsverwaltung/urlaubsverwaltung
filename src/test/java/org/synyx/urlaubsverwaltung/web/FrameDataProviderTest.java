@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -50,7 +51,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleWithoutSignedInUserModel() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -73,7 +74,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForBoss() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -110,7 +111,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForBossAndSickNoteAdd() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -147,7 +148,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForOffice() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -185,7 +186,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForDepartmentHead() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -221,7 +222,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForDepartmentHeadAndSickNoteAdd() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -257,7 +258,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForSecondStageAuthority() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -293,7 +294,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleNavigationAccessForSecondStageAuthorityAndSickNoteAdd() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setId(10L);
@@ -329,7 +330,7 @@ class FrameDataProviderTest {
 
     @Test
     void postHandleWithSignedInUserModel() {
-        mockSettings(true, false, true);
+        mockSettings(true, false, true, false);
 
         final Person person = new Person();
         person.setEmail("person@example.org");
@@ -361,7 +362,7 @@ class FrameDataProviderTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void ensureOvertimeIsSetForOfficeWhenFeatureEnabledAnd(boolean privilegedOnly) {
-        mockSettings(true, privilegedOnly, true);
+        mockSettings(true, privilegedOnly, true, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(OFFICE));
@@ -389,7 +390,7 @@ class FrameDataProviderTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void ensureOvertimeNotSetForOfficeWhenFeatureDisabledAnd(boolean privilegedOnly) {
-        mockSettings(false, privilegedOnly, true);
+        mockSettings(false, privilegedOnly, true, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(OFFICE));
@@ -426,7 +427,7 @@ class FrameDataProviderTest {
     @ParameterizedTest
     @MethodSource("modelPropertiesNavigation")
     void ensureForOvertimeAndRequestIsCorrectSetForOffice(String property, boolean propertyValue, boolean overtimeEnabled, boolean overtimeWritePrivilegedOnly) {
-        mockSettings(overtimeEnabled, overtimeWritePrivilegedOnly, true);
+        mockSettings(overtimeEnabled, overtimeWritePrivilegedOnly, true, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(OFFICE));
@@ -442,8 +443,8 @@ class FrameDataProviderTest {
     }
 
     @Test
-    void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabled() {
-        mockSettings(false, false, true);
+    void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabledAndSubmitSicknotesIsDisabled() {
+        mockSettings(false, false, true, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
@@ -459,8 +460,26 @@ class FrameDataProviderTest {
     }
 
     @Test
+    void ensureQuickAddPopupIsEnabledWhenUserIsLoggedInAndOvertimeIsDisabledAndSubmitSicknotesIsEnabled() {
+        mockSettings(false, false, true, true);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
+
+        assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
+    }
+
+    @Test
     void ensureOvertimeItemIsNotEnabledWhenOvertimeIsRestrictedToPrivileged() {
-        mockSettings(true, true, true);
+        mockSettings(true, true, true, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
@@ -488,7 +507,7 @@ class FrameDataProviderTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void ensureAvatarSettingsIsInModel(boolean gravatarEnabled) {
-        mockSettings(false, false, gravatarEnabled);
+        mockSettings(false, false, gravatarEnabled, false);
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -502,7 +521,7 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap()).containsEntry("gravatarEnabled", gravatarEnabled);
     }
 
-    private void mockSettings(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly, boolean gravatarEnabled) {
+    private void mockSettings(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly, boolean gravatarEnabled, boolean submitSicknotesEnabled) {
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(overtimeFeatureActive);
         overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
@@ -510,9 +529,13 @@ class FrameDataProviderTest {
         final AvatarSettings avatarSettings = new AvatarSettings();
         avatarSettings.setGravatarEnabled(gravatarEnabled);
 
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(submitSicknotesEnabled);
+
         final Settings settings = new Settings();
         settings.setOvertimeSettings(overtimeSettings);
         settings.setAvatarSettings(avatarSettings);
+        settings.setSickNoteSettings(sickNoteSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
     }
