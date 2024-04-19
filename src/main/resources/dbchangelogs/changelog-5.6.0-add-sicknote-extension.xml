@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="honnel" id="add-sicknote-extension-table">
+
+    <preConditions>
+      <not>
+        <tableExists tableName="sick_note_extension"/>
+      </not>
+    </preConditions>
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="sick_note_extension_id_seq" startValue="1"/>
+
+    <createTable tableName="sick_note_extension">
+      <column name="id" type="bigint">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_extension_pkey"/>
+      </column>
+      <column name="created_at" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sick_note_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="new_end_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_aub" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint baseColumnNames="sick_note_id" baseTableName="sick_note_extension"
+                             constraintName="fk_sick_note_extension_sick_note" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="sick_note" validate="true"/>
+  </changeSet>
+</databaseChangeLog>
