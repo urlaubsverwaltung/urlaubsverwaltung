@@ -179,7 +179,7 @@
     <dependency>
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
-      <version>3.2.17</version>
+      <version>3.2.18</version>
     </dependency>
 
     <!-- GOOGLE CALENDAR SYNC -->
