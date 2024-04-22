@@ -57,7 +57,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             person,
             today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
-            true,
+            null,
             null,
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,

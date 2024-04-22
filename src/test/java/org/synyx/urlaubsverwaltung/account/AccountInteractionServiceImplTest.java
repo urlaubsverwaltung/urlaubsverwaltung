@@ -113,6 +113,8 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getPerson()).isEqualTo(person);
         assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
+        assertThat(account.isDoRemainingVacationDaysExpireLocally()).isNull();
+        assertThat(account.getExpiryDateLocally()).isNull();
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(annualVacationDays));
         assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(actualVacationDays));
         assertThat(account.getComment()).isEmpty();
