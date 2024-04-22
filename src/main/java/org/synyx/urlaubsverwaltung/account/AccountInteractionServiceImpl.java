@@ -69,7 +69,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             person,
             today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
-            true,
+            null,
             today.withMonth(APRIL.getValue()).with(firstDayOfMonth()), // default expiry date on first April
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
