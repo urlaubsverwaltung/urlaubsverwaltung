@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -122,6 +123,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(userPerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(false)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(false)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -200,6 +203,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -302,6 +307,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -401,6 +408,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(officePerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -500,6 +509,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(headPerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -597,6 +608,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(headPerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -688,6 +701,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
             .andExpect(model().attribute("userApplications", hasItem(
                 allOf(
@@ -796,6 +811,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
+            .andExpect(model().attribute("canAccessOtherApplications", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
             .andExpect(model().attribute("userApplications", hasItem(
                 allOf(
@@ -1523,6 +1540,7 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get(path)).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
@@ -1577,6 +1595,7 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
                 .andExpect(model().attribute("signedInUser", is(departmentHead)))
+                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
                 .andExpect(model().attribute("otherSickNotes", hasSize(1)))
                 .andExpect(model().attribute("otherSickNotes", hasItems(
                         allOf(
@@ -1631,6 +1650,62 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
                 .andExpect(model().attribute("signedInUser", is(secondStageAuthority)))
+                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
+                .andExpect(model().attribute("otherSickNotes", hasSize(1)))
+                .andExpect(model().attribute("otherSickNotes", hasItems(
+                        allOf(
+                                instanceOf(SickNoteDto.class),
+                                hasProperty("id", equalTo("1")),
+                                hasProperty("startDate", equalTo(startDate)),
+                                hasProperty("endDate", equalTo(endDate)),
+                                hasProperty("dayLength", equalTo(FULL)),
+                                hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
+                                hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
+                                hasProperty("person",
+                                        hasProperty("name", equalTo("Hans Dampf"))
+                                ),
+                                hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
+                                hasProperty("status", equalTo("SUBMITTED"))
+                        )
+                )))
+                .andExpect(view().name("application/application-overview"));
+    }
+
+    @Test
+    void getSubmittedSickNotesForBossWithSickNoteEdit() throws Exception {
+
+        final Person person = new Person();
+        person.setFirstName("Hans");
+        person.setLastName("Dampf");
+        final LocalDate startDate = LocalDate.of(2024, 1, 4);
+        final LocalDate endDate = LocalDate.of(2024, 1, 5);
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
+                startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+                endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+        );
+        final SickNote sickNote = SickNote.builder()
+                .id(1L)
+                .sickNoteType(anySickNoteType())
+                .person(person)
+                .status(SUBMITTED)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+                .build();
+
+        final Person boss = new Person();
+        boss.setPermissions(List.of(BOSS, SICK_NOTE_EDIT));
+
+        when(personService.getSignedInUser()).thenReturn(boss);
+        when(personService.getActivePersons()).thenReturn(List.of(person, boss));
+
+        // other sicknotes
+        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+
+        perform(get("/web/application")).andExpect(status().isOk())
+                .andExpect(model().attribute("signedInUser", is(boss)))
+                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
                 .andExpect(model().attribute("otherSickNotes", hasSize(1)))
                 .andExpect(model().attribute("otherSickNotes", hasItems(
                         allOf(
