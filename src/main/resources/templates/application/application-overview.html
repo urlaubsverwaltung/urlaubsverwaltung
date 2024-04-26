@@ -56,21 +56,21 @@
           >
             <li
               class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-              th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+              th:classappend="${activeContent == 'application' || activeContent == 'sicknote' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-applications-block"
-              th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+              th:attrappend="data-active=${activeContent == 'application' || activeContent == 'sicknote'}?${'data-active'}"
             >
               <a
                 href="#user-applications-block"
                 th:href="@{/web/application}"
                 class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
-                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                th:classappend="${activeContent == 'application' || activeContent == 'sicknote' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
               >
                 <th:block th:text="#{applications.myself.waiting}" />
                 <span
                   class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-zinc-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5"
                 >
-                  <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
+                  <th:block th:text="${#lists.size(userApplications)}" />
                 </span>
               </a>
             </li>
@@ -98,7 +98,11 @@
         </th:block>
       </div>
 
-      <div id="user-applications-block" class="tw-mb-10" th:hidden="${activeContent != 'application'}">
+      <div
+        id="user-applications-block"
+        class="tw-mb-10"
+        th:hidden="${activeContent != 'application' && activeContent != 'sicknote'}"
+      >
         <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}"></h2>
         <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
         <div
@@ -342,16 +346,16 @@
             >
               <li
                 class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-                th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+                th:classappend="${activeContent == 'application' || activeContent == 'replacement' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
                 data-content="#other-applications-block"
-                th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+                th:attrappend="data-active=${activeContent == 'application' || activeContent == 'replacement'}?${'data-active'}"
                 th:if="${canAccessOtherApplications}"
               >
                 <a
                   href="#other-applications-block"
                   th:href="@{/web/application}"
                   class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
-                  th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  th:classappend="${activeContent == 'application' || activeContent == 'replacement' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
                 >
                   <th:block th:text="#{applications.other.waiting}" />
                   <span
@@ -390,7 +394,7 @@
           id="other-applications-block"
           class="tw-mb-10"
           th:if="${canAccessOtherApplications}"
-          th:hidden="${activeContent != 'application'}"
+          th:hidden="${activeContent != 'application' && activeContent != 'replacement'}"
         >
           <div class="tw-mb-10">
             <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
