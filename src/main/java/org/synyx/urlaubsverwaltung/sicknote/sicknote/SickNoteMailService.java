@@ -239,7 +239,9 @@ class SickNoteMailService {
     @Async
     void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer) {
         final List<Person> recipients =
-                mailRecipientService.getRecipientsOfInterest(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT);
+                mailRecipientService.getRecipientsOfInterest(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)
+                        .stream().filter(recipient -> !recipient.equals(maintainer))
+                        .toList();
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
                 .withRecipient(recipients)
                 .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())

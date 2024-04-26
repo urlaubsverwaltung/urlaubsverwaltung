@@ -542,10 +542,11 @@ class SickNoteMailServiceIT extends TestContainersBase {
     void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
 
         final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
-        final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT))
-            .thenReturn(List.of(office));
+            .thenReturn(List.of(office1, office2));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
@@ -561,16 +562,16 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office);
+        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office1);
 
         // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
         assertThat(inboxPerson).hasSize(1);
 
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde von Marlene Muster angenommen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
-            Hallo Lieschen Müller,
+            Hallo Hans Meyer,
 
             Lieschen Müller hat eine neue Krankmeldung von Marlene Muster angenommen:
 
@@ -582,7 +583,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Art der Krankmeldung: Kind-Krankmeldung
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office.getId()));
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office2.getId()));
     }
 
     private String readPlainContent(Message message) throws MessagingException, IOException {

@@ -435,12 +435,17 @@ class SickNoteMailServiceTest {
         person.setId(1L);
         person.setPermissions(Set.of(USER));
 
-        final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        management.setId(2L);
-        management.setPermissions(List.of(USER, OFFICE));
-        management.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT));
+        final Person management1 = new Person("office1", "Muster", "Marlene", "muster@example.org");
+        management1.setId(2L);
+        management1.setPermissions(List.of(USER, OFFICE));
+        management1.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT));
 
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management));
+        final Person management2 = new Person("office2", "Meyer", "Manfred", "meyer@example.org");
+        management2.setId(3L);
+        management2.setPermissions(List.of(USER, OFFICE));
+        management2.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
 
         final SickNote sickNote = SickNote.builder()
                 .id(2L)
@@ -450,15 +455,15 @@ class SickNoteMailServiceTest {
                 .endDate(LocalDate.of(2022, 4, 20))
                 .build();
 
-        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management);
+        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management1);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management));
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management2));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.accepted_by_management.to_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_accepted_by_management_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management, "sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management1, "sickNote", sickNote));
     }
 
 
