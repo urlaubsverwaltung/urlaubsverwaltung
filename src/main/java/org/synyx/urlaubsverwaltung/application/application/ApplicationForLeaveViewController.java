@@ -36,12 +36,14 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 
 /**
@@ -105,6 +107,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
         model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
+        model.addAttribute("canAccessOtherApplications", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
+        model.addAttribute("canAccessSickNoteSubmissions", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
@@ -360,7 +364,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private List<Person> getPersonsForRelevantSubmittedSickNotes(Person signedInUser) {
 
         if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(SICK_NOTE_EDIT))) {
-            return personService.getActivePersons();
+            return personService.getActivePersons().stream().filter(person -> !person.equals(signedInUser)).toList();
         }
 
         final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && signedInUser.hasRole(SICK_NOTE_EDIT)

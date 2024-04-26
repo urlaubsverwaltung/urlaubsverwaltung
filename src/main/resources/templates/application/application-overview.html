@@ -323,65 +323,207 @@
         </div>
       </div>
 
-      <div
-        th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{::new-other-applications-heading-actions})}"
-      >
-        <th:block th:ref="new-other-applications-heading-actions">
-          <div class="tw-flex tw-flex-col sm:tw-flex-row"></div>
-        </th:block>
-        <th:block th:ref="new-other-applications-heading-body">
-          <ul
-            class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0"
-            is="uv-nav-tabs"
-          >
-            <li
-              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-              th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
-              data-content="#other-applications-block"
-              th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+      <th:block th:if="${canAccessOtherApplications || canAccessSickNoteSubmissions}">
+        <div
+          th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{::new-other-applications-heading-actions})}"
+        >
+          <th:block th:ref="new-other-applications-heading-actions">
+            <div class="tw-flex tw-flex-col sm:tw-flex-row"></div>
+          </th:block>
+          <th:block th:ref="new-other-applications-heading-body">
+            <ul
+              class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0"
+              is="uv-nav-tabs"
             >
-              <a
-                href="#other-applications-block"
-                th:href="@{/web/application}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
-                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
-                th:text="#{applications.other.waiting}"
+              <li
+                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+                th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+                data-content="#other-applications-block"
+                th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+                th:if="${canAccessOtherApplications}"
               >
-              </a>
-            </li>
-            <li
-              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-              th:classappend="${activeContent == 'sicknote' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
-              data-content="#other-sicknotes-block"
-              th:attrappend="data-active=${activeContent == 'sicknote'}?${'data-active'}"
-            >
-              <a
-                href="#other-sicknotes-block"
-                th:href="@{/web/sicknote/submitted}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200 tw-gap-2"
-                th:classappend="${activeContent == 'sicknote' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
-              >
-                <th:block th:text="#{sicknotes.submitted}" />
-                <span
-                  class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-zinc-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5"
+                <a
+                  href="#other-applications-block"
+                  th:href="@{/web/application}"
+                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
+                  th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  th:text="#{applications.other.waiting}"
                 >
-                  <th:block th:text="${#lists.size(otherSickNotes)}" />
-                </span>
-              </a>
-            </li>
-          </ul>
-        </th:block>
-      </div>
+                </a>
+              </li>
+              <li
+                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+                th:classappend="${activeContent == 'sicknote' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+                data-content="#other-sicknotes-block"
+                th:attrappend="data-active=${activeContent == 'sicknote'}?${'data-active'}"
+                th:if="${canAccessSickNoteSubmissions}"
+              >
+                <a
+                  href="#other-sicknotes-block"
+                  th:href="@{/web/sicknote/submitted}"
+                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200 tw-gap-2"
+                  th:classappend="${activeContent == 'sicknote' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                >
+                  <th:block th:text="#{sicknotes.submitted}" />
+                  <span
+                    class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-zinc-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5"
+                  >
+                    <th:block th:text="${#lists.size(otherSickNotes)}" />
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </th:block>
+        </div>
 
-      <div id="other-applications-block" class="tw-mb-10" th:hidden="${activeContent != 'application'}">
-        <div class="tw-mb-10">
-          <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
+        <div
+          id="other-applications-block"
+          class="tw-mb-10"
+          th:if="${canAccessOtherApplications}"
+          th:hidden="${activeContent != 'application'}"
+        >
+          <div class="tw-mb-10">
+            <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
+            <ul
+              th:if="${not #lists.isEmpty(otherApplications)}"
+              class="lg:list--hover tw-w-full tw-list-none tw-m-0 tw-p-0 tw-text-sm tw-space-y-10 lg:tw-space-y-4"
+            >
+              <li
+                th:each="otherRequestForLeave,loopStatus : ${otherApplications}"
+                class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
+              >
+                <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
+                  <span
+                    class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
+                  >
+                    <img
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px',personId=${otherRequestForLeave.person.id})}"
+                      alt=""
+                    />
+                  </span>
+                  <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
+                    <span class="tw-flex tw-items-center">
+                      <a
+                        th:text="${otherRequestForLeave.person.name}"
+                        th:href="@{/web/person/__${otherRequestForLeave.person.id}__/overview}"
+                        class="icon-link"
+                        data-turbo="false"
+                      ></a>
+                      <th:block th:if="${otherRequestForLeave.person.isInactive}">
+                        <span th:data-title="#{person.data.inactive}">
+                          &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span
+                            class="tw-sr-only"
+                            >(<th:block th:text="#{person.data.inactive}" />)</span
+                          >
+                        </span>
+                      </th:block>
+                    </span>
+                    <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
+                  </span>
+                </div>
+                <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
+                  <div class="tw-flex-1 tw-flex tw-items-center tw-gap-3 lg:tw-px-1">
+                    <div th:replace="~{::absence-color-box(${otherRequestForLeave})}"></div>
+                    <a
+                      href="#"
+                      th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
+                      class="tw-block tw-no-underline print:no-link"
+                    >
+                      <span
+                        class="hover:tw-underline tw-mb-1 tw-text-lg"
+                        th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
+                      >
+                        <th:block th:case="true">
+                          <th:block th:text="#{applications.days(${otherRequestForLeave.workDays})}" />
+                        </th:block>
+                        <th:block th:case="false">
+                          <th:block th:text="${otherRequestForLeave.duration}" />
+                        </th:block>
+                        <th:block th:text="${otherRequestForLeave.vacationType.label}" />
+                      </span>
+                      <span
+                        class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
+                        th:text="${otherRequestForLeave.durationOfAbsenceDescription}"
+                      ></span>
+                    </a>
+                  </div>
+                  <div class="print:tw-hidden">
+                    <div class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
+                      <a
+                        th:if="${otherRequestForLeave.editAllowed}"
+                        class="button tw-flex-1"
+                        href="#"
+                        th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
+                      >
+                        <svg
+                          th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"
+                        ></svg>
+                        <span class="tw-sr-only xs:tw-not-sr-only">
+                          <th:block th:text="#{action.edit}" />
+                        </span>
+                      </a>
+                      <a
+                        th:if="${otherRequestForLeave.approveAllowed}"
+                        class="button tw-flex-1"
+                        href="#"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
+                      >
+                        <svg
+                          th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"
+                        ></svg>
+                        <span class="tw-sr-only xs:tw-not-sr-only">
+                          <th:block
+                            th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}"
+                          />
+                        </span>
+                      </a>
+                      <a
+                        th:if="${otherRequestForLeave.rejectAllowed}"
+                        class="button tw-flex-1"
+                        href="#"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
+                      >
+                        <svg
+                          th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"
+                        ></svg>
+                        <span class="tw-sr-only xs:tw-not-sr-only">
+                          <th:block th:text="#{action.reject}" />
+                        </span>
+                      </a>
+                      <a
+                        class="button tw-flex-1 tw-justify-center"
+                        th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
+                        th:if="${otherRequestForLeave.cancelAllowed}"
+                      >
+                        <svg
+                          th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"
+                        ></svg>
+                        <span class="sr-only xs:tw-not-sr-only">
+                          <th:block th:text="#{action.delete}"></th:block>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          id="other-sicknotes-block"
+          class="tw-mb-10"
+          th:if="${canAccessSickNoteSubmissions}"
+          th:hidden="${activeContent != 'sicknote'}"
+        >
+          <h2 class="tw-sr-only" th:text="krankmeldungen"></h2>
+          <p th:if="${#lists.isEmpty(otherSickNotes)}" th:text="#{sicknotes.submitted.none}"></p>
           <ul
-            th:if="${not #lists.isEmpty(otherApplications)}"
+            th:if="${not #lists.isEmpty(otherSickNotes)}"
             class="lg:list--hover tw-w-full tw-list-none tw-m-0 tw-p-0 tw-text-sm tw-space-y-10 lg:tw-space-y-4"
           >
             <li
-              th:each="otherRequestForLeave,loopStatus : ${otherApplications}"
+              th:each="otherSickNote,loopStatus : ${otherSickNotes}"
               class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
@@ -389,19 +531,19 @@
                   class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
                 >
                   <img
-                    th:replace="~{fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px',personId=${otherRequestForLeave.person.id})}"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${otherSickNote.person.avatarUrl + '?d=404&s=104'},niceName=${otherSickNote.person.name},width='52px',height='52px',personId=${otherSickNote.person.id})}"
                     alt=""
                   />
                 </span>
                 <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
                   <span class="tw-flex tw-items-center">
                     <a
-                      th:text="${otherRequestForLeave.person.name}"
-                      th:href="@{/web/person/__${otherRequestForLeave.person.id}__/overview}"
+                      th:text="${otherSickNote.person.name}"
+                      th:href="@{/web/person/__${otherSickNote.person.id}__/overview}"
                       class="icon-link"
                       data-turbo="false"
                     ></a>
-                    <th:block th:if="${otherRequestForLeave.person.isInactive}">
+                    <th:block th:if="${otherSickNote.person.isInactive}">
                       <span th:data-title="#{person.data.inactive}">
                         &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span
                           class="tw-sr-only"
@@ -410,84 +552,62 @@
                       </span>
                     </th:block>
                   </span>
-                  <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
+                  <span class="md:tw-text-sm" th:text="#{sicknote.progress.SUBMITTED.withoutDate}"></span>
                 </span>
+              </div>
+              <div class="tw-flex tw-items-center tw-gap-3">
+                <div
+                  class="tw-shrink-0 absence-type_color-box"
+                  th:classappend="|
+                      ${otherSickNote.status == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
+                      |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-PINK);'}|"
+                  th:title="#{sicknote.progress.SUBMITTED.withoutDate}"
+                >
+                  &nbsp;
+                </div>
+                <a
+                  href="#"
+                  th:href="@{/web/sicknote/{sicknoteId} (sicknoteId=${otherSickNote.id})}"
+                  class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                >
+                  <span class="hover:tw-underline tw-mb-1 tw-text-lg">
+                    <th:block th:text="#{overview.sicknotes.sickdays.days(${otherSickNote.workDays})}" />
+                    <th:block th:text="${#messages.msg(otherSickNote.type)}"></th:block>
+                  </span>
+                  <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
+                    <th:block th:if="${otherSickNote.startDate == otherSickNote.endDate}">
+                      <th:block th:text="|${#messages.msg(otherSickNote.weekDayOfStartDate + '.short')}|"></th:block>,
+                      <th:block th:replace="~{fragments/date::date(${otherSickNote.startDate})}"></th:block>,&nbsp;
+                      <th:block th:text="${#messages.msg(otherSickNote.dayLength)}"></th:block>
+                    </th:block>
+                    <th:block th:if="${otherSickNote.startDate != otherSickNote.endDate}">
+                      <span
+                        th:replace="~{fragments/date-range::date-range(from=${otherSickNote.startDate}, to=${otherSickNote.endDate}, pattern='E, dd.MM.yyyy')}"
+                      ></span>
+                    </th:block>
+                  </span>
+                </a>
               </div>
               <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
                 <div class="tw-flex-1 tw-flex tw-items-center tw-gap-3 lg:tw-px-1">
-                  <div th:replace="~{::absence-color-box(${otherRequestForLeave})}"></div>
                   <a
                     href="#"
-                    th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
+                    th:href="@{/web/sicknote/{sickNoteId}(sickNoteId=${otherSickNote.id})}"
                     class="tw-block tw-no-underline print:no-link"
                   >
-                    <span
-                      class="hover:tw-underline tw-mb-1 tw-text-lg"
-                      th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
-                    >
-                      <th:block th:case="true">
-                        <th:block th:text="#{applications.days(${otherRequestForLeave.workDays})}" />
-                      </th:block>
-                      <th:block th:case="false">
-                        <th:block th:text="${otherRequestForLeave.duration}" />
-                      </th:block>
-                      <th:block th:text="${otherRequestForLeave.vacationType.label}" />
-                    </span>
-                    <span
-                      class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
-                      th:text="${otherRequestForLeave.durationOfAbsenceDescription}"
-                    ></span>
                   </a>
                 </div>
                 <div class="print:tw-hidden">
                   <div class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
                     <a
-                      th:if="${otherRequestForLeave.editAllowed}"
                       class="button tw-flex-1"
                       href="#"
-                      th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
-                    >
-                      <svg
-                        th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"
-                      ></svg>
-                      <span class="tw-sr-only xs:tw-not-sr-only">
-                        <th:block th:text="#{action.edit}" />
-                      </span>
-                    </a>
-                    <a
-                      th:if="${otherRequestForLeave.approveAllowed}"
-                      class="button tw-flex-1"
-                      href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
+                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='allow', shortcut=true)}"
                     >
                       <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
                       <span class="tw-sr-only xs:tw-not-sr-only">
-                        <th:block
-                          th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}"
-                        />
-                      </span>
-                    </a>
-                    <a
-                      th:if="${otherRequestForLeave.rejectAllowed}"
-                      class="button tw-flex-1"
-                      href="#"
-                      th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
-                    >
-                      <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
-                      <span class="tw-sr-only xs:tw-not-sr-only">
-                        <th:block th:text="#{action.reject}" />
-                      </span>
-                    </a>
-                    <a
-                      class="button tw-flex-1 tw-justify-center"
-                      th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
-                      th:if="${otherRequestForLeave.cancelAllowed}"
-                    >
-                      <svg
-                        th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"
-                      ></svg>
-                      <span class="sr-only xs:tw-not-sr-only">
-                        <th:block th:text="#{action.delete}"></th:block>
+                        <th:block th:text="#{action.acceptSicknote}" />
                       </span>
                     </a>
                   </div>
@@ -496,108 +616,7 @@
             </li>
           </ul>
         </div>
-      </div>
-
-      <div id="other-sicknotes-block" class="tw-mb-10" th:hidden="${activeContent != 'sicknote'}">
-        <h2 class="tw-sr-only" th:text="krankmeldungen"></h2>
-        <p th:if="${#lists.isEmpty(otherSickNotes)}" th:text="#{sicknotes.submitted.none}"></p>
-        <ul
-          th:if="${not #lists.isEmpty(otherSickNotes)}"
-          class="lg:list--hover tw-w-full tw-list-none tw-m-0 tw-p-0 tw-text-sm tw-space-y-10 lg:tw-space-y-4"
-        >
-          <li
-            th:each="otherSickNote,loopStatus : ${otherSickNotes}"
-            class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
-          >
-            <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
-              <span
-                class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
-              >
-                <img
-                  th:replace="~{fragments/avatar::avatar-bordered(url=${otherSickNote.person.avatarUrl + '?d=404&s=104'},niceName=${otherSickNote.person.name},width='52px',height='52px',personId=${otherSickNote.person.id})}"
-                  alt=""
-                />
-              </span>
-              <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
-                <span class="tw-flex tw-items-center">
-                  <a
-                    th:text="${otherSickNote.person.name}"
-                    th:href="@{/web/person/__${otherSickNote.person.id}__/overview}"
-                    class="icon-link"
-                    data-turbo="false"
-                  ></a>
-                  <th:block th:if="${otherSickNote.person.isInactive}">
-                    <span th:data-title="#{person.data.inactive}">
-                      &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span class="tw-sr-only"
-                        >(<th:block th:text="#{person.data.inactive}" />)</span
-                      >
-                    </span>
-                  </th:block>
-                </span>
-                <span class="md:tw-text-sm" th:text="#{sicknote.progress.SUBMITTED.withoutDate}"></span>
-              </span>
-            </div>
-            <div class="tw-flex tw-items-center tw-gap-3">
-              <div
-                class="tw-shrink-0 absence-type_color-box"
-                th:classappend="|
-                    ${otherSickNote.status == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
-                    |"
-                th:styleappend="|${'--absence-bar-color:var(--absence-color-PINK);'}|"
-                th:title="#{sicknote.progress.SUBMITTED.withoutDate}"
-              >
-                &nbsp;
-              </div>
-              <a
-                href="#"
-                th:href="@{/web/sicknote/{sicknoteId} (sicknoteId=${otherSickNote.id})}"
-                class="tw-block tw-flex-1 tw-no-underline print:no-link"
-              >
-                <span class="hover:tw-underline tw-mb-1 tw-text-lg">
-                  <th:block th:text="#{overview.sicknotes.sickdays.days(${otherSickNote.workDays})}" />
-                  <th:block th:text="${#messages.msg(otherSickNote.type)}"></th:block>
-                </span>
-                <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
-                  <th:block th:if="${otherSickNote.startDate == otherSickNote.endDate}">
-                    <th:block th:text="|${#messages.msg(otherSickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                    <th:block th:replace="~{fragments/date::date(${otherSickNote.startDate})}"></th:block>,&nbsp;
-                    <th:block th:text="${#messages.msg(otherSickNote.dayLength)}"></th:block>
-                  </th:block>
-                  <th:block th:if="${otherSickNote.startDate != otherSickNote.endDate}">
-                    <span
-                      th:replace="~{fragments/date-range::date-range(from=${otherSickNote.startDate}, to=${otherSickNote.endDate}, pattern='E, dd.MM.yyyy')}"
-                    ></span>
-                  </th:block>
-                </span>
-              </a>
-            </div>
-            <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
-              <div class="tw-flex-1 tw-flex tw-items-center tw-gap-3 lg:tw-px-1">
-                <a
-                  href="#"
-                  th:href="@{/web/sicknote/{sickNoteId}(sickNoteId=${otherSickNote.id})}"
-                  class="tw-block tw-no-underline print:no-link"
-                >
-                </a>
-              </div>
-              <div class="print:tw-hidden">
-                <div class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
-                  <a
-                    class="button tw-flex-1"
-                    href="#"
-                    th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='allow', shortcut=true)}"
-                  >
-                    <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
-                    <span class="tw-sr-only xs:tw-not-sr-only">
-                      <th:block th:text="#{action.acceptSicknote}" />
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+      </th:block>
     </main>
   </body>
 </html>
