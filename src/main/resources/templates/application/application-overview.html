@@ -526,7 +526,7 @@
           th:if="${canAccessSickNoteSubmissions}"
           th:hidden="${activeContent != 'sicknote'}"
         >
-          <h2 class="tw-sr-only" th:text="krankmeldungen"></h2>
+          <h2 class="tw-sr-only" th:text="#{sicknotes.submitted}"></h2>
           <p th:if="${#lists.isEmpty(otherSickNotes)}" th:text="#{sicknotes.submitted.none}"></p>
           <ul
             th:if="${not #lists.isEmpty(otherSickNotes)}"
