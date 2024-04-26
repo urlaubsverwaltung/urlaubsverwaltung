@@ -160,8 +160,12 @@ public class SickNote {
         return SickNoteStatus.ACTIVE.equals(getStatus());
     }
 
+    public boolean isSubmitted() {
+        return SickNoteStatus.SUBMITTED.equals(getStatus());
+    }
+
     public boolean isSubmittedOrActive() {
-        return SickNoteStatus.SUBMITTED.equals(getStatus()) || SickNoteStatus.ACTIVE.equals(getStatus());
+        return isActive() || isSubmitted();
     }
 
     public boolean isAubPresent() {

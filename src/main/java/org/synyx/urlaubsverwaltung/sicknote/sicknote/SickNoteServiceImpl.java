@@ -23,6 +23,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 /**
  * Implementation for {@link SickNoteService}.
@@ -59,18 +60,36 @@ class SickNoteServiceImpl implements SickNoteService {
     public Optional<SickNote> getById(Long id) {
         return sickNoteRepository.findById(id)
                 .map(SickNoteServiceImpl::toSickNote)
-                .map(sickNote -> {
-                    final Person person = sickNote.getPerson();
-                    final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
-                    final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange);
-                    return SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build();
-                });
+                .map(this::withWorkDays);
     }
 
     @Override
     public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByPersonAndPeriod(person, from, to);
         return toSickNoteWithWorkDays(entities, new DateRange(from, to));
+    }
+
+    @Override
+    public Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person person) {
+
+        final LocalDate now = LocalDate.now(clock);
+        final Optional<SickNoteEntity> lastSickNote = sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now);
+
+        if (lastSickNote.isPresent()) {
+
+            final boolean isSickNoteOfYesterday = lastSickNote.get().getEndDate().isEqual(now.minusDays(1));
+            final boolean isSickNoteOfLastWorkDay = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(lastSickNote.get().getEndDate(), now))
+                    .get(person).workingDays().size() == 2;
+
+            if (isSickNoteOfYesterday || isSickNoteOfLastWorkDay) {
+                return lastSickNote.map(SickNoteServiceImpl::toSickNote)
+                        .map(this::withWorkDays);
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -221,5 +240,13 @@ class SickNoteServiceImpl implements SickNoteService {
                 .map(SickNoteServiceImpl::toSickNote)
                 .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
                 .collect(toList());
+    }
+
+    private SickNote withWorkDays(SickNote sickNote) {
+
+        final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
+        final WorkingTimeCalendar workingTimes= workingTimeCalendarService.getWorkingTimesByPersons(List.of(sickNote.getPerson()), dateRange).get(sickNote.getPerson());
+
+        return SickNote.builder(sickNote).workingTimeCalendar(workingTimes).build();
     }
 }

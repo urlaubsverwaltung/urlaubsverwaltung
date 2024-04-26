@@ -159,21 +159,17 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .startDate(LocalDate.now(UTC))
-            .endDate(LocalDate.now(UTC))
-            .dayLength(DayLength.FULL)
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .build();
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .build();
 
         sut.update(sickNote, creator, comment);
 
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, comment);
-
-        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
-        verify(sickNoteService).save(captor.capture());
-        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
@@ -184,6 +180,31 @@ class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteMailService).sendEditedToSickPerson(sickNote);
     }
+
+    @Test
+    void ensureStatusIsPreservedInUpdatedSickNote() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final String comment = "test comment";
+        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .status(SickNoteStatus.SUBMITTED)
+                .build();
+
+        sut.update(sickNote, creator, comment);
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteService).save(captor.capture());
+        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
+    }
+
 
     @Test
     void ensureCancelledSickNoteIsPersisted() {
