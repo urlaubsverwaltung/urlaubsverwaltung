@@ -59,13 +59,11 @@ class VacationTypeEventHandlerExtension {
     }
 
     private Map<Locale, String> toLabels(VacationType<?> vacationType) {
-        if (vacationType instanceof ProvidedVacationType providedVacationType) {
-            return toLabels(providedVacationType);
-        } else if (vacationType instanceof CustomVacationType customVacationType) {
-            return toLabels(customVacationType);
-        } else {
-            throw new IllegalArgumentException("Unsupported vacation type: " + vacationType);
-        }
+        return switch (vacationType) {
+            case ProvidedVacationType providedVacationType -> toLabels(providedVacationType);
+            case CustomVacationType customVacationType -> toLabels(customVacationType);
+            default -> throw new IllegalArgumentException("Unsupported vacation type: " + vacationType);
+        };
     }
 
     private Map<Locale, String> toLabels(ProvidedVacationType providedVacationType) {
