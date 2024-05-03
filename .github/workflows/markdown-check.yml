@@ -1,0 +1,52 @@
+name: Markdown Links Check
+# runs every friday at 8 am
+on:
+  schedule:
+    - cron: "0 8 * * 5"
+  workflow_dispatch:
+
+jobs:
+  check-links-in-chglog:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        # checks all markdown files from /.chglog including all subfolders
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          folder-path: '.chglog'
+
+
+  check-links-in-examples:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        # checks all markdown files from /.examples including all subfolders
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          folder-path: '.examples'
+
+  check-links-in-charts:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        # checks all markdown files from /charts including all subfolders
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          folder-path: 'charts'
+
+  check-links-in-root:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        # checks all markdown files from root but ignores subfolders
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+          max-depth: 0
