@@ -84,7 +84,7 @@ zur Verfügung.
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
 * Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .jar-Datei dorthin.
-* Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.properties`, welche die Konfiguration für
+* Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.yaml`, welche die Konfiguration für
 die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
   
@@ -105,7 +105,7 @@ Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example
 
 ### Konfiguration
 
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application.properties).
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application.yaml).
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
 Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die [Datenbank Einstellungen](#datenbank-konfigurieren)
 und [Security Provider](#security-provider-konfigurieren) müssen in einer eigenen Konfigurationsdatei hinterlegt werden.
@@ -336,7 +336,7 @@ Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, m
 
 `uv.development.demodata.create`
 
-in den [application-demodata.properties](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.properties)
+in den [application-demodata.yaml](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.yaml)
 auf `false` gesetzt werden.
 
 
