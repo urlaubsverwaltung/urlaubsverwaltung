@@ -21,6 +21,8 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -284,6 +286,67 @@ class VacationTypeServiceImplTest {
                 ENGLISH, "family day"
             ));
             assertThat(entity.getMessageKey()).isNull();
+        });
+    }
+
+    @Test
+    void ensureCreatePublishesEvent() {
+
+        final VacationTypeEntity firstEntity = new VacationTypeEntity();
+        firstEntity.setId(1L);
+        firstEntity.setActive(true);
+        firstEntity.setCategory(OTHER);
+        firstEntity.setRequiresApprovalToApply(true);
+        firstEntity.setRequiresApprovalToCancel(true);
+        firstEntity.setColor(YELLOW);
+        firstEntity.setVisibleToEveryone(true);
+        firstEntity.setLabelByLocale(Map.of(GERMAN, "jokertag", ENGLISH, "jokerday"));
+        firstEntity.setCustom(true);
+
+        final VacationTypeEntity secondEntity = new VacationTypeEntity();
+        secondEntity.setId(2L);
+        secondEntity.setActive(false);
+        secondEntity.setCategory(HOLIDAY);
+        secondEntity.setRequiresApprovalToApply(false);
+        secondEntity.setRequiresApprovalToCancel(false);
+        secondEntity.setColor(BLUE);
+        secondEntity.setVisibleToEveryone(false);
+        secondEntity.setLabelByLocale(Map.of(GERMAN, "familientag", ENGLISH, "family day"));
+        secondEntity.setCustom(true);
+
+        when(vacationTypeRepository.saveAll(anyList())).thenReturn(List.of(firstEntity, secondEntity));
+
+        sut.createVacationTypes(List.of(
+            CustomVacationType.builder(messageSource).labels(List.of()).build(),
+            CustomVacationType.builder(messageSource).labels(List.of()).build()
+        ));
+
+        final ArgumentCaptor<VacationTypeCreatedEvent> captor = ArgumentCaptor.forClass(VacationTypeCreatedEvent.class);
+        verify(applicationEventPublisher, times(2)).publishEvent(captor.capture());
+
+        final List<VacationTypeCreatedEvent> actualPublishedEvents = captor.getAllValues();
+        assertThat(actualPublishedEvents).hasSize(2);
+        assertThat(actualPublishedEvents.getFirst().vacationType()).satisfies(vacationType -> {
+            assertThat(vacationType.getId()).isEqualTo(1L);
+            assertThat(vacationType.active).isTrue();
+            assertThat(vacationType.getCategory()).isEqualTo(OTHER);
+            assertThat(vacationType.isRequiresApprovalToApply()).isTrue();
+            assertThat(vacationType.isRequiresApprovalToCancel()).isTrue();
+            assertThat(vacationType.getColor()).isEqualTo(YELLOW);
+            assertThat(vacationType.isVisibleToEveryone()).isTrue();
+            assertThat(vacationType.getLabel(GERMAN)).isEqualTo("jokertag");
+            assertThat(vacationType.getLabel(ENGLISH)).isEqualTo("jokerday");
+        });
+        assertThat(actualPublishedEvents.get(1).vacationType()).satisfies(vacationType -> {
+            assertThat(vacationType.getId()).isEqualTo(2L);
+            assertThat(vacationType.active).isFalse();
+            assertThat(vacationType.getCategory()).isEqualTo(HOLIDAY);
+            assertThat(vacationType.isRequiresApprovalToApply()).isFalse();
+            assertThat(vacationType.isRequiresApprovalToCancel()).isFalse();
+            assertThat(vacationType.getColor()).isEqualTo(BLUE);
+            assertThat(vacationType.isVisibleToEveryone()).isFalse();
+            assertThat(vacationType.getLabel(GERMAN)).isEqualTo("familientag");
+            assertThat(vacationType.getLabel(ENGLISH)).isEqualTo("family day");
         });
     }
 }

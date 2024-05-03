@@ -11,6 +11,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
@@ -19,9 +20,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdatedEvent;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import static java.util.Locale.forLanguageTag;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +30,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class VacationTypeEventHandlerExtensionTest {
@@ -50,7 +53,41 @@ class VacationTypeEventHandlerExtensionTest {
     }
 
     @Test
-    void handlesEventOfProvidedVacationType() {
+    void handlesCreatedEvent() {
+
+        final String tenant = "default";
+        when(tenantSupplier.get()).thenReturn(tenant);
+
+        final CustomVacationType vacationType = CustomVacationType.builder(new StaticMessageSource())
+            .color(YELLOW)
+            .id(42L)
+            .active(true)
+            .requiresApprovalToApply(false)
+            .requiresApprovalToCancel(false)
+            .visibleToEveryone(true)
+            .labels(List.of(
+                new VacationTypeLabel(Locale.GERMAN, "vacation-type-DE"),
+                new VacationTypeLabel(Locale.ENGLISH, "vacation-type-EN")
+            ))
+            .category(HOLIDAY)
+            .build();
+
+        vacationTypeEventHandlerExtension.onVacationTypeUpdated(VacationTypeUpdatedEvent.of(vacationType));
+
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final VacationTypeUpdatedEventDTO actualEvent = eventCaptor.getValue();
+
+        assertThat(actualEvent.getId()).isNotNull();
+        assertThat(actualEvent.getTenantId()).isEqualTo(tenant);
+        assertThat(actualEvent.getCategory()).isEqualTo("HOLIDAY");
+        assertThat(actualEvent.isRequiresApprovalToApply()).isFalse();
+        assertThat(actualEvent.isRequiresApprovalToCancel()).isFalse();
+        assertThat(actualEvent.getColor()).isEqualTo("YELLOW");
+        assertThat(actualEvent.isVisibleToEveryone()).isTrue();
+    }
+
+    @Test
+    void handlesUpdatedEventOfProvidedVacationType() {
         String tenant = "default";
         when(tenantSupplier.get()).thenReturn(tenant);
 
@@ -67,7 +104,7 @@ class VacationTypeEventHandlerExtensionTest {
         when(providedVacationType.getLabel(forLanguageTag("el"))).thenReturn("Holiday");
         VacationTypeUpdatedEvent event = VacationTypeUpdatedEvent.of(providedVacationType);
 
-        vacationTypeEventHandlerExtension.on(event);
+        vacationTypeEventHandlerExtension.onVacationTypeUpdated(event);
 
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         VacationTypeUpdatedEventDTO capturedEvent = eventCaptor.getValue();
@@ -87,7 +124,7 @@ class VacationTypeEventHandlerExtensionTest {
     }
 
     @Test
-    void handlesEventOfCustomVacationType() {
+    void handlesUpdatedEventOfCustomVacationType() {
         String tenant = "default";
         when(tenantSupplier.get()).thenReturn(tenant);
 
@@ -103,7 +140,7 @@ class VacationTypeEventHandlerExtensionTest {
 
         VacationTypeUpdatedEvent event = VacationTypeUpdatedEvent.of(customVacationType);
 
-        vacationTypeEventHandlerExtension.on(event);
+        vacationTypeEventHandlerExtension.onVacationTypeUpdated(event);
 
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         VacationTypeUpdatedEventDTO capturedEvent = eventCaptor.getValue();
@@ -134,7 +171,7 @@ class VacationTypeEventHandlerExtensionTest {
 
         VacationTypeUpdatedEvent event = VacationTypeUpdatedEvent.of(unsupportedVacationType);
 
-        assertThatThrownBy(() -> vacationTypeEventHandlerExtension.on(event))
+        assertThatThrownBy(() -> vacationTypeEventHandlerExtension.onVacationTypeUpdated(event))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Unsupported vacation type: " + unsupportedVacationType);
     }

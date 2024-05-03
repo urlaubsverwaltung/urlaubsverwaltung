@@ -124,7 +124,14 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             })
             .toList();
 
-        vacationTypeRepository.saveAll(newEntities);
+        final List<? extends VacationType<?>> createdVacationTypes = vacationTypeRepository.saveAll(newEntities)
+            .stream()
+            .map(entity -> convert(entity, messageSource))
+            .toList();
+
+        createdVacationTypes.stream()
+            .map(VacationTypeCreatedEvent::of)
+            .forEach(applicationEventPublisher::publishEvent);
     }
 
     public static VacationTypeEntity convert(VacationType<?> vacationType) {

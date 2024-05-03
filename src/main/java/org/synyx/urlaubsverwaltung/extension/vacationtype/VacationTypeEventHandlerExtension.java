@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeCreatedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdatedEvent;
 import org.synyx.urlaubsverwaltung.settings.SupportedLanguages;
@@ -38,9 +39,19 @@ class VacationTypeEventHandlerExtension {
 
     @EventListener
     @Async
-    void on(VacationTypeUpdatedEvent event) {
+    void onVacationTypeCreated(VacationTypeCreatedEvent event) {
+        publishVacationType(event.vacationType());
+    }
+
+    @EventListener
+    @Async
+    void onVacationTypeUpdated(VacationTypeUpdatedEvent event) {
+        publishVacationType(event.updatedVacationType());
+    }
+
+    private void publishVacationType(VacationType<?> vacationType) {
         final String tenant = tenantSupplier.get();
-        final VacationTypeUpdatedEventDTO updatedEventDTO = toVacationTypeDTO(tenant, event.updatedVacationType());
+        final VacationTypeUpdatedEventDTO updatedEventDTO = toVacationTypeDTO(tenant, vacationType);
         applicationEventPublisher.publishEvent(updatedEventDTO);
     }
 

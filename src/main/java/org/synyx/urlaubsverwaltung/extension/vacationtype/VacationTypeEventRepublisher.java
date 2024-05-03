@@ -43,7 +43,7 @@ class VacationTypeEventRepublisher {
                 VacationType<?> updatedVacationType = event.updatedVacationType();
                 LOG.info("Publishing vacationTypeUpdatedEvent with id={}, vacationTypeId={} for category={} with active={} and requiresApprovalToApply={}",
                     event.id(), updatedVacationType.getId(), updatedVacationType.getCategory(), updatedVacationType.isActive(), updatedVacationType.isRequiresApprovalToApply());
-                vacationTypeEventHandlerExtension.on(event);
+                vacationTypeEventHandlerExtension.onVacationTypeUpdated(event);
             });
 
         LOG.info("Republished all events with type=VacationTypeUpdatedEvent");
