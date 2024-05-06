@@ -20,7 +20,8 @@
           notifications.applicationCancellationForManagement.active ||
           notifications.applicationAdaptedForManagement.active ||
           notifications.applicationWaitingReminderForManagement.active ||
-          notifications.applicationCancellationRequestedForManagement.active
+          notifications.applicationCancellationRequestedForManagement.active ||
+          notifications.sickNoteCreatedByManagementForManagement.active
         },
         showOvertime=${
           notifications.overtimeApplied.active ||
@@ -95,6 +96,9 @@
           ></dd>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.applicationCancellationRequestedForManagement.active},info='person.notifications.section.absences.cancellation-requested.management.label')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.sickNoteCreatedByManagementForManagement.active},info='person.notifications.section.sicknote.created.management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showOvertime}">
