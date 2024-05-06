@@ -34,6 +34,7 @@ public class PersonNotificationsDto {
     private PersonNotificationDto ownSickNoteSubmittedCreatedEditedCancelled;
     private PersonNotificationDto sickNoteSubmittedByUserForManagement;
     private PersonNotificationDto sickNoteAcceptedByManagementForManagement;
+    private PersonNotificationDto sickNoteCreatedByManagementForManagement;
 
     PersonNotificationsDto() {
         // ok
@@ -221,5 +222,13 @@ public class PersonNotificationsDto {
 
     public void setSickNoteAcceptedByManagementForManagement(PersonNotificationDto sickNoteAcceptedByManagementForManagement) {
         this.sickNoteAcceptedByManagementForManagement = sickNoteAcceptedByManagementForManagement;
+    }
+
+    public PersonNotificationDto getSickNoteCreatedByManagementForManagement() {
+        return sickNoteCreatedByManagementForManagement;
+    }
+
+    public void setSickNoteCreatedByManagementForManagement(PersonNotificationDto sickNoteCreatedByManagementForManagement) {
+        this.sickNoteCreatedByManagementForManagement = sickNoteCreatedByManagementForManagement;
     }
 }
