@@ -10,6 +10,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -57,6 +58,7 @@ public enum MailNotification {
     NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT(false, hasRole(USER)),
     NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER(false, hasRole(USER)),
     NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT(true, hasRole(USER).and(hasAnyRole(OFFICE, SICK_NOTE_EDIT))),
+    NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT(true, hasRole(USER).and(hasAnyRole(OFFICE, SICK_NOTE_ADD))),
     NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT(false, hasRole(USER)),
     NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT(false, hasRole(USER)),
     NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED(true, hasRole(USER)),
