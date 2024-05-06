@@ -158,7 +158,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
 
-            Lieschen Müller hat eine neue Krankmeldung für dich eintragen:
+            Lieschen Müller hat eine neue Krankmeldung für dich eingetragen:
 
                 https://localhost:8080/web/sicknote/1
 
