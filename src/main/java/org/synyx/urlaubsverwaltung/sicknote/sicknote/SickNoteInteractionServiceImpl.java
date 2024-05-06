@@ -95,6 +95,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         sickNoteMailService.sendCreatedSickPerson(createdSickNote);
         sickNoteMailService.sendCreatedOrAcceptedToColleagues(createdSickNote);
+        sickNoteMailService.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(createdSickNote, comment);
 
         applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(createdSickNote));
 

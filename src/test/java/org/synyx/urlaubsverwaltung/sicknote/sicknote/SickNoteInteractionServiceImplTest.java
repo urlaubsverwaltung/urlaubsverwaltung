@@ -144,10 +144,13 @@ class SickNoteInteractionServiceImplTest {
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .build();
 
-        sut.create(sickNote, creator);
+        final String comment = "comment";
+
+        sut.create(sickNote, creator, comment);
 
         verify(sickNoteMailService).sendCreatedSickPerson(sickNote);
         verify(sickNoteMailService).sendCreatedOrAcceptedToColleagues(sickNote);
+        verify(sickNoteMailService).sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
     }
 
     @Test

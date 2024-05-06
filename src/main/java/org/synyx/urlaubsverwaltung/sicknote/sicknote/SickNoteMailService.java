@@ -27,6 +27,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
@@ -218,7 +219,6 @@ class SickNoteMailService {
         mailService.send(mailToOfficeAndResponsibleManagement);
     }
 
-
     @Async
     void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer) {
         final List<Person> recipients =
@@ -230,6 +230,22 @@ class SickNoteMailService {
                 .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
                 .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
                 .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
+    }
+
+    @Async
+    void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(SickNote createdSickNote, String comment) {
+
+        final List<Person> recipientsWithoutApplier =
+            mailRecipientService.getRecipientsOfInterestForSickNotes(createdSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
+                .filter(recipient -> !recipient.equals(createdSickNote.getApplier())).toList();
+
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+            .withRecipient(recipientsWithoutApplier)
+            .withSubject("subject.sicknote.created_by_management.to_management", createdSickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_created_by_management_to_management", locale -> Map.of("sickNote", createdSickNote, "comment", comment))
+            .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);
     }
