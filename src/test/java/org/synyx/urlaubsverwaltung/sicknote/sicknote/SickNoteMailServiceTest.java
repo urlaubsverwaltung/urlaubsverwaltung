@@ -36,6 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -294,6 +295,46 @@ class SickNoteMailServiceTest {
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
     }
+
+    @Test
+    void ensureSendSickNoteCreatedNotificationToOfficeAndResponsibleManagement() {
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(1L);
+        person.setPermissions(Set.of(USER));
+
+        final Person management1 = new Person("office1", "Muster", "Marlene", "muster@example.org");
+        management1.setId(2L);
+        management1.setPermissions(List.of(USER, OFFICE));
+        management1.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person management2 = new Person("office2", "Meyer", "Manfred", "meyer@example.org");
+        management2.setId(3L);
+        management2.setPermissions(List.of(USER, OFFICE));
+        management2.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .applier(management1)
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
+
+        final String comment = "Some comment";
+        sut.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management2));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created_by_management.to_management");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_by_management_to_management");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "comment", comment));
+    }
+
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();

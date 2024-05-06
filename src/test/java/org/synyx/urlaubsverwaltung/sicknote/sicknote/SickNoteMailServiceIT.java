@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.io.IOException;
@@ -29,9 +30,11 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
@@ -50,6 +53,8 @@ class SickNoteMailServiceIT extends TestContainersBase {
     private MailRecipientService mailRecipientService;
     @MockBean
     private SickNoteService sickNoteService;
+    @MockBean
+    private SickNoteCommentService sickNoteCommentService;
 
     @Test
     void sendEndOfSickPayNotification() throws MessagingException, IOException {
@@ -337,6 +342,62 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
+    }
+
+    @Test
+    void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
+
+        final Person person = personService.create("user", "Marlene", "Muster", "user@example.org", List.of(), List.of(USER));
+        final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+        final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
+
+        when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(office1, office2));
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("application.data.sicknotetype.sicknote");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(office1)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .aubStartDate(LocalDate.of(2022, 2, 2))
+            .aubEndDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteType)
+            .build();
+        final String comment = "Weiterführende Information";
+
+        sut.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
+
+        // check email of colleague
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
+        assertThat(inboxPerson).hasSize(1);
+
+        final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für Marlene Muster eingetragen");
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Hans Meyer,
+
+            Lieschen Müller hat eine neue Krankmeldung für Marlene Muster eingetragen:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Zeitraum der AU:      02.02.2022 bis 01.04.2022
+                Art der Krankmeldung: Krankmeldung
+
+            Kommentar(e) zur Krankmeldung:
+
+                Weiterführende Information
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office2.getId()));
     }
 
     private String readPlainContent(Message message) throws MessagingException, IOException {
