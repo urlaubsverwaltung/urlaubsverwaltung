@@ -410,12 +410,11 @@ class SickNoteMailServiceTest {
         final SickNote sickNote = SickNote.builder()
                 .id(2L)
                 .person(person)
-
                 .startDate(LocalDate.of(2022, 3, 10))
                 .endDate(LocalDate.of(2022, 4, 20))
                 .build();
 
-        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management1);
+        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management1, List.of("some comment"));
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -423,7 +422,7 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management2));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.accepted_by_management.to_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_accepted_by_management_to_management");
-        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management1, "sickNote", sickNote));
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management1, "sickNote", sickNote, "comments", List.of("some comment")));
     }
 
     @Test

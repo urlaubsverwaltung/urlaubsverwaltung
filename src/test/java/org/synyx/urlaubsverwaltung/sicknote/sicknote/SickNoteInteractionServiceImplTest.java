@@ -15,10 +15,13 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -366,6 +369,10 @@ class SickNoteInteractionServiceImplTest {
                 .status(SickNoteStatus.ACTIVE)
                 .build();
 
+        final SickNoteCommentEntity comment = new SickNoteCommentEntity(Clock.fixed(Instant.ofEpochMilli(0), ZoneId.systemDefault()));
+        comment.setText("some comment");
+        when(commentService.getCommentsBySickNote(sickNote)).thenReturn(List.of(comment));
+
         final Person maintainer = new Person("maintainer", "Senior", "Maintainer", "maintainer@example.org");
 
         final SickNote acceptedSickNote = sut.accept(sickNote, maintainer);
@@ -379,7 +386,7 @@ class SickNoteInteractionServiceImplTest {
         verify(commentService).create(sickNote, SickNoteCommentAction.ACCEPTED, maintainer);
 
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToSickPerson(sickNote, maintainer);
-        verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer);
+        verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer, List.of("some comment"));
 
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());

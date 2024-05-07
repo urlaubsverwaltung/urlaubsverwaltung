@@ -220,7 +220,7 @@ class SickNoteMailService {
     }
 
     @Async
-    void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer) {
+    void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer, List<String> comments) {
         final List<Person> recipients =
                 mailRecipientService.getRecipientsOfInterestForSickNotes(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)
                         .stream().filter(recipient -> !recipient.equals(maintainer))
@@ -228,7 +228,7 @@ class SickNoteMailService {
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
                 .withRecipient(recipients)
                 .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
-                .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+                .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer, "comments", comments))
                 .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);

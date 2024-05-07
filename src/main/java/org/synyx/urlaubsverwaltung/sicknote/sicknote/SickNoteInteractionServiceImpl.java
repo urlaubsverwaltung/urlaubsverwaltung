@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+
+import java.util.List;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -72,7 +75,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer);
 
         sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote, maintainer);
-        sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
+        final List<String> commentsForSickNote = commentService.getCommentsBySickNote(sickNote).stream().map(AbstractComment::getText).toList();
+        sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer, commentsForSickNote);
         sickNoteMailService.sendCreatedOrAcceptedToColleagues(acceptedSickNote);
 
         applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));

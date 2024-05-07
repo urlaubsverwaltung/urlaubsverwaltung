@@ -5,6 +5,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,15 @@ import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -56,6 +62,8 @@ class SickNoteMailServiceIT extends TestContainersBase {
     private MailRecipientService mailRecipientService;
     @MockBean
     private SickNoteService sickNoteService;
+    @MockBean
+    private SickNoteCommentService sickNoteCommentService;
 
     @Test
     void sendEndOfSickPayNotification() throws MessagingException, IOException {
@@ -499,11 +507,17 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 .applier(person)
                 .startDate(LocalDate.of(2022, 2, 1))
                 .endDate(LocalDate.of(2022, 4, 1))
+                .aubStartDate(LocalDate.of(2022, 2, 2))
+                .aubEndDate(LocalDate.of(2022, 4, 1))
                 .dayLength(DayLength.FULL)
                 .sickNoteType(sickNoteTypeChild)
                 .build();
 
-        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office1);
+        final SickNoteCommentEntity comment1 = comment("Ein Kommentar");
+        final SickNoteCommentEntity comment2 = comment("Noch ein Kommentar");
+        when(sickNoteCommentService.getCommentsBySickNote(sickNote)).thenReturn(List.of(comment1, comment2));
+
+        sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office1, List.of("Ein Kommentar", "Noch ein Kommentar"));
 
         // check email of colleague
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
@@ -521,8 +535,13 @@ class SickNoteMailServiceIT extends TestContainersBase {
             Informationen zur Krankmeldung:
 
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Zeitraum der AU:      02.02.2022 bis 01.04.2022
                 Art der Krankmeldung: Kind-Krankmeldung
-
+            
+            Kommentar(e) zur Krankmeldung:
+            
+                Ein Kommentar
+                Noch ein Kommentar
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office2.getId()));
     }
@@ -575,7 +594,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Zeitraum der AU:      02.02.2022 bis 01.04.2022
                 Art der Krankmeldung: Krankmeldung
             
-            Kommentar zur Krankmeldung:
+            Kommentar(e) zur Krankmeldung:
             
                 Weiterführende Information
           
@@ -585,5 +604,11 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
     private String readPlainContent(Message message) throws MessagingException, IOException {
         return message.getContent().toString().replaceAll("\\r", "");
+    }
+
+    private SickNoteCommentEntity comment(String text) {
+        final SickNoteCommentEntity comment = new SickNoteCommentEntity(Clock.fixed(Instant.ofEpochMilli(0), ZoneId.systemDefault()));
+        comment.setText(text);
+        return comment;
     }
 }
