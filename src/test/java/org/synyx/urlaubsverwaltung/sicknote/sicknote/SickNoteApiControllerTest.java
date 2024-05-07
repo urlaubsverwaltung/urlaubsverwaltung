@@ -66,7 +66,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -96,7 +96,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
@@ -126,7 +126,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
@@ -216,7 +216,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         perform(get("/api/persons/23/sicknotes")
@@ -248,7 +248,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)).thenReturn(true);
@@ -281,7 +281,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote1 = createSickNote(person, from, to, FULL);
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), LocalDate.of(2016, 1, 1), LocalDate.of(2016, 12, 31)))
             .thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(true);

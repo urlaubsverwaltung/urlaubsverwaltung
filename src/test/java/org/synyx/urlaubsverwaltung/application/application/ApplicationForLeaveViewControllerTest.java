@@ -11,14 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.ui.ModelMap;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -1536,7 +1534,7 @@ class ApplicationForLeaveViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         // other sicknotes
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get(path)).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
@@ -1591,7 +1589,7 @@ class ApplicationForLeaveViewControllerTest {
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
 
         // other sicknotes
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
                 .andExpect(model().attribute("signedInUser", is(departmentHead)))
@@ -1646,7 +1644,7 @@ class ApplicationForLeaveViewControllerTest {
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(person));
 
         // other sicknotes
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
                 .andExpect(model().attribute("signedInUser", is(secondStageAuthority)))
@@ -1701,7 +1699,7 @@ class ApplicationForLeaveViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person, boss));
 
         // other sicknotes
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
                 .andExpect(model().attribute("signedInUser", is(boss)))

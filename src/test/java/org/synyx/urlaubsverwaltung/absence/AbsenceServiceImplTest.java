@@ -97,7 +97,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStatesAndPersonSince(List.of(SUBMITTED, ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersonsSince(List.of(SUBMITTED, ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
 
         final List<Absence> openAbsences = sut.getOpenAbsencesSince(List.of(person), since);
         assertThat(openAbsences).hasSize(2);
@@ -173,7 +173,7 @@ class AbsenceServiceImplTest {
 
         sut.getOpenAbsences(List.of(batman, superman), start, end);
 
-        verify(sickNoteService).getForStatesAndPerson(List.of(SUBMITTED, ACTIVE), List.of(batman, superman), start, end);
+        verify(sickNoteService).getForStatesAndPersons(List.of(SUBMITTED, ACTIVE), List.of(batman, superman), start, end);
     }
 
     @Test
@@ -422,7 +422,7 @@ class AbsenceServiceImplTest {
                 .dayLength(DayLength.MORNING)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -458,7 +458,7 @@ class AbsenceServiceImplTest {
                 .dayLength(DayLength.NOON)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -494,7 +494,7 @@ class AbsenceServiceImplTest {
                 .dayLength(FULL)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -548,7 +548,7 @@ class AbsenceServiceImplTest {
                 .dayLength(FULL)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(2);
@@ -624,7 +624,7 @@ class AbsenceServiceImplTest {
                 .dayLength(DayLength.NOON)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(2);
@@ -703,7 +703,7 @@ class AbsenceServiceImplTest {
             .dayLength(FULL)
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -1011,7 +1011,7 @@ class AbsenceServiceImplTest {
 
         sut.getClosedAbsences(List.of(batman, superman), start, end);
 
-        verify(sickNoteService).getForStatesAndPerson(List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED), List.of(batman, superman), start, end);
+        verify(sickNoteService).getForStatesAndPersons(List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED), List.of(batman, superman), start, end);
     }
 
     @Test
@@ -1175,7 +1175,7 @@ class AbsenceServiceImplTest {
                 .dayLength(DayLength.MORNING)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getClosedAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -1211,7 +1211,7 @@ class AbsenceServiceImplTest {
                 .dayLength(DayLength.NOON)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getClosedAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -1257,7 +1257,7 @@ class AbsenceServiceImplTest {
             .dayLength(DayLength.NOON)
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getClosedAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(2);
@@ -1336,7 +1336,7 @@ class AbsenceServiceImplTest {
                 .dayLength(FULL)
                 .build();
 
-        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
         final List<AbsencePeriod> actualAbsences = sut.getClosedAbsences(List.of(batman), start, end);
 

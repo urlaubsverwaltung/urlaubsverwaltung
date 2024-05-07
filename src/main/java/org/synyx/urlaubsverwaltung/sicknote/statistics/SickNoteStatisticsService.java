@@ -59,7 +59,7 @@ public class SickNoteStatisticsService {
         final List<SickNote> sickNotes;
         if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
             final List<Person> members = getMembersForPerson(person);
-            sickNotes = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
+            sickNotes = sickNoteService.getForStatesAndPersons(List.of(ACTIVE), members, from, to);
         } else {
             sickNotes = List.of();
         }

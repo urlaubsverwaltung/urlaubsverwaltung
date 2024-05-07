@@ -108,7 +108,7 @@ public class SickDaysStatisticsService {
 
     private List<SickNote> getSickNotes(Person person, List<Person> members, LocalDate from, LocalDate to) {
         if (person.hasRole(OFFICE) || (person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
-            return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
+            return sickNoteService.getForStatesAndPersons(List.of(ACTIVE), members, from, to);
         }
 
         return List.of();

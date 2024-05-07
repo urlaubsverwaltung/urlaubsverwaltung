@@ -81,7 +81,7 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
         when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId(), member.getId()))).thenReturn(Map.of(new PersonId(departmentHead.getId()), departmentHeadBasedata));
@@ -160,7 +160,7 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(secondStageAuthority, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(member, secondStageAuthority)));
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member, secondStageAuthority), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(member, secondStageAuthority), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), "Passagier1337", "additionalInfo");
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(secondStageAuthority.getId()), personBasedata);
@@ -234,7 +234,7 @@ class SickDaysStatisticsServiceTest {
             .endDate(startDate.plusDays(6))
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office), startDate, endDate))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(office), startDate, endDate))
             .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
@@ -281,7 +281,7 @@ class SickDaysStatisticsServiceTest {
             .endDate(startDate.plusDays(6))
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office), startDate, endDate))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(office), startDate, endDate))
             .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
@@ -326,7 +326,7 @@ class SickDaysStatisticsServiceTest {
             .endDate(startDate.plusDays(6))
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(boss), startDate, endDate))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(boss), startDate, endDate))
             .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
@@ -373,7 +373,7 @@ class SickDaysStatisticsServiceTest {
             .endDate(startDate.plusDays(6))
             .build();
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(boss), startDate, endDate))
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(boss), startDate, endDate))
             .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
@@ -449,7 +449,7 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
         final PersonBasedata memberBasedata = new PersonBasedata(new PersonId(2L), "000042", "additionalInfo member");
@@ -505,7 +505,7 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
 
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBaseDataMap = Map.of();
         when(personBasedataService.getBasedataByPersonId(List.of(42L, 2L))).thenReturn(personIdBaseDataMap);

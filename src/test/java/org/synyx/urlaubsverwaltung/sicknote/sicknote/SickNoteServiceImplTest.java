@@ -361,7 +361,7 @@ class SickNoteServiceImplTest {
     }
 
     @Test
-    void getForStatesAndPerson() {
+    void getForStatesAndPersons() {
         final Person person = new Person();
         final Person applier = new Person();
         final SickNoteType sickNoteType = new SickNoteType();
@@ -394,7 +394,7 @@ class SickNoteServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
 
-        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        final List<SickNote> sickNotes = sut.getForStatesAndPersons(openSickNoteStatuses, persons);
         assertThat(sickNotes).hasSize(1);
 
         final SickNote actual = sickNotes.getFirst();
@@ -426,12 +426,12 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons))
                 .thenReturn(List.of());
 
-        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        final List<SickNote> sickNotes = sut.getForStatesAndPersons(openSickNoteStatuses, persons);
         assertThat(sickNotes).isEmpty();
     }
 
     @Test
-    void getForStatesAndPersonSince() {
+    void getForStatesAndPersonsSince() {
         final Person person = new Person();
         final Person applier = new Person();
         final SickNoteType sickNoteType = new SickNoteType();
@@ -465,7 +465,7 @@ class SickNoteServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
 
-        final List<SickNote> sickNotes = sut.getForStatesAndPersonSince(openSickNoteStatuses, persons, since);
+        final List<SickNote> sickNotes = sut.getForStatesAndPersonsSince(openSickNoteStatuses, persons, since);
         assertThat(sickNotes).hasSize(1);
 
         final SickNote actual = sickNotes.get(0);

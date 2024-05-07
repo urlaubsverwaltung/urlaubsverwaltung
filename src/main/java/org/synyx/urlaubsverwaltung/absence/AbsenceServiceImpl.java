@@ -81,7 +81,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final List<Application> openApplications = applicationService.getForStatesAndPerson(byApplicationStatus, persons, start, end);
         final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeCalendarByPerson::get);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(bySickNoteStatus, persons, start, end);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersons(bySickNoteStatus, persons, start, end);
         final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
         final List<AbsencePeriod> noWorkingDaysAndPublicHolidays = generateAbsencePeriodFromWorkingTimes(workingTimeCalendarByPerson);
@@ -96,7 +96,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final List<Application> openApplications = applicationService.getForStatesAndPersonSince(ApplicationStatus.activeStatuses(), persons, since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersonSince(SickNoteStatus.activeStatuses(), persons, since);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersonsSince(SickNoteStatus.activeStatuses(), persons, since);
         final List<Absence> sickNoteAbsences = generateAbsencesFromSickNotes(openSickNotes);
 
         return ListUtils.union(applicationAbsences, sickNoteAbsences);

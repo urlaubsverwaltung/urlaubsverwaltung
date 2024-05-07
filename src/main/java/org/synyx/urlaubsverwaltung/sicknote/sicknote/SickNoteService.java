@@ -59,14 +59,14 @@ public interface SickNoteService {
      *
      * @return all {@link SickNote} with specific states and persons
      */
-    List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
+    List<SickNote> getForStatesAndPersons(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
 
     /**
      * Get all {@link SickNote} with specific states and persons
      *
      * @return all {@link SickNote} with specific states and persons
      */
-    List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since);
+    List<SickNote> getForStatesAndPersonsSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since);
 
     /**
      * Get all {@link SickNote}s with specific states and persons for the given date range
@@ -77,9 +77,9 @@ public interface SickNoteService {
      * @param end            end date (inclusive)
      * @return list of all matching {@link SickNote}s
      */
-    List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
+    List<SickNote> getForStatesAndPersons(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
 
-    List<SickNote> getForStatesAndPersonAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end);
+    List<SickNote> getForStatesAndPersonsAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end);
 
     /**
      * Set end of sick pay notification send for given sicknote.

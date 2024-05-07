@@ -68,7 +68,7 @@ class SickNoteStatisticsServiceTest {
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
             .build());
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
@@ -110,7 +110,7 @@ class SickNoteStatisticsServiceTest {
             .endDate(LocalDate.of(2022, 10, 10))
             .build();
         final List<SickNote> sickNotes = List.of(sickNote);
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
+        when(sickNoteService.getForStatesAndPersons(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);

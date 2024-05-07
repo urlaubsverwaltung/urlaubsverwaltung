@@ -80,7 +80,7 @@ public class SickNoteApiController {
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> managedPersons = getMembersOfPersons(signedInUser);
 
-        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), managedPersons, startDate, endDate).stream()
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPersons(List.of(ACTIVE), managedPersons, startDate, endDate).stream()
             .map(SickNoteDto::new)
             .toList();
 
@@ -122,7 +122,7 @@ public class SickNoteApiController {
             throw new ResponseStatusException(FORBIDDEN, "Not allowed to access data of the person with the ID=" + personId);
         }
 
-        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), startDate, endDate).stream()
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPersons(List.of(ACTIVE), List.of(person), startDate, endDate).stream()
             .map(SickNoteDto::new)
             .toList();
 

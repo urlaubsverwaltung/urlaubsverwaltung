@@ -102,7 +102,7 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
+    public List<SickNote> getForStatesAndPersons(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonIn(sickNoteStatuses, persons);
 
         final Optional<LocalDate> min = entities.stream().min(comparing(SickNoteEntity::getStartDate)).map(SickNoteEntity::getStartDate);
@@ -115,19 +115,19 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since) {
+    public List<SickNote> getForStatesAndPersonsSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(sickNoteStatuses, persons, since);
         return toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
     }
 
     @Override
-    public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end) {
+    public List<SickNote> getForStatesAndPersons(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, start, end);
         return toSickNoteWithWorkDays(entities, new DateRange(start, end));
     }
 
     @Override
-    public List<SickNote> getForStatesAndPersonAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end) {
+    public List<SickNote> getForStatesAndPersonsAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndPersonPermissionsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, roles, start, end);
         return toSickNoteWithWorkDays(entities, new DateRange(start, end));
     }
