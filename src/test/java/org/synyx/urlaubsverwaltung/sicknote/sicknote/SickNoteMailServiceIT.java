@@ -537,9 +537,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
                 Zeitraum der AU:      02.02.2022 bis 01.04.2022
                 Art der Krankmeldung: Kind-Krankmeldung
-            
+
             Kommentar(e) zur Krankmeldung:
-            
+
                 Ein Kommentar
                 Noch ein Kommentar
 
@@ -593,11 +593,11 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
                 Zeitraum der AU:      02.02.2022 bis 01.04.2022
                 Art der Krankmeldung: Krankmeldung
-            
+
             Kommentar(e) zur Krankmeldung:
-            
+
                 Weiterführende Information
-          
+
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office2.getId()));
     }
