@@ -162,7 +162,7 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendCreatedSickPerson(sickNote);
+        sut.sendCreatedToSickPerson(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());

@@ -147,7 +147,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendCreatedSickPerson(sickNote);
+        sut.sendCreatedToSickPerson(sickNote);
 
         // check email of colleague
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
