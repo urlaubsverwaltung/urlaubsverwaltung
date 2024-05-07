@@ -106,7 +106,7 @@ class SickNoteMailService {
      * @param sickNote that has been created
      */
     @Async
-    void sendCreatedSickPerson(SickNote sickNote) {
+    void sendCreatedToSickPerson(SickNote sickNote) {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.created.to_applicant_by_management")
