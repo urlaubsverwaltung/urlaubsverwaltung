@@ -40,7 +40,7 @@ class VacationTypeEventRepublisher {
             .stream()
             .map(VacationTypeUpdatedEvent::of)
             .forEach(event -> {
-                VacationType<?> updatedVacationType = event.updatedVacationType();
+                final VacationType<?> updatedVacationType = event.updatedVacationType();
                 LOG.info("Publishing vacationTypeUpdatedEvent with id={}, vacationTypeId={} for category={} with active={} and requiresApprovalToApply={}",
                     event.id(), updatedVacationType.getId(), updatedVacationType.getCategory(), updatedVacationType.isActive(), updatedVacationType.isRequiresApprovalToApply());
                 vacationTypeEventHandlerExtension.onVacationTypeUpdated(event);
