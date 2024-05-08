@@ -97,15 +97,10 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(Optional::get)
             .map(VacationType.class::cast)
             .map(VacationTypeServiceImpl::convert)
-            .collect(toList());
+            .toList();
 
-        final List<VacationType<?>> updatedVacationTypes = vacationTypeRepository.saveAll(updatedEntities)
-            .stream()
+        vacationTypeRepository.saveAll(updatedEntities).stream()
             .map(entity -> convert(entity, messageSource))
-            .collect(toList());
-
-        updatedVacationTypes
-            .stream()
             .map(VacationTypeUpdatedEvent::of)
             .forEach(applicationEventPublisher::publishEvent);
     }
@@ -124,12 +119,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             })
             .toList();
 
-        final List<? extends VacationType<?>> createdVacationTypes = vacationTypeRepository.saveAll(newEntities)
-            .stream()
+        vacationTypeRepository.saveAll(newEntities).stream()
             .map(entity -> convert(entity, messageSource))
-            .toList();
-
-        createdVacationTypes.stream()
             .map(VacationTypeCreatedEvent::of)
             .forEach(applicationEventPublisher::publishEvent);
     }
@@ -179,7 +170,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         }
     }
 
-    private static VacationTypeEntity createVacationTypeEntity( boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
+    private static VacationTypeEntity createVacationTypeEntity(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
         vacationTypeEntity.setCustom(false);
         vacationTypeEntity.setActive(active);
