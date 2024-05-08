@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
@@ -34,11 +35,15 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final VacationTypeRepository vacationTypeRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final MessageSource messageSource;
 
     @Autowired
-    VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository, MessageSource messageSource) {
+    VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository,
+                            ApplicationEventPublisher applicationEventPublisher,
+                            MessageSource messageSource) {
         this.vacationTypeRepository = vacationTypeRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.messageSource = messageSource;
     }
 
@@ -79,22 +84,29 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(vacationTypeEntity -> convert(vacationTypeEntity, messageSource))
             .map(vacationType -> {
                 final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
-                if (vacationType instanceof ProvidedVacationType providedVacationType) {
-                    return Optional.of(updateProvidedVacationType(providedVacationType, vacationTypeUpdate));
-                } else if (vacationType instanceof CustomVacationType customVacationType) {
-                    return Optional.of(updateCustomVacationType(customVacationType, vacationTypeUpdate));
-                } else {
-                    LOG.error("cannot handle vacationTypeUpdate={} for unknown vacationType implementation.", vacationTypeUpdate);
-                    return Optional.empty();
+                switch (vacationType) {
+                    case ProvidedVacationType providedVacationType -> {
+                        return Optional.of(updateProvidedVacationType(providedVacationType, vacationTypeUpdate));
+                    }
+                    case CustomVacationType customVacationType -> {
+                        return Optional.of(updateCustomVacationType(customVacationType, vacationTypeUpdate));
+                    }
+                    default -> {
+                        LOG.error("cannot handle vacationTypeUpdate={} for unknown vacationType implementation.", vacationTypeUpdate);
+                        return Optional.empty();
+                    }
                 }
             })
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(VacationType.class::cast)
             .map(VacationTypeServiceImpl::convert)
-            .collect(toList());
+            .toList();
 
-        vacationTypeRepository.saveAll(updatedEntities);
+        vacationTypeRepository.saveAll(updatedEntities).stream()
+            .map(entity -> convert(entity, messageSource))
+            .map(VacationTypeUpdatedEvent::of)
+            .forEach(applicationEventPublisher::publishEvent);
     }
 
     @Override
@@ -111,20 +123,21 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             })
             .toList();
 
-        vacationTypeRepository.saveAll(newEntities);
+        vacationTypeRepository.saveAll(newEntities).stream()
+            .map(entity -> convert(entity, messageSource))
+            .map(VacationTypeCreatedEvent::of)
+            .forEach(applicationEventPublisher::publishEvent);
     }
 
     public static VacationTypeEntity convert(VacationType<?> vacationType) {
-        if (vacationType instanceof ProvidedVacationType providedVacationType) {
-            return convertProvidedVacationType(providedVacationType);
-        } else if (vacationType instanceof CustomVacationType customVacationType) {
-            return convertCustomVacationType(customVacationType);
-        } else {
-            throw new IllegalStateException("could not convert unknown vacationType.");
-        }
+        return switch (vacationType) {
+            case ProvidedVacationType providedVacationType -> convertProvidedVacationType(providedVacationType);
+            case CustomVacationType customVacationType -> convertCustomVacationType(customVacationType);
+            default -> throw new IllegalStateException("could not convert unknown vacationType.");
+        };
     }
 
-    public static VacationType<? extends VacationType<?>> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
+    public static VacationType<?> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
         if (vacationTypeEntity.isCustom()) {
             return convertCustomVacationType(vacationTypeEntity, messageSource);
         } else {
@@ -159,7 +172,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         }
     }
 
-    private static VacationTypeEntity createVacationTypeEntity( boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
+    private static VacationTypeEntity createVacationTypeEntity(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
         vacationTypeEntity.setCustom(false);
         vacationTypeEntity.setActive(active);
