@@ -84,13 +84,17 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(vacationTypeEntity -> convert(vacationTypeEntity, messageSource))
             .map(vacationType -> {
                 final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
-                if (vacationType instanceof ProvidedVacationType providedVacationType) {
-                    return Optional.of(updateProvidedVacationType(providedVacationType, vacationTypeUpdate));
-                } else if (vacationType instanceof CustomVacationType customVacationType) {
-                    return Optional.of(updateCustomVacationType(customVacationType, vacationTypeUpdate));
-                } else {
-                    LOG.error("cannot handle vacationTypeUpdate={} for unknown vacationType implementation.", vacationTypeUpdate);
-                    return Optional.empty();
+                switch (vacationType) {
+                    case ProvidedVacationType providedVacationType -> {
+                        return Optional.of(updateProvidedVacationType(providedVacationType, vacationTypeUpdate));
+                    }
+                    case CustomVacationType customVacationType -> {
+                        return Optional.of(updateCustomVacationType(customVacationType, vacationTypeUpdate));
+                    }
+                    default -> {
+                        LOG.error("cannot handle vacationTypeUpdate={} for unknown vacationType implementation.", vacationTypeUpdate);
+                        return Optional.empty();
+                    }
                 }
             })
             .filter(Optional::isPresent)
@@ -126,13 +130,11 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     public static VacationTypeEntity convert(VacationType<?> vacationType) {
-        if (vacationType instanceof ProvidedVacationType providedVacationType) {
-            return convertProvidedVacationType(providedVacationType);
-        } else if (vacationType instanceof CustomVacationType customVacationType) {
-            return convertCustomVacationType(customVacationType);
-        } else {
-            throw new IllegalStateException("could not convert unknown vacationType.");
-        }
+        return switch (vacationType) {
+            case ProvidedVacationType providedVacationType -> convertProvidedVacationType(providedVacationType);
+            case CustomVacationType customVacationType -> convertCustomVacationType(customVacationType);
+            default -> throw new IllegalStateException("could not convert unknown vacationType.");
+        };
     }
 
     public static VacationType<?> convert(VacationTypeEntity vacationTypeEntity, MessageSource messageSource) {
