@@ -183,10 +183,14 @@ public class ApplicationEventHandlerExtension {
                     .build()
             );
         } else if (vacationType instanceof CustomVacationType customVacationType) {
-            // TODO handle CustomVacationType
-            // currently ignored as the VacationTypeDTO does not support sending the labels
-            LOG.info("ignoring application state change with customVacationType={}", customVacationType);
-            return Optional.empty();
+            return Optional.of(VacationTypeDTO.builder()
+                .sourceId(customVacationType.getId())
+                .category(customVacationType.getCategory().name())
+                .requiresApprovalToApply(customVacationType.isRequiresApprovalToApply())
+                .requiresApprovalToCancel(customVacationType.isRequiresApprovalToCancel())
+                .color(customVacationType.getColor().name())
+                .visibleToEveryone(customVacationType.isVisibleToEveryone())
+                .build());
         } else {
             LOG.error("did not publish application state change due to unhandled implementation of vacationType={}", vacationType);
             return Optional.empty();
