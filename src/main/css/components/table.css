@@ -206,6 +206,7 @@ table.absence-type-settings-table thead {
     td,
     tr {
       display: block;
+      height: inherit;
     }
 
     /* Hide table headers (but not display: none;, for accessibility) */
