@@ -5,7 +5,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -363,14 +362,14 @@ class SickNoteMailServiceIT extends TestContainersBase {
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .person(person)
-                .applier(person)
-                .startDate(LocalDate.of(2022, 2, 1))
-                .endDate(LocalDate.of(2022, 4, 1))
-                .dayLength(DayLength.FULL)
-                .sickNoteType(sickNoteTypeChild)
-                .build();
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
 
         sut.sendSickNoteSubmittedNotificationToSickPerson(sickNote);
 
@@ -403,21 +402,21 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person office = personService.create("office", "Lieschen", "Müller", "office@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT), List.of(OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT))
-                .thenReturn(List.of(office));
+            .thenReturn(List.of(office));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .person(person)
-                .applier(person)
-                .startDate(LocalDate.of(2022, 2, 1))
-                .endDate(LocalDate.of(2022, 4, 1))
-                .dayLength(DayLength.FULL)
-                .sickNoteType(sickNoteTypeChild)
-                .build();
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
 
         sut.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
 
@@ -454,14 +453,14 @@ class SickNoteMailServiceIT extends TestContainersBase {
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .person(person)
-                .applier(person)
-                .startDate(LocalDate.of(2022, 2, 1))
-                .endDate(LocalDate.of(2022, 4, 1))
-                .dayLength(DayLength.FULL)
-                .sickNoteType(sickNoteTypeChild)
-                .build();
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
 
         sut.sendSickNoteAcceptedNotificationToSickPerson(sickNote, office);
 
@@ -495,23 +494,23 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
 
         when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT))
-                .thenReturn(List.of(office1, office2));
+            .thenReturn(List.of(office1, office2));
 
         final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .person(person)
-                .applier(person)
-                .startDate(LocalDate.of(2022, 2, 1))
-                .endDate(LocalDate.of(2022, 4, 1))
-                .aubStartDate(LocalDate.of(2022, 2, 2))
-                .aubEndDate(LocalDate.of(2022, 4, 1))
-                .dayLength(DayLength.FULL)
-                .sickNoteType(sickNoteTypeChild)
-                .build();
+            .id(1L)
+            .person(person)
+            .applier(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .aubStartDate(LocalDate.of(2022, 2, 2))
+            .aubEndDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
 
         final SickNoteCommentEntity comment1 = comment("Ein Kommentar");
         final SickNoteCommentEntity comment2 = comment("Noch ein Kommentar");
