@@ -538,7 +538,6 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Art der Krankmeldung: Kind-Krankmeldung
 
             Kommentar(e) zur Krankmeldung:
-
                 Ein Kommentar
                 Noch ein Kommentar
 

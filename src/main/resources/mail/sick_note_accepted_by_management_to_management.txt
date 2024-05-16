@@ -11,7 +11,6 @@
     [(${rightPadder.rightPad('__#{sick_note.information.type}__',__#{sick_note.information.max_length}__)})] [(#{__${sickNote.sickNoteType.messageKey}__})]
 [# th:if="${not #lists.isEmpty(comments)}"]
 [(#{sick_note.information.comment.title})]
-[# th:each="comment : ${comments}"]
-    [(${comment})]
+[# th:each="comment : ${comments}"][(${comment})]
 [/][/]
 [(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
