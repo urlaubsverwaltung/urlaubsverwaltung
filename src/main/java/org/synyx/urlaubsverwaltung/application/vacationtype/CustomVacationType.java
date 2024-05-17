@@ -49,11 +49,12 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
         final VacationTypeLabelResolver<CustomVacationType> labelResolver =
             (vacationType, locale) -> {
                 final Map<Locale, VacationTypeLabel> labelByLocale = vacationType.labelsByLocale();
+
                 return Optional.ofNullable(labelByLocale.get(locale))
                     .map(VacationTypeLabel::label)
                     .filter(StringUtils::hasText)
-                    // fallback to hard coded GERMAN since our default language is GERMAN
-                    .or(() -> Optional.of(labelByLocale.get(Locale.GERMAN)).map(VacationTypeLabel::label).filter(StringUtils::hasText))
+                    // fallback to base locale (e.g. "de" for incoming "de_DE")
+                    .or(() -> Optional.of(labelByLocale.get(Locale.forLanguageTag(locale.getLanguage()))).map(VacationTypeLabel::label).filter(StringUtils::hasText))
                     .orElseGet(() -> messageSource.getMessage("vacationtype.label.fallback", new Object[]{}, locale));
             };
 
