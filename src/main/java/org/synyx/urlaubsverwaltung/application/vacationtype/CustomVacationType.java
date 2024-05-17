@@ -47,10 +47,16 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
     public static Builder builder(MessageSource messageSource) {
 
         final VacationTypeLabelResolver<CustomVacationType> labelResolver =
-            (vacationType, locale) -> Optional.ofNullable(vacationType.labelsByLocale().get(locale))
-                .map(VacationTypeLabel::label)
-                .filter(StringUtils::hasText)
-                .orElseGet(() -> messageSource.getMessage("vacationtype.label.fallback", new Object[]{}, locale));
+            (vacationType, locale) -> {
+                final Map<Locale, VacationTypeLabel> labelByLocale = vacationType.labelsByLocale();
+
+                return Optional.ofNullable(labelByLocale.get(locale))
+                    .map(VacationTypeLabel::label)
+                    .filter(StringUtils::hasText)
+                    // fallback to base locale (e.g. "de" for incoming "de_DE")
+                    .or(() -> Optional.of(labelByLocale.get(Locale.forLanguageTag(locale.getLanguage()))).map(VacationTypeLabel::label).filter(StringUtils::hasText))
+                    .orElseGet(() -> messageSource.getMessage("vacationtype.label.fallback", new Object[]{}, locale));
+            };
 
         return new Builder(labelResolver);
     }
