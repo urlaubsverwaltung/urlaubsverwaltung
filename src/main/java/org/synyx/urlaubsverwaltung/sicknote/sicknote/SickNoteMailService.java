@@ -25,6 +25,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -178,5 +179,21 @@ class SickNoteMailService {
             .withTemplate("sick_note_cancel_to_colleagues", modelColleaguesSupplier)
             .build();
         mailService.send(mailToRelevantColleagues);
+    }
+
+    @Async
+    void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(SickNote createdSickNote, String comment) {
+
+        final List<Person> recipientsWithoutApplier =
+            mailRecipientService.getRecipientsOfInterestForSickNotes(createdSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
+                .filter(recipient -> !recipient.equals(createdSickNote.getApplier())).toList();
+
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+            .withRecipient(recipientsWithoutApplier)
+            .withSubject("subject.sicknote.created_by_management.to_management", createdSickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_created_by_management_to_management", locale -> Map.of("sickNote", createdSickNote, "comment", comment))
+            .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
     }
 }

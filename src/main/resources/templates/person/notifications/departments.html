@@ -162,6 +162,9 @@
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
               ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCreatedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteCreatedByManagementForManagement.active},name='sickNoteCreatedByManagementForManagement.active',label='person.notifications.section.sicknote.created.management.label',info='person.notifications.section.sicknote.created.management.info')}"
+              ></li>
             </ul>
           </section>
           <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">

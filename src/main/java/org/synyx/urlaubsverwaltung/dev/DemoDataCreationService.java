@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
@@ -68,7 +69,8 @@ public class DemoDataCreationService {
         NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION,
         NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED,
         NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED,
-        NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER
+        NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER,
+        NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT
     );
     private static final List<MailNotification> NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT = Stream.concat(PERSON_NOTIFICATIONS.stream(), MANAGEMENT_NOTIFICATIONS.stream()).collect(toList());
 

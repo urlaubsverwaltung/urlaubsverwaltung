@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 
 final class PersonNotificationsMapper {
@@ -95,6 +96,7 @@ final class PersonNotificationsMapper {
             NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT
         );
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedEditedCancelledByManagement(), notificationEmailSickNoteByManagement);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT);
 
         return mailNotifications;
     }
@@ -139,6 +141,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED, personNotificationsDto::setOvertimeAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteCreatedByManagementForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 
