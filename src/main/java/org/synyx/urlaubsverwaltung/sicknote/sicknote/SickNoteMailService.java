@@ -185,7 +185,7 @@ class SickNoteMailService {
     void sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(SickNote createdSickNote, String comment) {
 
         final List<Person> recipientsWithoutApplier =
-            mailRecipientService.getRecipientsOfInterestForSickNotes(createdSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
+            mailRecipientService.getRecipientsOfInterest(createdSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
                 .filter(recipient -> !recipient.equals(createdSickNote.getApplier())).toList();
 
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()

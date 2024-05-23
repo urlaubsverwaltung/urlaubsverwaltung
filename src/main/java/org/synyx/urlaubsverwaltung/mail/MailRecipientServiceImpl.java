@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -59,56 +58,19 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
             officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, BOSS))) {
+        if (mailNotification.isValidWith(List.of(USER, BOSS, SICK_NOTE_ADD))) {
             officeAndBosses.addAll(getBossWith(mailNotification));
         }
-
         final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
-            recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest));
+        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD))) {
+            recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
-            recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest));
-        }
-
-        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
-            .distinct()
-            .filter(recipient -> recipient.getNotifications().contains(mailNotification))
-            .collect(toList());
-    }
-
-    @Override
-    public List<Person> getRecipientsOfInterestForSickNotes(Person personOfInterest, MailNotification mailNotification) {
-
-        final List<Person> officeAndBosses = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
-            officeAndBosses.addAll(getOfficeWith(mailNotification));
+        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD))) {
+            recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotification));
         }
 
-        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_ADD))) {
-            final List<Person> bossesWithSickNoteEdit = getBossWith(mailNotification).stream()
-                .filter(person -> person.hasRole(SICK_NOTE_ADD))
-                .toList();
-            officeAndBosses.addAll(bossesWithSickNoteEdit);
-        }
-
-        final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_ADD))) {
-            final List<Person> responsibleDepartmentHeads = responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest).stream()
-                .filter(departmentHead -> departmentHead.hasRole(SICK_NOTE_ADD))
-                .toList();
-            recipientsOfInterestForDepartment.addAll(responsibleDepartmentHeads);
-        }
-        if (mailNotification.isValidWith(List.of(USER, SICK_NOTE_ADD))) {
-            final List<Person> responsibleSecondStageAuthorities = responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest).stream()
-                .filter(secondStageAuthority -> secondStageAuthority.hasRole(SICK_NOTE_ADD))
-                .toList();
-            recipientsOfInterestForDepartment.addAll(responsibleSecondStageAuthorities);
-        }
-
-        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
         return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
             .distinct()
             .filter(recipient -> recipient.getNotifications().contains(mailNotification))
@@ -122,7 +84,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             return personService.getActivePersons().stream()
                 .filter(person -> person.getNotifications().contains(mailNotification))
                 .filter(not(isEqual(personOfInterest)))
-                .collect(toList());
+                .toList();
         }
 
         return departmentService.getAssignedDepartmentsOfMember(personOfInterest).stream()
@@ -133,7 +95,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
                 .filter(person -> !department.getSecondStageAuthorities().contains(person)))
             .filter(not(isEqual(personOfInterest)))
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
@@ -159,15 +121,31 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
     }
 
-    private List<Person> getBossWith(MailNotification concerningMailNotification) {
-        return personService.getActivePersonsByRole(BOSS).stream()
-            .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
-            .toList();
-    }
-
     private List<Person> getOfficeWith(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(OFFICE).stream()
             .filter(office -> office.getNotifications().contains(concerningMailNotification))
+            .filter(office -> concerningMailNotification.isValidWith(office.getPermissions()))
+            .toList();
+    }
+
+    private List<Person> getBossWith(MailNotification concerningMailNotification) {
+        return personService.getActivePersonsByRole(BOSS).stream()
+            .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
+            .filter(boss -> concerningMailNotification.isValidWith(boss.getPermissions()))
+            .toList();
+    }
+
+    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification concerningMailNotification) {
+        return responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest).stream()
+            .filter(departmentHead -> departmentHead.getNotifications().contains(concerningMailNotification))
+            .filter(departmentHead -> concerningMailNotification.isValidWith(departmentHead.getPermissions()))
+            .toList();
+    }
+
+    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest, MailNotification concerningMailNotification) {
+        return responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest).stream()
+            .filter(departmentHead -> departmentHead.getNotifications().contains(concerningMailNotification))
+            .filter(departmentHead -> concerningMailNotification.isValidWith(departmentHead.getPermissions()))
             .toList();
     }
 
