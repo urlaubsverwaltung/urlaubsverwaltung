@@ -21,6 +21,7 @@ import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -58,16 +59,16 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
             officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, BOSS, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
             officeAndBosses.addAll(getBossWith(mailNotification));
         }
         final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotification));
         }
 

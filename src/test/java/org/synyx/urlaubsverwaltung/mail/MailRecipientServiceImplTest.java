@@ -27,8 +27,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -302,6 +304,68 @@ class MailRecipientServiceImplTest {
 
         sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         verify(personService, never()).getActivePersonsByRole(role);
+    }
+
+    @Test
+    void getRecipientsOfInterestWithDepartmentsAndApplicationCancellationRequestedFilteredByEnabledMailNotification() {
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        // given user
+        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
+        normalUser.setId(1L);
+        normalUser.setPermissions(List.of(USER));
+
+        // given office
+        final Person office = new Person("office", "office", "office", "office@example.org");
+        office.setId(2L);
+        office.setPermissions(List.of(USER, OFFICE));
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
+
+        // given department head with application cancellation requested permission
+        final Person departmentHeadWithApplicationCancellationRequested = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHeadWithApplicationCancellationRequested.setId(5L);
+        departmentHeadWithApplicationCancellationRequested.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED));
+        departmentHeadWithApplicationCancellationRequested.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED));
+
+        // given department head without application cancellation requested permission
+        final Person departmentHeadWithoutApplicationCancellationRequested = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHeadWithoutApplicationCancellationRequested.setId(6L);
+        departmentHeadWithoutApplicationCancellationRequested.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHeadWithoutApplicationCancellationRequested.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED));
+
+        // given second stage with application cancellation requested permission
+        final Person secondStageWithApplicationCancellationRequested = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
+        secondStageWithApplicationCancellationRequested.setId(7L);
+        secondStageWithApplicationCancellationRequested.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED));
+        secondStageWithApplicationCancellationRequested.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED));
+
+        // given second stage without application cancellation requested permission
+        final Person secondStageWithoutApplicationCancellationRequested = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
+        secondStageWithoutApplicationCancellationRequested.setId(8L);
+        secondStageWithoutApplicationCancellationRequested.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        secondStageWithoutApplicationCancellationRequested.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED));
+
+        final Person secondStageWithoutMailNotification = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
+        secondStageWithoutMailNotification.setId(9L);
+        secondStageWithoutMailNotification.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED));
+        secondStageWithoutMailNotification.setNotifications(List.of());
+
+        when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser))
+            .thenReturn(List.of(departmentHeadWithApplicationCancellationRequested, departmentHeadWithoutApplicationCancellationRequested));
+
+        when(responsiblePersonService.getResponsibleSecondStageAuthorities(normalUser))
+            .thenReturn(List.of(secondStageWithApplicationCancellationRequested, secondStageWithoutApplicationCancellationRequested, secondStageWithoutMailNotification));
+
+        final PersonId bossAllId = new PersonId(office.getId());
+        when(userNotificationSettingsService.findNotificationSettings(List.of(bossAllId)))
+            .thenReturn(Map.of(bossAllId, new UserNotificationSettings(bossAllId, false)));
+
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
+        assertThat(recipientsForAllowAndRemind)
+            .doesNotContain(departmentHeadWithoutApplicationCancellationRequested, secondStageWithoutApplicationCancellationRequested, secondStageWithoutMailNotification)
+            .containsOnly(office, departmentHeadWithApplicationCancellationRequested, secondStageWithApplicationCancellationRequested);
     }
 
     @Test
