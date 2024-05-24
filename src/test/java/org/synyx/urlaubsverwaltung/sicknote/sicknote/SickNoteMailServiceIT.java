@@ -351,7 +351,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person office1 = personService.create("office1", "Lieschen", "Müller", "office1@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
         final Person office2 = personService.create("office2", "Hans", "Meyer", "office2@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(OFFICE));
 
-        when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT))
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT))
             .thenReturn(List.of(office1, office2));
 
         final SickNoteType sickNoteType = new SickNoteType();

@@ -313,7 +313,7 @@ class SickNoteMailServiceTest {
         management2.setPermissions(List.of(USER, OFFICE));
         management2.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT));
 
-        when(mailRecipientService.getRecipientsOfInterestForSickNotes(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
 
         final SickNote sickNote = SickNote.builder()
             .id(2L)
