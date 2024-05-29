@@ -76,8 +76,7 @@ class SecurityWebConfiguration {
     @Bean
     @Order(4)
     SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
-
-        http
+        return http
             .authorizeHttpRequests(requests ->
                 requests
                     // Swagger API
@@ -102,21 +101,20 @@ class SecurityWebConfiguration {
                     .requestMatchers("/web/sicknote/**").hasAuthority(USER.name())
                     .requestMatchers("/web/settings/**").hasAuthority(OFFICE.name())
                     .anyRequest().authenticated()
-            );
-
-        http.oauth2Login(
-            loginCustomizer -> loginCustomizer.authorizationEndpoint(
-                endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
             )
-        );
-        http.logout(
-            logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
-        );
-
-        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
-        http.addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class);
-
-        return http.build();
+            .oauth2Login(
+                loginCustomizer -> loginCustomizer.authorizationEndpoint(
+                    endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
+                )
+            )
+            .logout(
+                logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
+            )
+            .securityContext(
+                securityContext -> securityContext.securityContextRepository(securityContextRepository)
+            )
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class)
+            .build();
     }
 
     @Bean
