@@ -74,6 +74,7 @@ class SecurityWebConfiguration {
     }
 
     @Bean
+    @Order(4)
     SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
 
         http
