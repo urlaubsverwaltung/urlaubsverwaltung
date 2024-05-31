@@ -349,14 +349,18 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             if (anonymizeMorning) {
                 return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
             } else {
-                return builder.sickNoteMorning();
+                // sickNote has only one of two statuses: whether WAITING or ACTIVE
+                final boolean hasStatusWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
+                return hasStatusWaiting ? builder.waitingSickNoteMorning() : builder.activeSickNoteMorning();
             }
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonGenericAbsenceType)) {
             if (anonymizeNoon) {
                 return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
             } else {
-                return builder.sickNoteNoon();
+                // sickNote has only one of two statuses: whether WAITING or ACTIVE
+                final boolean hasStatusWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
+                return hasStatusWaiting ? builder.waitingSickNoteNoon() : builder.activeSickNoteNoon();
             }
         }
 
@@ -453,7 +457,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             if (anonymizeAbsenceType) {
                 return builder.colorFull(ANONYMIZED_ABSENCE_COLOR).absenceFull();
             } else {
-                return builder.sickNoteFull();
+                // sickNote has only one of two statuses: whether WAITING or ACTIVE
+                final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
+                if (morningWaiting) {
+                    return builder.waitingSickNoteFull();
+                }
+                return builder.activeSickNoteFull();
             }
         }
 

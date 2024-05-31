@@ -4,9 +4,13 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 public class AbsenceOverviewDayType {
 
-    private final boolean sickNoteMorning;
-    private final boolean sickNoteNoon;
-    private final boolean sickNoteFull;
+    private final boolean waitingSickNoteMorning;
+    private final boolean waitingSickNoteNoon;
+    private final boolean waitingSickNoteFull;
+
+    private final boolean activeSickNoteMorning;
+    private final boolean activeSickNoteNoon;
+    private final boolean activeSickNoteFull;
 
     private final boolean absenceMorning;
     private final boolean absenceNoon;
@@ -32,16 +36,20 @@ public class AbsenceOverviewDayType {
 
     @SuppressWarnings("java:S107")
     // Methods should not have too many parameters -> builder below must be used for construction
-    private AbsenceOverviewDayType(boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
+    private AbsenceOverviewDayType(boolean waitingSickNoteMorning, boolean waitingSickNoteNoon, boolean waitingSickNoteFull,
+                                   boolean activeSickNoteMorning, boolean activeSickNoteNoon, boolean activeSickNoteFull, boolean absenceMorning,
                                    boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
                                    boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,
                                    boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
                                    boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
                                    boolean publicHolidayMorning, boolean publicHolidayNoon,
                                    boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
-        this.sickNoteMorning = sickNoteMorning;
-        this.sickNoteNoon = sickNoteNoon;
-        this.sickNoteFull = sickNoteFull;
+        this.waitingSickNoteMorning = waitingSickNoteMorning;
+        this.waitingSickNoteNoon = waitingSickNoteNoon;
+        this.waitingSickNoteFull = waitingSickNoteFull;
+        this.activeSickNoteMorning = activeSickNoteMorning;
+        this.activeSickNoteNoon = activeSickNoteNoon;
+        this.activeSickNoteFull = activeSickNoteFull;
         this.absenceMorning = absenceMorning;
         this.absenceNoon = absenceNoon;
         this.absenceFull = absenceFull;
@@ -64,16 +72,28 @@ public class AbsenceOverviewDayType {
         return new Builder();
     }
 
-    public boolean isSickNoteMorning() {
-        return sickNoteMorning;
+    public boolean isWaitingSickNoteMorning() {
+        return waitingSickNoteMorning;
     }
 
-    public boolean isSickNoteNoon() {
-        return sickNoteNoon;
+    public boolean isWaitingSickNoteNoon() {
+        return waitingSickNoteNoon;
     }
 
-    public boolean isSickNoteFull() {
-        return sickNoteFull;
+    public boolean isWaitingSickNoteFull() {
+        return waitingSickNoteFull;
+    }
+
+    public boolean isActiveSickNoteMorning() {
+        return activeSickNoteMorning;
+    }
+
+    public boolean isActiveSickNoteNoon() {
+        return activeSickNoteNoon;
+    }
+
+    public boolean isActiveSickNoteFull() {
+        return activeSickNoteFull;
     }
 
     public boolean isAbsenceMorning() {
@@ -142,9 +162,13 @@ public class AbsenceOverviewDayType {
 
     public static class Builder {
 
-        private boolean sickNoteMorning = false;
-        private boolean sickNoteNoon = false;
-        private boolean sickNoteFull = false;
+        private boolean waitingSickNoteMorning = false;
+        private boolean waitingSickNoteNoon = false;
+        private boolean waitingSickNoteFull = false;
+
+        private boolean activeSickNoteMorning = false;
+        private boolean activeSickNoteNoon = false;
+        private boolean activeSickNoteFull = false;
 
         private boolean absenceMorning = false;
         private boolean absenceNoon = false;
@@ -170,18 +194,33 @@ public class AbsenceOverviewDayType {
         private VacationTypeColor colorNoon;
         private VacationTypeColor colorFull;
 
-        public Builder sickNoteMorning() {
-            this.sickNoteMorning = true;
+        public Builder waitingSickNoteMorning() {
+            this.waitingSickNoteMorning = true;
             return this;
         }
 
-        public Builder sickNoteNoon() {
-            this.sickNoteNoon = true;
+        public Builder waitingSickNoteNoon() {
+            this.waitingSickNoteNoon = true;
             return this;
         }
 
-        public Builder sickNoteFull() {
-            this.sickNoteFull = true;
+        public Builder waitingSickNoteFull() {
+            this.waitingSickNoteFull = true;
+            return this;
+        }
+
+        public Builder activeSickNoteMorning() {
+            this.activeSickNoteMorning = true;
+            return this;
+        }
+
+        public Builder activeSickNoteNoon() {
+            this.activeSickNoteNoon = true;
+            return this;
+        }
+
+        public Builder activeSickNoteFull() {
+            this.activeSickNoteFull = true;
             return this;
         }
 
@@ -277,9 +316,12 @@ public class AbsenceOverviewDayType {
 
         public AbsenceOverviewDayType build() {
             return new AbsenceOverviewDayType(
-                sickNoteMorning,
-                sickNoteNoon,
-                sickNoteFull,
+                waitingSickNoteMorning,
+                waitingSickNoteNoon,
+                waitingSickNoteFull,
+                activeSickNoteMorning,
+                activeSickNoteNoon,
+                activeSickNoteFull,
                 absenceMorning,
                 absenceNoon,
                 absenceFull,

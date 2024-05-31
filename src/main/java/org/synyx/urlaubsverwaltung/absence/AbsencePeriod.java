@@ -30,7 +30,6 @@ public class AbsencePeriod {
 
     public enum AbsenceStatus {
         // vacation
-        WAITING,
         TEMPORARY_ALLOWED,
         ALLOWED,
         ALLOWED_CANCELLATION_REQUESTED,
@@ -40,6 +39,7 @@ public class AbsencePeriod {
         ACTIVE,
         CONVERTED_TO_VACATION,
         // sick notes and vacation
+        WAITING,
         CANCELLED
     }
 
