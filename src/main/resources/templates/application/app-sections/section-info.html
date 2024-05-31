@@ -26,13 +26,15 @@
             </th:block>
             <th:block th:ref="application-details-box-body">
               <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
-                <th:block th:text="${app.person.niceName}" />
+                <th:block th:text="${app.person.niceName}"> Klaus Müller </th:block>
                 <th:block
                   th:text="${(app.status.name == 'ALLOWED' && app.editedDate == null) ? #messages.msg('application.applier.appliedDirectly') : #messages.msg('application.applier.applied')}"
-                />
+                >
+                  beantragt
+                </th:block>
               </span>
               <span class="tw-flex tw-justify-between tw-gap-4 tw-items-center tw-my-1 tw-text-lg tw-font-medium">
-                <th:block th:text="${app.vacationType.label}" />
+                <th:block th:text="${app.vacationType.label}"> Erholungsurlaub </th:block>
                 <span
                   class="absence-type_color-box print:tw-hidden tw-mr-5"
                   th:classappend="|

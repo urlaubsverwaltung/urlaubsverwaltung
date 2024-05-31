@@ -125,16 +125,31 @@
             </th:block>
             <th:block th:ref="sicknote-box-body">
               <span
-                th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}"
                 class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                 data-test-id="sicknote-person"
               >
+                <th:block th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}">
+                  Klaus Müller hat eine
+                </th:block>
               </span>
-              <span
-                th:text="#{__${sickNote.sickNoteType.messageKey}__}"
-                class="tw-my-1 tw-text-lg tw-font-medium"
-                data-test-id="sicknote-type"
-              >
+              <span class="tw-flex tw-justify-between tw-gap-4 tw-items-center tw-my-1 tw-text-lg tw-font-medium">
+                <span th:text="#{__${sickNote.sickNoteType.messageKey}__}" data-test-id="sicknote-type">
+                  Kind-Krankmeldung
+                </span>
+                <span
+                  class="absence-type_color-box print:tw-hidden tw-mr-5"
+                  th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
+                  th:classappend="|
+                    ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
+                    ${sickNote.status.name == 'ACTIVE' ? 'absence-type_color-box-allowed' : ''}
+                    ${sickNote.status.name == 'CONVERTED_TO_VACATION' ? 'absence-type_color-box-cancelled' : ''}
+                    ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                    |"
+                  th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
+                  th:title="${sickNoteStatusNameI18n}"
+                >
+                  &nbsp;
+                </span>
               </span>
               <span
                 class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
