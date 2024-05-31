@@ -48,7 +48,7 @@
     --uv-cal-default-color: 10, 10, 10;
     --uv-cal-weekend-bg: 181, 208, 223;
     --uv-cal-weekend-color: 10, 10, 10;
-    --uv-cal-sick-note-bg: 239, 68, 68;
+    --uv-cal-sick-note-bg: 239, 68, 68; /* red.500 */
     --uv-cal-public-holiday-bg: 203, 213, 225; /* slate.300 */
     --uv-cal-public-holiday-color: 10, 10, 10;
   }

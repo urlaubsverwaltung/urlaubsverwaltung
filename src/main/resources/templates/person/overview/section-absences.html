@@ -150,7 +150,7 @@
               th:class="${app.status.name == 'CANCELLED' || app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'inactive' : 'active'}"
               th:onclick="|navigate('/web/application/${app.id}');|"
             >
-              <td class="visible-print">
+              <td class="tw-hidden print:tw-table-cell">
                 <th:block th:text="${#messages.msg(app.status)}"></th:block>
               </td>
               <td class="tw-py-6 absence-type_color-box-parent">

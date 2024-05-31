@@ -115,9 +115,28 @@
         <tbody>
           <tr
             th:each="sickNote,loopStatus : ${sickNotes}"
-            th:class="${sickNote.active ? 'active' : 'inactive'}"
+            th:class="${(sickNote.status.name == 'ACTIVE' || sickNote.status.name == 'SUBMITTED') ? 'active' : 'inactive'}"
             th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
+            th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
           >
+            <td class="tw-hidden print:tw-table-cell">
+              <th:block th:text="${sickNoteStatusNameI18n}"></th:block>
+            </td>
+            <td class="tw-py-6 absence-type_color-box-parent">
+              <div
+                class="absence-type_color-box"
+                th:classappend="|
+                  ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
+                  ${sickNote.status.name == 'ACTIVE' ? 'absence-type_color-box-allowed' : ''}
+                  ${sickNote.status.name == 'CONVERTED_TO_VACATION' ? 'absence-type_color-box-cancelled' : ''}
+                  ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  |"
+                th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
+                th:title="${sickNoteStatusNameI18n}"
+              >
+                &nbsp;
+              </div>
+            </td>
             <td class="is-centered print:tw-hidden state ${sickNote.status}">
               <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
                 <svg th:replace="~{icon/child::svg(className='tw-w-6 tw-h-6')}"></svg>
