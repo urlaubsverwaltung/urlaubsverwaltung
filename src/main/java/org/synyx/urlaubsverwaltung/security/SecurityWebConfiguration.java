@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,6 +17,7 @@ import org.springframework.security.web.context.RequestAttributeSecurityContextR
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -48,9 +50,33 @@ class SecurityWebConfiguration {
     }
 
     @Bean
-    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
+    @Order(3)
+    SecurityFilterChain calendarSecurityFilterChain(final HttpSecurity http) throws Exception {
+        return http
+            .securityMatchers(configurer ->
+                configurer
+                    .requestMatchers(GET, "/web/company/persons/*/calendar")
+                    .requestMatchers(GET, "/web/departments/*/persons/*/calendar")
+                    .requestMatchers(GET, "/web/persons/*/calendar")
+            )
+            .authorizeHttpRequests(requests ->
+                requests
+                    .requestMatchers(GET, "/web/company/persons/*/calendar").permitAll()
+                    .requestMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
+                    .requestMatchers(GET, "/web/persons/*/calendar").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                sessionManagement -> sessionManagement.sessionCreationPolicy(NEVER)
+            )
+            .build();
+    }
 
-        http
+    @Bean
+    @Order(4)
+    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
+        return http
             .authorizeHttpRequests(requests ->
                 requests
                     // Swagger API
@@ -65,9 +91,6 @@ class SecurityWebConfiguration {
                     .requestMatchers("/assets/**").permitAll()
                     // Web
                     .requestMatchers("/login*").permitAll()
-                    .requestMatchers(GET, "/web/company/persons/*/calendar").permitAll()
-                    .requestMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
-                    .requestMatchers(GET, "/web/persons/*/calendar").permitAll()
                     .requestMatchers("/web/absences/**").hasAuthority(USER.name())
                     .requestMatchers("/web/application/**").hasAuthority(USER.name())
                     .requestMatchers("/web/department/**").hasAnyAuthority(BOSS.name(), OFFICE.name())
@@ -78,21 +101,20 @@ class SecurityWebConfiguration {
                     .requestMatchers("/web/sicknote/**").hasAuthority(USER.name())
                     .requestMatchers("/web/settings/**").hasAuthority(OFFICE.name())
                     .anyRequest().authenticated()
-            );
-
-        http.oauth2Login(
-            loginCustomizer -> loginCustomizer.authorizationEndpoint(
-                endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
             )
-        );
-        http.logout(
-            logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
-        );
-
-        http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
-        http.addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class);
-
-        return http.build();
+            .oauth2Login(
+                loginCustomizer -> loginCustomizer.authorizationEndpoint(
+                    endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
+                )
+            )
+            .logout(
+                logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
+            )
+            .securityContext(
+                securityContext -> securityContext.securityContextRepository(securityContextRepository)
+            )
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class)
+            .build();
     }
 
     @Bean
