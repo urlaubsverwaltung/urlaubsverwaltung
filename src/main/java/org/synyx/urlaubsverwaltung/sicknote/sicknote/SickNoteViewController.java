@@ -139,7 +139,7 @@ class SickNoteViewController implements HasLaunchpad {
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
-            return "sicknote/sick_note";
+            return "sicknote/sick_note_detail";
         }
 
         throw new AccessDeniedException(format(

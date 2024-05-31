@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.List.of;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.empty;
@@ -746,7 +745,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("comment", instanceOf(SickNoteCommentFormDto.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
             .andExpect(model().attribute("departmentsOfPerson", List.of(department)))
-            .andExpect(view().name("sicknote/sick_note"));
+            .andExpect(view().name("sicknote/sick_note_detail"));
     }
 
     @ParameterizedTest
@@ -758,7 +757,7 @@ class SickNoteViewControllerTest {
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canEditSickNote", true));
     }
 
@@ -774,7 +773,7 @@ class SickNoteViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canEditSickNote", true));
     }
 
@@ -807,7 +806,7 @@ class SickNoteViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canEditSickNote", true));
     }
 
@@ -836,7 +835,7 @@ class SickNoteViewControllerTest {
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canConvertSickNote", true));
     }
 
@@ -848,7 +847,7 @@ class SickNoteViewControllerTest {
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canDeleteSickNote", true));
     }
 
@@ -860,7 +859,7 @@ class SickNoteViewControllerTest {
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(view().name("sicknote/sick_note_detail"))
             .andExpect(model().attribute("canCommentSickNote", true));
     }
 
