@@ -12,9 +12,12 @@ import {
   isPersonalHolidayWaitingFull,
   isPersonalHolidayWaitingMorning,
   isPersonalHolidayWaitingNoon,
-  isSickNoteFull,
-  isSickNoteMorning,
-  isSickNoteNoon,
+  isSickNoteActiveFull,
+  isSickNoteActiveMorning,
+  isSickNoteActiveNoon,
+  isSickNoteWaitingFull,
+  isSickNoteWaitingMorning,
+  isSickNoteWaitingNoon,
 } from "../../js/absence";
 import { isToday, isWeekend } from "date-fns";
 
@@ -42,8 +45,14 @@ const css = {
   absenceNoonOutlineSolidHalf: "absence-noon--outline-solid-half",
   absenceNoonOutlineSolidSecondHalf: "absence-noon--outline-solid-second-half",
   sickNoteFull: "datepicker-day-sick-note-full",
+  sickNoteFullSolid: "absence-full--solid",
+  sickNoteFullOutline: "absence-full--outline",
   sickNoteMorning: "datepicker-day-sick-note-morning",
+  sickNoteMorningSolid: "absence-morning--solid",
+  sickNoteMorningOutline: "absence-morning--outline",
   sickNoteNoon: "datepicker-day-sick-note-noon",
+  sickNoteNoonSolid: "absence-noon--solid",
+  sickNoteNoonOutline: "absence-noon--outline",
 };
 
 const isPast = () => false;
@@ -96,9 +105,12 @@ function getCssClassesForDate(date, absences, publicHolidays) {
     isPersonalHolidayApprovedNoon(absences) && [css.absenceNoon, css.absenceNoonSolid],
     isPersonalHolidayCancellationRequestedNoon(absences) && [css.absenceNoon, css.absenceNoonOutlineSolidSecondHalf],
 
-    isSickNoteFull(absences) && css.sickNoteFull,
-    isSickNoteMorning(absences) && css.sickNoteMorning,
-    isSickNoteNoon(absences) && css.sickNoteNoon,
+    isSickNoteWaitingFull(absences) && [css.sickNoteFull, css.sickNoteFullOutline],
+    isSickNoteActiveFull(absences) && [css.sickNoteFull, css.sickNoteFullSolid],
+    isSickNoteWaitingMorning(absences) && [css.sickNoteMorning, css.sickNoteMorningOutline],
+    isSickNoteActiveMorning(absences) && [css.sickNoteMorning, css.sickNoteMorningSolid],
+    isSickNoteWaitingNoon(absences) && [css.sickNoteNoon, css.sickNoteNoonOutline],
+    isSickNoteActiveNoon(absences) && [css.sickNoteNoon, css.sickNoteNoonSolid],
   ]
     .flat()
     .filter(Boolean);

@@ -259,7 +259,6 @@
   background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
 }
 
-.datepicker-day.datepicker-day-sick-note-full::after,
 .datepicker-day.absence-full--solid::after {
   background: var(--absence-bar-color);
 }
@@ -289,7 +288,6 @@
   background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, var(--absence-bar-color-morning) 50%);
 }
 
-.datepicker-day.datepicker-day-sick-note-morning::before,
 .datepicker-day.absence-morning--solid::before {
   background: var(--absence-bar-color-morning) !important;
 }
@@ -318,7 +316,6 @@
   background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, var(--absence-bar-color-noon) 50%);
 }
 
-.datepicker-day.datepicker-day-sick-note-noon::after,
 .datepicker-day.absence-noon--solid::after {
   background: var(--absence-bar-color-noon);
 }
@@ -371,13 +368,13 @@ td.datepicker-day {
 }
 
 .datepicker-day-sick-note-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color-morning: var(--sick-note-color);
 }
 .datepicker-day-sick-note-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color-noon: var(--sick-note-color);
 }
 .datepicker-day-sick-note-full {
-  --absence-bar-color: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color: var(--sick-note-color);
 }
 
 .datepicker-day-weekend {

@@ -1,21 +1,27 @@
 import { findWhere } from "underscore";
 import {
-  noWorkdayCriteria,
-  sickNoteFullCriteria,
-  sickNoteMorningCriteria,
-  sickNoteNoonCriteria,
-  holidayFullWaitingCriteria,
-  holidayMorningWaitingCriteria,
-  holidayNoonWaitingCriteria,
-  holidayFullTemporaryCriteria,
-  holidayMorningTemporaryCriteria,
-  holidayNoonTemporaryCriteria,
   holidayFullApprovedCriteria,
-  holidayMorningApprovedCriteria,
-  holidayNoonApprovedCriteria,
   holidayFullCancellationRequestedCriteria,
+  holidayFullTemporaryCriteria,
+  holidayFullWaitingCriteria,
+  holidayMorningApprovedCriteria,
   holidayMorningCancellationRequestedCriteria,
+  holidayMorningTemporaryCriteria,
+  holidayMorningWaitingCriteria,
+  holidayNoonApprovedCriteria,
   holidayNoonCancellationRequestedCriteria,
+  holidayNoonTemporaryCriteria,
+  holidayNoonWaitingCriteria,
+  noWorkdayCriteria,
+  sickNoteFullActiveCriteria,
+  sickNoteFullCriteria,
+  sickNoteFullWaitingCriteria,
+  sickNoteMorningActiveCriteria,
+  sickNoteMorningCriteria,
+  sickNoteMorningWaitingCriteria,
+  sickNoteNoonActiveCriteria,
+  sickNoteNoonCriteria,
+  sickNoteNoonWaitingCriteria,
 } from "./absence-criteria";
 
 export function isNoWorkday(absences) {
@@ -26,12 +32,36 @@ export function isSickNoteFull(absences) {
   return Boolean(findWhere(absences, sickNoteFullCriteria));
 }
 
+export function isSickNoteWaitingFull(absences) {
+  return Boolean(findWhere(absences, sickNoteFullWaitingCriteria));
+}
+
+export function isSickNoteActiveFull(absences) {
+  return Boolean(findWhere(absences, sickNoteFullActiveCriteria));
+}
+
 export function isSickNoteMorning(absences) {
   return Boolean(findWhere(absences, sickNoteMorningCriteria));
 }
 
+export function isSickNoteWaitingMorning(absences) {
+  return Boolean(findWhere(absences, sickNoteMorningWaitingCriteria));
+}
+
+export function isSickNoteActiveMorning(absences) {
+  return Boolean(findWhere(absences, sickNoteMorningActiveCriteria));
+}
+
 export function isSickNoteNoon(absences) {
   return Boolean(findWhere(absences, sickNoteNoonCriteria));
+}
+
+export function isSickNoteWaitingNoon(absences) {
+  return Boolean(findWhere(absences, sickNoteNoonWaitingCriteria));
+}
+
+export function isSickNoteActiveNoon(absences) {
+  return Boolean(findWhere(absences, sickNoteNoonActiveCriteria));
 }
 
 export function isPersonalHolidayWaitingFull(absences) {

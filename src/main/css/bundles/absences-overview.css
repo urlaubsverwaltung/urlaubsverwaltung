@@ -202,13 +202,13 @@ svg.no-workday-icon {
 }
 
 .sick-note-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color-morning: var(--sick-note-color);
 }
 .sick-note-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color-noon: var(--sick-note-color);
 }
 .sick-note-full {
-  --absence-bar-color: theme("backgroundColor.calendar.sick-note");
+  --absence-bar-color: var(--sick-note-color);
 }
 
 .public-holiday-morning {
