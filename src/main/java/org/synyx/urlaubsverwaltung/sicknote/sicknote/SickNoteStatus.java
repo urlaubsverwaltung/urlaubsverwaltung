@@ -28,7 +28,7 @@ public enum SickNoteStatus {
     CANCELLED;
 
     /**
-     * Returns all active statuses of aa sick note.
+     * Returns all active statuses of a sick note.
      * Hint: Sick notes with one of these statuses will be used for calculations and shown as active on the ui.
      *
      * @return a list of all active statuses

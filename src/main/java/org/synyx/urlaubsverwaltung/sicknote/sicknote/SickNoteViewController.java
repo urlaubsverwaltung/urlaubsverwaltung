@@ -228,7 +228,7 @@ class SickNoteViewController implements HasLaunchpad {
     public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
-        if (!sickNote.isSubmittedOrActive()) {
+        if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
@@ -338,7 +338,7 @@ class SickNoteViewController implements HasLaunchpad {
             throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
-        if (!sickNote.isSubmittedOrActive()) {
+        if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
 

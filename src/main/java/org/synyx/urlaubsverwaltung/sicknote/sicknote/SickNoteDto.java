@@ -25,7 +25,7 @@ public class SickNoteDto {
         this.to = Objects.requireNonNull(sickNote.getEndDate()).format(formatter);
         this.dayLength = sickNote.getDayLength().getDuration();
         this.person = PersonMapper.mapToDto(sickNote.getPerson());
-        this.status = sickNote.isSubmittedOrActive() ? "ACTIVE" : "INACTIVE";
+        this.status = sickNote.isActive() ? "ACTIVE" : "INACTIVE";
 
         SickNoteType sickNoteType = sickNote.getSickNoteType();
 

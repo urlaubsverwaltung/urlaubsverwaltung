@@ -28,7 +28,7 @@
             <h2 th:text="#{sicknote.title}">Krankmeldung</h2>
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
-            <th:block th:if="${sickNote.submittedOrActive}">
+            <th:block th:if="${sickNote.active}">
               <div class="tw-flex tw-flex-row">
                 <th:block th:if="${canAcceptSickNote && !sickNote.active}">
                   <form
@@ -161,7 +161,7 @@
               <td th:text="#{absence.period.duration}"></td>
               <td>
                 <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
-                <span th:if="${sickNote.submittedOrActive == false}" th:text="#{sicknote.data.inactive}"></span>
+                <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
               </td>
             </tr>
             <tr>
