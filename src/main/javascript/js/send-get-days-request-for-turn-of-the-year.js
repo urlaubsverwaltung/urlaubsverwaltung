@@ -1,5 +1,5 @@
 // disabling date-fns#format is ok since we're formatting dates for api requests
-// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
+// eslint-disable-next-line no-restricted-imports
 import { isAfter, getYear, format, endOfYear, startOfYear } from "date-fns";
 import formatNumber from "./format-number";
 import { getJSON } from "./fetch";
