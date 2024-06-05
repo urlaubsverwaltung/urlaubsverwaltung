@@ -1,4 +1,3 @@
-/* eslint-disable @urlaubsverwaltung/no-global-fetch */
 import { defaults } from "underscore";
 
 export async function getJSON(url) {
@@ -14,6 +13,7 @@ export async function getJSON(url) {
 }
 
 export function post(url, options = {}) {
+  // eslint-disable-next-line no-restricted-globals
   return fetch(
     url,
     defaults(options, {
@@ -27,6 +27,7 @@ export function post(url, options = {}) {
 }
 
 export function doGet(url, options) {
+  // eslint-disable-next-line no-restricted-globals
   return fetch(
     url,
     defaults(options, {

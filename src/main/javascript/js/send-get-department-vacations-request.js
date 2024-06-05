@@ -1,7 +1,6 @@
-// disabling date-fns#format is ok since we're formatting dates for api requests
-// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
+// disabling no-restricted-imports of date-fns#format is ok since we're formatting dates for api requests
+// eslint-disable-next-line no-restricted-imports
 import { format, isAfter } from "date-fns";
-// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import { parseISO } from "date-fns/parseISO";
 import { getJSON } from "../js/fetch";
 

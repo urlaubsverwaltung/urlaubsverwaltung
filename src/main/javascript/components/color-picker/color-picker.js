@@ -81,7 +81,6 @@ class ColorPicker extends HTMLDivElement {
     // prevent native checkbox selection.
     // otherwise the browser jumps to the checkbox element (which is positioned absolutely on top of the screen)
     // checkbox state is updated in #render
-    // eslint-disable-next-line unicorn/consistent-function-scoping
     const handleDialogToggleButtonClick = (event) => {
       event.preventDefault();
       const { left } = this.#dialogToggleButton.getBoundingClientRect();
