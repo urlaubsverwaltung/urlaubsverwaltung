@@ -617,6 +617,18 @@
                     <a
                       class="button tw-flex-1"
                       href="#"
+                      th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='cancel', shortcut=true)}"
+                    >
+                      <svg
+                        th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"
+                      ></svg>
+                      <span class="tw-sr-only xs:tw-not-sr-only">
+                        <th:block th:text="#{action.cancelSicknote}" />
+                      </span>
+                    </a>
+                    <a
+                      class="button tw-flex-1"
+                      href="#"
                       th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='allow', shortcut=true)}"
                     >
                       <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
