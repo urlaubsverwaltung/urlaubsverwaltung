@@ -8,15 +8,16 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 public class SickNoteDto {
-    private String id;
-    private LocalDate startDate;
-    private DayOfWeek weekDayOfStartDate;
-    private LocalDate endDate;
-    private DayLength dayLength;
-    private BigDecimal workDays;
-    private SickNotePersonDto person;
-    private String type;
-    private String status;
+
+    private final String id;
+    private final LocalDate startDate;
+    private final DayOfWeek weekDayOfStartDate;
+    private final LocalDate endDate;
+    private final DayLength dayLength;
+    private final BigDecimal workDays;
+    private final SickNotePersonDto person;
+    private final String type;
+    private final String status;
 
     private SickNoteDto(String id, LocalDate startDate, DayOfWeek weekDayOfStartDate, LocalDate endDate,
                        DayLength dayLength, BigDecimal workDays, SickNotePersonDto person, String type,
