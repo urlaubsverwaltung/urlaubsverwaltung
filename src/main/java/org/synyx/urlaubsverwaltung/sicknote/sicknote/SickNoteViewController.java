@@ -288,7 +288,8 @@ class SickNoteViewController implements HasLaunchpad {
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/accept")
     public String acceptSickNote(@PathVariable("id") Long sickNoteId,
-                                 @RequestParam(value = "redirect", required = false) String redirectUrl
+                                 @RequestParam(value = "redirect", required = false) String redirectUrl,
+                                 RedirectAttributes redirectAttributes
     ) throws UnknownSickNoteException {
 
         final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
@@ -297,7 +298,11 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser);
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser);
+
+        if (SickNoteStatus.ACTIVE.equals(acceptedSickNote.getStatus())) {
+            redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
+        }
 
         if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
             return "redirect:" + redirectUrl;
@@ -376,7 +381,9 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
     @PostMapping("/sicknote/{id}/cancel")
-    public String cancelSickNote(@PathVariable("id") Long id) throws UnknownSickNoteException {
+    public String cancelSickNote(@PathVariable("id") Long id,
+                                 @RequestParam(value = "redirect", required = false) String redirectUrl,
+                                 RedirectAttributes redirectAttributes) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
@@ -388,6 +395,15 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser);
+
+        if (SickNoteStatus.CANCELLED.equals(cancelledSickNote.getStatus())) {
+            redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);
+        }
+
+        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
+            return "redirect:" + redirectUrl;
+        }
+
         return "redirect:/web/sicknote/" + cancelledSickNote.getId();
     }
 

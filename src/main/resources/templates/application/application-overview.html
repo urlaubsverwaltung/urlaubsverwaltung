@@ -15,13 +15,15 @@
 
       <div
         class="feedback"
-        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess) or #bools.isTrue(cancelSuccess)}"
+        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess) or #bools.isTrue(cancelSuccess) or #bools.isTrue(acceptSickNoteSuccess) or #bools.isTrue(cancelSickNoteSuccess)}"
       >
         <div class="alert alert-success">
           <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
           <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
           <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
           <th:block th:if="${cancelSuccess}" th:text="#{application.action.cancel.success}"></th:block>
+          <th:block th:if="${acceptSickNoteSuccess}" th:text="#{sicknote.action.accept.success}"></th:block>
+          <th:block th:if="${cancelSickNoteSuccess}" th:text="#{sicknote.action.cancel.success}"></th:block>
         </div>
       </div>
 
