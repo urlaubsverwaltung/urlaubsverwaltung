@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -12,33 +13,27 @@ import static org.springframework.util.StringUtils.hasText;
 @Component
 public class SickNoteCommentFormValidator implements Validator {
 
-    private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
-    private static final String ATTRIBUTE_COMMENT = "text";
-
     private static final int MAX_CHARS = 200;
+    private static final String ATTRIBUTE_TEXT = "text";
+    private static final String ERROR_REASON = "sicknote.action.reason.error.mandatory";
+    private static final String ERROR_LENGTH = "sicknote.action.reason.error.tooManyChars";
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return SickNoteCommentFormDto.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
-        final SickNoteCommentFormDto sickNoteCommentFormDto = (SickNoteCommentFormDto) target;
-        validateComment(sickNoteCommentFormDto, errors);
-    }
-
-    public void validateComment(SickNoteCommentFormDto comment, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
+        final SickNoteCommentFormDto comment = (SickNoteCommentFormDto) target;
 
         final String text = comment.getText();
+        if (!hasText(text) && comment.isMandatory()) {
+            errors.rejectValue(ATTRIBUTE_TEXT, ERROR_REASON);
+        }
 
-        if (hasText(text)) {
-            if (text.length() > MAX_CHARS) {
-                errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_LENGTH);
-            }
-        } else {
-            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MANDATORY_FIELD);
+        if (hasText(text) && text.length() > MAX_CHARS) {
+            errors.rejectValue(ATTRIBUTE_TEXT, ERROR_LENGTH);
         }
     }
 }

@@ -71,7 +71,8 @@ public interface SickNoteInteractionService {
      *
      * @param sickNote  to be cancelled
      * @param canceller the person who cancels the sick note
+     * @param comment reason for cancelation
      * @return the cancelled sick note
      */
-    SickNote cancel(SickNote sickNote, Person canceller);
+    SickNote cancel(SickNote sickNote, Person canceller, String comment);
 }

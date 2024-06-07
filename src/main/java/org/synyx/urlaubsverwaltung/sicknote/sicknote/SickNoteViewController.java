@@ -6,8 +6,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -45,6 +47,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -112,7 +115,11 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/{id}")
-    public String sickNoteDetails(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
+    public String sickNoteDetails(@PathVariable("id") Long id,
+                                  @RequestParam(value = "action", required = false) String action,
+                                  @RequestParam(value = "shortcut", required = false) boolean shortcut,
+                                  @RequestParam(value = "redirect", required = false) String redirect,
+                                  Model model) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
         final SickNote sickNote = getSickNote(id);
@@ -138,6 +145,10 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
+
+            model.addAttribute("action", requireNonNullElse(action, ""));
+            model.addAttribute("shortcut", shortcut);
+            model.addAttribute("redirect", redirect);
 
             return "sicknote/sick_note_detail";
         }
@@ -288,6 +299,7 @@ class SickNoteViewController implements HasLaunchpad {
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/accept")
     public String acceptSickNote(@PathVariable("id") Long sickNoteId,
+                                 @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors,
                                  @RequestParam(value = "redirect", required = false) String redirectUrl,
                                  RedirectAttributes redirectAttributes
     ) throws UnknownSickNoteException {
@@ -295,6 +307,13 @@ class SickNoteViewController implements HasLaunchpad {
         final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
         if (maybeSickNote.isEmpty()) {
             throw new UnknownSickNoteException(sickNoteId);
+        }
+
+        comment.setMandatory(false);
+        sickNoteCommentFormValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -382,6 +401,8 @@ class SickNoteViewController implements HasLaunchpad {
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
     @PostMapping("/sicknote/{id}/cancel")
     public String cancelSickNote(@PathVariable("id") Long id,
+                                 @ModelAttribute("comment") SickNoteCommentFormDto comment,
+                                 Errors errors,
                                  @RequestParam(value = "redirect", required = false) String redirectUrl,
                                  RedirectAttributes redirectAttributes) throws UnknownSickNoteException {
 
@@ -394,7 +415,14 @@ class SickNoteViewController implements HasLaunchpad {
                     signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
-        final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser);
+        comment.setMandatory(true);
+        sickNoteCommentFormValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:/web/sicknote/" + id + "?action=cancel&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
+        }
+
+        final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser, comment.getText());
 
         if (SickNoteStatus.CANCELLED.equals(cancelledSickNote.getStatus())) {
             redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);

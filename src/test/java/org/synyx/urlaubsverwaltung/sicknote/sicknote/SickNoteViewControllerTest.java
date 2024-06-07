@@ -1259,7 +1259,7 @@ class SickNoteViewControllerTest {
             .build();
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
-        when(sickNoteInteractionService.cancel(sickNote, person)).thenReturn(sickNote);
+        when(sickNoteInteractionService.cancel(sickNote, person, "comment")).thenReturn(sickNote);
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
             .andExpect(status().isFound())
@@ -1421,7 +1421,7 @@ class SickNoteViewControllerTest {
 
         final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
-        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, "comment")).thenReturn(sickNote);
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
             .andExpect(view().name("redirect:/web/sicknote/1"));
     }
@@ -1435,7 +1435,7 @@ class SickNoteViewControllerTest {
 
         final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
-        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, "comment")).thenReturn(sickNote);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
@@ -1451,7 +1451,7 @@ class SickNoteViewControllerTest {
 
         final SickNote sickNote = SickNote.builder().id(1L).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
-        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser, "comment")).thenReturn(sickNote);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))

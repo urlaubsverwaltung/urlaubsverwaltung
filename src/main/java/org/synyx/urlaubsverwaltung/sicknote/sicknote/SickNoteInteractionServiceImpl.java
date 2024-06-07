@@ -133,12 +133,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote cancel(SickNote sickNote, Person canceller) {
+    public SickNote cancel(SickNote sickNote, Person canceller, String comment) {
 
         final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
         LOG.info("Cancelled sick note: {}", cancelledSickNote);
 
-        commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller);
+        commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 
         sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote);
         sickNoteMailService.sendCancelToColleagues(cancelledSickNote);

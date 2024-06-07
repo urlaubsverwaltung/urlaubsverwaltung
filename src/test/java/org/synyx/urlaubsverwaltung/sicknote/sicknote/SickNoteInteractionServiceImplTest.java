@@ -205,11 +205,11 @@ class SickNoteInteractionServiceImplTest {
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
-        final SickNote cancelledSickNote = sut.cancel(sickNote, creator);
+        final SickNote cancelledSickNote = sut.cancel(sickNote, creator, "comment");
         assertThat(cancelledSickNote).isNotNull();
         assertThat(cancelledSickNote.getStatus()).isEqualTo(SickNoteStatus.CANCELLED);
 
-        verify(commentService).create(sickNote, SickNoteCommentAction.CANCELLED, creator);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CANCELLED, creator, "comment");
         verify(sickNoteService).save(sickNote);
 
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
@@ -239,7 +239,7 @@ class SickNoteInteractionServiceImplTest {
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .build();
 
-        sut.cancel(sickNote, canceller);
+        sut.cancel(sickNote, canceller, "comment");
 
         verify(sickNoteMailService).sendCancelledToSickPerson(sickNote);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
