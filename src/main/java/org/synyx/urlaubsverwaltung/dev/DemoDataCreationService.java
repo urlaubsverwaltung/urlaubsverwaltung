@@ -224,7 +224,7 @@ public class DemoDataCreationService {
         applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
         applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, FULL, now.minusDays(11), now.minusDays(10));
+        applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, FULL, now.minusDays(22), now.minusDays(21));
         applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
     }
 
