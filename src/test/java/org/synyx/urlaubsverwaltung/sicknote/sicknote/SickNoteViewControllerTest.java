@@ -1045,11 +1045,12 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final SickNote acceptedSickNote = SickNote.builder().person(new Person()).status(ACTIVE).build();
-        when(sickNoteInteractionService.accept(sickNote, signedInPerson)).thenReturn(acceptedSickNote);
+        when(sickNoteInteractionService.accept(sickNote, signedInPerson, "comment")).thenReturn(acceptedSickNote);
 
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/accept"));
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/accept")
+            .param("text", "comment"));
 
-        verify(sickNoteInteractionService).accept(any(SickNote.class), eq(signedInPerson));
+        verify(sickNoteInteractionService).accept(any(SickNote.class), eq(signedInPerson), eq("comment"));
     }
 
     @Test

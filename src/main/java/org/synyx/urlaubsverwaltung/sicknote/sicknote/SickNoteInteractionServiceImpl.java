@@ -65,11 +65,11 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote accept(SickNote sickNote, Person maintainer) {
+    public SickNote accept(SickNote sickNote, Person maintainer, String comment) {
         final SickNote acceptedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
         LOG.info("Sick note {} was accepted by {}", acceptedSickNote, maintainer);
 
-        commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer);
+        commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer, comment);
 
         sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote, maintainer);
         sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);

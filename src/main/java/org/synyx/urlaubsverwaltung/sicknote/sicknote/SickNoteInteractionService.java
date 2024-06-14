@@ -9,23 +9,24 @@ import org.synyx.urlaubsverwaltung.person.Person;
 public interface SickNoteInteractionService {
 
     /**
-     * Creates a new sicknote in SUBMITTED state if a user submits the sicknote for him/herself
+     * Creates a new sick note in SUBMITTED state if a user submits the sick note for him/herself
      *
      * @param sickNote
      * @param submitter
      * @param comment
-     * @return the saved sicknote in SUBMITTED state
+     * @return the saved sick note in SUBMITTED state
      */
     SickNote submit(SickNote sickNote, Person submitter, String comment);
 
     /**
-     * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts a sicknote which was submitted by user
+     * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts a sick note which was submitted by user
      *
      * @param sickNote
      * @param maintainer with role OFFICE or SICK_NOTE_VIEW_ADD_EDIT
-     * @return the saved sicknote in ACTIVE state
+     * @param comment optional comment when accepting a sick note
+     * @return the saved sick note in ACTIVE state
      */
-    SickNote accept(SickNote sickNote, Person maintainer);
+    SickNote accept(SickNote sickNote, Person maintainer, String comment);
 
     /**
      * Creates a new sick note.
@@ -71,7 +72,7 @@ public interface SickNoteInteractionService {
      *
      * @param sickNote  to be cancelled
      * @param canceller the person who cancels the sick note
-     * @param comment reason for cancelation
+     * @param comment reason for cancellation
      * @return the cancelled sick note
      */
     SickNote cancel(SickNote sickNote, Person canceller, String comment);

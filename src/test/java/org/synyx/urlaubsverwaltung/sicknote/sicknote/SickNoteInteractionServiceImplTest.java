@@ -368,7 +368,7 @@ class SickNoteInteractionServiceImplTest {
 
         final Person maintainer = new Person("maintainer", "Senior", "Maintainer", "maintainer@example.org");
 
-        final SickNote acceptedSickNote = sut.accept(sickNote, maintainer);
+        final SickNote acceptedSickNote = sut.accept(sickNote, maintainer, "comment");
         assertThat(acceptedSickNote).isNotNull();
         assertThat(acceptedSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
@@ -376,7 +376,7 @@ class SickNoteInteractionServiceImplTest {
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
-        verify(commentService).create(sickNote, SickNoteCommentAction.ACCEPTED, maintainer);
+        verify(commentService).create(sickNote, SickNoteCommentAction.ACCEPTED, maintainer, "comment");
 
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToSickPerson(sickNote, maintainer);
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer);

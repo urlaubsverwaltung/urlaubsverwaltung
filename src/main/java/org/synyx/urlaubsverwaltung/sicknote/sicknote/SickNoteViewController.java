@@ -315,7 +315,7 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser);
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
 
         if (SickNoteStatus.ACTIVE.equals(acceptedSickNote.getStatus())) {
             redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
