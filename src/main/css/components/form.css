@@ -173,6 +173,7 @@ textarea.error {
 
 .form-section .help-block {
   margin-top: 0;
+  line-height: 1.375;
   @apply dark:tw-text-zinc-200;
   @apply dark:tw-text-opacity-75;
 }
