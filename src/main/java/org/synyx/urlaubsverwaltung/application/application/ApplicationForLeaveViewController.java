@@ -137,11 +137,11 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
                                                                          List<Person> membersAsSecondStageAuthority, Locale locale) {
 
         return applications.stream()
-                .map(applicationForLeave -> {
-                    final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
-                    return toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale, allowedToAccessPersonData);
-                })
-                .toList();
+            .map(applicationForLeave -> {
+                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
+                return toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale, allowedToAccessPersonData);
+            })
+            .toList();
     }
 
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersAsDepartmentHead,
@@ -167,22 +167,22 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
 
         return ApplicationForLeaveDto.builder()
-                .id(application.getId())
-                .person(toViewPerson(person, allowedToAccessPersonData))
-                .vacationType(toViewVacationType(application.getVacationType(), locale))
-                .status(application.getStatus())
-                .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
-                .dayLength(application.getDayLength())
-                .workDays(application.getWorkDays())
-                .statusWaiting(isWaiting)
-                .editAllowed(isAllowedToEdit)
-                .approveAllowed(isAllowedToApprove)
-                .temporaryApproveAllowed(isAllowedToTemporaryApprove)
-                .rejectAllowed(isAllowedToReject)
-                .cancelAllowed(isAllowedToCancel)
-                .cancellationRequested(isCancellationRequested)
-                .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
-                .build();
+            .id(application.getId())
+            .person(toViewPerson(person, allowedToAccessPersonData))
+            .vacationType(toViewVacationType(application.getVacationType(), locale))
+            .status(application.getStatus())
+            .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
+            .dayLength(application.getDayLength())
+            .workDays(application.getWorkDays())
+            .statusWaiting(isWaiting)
+            .editAllowed(isAllowedToEdit)
+            .approveAllowed(isAllowedToApprove)
+            .temporaryApproveAllowed(isAllowedToTemporaryApprove)
+            .rejectAllowed(isAllowedToReject)
+            .cancelAllowed(isAllowedToCancel)
+            .cancellationRequested(isCancellationRequested)
+            .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
+            .build();
     }
 
     private static String toDurationOfAbsenceDescription(Application application, MessageSource messageSource, Locale locale) {
@@ -225,13 +225,13 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {
         return applicationService.getForHolidayReplacement(signedInUser, holidayReplacementForDate)
-                .stream()
-                .sorted(comparing(Application::getStartDate))
-                .map(application -> {
-                    final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, application.getPerson());
-                    return toApplicationReplacementDto(application, signedInUser, locale, allowedToAccessPersonData);
-                })
-                .toList();
+            .stream()
+            .sorted(comparing(Application::getStartDate))
+            .map(application -> {
+                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, application.getPerson());
+                return toApplicationReplacementDto(application, signedInUser, locale, allowedToAccessPersonData);
+            })
+            .toList();
     }
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
@@ -254,11 +254,11 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         }
 
         return cancellationRequests.stream()
-                .distinct()
-                .filter(withoutApplicationsOf(signedInUser))
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
-                .toList();
+            .distinct()
+            .filter(withoutApplicationsOf(signedInUser))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .sorted(comparing(ApplicationForLeave::getStartDate))
+            .toList();
     }
 
     private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
@@ -266,8 +266,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice().stream()
-                    .filter(withoutApplicationsOf(signedInUser))
-                    .toList();
+                .filter(withoutApplicationsOf(signedInUser))
+                .toList();
         }
 
         final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
@@ -283,41 +283,41 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         }
 
         return applicationsForLeave.stream()
-                .filter(distinctByKey(ApplicationForLeave::getId))
-                .toList();
+            .filter(distinctByKey(ApplicationForLeave::getId))
+            .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
         return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
-                .toList();
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .sorted(comparing(ApplicationForLeave::getStartDate))
+            .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         final List<ApplicationStatus> states = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
         return applicationService.getForStatesAndPerson(states, List.of(user)).stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
-                .toList();
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .sorted(comparing(ApplicationForLeave::getStartDate))
+            .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> members) {
         return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
-                .filter(withoutApplicationsOf(head))
-                .filter(withoutSecondStageAuthorityApplications())
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
-                .toList();
+            .filter(withoutApplicationsOf(head))
+            .filter(withoutSecondStageAuthorityApplications())
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .sorted(comparing(ApplicationForLeave::getStartDate))
+            .toList();
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage, List<Person> members) {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
-                .filter(withoutApplicationsOf(secondStage))
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate))
-                .toList();
+            .filter(withoutApplicationsOf(secondStage))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
+            .sorted(comparing(ApplicationForLeave::getStartDate))
+            .toList();
     }
 
     private Predicate<Application> withoutApplicationsOf(Person person) {
@@ -341,22 +341,22 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, applicationPerson);
 
         final String note = application.getHolidayReplacements().stream()
-                .filter(holidayReplacementEntity -> holidayReplacementEntity.getPerson().equals(holidayReplacementPerson))
-                .findFirst()
-                .map(HolidayReplacementEntity::getNote)
-                .orElse("");
+            .filter(holidayReplacementEntity -> holidayReplacementEntity.getPerson().equals(holidayReplacementPerson))
+            .findFirst()
+            .map(HolidayReplacementEntity::getNote)
+            .orElse("");
 
         final boolean pending = WAITING.equals(application.getStatus()) || TEMPORARY_ALLOWED.equals(application.getStatus());
 
         return ApplicationReplacementDto.builder()
-                .person(toViewPerson(applicationPerson, allowedToAccessPersonData))
-                .note(note)
-                .pending(pending)
-                .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
-                .workDays(workDays)
-                .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
-                .dayLength(dayLength)
-                .build();
+            .person(toViewPerson(applicationPerson, allowedToAccessPersonData))
+            .note(note)
+            .pending(pending)
+            .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
+            .workDays(workDays)
+            .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
+            .dayLength(dayLength)
+            .build();
     }
 
     private List<Person> getPersonsForRelevantSubmittedSickNotes(Person signedInUser) {
@@ -366,18 +366,18 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         }
 
         final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && signedInUser.hasRole(SICK_NOTE_EDIT)
-                ? departmentService.getMembersForDepartmentHead(signedInUser)
-                : List.of();
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
 
         final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(SICK_NOTE_EDIT)
-                ? departmentService.getMembersForSecondStageAuthority(signedInUser)
-                : List.of();
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-                .filter(person -> !person.hasRole(INACTIVE))
-                .distinct()
-                .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-                .toList();
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .toList();
     }
 
 }

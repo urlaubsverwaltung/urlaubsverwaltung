@@ -1323,8 +1323,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(view().name("application/application-overview"));
     }
 
-@ValueSource(strings = {"/web/application", "/web/application/replacement"})
-@ParameterizedTest
+    @ValueSource(strings = {"/web/application", "/web/application/replacement"})
+    @ParameterizedTest
     void ensureReplacementItem(String path) throws Exception {
         when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 
@@ -1513,19 +1513,19 @@ class ApplicationForLeaveViewControllerTest {
         final LocalDate startDate = LocalDate.of(2024, 1, 4);
         final LocalDate endDate = LocalDate.of(2024, 1, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
-                startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
-                endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+            endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .sickNoteType(anySickNoteType())
-                .person(person)
-                .status(SUBMITTED)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(FULL)
-                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-                .build();
+            .id(1L)
+            .sickNoteType(anySickNoteType())
+            .person(person)
+            .status(SUBMITTED)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+            .build();
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
@@ -1568,19 +1568,19 @@ class ApplicationForLeaveViewControllerTest {
         final LocalDate startDate = LocalDate.of(2024, 1, 4);
         final LocalDate endDate = LocalDate.of(2024, 1, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
-                startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
-                endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+            endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .sickNoteType(anySickNoteType())
-                .person(person)
-                .status(SUBMITTED)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(FULL)
-                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-                .build();
+            .id(1L)
+            .sickNoteType(anySickNoteType())
+            .person(person)
+            .status(SUBMITTED)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+            .build();
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD, SICK_NOTE_EDIT));
@@ -1592,26 +1592,26 @@ class ApplicationForLeaveViewControllerTest {
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
-                .andExpect(model().attribute("signedInUser", is(departmentHead)))
-                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
-                .andExpect(model().attribute("otherSickNotes", hasSize(1)))
-                .andExpect(model().attribute("otherSickNotes", hasItems(
-                        allOf(
-                                instanceOf(SickNoteDto.class),
-                                hasProperty("id", equalTo("1")),
-                                hasProperty("startDate", equalTo(startDate)),
-                                hasProperty("endDate", equalTo(endDate)),
-                                hasProperty("dayLength", equalTo(FULL)),
-                                hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                                hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
-                                hasProperty("person",
-                                        hasProperty("name", equalTo("Hans Dampf"))
-                                ),
-                                hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                                hasProperty("status", equalTo("SUBMITTED"))
-                        )
-                )))
-                .andExpect(view().name("application/application-overview"));
+            .andExpect(model().attribute("signedInUser", is(departmentHead)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
+            .andExpect(model().attribute("otherSickNotes", hasSize(1)))
+            .andExpect(model().attribute("otherSickNotes", hasItems(
+                allOf(
+                    instanceOf(SickNoteDto.class),
+                    hasProperty("id", equalTo("1")),
+                    hasProperty("startDate", equalTo(startDate)),
+                    hasProperty("endDate", equalTo(endDate)),
+                    hasProperty("dayLength", equalTo(FULL)),
+                    hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
+                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
+                    hasProperty("person",
+                        hasProperty("name", equalTo("Hans Dampf"))
+                    ),
+                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
+                    hasProperty("status", equalTo("SUBMITTED"))
+                )
+            )))
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1623,19 +1623,19 @@ class ApplicationForLeaveViewControllerTest {
         final LocalDate startDate = LocalDate.of(2024, 1, 4);
         final LocalDate endDate = LocalDate.of(2024, 1, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
-                startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
-                endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+            endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .sickNoteType(anySickNoteType())
-                .person(person)
-                .status(SUBMITTED)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(FULL)
-                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-                .build();
+            .id(1L)
+            .sickNoteType(anySickNoteType())
+            .person(person)
+            .status(SUBMITTED)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+            .build();
 
         final Person secondStageAuthority = new Person();
         secondStageAuthority.setPermissions(List.of(SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT));
@@ -1647,26 +1647,26 @@ class ApplicationForLeaveViewControllerTest {
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
-                .andExpect(model().attribute("signedInUser", is(secondStageAuthority)))
-                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
-                .andExpect(model().attribute("otherSickNotes", hasSize(1)))
-                .andExpect(model().attribute("otherSickNotes", hasItems(
-                        allOf(
-                                instanceOf(SickNoteDto.class),
-                                hasProperty("id", equalTo("1")),
-                                hasProperty("startDate", equalTo(startDate)),
-                                hasProperty("endDate", equalTo(endDate)),
-                                hasProperty("dayLength", equalTo(FULL)),
-                                hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                                hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
-                                hasProperty("person",
-                                        hasProperty("name", equalTo("Hans Dampf"))
-                                ),
-                                hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                                hasProperty("status", equalTo("SUBMITTED"))
-                        )
-                )))
-                .andExpect(view().name("application/application-overview"));
+            .andExpect(model().attribute("signedInUser", is(secondStageAuthority)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
+            .andExpect(model().attribute("otherSickNotes", hasSize(1)))
+            .andExpect(model().attribute("otherSickNotes", hasItems(
+                allOf(
+                    instanceOf(SickNoteDto.class),
+                    hasProperty("id", equalTo("1")),
+                    hasProperty("startDate", equalTo(startDate)),
+                    hasProperty("endDate", equalTo(endDate)),
+                    hasProperty("dayLength", equalTo(FULL)),
+                    hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
+                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
+                    hasProperty("person",
+                        hasProperty("name", equalTo("Hans Dampf"))
+                    ),
+                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
+                    hasProperty("status", equalTo("SUBMITTED"))
+                )
+            )))
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1678,19 +1678,19 @@ class ApplicationForLeaveViewControllerTest {
         final LocalDate startDate = LocalDate.of(2024, 1, 4);
         final LocalDate endDate = LocalDate.of(2024, 1, 5);
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
-                startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
-                endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
+            endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final SickNote sickNote = SickNote.builder()
-                .id(1L)
-                .sickNoteType(anySickNoteType())
-                .person(person)
-                .status(SUBMITTED)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(FULL)
-                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-                .build();
+            .id(1L)
+            .sickNoteType(anySickNoteType())
+            .person(person)
+            .status(SUBMITTED)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(FULL)
+            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+            .build();
 
         final Person boss = new Person();
         boss.setPermissions(List.of(BOSS, SICK_NOTE_EDIT));
@@ -1702,26 +1702,26 @@ class ApplicationForLeaveViewControllerTest {
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
-                .andExpect(model().attribute("signedInUser", is(boss)))
-                .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
-                .andExpect(model().attribute("otherSickNotes", hasSize(1)))
-                .andExpect(model().attribute("otherSickNotes", hasItems(
-                        allOf(
-                                instanceOf(SickNoteDto.class),
-                                hasProperty("id", equalTo("1")),
-                                hasProperty("startDate", equalTo(startDate)),
-                                hasProperty("endDate", equalTo(endDate)),
-                                hasProperty("dayLength", equalTo(FULL)),
-                                hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                                hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
-                                hasProperty("person",
-                                        hasProperty("name", equalTo("Hans Dampf"))
-                                ),
-                                hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                                hasProperty("status", equalTo("SUBMITTED"))
-                        )
-                )))
-                .andExpect(view().name("application/application-overview"));
+            .andExpect(model().attribute("signedInUser", is(boss)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
+            .andExpect(model().attribute("otherSickNotes", hasSize(1)))
+            .andExpect(model().attribute("otherSickNotes", hasItems(
+                allOf(
+                    instanceOf(SickNoteDto.class),
+                    hasProperty("id", equalTo("1")),
+                    hasProperty("startDate", equalTo(startDate)),
+                    hasProperty("endDate", equalTo(endDate)),
+                    hasProperty("dayLength", equalTo(FULL)),
+                    hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
+                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
+                    hasProperty("person",
+                        hasProperty("name", equalTo("Hans Dampf"))
+                    ),
+                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
+                    hasProperty("status", equalTo("SUBMITTED"))
+                )
+            )))
+            .andExpect(view().name("application/application-overview"));
     }
 
     private static SickNoteType anySickNoteType() {

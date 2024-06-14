@@ -126,10 +126,10 @@ class SickNoteViewController implements HasLaunchpad {
         final boolean isSamePerson = sickNotePerson.equals(signedInUser);
 
         if (isSamePerson
-                || signedInUser.hasRole(OFFICE)
-                || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
-                || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
-                || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
+            || signedInUser.hasRole(OFFICE)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
@@ -152,8 +152,8 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see the sick note of user '%s'",
-                signedInUser.getId(), sickNotePerson.getId()));
+            "User '%s' has not the correct permissions to see the sick note of user '%s'",
+            signedInUser.getId(), sickNotePerson.getId()));
     }
 
     @GetMapping("/sicknote/new")
@@ -163,14 +163,14 @@ class SickNoteViewController implements HasLaunchpad {
 
         if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
             throw new AccessDeniedException(
-                    "User '%s' has not the correct permissions to create a sick note".formatted(
-                            signedInUser.getId()));
+                "User '%s' has not the correct permissions to create a sick note".formatted(
+                    signedInUser.getId()));
         }
 
 
         final Person person = personId == null
-                ? signedInUser
-                : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+            ? signedInUser
+            : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("person", person);
@@ -195,16 +195,16 @@ class SickNoteViewController implements HasLaunchpad {
         final Person sickNotePerson = sickNoteFormDto.getPerson();
 
         final SickNote sickNote = SickNote.builder()
-                .id(sickNoteFormDto.getId())
-                .person(sickNotePerson)
-                .applier(signedInUser)
-                .sickNoteType(sickNoteFormDto.getSickNoteType())
-                .startDate(sickNoteFormDto.getStartDate())
-                .endDate(sickNoteFormDto.getEndDate())
-                .dayLength(sickNoteFormDto.getDayLength())
-                .aubStartDate(sickNoteFormDto.getAubStartDate())
-                .aubEndDate(sickNoteFormDto.getAubEndDate())
-                .build();
+            .id(sickNoteFormDto.getId())
+            .person(sickNotePerson)
+            .applier(signedInUser)
+            .sickNoteType(sickNoteFormDto.getSickNoteType())
+            .startDate(sickNoteFormDto.getStartDate())
+            .endDate(sickNoteFormDto.getEndDate())
+            .dayLength(sickNoteFormDto.getDayLength())
+            .aubStartDate(sickNoteFormDto.getAubStartDate())
+            .aubEndDate(sickNoteFormDto.getAubEndDate())
+            .build();
 
 
         sickNoteValidator.validate(sickNote, errors);
@@ -246,8 +246,8 @@ class SickNoteViewController implements HasLaunchpad {
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)) {
             throw new AccessDeniedException(format(
-                    "User '%s' has not the correct permissions to edit the sick note of user '%s'",
-                    signedInUser.getId(), sickNotePerson.getId()));
+                "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+                signedInUser.getId(), sickNotePerson.getId()));
         }
 
         final SickNoteFormDto sickNoteFormDto = toSickNoteForm(sickNote);
@@ -332,15 +332,15 @@ class SickNoteViewController implements HasLaunchpad {
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Long id,
                              @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors, RedirectAttributes redirectAttributes)
-            throws UnknownSickNoteException {
+        throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote.getPerson())) {
             throw new AccessDeniedException(format(
-                    "User '%s' has not the correct permissions to comment the sick note of user '%s'",
-                    signedInUser.getId(), sickNote.getPerson().getId()));
+                "User '%s' has not the correct permissions to comment the sick note of user '%s'",
+                signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
         sickNoteCommentFormValidator.validate(comment, errors);
@@ -357,7 +357,7 @@ class SickNoteViewController implements HasLaunchpad {
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model)
-            throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
+        throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
@@ -376,7 +376,7 @@ class SickNoteViewController implements HasLaunchpad {
     public String convertSickNoteToVacation(@PathVariable("id") Long id,
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm,
                                             Errors errors, Model model)
-            throws UnknownSickNoteException {
+        throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
@@ -409,8 +409,8 @@ class SickNoteViewController implements HasLaunchpad {
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote.getPerson())) {
             throw new AccessDeniedException(format(
-                    "User '%s' has not the correct permissions to cancel the sick note of user '%s'",
-                    signedInUser.getId(), sickNote.getPerson().getId()));
+                "User '%s' has not the correct permissions to cancel the sick note of user '%s'",
+                signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
         comment.setMandatory(true);
@@ -439,8 +439,8 @@ class SickNoteViewController implements HasLaunchpad {
 
     private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
         final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-                || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
-                || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
+            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
         return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 
@@ -451,18 +451,18 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
-                ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
-                : List.of();
+            ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
+            : List.of();
 
         final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
-                ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
-                : List.of();
+            ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-                .filter(person -> !person.hasRole(INACTIVE))
-                .distinct()
-                .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-                .collect(toList());
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 
     private List<VacationType<?>> getActiveVacationTypes() {
@@ -488,22 +488,22 @@ class SickNoteViewController implements HasLaunchpad {
 
     private static SickNoteFormDto toSickNoteForm(SickNote sickNote) {
         return SickNoteFormDto.builder()
-                .id(sickNote.getId())
-                .person(sickNote.getPerson())
-                .sickNoteType(sickNote.getSickNoteType())
-                .startDate(sickNote.getStartDate())
-                .endDate(sickNote.getEndDate())
-                .dayLength(sickNote.getDayLength())
-                .aubStartDate(sickNote.getAubStartDate())
-                .aubEndDate(sickNote.getAubEndDate())
-                .build();
+            .id(sickNote.getId())
+            .person(sickNote.getPerson())
+            .sickNoteType(sickNote.getSickNoteType())
+            .startDate(sickNote.getStartDate())
+            .endDate(sickNote.getEndDate())
+            .dayLength(sickNote.getDayLength())
+            .aubStartDate(sickNote.getAubStartDate())
+            .aubEndDate(sickNote.getAubEndDate())
+            .build();
     }
 
     private Application generateApplicationForLeave(SickNoteConvertForm sickNoteConvertForm) {
 
         final Long vacationTypeId = sickNoteConvertForm.getVacationType();
         final VacationType<?> vacationType = vacationTypeService.getById(vacationTypeId)
-                .orElseThrow(() -> new IllegalStateException("vacationType with id=%s does not exist.".formatted(vacationTypeId)));
+            .orElseThrow(() -> new IllegalStateException("vacationType with id=%s does not exist.".formatted(vacationTypeId)));
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(sickNoteConvertForm.getPerson());
