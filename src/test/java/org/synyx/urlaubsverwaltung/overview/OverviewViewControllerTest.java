@@ -31,6 +31,8 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -77,6 +79,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 @ExtendWith(MockitoExtension.class)
 class OverviewViewControllerTest {
@@ -566,14 +570,23 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+
         final SickNote sickNote = SickNote.builder()
             .startDate(localDate.minusDays(1L))
             .endDate(localDate.plusDays(1L))
+            .status(SickNoteStatus.ACTIVE)
+            .sickNoteType(sickNoteType)
+            .person(person)
             .build();
 
         final SickNote sickNote2 = SickNote.builder()
             .startDate(localDate.minusDays(10L))
             .endDate(localDate.plusDays(10L))
+            .status(SickNoteStatus.SUBMITTED)
+            .sickNoteType(sickNoteType)
+            .person(person)
             .build();
 
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
