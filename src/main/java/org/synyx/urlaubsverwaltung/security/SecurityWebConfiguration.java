@@ -46,6 +46,10 @@ class SecurityWebConfiguration {
         return http
             .securityMatcher(EndpointRequest.toAnyEndpoint())
             .authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(
+                sessionManagement -> sessionManagement.sessionCreationPolicy(NEVER)
+            )
             .build();
     }
 
