@@ -20,8 +20,12 @@
           notifications.applicationCancellationForManagement.active ||
           notifications.applicationAdaptedForManagement.active ||
           notifications.applicationWaitingReminderForManagement.active ||
-          notifications.applicationCancellationRequestedForManagement.active ||
-          notifications.sickNoteCreatedByManagementForManagement.active
+          notifications.applicationCancellationRequestedForManagement.active
+        },
+        showSickNoteManagement=${
+          notifications.sickNoteCreatedByManagementForManagement.active ||
+          notifications.sickNoteSubmittedByUserForManagement.active ||
+          notifications.sickNoteSubmittedByUserForManagement.active
         },
         showOvertime=${
           notifications.overtimeApplied.active ||
@@ -33,7 +37,7 @@
       th:fragment="section(notifications)"
     >
       <p
-        th:if="${!showAbsences and !showAbsencesManagement and !showOvertime and !showOvertimeManagement and !showPersons}"
+        th:if="${!showAbsences and !showAbsencesManagement and !showSickNoteManagement and !showOvertime and !showOvertimeManagement and !showPersons}"
         th:text="#{person.account.notifications.nothing-active}"
         class="tw-text-sm"
       >
@@ -41,7 +45,7 @@
       </p>
       <dl
         aria-labelledby="heading-notification"
-        th:if="${showAbsences or showAbsencesManagement or showOvertime or showOvertimeManagement or showPersons}"
+        th:if="${showAbsences or showAbsencesManagement or showSickNoteManagement or showOvertime or showOvertimeManagement or showPersons}"
       >
         <th:block th:if="${showAbsences}">
           <dt
@@ -97,8 +101,22 @@
           <dd
             th:replace="~{::email-notification-element(active=${notifications.applicationCancellationRequestedForManagement.active},info='person.notifications.section.absences.cancellation-requested.management.label')}"
           ></dd>
+        </th:block>
+        <th:block th:if="${showSickNoteManagement}">
+          <dt
+            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.sicknote.management.title}"
+          >
+            Krankmeldungen meiner Kolleg:innen
+          </dt>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.sickNoteCreatedByManagementForManagement.active},info='person.notifications.section.sicknote.created.management.label')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.sickNoteSubmittedByUserForManagement.active},info='person.notifications.section.sicknote.submitted.management.label')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.sickNoteAcceptedByManagementForManagement.active},info='person.notifications.section.sicknote.accepted.management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showOvertime}">
