@@ -28,8 +28,20 @@
             <h2 th:text="#{sicknote.title}">Krankmeldung</h2>
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
-            <th:block th:if="${sickNote.active}">
-              <div class="tw-flex tw-flex-row">
+            <div class="tw-flex tw-flex-row">
+              <th:block th:if="${canAcceptSickNote && sickNote.status.name == 'SUBMITTED'}">
+                <button
+                  type="button"
+                  class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  onclick="
+                    document.querySelector('#allow')?.classList.remove('tw-hidden');
+                    document.querySelector('#cancel')?.classList.add('tw-hidden');"
+                >
+                  <svg th:replace="~{icon/check::svg}"></svg>
+                  <span th:text="#{action.acceptSicknote}" class="tw-sr-only"></span>
+                </button>
+              </th:block>
+              <th:block th:if="${sickNote.active}">
                 <th:block th:if="${canEditSickNote}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/edit}"
@@ -39,7 +51,7 @@
                     <span th:text="#{action.edit}" class="tw-sr-only"></span>
                   </a>
                 </th:block>
-                <th:block th:if="${canConvertSickNote}">
+                <th:block th:if="${canConvertSickNote && sickNote.status.name == 'ACTIVE'}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/convert}"
                     class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
@@ -49,48 +61,126 @@
                   </a>
                 </th:block>
                 <th:block th:if="${canDeleteSickNote}">
-                  <a
-                    href="#modal-cancel"
-                    role="button"
-                    data-toggle="modal"
-                    class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  <button
+                    type="button"
+                    class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
+                    onclick="
+                    document.querySelector('#cancel')?.classList.remove('tw-hidden');
+                    document.querySelector('#allow')?.classList.add('tw-hidden');"
                   >
-                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5')}"></svg>
-                    <span th:text="#{action.delete}" class="tw-sr-only"></span>
-                  </a>
+                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                    <span class="tw-sr-only" th:text="#{action.delete.request}"></span>
+                  </button>
                 </th:block>
-                <a href="#" th:replace="~{fragments/print::button}"></a>
-              </div>
-            </th:block>
+              </th:block>
+              <a href="#" th:replace="~{fragments/print::button}"></a>
+            </div>
           </th:block>
         </div>
 
-        <form method="post" th:action="@{/web/sicknote/__${sickNote.id}__/cancel}">
-          <div
-            id="modal-cancel"
-            class="modal fade"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="myModalLabel"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
-                  </button>
-                  <h4 id="myModalLabel" th:text="|#{action.delete}?|" class="modal-title"></h4>
-                </div>
-                <div th:text="#{action.sicknote.cancel.confirm}" class="modal-body"></div>
-                <div class="modal-footer tw-flex tw-justify-between">
-                  <button class="button-danger" type="submit" th:text="#{action.delete}"></button>
-                  <button class="button" data-dismiss="modal" aria-hidden="true" th:text="#{action.cancel}"></button>
-                </div>
+        <div class="feedback">
+          <th:block th:if="${errors != null && errors.hasFieldErrors('text')}">
+            <p class="alert alert-danger" th:text="${#messages.msg(errors.getFieldErrors('text').get(0).getCode())}">
+              error feedback
+            </p>
+          </th:block>
+        </div>
+
+        <div class="actions">
+          <th:block th:if="${canAcceptSickNote}">
+            <form
+              id="allow"
+              class="form confirm alert alert-success"
+              th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
+              method="post"
+              th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/accept?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/accept'}"
+              th:action="@{__${actionUrl}__}"
+              th:object="${comment}"
+            >
+              <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
+              <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
+              <div class="form-group">
+                <strong class="tw-font-medium" th:text="#{action.sicknote.allow}">
+                  Soll diese Krankmeldung wirklich akzeptiert werden?
+                </strong>
               </div>
-            </div>
-          </div>
-        </form>
+
+              <div class="form-group">
+                <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
+                <textarea
+                  id="text-allow"
+                  rows="2"
+                  class="form-control"
+                  th:errorclass="error"
+                  name="text"
+                  onkeyup="count(this.value, 'text-allow-counter');"
+                  onkeydown="maxChars(this,200); count(this.value, 'text-allow-counter');"
+                ></textarea>
+                <small> <span id="text-allow-counter"></span><th:block th:text="#{action.comment.maxChars}" /> </small>
+              </div>
+
+              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+                <button type="submit" class="button-main-green tw-w-56" th:text="#{action.acceptSicknote}">
+                  Akzeptieren
+                </button>
+                <button
+                  type="button"
+                  th:text="#{action.cancel}"
+                  class="button"
+                  onclick="document.querySelector('#allow')?.classList.add('tw-hidden');"
+                >
+                  Abbrechen
+                </button>
+              </div>
+            </form>
+          </th:block>
+          <th:block th:if="${canDeleteSickNote}">
+            <form
+              id="cancel"
+              class="form confirm alert alert-danger"
+              th:classappend="${(action == 'cancel') ? '' : 'tw-hidden'}"
+              method="post"
+              th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/cancel?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/cancel'}"
+              th:action="@{__${actionUrl}__}"
+              th:object="${comment}"
+            >
+              <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
+              <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
+              <div class="form-group">
+                <strong class="tw-font-medium" th:text="#{action.sicknote.delete.request.confirm}">
+                  Soll diese Krankmeldung wirklich storniert werden?
+                </strong>
+              </div>
+
+              <div class="form-group">
+                <label th:text="|#{action.comment.mandatory}:|" for="text-cancel"></label>
+                <textarea
+                  id="text-cancel"
+                  rows="2"
+                  class="form-control"
+                  th:field="*{text}"
+                  th:errorclass="error"
+                  name="text"
+                  onkeyup="count(this.value, 'text-cancel-counter');"
+                  onkeydown="maxChars(this,200); count(this.value, 'text-cancel-counter');"
+                ></textarea>
+                <small> <span id="text-cancel-counter"></span><th:block th:text="#{action.comment.maxChars}" /> </small>
+              </div>
+
+              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+                <button type="submit" class="button-danger tw-w-56" th:text="#{action.delete}">Stornieren</button>
+                <button
+                  type="button"
+                  th:text="#{action.cancel}"
+                  class="button"
+                  onclick="document.querySelector('#cancel')?.classList.add('tw-hidden');"
+                >
+                  Abbrechen
+                </button>
+              </div>
+            </form>
+          </th:block>
+        </div>
 
         <div class="box tw-mb-5 tw-p-5">
           <div th:replace="~{fragments/box::box-with-icon(~{::sicknote-box-icon}, ~{::sicknote-box-body})}">
@@ -110,16 +200,31 @@
             </th:block>
             <th:block th:ref="sicknote-box-body">
               <span
-                th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}"
                 class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                 data-test-id="sicknote-person"
               >
+                <th:block th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}">
+                  Klaus Müller hat eine
+                </th:block>
               </span>
-              <span
-                th:text="#{__${sickNote.sickNoteType.messageKey}__}"
-                class="tw-my-1 tw-text-lg tw-font-medium"
-                data-test-id="sicknote-type"
-              >
+              <span class="tw-flex tw-justify-between tw-gap-4 tw-items-center tw-my-1 tw-text-lg tw-font-medium">
+                <span th:text="#{__${sickNote.sickNoteType.messageKey}__}" data-test-id="sicknote-type">
+                  Kind-Krankmeldung
+                </span>
+                <span
+                  class="absence-type_color-box print:tw-hidden tw-mr-5"
+                  th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
+                  th:classappend="|
+                    ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
+                    ${sickNote.status.name == 'ACTIVE' ? 'absence-type_color-box-allowed' : ''}
+                    ${sickNote.status.name == 'CONVERTED_TO_VACATION' ? 'absence-type_color-box-cancelled' : ''}
+                    ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                    |"
+                  th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
+                  th:title="${sickNoteStatusNameI18n}"
+                >
+                  &nbsp;
+                </span>
               </span>
               <span
                 class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"

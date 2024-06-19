@@ -20,12 +20,66 @@ class SickNoteCommentFormDtoValidatorTest {
     }
 
     @Test
-    void ensureCommentMayNotBeNull() {
+    void ensureSupportsCommentClass() {
+        assertThat(sut.supports(SickNoteCommentFormDto.class)).isTrue();
+    }
+
+    @Test
+    void ensureDoesNotSupportNull() {
+        assertThat(sut.supports(null)).isFalse();
+    }
+
+    @Test
+    void ensureDoesNotSupportOtherClass() {
+        assertThat(sut.supports(Object.class)).isFalse();
+    }
+
+    @Test
+    void ensureCommentCanBeNullIfNotMandatory() {
+
         final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
+        sickNoteCommentFormDto.setMandatory(false);
+        sickNoteCommentFormDto.setText(null);
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
         sut.validate(sickNoteCommentFormDto, errors);
-        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.mandatory");
+        assertThat(errors.getFieldErrors("text")).isEmpty();
+    }
+
+    @Test
+    void ensureCommentCanBeEmptyIfNotMandatory() {
+
+        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
+        sickNoteCommentFormDto.setMandatory(false);
+        sickNoteCommentFormDto.setText("");
+
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
+        sut.validate(sickNoteCommentFormDto, errors);
+        assertThat(errors.getFieldErrors("text")).isEmpty();
+    }
+
+    @Test
+    void ensureCommentCanNotBeNullIfMandatory() {
+
+        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
+        sickNoteCommentFormDto.setMandatory(true);
+        sickNoteCommentFormDto.setText(null);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
+        sut.validate(sickNoteCommentFormDto, errors);
+        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
+    }
+
+    @Test
+    void ensureCommentCanNotBeEmptyIfMandatory() {
+
+        final SickNoteCommentFormDto comment = new SickNoteCommentFormDto();
+        comment.setMandatory(true);
+        comment.setText("");
+
+        final Errors errors = new BeanPropertyBindingResult(comment, "sickNote");
+        sut.validate(comment, errors);
+        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
     }
 
     @Test
@@ -38,7 +92,7 @@ class SickNoteCommentFormDtoValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
         sut.validate(sickNoteCommentFormDto, errors);
-        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.tooManyChars");
+        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.tooManyChars");
     }
 
     @Test

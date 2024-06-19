@@ -63,7 +63,6 @@ module.exports = {
           past: withOpacity("--uv-cal-past-bg"),
           weekend: withOpacity("--uv-cal-weekend-bg"),
           // ----
-          "sick-note": withOpacity("--uv-cal-sick-note-bg"),
           "public-holiday": withOpacity("--uv-cal-public-holiday-bg"),
         },
       },

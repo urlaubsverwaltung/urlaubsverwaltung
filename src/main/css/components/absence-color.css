@@ -4,12 +4,12 @@
     --absence-color-GRAY: #6b7280;
     --absence-color-ORANGE: #f97316;
     --absence-color-YELLOW: #eab308;
-
     --absence-color-EMERALD: #10b981;
     --absence-color-CYAN: #06b6d4;
     --absence-color-BLUE: #3b82f6;
     --absence-color-VIOLET: #8b5cf6;
     --absence-color-PINK: #ec4899;
+    --sick-note-color: theme("colors.red.500");
   }
 
   .tw-dark {
@@ -22,5 +22,6 @@
     --absence-color-BLUE: #60a5fa;
     --absence-color-VIOLET: #a78bfa;
     --absence-color-PINK: #f472b6;
+    --sick-note-color: theme("colors.red.800");
   }
 }

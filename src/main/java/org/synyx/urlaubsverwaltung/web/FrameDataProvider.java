@@ -63,7 +63,7 @@ public class FrameDataProvider implements HandlerInterceptor {
 
             modelAndView.addObject("navigation", createNavigation(user));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
-            modelAndView.addObject("navigationSickNoteAddAccess", user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD));
+            modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
             modelAndView.addObject("gravatarEnabled", settingsService.getSettings().getAvatarSettings().isGravatarEnabled());
         }
@@ -117,12 +117,17 @@ public class FrameDataProvider implements HandlerInterceptor {
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser);
+        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser) || isAllowedToAddOrSubmitSickNote(signedInUser);
     }
 
     private boolean overtimeEnabled(Person signedInUser) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
         return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;
+    }
+
+    private boolean isAllowedToAddOrSubmitSickNote(Person user) {
+        var userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+        return user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD) || userIsAllowedToSubmitSickNotes;
     }
 }

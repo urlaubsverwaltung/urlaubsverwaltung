@@ -79,12 +79,48 @@ export const sickNoteMorningCriteria = {
   absent: "MORNING",
 };
 
+export const sickNoteMorningWaitingCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "MORNING",
+  status: "WAITING",
+};
+
+export const sickNoteMorningActiveCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "MORNING",
+  status: "ACTIVE",
+};
+
 export const sickNoteNoonCriteria = {
   absenceType: "SICK_NOTE",
   absent: "NOON",
 };
 
+export const sickNoteNoonWaitingCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "NOON",
+  status: "WAITING",
+};
+
+export const sickNoteNoonActiveCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "NOON",
+  status: "ACTIVE",
+};
+
 export const sickNoteFullCriteria = {
   absenceType: "SICK_NOTE",
   absent: "FULL",
+};
+
+export const sickNoteFullWaitingCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "FULL",
+  status: "WAITING",
+};
+
+export const sickNoteFullActiveCriteria = {
+  absenceType: "SICK_NOTE",
+  absent: "FULL",
+  status: "ACTIVE",
 };

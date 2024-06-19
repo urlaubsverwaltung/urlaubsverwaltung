@@ -41,7 +41,7 @@
       <input type="hidden" th:field="*{overtimeApplied.active}" />
       <input type="hidden" th:field="*{overtimeAppliedByManagement.active}" />
       <input type="hidden" th:field="*{personNewManagementAll.active}" />
-      <input type="hidden" th:field="*{sickNoteCreatedEditedCancelledByManagement.active}" />
+      <input type="hidden" th:field="*{ownSickNoteSubmittedCreatedEditedCancelled.active}" />
 
       <div class="list-selectable">
         <div
@@ -162,8 +162,25 @@
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
               ></li>
+            </ul>
+          </section>
+          <section th:if="${personNotificationsDto.sickNoteSubmittedByUserForManagement.visible}">
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.sicknote.management.title}"
+            >
+              Krankmeldungen meiner Kolleg:innen
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCreatedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteCreatedByManagementForManagement.active},name='sickNoteCreatedByManagementForManagement.active',label='person.notifications.section.sicknote.created.management.label',info='person.notifications.section.sicknote.created.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteSubmittedByUserForManagement.visible},active=${personNotificationsDto.sickNoteSubmittedByUserForManagement.active},name='sickNoteSubmittedByUserForManagement.active',label='person.notifications.section.sicknote.submitted.management.label',info='person.notifications.section.sicknote.submitted.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteAcceptedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteAcceptedByManagementForManagement.active},name='sickNoteAcceptedByManagementForManagement.active',label='person.notifications.section.sicknote.accepted.management.label',info='person.notifications.section.sicknote.accepted.management.info')}"
               ></li>
             </ul>
           </section>

@@ -31,8 +31,10 @@ public class PersonNotificationsDto {
     private PersonNotificationDto overtimeAppliedByManagement;
     private PersonNotificationDto overtimeApplied;
     private PersonNotificationDto absenceForColleagues;
-    private PersonNotificationDto sickNoteCreatedEditedCancelledByManagement;
+    private PersonNotificationDto ownSickNoteSubmittedCreatedEditedCancelled;
     private PersonNotificationDto sickNoteCreatedByManagementForManagement;
+    private PersonNotificationDto sickNoteSubmittedByUserForManagement;
+    private PersonNotificationDto sickNoteAcceptedByManagementForManagement;
 
     PersonNotificationsDto() {
         // ok
@@ -198,12 +200,12 @@ public class PersonNotificationsDto {
         this.absenceForColleagues = absenceForColleagues;
     }
 
-    public PersonNotificationDto getSickNoteCreatedEditedCancelledByManagement() {
-        return sickNoteCreatedEditedCancelledByManagement;
+    public PersonNotificationDto getOwnSickNoteSubmittedCreatedEditedCancelled() {
+        return ownSickNoteSubmittedCreatedEditedCancelled;
     }
 
-    public void setSickNoteCreatedEditedCancelledByManagement(PersonNotificationDto sickNoteCreatedEditedCancelledByManagement) {
-        this.sickNoteCreatedEditedCancelledByManagement = sickNoteCreatedEditedCancelledByManagement;
+    public void setOwnSickNoteSubmittedCreatedEditedCancelled(PersonNotificationDto ownSickNoteSubmittedCreatedEditedCancelled) {
+        this.ownSickNoteSubmittedCreatedEditedCancelled = ownSickNoteSubmittedCreatedEditedCancelled;
     }
 
     public PersonNotificationDto getSickNoteCreatedByManagementForManagement() {
@@ -212,5 +214,21 @@ public class PersonNotificationsDto {
 
     public void setSickNoteCreatedByManagementForManagement(PersonNotificationDto sickNoteCreatedByManagementForManagement) {
         this.sickNoteCreatedByManagementForManagement = sickNoteCreatedByManagementForManagement;
+    }
+
+    public PersonNotificationDto getSickNoteSubmittedByUserForManagement() {
+        return sickNoteSubmittedByUserForManagement;
+    }
+
+    public void setSickNoteSubmittedByUserForManagement(PersonNotificationDto sickNoteSubmittedByUserForManagement) {
+        this.sickNoteSubmittedByUserForManagement = sickNoteSubmittedByUserForManagement;
+    }
+
+    public PersonNotificationDto getSickNoteAcceptedByManagementForManagement() {
+        return sickNoteAcceptedByManagementForManagement;
+    }
+
+    public void setSickNoteAcceptedByManagementForManagement(PersonNotificationDto sickNoteAcceptedByManagementForManagement) {
+        this.sickNoteAcceptedByManagementForManagement = sickNoteAcceptedByManagementForManagement;
     }
 }

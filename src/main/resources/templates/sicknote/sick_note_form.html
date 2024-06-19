@@ -59,7 +59,7 @@
             </div>
 
             <div class="col-md-8 col-md-pull-4">
-              <div class="form-group is-required">
+              <div th:if="${canAddSickNote}" class="form-group is-required">
                 <label th:text="|#{sicknote.data.person}:|" class="control-label col-md-3" for="employee"> </label>
 
                 <div class="col-md-9">
@@ -85,6 +85,9 @@
                   </th:block>
                 </div>
               </div>
+              <th:block th:if="${!canAddSickNote}">
+                <input type="hidden" name="person" th:value="${person.id}" />
+              </th:block>
 
               <div class="form-group is-required">
                 <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType"> </label>
@@ -317,10 +320,10 @@
           <button
             type="submit"
             class="button-main-green tw-w-56"
-            th:text="#{action.save}"
+            th:text="${sickNote.id == null} ? #{action.apply.sicknote}: #{action.apply.sicknote.edit}"
             data-test-id="sicknote-submit-button"
           >
-            Speichern
+            Neue Krankmeldung
           </button>
           <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>

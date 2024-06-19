@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -53,6 +54,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
@@ -111,44 +113,60 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/{id}")
-    public String sickNoteDetails(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
+    public String sickNoteDetails(@PathVariable("id") Long id,
+                                  @RequestParam(value = "action", required = false) String action,
+                                  @RequestParam(value = "shortcut", required = false) boolean shortcut,
+                                  @RequestParam(value = "redirect", required = false) String redirect,
+                                  Model model) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
         final SickNote sickNote = getSickNote(id);
+        final Person sickNotePerson = sickNote.getPerson();
 
-        final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
+        final boolean isSamePerson = sickNotePerson.equals(signedInUser);
 
         if (isSamePerson
             || signedInUser.hasRole(OFFICE)
-            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())) {
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote));
+            model.addAttribute("canAcceptSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
-            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote));
-            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote));
+            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
+            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
 
-            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
+            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
-            return "sicknote/sick_note";
+            model.addAttribute("action", requireNonNullElse(action, ""));
+            model.addAttribute("shortcut", shortcut);
+            model.addAttribute("redirect", redirect);
+
+            return "sicknote/sick_note_detail";
         }
 
         throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to see the sick note of user '%s'",
-            signedInUser.getId(), sickNote.getPerson().getId()));
+            signedInUser.getId(), sickNotePerson.getId()));
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @GetMapping("/sicknote/new")
     public String newSickNote(@RequestParam(value = "person", required = false) Long personId, Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
+
+        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
+            throw new AccessDeniedException(
+                "User '%s' has not the correct permissions to create a sick note".formatted(
+                    signedInUser.getId()));
+        }
+
 
         final Person person = personId == null
             ? signedInUser
@@ -161,6 +179,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
+        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, person));
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         addVacationTypeColorsToModel(model);
@@ -168,16 +187,16 @@ class SickNoteViewController implements HasLaunchpad {
         return "sicknote/sick_note_form";
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @PostMapping("/sicknote")
-    public String addNewSickNote(@ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) {
+    public String addOrSubmitNewSickNote(@ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
+        final Person sickNotePerson = sickNoteFormDto.getPerson();
 
         final SickNote sickNote = SickNote.builder()
             .id(sickNoteFormDto.getId())
-            .person(sickNoteFormDto.getPerson())
+            .person(sickNotePerson)
             .applier(signedInUser)
             .sickNoteType(sickNoteFormDto.getSickNoteType())
             .startDate(sickNoteFormDto.getStartDate())
@@ -187,12 +206,14 @@ class SickNoteViewController implements HasLaunchpad {
             .aubEndDate(sickNoteFormDto.getAubEndDate())
             .build();
 
+
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
             model.addAttribute("sickNote", sickNoteFormDto);
-            model.addAttribute("person", sickNoteFormDto.getPerson());
+            model.addAttribute("person", sickNotePerson);
             model.addAttribute("persons", getManagedPersons(signedInUser));
+            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             addVacationTypeColorsToModel(model);
@@ -200,7 +221,13 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_form";
         }
 
-        final SickNote updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
+        final SickNote updatedSickNote;
+        var isSubmission = sickNote.getPerson().equals(sickNote.getApplier()) && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+        if (isSubmission) {
+            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
+        } else {
+            updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
+        }
 
         return "redirect:/web/sicknote/" + updatedSickNote.getId();
     }
@@ -215,16 +242,19 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote)) {
+        final Person sickNotePerson = sickNote.getPerson();
+
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit the sick note of user '%s'",
-                signedInUser.getId(), sickNote.getPerson().getId()));
+                signedInUser.getId(), sickNotePerson.getId()));
         }
 
         final SickNoteFormDto sickNoteFormDto = toSickNoteForm(sickNote);
 
         model.addAttribute("sickNote", sickNoteFormDto);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
 
         addVacationTypeColorsToModel(model);
 
@@ -250,6 +280,9 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNote", sickNoteFormDto);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
+            final Person signedInUser = personService.getSignedInUser();
+            model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, editedSickNote.getPerson()));
+
             addVacationTypeColorsToModel(model);
 
             return "sicknote/sick_note_form";
@@ -257,6 +290,40 @@ class SickNoteViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteFormDto.getComment());
+
+        return "redirect:/web/sicknote/" + sickNoteId;
+    }
+
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
+    @PostMapping("/sicknote/{id}/accept")
+    public String acceptSickNote(@PathVariable("id") Long sickNoteId,
+                                 @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors,
+                                 @RequestParam(value = "redirect", required = false) String redirectUrl,
+                                 RedirectAttributes redirectAttributes
+    ) throws UnknownSickNoteException {
+
+        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
+        if (maybeSickNote.isEmpty()) {
+            throw new UnknownSickNoteException(sickNoteId);
+        }
+
+        comment.setMandatory(false);
+        sickNoteCommentFormValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:/web/sicknote/" + sickNoteId + "?action=allow&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
+        }
+
+        final Person signedInUser = personService.getSignedInUser();
+        final SickNote acceptedSickNote = sickNoteInteractionService.accept(maybeSickNote.get(), signedInUser, comment.getText());
+
+        if (SickNoteStatus.ACTIVE.equals(acceptedSickNote.getStatus())) {
+            redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
+        }
+
+        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
+            return "redirect:" + redirectUrl;
+        }
 
         return "redirect:/web/sicknote/" + sickNoteId;
     }
@@ -270,7 +337,7 @@ class SickNoteViewController implements HasLaunchpad {
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote)) {
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote.getPerson())) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to comment the sick note of user '%s'",
                 signedInUser.getId(), sickNote.getPerson().getId()));
@@ -331,25 +398,49 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
     @PostMapping("/sicknote/{id}/cancel")
-    public String cancelSickNote(@PathVariable("id") Long id) throws UnknownSickNoteException {
+    public String cancelSickNote(@PathVariable("id") Long id,
+                                 @ModelAttribute("comment") SickNoteCommentFormDto comment,
+                                 Errors errors,
+                                 @RequestParam(value = "redirect", required = false) String redirectUrl,
+                                 RedirectAttributes redirectAttributes) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote)) {
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote.getPerson())) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to cancel the sick note of user '%s'",
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
-        final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser);
+        comment.setMandatory(true);
+        sickNoteCommentFormValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:/web/sicknote/" + id + "?action=cancel&redirect=%s".formatted(requireNonNullElse(redirectUrl, ""));
+        }
+
+        final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser, comment.getText());
+
+        if (SickNoteStatus.CANCELLED.equals(cancelledSickNote.getStatus())) {
+            redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);
+        }
+
+        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
+            return "redirect:" + redirectUrl;
+        }
+
         return "redirect:/web/sicknote/" + cancelledSickNote.getId();
     }
 
-    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, SickNote sickNote) {
+    private boolean canAddSickNote(Person person, Person sickNotePerson) {
+        return person.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(person, SICK_NOTE_ADD, sickNotePerson);
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person sickNotePerson) {
         final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNote.getPerson())
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNote.getPerson());
+            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNotePerson)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNotePerson);
         return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 

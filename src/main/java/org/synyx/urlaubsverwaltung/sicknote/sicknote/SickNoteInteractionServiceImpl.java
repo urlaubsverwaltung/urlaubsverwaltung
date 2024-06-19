@@ -19,6 +19,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 /**
  * Implementation for {@link SickNoteInteractionService}.
@@ -51,6 +52,35 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
+    public SickNote submit(SickNote sickNote, Person submitter, String comment) {
+        final SickNote submittedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(SUBMITTED).build());
+        LOG.info("New sick note {} was submitted by user {}", submittedSickNote, submitter);
+
+        commentService.create(submittedSickNote, SickNoteCommentAction.SUBMITTED, submitter, comment);
+
+        sickNoteMailService.sendSickNoteSubmittedNotificationToSickPerson(submittedSickNote);
+        sickNoteMailService.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(submittedSickNote);
+
+        return submittedSickNote;
+    }
+
+    @Override
+    public SickNote accept(SickNote sickNote, Person maintainer, String comment) {
+        final SickNote acceptedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        LOG.info("Sick note {} was accepted by {}", acceptedSickNote, maintainer);
+
+        commentService.create(acceptedSickNote, SickNoteCommentAction.ACCEPTED, maintainer, comment);
+
+        sickNoteMailService.sendSickNoteAcceptedNotificationToSickPerson(acceptedSickNote, maintainer);
+        sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
+        sickNoteMailService.sendCreatedOrAcceptedToColleagues(acceptedSickNote);
+
+        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));
+
+        return acceptedSickNote;
+    }
+
+    @Override
     public SickNote create(SickNote sickNote, Person creator) {
         return this.create(sickNote, creator, null);
     }
@@ -64,7 +94,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         commentService.create(createdSickNote, SickNoteCommentAction.CREATED, applier, comment);
 
         sickNoteMailService.sendCreatedToSickPerson(createdSickNote);
-        sickNoteMailService.sendCreatedToColleagues(createdSickNote);
+        sickNoteMailService.sendCreatedOrAcceptedToColleagues(createdSickNote);
         sickNoteMailService.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(createdSickNote, comment);
 
         applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(createdSickNote));
@@ -103,12 +133,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote cancel(SickNote sickNote, Person canceller) {
+    public SickNote cancel(SickNote sickNote, Person canceller, String comment) {
 
         final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
         LOG.info("Cancelled sick note: {}", cancelledSickNote);
 
-        commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller);
+        commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 
         sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote);
         sickNoteMailService.sendCancelToColleagues(cancelledSickNote);

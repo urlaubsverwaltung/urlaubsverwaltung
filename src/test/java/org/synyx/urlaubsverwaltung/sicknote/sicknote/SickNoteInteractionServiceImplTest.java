@@ -149,7 +149,7 @@ class SickNoteInteractionServiceImplTest {
         sut.create(sickNote, creator, comment);
 
         verify(sickNoteMailService).sendCreatedToSickPerson(sickNote);
-        verify(sickNoteMailService).sendCreatedToColleagues(sickNote);
+        verify(sickNoteMailService).sendCreatedOrAcceptedToColleagues(sickNote);
         verify(sickNoteMailService).sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
     }
 
@@ -205,11 +205,11 @@ class SickNoteInteractionServiceImplTest {
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
-        final SickNote cancelledSickNote = sut.cancel(sickNote, creator);
+        final SickNote cancelledSickNote = sut.cancel(sickNote, creator, "comment");
         assertThat(cancelledSickNote).isNotNull();
         assertThat(cancelledSickNote.getStatus()).isEqualTo(SickNoteStatus.CANCELLED);
 
-        verify(commentService).create(sickNote, SickNoteCommentAction.CANCELLED, creator);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CANCELLED, creator, "comment");
         verify(sickNoteService).save(sickNote);
 
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
@@ -239,7 +239,7 @@ class SickNoteInteractionServiceImplTest {
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .build();
 
-        sut.cancel(sickNote, canceller);
+        sut.cancel(sickNote, canceller, "comment");
 
         verify(sickNoteMailService).sendCancelledToSickPerson(sickNote);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
@@ -322,5 +322,70 @@ class SickNoteInteractionServiceImplTest {
         assertThat(sickNoteDeletedEvent.sickNote()).isEqualTo(sickNote);
         assertThat(sickNoteDeletedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteDeletedEvent.id()).isNotNull();
+    }
+
+    @Test
+    void submit() {
+        when(sickNoteService.save(any(SickNote.class))).then(returnsFirstArg());
+
+        final SickNote sickNote = SickNote.builder()
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .build();
+
+        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+        final String comment = "comment";
+
+        final SickNote submittedSickNote = sut.submit(sickNote, creator, comment);
+        assertThat(submittedSickNote).isNotNull();
+        assertThat(submittedSickNote.getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteService).save(captor.capture());
+        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
+
+        verify(commentService).create(sickNote, SickNoteCommentAction.SUBMITTED, creator, comment);
+
+        verify(sickNoteMailService).sendSickNoteSubmittedNotificationToSickPerson(sickNote);
+        verify(sickNoteMailService).sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
+    }
+
+    @Test
+    void accept() {
+        when(sickNoteService.save(any(SickNote.class))).then(returnsFirstArg());
+
+        final SickNote sickNote = SickNote.builder()
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .status(SickNoteStatus.ACTIVE)
+                .build();
+
+        final Person maintainer = new Person("maintainer", "Senior", "Maintainer", "maintainer@example.org");
+
+        final SickNote acceptedSickNote = sut.accept(sickNote, maintainer, "comment");
+        assertThat(acceptedSickNote).isNotNull();
+        assertThat(acceptedSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteService).save(captor.capture());
+        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
+
+        verify(commentService).create(sickNote, SickNoteCommentAction.ACCEPTED, maintainer, "comment");
+
+        verify(sickNoteMailService).sendSickNoteAcceptedNotificationToSickPerson(sickNote, maintainer);
+        verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer);
+
+        final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteUpdatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
+        assertThat(sickNoteCreatedEvent.sickNote()).isEqualTo(acceptedSickNote);
+        assertThat(sickNoteCreatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCreatedEvent.id()).isNotNull();
     }
 }

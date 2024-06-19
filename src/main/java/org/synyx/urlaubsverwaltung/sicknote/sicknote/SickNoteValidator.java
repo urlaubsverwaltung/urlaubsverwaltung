@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -51,12 +52,14 @@ public class SickNoteValidator implements Validator {
     private final OverlapService overlapService;
     private final WorkingTimeService workingTimeService;
     private final DepartmentService departmentService;
+    private final SettingsService settingsService;
 
     @Autowired
-    SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, DepartmentService departmentService) {
+    SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, DepartmentService departmentService, SettingsService settingsService) {
         this.overlapService = overlapService;
         this.workingTimeService = workingTimeService;
         this.departmentService = departmentService;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -79,6 +82,10 @@ public class SickNoteValidator implements Validator {
     private void validateApplier(SickNote sickNote, Errors errors) {
         final Person applier = sickNote.getApplier();
         if (applier == null) {
+            return;
+        }
+
+        if (settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes() && applier.equals(sickNote.getPerson())) {
             return;
         }
 

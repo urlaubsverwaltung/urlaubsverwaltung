@@ -8,6 +8,11 @@ import java.util.List;
 public enum SickNoteStatus {
 
     /**
+     * After the submission of a sick note by a user him/herself the saved sick note gets this status
+     */
+    SUBMITTED,
+
+    /**
      * After creating a sick note the saved sick note gets this status
      */
     ACTIVE,
@@ -23,13 +28,13 @@ public enum SickNoteStatus {
     CANCELLED;
 
     /**
-     * Returns all active statuses of aa sick note.
+     * Returns all active statuses of a sick note.
      * Hint: Sick notes with one of these statuses will be used for calculations and shown as active on the ui.
      *
      * @return a list of all active statuses
      */
     public static List<SickNoteStatus> activeStatuses() {
-        return List.of(ACTIVE);
+        return List.of(SUBMITTED, ACTIVE);
     }
 
     /**

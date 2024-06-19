@@ -920,6 +920,7 @@ describe("create-datepicker", () => {
               date: "2020-12-24",
               absent: "FULL",
               absenceType: "SICK_NOTE",
+              status: "ACTIVE",
             },
           ]);
 
@@ -938,6 +939,7 @@ describe("create-datepicker", () => {
               date: "2020-12-24",
               absent: "MORNING",
               absenceType: "SICK_NOTE",
+              status: "ACTIVE",
             },
           ]);
 
@@ -956,6 +958,7 @@ describe("create-datepicker", () => {
               date: "2020-12-24",
               absent: "NOON",
               absenceType: "SICK_NOTE",
+              status: "ACTIVE",
             },
           ]);
 

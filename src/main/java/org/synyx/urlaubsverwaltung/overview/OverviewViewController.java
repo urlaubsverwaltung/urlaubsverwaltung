@@ -157,7 +157,7 @@ public class OverviewViewController implements HasLaunchpad {
 
         final List<SickNote> sortedSickNotes = sickNotes.stream()
             .sorted(comparing(SickNote::getStartDate).reversed())
-            .collect(toList());
+            .toList();
         model.addAttribute("sickNotes", sortedSickNotes);
 
         final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService, from, to);

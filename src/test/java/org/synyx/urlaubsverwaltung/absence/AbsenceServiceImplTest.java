@@ -53,6 +53,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
@@ -96,7 +97,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStatesAndPersonSince(List.of(ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersonSince(List.of(SUBMITTED, ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
 
         final List<Absence> openAbsences = sut.getOpenAbsencesSince(List.of(person), since);
         assertThat(openAbsences).hasSize(2);
@@ -129,7 +130,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStatesSince(List.of(ACTIVE), since)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesSince(List.of(SUBMITTED, ACTIVE), since)).thenReturn(List.of(sickNote));
 
         final List<Absence> openAbsences = sut.getOpenAbsencesSince(since);
         assertThat(openAbsences).hasSize(2);
@@ -172,7 +173,7 @@ class AbsenceServiceImplTest {
 
         sut.getOpenAbsences(List.of(batman, superman), start, end);
 
-        verify(sickNoteService).getForStatesAndPerson(List.of(ACTIVE), List.of(batman, superman), start, end);
+        verify(sickNoteService).getForStatesAndPerson(List.of(SUBMITTED, ACTIVE), List.of(batman, superman), start, end);
     }
 
     @Test

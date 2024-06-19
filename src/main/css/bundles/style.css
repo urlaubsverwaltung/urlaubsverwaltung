@@ -48,7 +48,6 @@
     --uv-cal-default-color: 10, 10, 10;
     --uv-cal-weekend-bg: 181, 208, 223;
     --uv-cal-weekend-color: 10, 10, 10;
-    --uv-cal-sick-note-bg: 239, 68, 68;
     --uv-cal-public-holiday-bg: 203, 213, 225; /* slate.300 */
     --uv-cal-public-holiday-color: 10, 10, 10;
   }
@@ -61,7 +60,6 @@
     --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
     --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
     --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
-    --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
     --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
   }

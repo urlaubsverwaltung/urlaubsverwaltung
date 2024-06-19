@@ -157,7 +157,7 @@ public class SickNote {
     }
 
     public boolean isActive() {
-        return SickNoteStatus.ACTIVE.equals(getStatus());
+        return SickNoteStatus.activeStatuses().contains(this.status);
     }
 
     public boolean isAubPresent() {

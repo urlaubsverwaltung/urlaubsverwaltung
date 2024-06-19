@@ -229,9 +229,10 @@ class SickNoteTest {
         assertThat(sickNote.isActive()).isFalse();
     }
 
-    @Test
-    void ensureIsActiveForActiveStatus() {
-        final SickNote sickNote = SickNote.builder().status(SickNoteStatus.ACTIVE).build();
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "ACTIVE"})
+    void ensureIsActiveForActiveStatus(SickNoteStatus status) {
+        final SickNote sickNote = SickNote.builder().status(status).build();
         assertThat(sickNote.isActive()).isTrue();
     }
 

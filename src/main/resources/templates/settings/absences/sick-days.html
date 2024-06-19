@@ -74,6 +74,43 @@
             </div>
           </div>
         </div>
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <span
+              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
+              th:text="#{settings.betaTag}"
+              >BETA</span
+            >
+            <th:block th:utext="#{settings.sickDays.betaUserIsAllowedToSubmitSickNotes}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label class="control-label col-md-4" for="sickDays.userIsAllowedToSubmitSickNotes.true">
+              <span th:text="|#{settings.sickDays.userIsAllowedToSubmitSickNotes}:|" />
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="sickDays.userIsAllowedToSubmitSickNotes.true"
+                  th:field="*{sickNoteSettings.userIsAllowedToSubmitSickNotes}"
+                  value="true"
+                />
+                <th:block th:text="#{settings.sickDays.userIsAllowedToSubmitSickNotes.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="sickNoteSettings.userIsAllowedToSubmitSickNotes.false"
+                  th:field="*{sickNoteSettings.userIsAllowedToSubmitSickNotes}"
+                  value="false"
+                />
+                <th:block th:text="#{settings.sickDays.userIsAllowedToSubmitSickNotes.false}" />
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
     </th:block>
   </body>
