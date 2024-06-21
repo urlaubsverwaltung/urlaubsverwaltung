@@ -490,6 +490,8 @@ class SickNoteMailServiceIT extends TestContainersBase {
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
                 Art der Krankmeldung: Kind-Krankmeldung
 
+            Überblick aller eingereichten Krankmeldungen findest du unter https://localhost:8080/web/sicknote/submitted#sicknote-submitted
+
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office.getId()));
     }
@@ -581,6 +583,8 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
                 Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
                 Art der Krankmeldung: Kind-Krankmeldung
+
+            Überblick aller eingereichten Krankmeldungen findest du unter https://localhost:8080/web/sicknote/submitted#sicknote-submitted
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office2.getId()));
