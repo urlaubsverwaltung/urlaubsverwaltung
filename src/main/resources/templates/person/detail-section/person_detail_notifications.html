@@ -23,9 +23,9 @@
           notifications.applicationCancellationRequestedForManagement.active
         },
         showSickNoteManagement=${
-          notifications.sickNoteCreatedByManagementForManagement.active ||
-          notifications.sickNoteSubmittedByUserForManagement.active ||
-          notifications.sickNoteSubmittedByUserForManagement.active
+          (notifications.sickNoteCreatedByManagementForManagement.visible && notifications.sickNoteCreatedByManagementForManagement.active) ||
+          (notifications.sickNoteSubmittedByUserForManagement.visible && notifications.sickNoteSubmittedByUserForManagement.active) ||
+          (notifications.sickNoteAcceptedByManagementForManagement.visible && notifications.sickNoteAcceptedByManagementForManagement.active)
         },
         showOvertime=${
           notifications.overtimeApplied.active ||
@@ -113,10 +113,10 @@
             th:replace="~{::email-notification-element(active=${notifications.sickNoteCreatedByManagementForManagement.active},info='person.notifications.section.sicknote.created.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.sickNoteSubmittedByUserForManagement.active},info='person.notifications.section.sicknote.submitted.management.label')}"
+            th:replace="~{::email-notification-element(active=${notifications.sickNoteSubmittedByUserForManagement.visible && notifications.sickNoteSubmittedByUserForManagement.active},info='person.notifications.section.sicknote.submitted.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.sickNoteAcceptedByManagementForManagement.active},info='person.notifications.section.sicknote.accepted.management.label')}"
+            th:replace="~{::email-notification-element(active=${notifications.sickNoteAcceptedByManagementForManagement.visible && notifications.sickNoteAcceptedByManagementForManagement.active},info='person.notifications.section.sicknote.accepted.management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showOvertime}">
