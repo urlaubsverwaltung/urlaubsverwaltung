@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
@@ -103,13 +104,16 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     }
 
     private void prepareApplicationModels(Model model, Locale locale) {
+
+        final SickNoteSettings sickNoteSettings = settingsService.getSettings().getSickNoteSettings();
+
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
-        model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
-        model.addAttribute("canAccessOtherApplications", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
-        model.addAttribute("canAccessSickNoteSubmissions", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes() && (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)))));
+        model.addAttribute("canAccessApplicationStatistics", isAllowedToAccessApplicationStatistics(signedInUser));
+        model.addAttribute("canAccessCancellationRequests", isAllowedToAccessCancellationRequest(signedInUser));
+        model.addAttribute("canAccessOtherApplications", isAllowedToAccessOtherApplications(signedInUser));
+        model.addAttribute("canAccessSickNoteSubmissions", sickNoteSettings.getUserIsAllowedToSubmitSickNotes() && isAllowedToAccessSickNoteSubmissions(signedInUser));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
@@ -134,6 +138,23 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
         final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
         model.addAttribute("applications_holiday_replacements", replacements);
+    }
+
+    private static boolean isAllowedToAccessApplicationStatistics(Person signedInUser) {
+        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+    }
+
+    private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
+        return signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)));
+    }
+
+    private static boolean isAllowedToAccessOtherApplications(Person signedInUser) {
+        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+    }
+
+    private static boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
+        return signedInUser.hasRole(OFFICE)
+            || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)));
     }
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
