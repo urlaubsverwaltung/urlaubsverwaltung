@@ -108,7 +108,7 @@ final class PersonNotificationsMapper {
         return mailNotifications;
     }
 
-    static PersonNotificationsDto mapToPersonNotificationsDto(Person person) {
+    static PersonNotificationsDto mapToPersonNotificationsDto(Person person, boolean userIsAllowedToSubmitSickNotes) {
 
         final List<MailNotification> activePersonMailNotifications = new ArrayList<>(person.getNotifications());
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
@@ -158,7 +158,7 @@ final class PersonNotificationsMapper {
 
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             final boolean departmentRelated = mailNotificationToCheck.isDepartmentRelated();
-            final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());
+            final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions()) && (!mailNotificationToCheck.isSickNoteSubmissionRelated() || userIsAllowedToSubmitSickNotes);
             final boolean isActive = activePersonMailNotifications.contains(mailNotificationToCheck);
             setterByNotification.get(mailNotificationToCheck).accept(new PersonNotificationDtoDepartmentAware(departmentRelated, isVisible, isActive));
         }
@@ -210,7 +210,10 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getApplicationWaitingReminderForManagement(),
             personNotificationsDto.getApplicationCancellationRequestedForManagement(),
             personNotificationsDto.getOvertimeAppliedForManagement(),
-            personNotificationsDto.getAbsenceForColleagues()
+            personNotificationsDto.getAbsenceForColleagues(),
+            personNotificationsDto.getSickNoteCreatedByManagementForManagement(),
+            personNotificationsDto.getSickNoteSubmittedByUserForManagement(),
+            personNotificationsDto.getSickNoteAcceptedByManagementForManagement()
         );
 
         final List<PersonNotificationDtoDepartmentAware> visibleDepartment = dtoDepartmentNotifications.stream()

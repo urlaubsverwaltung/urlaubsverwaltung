@@ -79,7 +79,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
         model.addAttribute("person", person);
         model.addAttribute("permissions", mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
 
-        model.addAttribute("personNotificationsDto", mapToPersonNotificationsDto(person));
+        model.addAttribute("personNotificationsDto", mapToPersonNotificationsDto(person, settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()));
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {

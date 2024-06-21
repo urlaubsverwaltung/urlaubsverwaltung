@@ -21,6 +21,9 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,10 +69,12 @@ class PersonNotificationsViewControllerTest {
     private UserNotificationSettingsService userNotificationSettingsService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService);
+        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService, settingsService);
     }
 
     @ParameterizedTest
@@ -90,6 +95,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        userIsAllowedToSubmitSickNotes(false);
 
         perform(get(givenUrl, 1))
             .andExpect(status().isOk())
@@ -119,6 +126,8 @@ class PersonNotificationsViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get(givenUrl, 1))
             .andExpect(status().isOk())
             .andExpect(model().attribute("departmentsAvailable", is(true)))
@@ -147,6 +156,8 @@ class PersonNotificationsViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get(givenUrl, 1))
             .andExpect(status().isOk())
             .andExpect(model().attribute("departmentsAvailable", is(true)))
@@ -165,6 +176,8 @@ class PersonNotificationsViewControllerTest {
 
         final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1L), true);
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
+
+        userIsAllowedToSubmitSickNotes(false);
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
@@ -186,8 +199,14 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAdaptedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -220,6 +239,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -242,6 +263,12 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -274,6 +301,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -296,6 +325,12 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -328,6 +363,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -350,6 +387,12 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -382,6 +425,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -406,6 +451,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -429,6 +476,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -451,6 +500,12 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -482,6 +537,8 @@ class PersonNotificationsViewControllerTest {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
@@ -504,6 +561,12 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteCreatedByManagementForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
@@ -520,6 +583,54 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
+    }
+
+    @Test
+    void ensuresThatOnlyVisibleAndActiveAndUserIsNotAllowedToSubmitSickNotesForOffice() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
+
+        userIsAllowedToSubmitSickNotes(false);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
+        ;
+    }
+
+    @Test
+    void ensuresThatOnlyVisibleAndActiveAndUserIsAllowedToSubmitSickNotesForOffice() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteSubmittedByUserForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("sickNoteAcceptedByManagementForManagement", hasProperty("active", is(false)))))
+            ;
     }
 
     @Test
@@ -612,6 +723,8 @@ class PersonNotificationsViewControllerTest {
             return null;
         }).when(validator).validate(any(), any());
 
+        userIsAllowedToSubmitSickNotes(false);
+
         perform(post("/web/person/{personId}/notifications", 1)
             .param("personId", "1")
             .param("applicationAppliedAndChanges.visible", "true")
@@ -623,6 +736,25 @@ class PersonNotificationsViewControllerTest {
         verify(personService, never()).update(personWithoutNotifications);
     }
 
+    @Test
+    void ensureSickNoteSubmissionOnDepartmentNotifications() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), true));
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        perform(get("/web/person/{personId}/notifications/departments", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))));
+    }
+
     private static Person personWithId(long personId) {
         final Person person = new Person();
         person.setId(personId);
@@ -631,5 +763,13 @@ class PersonNotificationsViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    private void userIsAllowedToSubmitSickNotes(boolean userIsAllowedToSubmit) {
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(userIsAllowedToSubmit);
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 }
