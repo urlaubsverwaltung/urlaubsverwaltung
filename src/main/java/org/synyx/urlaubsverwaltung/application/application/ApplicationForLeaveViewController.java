@@ -145,7 +145,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     }
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
+        return signedInUser.hasRole(OFFICE)
+            || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private static boolean isAllowedToAccessOtherApplications(Person signedInUser) {
