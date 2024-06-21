@@ -63,7 +63,7 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("navigation", createNavigation(user));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user));
-            modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
+            modelAndView.addObject("navigationOvertimeAddAccess", userIsAllowedToWriteOvertime(user));
             modelAndView.addObject("gravatarEnabled", settingsService.getSettings().getAvatarSettings().isGravatarEnabled());
         }
     }
@@ -75,7 +75,7 @@ public class FrameDataProvider implements DataProviderInterface {
         elements.add(new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"));
         elements.add(new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"));
 
-        final boolean overtime = overtimeEnabled(user);
+        final boolean overtime = overtimeEnabled();
         if (overtime) {
             elements.add(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
         }
@@ -104,10 +104,14 @@ public class FrameDataProvider implements DataProviderInterface {
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser) || isAllowedToAddOrSubmitSickNote(signedInUser);
+        return signedInUser.hasRole(OFFICE) || overtimeEnabled() || isAllowedToAddOrSubmitSickNote(signedInUser);
     }
 
-    private boolean overtimeEnabled(Person signedInUser) {
+    private boolean overtimeEnabled() {
+        return settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
+    }
+
+    private boolean userIsAllowedToWriteOvertime(Person signedInUser) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
         return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;

@@ -106,7 +106,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -143,7 +143,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -181,7 +181,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -217,7 +217,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -253,7 +253,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -289,7 +289,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -325,7 +325,7 @@ class FrameDataProviderTest {
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @Test
@@ -384,7 +384,7 @@ class FrameDataProviderTest {
                 );
             });
 
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
 
     @ParameterizedTest
@@ -412,7 +412,7 @@ class FrameDataProviderTest {
                     .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });
 
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
     }
 
     static Stream<Arguments> modelPropertiesNavigation() {
@@ -478,7 +478,7 @@ class FrameDataProviderTest {
     }
 
     @Test
-    void ensureOvertimeItemIsNotEnabledWhenOvertimeIsRestrictedToPrivileged() {
+    void ensureOvertimeItemIsEnabledWhenOvertimeIsRestrictedToPrivileged() {
         mockSettings(true, true, true, false);
 
         final Person person = new Person();
@@ -498,10 +498,10 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements())
                     .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+                    .contains(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });
 
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
     }
 
     @ParameterizedTest
