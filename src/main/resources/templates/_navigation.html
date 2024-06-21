@@ -107,7 +107,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li th:if="${navigationOvertimeItemEnabled}" class="tw-mt-4 xs:tw-mt-1">
+                          <li th:if="${navigationOvertimeAddAccess}" class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')}"
