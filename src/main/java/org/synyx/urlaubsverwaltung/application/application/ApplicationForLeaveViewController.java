@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
@@ -56,18 +57,20 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
+    private final SettingsService settingsService;
     private final Clock clock;
     private final MessageSource messageSource;
 
     @Autowired
     ApplicationForLeaveViewController(ApplicationService applicationService, SickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
-                                      DepartmentService departmentService, PersonService personService, Clock clock,
+                                      DepartmentService departmentService, PersonService personService, SettingsService settingsService, Clock clock,
                                       MessageSource messageSource) {
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
+        this.settingsService = settingsService;
         this.clock = clock;
         this.messageSource = messageSource;
     }
@@ -106,7 +109,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
         model.addAttribute("canAccessOtherApplications", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
-        model.addAttribute("canAccessSickNoteSubmissions", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
+        model.addAttribute("canAccessSickNoteSubmissions", settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes() && (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)))));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();

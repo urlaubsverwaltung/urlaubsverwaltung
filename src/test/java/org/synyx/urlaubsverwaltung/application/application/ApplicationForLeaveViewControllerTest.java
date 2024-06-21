@@ -17,6 +17,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -79,14 +82,19 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+    private SettingsService settingsService;
+    @Mock
     private MessageSource messageSource;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
+
+        userIsAllowedToSubmitSickNotes(false);
+
         sut = new ApplicationForLeaveViewController(applicationService, sickNoteService, workDaysCountService, departmentService,
-            personService, clock, messageSource);
+            personService, settingsService, clock, messageSource);
     }
 
     @Test
@@ -407,7 +415,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
-            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(true)))
+            .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
             .andExpect(model().attribute("userApplications", hasItems(
                 allOf(
@@ -1534,6 +1542,7 @@ class ApplicationForLeaveViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         // other sicknotes
+        userIsAllowedToSubmitSickNotes(true);
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get(path)).andExpect(status().isOk())
@@ -1589,6 +1598,7 @@ class ApplicationForLeaveViewControllerTest {
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(person));
 
         // other sicknotes
+        userIsAllowedToSubmitSickNotes(true);
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
@@ -1644,6 +1654,7 @@ class ApplicationForLeaveViewControllerTest {
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(person));
 
         // other sicknotes
+        userIsAllowedToSubmitSickNotes(true);
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
@@ -1699,6 +1710,7 @@ class ApplicationForLeaveViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(person, boss));
 
         // other sicknotes
+        userIsAllowedToSubmitSickNotes(true);
         when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
@@ -1740,5 +1752,13 @@ class ApplicationForLeaveViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    private void userIsAllowedToSubmitSickNotes(boolean userIsAllowedToSubmit) {
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setUserIsAllowedToSubmitSickNotes(userIsAllowedToSubmit);
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
     }
 }
