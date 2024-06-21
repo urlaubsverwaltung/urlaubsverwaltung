@@ -141,20 +141,20 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     }
 
     private static boolean isAllowedToAccessApplicationStatistics(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+        return signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
     }
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)));
+        return signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private static boolean isAllowedToAccessOtherApplications(Person signedInUser) {
-        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+        return signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
     }
 
     private static boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
         return signedInUser.hasRole(OFFICE)
-            || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)));
+            || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
