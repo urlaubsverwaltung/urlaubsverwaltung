@@ -66,7 +66,7 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("navigation", createNavigation(user, settings));
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user, settings));
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
-            modelAndView.addObject("navigationOvertimeAddAccess", userIsAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
+            modelAndView.addObject("navigationOvertimeAddAccess", isUserAllowedToWriteOvertime(user, settings.getOvertimeSettings()));
             modelAndView.addObject("gravatarEnabled", settings.getAvatarSettings().isGravatarEnabled());
         }
     }
@@ -107,14 +107,14 @@ public class FrameDataProvider implements DataProviderInterface {
     }
 
     private boolean popupMenuEnabled(Person signedInUser, Settings settings) {
-        return signedInUser.hasRole(OFFICE) || overtimeEnabled(settings.getOvertimeSettings()) || isAllowedToAddOrSubmitSickNote(signedInUser, settings.getSickNoteSettings());
+        return signedInUser.hasRole(OFFICE) || isUserAllowedToWriteOvertime(signedInUser, settings.getOvertimeSettings()) || isAllowedToAddOrSubmitSickNote(signedInUser, settings.getSickNoteSettings());
     }
 
     private boolean overtimeEnabled(OvertimeSettings overtimeSettings) {
         return overtimeSettings.isOvertimeActive();
     }
 
-    private boolean userIsAllowedToWriteOvertime(Person signedInUser, OvertimeSettings overtimeSettings) {
+    private boolean isUserAllowedToWriteOvertime(Person signedInUser, OvertimeSettings overtimeSettings) {
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
         return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;
     }
