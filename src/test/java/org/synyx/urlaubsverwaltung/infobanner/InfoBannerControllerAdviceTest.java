@@ -29,15 +29,15 @@ class InfoBannerControllerAdviceTest {
     }
 
     @Test
-    void ensureModelAttributeIsNotSetWhenModelAndViewHasNoView() throws Exception {
+    void ensureModelAttributeIsNotSetWhenModelAndViewHasNoView() {
         final ModelAndView modelAndView = new ModelAndView();
         sut.postHandle(null, null, null, modelAndView);
         assertThat(modelAndView.getModel()).doesNotContainEntry("infoBannerText", "info text");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"redirect", "forward"})
-    void ensureModelAttributeIsNotSetWhenViewNameStartsWith(String prefix) throws Exception {
+    @ValueSource(strings = {"forward::view-name", "redirect::view-name"})
+    void ensureModelAttributeIsNotSetWhenViewNameStartsWith(String prefix) {
 
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(prefix);
@@ -47,7 +47,7 @@ class InfoBannerControllerAdviceTest {
     }
 
     @Test
-    void ensureModelAttribute() throws Exception {
+    void ensureModelAttribute() {
         final ModelAndView modelAndView = new ModelAndView("any-viewname");
         sut.postHandle(null, null, null, modelAndView);
         assertThat(modelAndView.getModel()).containsEntry("infoBannerText", "info text");

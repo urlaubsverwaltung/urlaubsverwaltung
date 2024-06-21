@@ -347,7 +347,7 @@ class FrameDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"redirect:", "login"})
+    @ValueSource(strings = {"forward::view-name", "redirect::view-name"})
     @NullSource
     void postHandleDoNotAddGravatar(String viewName) {
 

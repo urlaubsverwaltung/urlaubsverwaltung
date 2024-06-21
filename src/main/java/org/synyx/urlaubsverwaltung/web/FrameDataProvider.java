@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -27,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
  * Interceptor to add menu specific information to all requests
  */
 @Component
-public class FrameDataProvider implements HandlerInterceptor {
+public class FrameDataProvider implements DataProviderInterface {
 
     private final PersonService personService;
     private final SettingsService settingsService;
@@ -46,7 +45,7 @@ public class FrameDataProvider implements HandlerInterceptor {
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
 
-        if (modelAndView != null && menuIsShown(modelAndView)) {
+        if (addDataIf(modelAndView)) {
 
             final Person signedInUserInModel = (Person) modelAndView.getModelMap().get("signedInUser");
             final Person user = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser);
@@ -102,18 +101,6 @@ public class FrameDataProvider implements HandlerInterceptor {
         }
 
         return new NavigationDto(elements);
-    }
-
-    private boolean menuIsShown(ModelAndView modelAndView) {
-
-        final String viewName = modelAndView.getViewName();
-        if (viewName == null) {
-            return false;
-        }
-
-        return !viewName.startsWith("forward:")
-            && !viewName.startsWith("redirect:")
-            && !viewName.startsWith("login");
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {

@@ -64,18 +64,6 @@ class UserThemeDataProviderTest {
         assertThat(modelAndView.getModelMap()).containsEntry("theme", "system");
     }
 
-    @Test
-    void addSystemDefaultThemeForLogin() {
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setLocalName(Locale.GERMAN.getLanguage());
-
-        sut.postHandle(request, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap()).containsEntry("theme", "system");
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"forward:", "redirect:"})
     @NullSource

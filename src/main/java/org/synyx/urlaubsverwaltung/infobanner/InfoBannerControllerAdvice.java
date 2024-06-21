@@ -3,11 +3,10 @@ package org.synyx.urlaubsverwaltung.infobanner;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.web.DataProviderInterface;
 
-class InfoBannerControllerAdvice implements HandlerInterceptor {
+class InfoBannerControllerAdvice implements DataProviderInterface {
 
     private final InfoBannerConfigProperties properties;
 
@@ -16,15 +15,9 @@ class InfoBannerControllerAdvice implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-
-        if (modelAndView != null && modelAndView.hasView() && !redirectOrForward(modelAndView)) {
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
+        if (addDataIf(modelAndView)) {
             modelAndView.getModelMap().addAttribute("infoBannerText", properties.text().de());
         }
-    }
-
-    private static boolean redirectOrForward(ModelAndView modelAndView) {
-        final String viewName = modelAndView.getViewName();
-        return viewName != null && (viewName.startsWith("redirect") || viewName.startsWith("forward"));
     }
 }
