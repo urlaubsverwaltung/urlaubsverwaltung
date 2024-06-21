@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
@@ -126,8 +127,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
 
-        final List<SickNoteDto> otherSickNotes = sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), getPersonsForRelevantSubmittedSickNotes(signedInUser)).stream().map(SickNoteDto::new).toList();
-        model.addAttribute("otherSickNotes", otherSickNotes);
+        final List<SickNote> otherSickNotes = sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), getPersonsForRelevantSubmittedSickNotes(signedInUser)).stream().toList();
+        final List<SickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(otherSickNotes, locale);
+        model.addAttribute("otherSickNotes", otherSickNotesDtos);
 
         final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
         final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
@@ -156,6 +158,23 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private static boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
         return signedInUser.hasRole(OFFICE)
             || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
+    }
+
+    private List<SickNoteDto> mapToSickNoteDtoList(List<SickNote> sickNotes, Locale locale) {
+        return sickNotes.stream()
+            .map(sickNote -> toView(sickNote, messageSource, locale))
+            .toList();
+    }
+
+    private static SickNoteDto toView(SickNote sickNote, MessageSource messageSource, Locale locale) {
+        return new SickNoteDto(
+            sickNote.getId().toString(),
+            sickNote.getWorkDays(),
+            new SickNotePersonDto(sickNote.getPerson().getNiceName(), sickNote.getPerson().getGravatarURL(), sickNote.getPerson().isInactive(), sickNote.getId()),
+            sickNote.getSickNoteType().getMessageKey(),
+            sickNote.getStatus().name(),
+            toDurationOfAbsenceDescription(sickNote, messageSource, locale)
+        );
     }
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
@@ -231,6 +250,24 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             }
 
             final DayLength dayLength = application.getDayLength();
+            final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
+            return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
+        }
+
+        final String dateEndString = endDate.format(dateFormatter);
+        return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
+    }
+
+    private static String toDurationOfAbsenceDescription(SickNote sickNote, MessageSource messageSource, Locale locale) {
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
+
+        final LocalDate startDate = sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate();
+
+        final String dateStartString = startDate.format(dateFormatter);
+
+        if (startDate.isEqual(endDate)) {
+            final DayLength dayLength = sickNote.getDayLength();
             final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
             return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
         }

@@ -33,7 +33,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.DayOfWeek.THURSDAY;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -1553,16 +1552,13 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(SickNoteDto.class),
                     hasProperty("id", equalTo("1")),
-                    hasProperty("startDate", equalTo(startDate)),
-                    hasProperty("endDate", equalTo(endDate)),
-                    hasProperty("dayLength", equalTo(FULL)),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                    hasProperty("status", equalTo("SUBMITTED"))
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
+                    hasProperty("status", equalTo("SUBMITTED")),
+                    hasProperty("durationOfAbsenceDescription")
                 )
             )))
             .andExpect(view().name("application/application-overview"));
@@ -1609,16 +1605,13 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(SickNoteDto.class),
                     hasProperty("id", equalTo("1")),
-                    hasProperty("startDate", equalTo(startDate)),
-                    hasProperty("endDate", equalTo(endDate)),
-                    hasProperty("dayLength", equalTo(FULL)),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                    hasProperty("status", equalTo("SUBMITTED"))
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
+                    hasProperty("status", equalTo("SUBMITTED")),
+                    hasProperty("durationOfAbsenceDescription")
                 )
             )))
             .andExpect(view().name("application/application-overview"));
@@ -1665,16 +1658,13 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(SickNoteDto.class),
                     hasProperty("id", equalTo("1")),
-                    hasProperty("startDate", equalTo(startDate)),
-                    hasProperty("endDate", equalTo(endDate)),
-                    hasProperty("dayLength", equalTo(FULL)),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
-                    hasProperty("status", equalTo("SUBMITTED"))
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
+                    hasProperty("status", equalTo("SUBMITTED")),
+                    hasProperty("durationOfAbsenceDescription")
                 )
             )))
             .andExpect(view().name("application/application-overview"));
@@ -1721,15 +1711,11 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(SickNoteDto.class),
                     hasProperty("id", equalTo("1")),
-                    hasProperty("startDate", equalTo(startDate)),
-                    hasProperty("endDate", equalTo(endDate)),
-                    hasProperty("dayLength", equalTo(FULL)),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
-                    hasProperty("weekDayOfStartDate", equalTo(THURSDAY)),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("application.data.sicknotetype.sicknote")),
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
                     hasProperty("status", equalTo("SUBMITTED"))
                 )
             )))
@@ -1739,6 +1725,7 @@ class ApplicationForLeaveViewControllerTest {
     private static SickNoteType anySickNoteType() {
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("sickNoteTypeMessageKey");
         return sickNoteType;
     }
 
