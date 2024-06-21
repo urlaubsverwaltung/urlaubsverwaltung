@@ -592,18 +592,10 @@
                       <th:block th:text="#{overview.sicknotes.sickdays.days(${otherSickNote.workDays})}" />
                       <th:block th:text="${#messages.msg(otherSickNote.type)}"></th:block>
                     </span>
-                    <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
-                      <th:block th:if="${otherSickNote.startDate == otherSickNote.endDate}">
-                        <th:block th:text="|${#messages.msg(otherSickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                        <th:block th:replace="~{fragments/date::date(${otherSickNote.startDate})}"></th:block>,&nbsp;
-                        <th:block th:text="${#messages.msg(otherSickNote.dayLength)}"></th:block>
-                      </th:block>
-                      <th:block th:if="${otherSickNote.startDate != otherSickNote.endDate}">
-                        <span
-                          th:replace="~{fragments/date-range::date-range(from=${otherSickNote.startDate}, to=${otherSickNote.endDate}, pattern='E, dd.MM.yyyy')}"
-                        ></span>
-                      </th:block>
-                    </span>
+                    <span
+                      class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
+                      th:text="${otherSickNote.durationOfAbsenceDescription}"
+                    ></span>
                   </a>
                 </div>
                 <div class="print:tw-hidden">
