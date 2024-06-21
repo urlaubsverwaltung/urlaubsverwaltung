@@ -101,7 +101,7 @@
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
               <div class="form-group">
                 <strong class="tw-font-medium" th:text="#{action.sicknote.allow}">
-                  Soll diese Krankmeldung wirklich akzeptiert werden?
+                  Soll diese Krankmeldung wirklich angenommen werden?
                 </strong>
               </div>
 
@@ -121,7 +121,7 @@
 
               <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
                 <button type="submit" class="button-main-green tw-w-56" th:text="#{action.acceptSicknote}">
-                  Akzeptieren
+                  Annehmen
                 </button>
                 <button
                   type="button"
