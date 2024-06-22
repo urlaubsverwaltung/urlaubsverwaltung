@@ -36,9 +36,6 @@ spring:
     fallback-to-system-locale: false
   liquibase:
     change-log: classpath:/dbchangelogs/changelogmaster.xml
-  thymeleaf:
-    servlet:
-      produce-partial-output-while-processing: false
   threads:
     virtual:
       enabled: true
