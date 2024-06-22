@@ -72,7 +72,7 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190326")
+            .contains("DTSTART;TZID=Etc/UTC:20190326T000000")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
 
@@ -97,8 +97,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190426T080000Z")
-            .contains("DTEND:20190426T120000Z")
+            .contains("DTSTART;TZID=Etc/UTC:20190426T080000")
+            .contains("DTEND;TZID=Etc/UTC:20190426T120000")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
 
@@ -125,8 +125,8 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190326")
-            .contains("DTEND;VALUE=DATE:20190402")
+            .contains("DTSTART;TZID=Etc/UTC:20190326T000000")
+            .contains("DTEND;TZID=Etc/UTC:20190402T000000")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
 
@@ -151,8 +151,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
+            .contains("DTEND;TZID=Etc/UTC:20190526T160000")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
 
@@ -181,8 +181,8 @@ class ICalServiceTest {
 
             .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
+            .contains("DTEND;TZID=Etc/UTC:20190526T160000")
             .contains("ORGANIZER:mailto:no-reply@example.org")
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
 
@@ -210,8 +210,8 @@ class ICalServiceTest {
             .contains("METHOD:CANCEL")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
+            .contains("DTEND;TZID=Etc/UTC:20190526T160000")
             .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
             .contains("SEQUENCE:1")
 
@@ -240,8 +240,8 @@ class ICalServiceTest {
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T120000")
+            .contains("DTEND;TZID=Etc/UTC:20190526T160000")
             .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
@@ -274,7 +274,7 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T000000")
             .contains("TRANSP:TRANSPARENT")
             .contains("UID:22D8DC26F4271C049ED5601345B58D9C")
 
@@ -306,7 +306,7 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T000000")
             .contains("TRANSP:TRANSPARENT")
             .contains("UID:22D8DC26F4271C049ED5601345B58D9C")
 
@@ -334,7 +334,7 @@ class ICalServiceTest {
 
             .contains("SUMMARY:Vertretung für Marlene Muster")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("DTSTART;TZID=Etc/UTC:20190526T000000")
             .contains("TRANSP:TRANSPARENT")
             .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
 
