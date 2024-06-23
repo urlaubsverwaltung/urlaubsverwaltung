@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "user_pagination_settings")
-class UserPaginationSettingsEntity {
+public class UserPaginationSettingsEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "person_id")

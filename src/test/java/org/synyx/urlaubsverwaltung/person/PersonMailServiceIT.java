@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.SE
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-class PersonMailServiceIT extends TestContainersBase {
+class PersonMailServiceIT extends SingleTenantTestContainersBase {
 
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);

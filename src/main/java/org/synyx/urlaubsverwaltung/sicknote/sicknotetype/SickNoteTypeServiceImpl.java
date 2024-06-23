@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknotetype;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +29,9 @@ class SickNoteTypeServiceImpl implements SickNoteTypeService {
         return this.sickNoteTypeRepository.findAll(Sort.by("id"));
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    void insertDefaultSickNoteTypes() {
+
+    @Override
+    public void insertDefaultSickNoteTypes() {
         final long count = sickNoteTypeRepository.count();
         if (count == 0) {
 

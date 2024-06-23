@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -16,7 +17,7 @@ import static java.util.Optional.ofNullable;
  * Represents a basic comment.
  */
 @MappedSuperclass
-public abstract class AbstractComment {
+public abstract class AbstractComment extends AbstractTenantAwareEntity {
 
     // Who has written the comment?
     @ManyToOne

@@ -9,6 +9,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
  * Entity representing the working time of a person.
  */
 @Entity(name = "working_time")
-class WorkingTimeEntity {
+public class WorkingTimeEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

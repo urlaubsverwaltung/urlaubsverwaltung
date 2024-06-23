@@ -2,10 +2,8 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,8 +143,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         }
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    void insertDefaultVacationTypes() {
+    @Override
+    public void insertDefaultVacationTypes() {
         final long count = vacationTypeRepository.count();
         if (count == 0) {
 

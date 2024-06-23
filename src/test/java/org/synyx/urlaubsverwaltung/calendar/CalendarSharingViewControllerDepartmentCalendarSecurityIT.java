@@ -10,7 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -32,7 +32,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 
 @SpringBootTest
-class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestContainersBase {
+class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private WebApplicationContext context;
