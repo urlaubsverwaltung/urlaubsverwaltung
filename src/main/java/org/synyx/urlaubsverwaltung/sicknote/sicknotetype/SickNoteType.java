@@ -5,13 +5,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 
 @Entity
-public class SickNoteType {
+public class SickNoteType extends AbstractTenantAwareEntity {
 
     @Id
     private Long id;

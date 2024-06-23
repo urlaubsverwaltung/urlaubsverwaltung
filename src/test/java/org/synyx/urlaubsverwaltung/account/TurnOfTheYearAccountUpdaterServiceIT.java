@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost", "spring.main.allow-bean-definition-overriding=true"})
 @Transactional
-class TurnOfTheYearAccountUpdaterServiceIT extends TestContainersBase {
+class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBase {
 
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);

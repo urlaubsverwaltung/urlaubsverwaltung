@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
-class PersonRepositoryIT extends TestContainersBase {
+class PersonRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonRepository sut;

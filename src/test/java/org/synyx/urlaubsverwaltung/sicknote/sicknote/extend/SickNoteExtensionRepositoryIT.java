@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -21,7 +21,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
-class SickNoteExtensionRepositoryIT  extends TestContainersBase {
+class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private SickNoteExtensionRepository sut;

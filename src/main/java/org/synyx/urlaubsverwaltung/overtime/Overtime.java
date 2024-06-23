@@ -10,6 +10,7 @@ import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import java.math.BigDecimal;
@@ -33,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  * @since 2.11.0
  */
 @Entity
-public class Overtime {
+public class Overtime extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
-class SickNoteMailService {
+public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -60,7 +60,7 @@ class SickNoteMailService {
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
     @Async
-    void sendEndOfSickPayNotification() {
+    public void sendEndOfSickPayNotification() {
 
         final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 

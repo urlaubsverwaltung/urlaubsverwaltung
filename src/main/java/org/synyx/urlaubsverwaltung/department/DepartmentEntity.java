@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.ZoneOffset.UTC;
 
 @Entity(name = "department")
-class DepartmentEntity {
+public class DepartmentEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

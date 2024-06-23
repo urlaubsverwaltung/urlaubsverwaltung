@@ -3,12 +3,15 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+
+import java.util.Iterator;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-class CalendarSettingsService {
+public class CalendarSettingsService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -19,20 +22,25 @@ class CalendarSettingsService {
         this.calendarSettingsRepository = calendarSettingsRepository;
     }
 
-    CalendarSettings save(CalendarSettings settings) {
+    public CalendarSettings save(CalendarSettings settings) {
         final CalendarSettings savedSettings = calendarSettingsRepository.save(settings);
         LOG.info("Updated settings: {}", savedSettings);
         return savedSettings;
     }
 
-    CalendarSettings getCalendarSettings() {
-        return calendarSettingsRepository.findById(1L)
-            .orElseGet(() -> {
-                final CalendarSettings settings = new CalendarSettings();
-                settings.setId(1L);
-                final CalendarSettings savedSettings = calendarSettingsRepository.save(settings);
-                LOG.info("Saved initial calendar settings {}", savedSettings);
-                return savedSettings;
-            });
+    public CalendarSettings getCalendarSettings() {
+        return calendarSettingsRepository.findAll().stream().findFirst()
+            .orElseThrow(() -> new IllegalStateException("No calendar settings found in database!"));
+    }
+
+    public void insertDefaultCalendarSettings() {
+
+        final long count = calendarSettingsRepository.count();
+
+        if (count == 0) {
+            final CalendarSettings settings = new CalendarSettings();
+            final CalendarSettings savedSettings = calendarSettingsRepository.save(settings);
+            LOG.info("Saved initial calendar settings {}", savedSettings);
+        }
     }
 }

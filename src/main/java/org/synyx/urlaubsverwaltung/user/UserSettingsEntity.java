@@ -9,6 +9,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -18,7 +19,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "user_settings")
-class UserSettingsEntity {
+public class UserSettingsEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "person_id")

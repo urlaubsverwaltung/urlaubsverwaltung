@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
 import org.slf4j.Logger;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -58,11 +56,9 @@ public class SpecialLeaveSettingsService {
             specialLeaveSettingsEntity.getDays());
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    void insertDefaultSpecialLeaveSettings() {
+    public void insertDefaultSpecialLeaveSettings() {
         final long count = specialLeaveSettingsRepository.count();
         if (count == 0) {
-
             final SpecialLeaveSettingsEntity ownWedding = createSpecialLeaveEntity(1, true, "application.data.specialleave.own_wedding");
             final SpecialLeaveSettingsEntity birthOfChild = createSpecialLeaveEntity(1, true, "application.data.specialleave.birth_of_child");
             final SpecialLeaveSettingsEntity deathOfChild = createSpecialLeaveEntity(2, true, "application.data.specialleave.death_of_child");

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,14 +31,17 @@ class SecurityWebConfiguration {
     private final SessionService sessionService;
     private final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final String loginFormUrl;
 
     SecurityWebConfiguration(PersonService personService, SessionService sessionService,
                              OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
-                             ClientRegistrationRepository clientRegistrationRepository) {
+                             ClientRegistrationRepository clientRegistrationRepository,
+                             @Value("${urlaubsverwaltung.security.oidc.loginFormUrl:#{null}}") String loginFormUrl) {
         this.personService = personService;
         this.sessionService = sessionService;
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
         this.clientRegistrationRepository = clientRegistrationRepository;
+        this.loginFormUrl = loginFormUrl;
     }
 
     @Bean
@@ -107,9 +111,15 @@ class SecurityWebConfiguration {
                     .anyRequest().authenticated()
             )
             .oauth2Login(
-                loginCustomizer -> loginCustomizer.authorizationEndpoint(
-                    endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
-                )
+                loginCustomizer -> {
+                    loginCustomizer.authorizationEndpoint(
+                        endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
+                    );
+
+                    if (loginFormUrl != null) {
+                        loginCustomizer.loginPage(loginFormUrl);
+                    }
+                }
             )
             .logout(
                 logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)

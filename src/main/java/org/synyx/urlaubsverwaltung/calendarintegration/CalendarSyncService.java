@@ -52,7 +52,6 @@ class CalendarSyncService {
         this.calendarSettingsService = calendarSettingsService;
         this.calendarProviderService = calendarProviderService;
         this.absenceMappingRepository = absenceMappingRepository;
-        LOG.debug("The following calendar provider is configured: {}", calendarProviderService.getCalendarProvider().getClass());
     }
 
     @Async

@@ -7,6 +7,8 @@ uv:
     fromDisplayName: Urlaubsverwaltung
     replyTo: sender@example.org
     replyToDisplayName: Urlaubsverwaltung
+  tenant:
+    mode: single
 
 spring:
   security:
