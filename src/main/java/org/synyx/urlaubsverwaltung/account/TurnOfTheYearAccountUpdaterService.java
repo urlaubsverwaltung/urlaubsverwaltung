@@ -48,7 +48,7 @@ public class TurnOfTheYearAccountUpdaterService {
         this.clock = clock;
     }
 
-    void updateAccountsForNextPeriod() {
+    public void updateAccountsForNextPeriod() {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -31,13 +33,22 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Settings getSettings() {
-        return settingsRepository.findById(1L)
-            .orElseGet(() -> {
-                final Settings settings = new Settings();
-                settings.setId(1L);
-                final Settings savedSettings = settingsRepository.save(settings);
-                LOG.info("Saved initial settings {}", savedSettings);
-                return savedSettings;
-            });
+        Iterator<Settings> iterator = settingsRepository.findAll().iterator();
+        if (!iterator.hasNext()) {
+            throw new IllegalStateException("No settings found in database!");
+        }
+        return iterator.next();
+    }
+
+    @Override
+    public void insertDefaultSettings() {
+
+        final long count = settingsRepository.count();
+
+        if (count == 0) {
+            final Settings settings = new Settings();
+            final Settings savedSettings = settingsRepository.save(settings);
+            LOG.info("Saved initial settings {}", savedSettings);
+        }
     }
 }

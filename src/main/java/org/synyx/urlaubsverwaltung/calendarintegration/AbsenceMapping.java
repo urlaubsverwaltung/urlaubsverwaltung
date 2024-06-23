@@ -6,6 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
  */
 @Entity
-public class AbsenceMapping {
+public class AbsenceMapping extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

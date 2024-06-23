@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 @SpringBootTest
 @Transactional
-class ApplicationRepositoryIT extends TestContainersBase {
+class ApplicationRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private ApplicationRepository sut;

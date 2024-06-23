@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Stream.concat;
 
-class RolesFromClaimMappersInfusedOAuth2UserService implements OAuth2UserService<OidcUserRequest, OidcUser> {
+public class RolesFromClaimMappersInfusedOAuth2UserService implements OAuth2UserService<OidcUserRequest, OidcUser> {
 
     private final OAuth2UserService<OidcUserRequest, OidcUser> delegate;
     private final List<RolesFromClaimMapper> claimMappers;
 
-    RolesFromClaimMappersInfusedOAuth2UserService(OAuth2UserService<OidcUserRequest, OidcUser> delegate, List<RolesFromClaimMapper> claimMappers) {
+    public RolesFromClaimMappersInfusedOAuth2UserService(OAuth2UserService<OidcUserRequest, OidcUser> delegate, List<RolesFromClaimMapper> claimMappers) {
         this.delegate = delegate;
         this.claimMappers = claimMappers;
     }

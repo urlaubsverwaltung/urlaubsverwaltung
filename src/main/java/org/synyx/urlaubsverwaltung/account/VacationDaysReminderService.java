@@ -47,7 +47,7 @@ public class VacationDaysReminderService {
      * Reminds for vacation days left for <b>current year</b>.
      */
     @Async
-    void remindForCurrentlyLeftVacationDays() {
+    public void remindForCurrentlyLeftVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
 
@@ -69,7 +69,7 @@ public class VacationDaysReminderService {
      * Should be called after turn of the year logic which calculates the new account for the new year
      */
     @Async
-    void remindForRemainingVacationDays() {
+    public void remindForRemainingVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
 
@@ -96,7 +96,7 @@ public class VacationDaysReminderService {
      * Notify about expired remaining vacation days
      */
     @Async
-    void notifyForExpiredRemainingVacationDays() {
+    public void notifyForExpiredRemainingVacationDays() {
         final LocalDate now = LocalDate.now(clock);
         final int year = now.getYear();
 

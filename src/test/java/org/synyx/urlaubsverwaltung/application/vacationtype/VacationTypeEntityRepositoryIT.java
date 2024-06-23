@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +17,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 
 @SpringBootTest
 @Transactional
-class VacationTypeEntityRepositoryIT extends TestContainersBase {
+class VacationTypeEntityRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private VacationTypeRepository sut;
