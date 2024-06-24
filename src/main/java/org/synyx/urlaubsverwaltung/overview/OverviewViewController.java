@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -28,6 +30,8 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -35,8 +39,10 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
@@ -67,6 +73,7 @@ public class OverviewViewController implements HasLaunchpad {
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
@@ -75,7 +82,7 @@ public class OverviewViewController implements HasLaunchpad {
                                   ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService,
-                                  VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
+                                  VacationTypeViewModelService vacationTypeViewModelService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -86,6 +93,7 @@ public class OverviewViewController implements HasLaunchpad {
         this.settingsService = settingsService;
         this.departmentService = departmentService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -224,9 +232,13 @@ public class OverviewViewController implements HasLaunchpad {
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
-            final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
 
-            final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
+            final LocalDate startDate = Year.of(year).atDay(1);
+            final LocalDate endDate = startDate.with(lastDayOfYear());
+
+            final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year));
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, new DateRange(startDate, endDate));
+            final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
