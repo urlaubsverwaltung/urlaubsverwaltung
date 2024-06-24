@@ -117,23 +117,23 @@ public class VacationDaysService {
                 final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
                 final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-                final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.getUsedVacationDaysYear();
+                final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
                     .withRemainingVacation(remainingVacationDays)
                     .notExpiring(remainingVacationDaysNotExpiring)
-                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysYear.getUsedVacationDaysBeforeExpiryDate())
-                    .forUsedVacationDaysAfterExpiry(usedVacationDaysYear.getUsedVacationDaysAfterExpiryDate())
+                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysYear.usedVacationDaysBeforeExpiryDate())
+                    .forUsedVacationDaysAfterExpiry(usedVacationDaysYear.usedVacationDaysAfterExpiryDate())
                     .withVacationDaysUsedNextYear(ZERO)
                     .build();
 
-                final UsedVacationDaysDateRange usedVacationDaysDateRange = usedVacationDaysTuple.getUsedVacationDaysDateRange();
+                final UsedVacationDaysDateRange usedVacationDaysDateRange = usedVacationDaysTuple.usedVacationDaysDateRange();
                 final VacationDaysLeft vacationDaysLeftDateRange = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
                     .withRemainingVacation(remainingVacationDays)
                     .notExpiring(remainingVacationDaysNotExpiring)
-                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysDateRange.getUsedVacationDaysBeforeExpiryDate())
-                    .forUsedVacationDaysAfterExpiry(usedVacationDaysDateRange.getUsedVacationDaysAfterExpiryDate())
+                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysDateRange.usedVacationDaysBeforeExpiryDate())
+                    .forUsedVacationDaysAfterExpiry(usedVacationDaysDateRange.usedVacationDaysAfterExpiryDate())
                     .withVacationDaysUsedNextYear(ZERO)
                     .build();
 
@@ -277,22 +277,8 @@ public class VacationDaysService {
         T add(T toAdd);
     }
 
-    private static class UsedVacationDaysTuple implements Addable<UsedVacationDaysTuple> {
-        private final UsedVacationDaysDateRange usedVacationDaysDateRange;
-        private final UsedVacationDaysYear usedVacationDaysYear;
-
-        UsedVacationDaysTuple(UsedVacationDaysDateRange usedVacationDaysDateRange, UsedVacationDaysYear usedVacationDaysYear) {
-            this.usedVacationDaysDateRange = usedVacationDaysDateRange;
-            this.usedVacationDaysYear = usedVacationDaysYear;
-        }
-
-        UsedVacationDaysDateRange getUsedVacationDaysDateRange() {
-            return usedVacationDaysDateRange;
-        }
-
-        UsedVacationDaysYear getUsedVacationDaysYear() {
-            return usedVacationDaysYear;
-        }
+    private record UsedVacationDaysTuple(UsedVacationDaysDateRange usedVacationDaysDateRange,
+                                         UsedVacationDaysYear usedVacationDaysYear) implements Addable<UsedVacationDaysTuple> {
 
         @Override
         public UsedVacationDaysTuple add(UsedVacationDaysTuple toAdd) {
@@ -307,23 +293,8 @@ public class VacationDaysService {
         }
     }
 
-    private static class UsedVacationDaysYear implements Addable<UsedVacationDaysYear> {
-
-        private final BigDecimal usedVacationDaysBeforeExpiryDate;
-        private final BigDecimal usedVacationDaysAfterExpiryDate;
-
-        UsedVacationDaysYear(BigDecimal usedVacationDaysBeforeExpiryDate, BigDecimal usedVacationDaysAfterExpiryDate) {
-            this.usedVacationDaysBeforeExpiryDate = usedVacationDaysBeforeExpiryDate;
-            this.usedVacationDaysAfterExpiryDate = usedVacationDaysAfterExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysBeforeExpiryDate() {
-            return usedVacationDaysBeforeExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysAfterExpiryDate() {
-            return usedVacationDaysAfterExpiryDate;
-        }
+    private record UsedVacationDaysYear(BigDecimal usedVacationDaysBeforeExpiryDate,
+                                        BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysYear> {
 
         @Override
         public UsedVacationDaysYear add(UsedVacationDaysYear toAdd) {
@@ -334,32 +305,17 @@ public class VacationDaysService {
         }
     }
 
-    private static class UsedVacationDaysDateRange implements Addable<UsedVacationDaysDateRange> {
-
-        private final BigDecimal usedVacationDaysBeforeExpiryDate;
-        private final BigDecimal usedVacationDaysAfterExpiryDate;
-
-        UsedVacationDaysDateRange(BigDecimal usedVacationDaysBeforeExpiryDate, BigDecimal usedVacationDaysAfterExpiryDate) {
-            this.usedVacationDaysBeforeExpiryDate = usedVacationDaysBeforeExpiryDate;
-            this.usedVacationDaysAfterExpiryDate = usedVacationDaysAfterExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysBeforeExpiryDate() {
-            return usedVacationDaysBeforeExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysAfterExpiryDate() {
-            return usedVacationDaysAfterExpiryDate;
-        }
+    private record UsedVacationDaysDateRange(BigDecimal usedVacationDaysBeforeExpiryDate,
+                                             BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysDateRange> {
 
         @Override
-        public UsedVacationDaysDateRange add(UsedVacationDaysDateRange toAdd) {
-            return new UsedVacationDaysDateRange(
-                usedVacationDaysBeforeExpiryDate.add(toAdd.usedVacationDaysBeforeExpiryDate),
-                usedVacationDaysAfterExpiryDate.add(toAdd.usedVacationDaysAfterExpiryDate)
-            );
+            public UsedVacationDaysDateRange add(UsedVacationDaysDateRange toAdd) {
+                return new UsedVacationDaysDateRange(
+                    usedVacationDaysBeforeExpiryDate.add(toAdd.usedVacationDaysBeforeExpiryDate),
+                    usedVacationDaysAfterExpiryDate.add(toAdd.usedVacationDaysAfterExpiryDate)
+                );
+            }
         }
-    }
 
     private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, Optional<Account> nextYear) {
 
