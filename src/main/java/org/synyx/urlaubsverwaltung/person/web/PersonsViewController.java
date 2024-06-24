@@ -14,8 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -30,6 +32,8 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -45,6 +49,8 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
@@ -65,17 +71,19 @@ public class PersonsViewController implements HasLaunchpad {
     private final VacationDaysService vacationDaysService;
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
     public PersonsViewController(PersonService personService, AccountService accountService,
                                  VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                 PersonBasedataService personBasedataService, Clock clock) {
+                                 PersonBasedataService personBasedataService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -211,24 +219,40 @@ public class PersonsViewController implements HasLaunchpad {
     private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {
 
         final List<PersonDto> personDtos = new ArrayList<>(personPage.getContent().size());
+        final List<Person> persons = personPage.stream().toList();
+
+        final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
+
+        final LocalDate startDate = Year.of(year).atDay(1).with(firstDayOfYear());
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+
+        final DateRange dateRange = new DateRange(startDate, endDate);
+
+        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, dateRange);
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, dateRange);
 
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
-            final Optional<Account> maybeHolidayAccount = accountService.getHolidaysAccount(year, person);
-            if (maybeHolidayAccount.isPresent()) {
-                final Account holidaysAccount = maybeHolidayAccount.get();
-                final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-                final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
+            final Optional<Account> maybeAccount = accountHolidayAccountVacationDaysMap.keySet().stream()
+                .filter(account -> account.getPerson().equals(person))
+                .findFirst();
 
-                final boolean doRemainingVacationDaysExpire = holidaysAccount.doRemainingVacationDaysExpire();
-                final LocalDate expiryDate = holidaysAccount.getExpiryDate();
+            if (maybeAccount.isPresent()) {
+
+                final Account account = maybeAccount.get();
+                final HolidayAccountVacationDays holidayAccountVacationDays = accountHolidayAccountVacationDaysMap.get(account);
+
+                final boolean doRemainingVacationDaysExpire = account.doRemainingVacationDaysExpire();
+                final LocalDate expiryDate = account.getExpiryDate();
+
+                final VacationDaysLeft vacationDaysLeft = holidayAccountVacationDays.vacationDaysYear();
                 final double remainingVacationDays = vacationDaysLeft.getRemainingVacationDaysLeft(now, doRemainingVacationDaysExpire, expiryDate).doubleValue();
 
                 personDtoBuilder
-                    .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
-                    .entitlementActual(holidaysAccount.getActualVacationDays().doubleValue())
-                    .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
+                    .entitlementYear(account.getAnnualVacationDays().doubleValue())
+                    .entitlementActual(account.getActualVacationDays().doubleValue())
+                    .entitlementRemaining(account.getRemainingVacationDays().doubleValue())
                     .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
                     .vacationDaysLeftRemaining(remainingVacationDays);
             }

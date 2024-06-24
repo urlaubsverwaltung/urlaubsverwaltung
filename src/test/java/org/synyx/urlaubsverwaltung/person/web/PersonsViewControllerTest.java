@@ -14,8 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -29,6 +31,8 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -37,8 +41,11 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
@@ -62,12 +69,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -87,11 +96,13 @@ class PersonsViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private PersonBasedataService personBasedataService;
+    @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     @BeforeEach
     void setUp() {
         clock = Clock.systemUTC();
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, workingTimeCalendarService, clock);
     }
 
     @Test
@@ -459,7 +470,7 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesGivenYear() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, workingTimeCalendarService, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -481,7 +492,7 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, workingTimeCalendarService, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -678,7 +689,7 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreOnlyDisplayedIfTheyDoNotExpire(final boolean doExpire, final BigDecimal remainingVacationDays) throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, workingTimeCalendarService, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);
@@ -697,13 +708,19 @@ class PersonsViewControllerTest {
 
         final Account account = new Account(person, startDate, endDate, doExpire, expiryDate, valueOf(30), remainingVacationDays, ZERO, null);
         account.setActualVacationDays(valueOf(30));
-        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(currentYear, List.of(person))).thenReturn(List.of(account));
+
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
+        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))
             .andExpect(
@@ -727,7 +744,7 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreDisplayedIfBeforeExpireDate() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-03-31T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, workingTimeCalendarService, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);
@@ -746,13 +763,20 @@ class PersonsViewControllerTest {
 
         final Account account = new Account(person, startDate, endDate, true, expiryDate, valueOf(30), valueOf(5), ZERO, null);
         account.setActualVacationDays(valueOf(30));
-        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(currentYear, List.of(person))).thenReturn(List.of(account));
+
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
+        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))
             .andExpect(
@@ -804,5 +828,17 @@ class PersonsViewControllerTest {
         person.setPermissions(Arrays.asList(role));
 
         return person;
+    }
+
+    private static WorkingTimeCalendar.WorkingDayInformation fullWorkDay() {
+        return new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY);
+    }
+
+    private Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingTimeCalendar.WorkingDayInformation> dayLengthProvider) {
+        Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> map = new HashMap<>();
+        for (LocalDate date : new DateRange(from, to)) {
+            map.put(date, dayLengthProvider.apply(date));
+        }
+        return map;
     }
 }

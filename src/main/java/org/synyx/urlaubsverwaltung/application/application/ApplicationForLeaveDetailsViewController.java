@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
@@ -31,6 +32,8 @@ import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
@@ -44,6 +47,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Predicate.isEqual;
@@ -92,6 +96,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
@@ -101,7 +106,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
                                              ApplicationInteractionService applicationInteractionService,
                                              ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
                                              ApplicationCommentValidator commentValidator,
-                                             DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
+                                             DepartmentService departmentService, WorkingTimeService workingTimeService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
         this.responsiblePersonService = responsiblePersonService;
@@ -113,6 +118,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -419,22 +425,26 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("departmentApplications", departmentApplications);
 
         // HOLIDAY ACCOUNT
-        final Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
-        if (account.isPresent()) {
-            final Account acc = account.get();
-            final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, application.getPerson());
+        if (maybeAccount.isPresent()) {
+            final Account account = maybeAccount.get();
 
-            final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(acc, accountNextYear);
+            final LocalDate startDate = Year.of(year).atDay(1);
+            final LocalDate endDate = startDate.with(lastDayOfYear());
+
+            final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(application.getPerson()), Year.of(year));
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, new DateRange(startDate, endDate));
+            final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
             final LocalDate now = LocalDate.now(clock);
-            final LocalDate expiryDate = acc.getExpiryDate();
+            final LocalDate expiryDate = account.getExpiryDate();
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, expiryDate);
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
-            model.addAttribute("doRemainingVacationDaysExpire", acc.doRemainingVacationDaysExpire());
+            model.addAttribute("doRemainingVacationDaysExpire", account.doRemainingVacationDaysExpire());
             model.addAttribute("expiryDate", expiryDate);
 
-            model.addAttribute("account", acc);
+            model.addAttribute("account", account);
             model.addAttribute("isBeforeExpiryDate", now.isBefore(expiryDate));
         }
 

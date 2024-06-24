@@ -71,23 +71,6 @@ public class VacationDaysService {
     }
 
     /**
-     * This version of the method also considers the account for next year,
-     * so that it can adjust for vacation days carried over from this year to the next and then used there
-     * (reducing the amount available in this year accordingly)
-     *
-     * @param account  the account for the year to calculate the vacation days for
-     * @param nextYear the account for following year, if available
-     * @return information about the vacation days left for that year
-     * @deprecated in favor of {@link VacationDaysService#getVacationDaysLeft(List, Map, DateRange)} (less database calls)
-     */
-    @Deprecated(since = "4.53.0")
-    public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, nextYear);
-    }
-
-    /**
      * @param holidayAccounts              {@link Account} to determine configured expiryDate of {@link Application}s
      * @param workingTimeCalendarsByPerson {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
      * @param dateRange                    date range to calculate left vacation days for. must be within a year.
