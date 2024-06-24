@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -400,12 +401,14 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private void prepareApplicationForLeaveForm(Person signedInUser, Person person, ApplicationForLeaveForm appForm, Model model, Locale locale) {
 
+        final Settings settings = settingsService.getSettings();
+
         model.addAttribute("person", person);
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", !(managedPersons.size() == 1 && managedPersons.contains(signedInUser)));
 
-        final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
+        final boolean overtimeActive = settings.getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
         final List<VacationType<?>> activeVacationTypes = overtimeActive
@@ -431,7 +434,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         model.addAttribute("applicationForLeaveForm", appForm);
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
-        final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
+        final boolean isHalfDaysActivated = settings.getApplicationSettings().isAllowHalfDays();
         model.addAttribute("showHalfDayOption", isHalfDayApplication || isHalfDaysActivated);
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
