@@ -24,6 +24,10 @@ import java.util.function.Supplier;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @Service
 class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
@@ -46,8 +50,6 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -77,7 +79,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, workingTimeSettings));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -91,19 +93,19 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime) {
         final FederalState federalState = workingTime.getFederalState();
 
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
 
-        DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? DayLength.MORNING : DayLength.ZERO;
-        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WorkingTimeCalendarEntryType.WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+        DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? MORNING : ZERO;
+        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
 
-        DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : DayLength.ZERO;
-        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WorkingTimeCalendarEntryType.WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+        DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : ZERO;
+        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
 
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState);
 
             if (maybePublicHoliday.isPresent()) {
 
@@ -111,50 +113,50 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
                 if (configuredWorkingTimeForDayOfWeek.isFull()) {
                     if (publicHoliday.dayLength().isFull()) {
-                        morning = DayLength.ZERO;
-                        morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
-                        noon = DayLength.ZERO;
-                        noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        morning = ZERO;
+                        morningType = PUBLIC_HOLIDAY;
+                        noon = ZERO;
+                        noonType = PUBLIC_HOLIDAY;
                     } else if (publicHoliday.dayLength().isMorning()) {
-                        morning = DayLength.ZERO;
-                        morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        morning = ZERO;
+                        morningType = PUBLIC_HOLIDAY;
                         noon = DayLength.NOON;
-                        noonType = WorkingTimeCalendarEntryType.WORKDAY;
+                        noonType = WORKDAY;
                     } else if (publicHoliday.dayLength().isNoon()) {
-                        morning = DayLength.MORNING;
-                        morningType = WorkingTimeCalendarEntryType.WORKDAY;
-                        noon = DayLength.ZERO;
-                        noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                        morning = MORNING;
+                        morningType = WORKDAY;
+                        noon = ZERO;
+                        noonType = PUBLIC_HOLIDAY;
                     } else {
-                        morning = DayLength.MORNING;
-                        morningType = WorkingTimeCalendarEntryType.WORKDAY;
+                        morning = MORNING;
+                        morningType = WORKDAY;
                         noon = DayLength.NOON;
-                        noonType = WorkingTimeCalendarEntryType.WORKDAY;
+                        noonType = WORKDAY;
                     }
                 } else {
                     if (configuredWorkingTimeForDayOfWeek.isMorning()) {
 
-                        noon = DayLength.ZERO;
+                        noon = ZERO;
                         noonType = WorkingTimeCalendarEntryType.NO_WORKDAY;
 
                         if (publicHoliday.isFull() || publicHoliday.isMorning()) {
-                            morning = DayLength.ZERO;
-                            morningType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                            morning = ZERO;
+                            morningType = PUBLIC_HOLIDAY;
                         } else {
-                            morning = DayLength.MORNING;
-                            morningType = WorkingTimeCalendarEntryType.WORKDAY;
+                            morning = MORNING;
+                            morningType = WORKDAY;
                         }
                     } else {
 
-                        morning = DayLength.ZERO;
+                        morning = ZERO;
                         morningType = WorkingTimeCalendarEntryType.NO_WORKDAY;
 
                         if (publicHoliday.isFull() || publicHoliday.isNoon()) {
-                            noon = DayLength.ZERO;
-                            noonType = WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+                            noon = ZERO;
+                            noonType = PUBLIC_HOLIDAY;
                         } else {
                             noon = DayLength.NOON;
-                            noonType = WorkingTimeCalendarEntryType.WORKDAY;
+                            noonType = WORKDAY;
                         }
                     }
                 }
@@ -164,12 +166,12 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         DayLength calculatedDayLength = configuredWorkingTimeForDayOfWeek;
         if (morning.isMorning() && noon.isNoon()) {
             calculatedDayLength = DayLength.FULL;
-        } else if (morning == DayLength.ZERO && noon == DayLength.ZERO) {
-            calculatedDayLength = DayLength.ZERO;
-        } else if (morning == DayLength.ZERO && noon.isNoon()) {
+        } else if (morning == ZERO && noon == ZERO) {
+            calculatedDayLength = ZERO;
+        } else if (morning == ZERO && noon.isNoon()) {
             calculatedDayLength = DayLength.NOON;
-        } else if (morning.isMorning() && noon == DayLength.ZERO) {
-            calculatedDayLength = DayLength.MORNING;
+        } else if (morning.isMorning() && noon == ZERO) {
+            calculatedDayLength = MORNING;
         }
 
         return new WorkingDayInformation(calculatedDayLength, morningType, noonType);
