@@ -48,7 +48,6 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -146,7 +145,7 @@ public class PersonsViewController implements HasLaunchpad {
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
         final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
         model.addAttribute("personsPagination", personsPagination);
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList()));
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().toList());
 
         final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
         model.addAttribute("sortSelect", htmlSelectDto);
@@ -206,7 +205,7 @@ public class PersonsViewController implements HasLaunchpad {
         return Stream.of(relevantDepartments).flatMap(Set::stream)
             .distinct()
             .sorted(comparing(Department::getName))
-            .collect(toList());
+            .toList();
     }
 
     private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {

@@ -26,7 +26,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -106,7 +105,7 @@ public class VacationDaysService {
             throw new IllegalArgumentException(String.format("date range must be in the same year but was from=%s to=%s", from, to));
         }
 
-        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).collect(toList());
+        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
         final Map<Account, UsedVacationDaysTuple> usedVacationDaysByAccount = getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson);
 
         return usedVacationDaysByAccount.entrySet().stream()
@@ -159,7 +158,7 @@ public class VacationDaysService {
         final LocalDate firstDayOfYear = dateRange.startDate().with(firstDayOfYear());
         final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
 
-        final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().collect(toList());
+        final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().toList();
         final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(activeStatuses(), persons, firstDayOfYear, lastDayOfYear);
 
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
