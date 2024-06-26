@@ -5,6 +5,8 @@ import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -63,19 +65,21 @@ class PublicHolidaysServiceImplTest {
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
     }
 
-    @Test
-    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+    @ParameterizedTest
+    @CsvSource({"FULL, 1", "MORNING, 0.5", "NOON, 0.5", "ZERO, 0"})
+    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOf(String dayLength, double workingDuration) {
 
         final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.FULL);
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.valueOf(dayLength));
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ONE));
+        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(workingDuration)));
     }
 
-    @Test
-    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
+    @ParameterizedTest
+    @CsvSource({"FULL, 1", "MORNING, 0.5", "NOON, 0.5", "ZERO, 0"})
+    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOf(String dayLength, double workingDuration) {
 
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
@@ -85,49 +89,6 @@ class PublicHolidaysServiceImplTest {
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ONE));
     }
 
-    @Test
-    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
-
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.MORNING);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(0.5)));
-    }
-
-    @Test
-    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
-
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.NOON);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(0.5)));
-    }
-
-    @Test
-    void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
-
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.ZERO);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
-    }
-
-    @Test
-    void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
-
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.ZERO);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
-    }
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
