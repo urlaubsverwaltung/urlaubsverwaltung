@@ -66,7 +66,7 @@ class PublicHolidayApiControllerTest {
         final LocalDate to = LocalDate.of(2016, 5, 20);
         final PublicHoliday fromHoliday = new PublicHoliday(from, MORNING, "");
         final PublicHoliday toHoliday = new PublicHoliday(to, NOON, "");
-        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(fromHoliday, toHoliday));
+        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         perform(get("/api/public-holidays")
             .param("from", "2016-05-19")
@@ -129,9 +129,6 @@ class PublicHolidayApiControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final WorkingTimeSettings workingTimeSettings = anyWorkingTimeSettings();
-        when(settingsService.getSettings()).thenReturn(settingsWithWorkingTimeSettings(workingTimeSettings));
-
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
 
@@ -140,8 +137,8 @@ class PublicHolidayApiControllerTest {
                 new DateRange(from, from), GERMANY_BADEN_WUERTTEMBERG,
                 new DateRange(to, to), GERMANY_BADEN_WUERTTEMBERG
             ));
-        when(publicHolidaysService.getPublicHolidays(from, from, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(new PublicHoliday(from, MORNING, "")));
-        when(publicHolidaysService.getPublicHolidays(to, to, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(new PublicHoliday(to, NOON, "")));
+        when(publicHolidaysService.getPublicHolidays(from, from, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(from, MORNING, "")));
+        when(publicHolidaysService.getPublicHolidays(to, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(to, NOON, "")));
 
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-05-19")

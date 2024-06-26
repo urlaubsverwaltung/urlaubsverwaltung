@@ -94,8 +94,6 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(2)
@@ -150,8 +148,6 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, dateRange);
         assertThat(actual)
             .hasSize(2)
@@ -197,7 +193,7 @@ class WorkingTimeCalendarServiceImplTest {
 
         sut.getWorkingTimesByPersons(persons, Year.of(2022));
 
-        verify(publicHolidaysService, times(365)).getPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN), eq(workingTimeSettings));
+        verify(publicHolidaysService, times(365)).getPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN));
     }
 
     @Test
@@ -239,11 +235,10 @@ class WorkingTimeCalendarServiceImplTest {
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
-        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class), eq(workingTimeSettings))).thenReturn(Optional.empty());
-        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings))
+        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(Optional.empty());
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 5), FULL, "")));
-        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN, workingTimeSettings))
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN))
             .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 10), FULL, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
@@ -304,8 +299,6 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeNextYear));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(1)
@@ -353,8 +346,6 @@ class WorkingTimeCalendarServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
             .thenReturn(List.of(workingTimeLaterInYear, workingTimeEntity));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(List.of(person), Year.of(2022));
         assertThat(actual)
             .hasSize(1)
@@ -376,8 +367,6 @@ class WorkingTimeCalendarServiceImplTest {
 
         final List<Person> persons = List.of(person);
         final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of());
 
@@ -412,13 +401,7 @@ class WorkingTimeCalendarServiceImplTest {
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity));
 
-        final Settings settings = new Settings();
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setWorkingDurationForChristmasEve(FULL);
-        settings.setWorkingTimeSettings(workingTimeSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2024, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings))
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2024, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2024, DECEMBER, 24), ZERO, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, new DateRange(LocalDate.of(2024, 12, 24), LocalDate.of(2024, 12, 24)));

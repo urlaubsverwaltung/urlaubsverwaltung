@@ -82,7 +82,7 @@ public class PublicHolidayApiController {
         final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
         final FederalState federalState = workingTimeSettings.getFederalState();
 
-        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState, workingTimeSettings);
+        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
         return new PublicHolidaysDto(publicHolidays);
     }
 
@@ -129,11 +129,9 @@ public class PublicHolidayApiController {
         final Person person = optionalPerson.get();
         final DateRange dateRange = new DateRange(startDate, endDate);
 
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-
         final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
-            .map(entry -> getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue(), workingTimeSettings))
+            .map(entry -> getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
             .flatMap(List::stream)
             .sorted(Comparator.comparing(PublicHolidayDto::getDate))
             .toList();
@@ -141,8 +139,8 @@ public class PublicHolidayApiController {
         return new PublicHolidaysDto(publicHolidays);
     }
 
-    private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
-        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState, workingTimeSettings).stream()
+    private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
+        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
             .map(this::mapPublicHolidayToDto)
             .toList();
     }
