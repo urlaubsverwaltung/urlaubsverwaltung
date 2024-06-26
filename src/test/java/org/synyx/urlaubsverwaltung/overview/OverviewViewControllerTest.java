@@ -216,20 +216,20 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         final Account account = someAccount();
-        final int year = Year.now(clock).getValue();
-        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+        final Year year = Year.now(clock);
+        when(accountService.getHolidaysAccount(year.getValue(), person)).thenReturn(Optional.of(account));
 
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
 
-        final LocalDate startDate = Year.of(year).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person/1/overview"))
