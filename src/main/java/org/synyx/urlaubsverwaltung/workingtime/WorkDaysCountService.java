@@ -10,12 +10,15 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.stream.Collectors.toCollection;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
 @Service
@@ -54,6 +57,10 @@ public class WorkDaysCountService {
 
         final Map<LocalDate, WorkingTime> workingTimesByDate = toLocalDateWorkingTime(workingTimes);
 
+        final List<PublicHoliday> publicHolidays = new ArrayList<>();
+        workingTimes.forEach((partialDateRange, partialWorkingTime) -> publicHolidaysService.getPublicHolidays(partialDateRange.startDate(), partialDateRange.endDate(), partialWorkingTime.getFederalState()).stream()
+            .collect(toCollection(() -> publicHolidays)));
+
         BigDecimal vacationDays = BigDecimal.ZERO;
         LocalDate day = startDate;
         while (!day.isAfter(endDate)) {
@@ -61,11 +68,11 @@ public class WorkDaysCountService {
             final WorkingTime workingTime = workingTimesByDate.get(day);
 
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(day, workingTime.getFederalState());
+            final LocalDate finalDay = day;
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidays.stream().filter(publicHoliday -> publicHoliday.date().equals(finalDay)).findFirst();
             final BigDecimal duration = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getWorkingDuration() : BigDecimal.ONE;
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
-
             final BigDecimal result = duration.multiply(workingDuration);
 
             vacationDays = vacationDays.add(result);
