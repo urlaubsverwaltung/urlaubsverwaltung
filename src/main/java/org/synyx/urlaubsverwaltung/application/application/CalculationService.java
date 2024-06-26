@@ -115,11 +115,8 @@ class CalculationService {
 
         final Account account = maybeAccount.get();
 
-        final LocalDate startDate = Year.of(year).atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
         final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year));
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, new DateRange(startDate, endDate));
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year));
         final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 

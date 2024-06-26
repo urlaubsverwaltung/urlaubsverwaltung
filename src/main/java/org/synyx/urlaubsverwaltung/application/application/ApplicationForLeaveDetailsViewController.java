@@ -47,7 +47,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Predicate.isEqual;
@@ -429,11 +428,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
 
-            final LocalDate startDate = Year.of(year).atDay(1);
-            final LocalDate endDate = startDate.with(lastDayOfYear());
-
             final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(application.getPerson()), Year.of(year));
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, new DateRange(startDate, endDate));
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year));
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 

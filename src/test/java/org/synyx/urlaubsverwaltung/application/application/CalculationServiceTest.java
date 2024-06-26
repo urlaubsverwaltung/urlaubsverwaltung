@@ -209,7 +209,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(TEN)
             .forUsedVacationDaysAfterExpiry(TEN)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(Year.of(2012).atDay(1), Year.of(2012).atDay(1).with(lastDayOfYear()))))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, Year.of(2012)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -321,14 +321,16 @@ class CalculationServiceTest {
         final Account accountNextYear = new Account(person, validFromNextYear, validToNextYear, true, expiryDateNextYear, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(accountNextYear));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year2012 = Year.of(2012);
+        final LocalDate startDate = year2012.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2013))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year2012)).thenReturn(workingTimeCalendarByPerson);
+        final Year year2013 = Year.of(2013);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year2013)).thenReturn(workingTimeCalendarByPerson);
 
         when(vacationDaysService.getUsedRemainingVacationDays(accountNextYear)).thenReturn(ZERO);
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -338,9 +340,9 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(TEN)
             .forUsedVacationDaysAfterExpiry(TEN)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year2012))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
-        when(vacationDaysService.getVacationDaysLeft(List.of(accountNextYear), workingTimeCalendarByPerson, new DateRange(startDate.plusYears(1), endDate.plusYears(1))))
+        when(vacationDaysService.getVacationDaysLeft(List.of(accountNextYear), workingTimeCalendarByPerson, year2013))
             .thenReturn(Map.of(accountNextYear, new HolidayAccountVacationDays(accountNextYear, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -373,13 +375,14 @@ class CalculationServiceTest {
         final Optional<Account> account2013 = Optional.empty();
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(new BigDecimal("2"))
@@ -388,7 +391,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -420,13 +423,14 @@ class CalculationServiceTest {
 
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -435,7 +439,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -467,13 +471,14 @@ class CalculationServiceTest {
 
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.empty());
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ONE)
@@ -482,7 +487,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -517,13 +522,14 @@ class CalculationServiceTest {
         final Account account2013 = new Account(person, validFrom13, validTo13, true, expiryDate13, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         // vacation days would be left after this application for leave
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -533,7 +539,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(TEN)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -567,13 +573,14 @@ class CalculationServiceTest {
         final Optional<Account> account2013 = Optional.empty();
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -582,7 +589,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -636,13 +643,14 @@ class CalculationServiceTest {
         final Account account2013 = new Account(person, validFrom13, validTo13, true, expiryDate13, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         // vacation days would be left after this application for leave
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -652,7 +660,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(4))
             .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2012), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2012), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2012, new HolidayAccountVacationDays(account2012, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -685,13 +693,14 @@ class CalculationServiceTest {
         when(accountService.getHolidaysAccount(2011, person)).thenReturn(Optional.of(account));
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(account)).thenReturn(account);
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ONE)
@@ -700,7 +709,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -757,13 +766,14 @@ class CalculationServiceTest {
         final Account account2013 = new Account(person, validFrom13, validTo13, true, expireDate13, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         // vacation days would be left after this application for leave
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -773,7 +783,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(5))
             .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2012), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2012), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2012, new HolidayAccountVacationDays(account2012, vacationDaysLeft, vacationDaysLeft)));
 
         assertThat(sut.checkApplication(applicationForLeaveToCheck)).isFalse();
@@ -799,7 +809,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationStartDate);
         applicationForLeaveToCheck.setEndDate(applicationEndDate);
 
-        final LocalDate validFrom12 = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate validFrom12 = year.atDay(1);
         final LocalDate lastDayOfYear12 = getLastDayOfYear(2012);
         final LocalDate expireDate12 = LocalDate.of(2012, APRIL, 1);
         final Account account = new Account(person, validFrom12, lastDayOfYear12, true, expireDate12, TEN, ZERO, ZERO, "");
@@ -815,13 +826,13 @@ class CalculationServiceTest {
         account2013.setActualVacationDays(account2013.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         // this year still has all ten days (but 3 of them used up next year, see above)
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -832,7 +843,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(ZERO)
             .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2013)).thenReturn(TEN);
@@ -858,7 +869,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationDate);
         applicationForLeaveToCheck.setEndDate(applicationDate);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
@@ -872,13 +884,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -888,7 +900,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(TEN)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -915,7 +927,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationStart);
         applicationForLeaveToCheck.setEndDate(applicationEnd);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
@@ -929,13 +942,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -945,7 +958,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(ZERO)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -971,7 +984,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationDate);
         applicationForLeaveToCheck.setEndDate(applicationDate);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
@@ -985,13 +999,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -1001,7 +1015,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(TEN)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -1027,7 +1041,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationDate);
         applicationForLeaveToCheck.setEndDate(applicationDate);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, ONE, ZERO, "");
@@ -1041,13 +1056,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -1057,7 +1072,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(TEN)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -1084,7 +1099,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(applicationStart);
         applicationForLeaveToCheck.setEndDate(applicationEnd);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
@@ -1098,13 +1114,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -1114,7 +1130,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(ZERO)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -1141,7 +1157,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(start);
         applicationForLeaveToCheck.setEndDate(end);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
@@ -1155,13 +1172,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -1171,7 +1188,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(TEN)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -1198,7 +1215,8 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(start);
         applicationForLeaveToCheck.setEndDate(end);
 
-        final LocalDate validFrom2022 = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate validFrom2022 = year.atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
         final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, ZERO, TEN, ZERO, "");
@@ -1212,13 +1230,13 @@ class CalculationServiceTest {
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -1228,7 +1246,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(ZERO)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2023)).thenReturn(ZERO);
@@ -1264,13 +1282,14 @@ class CalculationServiceTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -1279,7 +1298,7 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(TEN)
             .forUsedVacationDaysAfterExpiry(TEN)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final Application applicationForLeaveToCheck = new Application();
@@ -1321,13 +1340,14 @@ class CalculationServiceTest {
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account2014));
 
-        final LocalDate startDate = Year.of(2012).atDay(1);
+        final Year year = Year.of(2012);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2012))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         // vacation days would be left after this application for leave
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -1337,10 +1357,10 @@ class CalculationServiceTest {
             .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(usedDaysBeforeExpiryDate))
             .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(usedDaysAfterApril))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account12), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account12), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account12, new HolidayAccountVacationDays(account12, vacationDaysLeft, vacationDaysLeft)));
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2013), Map.of(), new DateRange(startDate.plusYears(1), endDate.plusYears(1))))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2013), Map.of(), year.plusYears(1)))
             .thenReturn(Map.of(account2013, new HolidayAccountVacationDays(account2013, vacationDaysLeft, vacationDaysLeft)));
 
         when(vacationDaysService.getUsedRemainingVacationDays(account2013)).thenReturn(ZERO);
