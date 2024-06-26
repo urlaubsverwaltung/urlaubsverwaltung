@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -49,8 +48,6 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
@@ -223,13 +220,8 @@ public class PersonsViewController implements HasLaunchpad {
 
         final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
 
-        final LocalDate startDate = Year.of(year).atDay(1).with(firstDayOfYear());
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
-        final DateRange dateRange = new DateRange(startDate, endDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, dateRange);
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, dateRange);
+        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(year));
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, Year.of(year));
 
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();

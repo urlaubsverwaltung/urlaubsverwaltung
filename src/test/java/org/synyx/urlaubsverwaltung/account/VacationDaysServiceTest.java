@@ -307,6 +307,52 @@ class VacationDaysServiceTest {
 
     @ParameterizedTest
     @EnumSource(value = VacationCategory.class, names = {"SPECIALLEAVE", "UNPAIDLEAVE", "OVERTIME", "OTHER"})
+    void ensureGetVacationDaysLeftIgnoresVacationTypeWithYear(VacationCategory category) {
+        final Person person = anyPerson();
+
+        final Year year = Year.of(2022);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Account account = anyAccount(person, Year.of(2022));
+        account.setAnnualVacationDays(BigDecimal.valueOf(30));
+        account.setActualVacationDays(BigDecimal.valueOf(30));
+        account.setRemainingVacationDays(BigDecimal.valueOf(10));
+
+        final Application application = anyApplication(person);
+        application.setStartDate(LocalDate.of(year.getValue(), JANUARY, 3));
+        application.setEndDate(LocalDate.of(year.getValue(), JANUARY, 28));
+        application.setVacationType(createVacationType(1L, category, new StaticMessageSource()));
+
+        final List<ApplicationStatus> applicationStatus = activeStatuses();
+        when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
+            .thenReturn(List.of(application));
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Map<Account, HolidayAccountVacationDays> actual =
+            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), Year.of(2022));
+
+        final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(30))
+            .withRemainingVacation(BigDecimal.valueOf(10))
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+        });
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = VacationCategory.class, names = {"SPECIALLEAVE", "UNPAIDLEAVE", "OVERTIME", "OTHER"})
     void ensureGetVacationDaysLeftIgnoresVacationType(VacationCategory category) {
         final Person person = anyPerson();
 

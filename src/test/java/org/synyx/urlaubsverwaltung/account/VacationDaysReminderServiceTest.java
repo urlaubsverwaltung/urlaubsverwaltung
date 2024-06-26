@@ -154,13 +154,14 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -168,7 +169,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -197,7 +198,7 @@ class VacationDaysReminderServiceTest {
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -206,7 +207,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -277,13 +278,14 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
+        final Year year = Year.of(2022);
+        final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -292,7 +294,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.notifyForExpiredRemainingVacationDays();
@@ -339,7 +341,7 @@ class VacationDaysReminderServiceTest {
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -348,7 +350,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
         when(vacationDaysService.calculateTotalLeftVacationDays(account2022)).thenReturn(BigDecimal.valueOf(11L));
 

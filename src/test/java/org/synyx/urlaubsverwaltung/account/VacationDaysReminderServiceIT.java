@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -126,7 +127,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, Year.of(2022)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -171,7 +172,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
@@ -180,7 +181,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, new DateRange(startDate, endDate)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, Year.of(2022)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(TEN);
 
