@@ -42,7 +42,7 @@ public class VacationDaysService {
     private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
+    VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
         this.workDaysCountService = workDaysCountService;
         this.applicationService = applicationService;
         this.clock = clock;
