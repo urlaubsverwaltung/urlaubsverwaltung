@@ -305,6 +305,136 @@ class VacationDaysServiceTest {
         assertThat(leftDays).isEqualTo(new BigDecimal("30"));
     }
 
+    @Test
+    void testGetVacationDaysLeft() {
+
+        final Person person = anyPerson();
+
+        final Application application4Days = anyApplication(person);
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
+        application4Days.setStatus(ALLOWED);
+
+        final Application application20Days = anyApplication(person);
+        application20Days.setStartDate(LocalDate.of(2022, APRIL, 1));
+        application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
+        application20Days.setStatus(ALLOWED);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application20Days));
+
+        final Year year = Year.of(2022);
+        final Account account = anyAccount(person, year);
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal(12L));
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
+    }
+
+    @Test
+    void testGetVacationDaysLeftWithoutExpire() {
+
+        final Person person = anyPerson();
+
+        final Application application4Days = anyApplication(person);
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
+        application4Days.setStatus(ALLOWED);
+
+        final Application application20Days = anyApplication(person);
+        application20Days.setStartDate(LocalDate.of(2022, APRIL, 1));
+        application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
+        application20Days.setStatus(ALLOWED);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application20Days));
+
+        final Year year = Year.of(2022);
+        final Account account = anyAccount(person, year);
+        account.setDoRemainingVacationDaysExpireLocally(false);
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), year);
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal(12L));
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
+    }
+
+    @Test
+    void testGetVacationDaysLeftWithRemainingAlreadyUsed() {
+        final Person person = anyPerson();
+
+        final Application application4Days = anyApplication(person);
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
+        application4Days.setStatus(ALLOWED);
+        final Application application20Days = anyApplication(person);
+        application20Days.setStartDate(LocalDate.of(2022, APRIL, 1));
+        application20Days.setEndDate(LocalDate.of(2022, APRIL, 20));
+        application20Days.setStatus(ALLOWED);
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application20Days));
+
+        final Application application4DaysIn2023 = anyApplication(person);
+        application4DaysIn2023.setStartDate(LocalDate.of(2023, JANUARY, 4));
+        application4DaysIn2023.setEndDate(LocalDate.of(2023, JANUARY, 7));
+        application4DaysIn2023.setStatus(ALLOWED);
+        final Application application20DaysIn2023 = anyApplication(person);
+        application20DaysIn2023.setStartDate(LocalDate.of(2022, APRIL, 1));
+        application20DaysIn2023.setEndDate(LocalDate.of(2022, APRIL, 20));
+        application20DaysIn2023.setStatus(ALLOWED);
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)))
+            .thenReturn(List.of(application4DaysIn2023, application20DaysIn2023));
+
+        // 36 Total, using 24, so 12 left
+        final Year year = Year.of(2022);
+        final Account account = anyAccount(person, year);
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("6"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+
+        // next year has only 12 new days, but using 24, i.e. all 12 from this year
+        final Account accountNextYear = anyAccount(person, year.plusYears(1));
+        accountNextYear.setAnnualVacationDays(new BigDecimal("12"));
+        accountNextYear.setActualVacationDays(new BigDecimal("12"));
+        accountNextYear.setRemainingVacationDays(new BigDecimal("20"));
+        accountNextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
+        accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(
+            LocalDate.of(year.getValue(), 1, 1),
+            LocalDate.of(year.getValue(), 1, 1).plusYears(1).with(lastDayOfYear()),
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), year, List.of(accountNextYear));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(new BigDecimal("12"));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+    }
+
     @ParameterizedTest
     @EnumSource(value = VacationCategory.class, names = {"SPECIALLEAVE", "UNPAIDLEAVE", "OVERTIME", "OTHER"})
     void ensureGetVacationDaysLeftIgnoresVacationTypeWithYear(VacationCategory category) {
@@ -324,8 +454,7 @@ class VacationDaysServiceTest {
         application.setEndDate(LocalDate.of(year.getValue(), JANUARY, 28));
         application.setVacationType(createVacationType(1L, category, new StaticMessageSource()));
 
-        final List<ApplicationStatus> applicationStatus = activeStatuses();
-        when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
         final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
