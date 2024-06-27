@@ -60,13 +60,9 @@ public class VacationDaysService {
      */
     BigDecimal calculateTotalLeftVacationDays(Account account) {
         final LocalDate today = LocalDate.now(clock);
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return calculateTotalLeftVacationDays(firstDayOfYear, lastDayOfYear, today, account);
-    }
-
-    private BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
-        return getVacationDaysLeft(start, end, account)
+        final LocalDate startDate = Year.of(account.getYear()).atDay(1);
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+        return getVacationDaysLeft(startDate, endDate, account)
             .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
     }
 
