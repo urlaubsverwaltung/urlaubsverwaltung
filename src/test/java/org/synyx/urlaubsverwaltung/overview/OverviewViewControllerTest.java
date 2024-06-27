@@ -215,9 +215,11 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
-        final Account account = someAccount();
         final Year year = Year.now(clock);
+        final Account account = someAccount();
         when(accountService.getHolidaysAccount(year.getValue(), person)).thenReturn(Optional.of(account));
+        final Account accountNextYear = someAccount();
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), person)).thenReturn(Optional.of(accountNextYear));
 
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
 
@@ -229,7 +231,7 @@ class OverviewViewControllerTest {
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person/1/overview"))
