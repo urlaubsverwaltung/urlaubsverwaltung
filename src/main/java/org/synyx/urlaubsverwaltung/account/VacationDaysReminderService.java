@@ -79,8 +79,9 @@ public class VacationDaysReminderService {
 
         if (!holidaysAccounts.isEmpty()) {
 
+            final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year.plusYears(1).getValue(), persons);
             final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, year);
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, year);
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, year, holidaysAccountsNextYear);
 
             accountHolidayAccountVacationDaysMap.keySet().stream()
                 .filter(Account::doRemainingVacationDaysExpire)
@@ -113,8 +114,9 @@ public class VacationDaysReminderService {
 
         if (!holidaysAccounts.isEmpty()) {
 
+            final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(currentYear.plusYears(1).getValue(), persons);
             final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, currentYear);
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, currentYear);
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, currentYear, holidaysAccountsNextYear);
 
             accountHolidayAccountVacationDaysMap.keySet().stream()
                 .filter(Account::doRemainingVacationDaysExpire)

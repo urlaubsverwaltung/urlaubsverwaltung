@@ -710,6 +710,10 @@ class PersonsViewControllerTest {
         account.setActualVacationDays(valueOf(30));
         when(accountService.getHolidaysAccount(year.getValue(), List.of(person))).thenReturn(List.of(account));
 
+        final Account accountNextYear = new Account(person, startDate, endDate, doExpire, expiryDate, valueOf(30), remainingVacationDays, ZERO, null);
+        accountNextYear.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), List.of(person))).thenReturn(List.of(accountNextYear));
+
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
@@ -719,7 +723,7 @@ class PersonsViewControllerTest {
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))
@@ -765,6 +769,10 @@ class PersonsViewControllerTest {
         account.setActualVacationDays(valueOf(30));
         when(accountService.getHolidaysAccount(year.getValue(), List.of(person))).thenReturn(List.of(account));
 
+        final Account accountNextYear = new Account(person, startDate, endDate, true, expiryDate, valueOf(30), valueOf(5), ZERO, null);
+        accountNextYear.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), List.of(person))).thenReturn(List.of(accountNextYear));
+
         final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
@@ -775,7 +783,7 @@ class PersonsViewControllerTest {
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))

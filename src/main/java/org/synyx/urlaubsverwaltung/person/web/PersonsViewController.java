@@ -219,9 +219,10 @@ public class PersonsViewController implements HasLaunchpad {
         final List<Person> persons = personPage.stream().toList();
 
         final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
+        final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year+1, persons);
 
         final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(year));
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, Year.of(year));
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, Year.of(year), holidaysAccountsNextYear);
 
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();

@@ -231,8 +231,9 @@ public class OverviewViewController implements HasLaunchpad {
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
 
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
             final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year));
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year));
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 

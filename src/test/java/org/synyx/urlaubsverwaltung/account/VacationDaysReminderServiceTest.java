@@ -154,6 +154,11 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
+        final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
+        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
+
         final Year year = Year.of(2022);
         final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
@@ -169,7 +174,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year, List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -192,6 +197,12 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
+        final Account account2023 = new Account();
+        account2023.setPerson(person);
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
+        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
+
         final LocalDate startDate = Year.of(2022).atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
@@ -207,7 +218,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -278,6 +289,11 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
+        final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
+        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
+
         final Year year = Year.of(2022);
         final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
@@ -294,7 +310,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year, List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.notifyForExpiredRemainingVacationDays();
@@ -335,6 +351,12 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account2022));
 
+        final Account account2023 = new Account();
+        account2023.setPerson(person);
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
+        account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
+
         final LocalDate startDate = LocalDate.of(2022, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2022, DECEMBER, 31);
 
@@ -350,7 +372,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
         when(vacationDaysService.getTotalLeftVacationDays(account2022)).thenReturn(BigDecimal.valueOf(11L));
 

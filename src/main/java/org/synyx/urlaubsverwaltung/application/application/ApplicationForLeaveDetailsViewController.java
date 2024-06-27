@@ -428,8 +428,9 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
 
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson()).stream().toList();
             final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(application.getPerson()), Year.of(year));
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year));
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
