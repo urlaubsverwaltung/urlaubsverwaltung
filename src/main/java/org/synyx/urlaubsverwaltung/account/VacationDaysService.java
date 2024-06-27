@@ -137,6 +137,12 @@ public class VacationDaysService {
             .collect(toMap(HolidayAccountVacationDays::account, identity()));
     }
 
+    public BigDecimal getUsedRemainingVacationDays(Account account) {
+        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+        return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account);
+    }
+
     BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
 
         if (firstMilestone.isAfter(lastMilestone)) {
@@ -347,12 +353,6 @@ public class VacationDaysService {
             .forUsedVacationDaysAfterExpiry(usedVacationDaysAfterExpiryDate)
             .withVacationDaysUsedNextYear(usedVacationDaysNextYear)
             .build();
-    }
-
-    public BigDecimal getUsedRemainingVacationDays(Account account) {
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account);
     }
 
     private BigDecimal getUsedRemainingVacationDays(LocalDate start, LocalDate end, Account account) {
