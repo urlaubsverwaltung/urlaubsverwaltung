@@ -76,10 +76,28 @@ public class VacationDaysService {
     public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
                                                                         Map<Person, WorkingTimeCalendar> workingTimeCalendars,
                                                                         Year year) {
+        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, year, List.of());
+    }
+
+    /**
+     * This version of the method also considers the account for next year,
+     * so that it can adjust for vacation days carried over from this year to the next and then used there
+     * (reducing the amount available in this year accordingly)
+     *
+     * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param workingTimeCalendars    {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
+     * @param year                    year to calculate left vacation days for.
+     * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
+                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendars,
+                                                                        Year year, List<Account> holidayAccountsNextYear) {
         final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
-        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, new DateRange(startDate, endDate));
+        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, new DateRange(startDate, endDate), holidayAccountsNextYear);
     }
 
     /**
@@ -89,9 +107,24 @@ public class VacationDaysService {
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
-                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendars,
-                                                                        DateRange dateRange) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendars, DateRange dateRange) {
+        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, dateRange, List.of());
+    }
+
+    /**
+     * This version of the method also considers the account for next year,
+     * so that it can adjust for vacation days carried over from this year to the next and then used there
+     * (reducing the amount available in this year accordingly)
+     *
+     * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param workingTimeCalendars    {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
+     * @param dateRange               date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendars,
+                                                                        DateRange dateRange, List<Account> holidayAccountsNextYear) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -101,25 +134,30 @@ public class VacationDaysService {
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
-        final Map<Account, UsedVacationDaysTuple> usedVacationDaysByAccount = getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars);
-
-        return usedVacationDaysByAccount.entrySet().stream()
+        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
-                final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
-
                 final BigDecimal vacationDays = account.getActualVacationDays();
                 final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
                 final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
+                final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
                 final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
+
+                final BigDecimal vacationDaysUsedNextYear = holidayAccountsNextYear.stream()
+                    .filter(holidayAccountNextYear -> holidayAccountNextYear.getPerson().equals(account.getPerson()))
+                    .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
+                    .findFirst()
+                    .map(this::getUsedRemainingVacationDays)
+                    .orElse(ZERO);
+
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
                     .withRemainingVacation(remainingVacationDays)
                     .notExpiring(remainingVacationDaysNotExpiring)
                     .forUsedVacationDaysBeforeExpiry(usedVacationDaysYear.usedVacationDaysBeforeExpiryDate())
                     .forUsedVacationDaysAfterExpiry(usedVacationDaysYear.usedVacationDaysAfterExpiryDate())
-                    .withVacationDaysUsedNextYear(ZERO)
+                    .withVacationDaysUsedNextYear(vacationDaysUsedNextYear)
                     .build();
 
                 final UsedVacationDaysDateRange usedVacationDaysDateRange = usedVacationDaysTuple.usedVacationDaysDateRange();
@@ -129,7 +167,7 @@ public class VacationDaysService {
                     .notExpiring(remainingVacationDaysNotExpiring)
                     .forUsedVacationDaysBeforeExpiry(usedVacationDaysDateRange.usedVacationDaysBeforeExpiryDate())
                     .forUsedVacationDaysAfterExpiry(usedVacationDaysDateRange.usedVacationDaysAfterExpiryDate())
-                    .withVacationDaysUsedNextYear(ZERO)
+                    .withVacationDaysUsedNextYear(vacationDaysUsedNextYear)
                     .build();
 
                 return new HolidayAccountVacationDays(account, vacationDaysLeftYear, vacationDaysLeftDateRange);
