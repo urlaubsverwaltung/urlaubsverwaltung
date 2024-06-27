@@ -234,7 +234,7 @@ class VacationDaysServiceTest {
 
         // total number = left vacation days + left not expiring remaining vacation days
         // 31 = 30 + 1
-        final BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
+        final BigDecimal leftDays = sut.getTotalLeftVacationDays(account);
         assertThat(leftDays).isEqualTo(new BigDecimal("31"));
     }
 
@@ -266,7 +266,7 @@ class VacationDaysServiceTest {
 
         // total number = left vacation days + left remaining vacation days
         // 32 = 30 + 2
-        final BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
+        final BigDecimal leftDays = sut.getTotalLeftVacationDays(account);
         assertThat(leftDays).isEqualTo(new BigDecimal("32"));
     }
 
@@ -298,7 +298,7 @@ class VacationDaysServiceTest {
 
         // total number = left vacation days + left not expiring remaining vacation days
         // 30 = 30 + 0
-        final BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
+        final BigDecimal leftDays = sut.getTotalLeftVacationDays(account);
         assertThat(leftDays).isEqualTo(new BigDecimal("30"));
     }
 
