@@ -167,7 +167,7 @@ public class VacationDaysService {
      * @param account {@link Account}
      * @return total number of left vacation days
      */
-    BigDecimal calculateTotalLeftVacationDays(Account account) {
+    BigDecimal getTotalLeftVacationDays(Account account) {
         final LocalDate today = LocalDate.now(clock);
         final LocalDate startDate = Year.of(account.getYear()).atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
