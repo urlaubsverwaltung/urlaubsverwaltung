@@ -74,7 +74,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
-        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -183,7 +183,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
             .build();
         when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, Year.of(2022)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
-        when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(TEN);
+        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
 
         sut.notifyForExpiredRemainingVacationDays();
 
