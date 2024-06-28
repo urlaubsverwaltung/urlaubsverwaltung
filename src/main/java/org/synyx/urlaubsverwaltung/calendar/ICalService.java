@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -95,12 +96,7 @@ public class ICalService {
 
         final VEvent event;
         if (absence.isAllDay()) {
-            if (isSameDay(startDateTime, endDateTime)) {
-                event = new VEvent(startDateTime, absence.getEventSubject());
-            } else {
-                event = new VEvent(startDateTime, endDateTime, absence.getEventSubject());
-            }
-            event.add(new XProperty("X-MICROSOFT-CDO-ALLDAYEVENT", "TRUE"));
+            event = generateAllDayEvent(absence.getEventSubject(), startDateTime, endDateTime);
         } else {
             event = new VEvent(startDateTime, endDateTime, absence.getEventSubject());
         }
@@ -123,6 +119,20 @@ public class ICalService {
         return Optional.of(event);
     }
 
+    private VEvent generateAllDayEvent(String eventSubject, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+        final LocalDate startDate = startDateTime.toLocalDate();
+        final LocalDate endDate = endDateTime.toLocalDate();
+
+        final VEvent event;
+        if (isSameDay(startDate, endDate)) {
+            event = new VEvent(startDate, eventSubject);
+        } else {
+            event = new VEvent(startDate, endDate, eventSubject);
+        }
+        event.add(new XProperty("X-MICROSOFT-CDO-ALLDAYEVENT", "TRUE"));
+        return event;
+    }
+
     private Attendee generateAttendee(Absence absence) {
         final Attendee attendee = new Attendee(URI.create("mailto:" + absence.getPerson().getEmail()));
         attendee.add(REQ_PARTICIPANT);
@@ -131,8 +141,8 @@ public class ICalService {
         return attendee;
     }
 
-    private boolean isSameDay(ZonedDateTime startDateTime, ZonedDateTime endDate) {
-        return startDateTime.toLocalDate().isEqual(endDate.toLocalDate().minusDays(1));
+    private boolean isSameDay(LocalDate startDate, LocalDate endDate) {
+        return startDate.isEqual(endDate.minusDays(1));
     }
 
     private String generateUid(Absence absence) {
