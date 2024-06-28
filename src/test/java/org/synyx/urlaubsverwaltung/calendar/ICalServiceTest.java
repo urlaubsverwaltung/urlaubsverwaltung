@@ -75,7 +75,7 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART;TZID=Etc/UTC:20190326T000000
+                DTSTART;VALUE=DATE:20190326
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:F5C924EEB91550EBDD74CDA428649C8B
@@ -140,8 +140,8 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART;TZID=Etc/UTC:20190326T000000
-                DTEND;TZID=Etc/UTC:20190402T000000
+                DTSTART;VALUE=DATE:20190326
+                DTEND;VALUE=DATE:20190402
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:D4C6D48B54BAED09F894FBDE0151381F
@@ -314,7 +314,7 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART;TZID=Etc/UTC:20190526T000000
+                DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:22D8DC26F4271C049ED5601345B58D9C
@@ -352,7 +352,7 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART;TZID=Etc/UTC:20190526T000000
+                DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:22D8DC26F4271C049ED5601345B58D9C
@@ -384,7 +384,7 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART;TZID=Etc/UTC:20190526T000000
+                DTSTART;VALUE=DATE:20190526
                 SUMMARY:Vertretung für Marlene Muster
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:D2A4772AEB3FD20D5F6997FCD8F28719
