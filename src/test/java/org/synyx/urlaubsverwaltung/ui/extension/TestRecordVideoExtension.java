@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.extension;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -11,17 +8,14 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.nio.file.Paths;
 
+import static com.microsoft.playwright.impl.junit.PageExtension.getOrCreatePage;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.ui.extension.UiTestStore.getBrowser;
-import static org.synyx.urlaubsverwaltung.ui.extension.UiTestStore.getBrowserContext;
-import static org.synyx.urlaubsverwaltung.ui.extension.UiTestStore.getPage;
-import static org.synyx.urlaubsverwaltung.ui.extension.UiTestStore.getPlaywright;
 
 /**
- * Handle stuff like closing the Browser or saving recorded test videos.
+ * Deletes record video files of successful tests and renames videos of failed tests to the matching test name.
  */
-public class BrowserSetupExtension implements AfterEachCallback {
+public class TestRecordVideoExtension implements AfterEachCallback {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -29,12 +23,11 @@ public class BrowserSetupExtension implements AfterEachCallback {
     public void afterEach(ExtensionContext context) throws Exception {
 
         handleVideoFile(context);
-        close(context);
     }
 
     private static void handleVideoFile(ExtensionContext context) {
 
-        final Page page = getPage(context);
+        final Page page = getOrCreatePage(context);
 
         final File videoFile = new File(page.video().path().toUri());
         if (context.getExecutionException().isEmpty()) {
@@ -56,18 +49,5 @@ public class BrowserSetupExtension implements AfterEachCallback {
 
     private static String normalizeVideoFileName(String original) {
         return original.replaceAll(" ", "_");
-    }
-
-    private static void close(ExtensionContext context) {
-
-        final Page page = getPage(context);
-        final BrowserContext browserContext = getBrowserContext(context);
-        final Browser browser = getBrowser(context);
-        final Playwright playwright = getPlaywright(context);
-
-        page.close();
-        browserContext.close();
-        browser.close();
-        playwright.close();
     }
 }
