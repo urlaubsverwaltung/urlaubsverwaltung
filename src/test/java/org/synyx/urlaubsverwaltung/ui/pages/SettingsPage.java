@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
+import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
 
 public class SettingsPage {
 
@@ -44,6 +45,7 @@ public class SettingsPage {
 
     public void addNewVacationType() {
         page.locator("button[name=add-absence-type]").click();
+        page.locator("[data-test-id=vacation-type] .absence-type-card__label span:empty").waitFor(new Locator.WaitForOptions().setState(ATTACHED));
     }
 
     public Locator lastVacationType() {

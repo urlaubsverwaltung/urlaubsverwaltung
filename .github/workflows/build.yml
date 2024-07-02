@@ -13,6 +13,7 @@ on:
 
 env:
   MAVEN_ARGS: "--no-transfer-progress --errors --fail-at-end --show-version"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 # required browsers are installed below
 
 jobs:
   build:
@@ -31,6 +32,9 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
+
+      - name: Install Playwright Browsers (UI tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps chromium"
 
       - name: Build
         run: ./mvnw -Pcoverage dependency:go-offline clean verify
