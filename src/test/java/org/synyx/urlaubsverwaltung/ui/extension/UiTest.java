@@ -67,8 +67,8 @@ public @interface UiTest {
                 .setContextOptions(new Browser.NewContextOptions()
                     .setRecordVideoDir(Paths.get("target"))
                     .setLocale("de")
-                    .setScreenSize(1500, 1080)
-                    .setViewportSize(1500, 1080)
+                    .setScreenSize(1500, 2000)
+                    .setViewportSize(1500, 2000)
                 );
         }
     }
