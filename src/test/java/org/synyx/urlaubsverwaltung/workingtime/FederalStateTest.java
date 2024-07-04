@@ -46,6 +46,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SCHLE
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_THUERINGEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GREECE_GREECE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.ITALY;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.LITHUANIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.MALTA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NETHERLANDS;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
@@ -210,6 +211,8 @@ class FederalStateTest {
             Arguments.of(SPAIN_VALENCIA, "vc", null),
 
             Arguments.of(NETHERLANDS, "nl", null)
+
+            Arguments.of(LITHUANIA, "lt", null)
         );
     }
 
@@ -347,8 +350,9 @@ class FederalStateTest {
         final List<FederalState> hrFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "hr".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> esFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "es".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> nlFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "nl".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> ltFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "lt".equals(federalState.getCountry())).collect(toList());
 
-        assertThat(federalStatesTypesByCountry).hasSize(10)
+        assertThat(federalStatesTypesByCountry).hasSize(11)
             .contains(entry("de", germanyFederalStates))
             .contains(entry("at", austriaFederalStates))
             .contains(entry("ch", switzerlandFederalStates))
@@ -358,7 +362,7 @@ class FederalStateTest {
             .contains(entry("it", itFederalStates))
             .contains(entry("hr", hrFederalStates))
             .contains(entry("es", esFederalStates))
-            .contains(entry("hr", hrFederalStates))
-            .contains(entry("nl", nlFederalStates));
+            .contains(entry("nl", nlFederalStates))
+            .contains(entry("lt", ltFederalStates));
     }
 }
