@@ -191,9 +191,10 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.localization = localisation;
 
   const name = dateElement.getAttribute("name");
+  const originalStyle = dateElement.getAttribute("style") ?? "";
   const value = dateElement.dataset.isoValue || "";
 
-  duetDateElement.setAttribute("style", "--duet-radius=0");
+  duetDateElement.setAttribute("style", "--duet-radius=0;" + originalStyle);
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
   duetDateElement.setAttribute("name", name);
