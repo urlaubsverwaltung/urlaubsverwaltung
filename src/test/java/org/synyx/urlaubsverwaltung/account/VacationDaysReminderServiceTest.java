@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -27,9 +26,6 @@ import java.util.function.Function;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -49,8 +45,6 @@ class VacationDaysReminderServiceTest {
     @Mock
     private VacationDaysService vacationDaysService;
     @Mock
-    private WorkingTimeCalendarService workingTimeCalendarService;
-    @Mock
     private MailService mailService;
 
     final ArgumentCaptor<Mail> mailArgumentCaptor = ArgumentCaptor.forClass(Mail.class);
@@ -59,7 +53,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoReminderForZeroLeftVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -77,7 +71,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoReminderIfRemainingVacationDaysToNotExpire() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -96,7 +90,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoReminderIfAccountIsEmpty() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -112,7 +106,7 @@ class VacationDaysReminderServiceTest {
     void ensureReminderForLeftVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -144,7 +138,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoReminderWithoutRemainingVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -160,21 +154,13 @@ class VacationDaysReminderServiceTest {
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 
         final Year year = Year.of(2022);
-        final LocalDate startDate = year.atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
-        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
-
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
             .withRemainingVacation(ZERO)
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year, List.of(account2023)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), year, List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -186,7 +172,7 @@ class VacationDaysReminderServiceTest {
     void ensureReminderForRemainingVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -203,14 +189,6 @@ class VacationDaysReminderServiceTest {
         account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 
-        final LocalDate startDate = Year.of(2022).atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
-        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
-
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
             .withRemainingVacation(TEN)
@@ -218,7 +196,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022), List.of(account2023)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.remindForRemainingVacationDays();
@@ -241,7 +219,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoNotificationWhenExpireDateNotEqualOfAfter() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-03-31T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -259,7 +237,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoNotificationWhenNotificationWasAlreadySent() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -279,7 +257,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoNotificationWithoutExpiredRemainingVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -295,14 +273,6 @@ class VacationDaysReminderServiceTest {
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 
         final Year year = Year.of(2022);
-        final LocalDate startDate = year.atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
-        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
-
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(ZERO)
             .withRemainingVacation(TEN)
@@ -310,7 +280,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, year, List.of(account2023)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), year, List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
 
         sut.notifyForExpiredRemainingVacationDays();
@@ -322,7 +292,7 @@ class VacationDaysReminderServiceTest {
     void ensureNoNotificationWhenExpireIsDisabled() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -340,7 +310,7 @@ class VacationDaysReminderServiceTest {
     void ensureNotificationForExpiredRemainingVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
-        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, workingTimeCalendarService, mailService, clock);
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -357,14 +327,6 @@ class VacationDaysReminderServiceTest {
         account2023.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, List.of(person))).thenReturn(List.of(account2023));
 
-        final LocalDate startDate = LocalDate.of(2022, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(2022, DECEMBER, 31);
-
-        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2022))).thenReturn(workingTimeCalendarByPerson);
-
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
@@ -372,7 +334,7 @@ class VacationDaysReminderServiceTest {
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), workingTimeCalendarByPerson, Year.of(2022), List.of(account2023)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), Year.of(2022), List.of(account2023)))
             .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
         when(vacationDaysService.getTotalLeftVacationDays(account2022)).thenReturn(BigDecimal.valueOf(11L));
 

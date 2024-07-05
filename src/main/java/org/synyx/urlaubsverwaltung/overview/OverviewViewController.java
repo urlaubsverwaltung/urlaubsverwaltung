@@ -29,8 +29,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -71,7 +69,6 @@ public class OverviewViewController implements HasLaunchpad {
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
-    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
@@ -80,7 +77,7 @@ public class OverviewViewController implements HasLaunchpad {
                                   ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService,
-                                  VacationTypeViewModelService vacationTypeViewModelService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
+                                  VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -91,7 +88,6 @@ public class OverviewViewController implements HasLaunchpad {
         this.settingsService = settingsService;
         this.departmentService = departmentService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
-        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -232,8 +228,7 @@ public class OverviewViewController implements HasLaunchpad {
             final Account account = maybeAccount.get();
 
             final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
-            final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year));
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year), accountNextYear);
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 

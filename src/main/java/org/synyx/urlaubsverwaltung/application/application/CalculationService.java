@@ -14,8 +14,6 @@ import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,19 +43,17 @@ class CalculationService {
     private final WorkDaysCountService workDaysCountService;
     private final OverlapService overlapService;
     private final ApplicationService applicationService;
-    private final WorkingTimeCalendarService workingTimeCalendarService;
 
     @Autowired
     CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
                        AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService,
-                       OverlapService overlapService, ApplicationService applicationService, WorkingTimeCalendarService workingTimeCalendarService) {
+                       OverlapService overlapService, ApplicationService applicationService) {
         this.vacationDaysService = vacationDaysService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.workDaysCountService = workDaysCountService;
         this.overlapService = overlapService;
         this.applicationService = applicationService;
-        this.workingTimeCalendarService = workingTimeCalendarService;
     }
 
     /**
@@ -115,8 +111,7 @@ class CalculationService {
 
         final Account account = maybeAccount.get();
 
-        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year));
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year));
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year));
         final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
