@@ -52,6 +52,24 @@ public class VacationDaysService {
     }
 
     /**
+     * Calculates the total number of days that are left to be used for applying for leave.
+     *
+     * <p>NOTE: The calculation depends on the current date. If it's before the expiry date, the left remaining vacation days are
+     * relevant for calculation and if it's after the expiry date, only the not expiring remaining vacation days are relevant for
+     * calculation.</p>
+     *
+     * @param account {@link Account}
+     * @return total number of left vacation days
+     */
+    BigDecimal getTotalLeftVacationDays(Account account) {
+        final LocalDate today = LocalDate.now(clock);
+        return getVacationDaysLeft(List.of(account), Year.of(account.getYear()))
+            .get(account)
+            .vacationDaysYear()
+            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
+    }
+
+    /**
      * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
      * @param year            year to calculate left vacation days for.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
@@ -152,24 +170,6 @@ public class VacationDaysService {
                 return new HolidayAccountVacationDays(account, vacationDaysLeftYear, vacationDaysLeftDateRange);
             })
             .collect(toMap(HolidayAccountVacationDays::account, identity()));
-    }
-
-    /**
-     * Calculates the total number of days that are left to be used for applying for leave.
-     *
-     * <p>NOTE: The calculation depends on the current date. If it's before the expiry date, the left remaining vacation days are
-     * relevant for calculation and if it's after the expiry date, only the not expiring remaining vacation days are relevant for
-     * calculation.</p>
-     *
-     * @param account {@link Account}
-     * @return total number of left vacation days
-     */
-    BigDecimal getTotalLeftVacationDays(Account account) {
-        final LocalDate today = LocalDate.now(clock);
-        final LocalDate startDate = Year.of(account.getYear()).atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-        return getVacationDaysLeft(startDate, endDate, account)
-            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
     }
 
     /**
@@ -299,10 +299,6 @@ public class VacationDaysService {
         return new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays);
     }
 
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account) {
-        return getVacationDaysLeft(start, end, account, Optional.empty());
-    }
-
     private BigDecimal divideBy2(BigDecimal value) {
         return value.divide(BigDecimal.valueOf(2), 2, RoundingMode.CEILING);
     }
@@ -404,7 +400,7 @@ public class VacationDaysService {
 
         if (account.getRemainingVacationDays().signum() > 0) {
 
-            final VacationDaysLeft left = getVacationDaysLeft(start, end, account);
+            final VacationDaysLeft left = getVacationDaysLeft(start, end, account, Optional.empty());
 
             final BigDecimal totalUsed = account.getActualVacationDays()
                 .add(account.getRemainingVacationDays())

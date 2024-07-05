@@ -213,25 +213,30 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void testGetTotalVacationDaysForPastYear() {
+    void ensureToGetTotalLeftVacationDaysForPastYear() {
 
         final Person person = anyPerson();
 
         final Application application4Days = anyApplication(person);
-        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 3));
-        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 6));
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
         application4Days.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application4Days.getDayLength(), application4Days.getStartDate(), application4Days.getEndDate(), application4Days.getPerson())).thenReturn(BigDecimal.valueOf(4L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 3, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application4Days));
 
         final Application application1Day = anyApplication(person);
         application1Day.setStartDate(LocalDate.of(2022, MAY, 2));
         application1Day.setEndDate(LocalDate.of(2022, MAY, 2));
         application1Day.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application1Day.getDayLength(), application1Day.getStartDate(), application1Day.getEndDate(), application1Day.getPerson())).thenReturn(BigDecimal.valueOf(1L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 12, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application1Day));
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application1Day));
+
+        final Year year = Year.of(2022);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
         account.setRemainingVacationDays(new BigDecimal("6"));
@@ -245,25 +250,30 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void testGetTotalVacationDaysForThisYearExpiryDate() {
+    void ensureToGetTotalLeftVacationDaysForThisYearExpiryDate() {
 
         final Person person = anyPerson();
 
         final Application application4Days = anyApplication(person);
-        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 3));
-        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 6));
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
         application4Days.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application4Days.getDayLength(), application4Days.getStartDate(), application4Days.getEndDate(), application4Days.getPerson())).thenReturn(BigDecimal.valueOf(4L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 3, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application4Days));
 
         final Application application1Day = anyApplication(person);
         application1Day.setStartDate(LocalDate.of(2022, MAY, 2));
         application1Day.setEndDate(LocalDate.of(2022, MAY, 2));
         application1Day.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application1Day.getDayLength(), application1Day.getStartDate(), application1Day.getEndDate(), application1Day.getPerson())).thenReturn(BigDecimal.valueOf(1L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 12, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application1Day));
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application1Day));
+
+        final Year year = Year.of(2022);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -282,20 +292,25 @@ class VacationDaysServiceTest {
         final Person person = anyPerson();
 
         final Application application4Days = anyApplication(person);
-        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 3));
-        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 6));
+        application4Days.setStartDate(LocalDate.of(2022, JANUARY, 4));
+        application4Days.setEndDate(LocalDate.of(2022, JANUARY, 7));
         application4Days.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application4Days.getDayLength(), application4Days.getStartDate(), application4Days.getEndDate(), application4Days.getPerson())).thenReturn(BigDecimal.valueOf(4L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 3, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application4Days));
 
-        final Application application3Days = anyApplication(person);
-        application3Days.setStartDate(LocalDate.of(2022, MAY, 2));
-        application3Days.setEndDate(LocalDate.of(2022, MAY, 5));
-        application3Days.setStatus(ALLOWED);
-        when(workDaysCountService.getWorkDaysCount(application3Days.getDayLength(), application3Days.getStartDate(), application3Days.getEndDate(), application3Days.getPerson())).thenReturn(BigDecimal.valueOf(3L));
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 12, 31), person, activeStatuses(), HOLIDAY))
-            .thenReturn(List.of(application3Days));
+        final Application application3Day = anyApplication(person);
+        application3Day.setStartDate(LocalDate.of(2022, MAY, 2));
+        application3Day.setEndDate(LocalDate.of(2022, MAY, 4));
+        application3Day.setStatus(ALLOWED);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)))
+            .thenReturn(List.of(application4Days, application3Day));
+
+        final Year year = Year.of(2022);
+        final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
         account.setRemainingVacationDays(new BigDecimal("7"));
