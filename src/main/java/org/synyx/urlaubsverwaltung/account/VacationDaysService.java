@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,27 +39,26 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 public class VacationDaysService {
 
     private final WorkDaysCountService workDaysCountService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final ApplicationService applicationService;
     private final Clock clock;
 
     @Autowired
-    VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
+    VacationDaysService(WorkDaysCountService workDaysCountService, WorkingTimeCalendarService workingTimeCalendarService, ApplicationService applicationService, Clock clock) {
         this.workDaysCountService = workDaysCountService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.applicationService = applicationService;
         this.clock = clock;
     }
 
     /**
-     * @param holidayAccounts      {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param workingTimeCalendars {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
-     * @param year                 year to calculate left vacation days for.
+     * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param year            year to calculate left vacation days for.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
-                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendars,
-                                                                        Year year) {
-        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, year, List.of());
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Year year) {
+        return getVacationDaysLeft(holidayAccounts, year, List.of());
     }
 
     /**
@@ -67,30 +67,27 @@ public class VacationDaysService {
      * (reducing the amount available in this year accordingly)
      *
      * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param workingTimeCalendars    {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
      * @param year                    year to calculate left vacation days for.
      * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
     public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
-                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendars,
                                                                         Year year, List<Account> holidayAccountsNextYear) {
         final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
-        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, new DateRange(startDate, endDate), holidayAccountsNextYear);
+        return getVacationDaysLeft(holidayAccounts, new DateRange(startDate, endDate), holidayAccountsNextYear);
     }
 
     /**
-     * @param holidayAccounts      {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param workingTimeCalendars {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
-     * @param dateRange            date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param dateRange       date range to calculate left vacation days for. must be within a year.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendars, DateRange dateRange) {
-        return getVacationDaysLeft(holidayAccounts, workingTimeCalendars, dateRange, List.of());
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, DateRange dateRange) {
+        return getVacationDaysLeft(holidayAccounts, dateRange, List.of());
     }
 
     /**
@@ -99,14 +96,12 @@ public class VacationDaysService {
      * (reducing the amount available in this year accordingly)
      *
      * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param workingTimeCalendars    {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
      * @param dateRange               date range to calculate left vacation days for. must be within a year.
      * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendars,
-                                                                        DateRange dateRange, List<Account> holidayAccountsNextYear) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, DateRange dateRange, List<Account> holidayAccountsNextYear) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -116,6 +111,8 @@ public class VacationDaysService {
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
+        final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
         return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
