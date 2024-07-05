@@ -31,8 +31,6 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -68,19 +66,17 @@ public class PersonsViewController implements HasLaunchpad {
     private final VacationDaysService vacationDaysService;
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
-    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
     public PersonsViewController(PersonService personService, AccountService accountService,
                                  VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                 PersonBasedataService personBasedataService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
+                                 PersonBasedataService personBasedataService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
-        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -221,8 +217,7 @@ public class PersonsViewController implements HasLaunchpad {
         final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
         final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year+1, persons);
 
-        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(year));
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, workingTimesByPersons, Year.of(year), holidaysAccountsNextYear);
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, Year.of(year), holidaysAccountsNextYear);
 
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();

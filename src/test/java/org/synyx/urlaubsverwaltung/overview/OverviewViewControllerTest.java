@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
@@ -36,26 +35,21 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -79,7 +73,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -89,7 +82,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
 class OverviewViewControllerTest {
@@ -116,8 +108,6 @@ class OverviewViewControllerTest {
     private OvertimeService overtimeService;
     @Mock
     private SettingsService settingsService;
-    @Mock
-    private WorkingTimeCalendarService workingTimeCalendarService;
 
     @Mock
     private VacationTypeViewModelService vacationTypeViewModelService;
@@ -127,7 +117,7 @@ class OverviewViewControllerTest {
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService,
-            departmentService, vacationTypeViewModelService, workingTimeCalendarService, clock);
+            departmentService, vacationTypeViewModelService, clock);
     }
 
     @Test
@@ -223,15 +213,7 @@ class OverviewViewControllerTest {
 
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
 
-        final LocalDate startDate = year.atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-
-        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkDay());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(workingTimeCalendarByPerson);
-
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, year, List.of(accountNextYear)))
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
             .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person/1/overview"))
@@ -672,18 +654,6 @@ class OverviewViewControllerTest {
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
         return messageSource;
-    }
-
-    private static WorkingTimeCalendar.WorkingDayInformation fullWorkDay() {
-        return new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingTimeCalendar.WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
