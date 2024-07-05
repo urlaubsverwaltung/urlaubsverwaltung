@@ -32,8 +32,6 @@ import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
@@ -95,7 +93,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
-    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
@@ -105,7 +102,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
                                              ApplicationInteractionService applicationInteractionService,
                                              ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
                                              ApplicationCommentValidator commentValidator,
-                                             DepartmentService departmentService, WorkingTimeService workingTimeService, WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
+                                             DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
         this.responsiblePersonService = responsiblePersonService;
@@ -117,7 +114,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
-        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -429,8 +425,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             final Account account = maybeAccount.get();
 
             final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson()).stream().toList();
-            final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(application.getPerson()), Year.of(year));
-            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), workingTimesByPersons, Year.of(year), accountNextYear);
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
             final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
