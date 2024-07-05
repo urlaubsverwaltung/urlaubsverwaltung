@@ -182,6 +182,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         if (sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
             LOG.info("sick note of last work day found");
+            return "forward:/web/sicknote/extend";
         } else {
             LOG.info("no sick note of last work day found");
         }
@@ -199,6 +200,47 @@ class SickNoteViewController implements HasLaunchpad {
         addVacationTypeColorsToModel(model);
 
         return "sicknote/sick_note_form";
+    }
+
+    @GetMapping("/sicknote/extend")
+    public String getExtendSickNote(Model model) {
+
+        final Person signedInUser = personService.getSignedInUser();
+        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+
+        if (maybeSickNote.isEmpty()) {
+            // TODO handle no sicknote to extend case
+            throw new RuntimeException("could not find sick note of yesterday or last workday");
+        }
+
+        final SickNote sickNote = maybeSickNote.get();
+        if (!sickNote.getPerson().equals(signedInUser)) {
+            throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
+        }
+
+        final SickNoteExtendDto extendDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.isAubPresent());
+        model.addAttribute("sickNote", extendDto);
+        model.addAttribute("sickNotePersonId", signedInUser.getId());
+        model.addAttribute("today", LocalDate.now());
+        // TODO model attributes
+        model.addAttribute("sickNoteEndDateWord", "heute");
+        model.addAttribute("extensionDatePlusOne", LocalDate.now());
+        model.addAttribute("extensionDatePlusTwo", LocalDate.now().plusDays(1));
+        model.addAttribute("extensionDateEndOfWeek", LocalDate.now().plusDays(4));
+        model.addAttribute("plusOneWorkdayWord", "heute");
+        model.addAttribute("plusTwoWorkdaysWord", "morgen");
+        model.addAttribute("untilEndOfWeekWord", "xxx");
+
+        return "sicknote/sick_note_extend";
+    }
+
+    @PostMapping("/sicknote/extend")
+    public String postExtendSickNote(@ModelAttribute("sickNote") SickNoteExtendDto dto, Errors errors, Model model) {
+
+        // TODO implement me
+        LOG.info("[not implemented yet] Extending sickNote {}", dto);
+
+        return "redirect:/web/sicknote/extend";
     }
 
     @PostMapping("/sicknote")
