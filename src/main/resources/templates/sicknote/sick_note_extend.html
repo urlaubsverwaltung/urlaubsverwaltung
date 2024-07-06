@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{sicknote.extend.header.title}">Krankmeldung erweitern</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/sick-note-extend.css}" />
+    </th:block>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/
@@ -24,7 +27,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 md:tw-px-0 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{sicknote.extend.title}">Weiter Krank melden</h1>
         <p
           class="tw-m-0 tw-mt-8"
@@ -36,24 +39,17 @@
           Wie lange bist du vorraussichtlich noch krank?
         </p>
         <form method="post" action="#" th:action="@{/web/sicknote/extend}" class="tw-mt-8" th:bind="${sickNote}">
-          <!-- pressing enter on a focused input field should submit the primary action -->
-          <button type="submit" hidden></button>
-          <div class="tw-max-w-3xl" style="display: grid; grid-column-gap: 1rem; grid-row-gap: 0.25rem">
+          <div class="extend-action-grid tw-max-w-3xl">
             <button
               type="submit"
               name="endDate"
               th:value="${extensionDatePlusOne}"
               class="button"
-              style="grid-column: 1; grid-row: 1"
               th:text="#{sicknote.extend.duration.plus-workday.label(1)}"
             >
               + 1 Tag
             </button>
-            <span
-              class="tw-text-sm text-center"
-              style="grid-column: 1; grid-row: 2"
-              th:text="#{sicknote.extend.duration.hint.label(${plusOneWorkdayWord})}"
-            >
+            <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusOneWorkdayWord})}">
               einschließlich heute
             </span>
             <button
@@ -61,16 +57,11 @@
               name="endDate"
               th:value="${extensionDatePlusTwo}"
               class="button"
-              style="grid-column: 2; grid-row: 1"
               th:text="#{sicknote.extend.duration.plus-workday.label(2)}"
             >
               + 2 Tage
             </button>
-            <span
-              class="tw-text-sm text-center"
-              style="grid-column: 2; grid-row: 2"
-              th:text="#{sicknote.extend.duration.hint.label(${plusTwoWorkdaysWord})}"
-            >
+            <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusTwoWorkdaysWord})}">
               einschließlich morgen
             </span>
             <button
@@ -78,16 +69,11 @@
               name="endDate"
               th:value="${extensionDateEndOfWeek}"
               class="button"
-              style="grid-column: 3; grid-row: 1"
               th:text="#{sicknote.extend.duration.end-of-week.label}"
             >
               Ende der Woche
             </button>
-            <span
-              class="tw-text-sm text-center"
-              style="grid-column: 3; grid-row: 2"
-              th:text="#{sicknote.extend.duration.hint.label(${untilEndOfWeekWord})}"
-            >
+            <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${untilEndOfWeekWord})}">
               einschließlich xxx
             </span>
             <input
@@ -95,18 +81,10 @@
               id="extend-to-date-input"
               name="endDate"
               class="form-control"
-              style="grid-column: 4; grid-row: 1; height: 100%"
               th:value="${today}"
               th:data-iso-value="${#temporals.format(today, 'yyyy-MM-dd')}"
             />
-            <label
-              for="extend-to-date-input"
-              class="sr-only"
-              style="grid-column: 4; grid-row: 2"
-              th:text="#{sicknote.extend.duration.custom.label}"
-            >
-              Krank melden bis
-            </label>
+            <label for="extend-to-date-input" th:text="#{sicknote.extend.duration.custom.label}"> Anderer Tag </label>
           </div>
           <div class="tw-mt-8">
             <div class="tw-flex tw-items-center tw-gap-2">
@@ -123,7 +101,11 @@
             </div>
           </div>
           <div class="tw-mt-8">
-            <button type="submit" class="button-main-green tw-w-56" th:text="#{sicknote.extend.form.submit.text}">
+            <button
+              type="submit"
+              class="button-main-green tw-w-full sm:tw-w-56"
+              th:text="#{sicknote.extend.form.submit.text}"
+            >
               Weiter Krank melden
             </button>
           </div>
