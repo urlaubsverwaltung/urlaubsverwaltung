@@ -1,0 +1,130 @@
+.extend-action-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.extend-action-grid > button:not(:first-child),
+.extend-action-grid > input[type="date"],
+.extend-action-grid > duet-date-picker {
+  margin-top: 1rem;
+}
+
+.extend-action-grid > duet-date-picker {
+  height: 100%;
+}
+
+/* override bootstrap stuff */
+.extend-action-grid > label {
+  margin: 0 !important;
+  font-weight: normal;
+}
+
+.extend-action-grid > span,
+.extend-action-grid > label {
+  margin-top: 0.25rem !important; /* important to override label bootstrap override o.O */
+  text-align: center;
+}
+
+@screen xs {
+  .extend-action-grid {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 0.5rem;
+    align-items: center;
+  }
+
+  .extend-action-grid > * {
+    margin: unset !important;
+  }
+
+  /* buttons */
+  .extend-action-grid > button:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(3) {
+    grid-row: 3;
+    grid-column: 1;
+  }
+  .extend-action-grid > input[type="date"],
+  .extend-action-grid > duet-date-picker {
+    grid-row: 4;
+    grid-column: 1;
+  }
+
+  /* labels */
+  .extend-action-grid > span:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 2;
+    text-align: left;
+  }
+  .extend-action-grid > span:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 2;
+    text-align: left;
+  }
+  .extend-action-grid > span:nth-of-type(3) {
+    grid-row: 3;
+    grid-column: 2;
+    text-align: left;
+  }
+  .extend-action-grid > label {
+    grid-row: 4;
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+@screen md {
+  .extend-action-grid {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 0.25rem;
+    grid-template-columns: fit-content(1fr);
+  }
+
+  /* buttons */
+  .extend-action-grid > button:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(2) {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .extend-action-grid > button:nth-of-type(3) {
+    grid-row: 1;
+    grid-column: 3;
+  }
+  .extend-action-grid > input[type="date"],
+  .extend-action-grid > duet-date-picker {
+    grid-row: 1;
+    grid-column: 4;
+  }
+
+  /* labels */
+  .extend-action-grid > span:nth-of-type(1) {
+    grid-row: 2;
+    grid-column: 1;
+    text-align: center;
+  }
+  .extend-action-grid > span:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 2;
+    text-align: center;
+  }
+  .extend-action-grid > span:nth-of-type(3) {
+    grid-row: 2;
+    grid-column: 3;
+    text-align: center;
+  }
+  .extend-action-grid > label {
+    grid-row: 2;
+    grid-column: 4;
+    text-align: center;
+  }
+}
