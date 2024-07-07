@@ -203,7 +203,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/extend")
-    public String getExtendSickNote(Model model) {
+    public String getExtendSickNote(@RequestParam(value = "extend", required = false) String extend, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
@@ -221,7 +221,7 @@ class SickNoteViewController implements HasLaunchpad {
         final SickNoteExtendDto extendDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.isAubPresent());
         model.addAttribute("sickNote", extendDto);
         model.addAttribute("sickNotePersonId", signedInUser.getId());
-        model.addAttribute("today", LocalDate.now());
+        model.addAttribute("extendCustomDate", getSickNoteExtendCustomDate(extend));
         // TODO model attributes
         model.addAttribute("sickNoteEndDateWord", "heute");
         model.addAttribute("extensionDatePlusOne", LocalDate.now());
@@ -231,7 +231,25 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("plusTwoWorkdaysWord", "morgen");
         model.addAttribute("untilEndOfWeekWord", "xxx");
 
+        if ("1".equals(extend)) {
+            model.addAttribute("selectedExtend", "1");
+        } else if ("2".equals(extend)) {
+            model.addAttribute("selectedExtend", "2");
+        } else if ("end-of-week".equals(extend)) {
+            model.addAttribute("selectedExtend", "end-of-week");
+        } else {
+            model.addAttribute("selectedExtend", "");
+        }
+
         return "sicknote/sick_note_extend";
+    }
+
+    private LocalDate getSickNoteExtendCustomDate(String requestParamExtend) {
+        try {
+            return LocalDate.parse(requestParamExtend);
+        } catch(Exception e) {
+            return LocalDate.now(clock);
+        }
     }
 
     @PostMapping("/sicknote/extend")

@@ -200,6 +200,12 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.setAttribute("name", name);
   duetDateElement.setAttribute("value", value);
 
+  for (const attributeName of dateElement.getAttributeNames()) {
+    if (attributeName.startsWith("data-") && attributeName !== "data-test-id") {
+      duetDateElement.setAttribute(attributeName, dateElement.getAttribute(attributeName));
+    }
+  }
+
   // cache initial value as fallback for history.popstate handling.
   // first it is looked at the URL. If there is no value set for `name` then this initial value is used.
   initialValues.set(name, value);
