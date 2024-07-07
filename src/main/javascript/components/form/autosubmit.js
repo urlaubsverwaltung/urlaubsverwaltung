@@ -21,26 +21,28 @@ export function initAutosubmit() {
     }
   });
 
-  document.addEventListener("change", function (event) {
-    const { defaultPrevented, target } = event;
-    if (defaultPrevented || noTextInput(target)) {
-      // `change` is not of interest for text inputs which are triggered by `keyup`
-      return;
-    }
-
-    if ("autoSubmit" in target.dataset) {
-      const { autoSubmit = "" } = target.dataset;
-      const element = autoSubmit ? document.querySelector("#" + autoSubmit) : target.closest("form");
-      if (element instanceof HTMLFormElement) {
-        element.requestSubmit();
-      } else {
-        element.closest("form").requestSubmit(element);
+  for (const eventName of ["change", "duetChange"]) {
+    document.addEventListener(eventName, function (event) {
+      const { defaultPrevented, target } = event;
+      if (defaultPrevented || textInput(target)) {
+        // `change` is not of interest for text inputs which are triggered by `keyup`
+        return;
       }
-    }
-  });
+
+      if ("autoSubmit" in target.dataset) {
+        const { autoSubmit = "" } = target.dataset;
+        const element = autoSubmit ? document.querySelector("#" + autoSubmit) : target.closest("form");
+        if (element instanceof HTMLFormElement) {
+          element.requestSubmit();
+        } else {
+          element.closest("form").requestSubmit(element);
+        }
+      }
+    });
+  }
 }
 
-function noTextInput(element) {
+function textInput(element) {
   return [
     "input[type='text']",
     "input[type='mail']",
