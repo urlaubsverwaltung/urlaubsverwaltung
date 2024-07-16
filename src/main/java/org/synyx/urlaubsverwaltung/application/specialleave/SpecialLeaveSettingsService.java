@@ -74,7 +74,7 @@ public class SpecialLeaveSettingsService {
 
     private static SpecialLeaveSettingsEntity createSpecialLeaveEntity(int days, boolean active, String messageKey) {
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
-        specialLeaveSettingsEntity.setId(id);
+        specialLeaveSettingsEntity.setId(null);
         specialLeaveSettingsEntity.setDays(days);
         specialLeaveSettingsEntity.setActive(active);
         specialLeaveSettingsEntity.setMessageKey(messageKey);

@@ -172,6 +172,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     private static VacationTypeEntity createVacationTypeEntity(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(null);
         vacationTypeEntity.setCustom(false);
         vacationTypeEntity.setActive(active);
         vacationTypeEntity.setCategory(category);
