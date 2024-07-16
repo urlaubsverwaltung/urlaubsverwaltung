@@ -52,18 +52,17 @@ class SickNoteTypeServiceImplTest {
         sut.insertDefaultSickNoteTypes();
 
         final SickNoteType sickNote = new SickNoteType();
-        sickNote.setId(1000L);
         sickNote.setCategory(SICK_NOTE);
         sickNote.setMessageKey("application.data.sicknotetype.sicknote");
 
         final SickNoteType sickNoteChild = new SickNoteType();
-        sickNoteChild.setId(2000L);
         sickNoteChild.setCategory(SICK_NOTE_CHILD);
         sickNoteChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         verify(sickNoteTypeRepository).saveAll(sickNoteTypeArgumentCaptor.capture());
         final List<SickNoteType> sickNoteTypes = sickNoteTypeArgumentCaptor.getValue();
         assertThat(sickNoteTypes)
+            .usingRecursiveFieldByFieldElementComparatorOnFields("category", "messageKey")
             .containsExactly(sickNote, sickNoteChild);
     }
 

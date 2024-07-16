@@ -23,8 +23,8 @@ public class SickNotePage {
     private final Page page;
 
     private enum Type {
-        SICK_NOTE("1000"),
-        CHILD_SICK_NOTE("2000");
+        SICK_NOTE("1953"),
+        CHILD_SICK_NOTE("1954");
 
         final String value;
 
