@@ -148,7 +148,9 @@
                     <th:block th:unless="${canEditDepartments}" th:text="${department.name}" />
                     <th:block th:text="#{person.account.departments.departmentHeadAndSecondStageAuthority}" />
                   </li>
-                  <li th:if="${#lists.contains(departmentHeadOfDepartments, department)}">
+                  <li
+                    th:if="${#lists.contains(departmentHeadOfDepartments, department) && !#lists.contains(secondStageAuthorityOfDepartments, department)}"
+                  >
                     <a
                       th:if="${canEditDepartments}"
                       th:text="${department.name}"
@@ -157,7 +159,9 @@
                     <th:block th:unless="${canEditDepartments}" th:text="${department.name}" />
                     <th:block th:text="#{person.account.departments.departmentHead}" />
                   </li>
-                  <li th:if="${#lists.contains(secondStageAuthorityOfDepartments, department)}">
+                  <li
+                    th:if="${!#lists.contains(departmentHeadOfDepartments, department) && #lists.contains(secondStageAuthorityOfDepartments, department)}"
+                  >
                     <a
                       th:if="${canEditDepartments}"
                       th:text="${department.name}"
