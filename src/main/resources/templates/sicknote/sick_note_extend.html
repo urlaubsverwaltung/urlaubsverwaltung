@@ -104,7 +104,13 @@
                 <label for="extend-to-date-input" th:text="#{sicknote.extend.duration.custom.label}">
                   Anderer Tag
                 </label>
-                <button type="submit" id="submit-date-button" name="custom-date-preview" class="tw-sr-only">
+                <button
+                  type="submit"
+                  id="submit-date-button"
+                  name="custom-date-preview"
+                  class="tw-sr-only"
+                  th:text="#{sicknote.extend.duration.custom.submit.text}"
+                >
                   Vorschau
                 </button>
               </span>
@@ -114,19 +120,21 @@
                 <div
                   class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800"
                 >
-                  <div class="tw-font-bold">Aktuelle Krankmeldung</div>
+                  <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
+                    Aktuelle Krankmeldung
+                  </div>
                   <div
                     class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
                     style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
                   >
-                    <span>von</span>
-                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.startDate, 'FULL')}"
-                      >xx.xx.xxxx</span
-                    >
-                    <span>bis</span>
-                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.endDate, 'FULL')}"
-                      >xx.xx.xxxx</span
-                    >
+                    <span th:text="#{sicknote.extend.preview.current.start.label}">von</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.startDate, 'FULL')}">
+                      xx.xx.xxxx
+                    </span>
+                    <span th:text="#{sicknote.extend.preview.current.end.label}">bis</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.endDate, 'FULL')}">
+                      xx.xx.xxxx
+                    </span>
                   </div>
                   <div
                     class="tw-mt-4 tw-text-sm tw-text-right"
@@ -139,19 +147,21 @@
                   <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
                 </div>
                 <div class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-blue-400">
-                  <div class="tw-font-bold">Vorschau geänderte Krankmeldung</div>
+                  <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
+                    Vorschau geänderte Krankmeldung
+                  </div>
                   <div
                     class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
                     style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
                   >
-                    <span>von</span>
-                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.startDate, 'FULL')}"
-                      >xx.xx.xxxx</span
-                    >
-                    <span>Verlängerung bis</span>
-                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.endDate, 'FULL')}"
-                      >xx.xx.xxxx</span
-                    >
+                    <span th:text="#{sicknote.extend.preview.new.start.label}">von</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.startDate, 'FULL')}">
+                      xx.xx.xxxx
+                    </span>
+                    <span th:text="#{sicknote.extend.preview.new.end.label}">Verlängerung bis</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.endDate, 'FULL')}">
+                      xx.xx.xxxx
+                    </span>
                   </div>
                   <div
                     class="tw-mt-4 tw-text-sm tw-text-right"
