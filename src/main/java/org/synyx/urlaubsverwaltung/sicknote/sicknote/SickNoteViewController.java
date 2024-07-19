@@ -209,8 +209,7 @@ class SickNoteViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
-            // TODO handle no sicknote to extend case
-            throw new RuntimeException("could not find sick note of yesterday or last workday");
+            return "sicknote/sick_note_extended_not_found";
         }
 
         final SickNote sickNote = maybeSickNote.get();
@@ -244,8 +243,7 @@ class SickNoteViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
-            // TODO handle no sicknote to extend case
-            throw new RuntimeException("could not find sick note of yesterday or last workday");
+            return "sicknote/sick_note_extended_not_found";
         }
 
         if (hasText(extend) || customDateSubmit.isPresent()) {
