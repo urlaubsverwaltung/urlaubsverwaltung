@@ -10,4 +10,5 @@
   <include relativeToChangelogFile="true" file="changelog-5.0.0-RC1-migrate-calender-settings.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.1.0-add-expiry-date-to-account-settings.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.4.0-sicknote-submission-by-user.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.6.0-trim-person.xml"/>
 </databaseChangeLog>
