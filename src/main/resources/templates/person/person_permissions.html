@@ -74,19 +74,32 @@
                       <input type="checkbox" th:field="*{permissions}" value="DEPARTMENT_HEAD" />
                       <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.description}" />
                     </label>
-                    <label th:class="|tw-leading-snug ${not #lists.isEmpty(departments) ? 'info' : ''}|">
+                    <div class="tw-ml-6 tw-text-sm tw-leading-snug">
                       <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                       <th:block
-                        th:if="${#lists.isEmpty(departments)}"
+                        th:if="${#lists.isEmpty(departmentHeadDepartments)}"
                         th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.none.description}"
                       />
-                      <th:block th:if="${not #lists.isEmpty(departments)}">
+                      <th:block th:if="${not #lists.isEmpty(departmentHeadDepartments)}">
                         <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}" />
-                        <th:block th:each="department, loop : ${departments}">
-                          <th:block th:text="|${department.name}${!loop.last ? ',' : ''}|" />
-                        </th:block>
+                        <ul
+                          th:if="${departmentHeadDepartments != null && not #lists.isEmpty(departmentHeadDepartments)}"
+                          class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                          th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
+                        >
+                          <li th:each="department : ${departmentHeadDepartments}">
+                            <a
+                              href="#"
+                              th:href="@{/web/absences (department=${department.name})}"
+                              th:text="${department.name}"
+                              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                            >
+                              Geschäftsführung
+                            </a>
+                          </li>
+                        </ul>
                       </th:block>
-                    </label>
+                    </div>
                   </div>
 
                   <div class="checkbox tw-pb-2 tw-mb-2">
@@ -98,7 +111,7 @@
                       <input type="checkbox" th:field="*{permissions}" value="SECOND_STAGE_AUTHORITY" />
                       <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description}" />
                     </label>
-                    <label th:class="|tw-leading-snug ${not #lists.isEmpty(secondStageDepartments) ? 'info' : ''}|">
+                    <div class="tw-ml-6 tw-text-sm tw-leading-snug">
                       <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                       <th:block
                         th:if="${#lists.isEmpty(secondStageDepartments)}"
@@ -108,11 +121,24 @@
                         <th:block
                           th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.description}"
                         />
-                        <th:block th:each="department, loop : ${secondStageDepartments}">
-                          <th:block th:text="|${department.name}${!loop.last ? ',' : ''}|" />
-                        </th:block>
+                        <ul
+                          th:if="${secondStageDepartments != null && not #lists.isEmpty(secondStageDepartments)}"
+                          class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                          th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
+                        >
+                          <li th:each="department : ${secondStageDepartments}">
+                            <a
+                              href="#"
+                              th:href="@{/web/absences (department=${department.name})}"
+                              th:text="${department.name}"
+                              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                            >
+                              Geschäftsführung
+                            </a>
+                          </li>
+                        </ul>
                       </th:block>
-                    </label>
+                    </div>
                   </div>
 
                   <div class="checkbox tw-pb-2 tw-mb-2">

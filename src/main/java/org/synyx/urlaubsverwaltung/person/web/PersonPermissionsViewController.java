@@ -65,7 +65,8 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         model.addAttribute("person", mapToPersonPermissionsDto(person));
-        model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
+        model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
+        model.addAttribute("departmentHeadDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
         return "person/person_permissions";
