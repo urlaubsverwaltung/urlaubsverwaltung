@@ -95,6 +95,42 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureCreatedPersonHasStrippedUsername() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("  rick ", "", "", "r", List.of(), List.of());
+        assertThat(createdPerson.getUsername()).isEqualTo("rick");
+    }
+
+    @Test
+    void ensureCreatedPersonHasStrippedFirstName() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("", " Rick  ", "", "r", List.of(), List.of());
+        assertThat(createdPerson.getFirstName()).isEqualTo("Rick");
+    }
+
+    @Test
+    void ensureCreatedPersonHasStrippedLastName() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("", "", " Grimes  ", "r", List.of(), List.of());
+        assertThat(createdPerson.getLastName()).isEqualTo("Grimes");
+    }
+
+    @Test
+    void ensureCreatedPersonHasStrippedEmail() {
+
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+
+        final Person createdPerson = sut.create("", "", "", " rick@grimes.de  ", List.of(), List.of());
+        assertThat(createdPerson.getEmail()).isEqualTo("rick@grimes.de");
+    }
+
+    @Test
     void ensureCreatedPersonHasCorrectAttributes() {
 
         when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
@@ -153,6 +189,50 @@ class PersonServiceImplTest {
 
         sut.update(person);
         verify(personRepository).save(person);
+    }
+
+    @Test
+    void ensureUpdatedPersonHasStrippedUsername() {
+
+        final Person person = new Person(" muster  ", "", "", "");
+        person.setId(1L);
+        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(person);
+        assertThat(updatedPerson.getUsername()).isEqualTo("muster");
+    }
+
+    @Test
+    void ensureUpdatedPersonHasStrippedFirstName() {
+
+        final Person person = new Person("", "", " Marlene  ", "");
+        person.setId(1L);
+        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(person);
+        assertThat(updatedPerson.getFirstName()).isEqualTo("Marlene");
+    }
+
+    @Test
+    void ensureUpdatedPersonHasStrippedLastName() {
+
+        final Person person = new Person("", " Muster  ", "", "");
+        person.setId(1L);
+        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(person);
+        assertThat(updatedPerson.getLastName()).isEqualTo("Muster");
+    }
+
+    @Test
+    void ensureUpdatedPersonHasStrippedEmail() {
+
+        final Person person = new Person("", "", "", " muster@example.org  ");
+        person.setId(1L);
+        when(personRepository.save(person)).thenAnswer(returnsFirstArg());
+
+        final Person updatedPerson = sut.update(person);
+        assertThat(updatedPerson.getEmail()).isEqualTo("muster@example.org");
     }
 
     @Test

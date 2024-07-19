@@ -99,7 +99,7 @@ class PersonServiceImpl implements PersonService {
     public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        final Person person = new Person(username, lastName, firstName, email);
+        final Person person = normalizePerson(new Person(username, lastName, firstName, email));
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
@@ -121,7 +121,7 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        final Person updatedPerson = personRepository.save(person);
+        final Person updatedPerson = personRepository.save(normalizePerson(person));
         LOG.info("Updated person: {}", updatedPerson);
 
         if (updatedPerson.isInactive()) {
@@ -249,6 +249,21 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
+    }
+
+    private Person normalizePerson(Person person) {
+        final Person normalized = new Person();
+
+        normalized.setUsername(person.getUsername().strip());
+        normalized.setLastName(person.getLastName().strip());
+        normalized.setFirstName(person.getFirstName().strip());
+        normalized.setEmail(person.getEmail().strip());
+
+        normalized.setId(person.getId());
+        normalized.setPermissions(person.getPermissions());
+        normalized.setNotifications(person.getNotifications());
+
+        return normalized;
     }
 
     private static Sort mapToImplicitPersonSort(Sort requestedSort) {
