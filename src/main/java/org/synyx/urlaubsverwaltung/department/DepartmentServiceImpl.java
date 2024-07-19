@@ -278,6 +278,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
         return departmentRepository.findByMembersPerson(member).stream()
             .map(this::mapToDepartment)
+            .sorted(departmentComparator())
             .collect(toList());
     }
 
@@ -285,6 +286,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
         return departmentRepository.findByDepartmentHeads(departmentHead).stream()
             .map(this::mapToDepartment)
+            .sorted(departmentComparator())
             .collect(toList());
     }
 
@@ -292,6 +294,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
         return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
             .map(this::mapToDepartment)
+            .sorted(departmentComparator())
             .collect(toList());
     }
 

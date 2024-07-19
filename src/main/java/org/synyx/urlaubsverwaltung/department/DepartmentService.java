@@ -72,7 +72,7 @@ public interface DepartmentService {
      * Finds all departments the given person is member of.
      *
      * @param member to get the departments of
-     * @return list of departments the given person is assigned to
+     * @return list of departments the given person is assigned to ordered by the department name
      */
     List<Department> getAssignedDepartmentsOfMember(Person member);
 
@@ -80,7 +80,7 @@ public interface DepartmentService {
      * Finds all departments the given person is set as department head.
      *
      * @param departmentHead to get the departments of
-     * @return list of departments the department head manages
+     * @return list of departments the department head manages ordered by the department name
      */
     List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead);
 
@@ -88,7 +88,7 @@ public interface DepartmentService {
      * Finds all departments the given person is set as second stage authority.
      *
      * @param secondStageAuthority to get the departments of
-     * @return list of departments the second stage authority manages
+     * @return list of departments the second stage authority manages ordered by the department name
      */
     List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
 
