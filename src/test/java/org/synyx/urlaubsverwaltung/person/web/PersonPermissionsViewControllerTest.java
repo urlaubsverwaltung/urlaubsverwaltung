@@ -90,13 +90,16 @@ class PersonPermissionsViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final List<Department> departments = List.of(new Department());
+        final List<Department> departmentHeadDepartments = List.of(new Department());
         final List<Department> secondStageDepartments = List.of(new Department());
 
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(any())).thenReturn(departments);
+        when(departmentService.getAssignedDepartmentsOfMember(any())).thenReturn(departments);
+        when(departmentService.getManagedDepartmentsOfDepartmentHead(any())).thenReturn(departmentHeadDepartments);
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(any())).thenReturn(secondStageDepartments);
 
         perform(get("/web/person/1/permissions"))
             .andExpect(model().attribute("departments", departments))
+            .andExpect(model().attribute("departmentHeadDepartments", departmentHeadDepartments))
             .andExpect(model().attribute("secondStageDepartments", secondStageDepartments));
     }
 
