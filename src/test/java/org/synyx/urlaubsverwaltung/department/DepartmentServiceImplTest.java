@@ -1164,32 +1164,98 @@ class DepartmentServiceImplTest {
 
     @Test
     void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
-
         final Person person = new Person();
-
         sut.getManagedDepartmentsOfDepartmentHead(person);
-
         verify(departmentRepository).findByDepartmentHeads(person);
     }
 
     @Test
-    void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
+    void ensureGetManagedDepartmentsOfDepartmentHeadDepartmentSorted() {
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1L);
+        departmentEntityA.setName("Department A");
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2L);
+        departmentEntityB.setName("Department B");
+
+        final Department departmentA = new Department();
+        departmentA.setId(1L);
+        final Department departmentB = new Department();
+        departmentB.setId(2L);
 
         final Person person = new Person();
 
-        sut.getManagedDepartmentsOfSecondStageAuthority(person);
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntityB, departmentEntityA));
 
+        final List<Department> allDepartments = sut.getManagedDepartmentsOfDepartmentHead(person);
+        assertThat(allDepartments)
+            .hasSize(2)
+            .containsExactly(departmentA, departmentB);
+    }
+
+    @Test
+    void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
+        final Person person = new Person();
+        sut.getManagedDepartmentsOfSecondStageAuthority(person);
         verify(departmentRepository).findBySecondStageAuthorities(person);
     }
 
     @Test
-    void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() {
+    void ensureGetManagedDepartmentsOfSecondStageAuthorityDepartmentSorted() {
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1L);
+        departmentEntityA.setName("Department A");
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2L);
+        departmentEntityB.setName("Department B");
+
+        final Department departmentA = new Department();
+        departmentA.setId(1L);
+        final Department departmentB = new Department();
+        departmentB.setId(2L);
 
         final Person person = new Person();
 
-        sut.getAssignedDepartmentsOfMember(person);
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(departmentEntityB, departmentEntityA));
 
+        final List<Department> allDepartments = sut.getManagedDepartmentsOfSecondStageAuthority(person);
+        assertThat(allDepartments)
+            .hasSize(2)
+            .containsExactly(departmentA, departmentB);
+    }
+
+    @Test
+    void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() {
+        final Person person = new Person();
+        sut.getAssignedDepartmentsOfMember(person);
         verify(departmentRepository).findByMembersPerson(person);
+    }
+
+    @Test
+    void ensureGetAssignedDepartmentsOfMemberDepartmentSorted() {
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1L);
+        departmentEntityA.setName("Department A");
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2L);
+        departmentEntityB.setName("Department B");
+
+        final Department departmentA = new Department();
+        departmentA.setId(1L);
+        final Department departmentB = new Department();
+        departmentB.setId(2L);
+
+        final Person person = new Person();
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntityB, departmentEntityA));
+
+        final List<Department> allDepartments = sut.getAssignedDepartmentsOfMember(person);
+        assertThat(allDepartments)
+            .hasSize(2)
+            .containsExactly(departmentA, departmentB);
     }
 
     @Test
