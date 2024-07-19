@@ -203,7 +203,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/extend")
-    public String getExtendSickNote(@RequestParam(value = "extend", required = false) String extend, Model model) {
+    public String getExtendSickNote(Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
@@ -218,10 +218,13 @@ class SickNoteViewController implements HasLaunchpad {
             throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
         }
 
-        final SickNoteExtendDto extendDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.isAubPresent());
-        model.addAttribute("sickNote", extendDto);
+        // TODO use correct workingdays value
+        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), 42, sickNote.isAubPresent());
+
+        model.addAttribute("sickNote", sickNoteDto);
         model.addAttribute("sickNotePersonId", signedInUser.getId());
-        model.addAttribute("extendCustomDate", getSickNoteExtendCustomDate(extend));
+        model.addAttribute("today", LocalDate.now(clock));
+        model.addAttribute("extendToDate", LocalDate.now(clock));
         // TODO model attributes
         model.addAttribute("sickNoteEndDateWord", "heute");
         model.addAttribute("extensionDatePlusOne", LocalDate.now());
@@ -231,34 +234,74 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("plusTwoWorkdaysWord", "morgen");
         model.addAttribute("untilEndOfWeekWord", "xxx");
 
-        if ("1".equals(extend)) {
-            model.addAttribute("selectedExtend", "1");
-        } else if ("2".equals(extend)) {
-            model.addAttribute("selectedExtend", "2");
-        } else if ("end-of-week".equals(extend)) {
-            model.addAttribute("selectedExtend", "end-of-week");
-        } else {
-            model.addAttribute("selectedExtend", "");
-        }
-
         return "sicknote/sick_note_extend";
     }
 
-    private LocalDate getSickNoteExtendCustomDate(String requestParamExtend) {
-        try {
-            return LocalDate.parse(requestParamExtend);
-        } catch(Exception e) {
-            return LocalDate.now(clock);
-        }
-    }
-
     @PostMapping("/sicknote/extend")
-    public String postExtendSickNote(@ModelAttribute("sickNote") SickNoteExtendDto dto, Errors errors, Model model) {
+    public String postExtendSickNote(@RequestParam(value = "extend", required = false) String extend,
+                                     @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
+                                     @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
+                                     @ModelAttribute("sickNote") SickNoteExtendDto extendedSickNoteDto, Errors errors,
+                                     Model model) {
 
-        // TODO implement me
-        LOG.info("[not implemented yet] Extending sickNote {}", dto);
+        // TODO verify errors
 
-        return "redirect:/web/sicknote/extend";
+        final Person signedInUser = personService.getSignedInUser();
+        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+
+        if (maybeSickNote.isEmpty()) {
+            // TODO handle no sicknote to extend case
+            throw new RuntimeException("could not find sick note of yesterday or last workday");
+        }
+
+        final SickNote sickNote = maybeSickNote.get();
+        if (!sickNote.getPerson().equals(signedInUser)) {
+            throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
+        }
+
+        // TODO use correct workingdays value
+        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), 42, sickNote.isAubPresent());
+
+        model.addAttribute("sickNote", currentSickNoteDto);
+//        model.addAttribute("sickNoteExtended", extendedSickNoteDto);
+        model.addAttribute("sickNotePersonId", signedInUser.getId());
+        model.addAttribute("today", LocalDate.now(clock));
+        model.addAttribute("extendToDate", extendToDate == null ? LocalDate.now(clock) : extendToDate);
+        // TODO model attributes
+        model.addAttribute("sickNoteEndDateWord", "heute");
+        model.addAttribute("extensionDatePlusOne", LocalDate.now());
+        model.addAttribute("extensionDatePlusTwo", LocalDate.now().plusDays(1));
+        model.addAttribute("extensionDateEndOfWeek", LocalDate.now().plusDays(4));
+        model.addAttribute("plusOneWorkdayWord", "heute");
+        model.addAttribute("plusTwoWorkdaysWord", "morgen");
+        model.addAttribute("untilEndOfWeekWord", "xxx");
+
+        final SickNoteExtendDto sickNoteExtendedDto;
+
+        // TODO use correct values
+        if ("1".equals(extend)) {
+            model.addAttribute("selectedExtend", "1");
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate().plusDays(1), 2, sickNote.isAubPresent());
+        } else if ("2".equals(extend)) {
+            model.addAttribute("selectedExtend", "2");
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate().plusDays(2), 3, sickNote.isAubPresent());
+        } else if ("end-of-week".equals(extend)) {
+            model.addAttribute("selectedExtend", "end-of-week");
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate().plusDays(1), 4, sickNote.isAubPresent());
+        } else if (customDateSubmit.isPresent()) {
+            model.addAttribute("selectedExtend", "custom");
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), extendToDate, 5, sickNote.isAubPresent());
+        } else {
+            model.addAttribute("selectedExtend", "");
+            sickNoteExtendedDto = null;
+        }
+
+        model.addAttribute("sickNoteExtended", sickNoteExtendedDto);
+
+        // TODO extend sick note
+
+        // TODO use redirect in every case?
+        return "sicknote/sick_note_extend";
     }
 
     @PostMapping("/sicknote")
