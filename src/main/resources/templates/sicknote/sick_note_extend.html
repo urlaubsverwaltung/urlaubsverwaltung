@@ -175,6 +175,12 @@
               </label>
             </div>
             <div>
+              <th:block th:if="${sickNoteExtended != null}">
+                <input type="hidden" name="id" th:value="${sickNoteExtended.id}" />
+                <input type="hidden" name="startDate" th:value="${sickNoteExtended.startDate}" />
+                <input type="hidden" name="endDate" th:value="${sickNoteExtended.endDate}" />
+                <input type="hidden" name="workingdays" th:value="${sickNoteExtended.workingDays}" />
+              </th:block>
               <button
                 type="submit"
                 class="button-main-green tw-w-full sm:tw-w-56"

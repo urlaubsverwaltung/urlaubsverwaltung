@@ -50,6 +50,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -206,17 +207,13 @@ class SickNoteViewController implements HasLaunchpad {
     public String getExtendSickNote(Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
-
+        final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
             // TODO handle no sicknote to extend case
             throw new RuntimeException("could not find sick note of yesterday or last workday");
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        if (!sickNote.getPerson().equals(signedInUser)) {
-            throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
-        }
 
         // TODO use correct workingdays value
         final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), 42, sickNote.isAubPresent());
@@ -238,32 +235,49 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PostMapping("/sicknote/extend")
-    public String postExtendSickNote(@RequestParam(value = "extend", required = false) String extend,
-                                     @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
-                                     @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
-                                     @ModelAttribute("sickNote") SickNoteExtendDto extendedSickNoteDto, Errors errors,
-                                     Model model) {
-
-        // TODO verify errors
+    public String extendSickNotePreview(@RequestParam(value = "extend", required = false) String extend,
+                                        @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
+                                        @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
+                                        @ModelAttribute("sickNoteExtended") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                        Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
-
+        final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
             // TODO handle no sicknote to extend case
             throw new RuntimeException("could not find sick note of yesterday or last workday");
         }
 
-        final SickNote sickNote = maybeSickNote.get();
-        if (!sickNote.getPerson().equals(signedInUser)) {
-            throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
+        if (hasText(extend) || customDateSubmit.isPresent()) {
+            // form submit with a +x button or a custom date
+            final SickNote sickNote = maybeSickNote.get();
+            return sickNoteExtendPreview(signedInUser, sickNote, extend, extendToDate, customDateSubmit, model);
+        } else {
+            // form submit to extend the sick note
+            return extendSickNote(signedInUser, sickNoteExtendDto, errors, model);
         }
+    }
+
+    private Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person signedInUser) {
+        final Optional<SickNote> maybeSickNote = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
+        if (maybeSickNote.isPresent()) {
+            final SickNote sickNote = maybeSickNote.get();
+            if (!sickNote.getPerson().equals(signedInUser)) {
+                throw new AccessDeniedException("SickNote is not of User '%s'".formatted(signedInUser.getId()));
+            }
+        }
+        return maybeSickNote;
+    }
+
+    /**
+     * Handles preview rendering of the desired sick note to extend.
+     */
+    private String sickNoteExtendPreview(Person signedInUser, SickNote sickNote, String extend, LocalDate extendToDate, Optional<String> customDateSubmit, Model model) {
 
         // TODO use correct workingdays value
         final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), 42, sickNote.isAubPresent());
 
         model.addAttribute("sickNote", currentSickNoteDto);
-//        model.addAttribute("sickNoteExtended", extendedSickNoteDto);
         model.addAttribute("sickNotePersonId", signedInUser.getId());
         model.addAttribute("today", LocalDate.now(clock));
         model.addAttribute("extendToDate", extendToDate == null ? LocalDate.now(clock) : extendToDate);
@@ -298,10 +312,16 @@ class SickNoteViewController implements HasLaunchpad {
 
         model.addAttribute("sickNoteExtended", sickNoteExtendedDto);
 
-        // TODO extend sick note
-
-        // TODO use redirect in every case?
+        // TODO use redirect with flashAttributes?
         return "sicknote/sick_note_extend";
+    }
+
+    /**
+     * Extends the sick note with the desired information.
+     */
+    private String extendSickNote(Person signedInUser, SickNoteExtendDto sickNoteExtendDto, Errors errors, Model model) {
+        // TODO extend sick note
+        throw new RuntimeException("not implemented yet");
     }
 
     @PostMapping("/sicknote")
