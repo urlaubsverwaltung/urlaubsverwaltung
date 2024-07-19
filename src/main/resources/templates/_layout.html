@@ -132,6 +132,27 @@
 
     <footer th:replace="~{_footer::footer}">footer block</footer>
 
+    <script>
+      (function () {
+        // show elements when JavaScript is available
+        for (let element of [...document.querySelectorAll("[data-js-no-hidden]")]) {
+          element.removeAttribute("hidden");
+        }
+
+        // add classes when JavaScript is available
+        for (let element of [...document.querySelectorAll("[data-js-class]")]) {
+          element.classList.add(...element.dataset.jsClass.split(" "));
+        }
+
+        // remove classes when JavaScript is available
+        for (let element of [...document.querySelectorAll("[data-js-class-remove]")]) {
+          const { jsClassRemove = "" } = element.dataset;
+          for (let className of jsClassRemove.split(" ")) {
+            element.classList.remove(className);
+          }
+        }
+      })();
+    </script>
     <th:block th:replace="${scripts}"></th:block>
   </body>
 </html>
