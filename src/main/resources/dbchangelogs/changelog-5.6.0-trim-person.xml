@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+  <changeSet author="seber" id="strip-person-username">
+    <preConditions>
+      <columnExists tableName="person" columnName="username"/>
+    </preConditions>
+    <sql>
+      update person set username = TRIM(username);
+    </sql>
+  </changeSet>
+
+  <changeSet author="seber" id="trim-person-firstname">
+    <preConditions>
+      <columnExists tableName="person" columnName="first_name"/>
+    </preConditions>
+    <sql>
+      update person set first_name = TRIM(first_name);
+    </sql>
+  </changeSet>
+
+  <changeSet author="seber" id="trim-person-lastname">
+    <preConditions>
+      <columnExists tableName="person" columnName="last_name"/>
+    </preConditions>
+    <sql>
+      update person set last_name = TRIM(last_name);
+    </sql>
+  </changeSet>
+
+  <changeSet author="seber" id="trim-person-email">
+    <preConditions>
+      <columnExists tableName="person" columnName="email"/>
+    </preConditions>
+    <sql>
+      update person set email = TRIM(email);
+    </sql>
+  </changeSet>
+</databaseChangeLog>
