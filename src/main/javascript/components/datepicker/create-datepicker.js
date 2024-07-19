@@ -197,6 +197,8 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.setAttribute("style", "--duet-radius=0;" + originalStyle);
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+  duetDateElement.setAttribute("min", dateElement.getAttribute("min"));
+  duetDateElement.setAttribute("max", dateElement.getAttribute("max"));
   duetDateElement.setAttribute("name", name);
   duetDateElement.setAttribute("value", value);
 

@@ -39,85 +39,129 @@
           Wie lange bist du vorraussichtlich noch krank?
         </p>
         <div class="tw-mt-8">
-          <form method="get" action="#" th:action="@{/web/sicknote/extend}">
+          <form
+            method="post"
+            action="#"
+            th:action="@{/web/sicknote/extend}"
+            class="tw-mt-8 tw-space-y-8"
+            th:bind="${sickNote}"
+          >
             <div class="extend-action-grid tw-max-w-3xl">
-              <a
+              <button
+                type="submit"
                 class="button"
                 th:href="@{/web/sicknote/extend (extend=1)}"
                 th:classappend="${selectedExtend == '1' ? 'tw-bg-blue-400' : ''}"
                 th:text="#{sicknote.extend.duration.plus-workday.label(1)}"
+                name="extend"
+                value="1"
               >
                 + 1 Tag
-              </a>
+              </button>
               <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusOneWorkdayWord})}">
                 einschließlich heute
               </span>
-              <a
+              <button
+                type="submit"
                 class="button"
                 th:href="@{/web/sicknote/extend (extend=2)}"
                 th:classappend="${selectedExtend == '2' ? 'tw-bg-blue-400' : ''}"
                 th:text="#{sicknote.extend.duration.plus-workday.label(2)}"
+                name="extend"
+                value="2"
               >
                 + 2 Tage
-              </a>
+              </button>
               <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusTwoWorkdaysWord})}">
                 einschließlich morgen
               </span>
-              <a
+              <button
                 class="button"
                 th:href="@{/web/sicknote/extend (extend=${'end-of-week'})}"
                 th:classappend="${selectedExtend == 'end-of-week' ? 'tw-bg-blue-400' : ''}"
                 th:text="#{sicknote.extend.duration.end-of-week.label}"
+                name="extend"
+                value="end-of-week"
               >
                 Ende der Woche
-              </a>
+              </button>
               <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${untilEndOfWeekWord})}">
                 einschließlich xxx
               </span>
               <input
                 type="date"
                 id="extend-to-date-input"
-                name="extend"
+                name="extendToDate"
                 class="form-control"
+                th:classappend="${selectedExtend == 'custom' ? 'tw-bg-blue-400 tw-border-2 tw-border-blue-400' : ''}"
                 data-auto-submit="submit-date-button"
                 data-auto-submit-delay="100"
-                th:value="${extendCustomDate}"
-                th:data-iso-value="${#temporals.format(extendCustomDate, 'yyyy-MM-dd')}"
+                th:value="${extendToDate}"
+                th:min="${#temporals.format(today, 'yyyy-MM-dd')}"
+                th:data-iso-value="${#temporals.format(extendToDate, 'yyyy-MM-dd')}"
               />
               <span>
                 <label for="extend-to-date-input" th:text="#{sicknote.extend.duration.custom.label}">
                   Anderer Tag
                 </label>
-                <button type="submit" formmethod="get" id="submit-date-button" class="tw-sr-only">Vorschau</button>
+                <button type="submit" id="submit-date-button" name="custom-date-preview" class="tw-sr-only">
+                  Vorschau
+                </button>
               </span>
             </div>
-          </form>
-          <div class="tw-mt-8 tw-flex tw-gap-4 tw-max-w-3xl">
-            <div class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800">
-              <div class="tw-font-bold">Aktuelle Krankmeldung</div>
-              <div class="tw-mt-4 tw-grid tw-grid-cols-2 tw-gap-y-1">
-                <span>von</span>
-                <span class="tw-text-right">xx.xx.xxxx</span>
-                <span>bis</span>
-                <span class="tw-text-right">xx.xx.xxxx</span>
+            <th:block th:if="${sickNoteExtended != null}">
+              <div class="tw-flex tw-gap-4 tw-max-w-3xl">
+                <div
+                  class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800"
+                >
+                  <div class="tw-font-bold">Aktuelle Krankmeldung</div>
+                  <div
+                    class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
+                    style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
+                  >
+                    <span>von</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.startDate, 'FULL')}"
+                      >xx.xx.xxxx</span
+                    >
+                    <span>bis</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNote.endDate, 'FULL')}"
+                      >xx.xx.xxxx</span
+                    >
+                  </div>
+                  <div
+                    class="tw-mt-4 tw-text-sm tw-text-right"
+                    th:text="#{sicknote.extend.preview.days-between(${sickNote.workingDays})}"
+                  >
+                    entspricht x Arbeitstagen
+                  </div>
+                </div>
+                <div class="tw-self-center">
+                  <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
+                </div>
+                <div class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-blue-400">
+                  <div class="tw-font-bold">Vorschau geänderte Krankmeldung</div>
+                  <div
+                    class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
+                    style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
+                  >
+                    <span>von</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.startDate, 'FULL')}"
+                      >xx.xx.xxxx</span
+                    >
+                    <span>Verlängerung bis</span>
+                    <span class="tw-text-right" th:text="${#temporals.format(sickNoteExtended.endDate, 'FULL')}"
+                      >xx.xx.xxxx</span
+                    >
+                  </div>
+                  <div
+                    class="tw-mt-4 tw-text-sm tw-text-right"
+                    th:text="#{sicknote.extend.preview.days-between(${sickNoteExtended.workingDays})}"
+                  >
+                    entspricht x Arbeitstagen
+                  </div>
+                </div>
               </div>
-              <div class="tw-mt-4 tw-text-sm tw-text-right">entspricht x Arbeitstagen</div>
-            </div>
-            <div class="tw-self-center">
-              <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
-            </div>
-            <div class="tw-flex-1 tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-blue-400">
-              <div class="tw-font-bold">Vorschau geänderte Krankmeldung</div>
-              <div class="tw-mt-4 tw-grid tw-grid-cols-2 tw-gap-y-1">
-                <span>von</span>
-                <span class="tw-text-right">xx.xx.xxxx</span>
-                <span>Verlängerung bis</span>
-                <span class="tw-text-right">xx.xx.xxxx</span>
-              </div>
-              <div class="tw-mt-4 tw-text-sm tw-text-right">entspricht x Arbeitstagen</div>
-            </div>
-          </div>
-          <form method="post" action="#" th:action="@{/web/sicknote/extend}" class="tw-mt-8" th:bind="${sickNote}">
+            </th:block>
             <div class="tw-flex tw-items-center tw-gap-2">
               <input
                 type="checkbox"
@@ -130,7 +174,7 @@
                 Die Krankheit wurde durch einen Arzt festgestellt (AU-Bescheinigung vorhanden)
               </label>
             </div>
-            <div class="tw-mt-8">
+            <div>
               <button
                 type="submit"
                 class="button-main-green tw-w-full sm:tw-w-56"
