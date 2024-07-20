@@ -12,19 +12,64 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInf
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 class WorkingTimeCalendarTest {
+
+    @Test
+    void ensureNextWorkingFollowingTo() {
+
+        final LocalDate from = LocalDate.of(2024, 7, 1);
+        final LocalDate to = LocalDate.of(2024, 7, 31);
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> {
+            if (List.of(WEDNESDAY, SATURDAY, SUNDAY).contains(date.getDayOfWeek())) {
+                return emptyWorkingDayInformation();
+            } else {
+                return fullWorkingDayInformation();
+            }
+        });
+
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 30))).hasValue(LocalDate.of(2024, 7, 1));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 15))).hasValue(LocalDate.of(2024, 7, 16));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 16))).hasValue(LocalDate.of(2024, 7, 18));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 17))).hasValue(LocalDate.of(2024, 7, 18));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 18))).hasValue(LocalDate.of(2024, 7, 19));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 19))).hasValue(LocalDate.of(2024, 7, 22));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 20))).hasValue(LocalDate.of(2024, 7, 22));
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 21))).hasValue(LocalDate.of(2024, 7, 22));
+    }
+
+    @Test
+    void ensureNextWorkingFollowingToReturnsEmptyOptionalWhenNotInWorkingDays() {
+
+        final LocalDate from = LocalDate.of(2024, 7, 1);
+        final LocalDate to = LocalDate.of(2024, 7, 31);
+
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        // 2024-06-30 would return 2024-07-01 -> use 2024-06-30 to assert empty value
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 29))).isEmpty();
+        assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 31))).isEmpty();
+    }
 
     @Test
     void ensureWorkingTimeForApplicationOverTwoDaysWhenWorkingFull() {
@@ -201,6 +246,10 @@ class WorkingTimeCalendarTest {
             Arguments.of(new WorkingDayInformation(MORNING, WORKDAY, NO_WORKDAY)),
             Arguments.of(new WorkingDayInformation(NOON, NO_WORKDAY, WORKDAY))
         );
+    }
+
+    private static WorkingDayInformation emptyWorkingDayInformation() {
+        return new WorkingDayInformation(ZERO, NO_WORKDAY, NO_WORKDAY);
     }
 
     private static WorkingDayInformation fullWorkingDayInformation() {
