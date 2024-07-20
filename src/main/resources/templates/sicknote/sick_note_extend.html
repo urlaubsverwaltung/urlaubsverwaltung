@@ -58,7 +58,11 @@
               >
                 + 1 Tag
               </button>
-              <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusOneWorkdayWord})}">
+              <span
+                class="tw-text-sm"
+                th:with="word=${'<span class=tw-block>' + plusOneWorkdayWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
                 einschließlich heute
               </span>
               <button
@@ -72,7 +76,11 @@
               >
                 + 2 Tage
               </button>
-              <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${plusTwoWorkdaysWord})}">
+              <span
+                class="tw-text-sm"
+                th:with="word=${'<span class=tw-block>' + plusTwoWorkdaysWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
                 einschließlich morgen
               </span>
               <button
@@ -85,7 +93,11 @@
               >
                 Ende der Woche
               </button>
-              <span class="tw-text-sm" th:text="#{sicknote.extend.duration.hint.label(${untilEndOfWeekWord})}">
+              <span
+                class="tw-text-sm"
+                th:with="word=${'<span class=tw-block>' + untilEndOfWeekWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
                 einschließlich xxx
               </span>
               <input

@@ -36,6 +36,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.util.Locale.JAPANESE;
 import static org.hamcrest.Matchers.aMapWithSize;
@@ -70,6 +71,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
+    private DateFormatAware dateFormatAware;
+    @Mock
     private MessageSource messageSource;
 
     private static final Clock clock = Clock.systemUTC();
@@ -77,15 +80,23 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource, clock);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, messageSource, clock);
     }
 
     @Test
     void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
-        perform(get("/web/application/statistics")
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2020"))
+        final Locale locale = Locale.GERMAN;
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2020", locale)).thenReturn(Optional.of(LocalDate.of(2020, 8, 1)));
+
+        perform(
+            get("/web/application/statistics")
+                .locale(locale)
+                .param("from", "01.01.2019")
+                .param("to", "01.08.2020")
+        )
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
             .andExpect(view().name("application/application-statistics"));
@@ -110,6 +121,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build());
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(
             get("/web/application/statistics")
@@ -159,6 +173,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(
             get("/web/application/statistics")
@@ -321,9 +338,18 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @Test
     void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
-        perform(get("/web/application/statistics/download")
-            .param("from", "01.01.2000")
-            .param("to", "01.01.2019"))
+
+        final Locale locale = Locale.GERMAN;
+
+        when(dateFormatAware.parse("01.01.2000", locale)).thenReturn(Optional.of(LocalDate.of(2000, 1, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+
+        perform(
+            get("/web/application/statistics/download")
+                .locale(locale)
+                .param("from", "01.01.2000")
+                .param("to", "01.01.2019")
+        )
             .andExpect(status().isBadRequest());
     }
 
@@ -365,13 +391,15 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/statistics/download")
             .locale(locale)
@@ -395,7 +423,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -404,6 +431,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/statistics/download")
             .locale(locale)
@@ -429,7 +459,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -438,6 +467,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/statistics/download")
             .locale(locale)
@@ -462,7 +494,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -471,6 +502,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/statistics/download")
             .locale(locale)
