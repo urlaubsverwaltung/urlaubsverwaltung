@@ -12,7 +12,7 @@ export const localisation = {
    * format used for the visually visible date string of the input element.
    * @type {string}
    */
-  dateFormat: "dd.MM.yyyy",
+  dateFormat: "d.M.yyyy",
 
   /**
    * short date format used by duet-date-picker for screen reader description only.

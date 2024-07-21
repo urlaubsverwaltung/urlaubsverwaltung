@@ -23,7 +23,7 @@ public class OvertimePage {
     }
 
     public void startDate(LocalDate startDate) {
-        final String dateString = ofPattern("dd.MM.yyyy").format(startDate);
+        final String dateString = ofPattern("d.M.yyyy").format(startDate);
         page.locator(DUET_START_DATE_SELECTOR).fill(dateString);
     }
 
@@ -42,7 +42,7 @@ public class OvertimePage {
 
     public boolean showsEndDate(LocalDate endDate) {
         final String value = page.locator(DUET_END_DATE_SELECTOR).inputValue();
-        final String expectedDateString = ofPattern("dd.MM.yyyy").format(endDate);
+        final String expectedDateString = ofPattern("d.M.yyyy").format(endDate);
         return value.equals(expectedDateString);
     }
 }

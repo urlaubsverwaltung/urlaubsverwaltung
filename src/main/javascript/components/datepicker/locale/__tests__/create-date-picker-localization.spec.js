@@ -5,7 +5,7 @@ describe("createDatepickerLocalization", () => {
   describe.each([["de", "de-AT", "el"]])("dateAdapter for duet-date-picker for locale=%s", (givenLocale) => {
     test("defines dateFormat", () => {
       const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
-      expect(datepickerLocalization.dateFormat).toBe("dd.MM.yyyy");
+      expect(datepickerLocalization.dateFormat).toBe("d.M.yyyy");
     });
 
     test("defines dateFormatShort", () => {
@@ -55,7 +55,7 @@ describe("createDatepickerLocalization", () => {
     (givenLocale) => {
       test("defines dateFormat", () => {
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
-        expect(datepickerLocalization.dateFormat).toBe("dd.MM.yyyy");
+        expect(datepickerLocalization.dateFormat).toBe("d.M.yyyy");
       });
 
       test("defines dateFormatShort", () => {
@@ -106,7 +106,7 @@ describe("createDatepickerLocalization", () => {
     (givenLocale) => {
       test("defines dateFormat", () => {
         const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
-        expect(datepickerLocalization.dateFormat).toBe("dd.MM.yyyy");
+        expect(datepickerLocalization.dateFormat).toBe("d.M.yyyy");
       });
 
       test("defines dateFormatShort", () => {
