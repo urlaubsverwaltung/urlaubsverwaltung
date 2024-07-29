@@ -32,7 +32,7 @@ public class ApplicationPage {
     }
 
     public void from(LocalDate date) {
-        final String dateString = ofPattern("dd.MM.yyyy").format(date);
+        final String dateString = ofPattern("d.M.yyyy").format(date);
         page.locator(FROM_INPUT_SELECTOR).fill(dateString);
     }
 
