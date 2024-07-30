@@ -55,7 +55,7 @@
     "rollup-plugin-esbuild": "6.1.1",
     "rollup-plugin-postcss": "4.0.2",
     "timepicker": "1.14.1",
-    "underscore": "1.13.6"
+    "underscore": "1.13.7"
   },
   "devDependencies": {
     "@babel/core": "7.24.9",
