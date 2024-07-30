@@ -370,6 +370,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
+    @Override
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
         return getManagedDepartmentsOfDepartmentHead(departmentHead)
             .stream()
@@ -387,10 +388,11 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
+    @Override
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
             .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .flatMap(department -> department.getMembers().stream())
             .distinct()
             .collect(toList());
     }
