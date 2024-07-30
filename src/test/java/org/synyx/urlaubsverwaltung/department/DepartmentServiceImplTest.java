@@ -2433,7 +2433,7 @@ class DepartmentServiceImplTest {
     }
 
     private static List<Person> anyPersons(int size, int firstPersonId) {
-        final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().collect(toList());
+        final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().toList();
         return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).collect(toList());
     }
 
