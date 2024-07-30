@@ -392,7 +392,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
             .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .flatMap(department -> department.getMembers().stream())
             .distinct()
             .collect(toList());
     }
