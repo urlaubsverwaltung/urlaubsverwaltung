@@ -107,8 +107,8 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190426T080000Z
-                DTEND:20190426T120000Z
+                DTSTART;TZID=Etc/UTC:20190426T080000
+                DTEND;TZID=Etc/UTC:20190426T120000
                 SUMMARY:Marlene Muster abwesend
                 UID:45BCD3F64AD76CEF9040DF93047C41B3
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
@@ -173,8 +173,8 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART;TZID=Etc/UTC:20190526T120000
+                DTEND;TZID=Etc/UTC:20190526T160000
                 SUMMARY:Marlene Muster abwesend
                 UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
@@ -208,8 +208,8 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART;TZID=Etc/UTC:20190526T120000
+                DTEND;TZID=Etc/UTC:20190526T160000
                 SUMMARY:Marlene Muster abwesend
                 UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
@@ -243,8 +243,8 @@ class ICalServiceTest {
                 METHOD:CANCEL
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART;TZID=Etc/UTC:20190526T120000
+                DTEND;TZID=Etc/UTC:20190526T160000
                 SUMMARY:Marlene Muster abwesend
                 UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
@@ -277,8 +277,8 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART;TZID=Etc/UTC:20190526T120000
+                DTEND;TZID=Etc/UTC:20190526T160000
                 SUMMARY:Marlene Muster abwesend
                 UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
