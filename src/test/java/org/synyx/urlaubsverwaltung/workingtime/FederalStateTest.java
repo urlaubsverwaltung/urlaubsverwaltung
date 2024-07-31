@@ -210,7 +210,7 @@ class FederalStateTest {
             Arguments.of(SPAIN_CANTABRIA, "cb", null),
             Arguments.of(SPAIN_VALENCIA, "vc", null),
 
-            Arguments.of(NETHERLANDS, "nl", null)
+            Arguments.of(NETHERLANDS, "nl", null),
 
             Arguments.of(LITHUANIA, "lt", null)
         );
