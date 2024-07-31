@@ -26,6 +26,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
@@ -50,6 +51,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -60,6 +62,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         final LocalDate end = dateRange.endDate();
 
         return persons.stream().map(person -> {
+
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
                 .stream()
                 .filter(workingTime -> !workingTime.getValidFrom().isAfter(end))
@@ -79,7 +82,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, workingTimeSettings));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -93,19 +96,19 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
         final FederalState federalState = workingTime.getFederalState();
 
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
 
         DayLength morning = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isMorning() ? MORNING : ZERO;
-        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+        WorkingTimeCalendarEntryType morningType = morning.isMorning() ? WORKDAY : NO_WORKDAY;
 
         DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : ZERO;
-        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : WorkingTimeCalendarEntryType.NO_WORKDAY;
+        WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
 
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
 
             if (maybePublicHoliday.isPresent()) {
 
@@ -137,7 +140,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                     if (configuredWorkingTimeForDayOfWeek.isMorning()) {
 
                         noon = ZERO;
-                        noonType = WorkingTimeCalendarEntryType.NO_WORKDAY;
+                        noonType = NO_WORKDAY;
 
                         if (publicHoliday.isFull() || publicHoliday.isMorning()) {
                             morning = ZERO;
@@ -149,7 +152,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                     } else {
 
                         morning = ZERO;
-                        morningType = WorkingTimeCalendarEntryType.NO_WORKDAY;
+                        morningType = NO_WORKDAY;
 
                         if (publicHoliday.isFull() || publicHoliday.isNoon()) {
                             noon = ZERO;
