@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -16,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteExtensionStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
 
 @ExtendWith(MockitoExtension.class)
-class SickNoteExtensionServiceTest {
+class SickNoteExtensionServiceImplTest {
 
     private SickNoteExtensionService sut;
 
@@ -32,7 +34,7 @@ class SickNoteExtensionServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteExtensionService(repository, sickNoteService, clock);
+        sut = new SickNoteExtensionServiceImpl(repository, sickNoteService, clock);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 enum SickNoteExtensionStatus {
 

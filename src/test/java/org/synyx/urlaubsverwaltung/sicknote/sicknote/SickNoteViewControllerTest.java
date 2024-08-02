@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.LocalDate;
 import java.util.List;

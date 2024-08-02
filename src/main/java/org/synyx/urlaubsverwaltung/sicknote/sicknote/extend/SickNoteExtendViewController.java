@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
@@ -40,16 +42,16 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final SickNoteService sickNoteService;
-    private final SickNoteExtensionService sickNoteExtensionService;
+    private final SickNoteExtensionServiceImpl sickNoteExtensionServiceImpl;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
-                                 SickNoteService sickNoteService, SickNoteExtensionService sickNoteExtensionService, DateFormatAware dateFormatAware, Clock clock) {
+                                 SickNoteService sickNoteService, SickNoteExtensionServiceImpl sickNoteExtensionServiceImpl, DateFormatAware dateFormatAware, Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
-        this.sickNoteExtensionService = sickNoteExtensionService;
+        this.sickNoteExtensionServiceImpl = sickNoteExtensionServiceImpl;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -95,7 +97,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extend";
         } else {
             // TODO validate sickNoteExtendDto
-            sickNoteExtensionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
+            sickNoteExtensionServiceImpl.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
     }

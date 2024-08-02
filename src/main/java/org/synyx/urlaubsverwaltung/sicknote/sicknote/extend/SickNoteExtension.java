@@ -1,4 +1,6 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
+
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.time.LocalDate;
 
@@ -19,5 +21,5 @@ import java.time.LocalDate;
  * @param isAub
  * @param status
  */
-record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, boolean isAub, SickNoteExtensionStatus status) {
+public record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, boolean isAub, SickNoteExtensionStatus status) {
 }

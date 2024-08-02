@@ -34,6 +34,8 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 

@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;

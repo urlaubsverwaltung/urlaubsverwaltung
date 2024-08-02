@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.springframework.security.access.AccessDeniedException;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.
