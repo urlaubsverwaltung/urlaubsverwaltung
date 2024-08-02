@@ -42,16 +42,17 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final SickNoteService sickNoteService;
-    private final SickNoteExtensionServiceImpl sickNoteExtensionServiceImpl;
+    private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
-                                 SickNoteService sickNoteService, SickNoteExtensionServiceImpl sickNoteExtensionServiceImpl, DateFormatAware dateFormatAware, Clock clock) {
+                                 SickNoteService sickNoteService, SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+                                 DateFormatAware dateFormatAware, Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
-        this.sickNoteExtensionServiceImpl = sickNoteExtensionServiceImpl;
+        this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -97,7 +98,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extend";
         } else {
             // TODO validate sickNoteExtendDto
-            sickNoteExtensionServiceImpl.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
+            sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
     }
