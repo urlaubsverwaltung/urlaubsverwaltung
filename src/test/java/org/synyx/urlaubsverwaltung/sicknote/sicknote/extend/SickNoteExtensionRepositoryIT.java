@@ -26,7 +26,7 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
     @Autowired
     private SickNoteService sickNoteService;
     @Autowired
-    private SickNoteExtensionService sickNoteExtensionService;
+    private SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     @Autowired
     private PersonService personService;
 
@@ -40,9 +40,8 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
 
         final Long sickNoteId = sickNote.getId();
-
-        sickNoteExtensionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1), false);
-        sickNoteExtensionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2), false);
+        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1), false);
+        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2), false);
 
         final List<SickNoteExtensionEntity> actual = sut.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
 

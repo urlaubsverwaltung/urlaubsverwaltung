@@ -30,7 +30,8 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreviewService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
@@ -90,7 +91,9 @@ class SickNoteViewControllerTest {
     @Mock
     private SickNoteTypeService sickNoteTypeService;
     @Mock
-    private SickNoteExtensionService sickNoteExtensionService;
+    private SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
+    @Mock
+    private SickNoteExtensionPreviewService sickNoteExtensionPreviewService;
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
@@ -112,9 +115,10 @@ class SickNoteViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new SickNoteViewController(sickNoteService,
-            sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService, sickNoteExtensionService,
-            vacationTypeService, vacationTypeViewModelService, personService, departmentService, sickNoteValidator,
-            sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
+            sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService, sickNoteExtensionInteractionService,
+            sickNoteExtensionPreviewService, vacationTypeService, vacationTypeViewModelService, personService,
+            departmentService, sickNoteValidator, sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService,
+            Clock.systemUTC());
     }
 
     @ParameterizedTest

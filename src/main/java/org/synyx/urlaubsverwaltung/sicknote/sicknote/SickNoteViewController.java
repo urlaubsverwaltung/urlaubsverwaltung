@@ -34,8 +34,9 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreviewService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
@@ -78,7 +79,8 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
-    private final SickNoteExtensionService sickNoteExtensionService;
+    private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
+    private final SickNoteExtensionPreviewService sickNoteExtensionPreviewService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
@@ -94,9 +96,11 @@ class SickNoteViewController implements HasLaunchpad {
 
     @Autowired
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
-                           SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService, SickNoteExtensionService sickNoteExtensionService,
-                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
-                           DepartmentService departmentService, SickNoteValidator sickNoteValidator,
+                           SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
+                           SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+                           SickNoteExtensionPreviewService sickNoteExtensionPreviewService,
+                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService,
+                           PersonService personService, DepartmentService departmentService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
 
@@ -104,7 +108,8 @@ class SickNoteViewController implements HasLaunchpad {
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
-        this.sickNoteExtensionService = sickNoteExtensionService;
+        this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
+        this.sickNoteExtensionPreviewService = sickNoteExtensionPreviewService;
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
@@ -144,7 +149,7 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
-            sickNoteExtensionService.findExtensionPreviewOfSickNote(sickNote.getId())
+            sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(sickNote.getId())
                 .ifPresent(preview -> {
                     model.addAttribute("extensionPreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
                     model.addAttribute("extensionPreviewNext", toSickNoteExtensionPreviewDto(preview));
@@ -179,7 +184,7 @@ class SickNoteViewController implements HasLaunchpad {
     public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId) {
 
         final Person signedInUser = personService.getSignedInUser();
-        sickNoteInteractionService.acceptSubmittedExtension(sickNoteId, signedInUser);
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId);
 
         return "redirect:/web/sicknote/" + sickNoteId;
     }
