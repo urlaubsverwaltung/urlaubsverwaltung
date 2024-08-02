@@ -55,9 +55,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     @Override
     public SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId) {
 
-        if (!maintainer.isActive() || !maintainer.hasAnyRole(OFFICE, SICK_NOTE_EDIT)) {
-            // isActive=false should not happen as this user cannot interact with the application
-            // however, we are defensive since there is no context here, this is just a random person passed into this method.
+        if (!maintainer.hasAnyRole(OFFICE, SICK_NOTE_EDIT)) {
             throw new AccessDeniedException("person id=%s is not authorized to accept submitted sickNoteExtension".formatted(maintainer.getId()));
         }
 
