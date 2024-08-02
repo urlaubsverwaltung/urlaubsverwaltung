@@ -89,6 +89,8 @@ class SickNoteViewControllerTest {
     @Mock
     private SickNoteTypeService sickNoteTypeService;
     @Mock
+    private SickNoteExtensionService sickNoteExtensionService;
+    @Mock
     private VacationTypeService vacationTypeService;
     @Mock
     private VacationTypeViewModelService vacationTypeViewModelService;
@@ -109,7 +111,7 @@ class SickNoteViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new SickNoteViewController(sickNoteService,
-            sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService,
+            sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService, sickNoteExtensionService,
             vacationTypeService, vacationTypeViewModelService, personService, departmentService, sickNoteValidator,
             sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
