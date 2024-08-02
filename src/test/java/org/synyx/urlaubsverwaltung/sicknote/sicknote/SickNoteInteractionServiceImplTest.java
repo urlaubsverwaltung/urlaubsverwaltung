@@ -162,7 +162,7 @@ class SickNoteInteractionServiceImplTest {
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
         final String comment = "test comment";
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+        final Person editor = new Person("editor", "Senior", "Editor", "editor@example.org");
 
         final SickNote sickNote = SickNote.builder()
             .id(42L)
@@ -172,10 +172,10 @@ class SickNoteInteractionServiceImplTest {
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
             .build();
 
-        sut.update(sickNote, creator, comment);
+        sut.update(sickNote, editor, comment);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, comment);
+        verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, editor, comment);
 
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
@@ -184,7 +184,8 @@ class SickNoteInteractionServiceImplTest {
         assertThat(sickNoteUpdatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteUpdatedEvent.id()).isNotNull();
 
-        verify(sickNoteMailService).sendEditedToSickPerson(sickNote, creator);
+        verify(sickNoteMailService).sendEditedToSickPerson(sickNote, editor);
+        verify(sickNoteMailService).sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, comment, editor);
     }
 
     @Test
@@ -193,7 +194,7 @@ class SickNoteInteractionServiceImplTest {
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
         final String comment = "test comment";
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+        final Person editor = new Person("editor", "Senior", "Editor", "editor@example.org");
 
         final SickNote sickNote = SickNote.builder()
             .id(42L)
@@ -204,7 +205,7 @@ class SickNoteInteractionServiceImplTest {
             .status(SickNoteStatus.SUBMITTED)
             .build();
 
-        sut.update(sickNote, creator, comment);
+        sut.update(sickNote, editor, comment);
 
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());

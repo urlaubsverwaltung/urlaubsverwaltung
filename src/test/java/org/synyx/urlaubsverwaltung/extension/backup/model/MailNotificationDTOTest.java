@@ -11,14 +11,14 @@ class MailNotificationDTOTest {
     @ParameterizedTest
     @EnumSource(MailNotificationDTO.class)
     void mailNotificationDTOEnumMatchesMailNotification(MailNotificationDTO mailNotificationDTO) {
-        MailNotification mailNotification = mailNotificationDTO.toMailNotification();
+        final MailNotification mailNotification = mailNotificationDTO.toMailNotification();
         assertThat(mailNotification).isNotNull();
     }
 
     @ParameterizedTest
     @EnumSource(MailNotification.class)
     void mailNotificationDTOEnumMatchesMailNotification(MailNotification mailNotification) {
-        MailNotificationDTO mailNotificationDTO = MailNotificationDTO.valueOf(mailNotification.name());
+        final MailNotificationDTO mailNotificationDTO = MailNotificationDTO.valueOf(mailNotification.name());
         assertThat(mailNotificationDTO).isNotNull();
     }
 }

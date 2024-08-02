@@ -44,9 +44,9 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    public static final String ACTIVE_CONTENT = "activeContent";
-    public static final String ACTIVE_CONTENT_SELF = "self";
-    public static final String ACTIVE_CONTENT_DEPARTMENTS = "departments";
+    private static final String ACTIVE_CONTENT = "activeContent";
+    private static final String ACTIVE_CONTENT_SELF = "self";
+    private static final String ACTIVE_CONTENT_DEPARTMENTS = "departments";
 
     private final PersonService personService;
     private final PersonNotificationsDtoValidator validator;
@@ -55,11 +55,12 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     private final SettingsService settingsService;
 
     @Autowired
-    PersonNotificationsViewController(PersonService personService,
-                                      PersonNotificationsDtoValidator validator,
-                                      UserNotificationSettingsService userNotificationSettingsService,
-                                      DepartmentService departmentService, SettingsService settingsService) {
-
+    PersonNotificationsViewController(
+        PersonService personService,
+        PersonNotificationsDtoValidator validator,
+        UserNotificationSettingsService userNotificationSettingsService,
+        DepartmentService departmentService, SettingsService settingsService
+    ) {
         this.personService = personService;
         this.validator = validator;
         this.userNotificationSettingsService = userNotificationSettingsService;

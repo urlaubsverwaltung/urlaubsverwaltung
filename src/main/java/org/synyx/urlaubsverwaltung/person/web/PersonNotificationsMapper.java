@@ -37,14 +37,15 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 
@@ -102,6 +103,7 @@ final class PersonNotificationsMapper {
         );
         addIfActive(mailNotifications, personNotificationsDto.getOwnSickNoteSubmittedCreatedEditedCancelled(), notificationEmailOwnSickNote);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteEditedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteSubmittedByUserForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteAcceptedByManagementForManagement(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT);
 
@@ -153,6 +155,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteCreatedByManagementForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT, personNotificationsDto::setSickNoteSubmittedByUserForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteAcceptedByManagementForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT, personNotificationsDto::setSickNoteEditedByManagementForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 
@@ -213,7 +216,8 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getAbsenceForColleagues(),
             personNotificationsDto.getSickNoteCreatedByManagementForManagement(),
             personNotificationsDto.getSickNoteSubmittedByUserForManagement(),
-            personNotificationsDto.getSickNoteAcceptedByManagementForManagement()
+            personNotificationsDto.getSickNoteAcceptedByManagementForManagement(),
+            personNotificationsDto.getSickNoteEditedByManagementForManagement()
         );
 
         final List<PersonNotificationDtoDepartmentAware> visibleDepartment = dtoDepartmentNotifications.stream()

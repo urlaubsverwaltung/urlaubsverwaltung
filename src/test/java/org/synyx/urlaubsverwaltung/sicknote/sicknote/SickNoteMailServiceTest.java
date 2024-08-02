@@ -40,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -242,6 +243,43 @@ class SickNoteMailServiceTest {
     }
 
     @Test
+    void ensureToSendEditedSickNoteMailToRecipientsOfInterest() {
+
+        final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        management.setId(1L);
+        management.setPermissions(List.of(USER, OFFICE));
+        management.setNotifications(List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT));
+
+        final Person editor = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person person = new Person("person", "person", "theo", "theo@example.org");
+        person.setId(2L);
+        person.setPermissions(Set.of(USER));
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2L)
+            .person(person)
+            .applier(management)
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
+
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        sut.sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, "comment", editor);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(management));
+        assertThat(mail.getReplyTo()).hasValue(editor);
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.edited_by_management.to_management");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_edited_by_management_to_management");
+        assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote, "comment", "comment", "editor", editor));
+    }
+
+    @Test
     void ensureSendSickNoteCancelledByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -352,11 +390,11 @@ class SickNoteMailServiceTest {
         person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER));
 
         final SickNote sickNote = SickNote.builder()
-                .id(2L)
-                .person(person)
-                .startDate(LocalDate.of(2022, 3, 10))
-                .endDate(LocalDate.of(2022, 4, 20))
-                .build();
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
 
         sut.sendSickNoteSubmittedNotificationToSickPerson(sickNote);
 
@@ -382,11 +420,11 @@ class SickNoteMailServiceTest {
         management.setPermissions(List.of(USER, OFFICE));
 
         final SickNote sickNote = SickNote.builder()
-                .id(2L)
-                .person(person)
-                .startDate(LocalDate.of(2022, 3, 10))
-                .endDate(LocalDate.of(2022, 4, 20))
-                .build();
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
 
         sut.sendSickNoteAcceptedNotificationToSickPerson(sickNote, management);
 
@@ -415,11 +453,11 @@ class SickNoteMailServiceTest {
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT)).thenReturn(List.of(management));
 
         final SickNote sickNote = SickNote.builder()
-                .id(2L)
-                .person(person)
-                .startDate(LocalDate.of(2022, 3, 10))
-                .endDate(LocalDate.of(2022, 4, 20))
-                .build();
+            .id(2L)
+            .person(person)
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
 
         sut.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
 
@@ -452,12 +490,12 @@ class SickNoteMailServiceTest {
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)).thenReturn(List.of(management1, management2));
 
         final SickNote sickNote = SickNote.builder()
-                .id(2L)
-                .person(person)
+            .id(2L)
+            .person(person)
 
-                .startDate(LocalDate.of(2022, 3, 10))
-                .endDate(LocalDate.of(2022, 4, 20))
-                .build();
+            .startDate(LocalDate.of(2022, 3, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
 
         sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, management1);
 
