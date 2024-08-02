@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -63,7 +64,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays().longValue(), sickNote.isAubPresent());
+        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays(), sickNote.isAubPresent());
 
         final LocalDate today = LocalDate.now(clock);
         prepareModel(model, signedInUser, today, sickNote, sickNoteDto);
@@ -169,7 +170,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
-        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays().longValue(), sickNote.isAubPresent());
+        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays(), sickNote.isAubPresent());
 
         prepareModel(model, signedInUser, extendToDate, sickNote, currentSickNoteDto);
 
@@ -177,20 +178,20 @@ class SickNoteExtendViewController implements HasLaunchpad {
         final String selectedExtend;
 
         if (customDateSubmit.isPresent()) {
-            final long nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), extendToDate).longValue();
+            final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), extendToDate);
             sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), extendToDate, nextWorkingDays, sickNote.isAubPresent());
             selectedExtend = "custom";
         } else if ("1".equals(extend)) {
-            final long nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusOneWorkdayDate).longValue();
+            final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusOneWorkdayDate);
             sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusOneWorkdayDate, nextWorkingDays, sickNote.isAubPresent());
             selectedExtend = "1";
         } else if ("2".equals(extend)) {
-            final long nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusTwoWorkdaysDate).longValue();
+            final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusTwoWorkdaysDate);
             sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusTwoWorkdaysDate, nextWorkingDays, sickNote.isAubPresent());
             selectedExtend = "2";
         } else if ("end-of-week".equals(extend)) {
             final LocalDate endOfWeek = endOfWeek();
-            final long nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), endOfWeek).longValue();
+            final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), endOfWeek);
             sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), endOfWeek, nextWorkingDays, sickNote.isAubPresent());
             selectedExtend = "end-of-week";
         } else {
