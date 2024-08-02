@@ -1,4 +1,6 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
+
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,5 +14,5 @@ import java.time.LocalDate;
  * @param isAub whether AUB exists or not
  * @param workingDays amount of working days
  */
-record SickNoteExtensionPreview(Long id, LocalDate startDate, LocalDate endDate, boolean isAub, BigDecimal workingDays) {
+public record SickNoteExtensionPreview(Long id, LocalDate startDate, LocalDate endDate, boolean isAub, BigDecimal workingDays) {
 }

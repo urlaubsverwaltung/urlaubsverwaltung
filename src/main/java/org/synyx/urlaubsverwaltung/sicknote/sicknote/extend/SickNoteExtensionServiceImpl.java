@@ -1,9 +1,11 @@
-package org.synyx.urlaubsverwaltung.sicknote.sicknote;
+package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.slf4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -14,11 +16,11 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteExtensionStatus.ACCEPTED;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteExtensionStatus.SUBMITTED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.ACCEPTED;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUBMITTED;
 
 @Service
-class SickNoteExtensionService {
+class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -26,21 +28,14 @@ class SickNoteExtensionService {
     private final SickNoteService sickNoteService;
     private final Clock clock;
 
-    SickNoteExtensionService(SickNoteExtensionRepository repository,
-                             SickNoteService sickNoteService,
-                             Clock clock) {
+    SickNoteExtensionServiceImpl(SickNoteExtensionRepository repository, SickNoteService sickNoteService, Clock clock) {
         this.repository = repository;
         this.sickNoteService = sickNoteService;
         this.clock = clock;
     }
 
-    /**
-     * Find the newest {@linkplain SickNoteExtensionPreview} of the given {@linkplain SickNote} id.
-     *
-     * @param sickNoteId {@linkplain SickNote} id
-     * @return Optional resolving to the newest {@linkplain SickNoteExtensionPreview}
-     */
-    Optional<SickNoteExtensionPreview> findExtensionPreviewOfSickNote(Long sickNoteId) {
+    @Override
+    public Optional<SickNoteExtensionPreview> findExtensionPreviewOfSickNote(Long sickNoteId) {
 
         final SickNote sickNote = getSickNote(sickNoteId);
         final List<SickNoteExtensionEntity> extensions = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
@@ -58,22 +53,8 @@ class SickNoteExtensionService {
             ));
     }
 
-    /**
-     * Submits a {@linkplain SickNoteExtension} that have to be accepted by a privileged person.
-     *
-     * <p>
-     * This sick note extension has to be {@linkplain SickNoteInteractionService#acceptSubmittedExtension(Long, Person) accepted}
-     * by a privileged person afterward.
-     *
-     * @param submitter {@linkplain Person} who submits the sick note extension
-     * @param sickNoteId id of a {@linkplain SickNote} that should be extended
-     * @param newEndDate new end date of the {@linkplain SickNote}
-     * @param isAub whether AUB exists or not
-     * @return the created {@linkplain SickNoteExtension} with status {@linkplain SickNoteExtensionStatus#SUBMITTED SUBMITTED}.
-     * @throws AccessDeniedException when submitter is not allowed to extend the sick note
-     * @throws IllegalStateException when sick note does not exist
-     */
-    SickNoteExtension submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub) {
+    @Override
+    public SickNoteExtension submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub) {
 
         final SickNote sickNote = getSickNote(sickNoteId);
         if (!sickNote.getPerson().equals(submitter)) {
@@ -98,16 +79,8 @@ class SickNoteExtensionService {
         return submittedExtension;
     }
 
-    /**
-     * Updates the status of the last known submitted {@linkplain SickNoteExtension} to {@linkplain SickNoteExtensionStatus#ACCEPTED accepted}.
-     *
-     * <p>
-     * Please note that you have to handle authorization of this action yourself.
-     * Authorization is not considered here.
-     *
-     * @param sickNoteId if of the {@linkplain SickNote} to handle
-     */
-    void acceptSubmittedExtension(Long sickNoteId) {
+    @Override
+    public void acceptSubmittedExtension(Long sickNoteId) {
         final List<SickNoteExtensionEntity> extensions = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
         extensions.stream()
             .findFirst()
