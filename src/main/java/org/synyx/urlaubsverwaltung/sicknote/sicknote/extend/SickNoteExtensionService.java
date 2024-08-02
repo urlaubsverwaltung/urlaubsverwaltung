@@ -57,7 +57,7 @@ class SickNoteExtensionService {
         final SickNoteExtensionEntity saved = repository.save(extensionEntity);
         final SickNoteExtension submittedExtension = toSickNoteExtension(saved);
 
-        LOG.info("created sickNoteExtension id={} of sickNote id={}", submittedExtension.id(), submittedExtension.sickNoteId());
+        LOG.info("Created sickNoteExtension id={} of sickNote id={}", submittedExtension.id(), submittedExtension.sickNoteId());
 
         return submittedExtension;
     }
@@ -72,14 +72,12 @@ class SickNoteExtensionService {
      *
      * @param sickNoteId id of the {@linkplain SickNote} to update
      * @return the updated {@linkplain SickNote}
+     * @throws IllegalStateException when sickNote or extension does not exist
      */
     SickNote acceptSubmittedExtension(Long sickNoteId) {
 
-        final SickNote sickNote = sickNoteService.getById(sickNoteId)
-            .orElseThrow(() -> new IllegalStateException("could not find sickNote with id=" + sickNoteId));
-
-        final SickNoteExtensionPreview extensionPreview = previewService.findExtensionPreviewOfSickNote(sickNoteId)
-            .orElseThrow(() -> new IllegalStateException("could not find extension of sickNote id=" + sickNote));
+        final SickNote sickNote = getSickNote(sickNoteId);
+        final SickNoteExtensionPreview extensionPreview = getExtensionPreview(sickNoteId);
 
         LOG.debug("update sickNote id={} to match accepted sickNoteExtension id={}", sickNoteId, extensionPreview.id());
 
@@ -114,7 +112,12 @@ class SickNoteExtensionService {
 
     private SickNote getSickNote(Long id) {
         return sickNoteService.getById(id)
-            .orElseThrow(() -> new IllegalStateException("could not find referenced sickNote with id=" + id));
+            .orElseThrow(() -> new IllegalStateException("could not find sickNote with id=" + id));
+    }
+
+    private SickNoteExtensionPreview getExtensionPreview(Long sickNoteId) {
+        return previewService.findExtensionPreviewOfSickNote(sickNoteId)
+            .orElseThrow(() -> new IllegalStateException("could not find extension of sickNote id=" + sickNoteId));
     }
 
     private SickNoteExtension toSickNoteExtension(SickNoteExtensionEntity entity) {

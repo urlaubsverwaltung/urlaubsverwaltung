@@ -47,8 +47,6 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
             throw new AccessDeniedException(msg);
         }
 
-        // TODO do we have to do other stuff like sending an email?
-
         return sickNoteExtensionService.createSickNoteExtension(sickNoteId, newEndDate, isAub);
     }
 
@@ -64,7 +62,6 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
         LOG.info("add extension accepted comment to sick note history.");
         commentService.create(updatedSickNote, EXTENSION_ACCEPTED, maintainer);
 
-        // TODO think about publishing dedicated SickNoteExtensionAcceptedEvent
         LOG.info("publish sickNoteUpdatedEvent for accepted sick note extension.");
         eventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));
 
