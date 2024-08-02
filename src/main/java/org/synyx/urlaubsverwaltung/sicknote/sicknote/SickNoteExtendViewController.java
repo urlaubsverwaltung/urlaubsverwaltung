@@ -39,14 +39,16 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final SickNoteService sickNoteService;
+    private final SickNoteExtensionService sickNoteExtensionService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
-                                 SickNoteService sickNoteService, DateFormatAware dateFormatAware, Clock clock) {
+                                 SickNoteService sickNoteService, SickNoteExtensionService sickNoteExtensionService, DateFormatAware dateFormatAware, Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -83,15 +85,17 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extended_not_found";
         }
 
+        final SickNote sickNote = maybeSickNote.get();
+
         if (hasText(extend) || customDateSubmit.isPresent()) {
             // form submit with a +x days button or a provided custom date
-            final SickNote sickNote = maybeSickNote.get();
             prepareSickNoteExtendPreview(signedInUser, sickNote, extend, extendToDate, customDateSubmit, model);
             // TODO use redirect with flashAttributes?
             return "sicknote/sick_note_extend";
         } else {
-            // TODO extend sick note
-            throw new RuntimeException("not implemented yet");
+            // TODO validate sickNoteExtendDto
+            sickNoteExtensionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
+            return "redirect:/web/sicknote/" + sickNote.getId();
         }
     }
 
