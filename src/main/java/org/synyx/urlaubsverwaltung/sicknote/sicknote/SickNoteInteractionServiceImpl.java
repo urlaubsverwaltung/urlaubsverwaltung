@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -15,7 +16,10 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EXTENSION_ACCEPTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
@@ -31,6 +35,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SickNoteService sickNoteService;
+    private final SickNoteExtensionService sickNoteExtensionService;
     private final SickNoteCommentService commentService;
     private final ApplicationInteractionService applicationInteractionService;
     private final SickNoteMailService sickNoteMailService;
@@ -38,13 +43,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
+                                   SickNoteExtensionService sickNoteExtensionService,
                                    SickNoteCommentService commentService,
                                    ApplicationInteractionService applicationInteractionService,
                                    SickNoteMailService sickNoteMailService,
-                                   ApplicationEventPublisher applicationEventPublisher
-    ) {
+                                   ApplicationEventPublisher applicationEventPublisher) {
 
         this.sickNoteService = sickNoteService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
         this.commentService = commentService;
         this.applicationInteractionService = applicationInteractionService;
         this.sickNoteMailService = sickNoteMailService;
@@ -78,6 +84,44 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));
 
         return acceptedSickNote;
+    }
+
+    @Override
+    public SickNote acceptSubmittedExtension(Long sickNoteId, Person maintainer) {
+
+        final SickNote sickNote = sickNoteService.getById(sickNoteId)
+            .orElseThrow(() -> new IllegalStateException("could not find sickNote with id=" + sickNoteId));
+
+        final SickNoteExtensionPreview extensionPreview = sickNoteExtensionService.findExtensionPreviewOfSickNote(sickNoteId)
+            .orElseThrow(() -> new IllegalStateException("could not find extension of sickNote id=" + sickNote));
+
+        if (!maintainer.isActive() || !maintainer.hasAnyRole(OFFICE, SICK_NOTE_EDIT)) {
+            // isActive=false should not happen as this user cannot interact with the application
+            // however, we are defensive since there is no context here, this is just a random person passed into this method.
+            throw new AccessDeniedException("person id=%s is not authorized to accept submitted sickNoteExtension".formatted(maintainer.getId()));
+        }
+
+        LOG.debug("update sickNote id={} to match accepted sickNoteExtension id={}", sickNoteId, extensionPreview.id());
+
+        // aub is not in scope currently
+        // will be handled with https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/4551
+        final SickNote updatedSickNote = sickNoteService.save(
+            SickNote.builder(sickNote).endDate(extensionPreview.endDate()).build()
+        );
+
+        LOG.debug("update sickNoteExtension status.");
+        sickNoteExtensionService.acceptSubmittedExtension(sickNoteId);
+
+        LOG.debug("add extension accepted comment to sick note history.");
+        commentService.create(updatedSickNote, EXTENSION_ACCEPTED, maintainer);
+
+        LOG.info("Accepted sick note extension: {}", updatedSickNote);
+
+        // TODO think about publishing dedicated SickNoteExtensionAcceptedEvent
+        LOG.debug("publish sickNoteUpdatedEvent for accepted sick note extension.");
+        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));
+
+        return updatedSickNote;
     }
 
     @Override

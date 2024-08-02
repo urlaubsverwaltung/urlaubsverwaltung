@@ -76,6 +76,7 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
+    private final SickNoteExtensionService sickNoteExtensionService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
@@ -91,7 +92,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @Autowired
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
-                           SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
+                           SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService, SickNoteExtensionService sickNoteExtensionService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
                            DepartmentService departmentService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
@@ -101,6 +102,7 @@ class SickNoteViewController implements HasLaunchpad {
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
@@ -136,8 +138,15 @@ class SickNoteViewController implements HasLaunchpad {
             || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
             || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
             || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
+
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
+
+            sickNoteExtensionService.findExtensionPreviewOfSickNote(sickNote.getId())
+                .ifPresent(preview -> {
+                    model.addAttribute("extensionPreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
+                    model.addAttribute("extensionPreviewNext", toSickNoteExtensionPreviewDto(preview));
+                });
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
@@ -162,6 +171,15 @@ class SickNoteViewController implements HasLaunchpad {
         throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to see the sick note of user '%s'",
             signedInUser.getId(), sickNotePerson.getId()));
+    }
+
+    @PostMapping("/sicknote/{id}/extension/accept")
+    public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId) {
+
+        final Person signedInUser = personService.getSignedInUser();
+        sickNoteInteractionService.acceptSubmittedExtension(sickNoteId, signedInUser);
+
+        return "redirect:/web/sicknote/" + sickNoteId;
     }
 
     @GetMapping("/sicknote/new")
@@ -542,5 +560,15 @@ class SickNoteViewController implements HasLaunchpad {
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
+    }
+
+    private SickNoteExtensionPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote) {
+        // TODO half working day sickNote
+        return new SickNoteExtensionPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays().longValue());
+    }
+
+    private SickNoteExtensionPreviewDto toSickNoteExtensionPreviewDto(SickNoteExtensionPreview preview) {
+        // TODO half working day sickNote
+        return new SickNoteExtensionPreviewDto(preview.startDate(), preview.endDate(), preview.workingDays().longValue());
     }
 }

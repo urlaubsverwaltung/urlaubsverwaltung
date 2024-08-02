@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -27,6 +28,17 @@ public interface SickNoteInteractionService {
      * @return the saved sick note in ACTIVE state
      */
     SickNote accept(SickNote sickNote, Person maintainer, String comment);
+
+    /**
+     * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts the submitted {@linkplain SickNoteExtension extension} of a {@linkplain SickNote sick note}.
+     *
+     * @param sickNoteId id of the {@linkplain SickNote} to extend
+     * @param maintainer with {@linkplain org.synyx.urlaubsverwaltung.person.Role role} OFFICE or SICK_NOTE_VIEW_ADD_EDIT
+     * @return the saved sick note in ACTIVE state
+     * @throws AccessDeniedException when maintainer is not authorized to accept the submitted extension
+     * @throws IllegalStateException when neither {@linkplain SickNoteExtension} nor {@linkplain SickNote} exists
+     */
+    SickNote acceptSubmittedExtension(Long sickNoteId, Person maintainer);
 
     /**
      * Creates a new sick note.

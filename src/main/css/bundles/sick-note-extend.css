@@ -1,3 +1,5 @@
+@import "../components/sick-note-extension-preview.css";
+
 .extend-action-grid {
   display: flex;
   flex-direction: column;

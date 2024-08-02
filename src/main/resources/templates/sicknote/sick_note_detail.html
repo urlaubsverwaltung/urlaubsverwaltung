@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}, styles=~{::styles})}"
+  >
     <title
       th:with="messageKey=#{__${sickNote.sickNoteType.messageKey}__}"
       th:text="#{sicknote.header.title(${messageKey}, ${sickNote.person.niceName})}"
     >
       Krankmeldung von Marlene
     </title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/sick-note-detail.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('sick_note.js')}" />
     </th:block>
@@ -264,6 +269,27 @@
             </tr>
           </tbody>
         </table>
+        <div th:if="${extensionPreviewCurrent != null}" class="tw-mt-8">
+          <div class="section-heading">
+            <div class="tw-flex tw-items-baseline tw-pb-2 tw-border-b-2 dark:tw-border-b dark:tw-border-zinc-600">
+              <h2>Krankmeldung erweitern</h2>
+            </div>
+          </div>
+          <p class="tw-mt-4">Max Muster möchte die Krankmeldung erweitern.</p>
+          <div class="tw-mt-8">
+            <th:block
+              th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${extensionPreviewCurrent}, ${extensionPreviewNext})}"
+            ></th:block>
+          </div>
+          <form
+            action="#"
+            th:action="@{/web/sicknote/__${sickNote.id}__/extension/accept}"
+            method="post"
+            class="tw-mt-8"
+          >
+            <button type="submit" class="button-main-green">Akzeptieren</button>
+          </form>
+        </div>
       </div>
 
       <div>

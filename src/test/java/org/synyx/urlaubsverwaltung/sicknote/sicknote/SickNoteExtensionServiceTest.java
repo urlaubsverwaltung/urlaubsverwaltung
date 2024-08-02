@@ -27,14 +27,12 @@ class SickNoteExtensionServiceTest {
     private SickNoteExtensionRepository repository;
     @Mock
     private SickNoteService sickNoteService;
-    @Mock
-    private SickNoteInteractionService sickNoteInteractionService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteExtensionService(repository, sickNoteService, sickNoteInteractionService, clock);
+        sut = new SickNoteExtensionService(repository, sickNoteService, clock);
     }
 
     @Test
