@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -31,7 +32,7 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, String text) {
+    public SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, @Nullable String text) {
 
         final SickNoteCommentEntity comment = new SickNoteCommentEntity(clock);
         comment.setSickNoteId(sickNote.getId());

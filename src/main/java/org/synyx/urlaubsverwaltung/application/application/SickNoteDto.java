@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.application.application;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * Represents the view dto for submitted sick notes rendered on the application/absences page.
+ */
 public final class SickNoteDto {
 
     private final String id;

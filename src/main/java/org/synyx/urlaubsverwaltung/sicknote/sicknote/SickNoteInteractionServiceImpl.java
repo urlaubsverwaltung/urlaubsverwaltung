@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -102,7 +103,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote update(SickNote sickNote, Person editor, String comment) {
+    public SickNote update(SickNote sickNote, Person editor, @Nullable String comment) {
 
         final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).build());
         LOG.info("Updated sick note: {}", updatedSickNote);
