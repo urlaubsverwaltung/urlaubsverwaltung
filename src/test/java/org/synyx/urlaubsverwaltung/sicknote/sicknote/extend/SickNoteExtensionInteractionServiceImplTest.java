@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -81,6 +82,22 @@ class SickNoteExtensionInteractionServiceImplTest {
         assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false))
             .isInstanceOf(AccessDeniedException.class)
             .hasMessage("person id=1 is not allowed to submit sickNote extension for sickNote id=1");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"SUBMITTED", "ACTIVE"}, mode = EXCLUDE)
+    void ensureSubmitSickNoteExtensionThrowsWhenSickNoteHasStatus(SickNoteStatus givenStatus) {
+
+        final Person submitter = new Person();
+        submitter.setId(1L);
+
+        final SickNote sickNote = SickNote.builder().id(1L).person(submitter).status(givenStatus).build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
+
+        final LocalDate nextEndDate = LocalDate.now();
+        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("Cannot submit sickNoteExtension for sickNote id=1 with status=%s".formatted(givenStatus));
     }
 
     @Test

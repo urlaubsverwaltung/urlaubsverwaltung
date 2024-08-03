@@ -56,10 +56,11 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
             final SickNote extendedSickNote = SickNote.builder(sickNote).endDate(newEndDate).build();
             // TODO shall we add a comment? which language?
             sickNoteInteractionService.update(extendedSickNote, submitter, "");
-        } else {
+        } else if (sickNote.isActive()) {
             // while an active sickNote has to be extended with a request
-            // TODO do not submit extension for other sickNote status
             sickNoteExtensionService.createSickNoteExtension(sickNoteId, newEndDate, isAub);
+        } else {
+            throw new IllegalStateException("Cannot submit sickNoteExtension for sickNote id=%s with status=%s".formatted(sickNoteId, sickNote.getStatus()));
         }
     }
 

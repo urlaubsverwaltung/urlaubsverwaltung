@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,7 +37,7 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
-        final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).startDate(now.minusDays(10)).endDate(now.minusDays(10)).build());
+        final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).startDate(now.minusDays(10)).endDate(now.minusDays(10)).status(SickNoteStatus.ACTIVE).build());
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
 
         final Long sickNoteId = sickNote.getId();
