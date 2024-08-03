@@ -14,7 +14,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -41,6 +44,8 @@ class SickNoteExtensionInteractionServiceImplTest {
     private SickNoteExtensionService sickNoteExtensionService;
     @Mock
     private SickNoteService sickNoteService;
+    @Mock
+    private SickNoteInteractionService sickNoteInteractionService;
     @Mock
     private SickNoteCommentService sickNoteCommentService;
     @Mock
@@ -86,14 +91,46 @@ class SickNoteExtensionInteractionServiceImplTest {
         final Person submitter = new Person();
         submitter.setId(1L);
 
-        final SickNote sickNote = SickNote.builder().person(submitter).build();
+        final SickNote sickNote = SickNote.builder().person(submitter).status(SickNoteStatus.ACTIVE).build();
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
         final SickNoteExtension expected = new SickNoteExtension(42L, 1L, nextEndDate, false, SUBMITTED);
         when(sickNoteExtensionService.createSickNoteExtension(1L, nextEndDate, false)).thenReturn(expected);
 
-        final SickNoteExtension actual = sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
-        assertThat(actual).isSameAs(expected);
+        sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
+
+        verifyNoInteractions(sickNoteInteractionService);
+    }
+
+    @Test
+    void ensureSubmitSickNoteExtensionDirectlyEditsTheSickNoteSinceStatusIsStillSubmitted() {
+
+        final LocalDate nextEndDate = LocalDate.now();
+
+        final Person submitter = new Person();
+        submitter.setId(1L);
+
+        final SickNote existingSubmittedSickNote = SickNote.builder()
+            .id(1L)
+            .person(submitter)
+            .status(SickNoteStatus.SUBMITTED)
+            .endDate(nextEndDate.minusDays(2))
+            .build();
+        when(sickNoteService.getById(1L)).thenReturn(Optional.of(existingSubmittedSickNote));
+
+        sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
+
+        verifyNoInteractions(sickNoteExtensionService);
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteInteractionService).update(captor.capture(), eq(submitter), eq(""));
+
+        assertThat(captor.getValue()).satisfies(updatedSickNote -> {
+            assertThat(updatedSickNote.getId()).isEqualTo(1L);
+            assertThat(updatedSickNote.getPerson()).isEqualTo(submitter);
+            assertThat(updatedSickNote.getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
+            assertThat(updatedSickNote.getEndDate()).isEqualTo(nextEndDate);
+        });
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
@@ -25,21 +26,24 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
 
     private final SickNoteExtensionService sickNoteExtensionService;
     private final SickNoteService sickNoteService;
+    private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService commentService;
     private final ApplicationEventPublisher eventPublisher;
 
     SickNoteExtensionInteractionServiceImpl(SickNoteExtensionService sickNoteExtensionService,
                                             SickNoteService sickNoteService,
+                                            SickNoteInteractionService sickNoteInteractionService,
                                             SickNoteCommentService commentService,
                                             ApplicationEventPublisher eventPublisher) {
         this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteService = sickNoteService;
+        this.sickNoteInteractionService = sickNoteInteractionService;
         this.commentService = commentService;
         this.eventPublisher = eventPublisher;
     }
 
     @Override
-    public SickNoteExtension submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub) {
+    public void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub) {
 
         final SickNote sickNote = getSickNote(sickNoteId);
         if (!sickNote.getPerson().equals(submitter)) {
@@ -47,7 +51,16 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
             throw new AccessDeniedException(msg);
         }
 
-        return sickNoteExtensionService.createSickNoteExtension(sickNoteId, newEndDate, isAub);
+        if (sickNote.isSubmitted()) {
+            // a not yet accepted or cancelled sickNote can be edited right now
+            final SickNote extendedSickNote = SickNote.builder(sickNote).endDate(newEndDate).build();
+            // TODO shall we add a comment? which language?
+            sickNoteInteractionService.update(extendedSickNote, submitter, "");
+        } else {
+            // while an active sickNote has to be extended with a request
+            // TODO do not submit extension for other sickNote status
+            sickNoteExtensionService.createSickNoteExtension(sickNoteId, newEndDate, isAub);
+        }
     }
 
     @Override

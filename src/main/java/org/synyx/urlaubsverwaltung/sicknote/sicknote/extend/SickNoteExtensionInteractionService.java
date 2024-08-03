@@ -12,6 +12,10 @@ public interface SickNoteExtensionInteractionService {
      * Submits a {@linkplain SickNoteExtension} that have to be accepted by a privileged person.
      *
      * <p>
+     * This method also handles cases when a {@linkplain SickNote} can directly be edited instead of submitting a
+     * {@linkplain SickNoteExtension}.
+     *
+     * <p>
      * This sick note extension has to be {@linkplain SickNoteExtensionInteractionService#acceptSubmittedExtension(Person, Long) accepted}
      * by a privileged person afterward.
      *
@@ -19,11 +23,10 @@ public interface SickNoteExtensionInteractionService {
      * @param sickNoteId id of a {@linkplain SickNote} that should be extended
      * @param newEndDate new end date of the {@linkplain SickNote}
      * @param isAub whether AUB exists or not
-     * @return the created {@linkplain SickNoteExtension} with status {@linkplain SickNoteExtensionStatus#SUBMITTED SUBMITTED}.
      * @throws AccessDeniedException when submitter is not allowed to extend the sick note
      * @throws IllegalStateException when sick note does not exist
      */
-    SickNoteExtension submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub);
+    void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub);
 
     /**
      * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts the submitted {@linkplain SickNoteExtension extension} of a {@linkplain SickNote sick note}.

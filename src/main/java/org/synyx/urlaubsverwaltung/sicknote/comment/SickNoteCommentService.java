@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
+import jakarta.annotation.Nullable;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
@@ -28,10 +29,10 @@ public interface SickNoteCommentService {
      * @param sickNote to create the comment for
      * @param action   describes the lifecycle action of the sick note that will be saved in the comment
      * @param author   of the comment
-     * @param text     of the comment
+     * @param text     optional text of the comment, can be {@code null}
      * @return the created comment
      */
-    SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, String text);
+    SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, @Nullable String text);
 
     /**
      * Gets all comments for the given sick note.
