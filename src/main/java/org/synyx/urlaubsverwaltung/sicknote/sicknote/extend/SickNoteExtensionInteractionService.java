@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 import org.springframework.security.access.AccessDeniedException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
 
 import java.time.LocalDate;
 
@@ -13,7 +12,7 @@ public interface SickNoteExtensionInteractionService {
      * Submits a {@linkplain SickNoteExtension} that have to be accepted by a privileged person.
      *
      * <p>
-     * This sick note extension has to be {@linkplain SickNoteInteractionService#acceptSubmittedExtension(Long, Person) accepted}
+     * This sick note extension has to be {@linkplain SickNoteExtensionInteractionService#acceptSubmittedExtension(Person, Long) accepted}
      * by a privileged person afterward.
      *
      * @param submitter {@linkplain Person} who submits the sick note extension
