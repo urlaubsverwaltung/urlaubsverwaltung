@@ -151,6 +151,7 @@ class SickNoteViewController implements HasLaunchpad {
 
             sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(sickNote.getId())
                 .ifPresent(preview -> {
+                    model.addAttribute("canAcceptSubmittedExtension", signedInUser.hasAnyRole(OFFICE, SICK_NOTE_EDIT));
                     model.addAttribute("extensionPreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
                     model.addAttribute("extensionPreviewNext", toSickNoteExtensionPreviewDto(preview));
                 });

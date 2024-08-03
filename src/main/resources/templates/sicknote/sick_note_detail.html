@@ -275,20 +275,27 @@
               <h2>Krankmeldung erweitern</h2>
             </div>
           </div>
-          <p class="tw-mt-4">Max Muster möchte die Krankmeldung erweitern.</p>
+          <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
+            <p class="tw-mt-4">Max Muster möchte die Krankmeldung erweitern.</p>
+          </th:block>
+          <th:block th:if="${#bools.isFalse(canAcceptSubmittedExtension)}">
+            <p class="tw-mt-4">Eine berechtigte Person muss die geänderte Krankmeldung akzeptieren.</p>
+          </th:block>
           <div class="tw-mt-8">
             <th:block
               th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${extensionPreviewCurrent}, ${extensionPreviewNext})}"
             ></th:block>
           </div>
-          <form
-            action="#"
-            th:action="@{/web/sicknote/__${sickNote.id}__/extension/accept}"
-            method="post"
-            class="tw-mt-8"
-          >
-            <button type="submit" class="button-main-green">Akzeptieren</button>
-          </form>
+          <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
+            <form
+              action="#"
+              th:action="@{/web/sicknote/__${sickNote.id}__/extension/accept}"
+              method="post"
+              class="tw-mt-8"
+            >
+              <button type="submit" class="button-main-green">Akzeptieren</button>
+            </form>
+          </th:block>
         </div>
       </div>
 
