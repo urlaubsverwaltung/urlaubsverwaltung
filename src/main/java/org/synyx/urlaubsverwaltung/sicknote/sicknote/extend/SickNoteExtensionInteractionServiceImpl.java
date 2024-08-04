@@ -58,7 +58,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
             sickNoteInteractionService.update(extendedSickNote, submitter, "");
         } else if (sickNote.isActive()) {
             // while an active sickNote has to be extended with a request
-            sickNoteExtensionService.createSickNoteExtension(sickNoteId, newEndDate, isAub);
+            sickNoteExtensionService.createSickNoteExtension(sickNote, newEndDate, isAub);
         } else {
             throw new IllegalStateException("Cannot submit sickNoteExtension for sickNote id=%s with status=%s".formatted(sickNoteId, sickNote.getStatus()));
         }

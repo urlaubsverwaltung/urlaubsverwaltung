@@ -6,20 +6,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.ACCEPTED;
@@ -36,12 +41,14 @@ class SickNoteExtensionServiceImplTest {
     private SickNoteService sickNoteService;
     @Mock
     private SickNoteExtensionPreviewService sickNoteExtensionPreviewService;
+    @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteExtensionService(repository, sickNoteService, sickNoteExtensionPreviewService, clock);
+        sut = new SickNoteExtensionService(repository, sickNoteService, sickNoteExtensionPreviewService, workingTimeCalendarService, clock);
     }
 
     @Test
@@ -50,20 +57,37 @@ class SickNoteExtensionServiceImplTest {
         final Person submitter = new Person();
         submitter.setId(1L);
 
+        final LocalDate startDate = LocalDate.of(2024, 8, 1);
+        final LocalDate endDate = LocalDate.of(2024, 8, 2);
+        final LocalDate nextEndDate = endDate.plusDays(2);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(submitter)
+            .startDate(startDate)
+            .endDate(endDate)
+            .build();
+
         when(repository.save(any(SickNoteExtensionEntity.class))).thenAnswer(invocation -> {
             final SickNoteExtensionEntity entity = invocation.getArgument(0);
             entity.setId(42L);
             return entity;
         });
 
-        final LocalDate nextEndDate = LocalDate.now();
-        final SickNoteExtension actual = sut.createSickNoteExtension(1L, nextEndDate, false);
+        final WorkingTimeCalendar workingTimeCalendar = mock(WorkingTimeCalendar.class);
+        when(workingTimeCalendar.workingTime(endDate, nextEndDate)).thenReturn(BigDecimal.valueOf(42));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(submitter), new DateRange(endDate, nextEndDate)))
+            .thenReturn(Map.of(submitter, workingTimeCalendar));
+
+        final SickNoteExtension actual = sut.createSickNoteExtension(sickNote, nextEndDate, false);
 
         assertThat(actual.id()).isEqualTo(42L);
         assertThat(actual.sickNoteId()).isEqualTo(1L);
         assertThat(actual.isAub()).isFalse();
         assertThat(actual.nextEndDate()).isEqualTo(nextEndDate);
         assertThat(actual.status()).isEqualTo(SUBMITTED);
+        assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(42));
     }
 
     @Test

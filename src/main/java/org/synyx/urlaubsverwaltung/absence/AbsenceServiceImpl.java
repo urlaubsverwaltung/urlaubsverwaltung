@@ -262,7 +262,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(SickNoteStatus sickNoteStatus) {
         return switch (sickNoteStatus) {
-            case SUBMITTED -> AbsencePeriod.AbsenceStatus.WAITING;
+            case SUBMITTED, EXTENSION_SUBMITTED -> AbsencePeriod.AbsenceStatus.WAITING;
             case ACTIVE -> AbsencePeriod.AbsenceStatus.ACTIVE;
             case CANCELLED -> AbsencePeriod.AbsenceStatus.CANCELLED;
             case CONVERTED_TO_VACATION -> AbsencePeriod.AbsenceStatus.CONVERTED_TO_VACATION;

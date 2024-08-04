@@ -14,8 +14,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteService;
 import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -54,7 +54,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private final ApplicationService applicationService;
-    private final SickNoteService sickNoteService;
+    private final SubmittedSickNoteService sickNoteService;
     private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -62,7 +62,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private final Clock clock;
     private final MessageSource messageSource;
 
-    ApplicationForLeaveViewController(ApplicationService applicationService, SickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
+    ApplicationForLeaveViewController(ApplicationService applicationService, SubmittedSickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
                                       DepartmentService departmentService, PersonService personService, SettingsService settingsService, Clock clock,
                                       MessageSource messageSource) {
         this.applicationService = applicationService;
@@ -139,8 +139,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     }
 
     private void prepareOtherSubmittedSickNotes(Model model, Person signedInUser, Locale locale) {
-        final List<SickNote> otherSickNotes = sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.SUBMITTED), getPersonsForRelevantSubmittedSickNotes(signedInUser)).stream().toList();
-        final List<SickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(otherSickNotes, locale);
+        final List<SubmittedSickNote> sickNotes = sickNoteService.findSubmittedSickNotes(getPersonsForRelevantSubmittedSickNotes(signedInUser));
+        final List<SickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(sickNotes, locale);
         model.addAttribute("otherSickNotes", otherSickNotesDtos);
     }
 
@@ -170,20 +170,24 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
-    private List<SickNoteDto> mapToSickNoteDtoList(List<SickNote> sickNotes, Locale locale) {
+    private List<SickNoteDto> mapToSickNoteDtoList(List<SubmittedSickNote> sickNotes, Locale locale) {
         return sickNotes.stream()
             .map(sickNote -> toView(sickNote, messageSource, locale))
             .toList();
     }
 
-    private static SickNoteDto toView(SickNote sickNote, MessageSource messageSource, Locale locale) {
+    private static SickNoteDto toView(SubmittedSickNote submittedSickNote, MessageSource messageSource, Locale locale) {
+        final SickNote sickNote = submittedSickNote.sickNote();
+        final Person person = sickNote.getPerson();
         return new SickNoteDto(
             sickNote.getId().toString(),
             sickNote.getWorkDays(),
-            new SickNotePersonDto(sickNote.getPerson().getNiceName(), sickNote.getPerson().getGravatarURL(), sickNote.getPerson().isInactive(), sickNote.getId()),
+            new SickNotePersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), sickNote.getId()),
             sickNote.getSickNoteType().getMessageKey(),
-            sickNote.getStatus().name(),
-            toDurationOfAbsenceDescription(sickNote, messageSource, locale)
+            submittedSickNote.status().name(),
+            toDurationOfAbsenceDescription(submittedSickNote, messageSource, locale),
+            submittedSickNote.extensionSubmitted(),
+            submittedSickNote.additionalWorkdays().orElse(null)
         );
     }
 
@@ -268,16 +272,16 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
     }
 
-    private static String toDurationOfAbsenceDescription(SickNote sickNote, MessageSource messageSource, Locale locale) {
+    private static String toDurationOfAbsenceDescription(SubmittedSickNote submittedSickNote, MessageSource messageSource, Locale locale) {
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
 
-        final LocalDate startDate = sickNote.getStartDate();
-        final LocalDate endDate = sickNote.getEndDate();
+        final LocalDate startDate = submittedSickNote.startDate();
+        final LocalDate endDate = submittedSickNote.nextEndDate();
 
         final String dateStartString = startDate.format(dateFormatter);
 
         if (startDate.isEqual(endDate)) {
-            final DayLength dayLength = sickNote.getDayLength();
+            final DayLength dayLength = submittedSickNote.sickNote().getDayLength();
             final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
             return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
         }

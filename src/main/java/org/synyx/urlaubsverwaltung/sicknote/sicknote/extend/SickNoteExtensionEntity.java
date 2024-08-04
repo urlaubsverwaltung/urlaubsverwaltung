@@ -6,7 +6,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,8 +14,7 @@ import java.util.Objects;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Entity
-@Table(name = "sick_note_extension")
+@Entity(name = "sick_note_extension")
 class SickNoteExtensionEntity {
 
     @Id
@@ -44,7 +42,7 @@ class SickNoteExtensionEntity {
         return id;
     }
 
-    public void setId(Long id) {
+    void setId(Long id) {
         this.id = id;
     }
 
@@ -52,7 +50,7 @@ class SickNoteExtensionEntity {
         return sickNoteId;
     }
 
-    public void setSickNoteId(Long extensionOfSickNoteId) {
+    void setSickNoteId(Long extensionOfSickNoteId) {
         this.sickNoteId = extensionOfSickNoteId;
     }
 
@@ -60,7 +58,7 @@ class SickNoteExtensionEntity {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -68,7 +66,7 @@ class SickNoteExtensionEntity {
         return newEndDate;
     }
 
-    public void setNewEndDate(LocalDate newEndDate) {
+    void setNewEndDate(LocalDate newEndDate) {
         this.newEndDate = newEndDate;
     }
 
@@ -76,7 +74,7 @@ class SickNoteExtensionEntity {
         return isAub;
     }
 
-    public void setAub(boolean aub) {
+    void setAub(boolean aub) {
         isAub = aub;
     }
 
@@ -84,7 +82,7 @@ class SickNoteExtensionEntity {
         return status;
     }
 
-    public void setStatus(SickNoteExtensionStatus status) {
+    void setStatus(SickNoteExtensionStatus status) {
         this.status = status;
     }
 
