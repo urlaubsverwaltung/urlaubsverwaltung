@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
@@ -103,9 +102,9 @@ class SickNoteServiceImpl implements SickNoteService {
         final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();
 
         return sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .toList();
     }
 
     @Override
@@ -164,9 +163,9 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> deleteAllByPerson(Person person) {
         return sickNoteRepository.deleteByPerson(person)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .toList();
     }
 
     @Override
@@ -222,14 +221,14 @@ class SickNoteServiceImpl implements SickNoteService {
             return List.of();
         }
 
-        final List<Person> personsWithSickNotes = entities.stream().map(SickNoteEntity::getPerson).distinct().collect(toList());
+        final List<Person> personsWithSickNotes = entities.stream().map(SickNoteEntity::getPerson).distinct().toList();
         final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(personsWithSickNotes, dateRange);
 
         return entities
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
+            .toList();
     }
 
     private SickNote withWorkDays(SickNote sickNote) {
