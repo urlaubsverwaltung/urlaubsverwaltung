@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|tw-${theme}|"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:thL="http://www.w3.org/1999/html"
+>
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="preload">
@@ -568,7 +574,20 @@
                       </span>
                     </th:block>
                   </span>
-                  <span class="md:tw-text-sm" th:text="#{sicknote.progress.SUBMITTED.withoutDate}"></span>
+                  <span class="md:tw-text-sm">
+                    <th:block
+                      th:if="${not otherSickNote.extensionSubmitted}"
+                      th:text="#{sicknote.progress.SUBMITTED.withoutDate}"
+                    >
+                      eingereicht
+                    </th:block>
+                    <th:block
+                      th:if="${otherSickNote.extensionSubmitted}"
+                      th:text="#{sicknote.progress.EXTENSION_SUBMITTED.withoutDate}"
+                    >
+                      Verlängerung eingereicht
+                    </th:block>
+                  </span>
                 </span>
               </div>
               <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
@@ -591,6 +610,10 @@
                     <span class="hover:tw-underline tw-mb-1 tw-text-lg">
                       <th:block th:text="#{overview.sicknotes.sickdays.days(${otherSickNote.workDays})}" />
                       <th:block th:text="${#messages.msg(otherSickNote.type)}"></th:block>
+                      <th:block
+                        th:if="${otherSickNote.additionalWorkDays != null}"
+                        th:text="#{overview.sicknotes.sickdays.days.additional(${otherSickNote.additionalWorkDays})}"
+                      />
                     </span>
                     <span
                       class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
@@ -611,6 +634,7 @@
                       </span>
                     </a>
                     <a
+                      th:if="${not otherSickNote.extensionSubmitted}"
                       class="button tw-flex-1"
                       href="#"
                       th:href="@{/web/sicknote/{sickNoteId} (sickNoteId=${otherSickNote.id}, action='cancel', shortcut=true)}"

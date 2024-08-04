@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -111,8 +112,8 @@ class SickNoteExtensionInteractionServiceImplTest {
         final SickNote sickNote = SickNote.builder().person(submitter).status(SickNoteStatus.ACTIVE).build();
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
-        final SickNoteExtension expected = new SickNoteExtension(42L, 1L, nextEndDate, false, SUBMITTED);
-        when(sickNoteExtensionService.createSickNoteExtension(1L, nextEndDate, false)).thenReturn(expected);
+        final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, false, SUBMITTED, BigDecimal.ONE);
+        when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate, false)).thenReturn(extension);
 
         sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
 

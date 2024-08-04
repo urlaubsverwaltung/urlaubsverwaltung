@@ -2,9 +2,14 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,13 +28,18 @@ class SickNoteExtensionService {
     private final SickNoteExtensionRepository repository;
     private final SickNoteService sickNoteService;
     private final SickNoteExtensionPreviewService previewService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
-    SickNoteExtensionService(SickNoteExtensionRepository repository, SickNoteService sickNoteService,
-                             SickNoteExtensionPreviewService previewService, Clock clock) {
+    SickNoteExtensionService(SickNoteExtensionRepository repository,
+                             SickNoteService sickNoteService,
+                             SickNoteExtensionPreviewService previewService,
+                             WorkingTimeCalendarService workingTimeCalendarService,
+                             Clock clock) {
         this.repository = repository;
         this.sickNoteService = sickNoteService;
         this.previewService = previewService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -40,26 +50,33 @@ class SickNoteExtensionService {
      * This method does not handle authorization. You have to check this upfront!
      * Whether the currently logged-in user is allowed to create an extension for the sickNote or not, for instance.
      *
-     * @param sickNoteId id of the referenced {@linkplain SickNote}
+     * @param sickNote the referenced {@linkplain SickNote}
      * @param newEndDate new endDate of the {@linkplain SickNote} when extension is accepted
      * @param isAub whether AUB exists or not
      * @return the created {@linkplain SickNoteExtension} with status {@linkplain SickNoteExtensionStatus#SUBMITTED submitted}.
      */
-    SickNoteExtension createSickNoteExtension(Long sickNoteId, LocalDate newEndDate, boolean isAub) {
+    SickNoteExtension createSickNoteExtension(SickNote sickNote, LocalDate newEndDate, boolean isAub) {
 
         final SickNoteExtensionEntity extensionEntity = new SickNoteExtensionEntity();
-        extensionEntity.setSickNoteId(sickNoteId);
+        extensionEntity.setSickNoteId(sickNote.getId());
         extensionEntity.setNewEndDate(newEndDate);
         extensionEntity.setAub(isAub);
         extensionEntity.setCreatedAt(Instant.now(clock));
         extensionEntity.setStatus(SUBMITTED);
 
         final SickNoteExtensionEntity saved = repository.save(extensionEntity);
-        final SickNoteExtension submittedExtension = toSickNoteExtension(saved);
+
+        final BigDecimal additionalWorkdays = getWorkdays(sickNote.getPerson(), sickNote.getEndDate(), newEndDate);
+        final SickNoteExtension submittedExtension = toSickNoteExtension(saved, additionalWorkdays);
 
         LOG.info("Created sickNoteExtension id={} of sickNote id={}", submittedExtension.id(), submittedExtension.sickNoteId());
 
         return submittedExtension;
+    }
+
+    private BigDecimal getWorkdays(Person person, LocalDate start, LocalDate end) {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(start, end)).get(person);
+        return workingTimeCalendar.workingTime(start, end);
     }
 
     /**
@@ -120,7 +137,7 @@ class SickNoteExtensionService {
             .orElseThrow(() -> new IllegalStateException("could not find extension of sickNote id=" + sickNoteId));
     }
 
-    private SickNoteExtension toSickNoteExtension(SickNoteExtensionEntity entity) {
-        return new SickNoteExtension(entity.getId(), entity.getSickNoteId(), entity.getNewEndDate(), entity.isAub(), entity.getStatus());
+    private SickNoteExtension toSickNoteExtension(SickNoteExtensionEntity entity, BigDecimal additionalWorkdays) {
+        return new SickNoteExtension(entity.getId(), entity.getSickNoteId(), entity.getNewEndDate(), entity.isAub(), entity.getStatus(), additionalWorkdays);
     }
 }

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -20,6 +21,7 @@ import java.time.LocalDate;
  * @param nextEndDate
  * @param isAub
  * @param status
+ * @param additionalWorkdays additional workdays to the original {@linkplain SickNote}
  */
-public record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, boolean isAub, SickNoteExtensionStatus status) {
+public record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, boolean isAub, SickNoteExtensionStatus status, BigDecimal additionalWorkdays) {
 }
