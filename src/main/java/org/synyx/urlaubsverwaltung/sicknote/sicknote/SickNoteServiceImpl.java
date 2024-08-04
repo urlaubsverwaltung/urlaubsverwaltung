@@ -171,21 +171,11 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public void deleteSickNoteApplier(Person applier) {
-
-        final List<SickNoteEntity> sickNoteEntities = sickNoteRepository.findByApplier(applier)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .map(SickNoteServiceImpl::sickNoteWithoutApplier)
-                .map(SickNoteServiceImpl::toSickNoteEntity)
-                .collect(toList());
-
-        sickNoteRepository.saveAll(sickNoteEntities);
-    }
-
-    private static SickNote sickNoteWithoutApplier(SickNote sickNote) {
-        return SickNote.builder(sickNote)
-                .applier(null)
-                .build();
+        final List<SickNoteEntity> entities = sickNoteRepository.findByApplier(applier);
+        for (SickNoteEntity entity : entities) {
+            entity.setApplier(null);
+        }
+        sickNoteRepository.saveAll(entities);
     }
 
     private static SickNoteEntity toSickNoteEntity(SickNote sickNote) {
