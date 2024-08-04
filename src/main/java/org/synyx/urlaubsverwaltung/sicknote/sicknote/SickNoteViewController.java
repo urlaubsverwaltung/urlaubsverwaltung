@@ -66,7 +66,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge;
 
 /**
  * Controller for {@link SickNote} purposes.
@@ -568,6 +567,18 @@ class SickNoteViewController implements HasLaunchpad {
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
+    }
+
+    private static SickNote merge(SickNote sickNote, SickNoteFormDto sickNoteFormDto) {
+        return SickNote.builder(sickNote)
+            .person(sickNoteFormDto.getPerson())
+            .sickNoteType(sickNoteFormDto.getSickNoteType())
+            .startDate(sickNoteFormDto.getStartDate())
+            .endDate(sickNoteFormDto.getEndDate())
+            .dayLength(sickNoteFormDto.getDayLength())
+            .aubStartDate(sickNoteFormDto.getAubStartDate())
+            .aubEndDate(sickNoteFormDto.getAubEndDate())
+            .build();
     }
 
     private SickNoteExtensionPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote) {
