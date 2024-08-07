@@ -42,7 +42,6 @@ class SickNoteExtensionPreviewServiceImpl implements SickNoteExtensionPreviewSer
                 extensionEntity.getId(),
                 sickNote.getStartDate(),
                 extensionEntity.getNewEndDate(),
-                extensionEntity.isAub(),
                 getWorkdays(sickNote.getPerson(), sickNote.getStartDate(), extensionEntity.getNewEndDate())
             ));
     }

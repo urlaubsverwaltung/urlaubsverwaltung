@@ -22,11 +22,10 @@ public interface SickNoteExtensionInteractionService {
      * @param submitter {@linkplain Person} who submits the sick note extension
      * @param sickNoteId id of a {@linkplain SickNote} that should be extended
      * @param newEndDate new end date of the {@linkplain SickNote}
-     * @param isAub whether AUB exists or not
      * @throws AccessDeniedException when submitter is not allowed to extend the sick note
      * @throws IllegalStateException when sick note does not exist
      */
-    void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub);
+    void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate);
 
     /**
      * A maintainer (OFFICE or SICK_NOTE_VIEW_ADD_EDIT) accepts the submitted {@linkplain SickNoteExtension extension} of a {@linkplain SickNote sick note}.

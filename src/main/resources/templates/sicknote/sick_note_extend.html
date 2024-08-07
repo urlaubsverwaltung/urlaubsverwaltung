@@ -196,18 +196,6 @@
                 </div>
               </th:block>
             </th:block>
-            <div class="tw-flex tw-items-center tw-gap-2">
-              <input
-                type="checkbox"
-                id="aub-input"
-                name="isAub"
-                class="uv-checkbox tw-shrink-0 tw-m-0"
-                th:checked="${sickNote.isAub}"
-              />
-              <label for="aub-input" class="tw-m-0 tw-font-normal tw-text-base" th:text="#{sicknote.extend.aub.label}">
-                Die Krankheit wurde durch einen Arzt festgestellt (AU-Bescheinigung vorhanden)
-              </label>
-            </div>
             <div>
               <th:block th:if="${sickNoteExtended != null}">
                 <input type="hidden" name="id" th:value="${sickNoteExtended.id}" />

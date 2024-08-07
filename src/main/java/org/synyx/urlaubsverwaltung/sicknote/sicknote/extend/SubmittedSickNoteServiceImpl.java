@@ -103,7 +103,6 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
             entity.getId(),
             entity.getSickNoteId(),
             entity.getNewEndDate(),
-            entity.isAub(),
             entity.getStatus(),
             additionalWorkdays
         );

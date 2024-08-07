@@ -62,7 +62,7 @@ class SickNoteExtensionInteractionServiceImplTest {
         when(sickNoteService.getById(1L)).thenReturn(Optional.empty());
 
         final LocalDate nextEndDate = LocalDate.now();
-        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false))
+        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("could not find sickNote with id=1");
     }
@@ -80,7 +80,7 @@ class SickNoteExtensionInteractionServiceImplTest {
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
         final LocalDate nextEndDate = LocalDate.now();
-        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false))
+        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate))
             .isInstanceOf(AccessDeniedException.class)
             .hasMessage("person id=1 is not allowed to submit sickNote extension for sickNote id=1");
     }
@@ -96,7 +96,7 @@ class SickNoteExtensionInteractionServiceImplTest {
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
         final LocalDate nextEndDate = LocalDate.now();
-        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false))
+        assertThatThrownBy(() -> sut.submitSickNoteExtension(submitter, 1L, nextEndDate))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("Cannot submit sickNoteExtension for sickNote id=1 with status=%s".formatted(givenStatus));
     }
@@ -112,10 +112,10 @@ class SickNoteExtensionInteractionServiceImplTest {
         final SickNote sickNote = SickNote.builder().person(submitter).status(SickNoteStatus.ACTIVE).build();
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(sickNote));
 
-        final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, false, SUBMITTED, BigDecimal.ONE);
-        when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate, false)).thenReturn(extension);
+        final SickNoteExtension extension = new SickNoteExtension(42L, 1L, nextEndDate, SUBMITTED, BigDecimal.ONE);
+        when(sickNoteExtensionService.createSickNoteExtension(sickNote, nextEndDate)).thenReturn(extension);
 
-        sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
+        sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
 
         verifyNoInteractions(sickNoteInteractionService);
     }
@@ -136,7 +136,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             .build();
         when(sickNoteService.getById(1L)).thenReturn(Optional.of(existingSubmittedSickNote));
 
-        sut.submitSickNoteExtension(submitter, 1L, nextEndDate, false);
+        sut.submitSickNoteExtension(submitter, 1L, nextEndDate);
 
         verifyNoInteractions(sickNoteExtensionService);
 
