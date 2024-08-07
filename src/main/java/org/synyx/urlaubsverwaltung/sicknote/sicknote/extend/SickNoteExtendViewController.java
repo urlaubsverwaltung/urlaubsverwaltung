@@ -67,7 +67,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays(), sickNote.isAubPresent());
+        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
 
         final LocalDate today = LocalDate.now(clock);
         prepareModel(model, signedInUser, today, sickNote, sickNoteDto);
@@ -98,7 +98,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extend";
         } else {
             // TODO validate sickNoteExtendDto
-            sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate(), sickNoteExtendDto.isAub());
+            sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate());
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
     }
@@ -173,7 +173,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
-        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays(), sickNote.isAubPresent());
+        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
 
         prepareModel(model, signedInUser, extendToDate, sickNote, currentSickNoteDto);
 
@@ -182,20 +182,20 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         if (customDateSubmit.isPresent()) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), extendToDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), extendToDate, nextWorkingDays, sickNote.isAubPresent());
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), extendToDate, nextWorkingDays);
             selectedExtend = "custom";
         } else if ("1".equals(extend)) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusOneWorkdayDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusOneWorkdayDate, nextWorkingDays, sickNote.isAubPresent());
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusOneWorkdayDate, nextWorkingDays);
             selectedExtend = "1";
         } else if ("2".equals(extend)) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusTwoWorkdaysDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusTwoWorkdaysDate, nextWorkingDays, sickNote.isAubPresent());
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusTwoWorkdaysDate, nextWorkingDays);
             selectedExtend = "2";
         } else if ("end-of-week".equals(extend)) {
             final LocalDate endOfWeek = endOfWeek();
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), endOfWeek);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), endOfWeek, nextWorkingDays, sickNote.isAubPresent());
+            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), endOfWeek, nextWorkingDays);
             selectedExtend = "end-of-week";
         } else {
             sickNoteExtendedDto = null;

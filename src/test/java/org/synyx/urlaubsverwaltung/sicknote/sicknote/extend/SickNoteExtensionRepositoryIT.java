@@ -41,8 +41,8 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
 
         final Long sickNoteId = sickNote.getId();
-        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1), false);
-        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2), false);
+        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1));
+        sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2));
 
         final List<SickNoteExtensionEntity> actual = sut.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
 

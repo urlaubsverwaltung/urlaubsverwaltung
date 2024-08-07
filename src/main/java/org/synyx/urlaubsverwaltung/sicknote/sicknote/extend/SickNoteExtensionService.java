@@ -52,15 +52,13 @@ class SickNoteExtensionService {
      *
      * @param sickNote the referenced {@linkplain SickNote}
      * @param newEndDate new endDate of the {@linkplain SickNote} when extension is accepted
-     * @param isAub whether AUB exists or not
      * @return the created {@linkplain SickNoteExtension} with status {@linkplain SickNoteExtensionStatus#SUBMITTED submitted}.
      */
-    SickNoteExtension createSickNoteExtension(SickNote sickNote, LocalDate newEndDate, boolean isAub) {
+    SickNoteExtension createSickNoteExtension(SickNote sickNote, LocalDate newEndDate) {
 
         final SickNoteExtensionEntity extensionEntity = new SickNoteExtensionEntity();
         extensionEntity.setSickNoteId(sickNote.getId());
         extensionEntity.setNewEndDate(newEndDate);
-        extensionEntity.setAub(isAub);
         extensionEntity.setCreatedAt(Instant.now(clock));
         extensionEntity.setStatus(SUBMITTED);
 
@@ -138,6 +136,6 @@ class SickNoteExtensionService {
     }
 
     private SickNoteExtension toSickNoteExtension(SickNoteExtensionEntity entity, BigDecimal additionalWorkdays) {
-        return new SickNoteExtension(entity.getId(), entity.getSickNoteId(), entity.getNewEndDate(), entity.isAub(), entity.getStatus(), additionalWorkdays);
+        return new SickNoteExtension(entity.getId(), entity.getSickNoteId(), entity.getNewEndDate(), entity.getStatus(), additionalWorkdays);
     }
 }

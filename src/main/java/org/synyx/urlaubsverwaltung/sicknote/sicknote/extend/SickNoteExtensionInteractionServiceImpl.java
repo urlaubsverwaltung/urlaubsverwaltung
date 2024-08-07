@@ -43,7 +43,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     }
 
     @Override
-    public void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate, boolean isAub) {
+    public void submitSickNoteExtension(Person submitter, Long sickNoteId, LocalDate newEndDate) {
 
         final SickNote sickNote = getSickNote(sickNoteId);
         if (!sickNote.getPerson().equals(submitter)) {
@@ -58,7 +58,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
             sickNoteInteractionService.update(extendedSickNote, submitter, "");
         } else if (sickNote.isActive()) {
             // while an active sickNote has to be extended with a request
-            sickNoteExtensionService.createSickNoteExtension(sickNote, newEndDate, isAub);
+            sickNoteExtensionService.createSickNoteExtension(sickNote, newEndDate);
         } else {
             throw new IllegalStateException("Cannot submit sickNoteExtension for sickNote id=%s with status=%s".formatted(sickNoteId, sickNote.getStatus()));
         }

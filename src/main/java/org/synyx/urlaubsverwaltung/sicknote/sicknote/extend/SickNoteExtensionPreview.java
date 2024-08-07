@@ -11,8 +11,7 @@ import java.time.LocalDate;
  * @param id id of {@linkplain SickNoteExtension}
  * @param startDate start date of the extended sickNote
  * @param endDate end date of th extended sickNote
- * @param isAub whether AUB exists or not
  * @param workingDays amount of working days
  */
-public record SickNoteExtensionPreview(Long id, LocalDate startDate, LocalDate endDate, boolean isAub, BigDecimal workingDays) {
+public record SickNoteExtensionPreview(Long id, LocalDate startDate, LocalDate endDate, BigDecimal workingDays) {
 }

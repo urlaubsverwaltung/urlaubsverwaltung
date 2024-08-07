@@ -19,9 +19,8 @@ import java.time.LocalDate;
  * @param id id of the this {@linkplain SickNoteExtension}
  * @param sickNoteId id of the {@linkplain SickNote} to extend
  * @param nextEndDate
- * @param isAub
  * @param status
  * @param additionalWorkdays additional workdays to the original {@linkplain SickNote}
  */
-public record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, boolean isAub, SickNoteExtensionStatus status, BigDecimal additionalWorkdays) {
+public record SickNoteExtension(Long id, Long sickNoteId, LocalDate nextEndDate, SickNoteExtensionStatus status, BigDecimal additionalWorkdays) {
 }

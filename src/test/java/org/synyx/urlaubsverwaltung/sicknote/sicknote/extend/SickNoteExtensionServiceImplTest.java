@@ -80,11 +80,10 @@ class SickNoteExtensionServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(submitter), new DateRange(endDate, nextEndDate)))
             .thenReturn(Map.of(submitter, workingTimeCalendar));
 
-        final SickNoteExtension actual = sut.createSickNoteExtension(sickNote, nextEndDate, false);
+        final SickNoteExtension actual = sut.createSickNoteExtension(sickNote, nextEndDate);
 
         assertThat(actual.id()).isEqualTo(42L);
         assertThat(actual.sickNoteId()).isEqualTo(1L);
-        assertThat(actual.isAub()).isFalse();
         assertThat(actual.nextEndDate()).isEqualTo(nextEndDate);
         assertThat(actual.status()).isEqualTo(SUBMITTED);
         assertThat(actual.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(42));
@@ -122,7 +121,7 @@ class SickNoteExtensionServiceImplTest {
 
         final LocalDate nextEndDate = now.plusDays(2);
         final BigDecimal workingDays = BigDecimal.valueOf(2L);
-        final SickNoteExtensionPreview preview = new SickNoteExtensionPreview(1L, now, nextEndDate, false, workingDays);
+        final SickNoteExtensionPreview preview = new SickNoteExtensionPreview(1L, now, nextEndDate, workingDays);
         when(sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(1L)).thenReturn(Optional.of(preview));
 
         final SickNote actual = sut.acceptSubmittedExtension(1L);
@@ -151,7 +150,7 @@ class SickNoteExtensionServiceImplTest {
 
         final LocalDate nextEndDate = now.plusDays(2);
         final BigDecimal workingDays = BigDecimal.valueOf(2L);
-        final SickNoteExtensionPreview preview = new SickNoteExtensionPreview(1L, now, nextEndDate, false, workingDays);
+        final SickNoteExtensionPreview preview = new SickNoteExtensionPreview(1L, now, nextEndDate, workingDays);
         when(sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(1L)).thenReturn(Optional.of(preview));
 
         final SickNoteExtensionEntity currentExtension = new SickNoteExtensionEntity();
