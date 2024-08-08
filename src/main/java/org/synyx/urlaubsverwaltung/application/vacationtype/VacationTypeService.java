@@ -43,4 +43,6 @@ public interface VacationTypeService {
      * @param vacationTypes to create
      */
     void createVacationTypes(Collection<VacationType<?>> vacationTypes);
+
+    void insertDefaultVacationTypes();
 }

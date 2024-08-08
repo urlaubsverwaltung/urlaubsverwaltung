@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class OvertimeRepositoryIT extends TestContainersBase {
+class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonService personService;

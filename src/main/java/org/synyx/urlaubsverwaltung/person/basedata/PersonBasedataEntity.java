@@ -9,13 +9,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Entity
 @Table(name = "person_basedata")
-class PersonBasedataEntity {
+public class PersonBasedataEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "person_id")

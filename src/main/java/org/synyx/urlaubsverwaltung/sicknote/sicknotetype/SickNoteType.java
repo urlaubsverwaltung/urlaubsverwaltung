@@ -1,19 +1,27 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknotetype;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
-public class SickNoteType {
+public class SickNoteType extends AbstractTenantAwareEntity {
 
     @Id
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "sick_note_type_generator")
+    @SequenceGenerator(name = "sick_note_type_generator", sequenceName = "sick_note_type_id_seq")
     private Long id;
 
     @NotNull

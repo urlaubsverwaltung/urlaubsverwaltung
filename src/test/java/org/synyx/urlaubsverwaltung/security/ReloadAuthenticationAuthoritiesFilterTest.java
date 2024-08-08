@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,10 +41,12 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     private SessionService sessionService;
     @Mock
     private DelegatingSecurityContextRepository securityContextRepository;
+    @Mock
+    private TenantContextHolder tenantContextHolder;
 
     @BeforeEach
     void setUp() {
-        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository);
+        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder);
     }
 
     @Test

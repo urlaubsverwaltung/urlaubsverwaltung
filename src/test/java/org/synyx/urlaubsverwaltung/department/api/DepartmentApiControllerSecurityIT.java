@@ -10,7 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
-class DepartmentApiControllerSecurityIT extends TestContainersBase {
+class DepartmentApiControllerSecurityIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private WebApplicationContext context;

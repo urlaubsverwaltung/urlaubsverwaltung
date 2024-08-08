@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
@@ -36,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
-class PersonServiceIT extends TestContainersBase {
+class PersonServiceIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonService personService;
