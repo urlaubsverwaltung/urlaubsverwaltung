@@ -10,7 +10,7 @@ import org.springframework.validation.Errors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class SickNoteCommentFormDtoValidatorTest {
+class SickNoteCommentFormValidatorTest {
 
     private SickNoteCommentFormValidator sut;
 
