@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_BURGENLAND;
@@ -22,6 +21,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_STEIE
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_TIROL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_VORARLBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_WIEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BELGIUM;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.CROATIA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
@@ -212,7 +212,9 @@ class FederalStateTest {
 
             Arguments.of(NETHERLANDS, "nl", null),
 
-            Arguments.of(LITHUANIA, "lt", null)
+            Arguments.of(LITHUANIA, "lt", null),
+
+            Arguments.of(BELGIUM, "be", null)
         );
     }
 
@@ -340,22 +342,23 @@ class FederalStateTest {
     @Test
     void ensureCorrectFederalStatesByCountry() {
         final Map<String, List<FederalState>> federalStatesTypesByCountry = FederalState.federalStatesTypesByCountry();
-        final List<FederalState> germanyFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> switzerlandFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> ukFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gb".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> grFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gr".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> mtFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "mt".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> itFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "it".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> hrFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "hr".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> esFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "es".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> nlFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "nl".equals(federalState.getCountry())).collect(toList());
-        final List<FederalState> ltFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "lt".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> deFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).toList();
+        final List<FederalState> atFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).toList();
+        final List<FederalState> chFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).toList();
+        final List<FederalState> ukFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gb".equals(federalState.getCountry())).toList();
+        final List<FederalState> grFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gr".equals(federalState.getCountry())).toList();
+        final List<FederalState> mtFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "mt".equals(federalState.getCountry())).toList();
+        final List<FederalState> itFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "it".equals(federalState.getCountry())).toList();
+        final List<FederalState> hrFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "hr".equals(federalState.getCountry())).toList();
+        final List<FederalState> esFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "es".equals(federalState.getCountry())).toList();
+        final List<FederalState> nlFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "nl".equals(federalState.getCountry())).toList();
+        final List<FederalState> ltFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "lt".equals(federalState.getCountry())).toList();
+        final List<FederalState> beFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "be".equals(federalState.getCountry())).toList();
 
-        assertThat(federalStatesTypesByCountry).hasSize(11)
-            .contains(entry("de", germanyFederalStates))
-            .contains(entry("at", austriaFederalStates))
-            .contains(entry("ch", switzerlandFederalStates))
+        assertThat(federalStatesTypesByCountry).hasSize(12)
+            .contains(entry("de", deFederalStates))
+            .contains(entry("at", atFederalStates))
+            .contains(entry("ch", chFederalStates))
             .contains(entry("gb", ukFederalStates))
             .contains(entry("gr", grFederalStates))
             .contains(entry("mt", mtFederalStates))
@@ -363,6 +366,7 @@ class FederalStateTest {
             .contains(entry("hr", hrFederalStates))
             .contains(entry("es", esFederalStates))
             .contains(entry("nl", nlFederalStates))
-            .contains(entry("lt", ltFederalStates));
+            .contains(entry("lt", ltFederalStates))
+            .contains(entry("be", beFederalStates));
     }
 }
