@@ -3,7 +3,10 @@ package org.synyx.urlaubsverwaltung.calendar;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ParameterList;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Organizer;
@@ -25,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,8 @@ import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 public class ICalService {
 
     private final CalendarProperties calendarProperties;
+
+    private static final ZoneId UTC = ZoneId.of("Etc/UTC");
 
     @Autowired
     ICalService(CalendarProperties calendarProperties) {
@@ -80,6 +86,8 @@ public class ICalService {
             calendar.add(CANCEL);
         }
 
+        calendar.add(toVTimeZone());
+
         absences.stream()
             .map(absence -> this.toVEvent(absence, method, absence.getPerson().equals(recipient)))
             .filter(Optional::isPresent)
@@ -89,16 +97,21 @@ public class ICalService {
         return calendar;
     }
 
+    private static VTimeZone toVTimeZone() {
+        final TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+        return registry.getTimeZone(UTC.getId()).getVTimeZone();
+    }
+
     private Optional<VEvent> toVEvent(Absence absence, ICalType method, boolean isOwn) {
 
-        final ZonedDateTime startDateTime = absence.getStartDate();
-        final ZonedDateTime endDateTime = absence.getEndDate();
+        final ZonedDateTime startDateTimeInUTC = absence.getStartDate().withZoneSameInstant(UTC);
+        final ZonedDateTime endDateTimeInUTC = absence.getEndDate().withZoneSameInstant(UTC);
 
         final VEvent event;
         if (absence.isAllDay()) {
-            event = generateAllDayEvent(absence.getEventSubject(), startDateTime, endDateTime);
+            event = generateAllDayEvent(absence.getEventSubject(), startDateTimeInUTC, endDateTimeInUTC);
         } else {
-            event = new VEvent(startDateTime, endDateTime, absence.getEventSubject());
+            event = new VEvent(startDateTimeInUTC, endDateTimeInUTC, absence.getEventSubject());
         }
 
         event.add(new Uid(generateUid(absence)));
