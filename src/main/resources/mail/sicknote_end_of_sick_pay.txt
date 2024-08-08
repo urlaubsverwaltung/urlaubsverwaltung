@@ -8,7 +8,7 @@
 
     [(${rightPadder.rightPad('__#{absence.information.person}__',__#{sick_note.information.sick_pay.max_length}__)})] [(${sickNote.person.niceName})]
     [(${rightPadder.rightPad('__#{absence.information.period}__',__#{sick_note.information.sick_pay.max_length}__)})] [# th:replace="~{_date_range(from=${sickNote.startDate},to=${sickNote.endDate},dayLength=${sickNote.dayLength})}" /]
-    [(${rightPadder.rightPad('__#{sick_note.information.sick_pay}__',__#{sick_note.information.sick_pay.max_length}__)})] [(${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNotePayTo, "dd.MM.yyyy")})]
+    [(${rightPadder.rightPad('__#{sick_note.information.sick_pay}__',__#{sick_note.information.sick_pay.max_length}__)})] [# th:replace="~{_date_range(from=${sickNotePayFrom},to=${sickNotePayTo})}" /]
 
 
 [(#{sick_note.sick_pay.note.title})]
