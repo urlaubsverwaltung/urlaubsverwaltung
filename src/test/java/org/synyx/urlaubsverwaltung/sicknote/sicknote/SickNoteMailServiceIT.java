@@ -72,6 +72,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .person(person)
             .startDate(LocalDate.of(2022, 2, 1))
             .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
             .build();
 
         final List<SickNote> sickNotes = List.of(sickNote);
@@ -99,7 +100,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             Informationen zur Krankmeldung:
 
                 Mitarbeiter:                  Lieschen Müller
-                Zeitraum:                     01.02.2022 bis 01.04.2022
+                Zeitraum:                     01.02.2022 bis 01.04.2022, ganztägig
                 Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022
 
 
@@ -123,7 +124,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             Informationen zur Krankmeldung:
 
                 Mitarbeiter:                  Lieschen Müller
-                Zeitraum:                     01.02.2022 bis 01.04.2022
+                Zeitraum:                     01.02.2022 bis 01.04.2022, ganztägig
                 Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022
 
 

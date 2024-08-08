@@ -2,7 +2,7 @@
 
 [(#{application.cancelled.to_colleagues(${application.person.niceName})})]
 
-    [(#{absence.information.period})] [(${#temporals.format(application.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(application.endDate, "dd.MM.yyyy")})], [(#{__${application.dayLength.name}__})]
+    [(#{absence.information.period})] [# th:replace="~{_date_range_application}" /]
 
 [(#{application.cancelled.to_colleagues.overview})]: [(${baseLinkURL})]web/absences
 
