@@ -175,7 +175,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -206,7 +206,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -237,7 +237,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -260,7 +260,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Mueller wurde erstellt:
 
-                Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -325,7 +325,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -356,7 +356,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -428,7 +428,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -459,7 +459,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -640,14 +640,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        final String contentPerson = readPlainContent(msgPerson);
-        assertThat(contentPerson).contains("Hallo Lieschen Müller");
-        assertThat(contentPerson).contains("dein Stornierungsantrag der genehmigten Abwesenheit");
-        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
-        assertThat(contentPerson).contains("Kommentar von Marlene Muster:");
-        assertThat(contentPerson).contains("Stornierung abgelehnt!");
-        assertThat(contentPerson).contains("/web/application/1234");
+            dein Stornierungsantrag der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Marlene Muster:
+            Stornierung abgelehnt!
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
 
         // send mail to office
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -854,7 +858,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -876,7 +880,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Mueller wurde erstellt:
 
-                Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -930,7 +934,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -952,7 +956,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Mueller wurde erstellt:
 
-                Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -1001,7 +1005,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -1068,6 +1072,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1084,15 +1089,19 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.");
-        assertThat(content).contains("Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
-        assertThat(content).contains("Eine Nachricht an die Vertretung");
+            Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.
+            Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(holidayReplacement.getId()));
     }
 
     @Test
@@ -1104,6 +1113,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1120,15 +1130,20 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine Vertretung für Lieschen Müller wurde eingeplant");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
-        assertThat(content).contains("Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
-        assertThat(content).contains("Eine Nachricht an die Vertretung");
+            die Abwesenheit von Lieschen Müller wurde genehmigt.
+            Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.
+
+            Notiz von Lieschen Müller an dich:
+            Eine Nachricht an die Vertretung
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.
+            """.formatted(holidayReplacement.getId()));
 
         final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.getFirst().getName()).contains("calendar.ics");
@@ -1143,6 +1158,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1158,15 +1174,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde zurückgezogen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Mar Teria,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("du bist für die Abwesenheit von Lieschen Müller");
-        assertThat(content).contains("im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,");
-        assertThat(content).contains("nicht mehr als Vertretung vorgesehen.");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
+            du bist für die Abwesenheit von Lieschen Müller
+            im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,
+            nicht mehr als Vertretung vorgesehen.
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.
+            """.formatted(holidayReplacement.getId()));
 
         final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.getFirst().getName()).contains("calendar.ics");
@@ -1298,6 +1317,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("deine Abwesenheit wurde erfolgreich eingereicht.");
         assertThat(content).contains(comment.text());
@@ -1347,7 +1367,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -1405,7 +1425,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -1442,6 +1462,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Marlene Muster hat eine Abwesenheit für dich gestellt.");
         assertThat(content).contains(comment.text());
@@ -1495,7 +1516,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -1556,7 +1577,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -1595,6 +1616,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("nicht genehmigter Antrag wurde von dir erfolgreich");
         assertThat(content).contains(comment.text());
@@ -1610,6 +1632,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
         final String contentRelevantPerson = readPlainContent(msgRelevantPerson);
+        // TODO
         assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
         assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde storniert.");
         assertThat(contentRelevantPerson).contains(comment.text());
@@ -1646,6 +1669,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("gestellter, nicht genehmigter Antrag wurde von Office Person storniert.");
         assertThat(content).contains(comment.text());
@@ -1661,6 +1685,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
         final String contentRelevantPerson = readPlainContent(msgRelevantPerson);
+        // TODO
         assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
         assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde von Office Person storniert.");
         assertThat(contentRelevantPerson).contains(comment.text());
@@ -1709,7 +1734,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -1762,7 +1787,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -1788,7 +1813,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Müller wurde zurückgenommen:
 
-                Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -1846,7 +1871,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -1868,7 +1893,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Müller wurde zurückgenommen:
 
-                Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -1892,6 +1917,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2020, 6, 15));
         application.setEndDate(LocalDate.of(2020, 6, 15));
         application.setCanceller(office);
+        application.setDayLength(FULL);
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.CANCELLED, person, "Geht leider nicht");
@@ -1970,7 +1996,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Müller wurde zurückgenommen:
 
-                Zeitraum: 15.06.2020 bis 15.06.2020, ganztägig
+                Zeitraum: 15.06.2020, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -2030,7 +2056,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2062,7 +2088,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2127,7 +2153,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Kai Schmitt
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2161,7 +2187,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Kai Schmitt
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2223,7 +2249,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Senior Kopf
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2255,7 +2281,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Senior Kopf
-                Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig
+                Zeitraum:            22.05.2023, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2316,7 +2342,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -2382,7 +2408,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -2445,7 +2471,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -2510,7 +2536,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -2601,7 +2627,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2683,7 +2709,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth
@@ -2769,7 +2795,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:          Alfred Pennyworth, Robin
@@ -2847,7 +2873,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2921,7 +2947,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Müller
-                Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig
+                Zeitraum:            16.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -2964,9 +2990,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inboxOfBoss[0];
         assertThat(msg.getSubject()).isEqualTo("Erinnerung auf wartende zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo Hugo Boss");
         assertThat(content).contains("/web/application/1234");
     }
@@ -3808,6 +3833,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo replacement holiday");
         assertThat(content).contains("deine Vertretung für Lieschen Müller vom 01.01.2022 bis zum 01.01.2022 beginnt heute.");
         assertThat(content).contains("Notiz:");
@@ -3844,6 +3870,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo replacement holiday");
         assertThat(content).contains("deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.");
         assertThat(content).contains("Notiz:");
@@ -3880,6 +3907,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo replacement holiday");
         assertThat(content).contains("deine Vertretung für Lieschen Müller vom 04.01.2022 bis zum 05.01.2022 beginnt in 3 Tagen.");
         assertThat(content).contains("Notiz:");
@@ -3916,6 +3944,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = readPlainContent(msg);
+        // TODO
         assertThat(content).contains("Hallo replacement holiday");
         assertThat(content).contains("deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.");
         assertThat(content).doesNotContain("Notiz:");
