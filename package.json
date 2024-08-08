@@ -49,7 +49,7 @@
     "font-awesome": "4.7.0",
     "jquery": "3.7.1",
     "less-plugin-clean-css": "1.6.0",
-    "lint-staged": "15.2.7",
+    "lint-staged": "15.2.8",
     "rimraf": "6.0.1",
     "rollup": "4.19.2",
     "rollup-plugin-esbuild": "6.1.1",
