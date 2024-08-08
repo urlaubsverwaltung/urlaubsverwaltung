@@ -187,7 +187,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
-        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsUser.getFirst().getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
@@ -218,7 +218,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """.formatted(office.getId()));
 
         final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
-        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsOffice.getFirst().getName()).contains("calendar.ics");
 
         // check email management attributes
         final MimeMessage msgBoss = inboxBoss[0];
@@ -249,7 +249,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsBoss = getAttachments(msgBoss);
-        assertThat(attachmentsBoss.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsBoss.getFirst().getName()).contains("calendar.ics");
 
         // check email colleague
         final MimeMessage msgColleague = inboxColleague[0];
@@ -269,7 +269,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
-        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -337,7 +337,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
-        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsUser.getFirst().getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
@@ -368,7 +368,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """.formatted(office.getId()));
 
         final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
-        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsOffice.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -440,7 +440,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
-        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsUser.getFirst().getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
@@ -471,7 +471,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """.formatted(office.getId()));
 
         final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
-        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsOffice.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1056,7 +1056,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        assertThat(attachments.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1131,7 +1131,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Eine Nachricht an die Vertretung");
 
         final List<AttachmentResource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        assertThat(attachments.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1169,7 +1169,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/replacement");
 
         final List<AttachmentResource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        assertThat(attachments.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1774,7 +1774,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsRelevantPerson = getAttachments(msg);
-        assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsRelevantPerson.getFirst().getName()).contains("calendar.ics");
 
         // check email colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -1797,7 +1797,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
-        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1930,7 +1930,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        assertThat(attachments.getFirst().getName()).contains("calendar.ics");
 
         // was email sent to relevant person?
         MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -1955,7 +1955,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
-        assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsRelevantPerson.getFirst().getName()).contains("calendar.ics");
 
         // was email sent to colleague?
         MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -1979,7 +1979,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             """);
 
         final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
-        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
