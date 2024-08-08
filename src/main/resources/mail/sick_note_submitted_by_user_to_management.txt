@@ -6,7 +6,7 @@
 
 [(#{sick_note.information.title})]
 
-    [(${rightPadder.rightPad('__#{sick_note.information.period}__',__#{sick_note.information.max_length}__)})] [# th:replace="~{_date_range_sick_note}" /]
+    [(${rightPadder.rightPad('__#{sick_note.information.period}__',__#{sick_note.information.max_length}__)})] [# th:replace="~{_date_range(from=${sickNote.startDate},to=${sickNote.endDate},dayLength=${sickNote.dayLength})}" /]
     [(${rightPadder.rightPad('__#{sick_note.information.type}__',__#{sick_note.information.max_length}__)})] [(#{__${sickNote.sickNoteType.messageKey}__})]
 
 [(#{sick_note.submitted_by_user.to_management.overview})] [(${baseLinkURL})]web/sicknote/submitted#sicknote-submitted

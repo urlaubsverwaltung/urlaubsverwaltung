@@ -6,7 +6,7 @@
 
 [(#{sick_note.information.title})]
 
-    [(${rightPadder.rightPad('__#{sick_note.information.period}__',__#{sick_note.information.max_length}__)})] [# th:replace="~{_date_range_sick_note}" /][# th:if="${not #strings.isEmpty(sickNote.aubStartDate)}"]
+    [(${rightPadder.rightPad('__#{sick_note.information.period}__',__#{sick_note.information.max_length}__)})] [# th:replace="~{_date_range(from=${sickNote.startDate},to=${sickNote.endDate},dayLength=${sickNote.dayLength})}" /][# th:if="${not #strings.isEmpty(sickNote.aubStartDate)}"]
     [(${rightPadder.rightPad('__#{sick_note.information.aubPeriod}__',__#{sick_note.information.max_length}__)})] [(${#temporals.format(sickNote.aubStartDate, 'dd.MM.yyyy')})] [(#{until})] [(${#temporals.format(sickNote.aubEndDate, 'dd.MM.yyyy')})][/]
     [(${rightPadder.rightPad('__#{sick_note.information.type}__',__#{sick_note.information.max_length}__)})] [(#{__${sickNote.sickNoteType.messageKey}__})]
 [# th:if="${not #strings.isEmpty(comment)}"]
