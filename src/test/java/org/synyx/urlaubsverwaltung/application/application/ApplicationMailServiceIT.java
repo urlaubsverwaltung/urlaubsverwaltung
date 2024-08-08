@@ -1314,15 +1314,27 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("deine Abwesenheit wurde erfolgreich eingereicht.");
-        assertThat(content).contains(comment.text());
-        assertThat(content).contains(comment.person().getNiceName());
-        assertThat(content).contains("/web/application/1234");
+            deine Abwesenheit wurde erfolgreich eingereicht.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Lieschen Müller:
+            Hätte gerne Urlaub
+
+            Informationen zur Abwesenheit:
+
+                Zeitraum:            08.08.2024, ganztägig
+                Art der Abwesenheit: Erholungsurlaub
+                Grund:              \s
+                Vertretung:         \s
+                Anschrift/Telefon:  \s
+                Erstellungsdatum:    08.08.2024
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -1459,15 +1471,27 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("Marlene Muster hat eine Abwesenheit für dich gestellt.");
-        assertThat(content).contains(comment.text());
-        assertThat(content).contains(comment.person().getNiceName());
-        assertThat(content).contains("/web/application/1234");
+            Marlene Muster hat eine Abwesenheit für dich gestellt.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Lieschen Müller:
+            Habe das mal für dich beantragt
+
+            Informationen zur Abwesenheit:
+
+                Zeitraum:            08.08.2024, ganztägig
+                Art der Abwesenheit: Erholungsurlaub
+                Grund:              \s
+                Vertretung:         \s
+                Anschrift/Telefon:  \s
+                Erstellungsdatum:    08.08.2024
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -1614,14 +1638,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("nicht genehmigter Antrag wurde von dir erfolgreich");
-        assertThat(content).contains(comment.text());
-        assertThat(content).contains(comment.person().getNiceName());
-        assertThat(content).contains("/web/application/1234");
+            dein am 08.08.2024 gestellter, nicht genehmigter Antrag wurde von dir erfolgreich storniert.
+
+                https://localhost:8080/web/application/1234
+
+            Begründung:
+            Wrong date - revoked
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
 
         // was email sent to relevant person
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -1630,14 +1658,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
+            Hallo Relevant Person,
 
-        final String contentRelevantPerson = readPlainContent(msgRelevantPerson);
-        // TODO
-        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde storniert.");
-        assertThat(contentRelevantPerson).contains(comment.text());
-        assertThat(contentRelevantPerson).contains(comment.person().getNiceName());
-        assertThat(contentRelevantPerson).contains("/web/application/1234");
+            der am 08.08.2024 gestellte, nicht genehmigte Antrag von Lieschen Müller wurde storniert.
+
+                https://localhost:8080/web/application/1234
+
+            Begründung:
+            Wrong date - revoked
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -1667,14 +1699,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("gestellter, nicht genehmigter Antrag wurde von Office Person storniert.");
-        assertThat(content).contains(comment.text());
-        assertThat(content).contains(comment.person().getNiceName());
-        assertThat(content).contains("/web/application/1234");
+            dein am 08.08.2024 gestellter, nicht genehmigter Antrag wurde von Office Person storniert.
+
+                https://localhost:8080/web/application/1234
+
+            Begründung:
+            Wrong information - revoked
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
 
         // was email sent to relevant person
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -1683,14 +1719,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
+            Hallo Relevant Person,
 
-        final String contentRelevantPerson = readPlainContent(msgRelevantPerson);
-        // TODO
-        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde von Office Person storniert.");
-        assertThat(contentRelevantPerson).contains(comment.text());
-        assertThat(contentRelevantPerson).contains(comment.person().getNiceName());
-        assertThat(contentRelevantPerson).contains("/web/application/1234");
+            der am 08.08.2024 gestellte, nicht genehmigte Antrag von Lieschen Müller wurde von Office Person storniert.
+
+                https://localhost:8080/web/application/1234
+
+            Begründung:
+            Wrong information - revoked
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -2990,10 +3030,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inboxOfBoss[0];
         assertThat(msg.getSubject()).isEqualTo("Erinnerung auf wartende zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo Hugo Boss");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Hugo Boss,
+
+            Lieschen Müller bittet um die Bearbeitung der Abwesenheit vom 08.08.2024.
+
+                https://localhost:8080/web/application/1234
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -3830,16 +3875,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo replacement holiday,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("deine Vertretung für Lieschen Müller vom 01.01.2022 bis zum 01.01.2022 beginnt heute.");
-        assertThat(content).contains("Notiz:");
-        assertThat(content).contains("Some notes");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
+            deine Vertretung für Lieschen Müller vom 01.01.2022 bis zum 01.01.2022 beginnt heute.
+
+            Notiz:
+            Some notes
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -3867,16 +3914,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo replacement holiday,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.");
-        assertThat(content).contains("Notiz:");
-        assertThat(content).contains("Some notes");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
+            deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.
+
+            Notiz:
+            Some notes
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -3904,16 +3953,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo replacement holiday,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("deine Vertretung für Lieschen Müller vom 04.01.2022 bis zum 05.01.2022 beginnt in 3 Tagen.");
-        assertThat(content).contains("Notiz:");
-        assertThat(content).contains("Some notes");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
+            deine Vertretung für Lieschen Müller vom 04.01.2022 bis zum 05.01.2022 beginnt in 3 Tagen.
+
+            Notiz:
+            Some notes
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     @Test
@@ -3941,15 +3992,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo replacement holiday,
 
-        // check content of email
-        String content = readPlainContent(msg);
-        // TODO
-        assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.");
-        assertThat(content).doesNotContain("Notiz:");
-        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application/replacement");
+            deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.
+
+
+            Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/null/notifications anpassen.""");
     }
 
     private Application createApplication(Person person) {
