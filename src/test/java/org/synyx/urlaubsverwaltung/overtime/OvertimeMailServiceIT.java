@@ -78,7 +78,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
             Informationen zu den Überstunden:
 
                 Mitarbeiter: Lieschen Müller
-                Zeitraum:    16.04.2020 - 23.04.2020
+                Zeitraum:    16.04.2020 bis 23.04.2020
                 Dauer:       55 Std. 12 Min.
 
 
@@ -121,7 +121,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
             Informationen zu den Überstunden:
 
-                Zeitraum:    16.04.2020 - 23.04.2020
+                Zeitraum:    16.04.2020 bis 23.04.2020
                 Dauer:       55 Std. 12 Min.
 
 
@@ -160,7 +160,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
             Informationen zu den Überstunden:
 
-                Zeitraum:    16.04.2020 - 23.04.2020
+                Zeitraum:    16.04.2020 bis 23.04.2020
                 Dauer:       55 Std. 12 Min.
 
 
