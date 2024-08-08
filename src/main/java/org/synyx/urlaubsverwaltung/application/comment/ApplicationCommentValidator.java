@@ -13,10 +13,8 @@ import static org.springframework.util.StringUtils.hasText;
 @Component
 public class ApplicationCommentValidator implements Validator {
 
-    private static final int MAX_CHARS = 200;
     private static final String ATTRIBUTE_TEXT = "text";
     private static final String ERROR_REASON = "error.entry.mandatory";
-    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
@@ -30,10 +28,6 @@ public class ApplicationCommentValidator implements Validator {
         final String text = comment.getText();
         if (!hasText(text) && comment.isMandatory()) {
             errors.rejectValue(ATTRIBUTE_TEXT, ERROR_REASON);
-        }
-
-        if (hasText(text) && text.length() > MAX_CHARS) {
-            errors.rejectValue(ATTRIBUTE_TEXT, ERROR_LENGTH);
         }
     }
 }

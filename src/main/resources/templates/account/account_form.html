@@ -333,15 +333,12 @@
                     for="comment"
                   ></label>
                   <div class="col-md-9">
-                    <small> <span id="text-comment"></span><span th:text="#{action.comment.maxChars}"></span> </small>
                     <textarea
                       id="comment"
                       rows="3"
                       th:field="*{comment}"
                       class="form-control"
                       th:errorclass="error"
-                      onkeyup="count(this.value, 'text-comment');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
                       th:placeholder="#{person.form.annualVacation.comment.placeholder}"
                     >
                     </textarea>

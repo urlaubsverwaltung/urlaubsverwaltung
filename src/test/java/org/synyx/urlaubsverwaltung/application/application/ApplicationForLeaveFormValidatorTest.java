@@ -87,6 +87,38 @@ class ApplicationForLeaveFormValidatorTest {
 
     private ApplicationForLeaveForm appForm;
 
+    private static Stream<Arguments> overtimeReductionInput() {
+        return Stream.of(
+            Arguments.of(null, 1),
+            Arguments.of(ZERO, 1)
+        );
+    }
+
+    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(absence.getInverse());
+        return settings;
+    }
+
+    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
+        return settings;
+    }
+
+    private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setLabel("message_key");
+        vacationTypeDto.setCategory(HOLIDAY);
+
+        return new ApplicationForLeaveForm.Builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .vacationType(vacationTypeDto)
+            .holidayReplacements(new ArrayList<>());
+    }
+
     @BeforeEach
     void setUp() {
 
@@ -547,29 +579,6 @@ class ApplicationForLeaveFormValidatorTest {
         verify(errors).rejectValue("reason", "application.error.missingReasonForSpecialLeave");
     }
 
-    // Validate address ------------------------------------------------------------------------------------------------
-    @Test
-    void ensureThereIsAMaximumCharLength() {
-
-        setupOvertimeSettings();
-
-        when(errors.hasErrors()).thenReturn(FALSE);
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
-        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
-
-        appForm.setAddress(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
-                + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
-                + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
-
-        sut.validate(appForm, errors);
-
-        verify(errors).rejectValue("address", "error.entry.tooManyChars");
-    }
-
     // Validate vacation days ------------------------------------------------------------------------------------------
     @Test
     void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
@@ -830,13 +839,6 @@ class ApplicationForLeaveFormValidatorTest {
         verifyNoMoreInteractions(errors);
     }
 
-    private static Stream<Arguments> overtimeReductionInput() {
-        return Stream.of(
-            Arguments.of(null, 1),
-            Arguments.of(ZERO, 1)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("overtimeReductionInput")
     void ensureHoursEmptyIfMinutesAreSet(BigDecimal hours, Integer minutes) {
@@ -990,6 +992,8 @@ class ApplicationForLeaveFormValidatorTest {
         verify(errors, never()).rejectValue(eq("hours"), anyString());
     }
 
+    // Validate maximal overtime reduction -----------------------------------------------------------------------------
+
     @Test
     void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
@@ -1065,8 +1069,6 @@ class ApplicationForLeaveFormValidatorTest {
         verifyNoInteractions(overlapService);
         verifyNoInteractions(calculationService);
     }
-
-    // Validate maximal overtime reduction -----------------------------------------------------------------------------
 
     /**
      * User tries to make an application (overtime reduction) but has not enough overtime left and minimum overtime is
@@ -1357,31 +1359,6 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.full");
         verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
-    }
-
-    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(absence.getInverse());
-        return settings;
-    }
-
-    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
-        return settings;
-    }
-
-    private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
-
-        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
-        vacationTypeDto.setId(1L);
-        vacationTypeDto.setLabel("message_key");
-        vacationTypeDto.setCategory(HOLIDAY);
-
-        return new ApplicationForLeaveForm.Builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .vacationType(vacationTypeDto)
-            .holidayReplacements(new ArrayList<>());
     }
 
     private void overtimeMinimumTest(BigDecimal hours) {

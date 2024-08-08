@@ -80,18 +80,12 @@
               <div class="lg:tw-flex lg:tw-items-center lg:tw-gap-4">
                 <label for="reason" class="is-required lg:tw-w-1/3" th:text="|#{application.data.reason}:|"></label>
                 <div class="tw-flex-1">
-                  <small>
-                    <span id="count-chars"></span>
-                    <th:block th:text="#{action.comment.maxChars}"></th:block>
-                  </small>
                   <textarea
                     id="reason"
                     th:field="*{reason}"
                     class="form-control"
                     th:errorclass="error"
                     rows="2"
-                    onkeyup="count(this.value, 'count-chars');"
-                    onkeydown="maxChars(this,200); count(this.value, 'count-chars');"
                   ></textarea>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"

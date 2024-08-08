@@ -43,18 +43,4 @@ class SickNoteConvertFormValidatorTest {
 
         verify(errors).rejectValue("reason", "error.entry.mandatory");
     }
-
-    @Test
-    void ensureThereIsAMaximumCharLengthForReason() {
-
-        final SickNoteConvertForm convertForm = new SickNoteConvertForm(SickNote.builder().build());
-        convertForm.setReason(
-            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
-                + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "
-                + "exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. ");
-
-        validator.validate(convertForm, errors);
-
-        verify(errors).rejectValue("reason", "error.entry.tooManyChars");
-    }
 }

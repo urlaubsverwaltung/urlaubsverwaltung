@@ -289,18 +289,12 @@
                 >
                 </label>
                 <div class="col-md-9">
-                  <small>
-                    <span id="text-comment"></span>
-                    <th:block th:text="#{action.comment.maxChars}"></th:block>
-                  </small>
                   <textarea
                     id="comment"
                     rows="1"
                     th:field="*{comment}"
                     class="form-control"
                     th:errorclass="error"
-                    onkeyup="count(this.value, 'text-comment');"
-                    onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
                   ></textarea>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"

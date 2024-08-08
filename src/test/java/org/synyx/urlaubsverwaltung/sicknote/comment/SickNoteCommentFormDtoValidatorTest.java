@@ -83,19 +83,6 @@ class SickNoteCommentFormDtoValidatorTest {
     }
 
     @Test
-    void ensureTooLongCommentIsNotValid() {
-
-        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
-        sickNoteCommentFormDto.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
-            + "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
-            + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
-
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
-        sut.validate(sickNoteCommentFormDto, errors);
-        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.tooManyChars");
-    }
-
-    @Test
     void ensureValidCommentHasNoErrors() {
         final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
         sickNoteCommentFormDto.setText("I am a fluffy little comment");
