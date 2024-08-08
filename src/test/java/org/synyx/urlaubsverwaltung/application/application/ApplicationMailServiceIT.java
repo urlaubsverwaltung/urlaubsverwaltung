@@ -2105,7 +2105,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 22.05.2023 bis 22.05.2023
+                Lieschen Müller: 22.05.2023, ganztägig
                \s
 
 
@@ -2137,7 +2137,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 22.05.2023 bis 22.05.2023
+                Lieschen Müller: 22.05.2023, ganztägig
                \s
 
 
@@ -2202,7 +2202,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Kai Schmitt: 22.05.2023 bis 22.05.2023
+                Kai Schmitt: 22.05.2023, ganztägig
                \s
 
 
@@ -2236,7 +2236,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Kai Schmitt: 22.05.2023 bis 22.05.2023
+                Kai Schmitt: 22.05.2023, ganztägig
                \s
 
 
@@ -2298,7 +2298,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Senior Kopf: 22.05.2023 bis 22.05.2023
+                Senior Kopf: 22.05.2023, ganztägig
                \s
 
 
@@ -2330,7 +2330,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Senior Kopf: 22.05.2023 bis 22.05.2023
+                Senior Kopf: 22.05.2023, ganztägig
                \s
 
 
@@ -2419,7 +2419,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application applicationSecond = createApplication(person);
         applicationSecond.setApplicationDate(LocalDate.of(2021, APRIL, 12));
         applicationSecond.setStartDate(LocalDate.of(2021, APRIL, 17));
-        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
+        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 18));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -2457,8 +2457,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
-                Lieschen Müller: 17.04.2021 bis 17.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
+                Lieschen Müller: 17.04.2021 bis 18.04.2021, ganztägig
                \s
 
 
@@ -2520,7 +2520,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
                \s
 
 
@@ -2585,7 +2585,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
                \s
 
 
@@ -2676,7 +2676,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
                \s
 
 
@@ -2758,7 +2758,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
                \s
 
 
@@ -2844,7 +2844,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
                \s
 
 
@@ -2873,7 +2873,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application applicationSecond = createApplication(person);
         applicationSecond.setApplicationDate(LocalDate.of(2021, APRIL, 12));
         applicationSecond.setStartDate(LocalDate.of(2021, APRIL, 17));
-        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
+        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 18));
 
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
@@ -2922,8 +2922,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
                \s
-                Lieschen Müller: 16.04.2021 bis 16.04.2021
-                Lieschen Müller: 17.04.2021 bis 17.04.2021
+                Lieschen Müller: 16.04.2021, ganztägig
+                Lieschen Müller: 17.04.2021 bis 18.04.2021, ganztägig
                \s
 
 
