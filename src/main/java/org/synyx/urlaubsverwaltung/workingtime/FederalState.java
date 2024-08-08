@@ -112,7 +112,9 @@ public enum FederalState {
     SPAIN_CANTABRIA("es", "cb"),
     SPAIN_VALENCIA("es", "vc"),
 
-    NETHERLANDS("nl", "nl");
+    NETHERLANDS("nl", "nl"),
+
+    LITHUANIA("lt", "lt");
 
     private final String[] codes;
 
