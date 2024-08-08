@@ -65,7 +65,6 @@ class ApplicationMailService {
 
     private static final String APPLICATION = "application";
     private static final String VACATION_TYPE = "vacationTypeLabel";
-    private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
     private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
@@ -98,7 +97,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, applicationComment
         );
 
@@ -145,7 +143,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -181,7 +178,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             "sender", sender
         );
 
@@ -330,7 +326,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
         final Mail mailToApplicant = Mail.builder()
@@ -364,7 +359,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
         final Mail mailToApplicant = Mail.builder()
@@ -399,7 +393,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -429,8 +422,7 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
-            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
-            DAY_LENGTH, application.getDayLength().name()
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
         );
 
         final Mail mailToReplacement = Mail.builder()
@@ -456,8 +448,7 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
-            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
-            DAY_LENGTH, application.getDayLength().name()
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
         );
 
         final Mail mailToReplacement = Mail.builder()
@@ -484,8 +475,7 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
-            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
-            DAY_LENGTH, application.getDayLength().name()
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
         );
 
         final Mail mailToReplacement = Mail.builder()
@@ -512,8 +502,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
-            DAY_LENGTH, application.getDayLength().name()
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson()
         );
 
         final Mail mailToReplacement = Mail.builder()
@@ -539,8 +528,7 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
-            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
-            DAY_LENGTH, application.getDayLength().name()
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
         );
 
         final List<ApplicationStatus> allowedStatuses = List.of(ApplicationStatus.ALLOWED, ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED);
@@ -567,7 +555,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -593,7 +580,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -660,7 +646,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -689,7 +674,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -727,7 +711,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
         final Mail mailToApplicant = Mail.builder()
@@ -812,7 +795,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment,
             "departmentVacations", applicationsForLeave
         );
@@ -840,7 +822,6 @@ class ApplicationMailService {
         // Inform user that the application for leave has been allowed temporary
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
 
@@ -858,7 +839,6 @@ class ApplicationMailService {
         final MailTemplateModelSupplier modelSecondStageSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
-            DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment,
             "departmentVacations", applicationsForLeave
         );

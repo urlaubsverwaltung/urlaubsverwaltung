@@ -143,7 +143,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = Map.of(
             "application", application,
             "vacationTypeLabel", "vacation type label",
-            "dayLength", "FULL",
             "comment", applicationComment
         );
 
@@ -202,7 +201,6 @@ class ApplicationMailServiceTest {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", applicationComment);
 
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(person));
@@ -249,7 +247,6 @@ class ApplicationMailServiceTest {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("sender", sender);
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
@@ -468,7 +465,6 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome replacement note");
-        model.put("dayLength", "FULL");
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
@@ -510,7 +506,6 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
-        model.put("dayLength", "FULL");
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
@@ -547,7 +542,6 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
-        model.put("dayLength", "FULL");
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
@@ -583,7 +577,6 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
-        model.put("dayLength", "FULL");
 
         sut.notifyHolidayReplacementForApply(replacementEntity, application);
 
@@ -626,7 +619,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
-        model.put("dayLength", "FULL");
 
         sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
 
@@ -671,7 +663,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         sut.sendAppliedNotification(application, comment);
@@ -724,7 +715,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         final Map<String, Object> modelColleagues = Map.of("application", application);
@@ -780,7 +770,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         final Map<String, Object> modelColleagues = Map.of("application", application);
@@ -833,7 +822,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         sut.sendDirectlyAllowedNotificationToManagement(application, comment);
@@ -877,7 +865,6 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
-        model.put("dayLength", "FULL");
 
         sut.notifyHolidayReplacementAboutDirectlyAllowedApplication(replacementEntity, application);
 
@@ -917,7 +904,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         sut.sendAppliedByManagementNotification(application, comment);
@@ -957,7 +943,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         final Person recipientOfInterest = new Person();
@@ -1018,7 +1003,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = Map.of(
             "application", application,
             "vacationTypeLabel", "vacation type label",
-            "dayLength", "FULL",
             "comment", comment
         );
 
@@ -1075,7 +1059,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = Map.of(
             "application", application,
             "vacationTypeLabel", "vacation type label",
-            "dayLength", "FULL",
             "comment", comment
         );
 
@@ -1193,7 +1176,6 @@ class ApplicationMailServiceTest {
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeLabel", "vacation type label");
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
         model.put("departmentVacations", applicationsForLeave);
 
@@ -1244,13 +1226,11 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("dayLength", "FULL");
         model.put("comment", comment);
 
         final Map<String, Object> modelSecondStage = new HashMap<>();
         modelSecondStage.put("application", application);
         modelSecondStage.put("vacationTypeLabel", "vacation type label");
-        modelSecondStage.put("dayLength", "FULL");
         modelSecondStage.put("comment", comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 

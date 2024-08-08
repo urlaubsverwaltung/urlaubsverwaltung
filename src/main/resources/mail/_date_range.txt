@@ -1,0 +1,1 @@
+[# th:if="${not from.equals(to)}"][(${#temporals.format(from, 'dd.MM.yyyy')})] [(#{until})] [(${#temporals.format(to, 'dd.MM.yyyy')})][# th:if="${not #strings.isEmpty(dayLength)}"], [(#{__${dayLength.name}__})][/][/][# th:if="${from.equals(to)}"][(${#temporals.format(from, 'dd.MM.yyyy')})][# th:if="${not #strings.isEmpty(dayLength)}"], [(#{__${dayLength.name}__})][/][/]
