@@ -114,7 +114,9 @@ public enum FederalState {
 
     NETHERLANDS("nl", "nl"),
 
-    LITHUANIA("lt", "lt");
+    LITHUANIA("lt", "lt"),
+
+    BELGIUM("be", "be");
 
     private final String[] codes;
 
