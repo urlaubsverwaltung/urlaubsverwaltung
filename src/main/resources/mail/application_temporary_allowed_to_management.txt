@@ -12,7 +12,7 @@
 [# th:replace="~{_absence_information_with_person}" /]
 [(#{application.temporary_allowed.to_management.overlapping.title})]
     [# th:each="vacation : ${departmentVacations}"]
-    [(${vacation.person.niceName})]: [(#{days_range(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})})][/]
+    [(${vacation.person.niceName})]: [# th:replace="~{_date_range(from=${vacation.startDate},to=${vacation.endDate},dayLength=${vacation.dayLength})}" /][/]
     [# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.applied.to_management.overlapping_absence.none})][/]
 
 
