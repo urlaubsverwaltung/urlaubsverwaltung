@@ -32,7 +32,9 @@ import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -44,6 +46,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -67,12 +70,14 @@ class SickDaysOverviewViewControllerTest {
     private SickDaysStatisticsService sickDaysStatisticsService;
     @Mock
     private PersonService personService;
+    @Mock
+    private DateFormatAware dateFormatAware;
 
     private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, new DateFormatAware(), clock);
+        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware, clock);
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
@@ -90,12 +95,17 @@ class SickDaysOverviewViewControllerTest {
     @MethodSource("dateInputAndIsoDateTuple")
     void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) throws Exception {
 
+        final Locale locale = Locale.GERMAN;
         final int year = clockYear();
 
         when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+        when(dateFormatAware.parse(givenDateString, locale)).thenReturn(Optional.of(givenDate));
 
-        perform(get("/web/sickdays")
-            .param("from", givenDateString))
+        perform(
+            get("/web/sickdays")
+                .locale(locale)
+                .param("from", givenDateString)
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("today", LocalDate.now(clock)))
             .andExpect(model().attribute("from", givenDate))
@@ -107,15 +117,24 @@ class SickDaysOverviewViewControllerTest {
     @MethodSource("dateInputAndIsoDateTuple")
     void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) throws Exception {
 
+        final Locale locale = Locale.GERMAN;
+
         final int year = clockYear();
+        final LocalDate fromDate = LocalDate.of(year, 1, 1);
 
         when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        perform(get("/web/sickdays")
-            .param("to", givenDateString))
+        when(dateFormatAware.parse(any(), eq(locale))).thenReturn(Optional.of(fromDate));
+        when(dateFormatAware.parse(givenDateString, locale)).thenReturn(Optional.of(givenDate));
+
+        perform(
+            get("/web/sickdays")
+                .locale(locale)
+                .param("to", givenDateString)
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("today", LocalDate.now(clock)))
-            .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
+            .andExpect(model().attribute("from", fromDate))
             .andExpect(model().attribute("to", givenDate))
             .andExpect(view().name("sicknote/sick_days"));
     }
@@ -137,6 +156,8 @@ class SickDaysOverviewViewControllerTest {
 
     @Test
     void periodsSickNotesWithDateRangeWithRole() throws Exception {
+
+        final Locale locale = Locale.GERMAN;
 
         final Person office = new Person();
         office.setId(1L);
@@ -211,7 +232,11 @@ class SickDaysOverviewViewControllerTest {
         when(sickDaysStatisticsService.getAll(office, requestStartDate, requestEndDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of(statisticsPersonOne, statisticsPersonTwo, statisticsPersonThree)));
 
+        when(dateFormatAware.parse(requestStartDate.toString(), locale)).thenReturn(Optional.of(requestStartDate));
+        when(dateFormatAware.parse(requestEndDate.toString(), locale)).thenReturn(Optional.of(requestEndDate));
+
         perform(get("/web/sickdays")
+            .locale(locale)
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString())
             .param("page", "2")
@@ -301,6 +326,8 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void sickNotesWithoutPersonnelNumberColumn() throws Exception {
 
+        final Locale locale = Locale.GERMAN;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
@@ -316,11 +343,16 @@ class SickDaysOverviewViewControllerTest {
         when(sickDaysStatisticsService.getAll(signedInUser, requestStartDate, requestEndDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
-        perform(get("/web/sickdays")
-            .param("from", requestStartDate.toString())
-            .param("to", requestEndDate.toString())
-            .param("page", "2")
-            .param("size", "50")
+        when(dateFormatAware.parse(requestStartDate.toString(), locale)).thenReturn(Optional.of(requestStartDate));
+        when(dateFormatAware.parse(requestEndDate.toString(), locale)).thenReturn(Optional.of(requestEndDate));
+
+        perform(
+            get("/web/sickdays")
+                .locale(locale)
+                .param("from", requestStartDate.toString())
+                .param("to", requestEndDate.toString())
+                .param("page", "2")
+                .param("size", "50")
         )
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(view().name("sicknote/sick_days"));

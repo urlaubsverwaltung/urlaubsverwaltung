@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -19,11 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
@@ -33,6 +37,8 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.Workin
 @Service
 class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private final WorkingTimeRepository workingTimeRepository;
     private final PublicHolidaysService publicHolidaysService;
     private final SettingsService settingsService;
@@ -41,6 +47,62 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         this.workingTimeRepository = workingTimeRepository;
         this.publicHolidaysService = publicHolidaysService;
         this.settingsService = settingsService;
+    }
+
+    @Override
+    public Optional<LocalDate> getNextWorkingDayFollowingTo(Person person, LocalDate date) {
+
+        LOG.info("calculate next working day following to date={} of person={}", date, person.getId());
+
+        final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
+
+        final List<WorkingTime> workingTimes = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person))
+            .stream()
+            .map(entity -> toWorkingTime(entity, federalStateCachedSupplier))
+            .toList();
+
+        if (workingTimes.isEmpty()) {
+            LOG.warn("expected workingTimes to exist for person={} but got none.", person.getId());
+            return Optional.empty();
+        }
+
+        final Optional<LocalDate> nextWorkingDay = getSameOrNextWorkingDay(
+            date.plusDays(1), d -> getWorkingTimeForDate(d, workingTimes));
+
+        if (nextWorkingDay.isEmpty()) {
+            LOG.warn("could not find next workingDay of person={} with date={}", person.getId(), date);
+        } else {
+            LOG.debug("found next workingDay of person={} with date={}", person.getId(), date);
+        }
+
+        return nextWorkingDay;
+    }
+
+    private Optional<WorkingTime> getWorkingTimeForDate(LocalDate date, List<WorkingTime> sortedWorkingTimes) {
+        // workingTimes are ordered by validFrom last to first (2024-07-01, 2023-07-01, ...)
+        // the first validFrom before searched date is the one to extract the info from
+        for (WorkingTime workingTime : sortedWorkingTimes) {
+            final LocalDate validFrom = workingTime.getValidFrom();
+            if (validFrom.isEqual(date) || validFrom.isBefore(date)) {
+                return Optional.of(workingTime);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Optional<LocalDate> getSameOrNextWorkingDay(LocalDate date, Function<LocalDate, Optional<WorkingTime>> workingTimeSupplier) {
+        return workingTimeSupplier.apply(date).flatMap(workingTime -> {
+            if (workingTime.isWorkingDay(date.getDayOfWeek())) {
+                return Optional.of(date);
+            } else {
+                try {
+                    return getSameOrNextWorkingDay(date.plusDays(1), workingTimeSupplier);
+                } catch(StackOverflowError e) {
+                    LOG.warn("could not get same or next workingDay due to workingTime without working days.", e);
+                    return Optional.empty();
+                }
+            }
+        });
     }
 
     @Override

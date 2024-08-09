@@ -1,8 +1,13 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import jakarta.annotation.Nullable;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * Represents the view dto for submitted sick notes rendered on the application/absences page.
+ */
 public final class SickNoteDto {
 
     private final String id;
@@ -11,6 +16,8 @@ public final class SickNoteDto {
     private final String type;
     private final String status;
     private final String durationOfAbsenceDescription;
+    private final boolean extensionSubmitted;
+    private final BigDecimal additionalWorkDays;
 
     public SickNoteDto(
         String id,
@@ -18,7 +25,9 @@ public final class SickNoteDto {
         SickNotePersonDto person,
         String type,
         String status,
-        String durationOfAbsenceDescription
+        String durationOfAbsenceDescription,
+        boolean extensionSubmitted,
+        @Nullable BigDecimal additionalWorkDays
     ) {
         this.id = id;
         this.workDays = workDays;
@@ -26,6 +35,8 @@ public final class SickNoteDto {
         this.type = type;
         this.status = status;
         this.durationOfAbsenceDescription = durationOfAbsenceDescription;
+        this.extensionSubmitted = extensionSubmitted;
+        this.additionalWorkDays = additionalWorkDays;
     }
 
     public String getId() {
@@ -50,6 +61,14 @@ public final class SickNoteDto {
 
     public String getDurationOfAbsenceDescription() {
         return durationOfAbsenceDescription;
+    }
+
+    public boolean isExtensionSubmitted() {
+        return extensionSubmitted;
+    }
+
+    public BigDecimal getAdditionalWorkDays() {
+        return additionalWorkDays;
     }
 
     @Override
@@ -78,6 +97,8 @@ public final class SickNoteDto {
             "person=" + person + ", " +
             "type=" + type + ", " +
             "status=" + status + ", " +
-            "durationOfAbsenceDescription=" + durationOfAbsenceDescription + ']';
+            "durationOfAbsenceDescription=" + durationOfAbsenceDescription + ", " +
+            "extensionSubmitted=" + extensionSubmitted + ", " +
+            "additionalWorkDays=" + additionalWorkDays + ']';
     }
 }

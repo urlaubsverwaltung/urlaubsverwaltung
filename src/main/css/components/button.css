@@ -12,11 +12,17 @@
   }
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .button,
+a.button,
 .button-main,
+a.button-main,
 .button-main-green,
+a.button-main-green,
 .button-danger,
-.button-info {
+a.button-danger,
+.button-info,
+a.button-info {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -43,7 +49,9 @@
   opacity: 0.65;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .button,
+a.button,
 .button:hover:not(:is(:disabled, .button--no-hover)),
 .button:active,
 .button:focus {
@@ -64,7 +72,9 @@
   @apply dark:tw-bg-zinc-700;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .button-main-green,
+a.button-main-green,
 .button-main-green:hover:not(:disabled),
 .button-main-green:active,
 .button-main-green:focus {
@@ -85,7 +95,9 @@
   @apply dark:tw-border-green-600;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .alert .button-main-green,
+.alert a.button-main-green,
 .alert .button-main-green:hover:not(:disabled),
 .alert .button-main-green:active,
 .alert .button-main-green:focus {
@@ -101,7 +113,9 @@
   @apply dark:tw-border-green-600;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .button-main,
+a.button-main,
 .button-main:hover:not(:disabled),
 .button-main:active,
 .button-main:focus {
@@ -121,7 +135,9 @@
   @apply dark:tw-border-sky-600;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */
 .button-danger,
+a.button-danger,
 .button-danger:hover:not(:disabled),
 .button-danger:active,
 .button-danger:focus {
@@ -141,7 +157,9 @@
   @apply dark:tw-border-red-600;
 }
 
+/* explicit a selector to override a:is(tw-dark) for instance */ /* explicit a selector to override a:is(tw-dark) for instance */
 .button-info,
+a.button-info,
 .button-info:hover:not(:disabled),
 .button-info:active,
 .button-info:focus {

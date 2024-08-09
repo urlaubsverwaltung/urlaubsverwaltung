@@ -13,11 +13,17 @@ import java.util.stream.StreamSupport;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
- * Represents a immutable date range
+ * Represents an immutable date range
  * <p>
  * A date range represents a period of time between two LocalDates.
  * Date range are inclusive of the start and the end date.
  * The end date is always greater than or equal to the start date.
+ *
+ * <p>
+ * So a duration between startDate and endDate is two days if endDate is the next day.
+ *
+ * @param startDate start of the date range, inclusive
+ * @param endDate end of the date range, inclusive
  */
 public record DateRange(LocalDate startDate, LocalDate endDate) implements Iterable<LocalDate> {
 
@@ -117,8 +123,11 @@ public record DateRange(LocalDate startDate, LocalDate endDate) implements Itera
      * Calculates the days between the start and the end date (inclusive start and end date)
      * <p>
      * examples:
-     * 2022-10-10 until 2022-10-10 is one day.
-     * 2022-10-10 until 2022-10-20 are eleven days.
+     * <ul>
+     *     <li>2022-10-10 until 2022-10-10 is one day</li>
+     *     <li>2022-10-10 until 2022-10-11 is two days</li>
+     *     <li>2022-10-10 until 2022-10-20 are eleven days</li>
+     * </ul>
      *
      * @return duration of days between start and end date (inclusive start and end date)
      */

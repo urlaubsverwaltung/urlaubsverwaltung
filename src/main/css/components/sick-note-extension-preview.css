@@ -1,0 +1,62 @@
+.sick-note-extension-preview-container {
+  container-type: inline-size;
+}
+
+.sick-note-extension-preview {
+  @apply tw-flex;
+  @apply tw-flex-col;
+  @apply tw-gap-1;
+  @apply tw-max-w-3xl;
+}
+
+.sick-note-extension-preview-card {
+  @apply tw-flex-1;
+  @apply tw-px-4;
+  @apply tw-py-3;
+  @apply tw-rounded-lg;
+  @apply tw-border-2;
+  @apply tw-border-zinc-200;
+  @apply dark:tw-border-zinc-800;
+}
+
+.sick-note-extension-preview-card_inner {
+  @apply tw-mt-4;
+  @apply tw-gap-x-8;
+  @apply tw-gap-y-1;
+}
+
+.sick-note-extension-preview-card_inner_label {
+  @apply tw-mt-2;
+  @apply tw-block;
+  @apply tw-text-sm;
+}
+
+.sick-note-extension-preview-card_inner_date {
+  @apply tw-font-semibold;
+}
+
+.sick-note-extension-preview-card_inner_workdays {
+  @apply tw-mt-4;
+  @apply tw-text-sm;
+}
+
+.sick-note-extension-preview-card--highlighted {
+  @apply tw-border-blue-400;
+  @apply dark:tw-border-blue-400;
+}
+
+.sick-note-extension-preview-arrow {
+  @apply tw-self-center;
+  @apply tw-rotate-90;
+}
+
+@container (min-width: 673px) {
+  .sick-note-extension-preview {
+    @apply tw-flex-row;
+    @apply tw-gap-4;
+  }
+
+  .sick-note-extension-preview-arrow {
+    @apply tw-rotate-0;
+  }
+}

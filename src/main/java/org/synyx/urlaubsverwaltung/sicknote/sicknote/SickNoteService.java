@@ -38,6 +38,8 @@ public interface SickNoteService {
      */
     List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
+    Optional<SickNote> getSickNoteOfYesterdayOrLastWorkDay(Person person);
+
     /**
      * Get all the sick notes that are reaching the end of sick pay.
      *

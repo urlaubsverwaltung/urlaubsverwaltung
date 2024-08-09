@@ -116,8 +116,8 @@ class ApplicationForLeaveFormViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private SpecialLeaveSettingsService specialLeaveSettingsService;
-
-    private final DateFormatAware dateFormatAware = new DateFormatAware();
+    @Mock
+    private DateFormatAware dateFormatAware;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -541,6 +541,8 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormWithGivenDateFrom() throws Exception {
 
+        final Locale locale = GERMAN;
+
         final Person person = new Person();
         person.setId(1L);
 
@@ -557,12 +559,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         final LocalDate givenDateFrom = LocalDate.now(clock).withMonth(SEPTEMBER.getValue()).withDayOfMonth(30);
 
+        when(dateFormatAware.parse(givenDateFrom.format(formatter), locale)).thenReturn(Optional.of(givenDateFrom));
 
-        final ResultActions resultActions = perform(get("/web/application/new")
-            .param("personId", "1")
-            .param("from", givenDateFrom.format(formatter)));
-
-        resultActions
+        perform(
+            get("/web/application/new")
+                .locale(locale)
+                .param("personId", "1")
+                .param("from", givenDateFrom.format(formatter))
+        )
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
@@ -585,6 +589,8 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormWithGivenDateFromAndDateTo(
         String givenFromString, String expectedFromString, String givenToString, String expectedToString) throws Exception {
 
+        final Locale locale = GERMAN;
+
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final Person person = new Person();
@@ -597,12 +603,16 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions resultActions = perform(get("/web/application/new")
-            .param("personId", "1")
-            .param("from", givenFromString)
-            .param("to", givenToString));
+        when(dateFormatAware.parse(givenFromString, locale)).thenReturn(Optional.of(LocalDate.parse(expectedFromString)));
+        when(dateFormatAware.parse(givenToString, locale)).thenReturn(Optional.of(LocalDate.parse(expectedToString)));
 
-        resultActions
+        perform(
+            get("/web/application/new")
+                .locale(locale)
+                .param("personId", "1")
+                .param("from", givenFromString)
+                .param("to", givenToString)
+        )
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("applicationForLeaveForm", allOf(

@@ -26,6 +26,36 @@ import java.util.Optional;
 public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingDays) {
 
     /**
+     * Calculates the next date of a working day.
+     *
+     * <p>
+     * Examples given working days are MONDAY, TUESDAY and FRIDAY
+     * <ul>
+     *     <li>{@code monday} -> tuesday</li>
+     *     <li>{@code tuesday} -> friday</li>
+     *     <li>{@code wednesday} -> friday</li>
+     *     <li>{@code thursday} -> friday</li>
+     *     <li>{@code friday} -> monday</li>
+     * </ul>
+     *
+     * @param localDate any local date
+     * @return optional resolving to a {@linkplain LocalDate} of the next working day when it exists in this calendar.
+     */
+    public Optional<LocalDate> nextWorkingFollowingTo(LocalDate localDate) {
+
+        final LocalDate nextDay = localDate.plusDays(1);
+        final Optional<DayLength> dayLength = workingTimeDayLength(nextDay);
+
+        if (dayLength.isEmpty()) {
+            return Optional.empty();
+        } else if (dayLength.get() != DayLength.ZERO) {
+            return Optional.of(nextDay);
+        } else {
+            return nextWorkingFollowingTo(nextDay);
+        }
+    }
+
+    /**
      * @param application
      * @return the dayLength workingTime for the given application date range. (e.g. 1.5 days)
      */

@@ -13,6 +13,11 @@ public enum SickNoteStatus {
     SUBMITTED,
 
     /**
+     * SickNote with pending extension submission.
+     */
+    EXTENSION_SUBMITTED,
+
+    /**
      * After creating a sick note the saved sick note gets this status
      */
     ACTIVE,
@@ -34,7 +39,7 @@ public enum SickNoteStatus {
      * @return a list of all active statuses
      */
     public static List<SickNoteStatus> activeStatuses() {
-        return List.of(SUBMITTED, ACTIVE);
+        return List.of(SUBMITTED, EXTENSION_SUBMITTED, ACTIVE);
     }
 
     /**
