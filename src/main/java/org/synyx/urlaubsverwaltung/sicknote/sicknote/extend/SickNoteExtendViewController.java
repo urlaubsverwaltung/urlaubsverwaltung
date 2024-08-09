@@ -44,16 +44,18 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final SickNoteService sickNoteService;
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
+    private final SickNoteExtendValidator sickNoteExtendValidator;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
                                  SickNoteService sickNoteService, SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
-                                 DateFormatAware dateFormatAware, Clock clock) {
+                                 SickNoteExtendValidator sickNoteExtendValidator, DateFormatAware dateFormatAware, Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
         this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
+        this.sickNoteExtendValidator = sickNoteExtendValidator;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -72,6 +74,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         final LocalDate today = LocalDate.now(clock);
         prepareModel(model, signedInUser, today, sickNote, sickNoteDto);
+        model.addAttribute("sickNote", sickNoteDto);
 
         return "sicknote/sick_note_extend";
     }
@@ -81,7 +84,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
                                  @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
                                  // hint if custom date has been submitted or not
                                  @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
-                                 @ModelAttribute("sickNoteExtended") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                 @ModelAttribute("sickNote") SickNoteExtendDto sickNoteExtendDto, Errors errors,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
 
@@ -91,7 +94,11 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extended_not_found";
         }
 
-        if (extend == null && customDateSubmit.isEmpty() && sickNoteExtendDto.id() == null) {
+        final SickNote sickNote = maybeSickNote.get();
+        final boolean userSelectedDays = hasText(extend);
+        final boolean userSelectedCustomDate = customDateSubmit.isPresent();
+
+        if (!userSelectedDays && !userSelectedCustomDate && sickNoteExtendDto.getSickNoteId() == null) {
             // form has been submitted with 'report sick' without filling the form actually
             // therefore just redirect to page
             // disabling the submit button until the form is ready is bad practice
@@ -100,16 +107,25 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "redirect:/web/sicknote/extend";
         }
 
-        final SickNote sickNote = maybeSickNote.get();
+        if (userSelectedCustomDate) {
+            // the selected custom date is not part of the DTO
+            // otherwise the submit button ALWAYS would use this custom date
+            sickNoteExtendDto.setEndDate(extendToDate);
+        }
+        if (userSelectedCustomDate || !userSelectedDays) {
+            sickNoteExtendValidator.validate(sickNoteExtendDto, errors);
+        }
+        if (errors.hasErrors()) {
+            prepareSickNoteExtendPreview(signedInUser, maybeSickNote.get(), extend, extendToDate, customDateSubmit, model);
+            return "sicknote/sick_note_extend";
+        }
 
-        if (hasText(extend) || customDateSubmit.isPresent()) {
-            // form submit with a +x days button or a provided custom date
+        if (userSelectedDays || userSelectedCustomDate) {
             prepareSickNoteExtendPreview(signedInUser, sickNote, extend, extendToDate, customDateSubmit, model);
-            // TODO use redirect with flashAttributes?
+            model.addAttribute("sickNote", sickNoteExtendDto);
             return "sicknote/sick_note_extend";
         } else {
-            // TODO validate sickNoteExtendDto
-            sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.endDate());
+            sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
             return "redirect:/web/sicknote/" + sickNote.getId();
         }
     }
@@ -166,12 +182,10 @@ class SickNoteExtendViewController implements HasLaunchpad {
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
-        model.addAttribute("sickNote", currentSickNoteDto);
-
         model.addAttribute("sickNotePersonId", signedInUser.getId());
         model.addAttribute("today", today);
         model.addAttribute("extendToDate", extendToDate == null ? today : extendToDate);
-        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(currentSickNoteDto.endDate(), FULL));
+        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(currentSickNoteDto.getEndDate(), FULL));
         model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FULL));
         model.addAttribute("plusTwoWorkdaysWord", dateFormatAware.formatWord(plusTwoWorkdaysDate, FULL));
         model.addAttribute("untilEndOfWeekWord", dateFormatAware.formatWord(endOfWeek(), FULL));
