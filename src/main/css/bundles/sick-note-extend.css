@@ -24,7 +24,15 @@
 .extend-action-grid > span,
 .extend-action-grid > label {
   margin-top: 0.25rem !important; /* important to override label bootstrap override o.O */
-  text-align: center;
+}
+
+.extend-label {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  @apply tw-text-sm;
+  @apply tw-font-normal;
+}
+.extend-label_date {
 }
 
 @screen xs {
@@ -62,22 +70,27 @@
   .extend-action-grid > span:nth-of-type(1) {
     grid-row: 1;
     grid-column: 2;
-    text-align: left;
   }
   .extend-action-grid > span:nth-of-type(2) {
     grid-row: 2;
     grid-column: 2;
-    text-align: left;
   }
   .extend-action-grid > span:nth-of-type(3) {
     grid-row: 3;
     grid-column: 2;
-    text-align: left;
   }
   .extend-action-grid > label {
     grid-row: 4;
     grid-column: 2;
+  }
+  .extend-label {
+    margin-left: 0;
+    margin-right: 0;
     text-align: left;
+    width: 100%;
+  }
+  .extend-label_date {
+    display: block;
   }
 }
 
@@ -112,21 +125,21 @@
   .extend-action-grid > span:nth-of-type(1) {
     grid-row: 2;
     grid-column: 1;
-    text-align: center;
   }
   .extend-action-grid > span:nth-of-type(2) {
     grid-row: 2;
     grid-column: 2;
-    text-align: center;
   }
   .extend-action-grid > span:nth-of-type(3) {
     grid-row: 2;
     grid-column: 3;
-    text-align: center;
   }
   .extend-action-grid > label {
     grid-row: 2;
     grid-column: 4;
+  }
+
+  .extend-label {
     text-align: center;
   }
 }

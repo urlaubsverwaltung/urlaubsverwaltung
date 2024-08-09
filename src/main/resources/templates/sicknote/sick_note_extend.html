@@ -61,7 +61,7 @@
         >
           Du hast eine Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
         </p>
-        <p class="tw-m-0 tw-mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
+        <p class="tw-m-0 tw-mt-4 md:tw-mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
           Wie lange bist du vorraussichtlich noch krank?
         </p>
         <div class="tw-mt-8">
@@ -85,8 +85,8 @@
                 + 1 Tag
               </button>
               <span
-                class="tw-text-sm"
-                th:with="word=${'<span class=tw-block>' + plusOneWorkdayWord + '</span>'}"
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + plusOneWorkdayWord + '</span>'}"
                 th:utext="#{sicknote.extend.duration.hint.label(${word})}"
               >
                 einschließlich heute
@@ -103,8 +103,8 @@
                 + 2 Tage
               </button>
               <span
-                class="tw-text-sm"
-                th:with="word=${'<span class=tw-block>' + plusTwoWorkdaysWord + '</span>'}"
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + plusTwoWorkdaysWord + '</span>'}"
                 th:utext="#{sicknote.extend.duration.hint.label(${word})}"
               >
                 einschließlich morgen
@@ -120,8 +120,8 @@
                 Ende der Woche
               </button>
               <span
-                class="tw-text-sm"
-                th:with="word=${'<span class=tw-block>' + untilEndOfWeekWord + '</span>'}"
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + untilEndOfWeekWord + '</span>'}"
                 th:utext="#{sicknote.extend.duration.hint.label(${word})}"
               >
                 einschließlich xxx
@@ -139,7 +139,11 @@
                 th:data-iso-value="${#temporals.format(extendToDate, 'yyyy-MM-dd')}"
               />
               <span>
-                <label for="extend-to-date-input" th:text="#{sicknote.extend.duration.custom.label}">
+                <label
+                  for="extend-to-date-input"
+                  class="tw-m-0 extend-label"
+                  th:text="#{sicknote.extend.duration.custom.label}"
+                >
                   Anderer Tag
                 </label>
                 <button
@@ -165,21 +169,32 @@
                       <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
                         Aktuelle Krankmeldung
                       </div>
-                      <div
-                        class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
-                        style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
-                      >
-                        <span th:text="#{sicknote.extend.preview.current.start.label}">von</span>
-                        <span class="tw-text-right" th:text="${#temporals.format(sickNote.startDate, 'FULL')}">
+                      <div class="sick-note-extension-preview-card_inner">
+                        <span
+                          class="sick-note-extension-preview-card_inner_label"
+                          th:text="#{sicknote.extend.preview.current.start.label}"
+                          >von</span
+                        >
+                        <span
+                          class="sick-note-extension-preview-card_inner_date"
+                          th:text="${#temporals.format(sickNote.startDate, 'FULL')}"
+                        >
                           xx.xx.xxxx
                         </span>
-                        <span th:text="#{sicknote.extend.preview.current.end.label}">bis</span>
-                        <span class="tw-text-right" th:text="${#temporals.format(sickNote.endDate, 'FULL')}">
+                        <span
+                          class="sick-note-extension-preview-card_inner_label"
+                          th:text="#{sicknote.extend.preview.current.end.label}"
+                          >bis</span
+                        >
+                        <span
+                          class="sick-note-extension-preview-card_inner_date"
+                          th:text="${#temporals.format(sickNote.endDate, 'FULL')}"
+                        >
                           xx.xx.xxxx
                         </span>
                       </div>
                       <div
-                        class="tw-mt-4 tw-text-sm tw-text-right"
+                        class="sick-note-extension-preview-card_inner_workdays"
                         th:text="#{sicknote.extend.preview.days-between(${sickNote.workingDays})}"
                       >
                         entspricht x Arbeitstagen
@@ -192,27 +207,32 @@
                       <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
                         Vorschau geänderte Krankmeldung
                       </div>
-                      <div
-                        class="tw-mt-4 tw-grid tw-gap-x-8 tw-gap-y-1"
-                        style="grid-template-columns: repeat(2, minmax(max-content, 1fr))"
-                      >
-                        <span th:text="#{sicknote.extend.preview.new.start.label}">von</span>
+                      <div class="sick-note-extension-preview-card_inner">
                         <span
-                          class="tw-text-right"
+                          class="sick-note-extension-preview-card_inner_label"
+                          th:text="#{sicknote.extend.preview.new.start.label}"
+                          >von</span
+                        >
+                        <span
+                          class="sick-note-extension-preview-card_inner_date"
                           th:text="${#temporals.format(sickNoteExtensionPreview.startDate, 'FULL')}"
                         >
                           xx.xx.xxxx
                         </span>
-                        <span th:text="#{sicknote.extend.preview.new.end.label}">Verlängerung bis</span>
                         <span
-                          class="tw-text-right"
+                          class="sick-note-extension-preview-card_inner_label"
+                          th:text="#{sicknote.extend.preview.new.end.label}"
+                          >Verlängerung bis</span
+                        >
+                        <span
+                          class="sick-note-extension-preview-card_inner_date"
                           th:text="${#temporals.format(sickNoteExtensionPreview.endDate, 'FULL')}"
                         >
                           xx.xx.xxxx
                         </span>
                       </div>
                       <div
-                        class="tw-mt-4 tw-text-sm tw-text-right"
+                        class="sick-note-extension-preview-card_inner_workdays"
                         th:text="#{sicknote.extend.preview.days-between(${sickNoteExtensionPreview.workingDays})}"
                       >
                         entspricht x Arbeitstagen
