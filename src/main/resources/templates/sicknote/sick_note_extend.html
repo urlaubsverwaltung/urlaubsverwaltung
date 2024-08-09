@@ -43,7 +43,12 @@
             <th:block th:text="#{sicknote.extend.create-new.child.button.text}">neue Kind-Krankmeldung</th:block>
           </a>
         </div>
-        <h2 class="tw-mt-16" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
+        <div th:if="${showFillFormFeedback}" class="tw-mt-8">
+          <p class="alert alert--outline alert-danger" th:text="#{sicknote.extend.fill-form-feedback}">
+            Gebe bitte noch an, wie viele Tage du voraussichtlich noch krank sein wirst.
+          </p>
+        </div>
+        <h2 class="tw-mt-12" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
         <p
           class="tw-m-0 tw-mt-8"
           th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNote.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
