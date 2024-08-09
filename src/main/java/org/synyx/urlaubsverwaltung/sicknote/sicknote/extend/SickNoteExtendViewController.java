@@ -35,6 +35,7 @@ import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 @Controller
 @RequestMapping("/web/sicknote/extend")
@@ -184,6 +185,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         model.addAttribute("sickNotePersonId", signedInUser.getId());
         model.addAttribute("today", today);
+        model.addAttribute("sickNoteTypeChild", sickNote.getSickNoteType().getCategory().equals(SICK_NOTE_CHILD));
         model.addAttribute("extendToDate", extendToDate == null ? today : extendToDate);
         model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(currentSickNoteDto.getEndDate(), FULL));
         model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FULL));
