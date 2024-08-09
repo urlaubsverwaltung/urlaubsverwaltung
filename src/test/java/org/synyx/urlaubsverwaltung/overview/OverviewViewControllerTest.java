@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -41,6 +42,7 @@ import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
@@ -203,13 +205,16 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
+        final Year year = Year.now(clock);
         final Account account = someAccount();
-        final Account nextYearAccount = someAccount();
-        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), person)).thenReturn(Optional.of(account));
-        when(accountService.getHolidaysAccount(Year.now(clock).getValue() + 1, person)).thenReturn(Optional.of(nextYearAccount));
+        when(accountService.getHolidaysAccount(year.getValue(), person)).thenReturn(Optional.of(account));
+        final Account accountNextYear = someAccount();
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), person)).thenReturn(Optional.of(accountNextYear));
 
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.of(nextYearAccount))).thenReturn(vacationDaysLeft);
+
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person/1/overview"))
             .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
