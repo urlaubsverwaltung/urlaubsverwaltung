@@ -51,6 +51,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 END:VCALENDAR
                 """);
     }
@@ -73,6 +86,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;VALUE=DATE:20190326
@@ -105,6 +131,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;TZID=Etc/UTC:20190426T080000
@@ -138,6 +177,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;VALUE=DATE:20190326
@@ -171,6 +223,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;TZID=Etc/UTC:20190526T120000
@@ -206,6 +271,19 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 X-WR-CALNAME:Abwesenheitskalender
                 REFRESH-INTERVAL:P1D
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;TZID=Etc/UTC:20190526T120000
@@ -241,6 +319,19 @@ class ICalServiceTest {
                 CALSCALE:GREGORIAN
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 METHOD:CANCEL
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;TZID=Etc/UTC:20190526T120000
@@ -275,6 +366,19 @@ class ICalServiceTest {
                 PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
                 CALSCALE:GREGORIAN
                 X-MICROSOFT-CALSCALE:GREGORIAN
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;TZID=Etc/UTC:20190526T120000
@@ -312,6 +416,19 @@ class ICalServiceTest {
                 PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
                 CALSCALE:GREGORIAN
                 X-MICROSOFT-CALSCALE:GREGORIAN
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;VALUE=DATE:20190526
@@ -350,6 +467,19 @@ class ICalServiceTest {
                 PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
                 CALSCALE:GREGORIAN
                 X-MICROSOFT-CALSCALE:GREGORIAN
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;VALUE=DATE:20190526
@@ -382,6 +512,19 @@ class ICalServiceTest {
                 PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
                 CALSCALE:GREGORIAN
                 X-MICROSOFT-CALSCALE:GREGORIAN
+                BEGIN:VTIMEZONE
+                TZID:Etc/UTC
+                LAST-MODIFIED:20240422T053450Z
+                TZURL:https://www.tzurl.org/zoneinfo/Etc/UTC
+                X-LIC-LOCATION:Etc/UTC
+                X-PROLEPTIC-TZNAME:UTC
+                BEGIN:STANDARD
+                TZNAME:UTC
+                TZOFFSETFROM:+0000
+                TZOFFSETTO:+0000
+                DTSTART:16010101T000000
+                END:STANDARD
+                END:VTIMEZONE
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
                 DTSTART;VALUE=DATE:20190526
