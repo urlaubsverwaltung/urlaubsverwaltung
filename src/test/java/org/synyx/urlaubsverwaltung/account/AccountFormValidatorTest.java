@@ -438,36 +438,6 @@ class AccountFormValidatorTest {
         verifyNoInteractions(errors);
     }
 
-    @Test
-    void ensureCommentHasNoValidationError() {
-        final AccountForm form = new AccountForm(2017);
-        form.setComment("blabla");
-
-        sut.validateComment(form, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureCommentWithNullHasNoValidationError() {
-        final AccountForm form = new AccountForm(2017);
-        form.setComment(null);
-
-        sut.validateComment(form, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureCommentHasLengthValidationError() {
-        final AccountForm form = new AccountForm(2017);
-        form.setComment("blablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-            "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-            "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla" +
-            "bla");
-
-        sut.validateComment(form, errors);
-        verify(errors).rejectValue("comment", "error.entry.commentTooLong");
-    }
-
     private Settings getSettings() {
         return settingsService.getSettings();
     }

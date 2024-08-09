@@ -2,9 +2,10 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Class for validating {@link SickNoteConvertForm} object.
@@ -13,9 +14,6 @@ import org.springframework.validation.Validator;
 public class SickNoteConvertFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
-
-    private static final int MAX_CHARS = 200;
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
@@ -28,12 +26,8 @@ public class SickNoteConvertFormValidator implements Validator {
         final SickNoteConvertForm convertForm = (SickNoteConvertForm) target;
         final String reason = convertForm.getReason();
 
-        if (!StringUtils.hasText(reason)) {
+        if (!hasText(reason)) {
             errors.rejectValue("reason", ERROR_MANDATORY_FIELD);
-        } else {
-            if (reason.length() > MAX_CHARS) {
-                errors.rejectValue("reason", ERROR_LENGTH);
-            }
         }
     }
 }

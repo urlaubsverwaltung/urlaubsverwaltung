@@ -48,10 +48,7 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 @Component
 class ApplicationForLeaveFormValidator implements Validator {
 
-    private static final int MAX_CHARS = 200;
-
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_HALF_DAY_PERIOD = "application.error.halfDayPeriod";
     private static final String ERROR_MISSING_REASON = "application.error.missingReasonForSpecialLeave";
@@ -76,8 +73,6 @@ class ApplicationForLeaveFormValidator implements Validator {
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
     private static final String ATTRIBUTE_REASON = "reason";
-    private static final String ATTRIBUTE_ADDRESS = "address";
-    private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTRIBUTE_HOURS = "hours";
     private static final String ATTRIBUTE_MINUTES = "minutes";
     private static final String DAY_LENGTH = "dayLength";
@@ -139,11 +134,6 @@ class ApplicationForLeaveFormValidator implements Validator {
         if (SPECIALLEAVE.equals(vacationType.getCategory()) && !hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
-
-        // validate length of texts
-        validateStringLength(applicationForm.getReason(), ATTRIBUTE_REASON, errors);
-        validateStringLength(applicationForm.getAddress(), ATTRIBUTE_ADDRESS, errors);
-        validateStringLength(applicationForm.getComment(), ATTRIBUTE_COMMENT, errors);
 
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
@@ -343,13 +333,6 @@ class ApplicationForLeaveFormValidator implements Validator {
         final Duration overtimeReduction = applicationForLeave.getOvertimeReduction();
         if (overtimeReduction != null && overtimeReduction.compareTo(minimumDuration) < 0) {
             errors.rejectValue("overtimeReduction", "overtime.error.minimumReductionRequired", new Object[]{minimumOvertimeReduction}, null);
-        }
-    }
-
-    private void validateStringLength(String text, String field, Errors errors) {
-
-        if (hasText(text) && text.length() > MAX_CHARS) {
-            errors.rejectValue(field, ERROR_LENGTH);
         }
     }
 

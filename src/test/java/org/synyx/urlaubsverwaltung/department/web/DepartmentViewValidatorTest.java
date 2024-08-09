@@ -87,14 +87,6 @@ class DepartmentViewValidatorTest {
     }
 
     @Test
-    void ensureNameMustNotBeTooLong() {
-        final DepartmentForm departmentForm = new DepartmentForm();
-        departmentForm.setName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        sut.validate(departmentForm, errors);
-        verify(errors).rejectValue("name", "error.entry.tooManyChars");
-    }
-
-    @Test
     void ensureValidNameDoesNotContainDelimiterStart() {
         final DepartmentForm departmentForm = new DepartmentForm();
         departmentForm.setName(":::Department");
@@ -132,26 +124,6 @@ class DepartmentViewValidatorTest {
         departmentForm.setName("Department");
         sut.validate(departmentForm, errors);
         verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureDescriptionMustNotBeTooLong() {
-        final DepartmentForm departmentForm = new DepartmentForm();
-        departmentForm.setName("Department");
-        departmentForm.setDescription(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
-                + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo"
-                + " dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor"
-                + " sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod"
-                + " tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et"
-                + " accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus"
-                + " est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed"
-                + " diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-                + " At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea"
-                + " takimata sanctus est Lorem ipsum dolor sit amet igir.");
-
-        sut.validate(departmentForm, errors);
-        verify(errors).rejectValue("description", "error.entry.tooManyChars");
     }
 
     @Test

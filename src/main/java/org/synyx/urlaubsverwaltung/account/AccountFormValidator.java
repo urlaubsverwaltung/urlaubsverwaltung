@@ -22,14 +22,12 @@ class AccountFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INTEGER_FIELD = "error.entry.integer";
-    private static final String ERROR_COMMENT_TO_LONG = "error.entry.commentTooLong";
     private static final String ERROR_FULL_OR_HALF_NUMBER = "error.entry.fullOrHalfNumber";
 
     private static final String ATTRIBUTE_ANNUAL_VACATION_DAYS = "annualVacationDays";
     private static final String ATTRIBUTE_ACTUAL_VACATION_DAYS = "actualVacationDays";
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS = "remainingVacationDays";
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
-    private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
     private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE_LOCALLY = "expiryDateLocally";
@@ -60,7 +58,6 @@ class AccountFormValidator implements Validator {
         validateExpiryDateLocally(form, errors, settingsSupplier);
         validateRemainingVacationDays(form, errors);
         validateRemainingVacationDaysNotExpiring(form, errors);
-        validateComment(form, errors);
     }
 
     void validatePeriod(AccountForm form, Errors errors) {
@@ -202,14 +199,6 @@ class AccountFormValidator implements Validator {
                     reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, msg("remainingVacationDaysNotExpiring.tooBig"), remainingVacationDays);
                 }
             }
-        }
-    }
-
-    void validateComment(AccountForm form, Errors errors) {
-
-        final String comment = form.getComment();
-        if (comment != null && comment.length() > 200) {
-            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_COMMENT_TO_LONG);
         }
     }
 

@@ -107,16 +107,7 @@
 
               <div class="form-group">
                 <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
-                <textarea
-                  id="text-allow"
-                  rows="2"
-                  class="form-control"
-                  th:errorclass="error"
-                  name="text"
-                  onkeyup="count(this.value, 'text-allow-counter');"
-                  onkeydown="maxChars(this,200); count(this.value, 'text-allow-counter');"
-                ></textarea>
-                <small> <span id="text-allow-counter"></span><th:block th:text="#{action.comment.maxChars}" /> </small>
+                <textarea id="text-allow" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
               </div>
 
               <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
@@ -161,10 +152,7 @@
                   th:field="*{text}"
                   th:errorclass="error"
                   name="text"
-                  onkeyup="count(this.value, 'text-cancel-counter');"
-                  onkeydown="maxChars(this,200); count(this.value, 'text-cancel-counter');"
                 ></textarea>
-                <small> <span id="text-cancel-counter"></span><th:block th:text="#{action.comment.maxChars}" /> </small>
               </div>
 
               <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
@@ -366,18 +354,7 @@
               <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
             </div>
 
-            <small>
-              <span id="text-comment"></span>
-              <th:block th:text="#{action.comment.maxChars}"></th:block>
-            </small>
-            <textarea
-              th:field="*{text}"
-              class="form-control"
-              th:errorclass="error"
-              rows="2"
-              onkeyup="count(this.value, 'text-comment');"
-              onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
-            ></textarea>
+            <textarea th:field="*{text}" class="form-control" th:errorclass="error" rows="2"></textarea>
             <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
               <button
                 th:text="#{action.cancel}"

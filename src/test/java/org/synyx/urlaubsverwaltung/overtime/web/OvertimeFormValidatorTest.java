@@ -504,23 +504,4 @@ class OvertimeFormValidatorTest {
         assertMayBeEmpty.accept(null);
         assertMayBeEmpty.accept("");
     }
-
-
-    @Test
-    void ensureCommentHasMaximumCharacterLength() {
-
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        when(settingsService.getSettings()).thenReturn(settings);
-        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
-
-        final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setComment(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore "
-                + "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores e");
-
-        sut.validate(overtimeForm, errors);
-
-        verify(errors).rejectValue("comment", "error.entry.tooManyChars");
-    }
 }

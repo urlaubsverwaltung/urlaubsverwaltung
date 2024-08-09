@@ -73,24 +73,12 @@
                   th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
                 ></th:block>
               </label>
-              <span>
-                <small
-                  class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100"
-                >
-                  <span class="tw-flex-grow"></span>
-                  <span th:id="${'text-holiday-replacement-note-' + index}"></span>
-                  <span th:text="#{action.comment.maxChars}"></span>
-                </small>
-              </span>
             </div>
             <div>
               <textarea
                 th:id="${'replacement-note-' + index}"
                 th:name="${'holidayReplacements[' + index + '].note'}"
                 class="form-control"
-                onkeyup="count(this.value, this.dataset.countSelector);"
-                onkeydown="maxChars(this,200); count(this.value, this.dataset.countSelector);"
-                th:data-count-selector="${'text-holiday-replacement-note-' + index}"
                 rows="1"
               ></textarea>
             </div>

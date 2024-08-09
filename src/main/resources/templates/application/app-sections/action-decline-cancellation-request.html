@@ -45,13 +45,7 @@
             name="text"
             class="form-control"
             th:errorclass="error"
-            onkeyup="count(this.value, 'text-decline-cancellation-request-counter');"
-            onkeydown="maxChars(this,200); count(this.value, 'text-decline-cancellation-request-counter');"
           ></textarea>
-          <small>
-            <span id="text-decline-cancellation-request-counter"></span
-            ><th:block th:text="#{action.comment.maxChars}" />
-          </small>
         </div>
 
         <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
