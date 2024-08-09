@@ -28,7 +28,22 @@
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 md:tw-px-0 lg:tw-px-12 xl:tw-px-0">
-        <h1 th:text="#{sicknote.extend.title}">Weiter Krank melden</h1>
+        <h1 class="tw-sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
+        <div class="tw-flex tw-gap-2">
+          <a href="#" th:href="@{/web/sicknote/new (noExtensionRedirect)}" class="button button-main tw-flex tw-gap-1">
+            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <th:block th:text="#{sicknote.extend.create-new.button.text}">neue Krankmeldung</th:block>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/sicknote/new (noExtensionRedirect=${''}, category=${'SICK_NOTE_CHILD'})}"
+            class="button button-main tw-flex tw-gap-1"
+          >
+            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <th:block th:text="#{sicknote.extend.create-new.child.button.text}">neue Kind-Krankmeldung</th:block>
+          </a>
+        </div>
+        <h2 class="tw-mt-16" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
         <p
           class="tw-m-0 tw-mt-8"
           th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNote.startDate, 'FULL')}, ${sickNoteEndDateWord})}"

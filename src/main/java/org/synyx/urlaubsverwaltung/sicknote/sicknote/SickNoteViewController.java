@@ -37,6 +37,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreviewService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
@@ -190,24 +191,26 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/new")
-    public String newSickNote(@RequestParam(value = "person", required = false) Long personId, Model model) throws UnknownPersonException {
+    public String newSickNote(@RequestParam(value = "person", required = false) Long personId,
+                              @RequestParam(value = "noExtensionRedirect", required = false) String noExtensionRedirect,
+                              @RequestParam(value = "category", required = false) Optional<SickNoteCategory> category,
+                              Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
-
         if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
             throw new AccessDeniedException(
                 "User '%s' has not the correct permissions to create a sick note".formatted(
                     signedInUser.getId()));
         }
 
-
         final Person sickNotePerson = personId == null
-                ? signedInUser
-                : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+            ? signedInUser
+            : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        if (sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
+        final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
+        if (!noRedirect && sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
             LOG.info("sick note of last work day found");
-            return "forward:/web/sicknote/extend";
+            return "redirect:/web/sicknote/extend";
         } else {
             LOG.info("no sick note of last work day found");
         }
@@ -215,12 +218,17 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("person", sickNotePerson);
 
-        model.addAttribute("sickNote", new SickNoteFormDto());
+        final List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
+
+        final SickNoteFormDto sickNoteFormDto = new SickNoteFormDto();
+        category.flatMap(cat -> sickNoteTypes.stream().filter(type -> type.isOfCategory(cat)).findFirst()).ifPresent(sickNoteFormDto::setSickNoteType);
+
+        model.addAttribute("sickNote", sickNoteFormDto);
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
         model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
-        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+        model.addAttribute("sickNoteTypes", sickNoteTypes);
 
         addVacationTypeColorsToModel(model);
 
