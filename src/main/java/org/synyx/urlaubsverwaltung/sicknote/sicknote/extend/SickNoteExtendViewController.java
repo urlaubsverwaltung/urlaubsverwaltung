@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -81,12 +82,22 @@ class SickNoteExtendViewController implements HasLaunchpad {
                                  // hint if custom date has been submitted or not
                                  @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
                                  @ModelAttribute("sickNoteExtended") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                 RedirectAttributes redirectAttributes,
                                  Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
             return "sicknote/sick_note_extended_not_found";
+        }
+
+        if (extend == null && customDateSubmit.isEmpty() && sickNoteExtendDto.id() == null) {
+            // form has been submitted with 'report sick' without filling the form actually
+            // therefore just redirect to page
+            // disabling the submit button until the form is ready is bad practice
+            // because of users clicking these buttons and nothing happens for instance (https://axesslab.com/disabled-buttons-suck)
+            redirectAttributes.addFlashAttribute("showFillFormFeedback", true);
+            return "redirect:/web/sicknote/extend";
         }
 
         final SickNote sickNote = maybeSickNote.get();
