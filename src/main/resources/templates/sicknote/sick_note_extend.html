@@ -70,14 +70,14 @@
             action="#"
             th:action="@{/web/sicknote/extend}"
             class="tw-mt-8 tw-space-y-8"
-            th:bind="${sickNote}"
+            th:object="${sickNote}"
           >
+            <input type="hidden" name="sickNoteId" th:value="${sickNote.sickNoteId}" />
             <div class="extend-action-grid tw-max-w-3xl">
               <button
                 type="submit"
-                class="button"
-                th:href="@{/web/sicknote/extend (extend=1)}"
-                th:classappend="${selectedExtend == '1' ? 'tw-border-2 tw-border-blue-400' : ''}"
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == '1'}"
                 th:text="#{sicknote.extend.duration.plus-workday.label(1)}"
                 name="extend"
                 value="1"
@@ -93,9 +93,8 @@
               </span>
               <button
                 type="submit"
-                class="button"
-                th:href="@{/web/sicknote/extend (extend=2)}"
-                th:classappend="${selectedExtend == '2' ? 'tw-border-2 tw-border-blue-400' : ''}"
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == '2'}"
                 th:text="#{sicknote.extend.duration.plus-workday.label(2)}"
                 name="extend"
                 value="2"
@@ -110,9 +109,8 @@
                 einschließlich morgen
               </span>
               <button
-                class="button"
-                th:href="@{/web/sicknote/extend (extend=${'end-of-week'})}"
-                th:classappend="${selectedExtend == 'end-of-week' ? 'tw-border-2 tw-border-blue-400' : ''}"
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == 'end-of-week'}"
                 th:text="#{sicknote.extend.duration.end-of-week.label}"
                 name="extend"
                 value="end-of-week"
@@ -130,8 +128,10 @@
                 type="date"
                 id="extend-to-date-input"
                 name="extendToDate"
-                class="form-control"
-                th:classappend="${selectedExtend == 'custom' ? 'tw-bg-blue-400 tw-border-2 tw-border-blue-400' : ''}"
+                class="form-control sicknote-extend-button"
+                th:classappend="${selectedExtend == 'custom' ? 'sicknote-extend-button--selected' : ''}"
+                th:field="*{extendToDate}"
+                th:errorclass="error"
                 data-auto-submit="submit-date-button"
                 data-auto-submit-delay="100"
                 th:value="${extendToDate}"
@@ -158,11 +158,14 @@
                 </button>
               </span>
             </div>
+            <p class="tw-mt-1 tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('endDate')}">
+              <th:block th:errors="*{endDate}">endDate error message</th:block>
+            </p>
             <th:block
               th:fragment="sick-note-extension-preview(sickNote, sickNoteExtensionPreview)"
               th:with="sickNoteExtensionPreview=${sickNoteExtensionPreview ?: sickNoteExtended}"
             >
-              <th:block th:if="${sickNoteExtensionPreview != null}">
+              <th:block th:if="${not #fields.hasAnyErrors() and sickNoteExtensionPreview != null}">
                 <div class="sick-note-extension-preview-container">
                   <div class="sick-note-extension-preview">
                     <div class="sick-note-extension-preview-card">
@@ -244,7 +247,6 @@
             </th:block>
             <div>
               <th:block th:if="${sickNoteExtended != null}">
-                <input type="hidden" name="id" th:value="${sickNoteExtended.id}" />
                 <input type="hidden" name="startDate" th:value="${sickNoteExtended.startDate}" />
                 <input type="hidden" name="endDate" th:value="${sickNoteExtended.endDate}" />
                 <input type="hidden" name="workingdays" th:value="${sickNoteExtended.workingDays}" />
