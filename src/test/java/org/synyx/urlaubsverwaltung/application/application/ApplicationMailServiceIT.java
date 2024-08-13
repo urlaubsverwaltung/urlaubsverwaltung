@@ -1302,6 +1302,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2024, 8, 8));
+        application.setEndDate(LocalDate.of(2024, 8, 8));
+        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
@@ -1455,13 +1459,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2024, 8, 8));
+        application.setEndDate(LocalDate.of(2024, 8, 8));
+        application.setApplicationDate(LocalDate.of(2024, 8, 8));
+
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Habe das mal für dich beantragt");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(List.of(OFFICE));
-
         application.setApplier(office);
+
         sut.sendAppliedByManagementNotification(application, comment);
 
         // was email sent?
@@ -1621,6 +1629,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setCanceller(person);
+        application.setApplicationDate(LocalDate.of(2024, 8, 8));
 
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.REVOKED, person, "Wrong date - revoked");
@@ -1678,7 +1687,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REVOKED));
+
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2024, 8, 8));
 
         final Person office = new Person("office", "Person", "Office", "office@example.org");
         application.setCanceller(office);
@@ -3013,6 +3024,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2024, 8, 8));
 
         when(mailRecipientService.getResponsibleManagersOf(application.getPerson())).thenReturn(asList(boss, departmentHead));
 
