@@ -22,10 +22,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 public class DepartmentViewValidator implements Validator {
 
     private static final int MAX_CHARS_NAME = 50;
-    private static final int MAX_CHARS_DESCRIPTION = 200;
 
     private static final String ATTRIBUTE_NAME = "name";
-    private static final String ATTRIBUTE_DESCRIPTION = "description";
     private static final String ATTRIBUTE_DEPARTMENT_HEADS = "departmentHeads";
     private static final String ATTRIBUTE_SECOND_STAGE_AUTHORITIES = "secondStageAuthorities";
     private static final String ATTRIBUTE_TWO_STAGE_APPROVAL = "twoStageApproval";
@@ -58,7 +56,6 @@ public class DepartmentViewValidator implements Validator {
         final DepartmentForm departmentForm = (DepartmentForm) target;
 
         validateName(errors, departmentForm);
-        validateDescription(errors, departmentForm.getDescription());
         validateDepartmentHeads(errors, departmentForm.getMembers(), departmentForm.getDepartmentHeads());
         validateSecondStageAuthorities(errors, departmentForm.isTwoStageApproval(), departmentForm.getSecondStageAuthorities());
     }
@@ -86,15 +83,6 @@ public class DepartmentViewValidator implements Validator {
             .isPresent();
         if (hasText && isDepartmentNameAlreadyTaken) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_DUPLICATED_NAME);
-        }
-    }
-
-    private void validateDescription(Errors errors, String description) {
-
-        final boolean hasText = StringUtils.hasText(description);
-
-        if (hasText && description.length() > MAX_CHARS_DESCRIPTION) {
-            errors.rejectValue(ATTRIBUTE_DESCRIPTION, ERROR_LENGTH);
         }
     }
 

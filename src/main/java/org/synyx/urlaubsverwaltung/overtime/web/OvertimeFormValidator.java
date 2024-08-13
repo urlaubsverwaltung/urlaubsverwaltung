@@ -15,18 +15,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.hasText;
-
 /**
  * Validates overtime record.
  */
 @Component
 public class OvertimeFormValidator implements Validator {
 
-    private static final int MAX_CHARS = 200;
-
     private static final String ERROR_MANDATORY = "error.entry.mandatory";
-    private static final String ERROR_MAX_CHARS = "error.entry.tooManyChars";
     private static final String ERROR_INVALID_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_MAX_OVERTIME = "overtime.data.numberOfHours.error.maxOvertime";
     private static final String ERROR_MIN_OVERTIME = "overtime.data.numberOfHours.error.minOvertime";
@@ -34,7 +29,6 @@ public class OvertimeFormValidator implements Validator {
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
-    private static final String ATTRIBUTE_COMMENT = "comment";
 
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -66,7 +60,6 @@ public class OvertimeFormValidator implements Validator {
         validatePeriod(overtimeForm, errors);
         validateNumberOfHours(overtimeSettings, overtimeForm, errors);
         validateMaximumOvertimeNotReached(overtimeSettings, overtimeForm, errors);
-        validateComment(overtimeForm, errors);
     }
 
     private void validatePeriod(OvertimeForm overtimeForm, Errors errors) {
@@ -139,13 +132,6 @@ public class OvertimeFormValidator implements Validator {
                 // minimumOvertime is an Integer -> save to extract hours here
                 errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime.toHours()}, null);
             }
-        }
-    }
-
-    private void validateComment(OvertimeForm overtimeForm, Errors errors) {
-        final String comment = overtimeForm.getComment();
-        if (hasText(comment) && comment.length() > MAX_CHARS) {
-            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MAX_CHARS);
         }
     }
 }

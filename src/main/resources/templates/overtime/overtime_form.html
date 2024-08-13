@@ -178,18 +178,7 @@
               <div class="form-group">
                 <label th:text="|#{overtime.data.comment}:|" class="control-label col-md-3" for="comment"></label>
                 <div class="col-md-9">
-                  <small>
-                    <span id="char-counter"></span>
-                    <th:block th:text="#{action.comment.maxChars}" />
-                  </small>
-                  <textarea
-                    id="comment"
-                    th:field="*{comment}"
-                    class="form-control"
-                    rows="2"
-                    onkeyup="count(this.value, 'char-counter');"
-                    onkeydown="maxChars(this,200); count(this.value, 'char-counter');"
-                  ></textarea>
+                  <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                     th:if="${#fields.hasErrors('comment')}"

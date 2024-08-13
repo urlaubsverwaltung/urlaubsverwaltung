@@ -11,9 +11,3 @@ import "../components/application-replacement-select";
 import holidayReplacementChanged from "../js/application/holiday-replacement-changed";
 
 window.holidayReplacementChanged = holidayReplacementChanged;
-
-import count from "../js/count";
-import maxChars from "../js/max-chars";
-
-window.count = count;
-window.maxChars = maxChars;

@@ -298,9 +298,6 @@
                 <div class="form-group is-required" id="form-group--reason">
                   <label th:text="|#{application.data.reason}:|" class="control-label col-md-3" for="reason"> </label>
                   <div class="col-md-9">
-                    <small>
-                      <span id="text-reason-counter"></span><th:block th:text="#{action.comment.maxChars}" />
-                    </small>
                     <textarea
                       id="reason"
                       rows="1"
@@ -308,8 +305,6 @@
                       th:text="${applicationForLeaveForm.reason}"
                       class="form-control"
                       th:errorclass="error"
-                      onkeyup="count(this.value, 'text-reason-counter');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-reason-counter');"
                       data-test-id="reason"
                     ></textarea>
                     <p
@@ -478,15 +473,6 @@
                                 class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
                               >
                               </label>
-                              <span>
-                                <small
-                                  class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100"
-                                >
-                                  <span class="tw-flex-grow"></span>
-                                  <span th:id="${'text-holiday-replacement-note-' + index}"></span>
-                                  <th:block th:text="#{action.comment.maxChars}" />
-                                </small>
-                              </span>
                             </div>
                             <div>
                               <textarea
@@ -497,8 +483,6 @@
                                 th:text="${__${'applicationForLeaveForm.holidayReplacements[' + index + '].note'}__}"
                                 class="form-control"
                                 th:errorclass="error"
-                                th:onkeyup="'count(this.value, text-holiday-replacement-note-' + ${index} + ');'"
-                                th:onkeydown="'maxChars(this,200); count(this.value, text-holiday-replacement-note-' + ${index} + ');'"
                               ></textarea>
                             </div>
                           </div>
@@ -532,17 +516,7 @@
                       th:text="${applicationForLeaveForm.address}"
                       class="form-control"
                       th:errorclass="error"
-                      onkeyup="count(this.value, 'text-address-counter');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-address-counter');"
                     ></textarea>
-                    <div class="tw-mt-1">
-                      <small
-                        class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100"
-                      >
-                        <span class="tw-flex-grow"></span>
-                        <span id="text-address-counter"></span><th:block th:text="#{action.comment.maxChars}" />
-                      </small>
-                    </div>
                     <p
                       class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                       th:if="${#fields.hasErrors('address')}"
@@ -568,17 +542,7 @@
                       th:text="${applicationForLeaveForm.comment}"
                       class="form-control"
                       th:errorclass="error"
-                      onkeyup="count(this.value, 'text-comment-counter');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-comment-counter');"
                     ></textarea>
-                    <div class="tw-mt-1">
-                      <small
-                        class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100"
-                      >
-                        <span class="tw-flex-grow"></span>
-                        <span id="text-comment-counter"></span><th:block th:text="#{action.comment.maxChars}" />
-                      </small>
-                    </div>
                     <p
                       class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                       th:if="${#fields.hasErrors('comment')}"
