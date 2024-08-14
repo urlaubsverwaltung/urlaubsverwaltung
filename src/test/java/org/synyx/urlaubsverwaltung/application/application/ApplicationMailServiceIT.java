@@ -1178,7 +1178,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             du bist für die Abwesenheit von Lieschen Müller
-            im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,
+            im Zeitraum vom 18.12.2020 bis zum 18.12.2020 ganztägig,
             nicht mehr als Vertretung vorgesehen.
 
             Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
@@ -1221,7 +1221,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
-            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+            Der neue Zeitraum ist vom 18.12.2020 bis zum 18.12.2020 ganztägig.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -1262,7 +1262,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.
-            Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.
+            Der neue Zeitraum ist vom 18.12.2020 bis zum 18.12.2020 ganztägig.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -2646,7 +2646,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentUser).isEqualTo("""
             Hallo Lieschen Müller,
 
-            deine am 12.04.2021 gestellte Abwesenheit von 16.04.2021 bis 16.04.2021, ganztägig wurde vorläufig genehmigt.
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 bis zum 16.04.2021 ganztägig wurde vorläufig genehmigt.
             Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
 
                 https://localhost:8080/web/application/1234
@@ -3393,7 +3393,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - replacement holiday
                   "Some notes"
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 bis zum 03.01.2022 ganztägig nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
