@@ -3192,7 +3192,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensurToSendEditedApplicationNotificationIfEditorIsApplicant() throws Exception {
+    void ensureToSendEditedApplicationNotificationIfEditorIsApplicant() throws Exception {
 
         final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
         editor.setId(1L);
