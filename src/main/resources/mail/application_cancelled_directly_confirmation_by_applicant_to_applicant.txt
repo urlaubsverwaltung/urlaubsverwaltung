@@ -1,6 +1,6 @@
 [(#{greeting(${application.person.niceName})})],
 
-[(#{application.cancelled_directly.confirmation.by_applicant_to_applicant(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
+[(#{application.cancelled_directly.confirmation.by_applicant_to_applicant(${application.startDate.equals(application.endDate).compareTo(false)}, ${#temporals.format(application.startDate, "dd.MM.yyyy")}, ${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]

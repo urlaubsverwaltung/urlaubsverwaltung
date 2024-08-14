@@ -127,7 +127,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
         application.setStartDate(LocalDate.of(2021, APRIL, 16));
-        application.setEndDate(LocalDate.of(2021, APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, APRIL, 17));
         application.setBoss(boss);
 
         final ApplicationComment comment = new ApplicationComment(
@@ -166,7 +166,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
-            deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt.
+            deine Abwesenheit vom 16.04.2021 bis zum 17.04.2021 wurde von Hugo Boss genehmigt.
 
                 https://localhost:8080/web/application/1234
 
@@ -175,7 +175,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             Informationen zur Abwesenheit:
 
-                Zeitraum:            16.04.2021, ganztägig
+                Zeitraum:            16.04.2021 bis 17.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -206,7 +206,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021, ganztägig
+                Zeitraum:            16.04.2021 bis 17.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -237,7 +237,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Informationen zur Abwesenheit:
 
                 Mitarbeiter:         Lieschen Mueller
-                Zeitraum:            16.04.2021, ganztägig
+                Zeitraum:            16.04.2021 bis 17.04.2021, ganztägig
                 Art der Abwesenheit: Erholungsurlaub
                 Grund:              \s
                 Vertretung:         \s
@@ -260,7 +260,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
             eine Abwesenheit von Lieschen Mueller wurde erstellt:
 
-                Zeitraum: 16.04.2021, ganztägig
+                Zeitraum: 16.04.2021 bis 17.04.2021, ganztägig
 
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
@@ -316,7 +316,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
-            deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt.
+            deine Abwesenheit vom 16.04.2021 wurde von Hugo Boss genehmigt.
 
                 https://localhost:8080/web/application/1234
 
@@ -419,7 +419,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
-            deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt.
+            deine Abwesenheit vom 16.04.2021 wurde von Hugo Boss genehmigt.
 
                 https://localhost:8080/web/application/1234
 
@@ -643,7 +643,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Lieschen Müller,
 
-            dein Stornierungsantrag der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt.
+            dein Stornierungsantrag der genehmigten Abwesenheit vom 29.05.2020 wurde abgelehnt.
 
                 https://localhost:8080/web/application/1234
 
@@ -663,7 +663,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Marlene Muster,
 
-            der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt.
+            der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 wurde abgelehnt.
 
                 https://localhost:8080/web/application/1234
 
@@ -683,7 +683,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
             Hallo Relevant Person,
 
-            der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt.
+            der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 wurde abgelehnt.
 
                 https://localhost:8080/web/application/1234
 
@@ -724,7 +724,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Lieschen Müller,
 
-            dein Antrag zum Stornieren deines bereits genehmigten Antrags vom 29.05.2020 bis 29.05.2020 wurde eingereicht.
+            dein Antrag zum Stornieren deines bereits genehmigten Antrags vom 29.05.2020 wurde eingereicht.
 
                 https://localhost:8080/web/application/1234
 
@@ -747,7 +747,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msgOffice)).isEqualTo("""
             Hallo Marlene Muster,
 
-            Lieschen Müller möchte die bereits genehmigte Abwesenheit vom 29.05.2020 bis 29.05.2020 stornieren.
+            Lieschen Müller möchte die bereits genehmigte Abwesenheit vom 29.05.2020 stornieren.
 
                 https://localhost:8080/web/application/1234
 
@@ -1048,7 +1048,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             eine Abwesenheit von Lieschen Müller wurde erstellt und
-            du wurdest für den Zeitraum vom 18.12.2020 bis 18.12.2020, ganztägig als Vertretung eingetragen.
+            du wurdest für den Zeitraum vom 18.12.2020 ganztägig als Vertretung eingetragen.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -1093,7 +1093,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.
-            Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.
+            Es handelt sich um den Zeitraum vom 18.12.2020 ganztägig.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -1134,7 +1134,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             Hallo Mar Teria,
 
             die Abwesenheit von Lieschen Müller wurde genehmigt.
-            Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.
+            Du wurdest damit für den Zeitraum vom 29.05.2020 ganztägig als Vertretung eingetragen.
 
             Notiz von Lieschen Müller an dich:
             Eine Nachricht an die Vertretung
@@ -1177,9 +1177,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
-            du bist für die Abwesenheit von Lieschen Müller
-            im Zeitraum vom 18.12.2020 bis zum 18.12.2020 ganztägig,
-            nicht mehr als Vertretung vorgesehen.
+            du bist für die Abwesenheit von Lieschen Müller vom 18.12.2020 nicht mehr als Vertretung vorgesehen.
 
             Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
 
@@ -1776,7 +1774,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Relevant Person,
 
-            die Abwesenheit von Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 wurde von Lieschen Müller storniert.
+            die Abwesenheit von Lieschen Müller vom 16.04.2021 wurde von Lieschen Müller storniert.
 
                 https://localhost:8080/web/application/1234
 
@@ -1829,7 +1827,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
-            deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde erfolgreich storniert.
+            deine Abwesenheit vom 16.04.2021 wurde erfolgreich storniert.
 
                 https://localhost:8080/web/application/1234
 
@@ -1913,7 +1911,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
-            deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Office Person erfolgreich storniert.
+            deine Abwesenheit vom 16.04.2021 wurde von Office Person erfolgreich storniert.
 
                 https://localhost:8080/web/application/1234
 
@@ -2646,7 +2644,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentUser).isEqualTo("""
             Hallo Lieschen Müller,
 
-            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 bis zum 16.04.2021 ganztägig wurde vorläufig genehmigt.
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
             Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
 
                 https://localhost:8080/web/application/1234
@@ -3128,14 +3126,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
             die folgenden 4 Abwesenheiten warten auf deine Bearbeitung:
 
             Anträge von Max Mahler:
-              Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig. https://localhost:8080/web/application/1
-              Erholungsurlaub vom 16.05.2021 bis 16.05.2021, ganztägig. https://localhost:8080/web/application/4
+              Erholungsurlaub vom 20.04.2022 bis zum 21.04.2022 ganztägig. https://localhost:8080/web/application/1
+              Erholungsurlaub vom 16.05.2021 ganztägig. https://localhost:8080/web/application/4
 
             Antrag von Frederik Förster:
-              Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig. https://localhost:8080/web/application/2
+              Erholungsurlaub vom 24.12.2023 bis zum 31.12.2023 ganztägig. https://localhost:8080/web/application/2
 
             Antrag von Peter Schuster:
-              Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig. https://localhost:8080/web/application/3
+              Erholungsurlaub vom 30.11.2021 ganztägig. https://localhost:8080/web/application/3
 
 
             Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests
@@ -3156,11 +3154,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             die folgenden 3 Abwesenheiten warten auf deine Bearbeitung:
 
             Anträge von Max Mahler:
-              Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig. https://localhost:8080/web/application/1
-              Erholungsurlaub vom 16.05.2021 bis 16.05.2021, ganztägig. https://localhost:8080/web/application/4
+              Erholungsurlaub vom 20.04.2022 bis zum 21.04.2022 ganztägig. https://localhost:8080/web/application/1
+              Erholungsurlaub vom 16.05.2021 ganztägig. https://localhost:8080/web/application/4
 
             Antrag von Peter Schuster:
-              Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig. https://localhost:8080/web/application/3
+              Erholungsurlaub vom 30.11.2021 ganztägig. https://localhost:8080/web/application/3
 
 
             Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests
@@ -3181,7 +3179,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             die folgende Abwesenheit wartet auf deine Bearbeitung:
 
             Antrag von Frederik Förster:
-              Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig. https://localhost:8080/web/application/2
+              Erholungsurlaub vom 24.12.2023 bis zum 31.12.2023 ganztägig. https://localhost:8080/web/application/2
 
 
             Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests
@@ -3344,7 +3342,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - replacement holiday
                   "Some notes"
 
-                Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3362,7 +3360,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -3393,7 +3391,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - replacement holiday
                   "Some notes"
 
-                Da du vom 02.01.2022 bis zum 03.01.2022 ganztägig nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 bis zum 03.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3441,7 +3439,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - replacement holiday
                   "Some notes"
 
-                Da du vom 03.01.2022 bis zum 03.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 03.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3480,7 +3478,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
 
-                Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3519,7 +3517,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3558,7 +3556,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
 
-                Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3597,7 +3595,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
 
-                Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3645,7 +3643,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - Alfred Pennyworth
 
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3695,7 +3693,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - Alfred Pennyworth
                   "Hey Alfred, denke bitte an Pinguin, danke dir!"
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3751,7 +3749,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - Robin
                   "Uffbasse Rob. Ich sehe dich."
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3806,7 +3804,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - Robin
 
 
-                Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3854,7 +3852,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 - replacement holiday
 
 
-                Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
+                Da du vom 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe.
                 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
 
@@ -3890,7 +3888,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo replacement holiday,
 
-            deine Vertretung für Lieschen Müller vom 01.01.2022 bis zum 01.01.2022 beginnt heute.
+            deine Vertretung für Lieschen Müller vom 01.01.2022 beginnt heute.
 
             Notiz:
             Some notes
@@ -3910,7 +3908,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
-        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -3929,7 +3927,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo replacement holiday,
 
-            deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.
+            deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 03.01.2022 beginnt morgen.
 
             Notiz:
             Some notes
@@ -4007,7 +4005,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo replacement holiday,
 
-            deine Vertretung für Lieschen Müller vom 02.01.2022 bis zum 02.01.2022 beginnt morgen.
+            deine Vertretung für Lieschen Müller vom 02.01.2022 beginnt morgen.
 
 
             Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement
