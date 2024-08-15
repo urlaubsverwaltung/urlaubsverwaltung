@@ -7,6 +7,6 @@
 [(#{comment.by(${comment.person.niceName})})]
 [(${comment.text})]
 [/]
-[# th:replace="~{_absence_information_with_person}" /]
+[# th:replace="~{_application_absence_information_with_person}" /]
 
 [(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
