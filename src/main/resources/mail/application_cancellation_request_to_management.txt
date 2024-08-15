@@ -11,4 +11,4 @@
 [(#{application.cancellation_request.to_management.overview})] [(${baseLinkURL})]web/application#cancellation-requests
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

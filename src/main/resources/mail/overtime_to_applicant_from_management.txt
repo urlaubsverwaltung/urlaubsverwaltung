@@ -13,4 +13,4 @@
     [(${rightPadder.rightPad('__#{overtime.information.duration}__',__#{overtime.information.max_length}__)})] [(${overtimeDurationHours})] [(${overtimeDurationMinutes})]
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

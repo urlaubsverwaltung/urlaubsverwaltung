@@ -9,4 +9,4 @@
 [(#{application.edited.to_holiday_replacement.overview_holiday_replacement})] [(${baseLinkURL})]web/application/replacement
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

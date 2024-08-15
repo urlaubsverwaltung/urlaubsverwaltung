@@ -7,4 +7,4 @@
 [(#{application.allowed.to_colleagues.overview})]: [(${baseLinkURL})]web/absences
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

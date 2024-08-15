@@ -9,4 +9,4 @@
 [/]
 [# th:replace="~{_application_absence_information_with_person}" /]
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

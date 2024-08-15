@@ -12,4 +12,4 @@
 [(#{sick_note.submitted_by_user.to_management.overview})] [(${baseLinkURL})]web/sicknote/submitted#sicknote-submitted
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

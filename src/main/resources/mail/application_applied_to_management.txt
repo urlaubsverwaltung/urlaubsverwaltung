@@ -14,4 +14,4 @@
     [# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.applied.to_management.overlapping_absence.none})][/]
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]
