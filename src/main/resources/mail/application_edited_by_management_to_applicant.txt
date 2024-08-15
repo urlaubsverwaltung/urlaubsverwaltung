@@ -5,4 +5,4 @@
     [(${baseLinkURL})]web/application/[(${application.id})]
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

@@ -9,8 +9,8 @@
 - [(${replacement.person.niceName})]
 [# th:if="${not #strings.isEmpty(replacement.note)}"][(${not #strings.isEmpty(replacement.note) ? '  "' + #strings.trim(replacement.note) + '"' : ''})][/][/]
 
-[(#{application.upcoming_application_to_applicant.note.first(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
+[(#{application.upcoming_application_to_applicant.note.first(${application.startDate.equals(application.endDate).compareTo(false)},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
 [(#{application.upcoming_application_to_applicant.note.second})]
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

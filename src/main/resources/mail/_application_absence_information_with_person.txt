@@ -1,10 +1,3 @@
-[(#{greeting(${recipient.niceName})})],
-
-[(#{application.referred.to_management.first(${sender.niceName},${application.person.niceName})})]
-[(#{application.referred.to_management.second(${sender.niceName})})]
-
-    [(${baseLinkURL})]web/application/[(${application.id})]
-
 [(#{absence.information.title})]
 
     [(${rightPadder.rightPad('__#{absence.information.person}__',__#{absence.information.max_length}__)})] [(${application.person.niceName})]
@@ -13,8 +6,4 @@
     [(${rightPadder.rightPad('__#{absence.information.reason}__',__#{absence.information.max_length}__)})] [(${application.reason})]
     [(${rightPadder.rightPad('__#{absence.information.holiday_replacement}__',__#{absence.information.max_length}__)})] [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:utext="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
     [(${rightPadder.rightPad('__#{absence.information.address}__',__#{absence.information.max_length}__)})] [(${#strings.trim(application.address)})]
-    [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})]
-    [(${rightPadder.rightPad('__#{absence.information.referred_from}__',__#{absence.information.max_length}__)})] [(${sender.niceName})]
-
-
-[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]
+    [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, 'dd.MM.yyyy')})]

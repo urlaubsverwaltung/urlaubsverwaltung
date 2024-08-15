@@ -1,6 +1,6 @@
 [(#{greeting(${application.person.niceName})})],
 
-[(#{application.temporary_allowed.to_applicant.first(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})})]
+[(#{application.temporary_allowed.to_applicant.first(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.startDate.equals(application.endDate).compareTo(false)},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${application.dayLength.name}__})})]
 [(#{application.temporary_allowed.to_applicant.second})]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
@@ -9,4 +9,4 @@
 [(${comment.text})][/]
 
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]

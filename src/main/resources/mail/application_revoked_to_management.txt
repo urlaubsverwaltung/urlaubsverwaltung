@@ -1,6 +1,5 @@
 [(#{greeting(${recipient.niceName})})],
 
-
 [# th:if="${application.person.niceName == comment.person.niceName}"][(#{application.revoked.to_management(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName})})][/][# th:if="${application.person.niceName != comment.person.niceName}"][(#{application.revoked.to_management.with_name(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName},${comment.person.niceName})})][/]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
@@ -9,4 +8,4 @@
 [(${comment.text})]
 [/]
 
-[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
+[# th:replace="~{_notification_description(recipientId=${recipient.id})}" /]
