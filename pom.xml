@@ -16,6 +16,12 @@
   </parent>
 
   <properties>
+    <!--
+    see https://spring.io/blog/2024/08/14/spring-framework-releases-fixes-for-cve-2024-38808-and-cve-2024-38809
+    and can be removed with spring boot 3.3.3
+    -->
+    <spring-framework.version>6.1.12</spring-framework.version>
+
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>21</java.version>
@@ -34,6 +40,18 @@
     <connection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</connection>
     <tag>HEAD</tag>
   </scm>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring-framework.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
