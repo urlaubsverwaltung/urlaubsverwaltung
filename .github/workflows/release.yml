@@ -18,11 +18,14 @@ jobs:
           distribution: 'liberica'
           java-version: '21'
           cache: 'maven'
+
       - name: Build jar with Maven
         run: ./mvnw clean package
+
       - name: Extract release version
         id: vars
         run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         env:
