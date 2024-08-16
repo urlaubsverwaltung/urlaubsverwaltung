@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}, additional=~{::additional})}"
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{sicknote.extend.header.title}">Krankmeldung erweitern</title>
     <th:block th:fragment="styles">
-      <link rel="stylesheet" th:href="@{/css/sick-note-extend.css}" />
+      <link rel="stylesheet" th:href="@{/css/sick-note-extend.css}" data-turbo-track="dynamic" />
     </th:block>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
@@ -23,10 +23,6 @@
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="sick_note_extend.js"></script>
-    </th:block>
-    <th:block th:fragment="additional">
-      <!--      <meta name="turbo-refresh-method" content="morph">-->
-      <!--      <meta name="turbo-refresh-scroll" content="preserve">-->
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
@@ -81,13 +77,14 @@
             Wie lange ist dein Kind vorraussichtlich noch krank?
           </p>
         </th:block>
-        <turbo-frame id="frame-sick-note-extend" class="tw-mt-8">
+        <div class="tw-mt-8">
           <form
             method="post"
             action="#"
             th:action="@{/web/sicknote/extend}"
             class="tw-mt-8 tw-space-y-8"
             th:object="${sickNoteExtension}"
+            data-turbo="true"
           >
             <input type="hidden" name="sickNoteId" th:value="${sickNoteExtension.sickNoteId}" />
             <input type="hidden" name="startDate" th:value="${sickNoteExtension.startDate}" />
@@ -272,7 +269,7 @@
               </button>
             </div>
           </form>
-        </turbo-frame>
+        </div>
       </div>
     </main>
   </body>
