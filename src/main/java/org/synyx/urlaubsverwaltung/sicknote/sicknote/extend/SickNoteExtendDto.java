@@ -23,6 +23,10 @@ class SickNoteExtendDto {
         this(null, null, null, null);
     }
 
+    SickNoteExtendDto(Long sickNoteId, LocalDate startDate) {
+        this(sickNoteId, startDate, null, null);
+    }
+
     SickNoteExtendDto(Long sickNoteId, LocalDate startDate, LocalDate endDate, BigDecimal workingDays) {
         this.sickNoteId = sickNoteId;
         this.startDate = startDate;

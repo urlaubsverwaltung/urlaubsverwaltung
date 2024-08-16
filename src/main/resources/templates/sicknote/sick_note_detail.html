@@ -269,7 +269,7 @@
             </tr>
           </tbody>
         </table>
-        <div th:if="${extensionPreviewCurrent != null}" class="tw-mt-8">
+        <div th:if="${sickNotePreviewCurrent != null}" class="tw-mt-8">
           <div class="section-heading">
             <div class="tw-flex tw-items-baseline tw-pb-2 tw-border-b-2 dark:tw-border-b dark:tw-border-zinc-600">
               <h2>Krankmeldung erweitern</h2>
@@ -283,7 +283,7 @@
           </th:block>
           <div class="tw-mt-8">
             <th:block
-              th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${extensionPreviewCurrent}, ${extensionPreviewNext})}"
+              th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${sickNotePreviewCurrent}, ${sickNotePreviewNext})}"
             ></th:block>
           </div>
           <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">

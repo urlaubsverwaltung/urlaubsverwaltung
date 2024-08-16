@@ -34,6 +34,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtendPreviewDto;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreviewService;
@@ -152,8 +153,8 @@ class SickNoteViewController implements HasLaunchpad {
             sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(sickNote.getId())
                 .ifPresent(preview -> {
                     model.addAttribute("canAcceptSubmittedExtension", signedInUser.hasAnyRole(OFFICE, SICK_NOTE_EDIT));
-                    model.addAttribute("extensionPreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
-                    model.addAttribute("extensionPreviewNext", toSickNoteExtensionPreviewDto(preview));
+                    model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
+                    model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(preview));
                 });
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
@@ -589,13 +590,11 @@ class SickNoteViewController implements HasLaunchpad {
             .build();
     }
 
-    private SickNoteExtensionPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote) {
-        // TODO half working day sickNote
-        return new SickNoteExtensionPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays().longValue());
+    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote) {
+        return new SickNoteExtendPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
     }
 
-    private SickNoteExtensionPreviewDto toSickNoteExtensionPreviewDto(SickNoteExtensionPreview preview) {
-        // TODO half working day sickNote
-        return new SickNoteExtensionPreviewDto(preview.startDate(), preview.endDate(), preview.workingDays().longValue());
+    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNoteExtensionPreview preview) {
+        return new SickNoteExtendPreviewDto(preview.startDate(), preview.endDate(), preview.workingDays());
     }
 }

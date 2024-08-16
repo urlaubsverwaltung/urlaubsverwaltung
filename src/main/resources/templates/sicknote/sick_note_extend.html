@@ -58,7 +58,7 @@
         <th:block th:if="${not sickNoteTypeChild}">
           <p
             class="tw-m-0 tw-mt-8"
-            th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNote.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
+            th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
@@ -69,7 +69,7 @@
         <th:block th:if="${sickNoteTypeChild}">
           <p
             class="tw-m-0 tw-mt-8"
-            th:text="#{sicknote.extend.child.paragraph.current(${#temporals.format(sickNote.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
+            th:text="#{sicknote.extend.child.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Kind-Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
@@ -83,9 +83,11 @@
             action="#"
             th:action="@{/web/sicknote/extend}"
             class="tw-mt-8 tw-space-y-8"
-            th:object="${sickNote}"
+            th:object="${sickNoteExtension}"
           >
-            <input type="hidden" name="sickNoteId" th:value="${sickNote.sickNoteId}" />
+            <input type="hidden" name="sickNoteId" th:value="${sickNoteExtension.sickNoteId}" />
+            <input type="hidden" name="startDate" th:value="${sickNoteExtension.startDate}" />
+            <input type="hidden" name="endDate" th:value="${sickNoteExtension.endDate}" />
             <div class="extend-action-grid tw-max-w-3xl">
               <button
                 type="submit"
@@ -174,96 +176,89 @@
             <p class="tw-mt-1 tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('endDate')}">
               <th:block th:errors="*{endDate}">endDate error message</th:block>
             </p>
-            <th:block
-              th:fragment="sick-note-extension-preview(sickNote, sickNoteExtensionPreview)"
-              th:with="sickNoteExtensionPreview=${sickNoteExtensionPreview ?: sickNoteExtended}"
-            >
-              <th:block th:if="${not #fields.hasAnyErrors() and sickNoteExtensionPreview != null}">
-                <div class="sick-note-extension-preview-container">
-                  <div class="sick-note-extension-preview">
-                    <div class="sick-note-extension-preview-card">
-                      <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
-                        Aktuelle Krankmeldung
-                      </div>
-                      <div class="sick-note-extension-preview-card_inner">
-                        <span
-                          class="sick-note-extension-preview-card_inner_label"
-                          th:text="#{sicknote.extend.preview.current.start.label}"
-                          >von</span
-                        >
-                        <span
-                          class="sick-note-extension-preview-card_inner_date"
-                          th:text="${#temporals.format(sickNote.startDate, 'FULL')}"
-                        >
-                          xx.xx.xxxx
-                        </span>
-                        <span
-                          class="sick-note-extension-preview-card_inner_label"
-                          th:text="#{sicknote.extend.preview.current.end.label}"
-                          >bis</span
-                        >
-                        <span
-                          class="sick-note-extension-preview-card_inner_date"
-                          th:text="${#temporals.format(sickNote.endDate, 'FULL')}"
-                        >
-                          xx.xx.xxxx
-                        </span>
-                      </div>
-                      <div
-                        class="sick-note-extension-preview-card_inner_workdays"
-                        th:text="#{sicknote.extend.preview.days-between(${sickNote.workingDays})}"
-                      >
-                        entspricht x Arbeitstagen
-                      </div>
+            <th:block th:if="${sickNotePreviewNext != null}">
+              <div
+                th:fragment="sick-note-extension-preview(sickNotePreviewCurrent, sickNotePreviewNext)"
+                class="sick-note-extension-preview-container"
+              >
+                <div class="sick-note-extension-preview">
+                  <div class="sick-note-extension-preview-card">
+                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
+                      Aktuelle Krankmeldung
                     </div>
-                    <div class="sick-note-extension-preview-arrow">
-                      <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
-                    </div>
-                    <div class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted">
-                      <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
-                        Vorschau geänderte Krankmeldung
-                      </div>
-                      <div class="sick-note-extension-preview-card_inner">
-                        <span
-                          class="sick-note-extension-preview-card_inner_label"
-                          th:text="#{sicknote.extend.preview.new.start.label}"
-                          >von</span
-                        >
-                        <span
-                          class="sick-note-extension-preview-card_inner_date"
-                          th:text="${#temporals.format(sickNoteExtensionPreview.startDate, 'FULL')}"
-                        >
-                          xx.xx.xxxx
-                        </span>
-                        <span
-                          class="sick-note-extension-preview-card_inner_label"
-                          th:text="#{sicknote.extend.preview.new.end.label}"
-                          >Verlängerung bis</span
-                        >
-                        <span
-                          class="sick-note-extension-preview-card_inner_date"
-                          th:text="${#temporals.format(sickNoteExtensionPreview.endDate, 'FULL')}"
-                        >
-                          xx.xx.xxxx
-                        </span>
-                      </div>
-                      <div
-                        class="sick-note-extension-preview-card_inner_workdays"
-                        th:text="#{sicknote.extend.preview.days-between(${sickNoteExtensionPreview.workingDays})}"
+                    <div class="sick-note-extension-preview-card_inner">
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.current.start.label}"
+                        >von</span
                       >
-                        entspricht x Arbeitstagen
-                      </div>
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewCurrent.startDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.current.end.label}"
+                        >bis</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewCurrent.endDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                    </div>
+                    <div
+                      class="sick-note-extension-preview-card_inner_workdays"
+                      th:text="#{sicknote.extend.preview.days-between(${sickNotePreviewCurrent.workingDays})}"
+                    >
+                      entspricht x Arbeitstagen
+                    </div>
+                  </div>
+                  <div class="sick-note-extension-preview-arrow">
+                    <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
+                  </div>
+                  <div class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted">
+                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
+                      Vorschau geänderte Krankmeldung
+                    </div>
+                    <div class="sick-note-extension-preview-card_inner">
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.new.start.label}"
+                        >von</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewNext.startDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.new.end.label}"
+                        >Verlängerung bis</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewNext.endDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                    </div>
+                    <div
+                      class="sick-note-extension-preview-card_inner_workdays"
+                      th:text="#{sicknote.extend.preview.days-between(${sickNotePreviewNext.workingDays})}"
+                    >
+                      entspricht x Arbeitstagen
                     </div>
                   </div>
                 </div>
-              </th:block>
+              </div>
             </th:block>
             <div>
-              <th:block th:if="${sickNoteExtended != null}">
-                <input type="hidden" name="startDate" th:value="${sickNoteExtended.startDate}" />
-                <input type="hidden" name="endDate" th:value="${sickNoteExtended.endDate}" />
-                <input type="hidden" name="workingdays" th:value="${sickNoteExtended.workingDays}" />
-              </th:block>
               <button
                 type="submit"
                 class="button-main-green tw-w-full sm:tw-w-56"

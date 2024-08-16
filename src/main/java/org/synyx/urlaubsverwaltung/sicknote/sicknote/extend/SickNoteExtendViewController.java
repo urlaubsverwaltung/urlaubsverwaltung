@@ -71,11 +71,11 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        final SickNoteExtendDto sickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
-
         final LocalDate today = LocalDate.now(clock);
-        prepareModel(model, signedInUser, today, sickNote, sickNoteDto);
-        model.addAttribute("sickNote", sickNoteDto);
+        prepareModel(model, signedInUser, today, sickNote);
+
+        final SickNoteExtendDto sickNoteExtension = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate());
+        model.addAttribute("sickNoteExtension", sickNoteExtension);
 
         return "sicknote/sick_note_extend";
     }
@@ -85,7 +85,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
                                  @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
                                  // hint if custom date has been submitted or not
                                  @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
-                                 @ModelAttribute("sickNote") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                 @ModelAttribute("sickNoteExtension") SickNoteExtendDto sickNoteExtendDto, Errors errors,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
 
@@ -95,39 +95,41 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "sicknote/sick_note_extended_not_found";
         }
 
-        final SickNote sickNote = maybeSickNote.get();
-        final boolean userSelectedDays = hasText(extend);
-        final boolean userSelectedCustomDate = customDateSubmit.isPresent();
+        if (customDateSubmit.isEmpty()) {
+            // unset value when form has not been submitted with choosing custom date
+            // to avoid using this variable accidentally
+            extendToDate = null;
+            sickNoteExtendDto.setExtendToDate(null);
+        }
 
-        if (!userSelectedDays && !userSelectedCustomDate && sickNoteExtendDto.getSickNoteId() == null) {
+        final SickNote sickNote = maybeSickNote.get();
+        final boolean hasUserSelectedDays = hasText(extend);
+        final boolean hasUserSelectedCustomDate = customDateSubmit.isPresent();
+        final boolean isCreateExtendSubmit = !hasUserSelectedCustomDate && !hasUserSelectedDays;
+
+        if (isCreateExtendSubmit && sickNoteExtendDto.getSickNoteId() == null) {
             // form has been submitted with 'report sick' without filling the form actually
             // therefore just redirect to page
-            // disabling the submit button until the form is ready is bad practice
+            // we could disable the submit button until the form is ready, this is bad practice however
             // because of users clicking these buttons and nothing happens for instance (https://axesslab.com/disabled-buttons-suck)
             redirectAttributes.addFlashAttribute("showFillFormFeedback", true);
             return "redirect:/web/sicknote/extend";
         }
 
-        if (userSelectedCustomDate) {
-            // the selected custom date is not part of the DTO
-            // otherwise the submit button ALWAYS would use this custom date
-            sickNoteExtendDto.setEndDate(extendToDate);
-        }
-        if (userSelectedCustomDate || !userSelectedDays) {
+        if (hasUserSelectedCustomDate || isCreateExtendSubmit) {
             sickNoteExtendValidator.validate(sickNoteExtendDto, errors);
         }
         if (errors.hasErrors()) {
-            prepareSickNoteExtendPreview(signedInUser, maybeSickNote.get(), extend, extendToDate, customDateSubmit, model);
+            prepareSickNoteExtendPreview(signedInUser, maybeSickNote.get(), sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
             return "sicknote/sick_note_extend";
         }
 
-        if (userSelectedDays || userSelectedCustomDate) {
-            prepareSickNoteExtendPreview(signedInUser, sickNote, extend, extendToDate, customDateSubmit, model);
-            model.addAttribute("sickNote", sickNoteExtendDto);
-            return "sicknote/sick_note_extend";
-        } else {
+        if (isCreateExtendSubmit) {
             sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
             return "redirect:/web/sicknote/" + sickNote.getId();
+        } else {
+            prepareSickNoteExtendPreview(signedInUser, sickNote, sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
+            return "sicknote/sick_note_extend";
         }
     }
 
@@ -174,8 +176,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         return maybeSickNote;
     }
 
-    private void prepareModel(Model model, Person signedInUser, LocalDate extendToDate, SickNote sickNote,
-                              SickNoteExtendDto currentSickNoteDto) {
+    private void prepareModel(Model model, Person signedInUser, LocalDate extendToDate, SickNote sickNote) {
 
         final WorkingTimeCalendar workingTimeCalendar = getWorkingTimeCalendar(sickNote, extendToDate);
 
@@ -187,50 +188,57 @@ class SickNoteExtendViewController implements HasLaunchpad {
         model.addAttribute("today", today);
         model.addAttribute("sickNoteTypeChild", sickNote.getSickNoteType().getCategory().equals(SICK_NOTE_CHILD));
         model.addAttribute("extendToDate", extendToDate == null ? today : extendToDate);
-        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(currentSickNoteDto.getEndDate(), FULL));
+        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(sickNote.getEndDate(), FULL));
         model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FULL));
         model.addAttribute("plusTwoWorkdaysWord", dateFormatAware.formatWord(plusTwoWorkdaysDate, FULL));
         model.addAttribute("untilEndOfWeekWord", dateFormatAware.formatWord(endOfWeek(), FULL));
     }
 
-    private void prepareSickNoteExtendPreview(Person signedInUser, SickNote sickNote, String extend,
+    private void prepareSickNoteExtendPreview(Person signedInUser, SickNote sickNote, SickNoteExtendDto sickNoteExtendDto, String extend,
                                               LocalDate extendToDate, Optional<String> customDateSubmit, Model model) {
 
         final WorkingTimeCalendar workingTimeCalendar = getWorkingTimeCalendar(sickNote, extendToDate);
         final LocalDate plusOneWorkdayDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, sickNote.getEndDate());
         final LocalDate plusTwoWorkdaysDate = nextWorkingDayFollowingTo(signedInUser, workingTimeCalendar, plusOneWorkdayDate);
 
-        final SickNoteExtendDto currentSickNoteDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
+        prepareModel(model, signedInUser, extendToDate, sickNote);
 
-        prepareModel(model, signedInUser, extendToDate, sickNote, currentSickNoteDto);
-
-        final SickNoteExtendDto sickNoteExtendedDto;
+        final SickNoteExtendPreviewDto sickNotePreviewNext;
         final String selectedExtend;
 
         if (customDateSubmit.isPresent()) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), extendToDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), extendToDate, nextWorkingDays);
+            sickNotePreviewNext = new SickNoteExtendPreviewDto(sickNote.getStartDate(), extendToDate, nextWorkingDays);
             selectedExtend = "custom";
         } else if ("1".equals(extend)) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusOneWorkdayDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusOneWorkdayDate, nextWorkingDays);
+            sickNotePreviewNext = new SickNoteExtendPreviewDto(sickNote.getStartDate(), plusOneWorkdayDate, nextWorkingDays);
             selectedExtend = "1";
         } else if ("2".equals(extend)) {
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), plusTwoWorkdaysDate);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), plusTwoWorkdaysDate, nextWorkingDays);
+            sickNotePreviewNext = new SickNoteExtendPreviewDto(sickNote.getStartDate(), plusTwoWorkdaysDate, nextWorkingDays);
             selectedExtend = "2";
         } else if ("end-of-week".equals(extend)) {
             final LocalDate endOfWeek = endOfWeek();
             final BigDecimal nextWorkingDays = workingTimeCalendar.workingTime(sickNote.getStartDate(), endOfWeek);
-            sickNoteExtendedDto = new SickNoteExtendDto(sickNote.getId(), sickNote.getStartDate(), endOfWeek, nextWorkingDays);
+            sickNotePreviewNext = new SickNoteExtendPreviewDto(sickNote.getStartDate(), endOfWeek, nextWorkingDays);
             selectedExtend = "end-of-week";
         } else {
-            sickNoteExtendedDto = null;
+            sickNotePreviewNext = null;
             selectedExtend = "";
         }
 
-        model.addAttribute("sickNoteExtended", sickNoteExtendedDto);
+        final SickNoteExtendPreviewDto sickNotePreviewCurrent =
+            new SickNoteExtendPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
+
+        model.addAttribute("sickNotePreviewCurrent", sickNotePreviewCurrent);
+        model.addAttribute("sickNotePreviewNext", sickNotePreviewNext);
         model.addAttribute("selectedExtend", selectedExtend);
+
+        if (sickNotePreviewNext != null) {
+            sickNoteExtendDto.setEndDate(sickNotePreviewNext.endDate());
+            model.addAttribute("sickNoteExtension", sickNoteExtendDto);
+        }
     }
 
     private LocalDate max(LocalDate date1, LocalDate date2) {
