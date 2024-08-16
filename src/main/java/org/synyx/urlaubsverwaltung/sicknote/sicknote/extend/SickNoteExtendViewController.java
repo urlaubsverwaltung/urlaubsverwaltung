@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SUNDAY;
@@ -34,8 +37,11 @@ import static java.time.temporal.TemporalAdjusters.next;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import static java.util.Objects.requireNonNullElse;
+import static org.springframework.http.HttpStatus.FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
+import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURBO_REQUEST_ID;
 
 @Controller
 @RequestMapping("/web/sicknote/extend")
@@ -82,20 +88,26 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
     @PostMapping
     public String extendSickNote(@RequestParam(value = "extend", required = false) String extend,
-                                 @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
-                                 // hint if custom date has been submitted or not
-                                 @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
-                                 @ModelAttribute("sickNoteExtension") SickNoteExtendDto sickNoteExtendDto, Errors errors,
-                                 RedirectAttributes redirectAttributes,
-                                 Model model) {
+                                       @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
+                                       // hint if custom date has been submitted or not
+                                       @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
+                                       @ModelAttribute("sickNoteExtension") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                       RedirectAttributes redirectAttributes,
+                                       Model model,
+                                       @RequestHeader(value = HEADER_TURBO_REQUEST_ID, required = false) Optional<UUID> turboRequestId,
+                                       HttpServletResponse response) {
+
+        final boolean hasUserSelectedDays = hasText(extend);
+        final boolean hasUserSelectedCustomDate = customDateSubmit.isPresent();
+        final boolean isCreateExtendSubmit = !hasUserSelectedCustomDate && !hasUserSelectedDays;
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
         if (maybeSickNote.isEmpty()) {
-            return "sicknote/sick_note_extended_not_found";
+            return"sicknote/sick_note_extended_not_found";
         }
 
-        if (customDateSubmit.isEmpty()) {
+        if (!hasUserSelectedCustomDate) {
             // unset value when form has not been submitted with choosing custom date
             // to avoid using this variable accidentally
             extendToDate = null;
@@ -103,9 +115,6 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         final SickNote sickNote = maybeSickNote.get();
-        final boolean hasUserSelectedDays = hasText(extend);
-        final boolean hasUserSelectedCustomDate = customDateSubmit.isPresent();
-        final boolean isCreateExtendSubmit = !hasUserSelectedCustomDate && !hasUserSelectedDays;
 
         if (isCreateExtendSubmit && sickNoteExtendDto.getSickNoteId() == null) {
             // form has been submitted with 'report sick' without filling the form actually
@@ -117,10 +126,18 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         if (hasUserSelectedCustomDate || isCreateExtendSubmit) {
-            sickNoteExtendValidator.validate(sickNoteExtendDto, errors);
+            SickNoteExtendDto mutationGuard = sickNoteExtendDto;
+            if (hasUserSelectedCustomDate) {
+                mutationGuard = new SickNoteExtendDto(sickNoteExtendDto);
+                mutationGuard.setEndDate(extendToDate);
+            }
+            sickNoteExtendValidator.validate(mutationGuard, errors);
         }
         if (errors.hasErrors()) {
             prepareSickNoteExtendPreview(signedInUser, maybeSickNote.get(), sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
+            if (turboRequestId.isPresent()) {
+                response.setStatus(UNPROCESSABLE_ENTITY.value());
+            }
             return "sicknote/sick_note_extend";
         }
 
@@ -129,6 +146,12 @@ class SickNoteExtendViewController implements HasLaunchpad {
             return "redirect:/web/sicknote/" + sickNote.getId();
         } else {
             prepareSickNoteExtendPreview(signedInUser, sickNote, sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
+            if (turboRequestId.isPresent()) {
+                // tricking @hotwired/turbo with redirect status code to render like we want to :x
+                // since not doing a real redirect. location is missing...
+                // (actually we should refactor this POST process to redirection in js case and without js)
+                response.setStatus(FOUND.value());
+            }
             return "sicknote/sick_note_extend";
         }
     }

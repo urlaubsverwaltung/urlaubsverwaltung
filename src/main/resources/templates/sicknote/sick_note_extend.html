@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}, additional=~{::additional})}"
   >
     <title th:text="#{sicknote.extend.header.title}">Krankmeldung erweitern</title>
     <th:block th:fragment="styles">
@@ -23,6 +23,10 @@
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="sick_note_extend.js"></script>
+    </th:block>
+    <th:block th:fragment="additional">
+      <!--      <meta name="turbo-refresh-method" content="morph">-->
+      <!--      <meta name="turbo-refresh-scroll" content="preserve">-->
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
@@ -77,7 +81,7 @@
             Wie lange ist dein Kind vorraussichtlich noch krank?
           </p>
         </th:block>
-        <div class="tw-mt-8">
+        <turbo-frame id="frame-sick-note-extend" class="tw-mt-8">
           <form
             method="post"
             action="#"
@@ -176,7 +180,7 @@
             <p class="tw-mt-1 tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('endDate')}">
               <th:block th:errors="*{endDate}">endDate error message</th:block>
             </p>
-            <th:block th:if="${sickNotePreviewNext != null}">
+            <th:block th:if="${not #fields.hasAnyErrors() && sickNotePreviewNext != null}">
               <div
                 th:fragment="sick-note-extension-preview(sickNotePreviewCurrent, sickNotePreviewNext)"
                 class="sick-note-extension-preview-container"
@@ -268,7 +272,7 @@
               </button>
             </div>
           </form>
-        </div>
+        </turbo-frame>
       </div>
     </main>
   </body>

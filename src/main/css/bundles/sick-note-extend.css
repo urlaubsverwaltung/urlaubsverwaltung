@@ -35,7 +35,13 @@
 .extend-label_date {
 }
 
-.sicknote-extend-button {
+.button.sicknote-extend-button[disabled] {
+  /*
+  hotwired/turbo disables this button on form submit.
+  default styling of button:disabled (see buttons.css) is a forbidden cursor.
+  however, we don't want cursor to flickering in this case
+   */
+  cursor: pointer;
 }
 
 .sicknote-extend-button[aria-pressed="true"],

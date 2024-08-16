@@ -34,6 +34,13 @@ class SickNoteExtendDto {
         this.workingDays = workingDays;
     }
 
+    SickNoteExtendDto(SickNoteExtendDto dto) {
+        this.sickNoteId = dto.sickNoteId;
+        this.startDate = dto.startDate;
+        this.endDate = dto.endDate;
+        this.workingDays = dto.workingDays;
+    }
+
     public Long getSickNoteId() {
         return sickNoteId;
     }
