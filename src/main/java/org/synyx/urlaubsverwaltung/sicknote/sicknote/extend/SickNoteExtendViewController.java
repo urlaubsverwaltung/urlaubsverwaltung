@@ -50,17 +50,20 @@ class SickNoteExtendViewController implements HasLaunchpad {
     private final PersonService personService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final SickNoteService sickNoteService;
+    private final SickNoteExtensionServiceImpl sickNoteExtensionService;
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     private final SickNoteExtendValidator sickNoteExtendValidator;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     SickNoteExtendViewController(PersonService personService, WorkingTimeCalendarService workingTimeCalendarService,
-                                 SickNoteService sickNoteService, SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+                                 SickNoteService sickNoteService, SickNoteExtensionServiceImpl sickNoteExtensionService,
+                                 SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
                                  SickNoteExtendValidator sickNoteExtendValidator, DateFormatAware dateFormatAware, Clock clock) {
         this.personService = personService;
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.sickNoteService = sickNoteService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
         this.sickNoteExtendValidator = sickNoteExtendValidator;
         this.dateFormatAware = dateFormatAware;
@@ -200,6 +203,11 @@ class SickNoteExtendViewController implements HasLaunchpad {
     }
 
     private void prepareModel(Model model, Person signedInUser, LocalDate extendToDate, SickNote sickNote) {
+
+        final Optional<SickNoteExtension> existingExtension = sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote);
+        existingExtension.ifPresent(extension ->
+            model.addAttribute("existingExtensionEndDate", extension.nextEndDate())
+        );
 
         final WorkingTimeCalendar workingTimeCalendar = getWorkingTimeCalendar(sickNote, extendToDate);
 

@@ -77,6 +77,16 @@
             Wie lange ist dein Kind vorraussichtlich noch krank?
           </p>
         </th:block>
+        <p
+          class="tw-m-0 tw-mt-4 tw-max-w-screen-sm tw-flex tw-gap-1.5 dark:tw-text-yellow-500"
+          th:if="${existingExtensionEndDate != null}"
+        >
+          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-shrink-0 tw-mt-0.5')}"></svg>
+          <span th:text="#{sicknote.extend.extension-exists(${#temporals.format(existingExtensionEndDate, 'SHORT')})}">
+            Es existiert bereits eine Verlängerung der Krankmeldung bis zum Freitag, 23. August 2024. Diese wird hiermit
+            überschrieben.
+          </span>
+        </p>
         <div class="tw-mt-8">
           <form
             method="post"
