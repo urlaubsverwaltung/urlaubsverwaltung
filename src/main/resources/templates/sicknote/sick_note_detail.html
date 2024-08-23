@@ -84,6 +84,11 @@
         </div>
 
         <div class="feedback">
+          <th:block th:if="${#bools.isTrue(showExtensionCreatedFeedback)}">
+            <p class="alert alert-success" th:text="#{sicknote.extend.submitted.success-info}">
+              Verlängerung der Krankmeldung wurde erfolgreich eingereicht.
+            </p>
+          </th:block>
           <th:block th:if="${errors != null && errors.hasFieldErrors('text')}">
             <p class="alert alert-danger" th:text="${#messages.msg(errors.getFieldErrors('text').get(0).getCode())}">
               error feedback

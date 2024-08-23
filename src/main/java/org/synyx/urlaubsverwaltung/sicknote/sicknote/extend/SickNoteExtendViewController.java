@@ -146,6 +146,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         if (isCreateExtendSubmit) {
             sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
+            redirectAttributes.addFlashAttribute("showExtensionCreatedFeedback", true);
             return "redirect:/web/sicknote/" + sickNote.getId();
         } else {
             prepareSickNoteExtendPreview(signedInUser, sickNote, sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
