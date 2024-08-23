@@ -102,13 +102,11 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
         final SickNote sickNote = getSickNote(sickNoteId);
         final List<SickNoteExtensionEntity> extensionEntities = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
-
-        // TODO nice error handling? while this should not happen when using the correct ui workflow...
         if (extensionEntities.isEmpty()) {
-            throw new IllegalStateException("cannot accept submitted extension. no extensions could be found.");
+            throw new IllegalStateException("Cannot accept submitted extension. No extensions could be found for sickNote id=%s".formatted(sickNoteId));
         }
         if (extensionEntities.stream().noneMatch(e -> e.getStatus() == SUBMITTED)) {
-            throw new IllegalStateException("cannot accept submitted extension. no extension with status SUBMITTED could be found.");
+            throw new IllegalStateException("Cannot accept submitted extension. No extension with status SUBMITTED could be found for sickNote id=%s".formatted(sickNoteId));
         }
 
         final LocalDate nextEndDate = extensionEntities.getFirst().getNewEndDate();
@@ -170,7 +168,7 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
     private SickNote getSickNote(Long id) {
         return sickNoteService.getById(id)
-            .orElseThrow(() -> new IllegalStateException("could not find sickNote with id=" + id));
+            .orElseThrow(() -> new IllegalStateException("Could not find sickNote with id=" + id));
     }
 
     private SickNoteExtension toSickNoteExtension(SickNoteExtensionEntity entity, BigDecimal additionalWorkdays) {
