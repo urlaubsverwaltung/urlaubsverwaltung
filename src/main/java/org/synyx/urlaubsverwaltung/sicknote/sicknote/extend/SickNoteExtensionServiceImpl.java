@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -23,7 +24,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExten
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionStatus.SUPERSEDED;
 
 @Service
-class SickNoteExtensionServiceImpl implements SickNoteExtensionService, SubmittedSickNoteExtensionService {
+class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -46,6 +47,27 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService, Submitte
     public Optional<SickNoteExtension> findSubmittedExtensionOfSickNote(SickNote sickNote) {
         return findMostRecentSubmittedExtensionEntity(sickNote)
             .map(entity -> toSickNoteExtension(entity, getAdditionalWorkingDays(sickNote, entity)));
+    }
+
+    @Override
+    public void updateExtensionsForConvertedSickNote(SickNote sickNote) {
+        if (sickNote.getStatus() == SickNoteStatus.CONVERTED_TO_VACATION) {
+            final List<SickNoteExtensionEntity> toSave = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNote.getId())
+                .stream()
+                .filter(e -> e.getStatus() == SUBMITTED)
+                .map(e -> {
+                    e.setStatus(SUPERSEDED);
+                    return e;
+                })
+                .toList();
+
+            if (toSave.isEmpty()) {
+                LOG.info("No sickNoteExtensions available to update for sickNote={}", sickNote.getId());
+            } else {
+                LOG.info("Update sickNoteExtension status from SUBMITTED to SUPERSEDED of ids={}", toSave.stream().map(SickNoteExtensionEntity::getId).toList());
+                repository.saveAll(toSave);
+            }
+        }
     }
 
     @Override

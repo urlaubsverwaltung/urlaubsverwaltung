@@ -3,8 +3,18 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
-interface SickNoteExtensionService {
+public interface SickNoteExtensionService {
+
+    /**
+     * Find the most recent {@link SickNoteExtension} with status {@linkplain SickNoteExtensionStatus#SUBMITTED}
+     * of a {@link org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote}.
+     *
+     * @param sickNote referenced {@link org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote}
+     * @return optional resolving to last created {@link SickNoteExtension} of sickNote, empty otherwise
+     */
+    Optional<SickNoteExtension> findSubmittedExtensionOfSickNote(SickNote sickNote);
 
     /**
      * Creates a new {@linkplain SickNoteExtension} linked to the given {@linkplain SickNote}.
@@ -34,4 +44,14 @@ interface SickNoteExtensionService {
      * @throws IllegalStateException when sickNote or extension does not exist
      */
     SickNote acceptSubmittedExtension(Long sickNoteId);
+
+    /**
+     * Update the status of all referenced {@link SickNoteExtension} to match the new {@link SickNote#getStatus() status}.
+     *
+     * <p>
+     * e.g. submitted extensions will be set to superseded if sickNote has been converted to vacation.
+     *
+     * @param sickNote {@link SickNote} to update referenced extensions
+     */
+    void updateExtensionsForConvertedSickNote(SickNote sickNote);
 }

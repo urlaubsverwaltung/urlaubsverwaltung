@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -32,6 +33,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SickNoteService sickNoteService;
+    private final SickNoteExtensionService sicknoteExtensionService;
     private final SickNoteCommentService commentService;
     private final ApplicationInteractionService applicationInteractionService;
     private final SickNoteMailService sickNoteMailService;
@@ -39,12 +41,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
+                                   SickNoteExtensionService sicknoteExtensionService,
                                    SickNoteCommentService commentService,
                                    ApplicationInteractionService applicationInteractionService,
                                    SickNoteMailService sickNoteMailService,
                                    ApplicationEventPublisher applicationEventPublisher) {
 
         this.sickNoteService = sickNoteService;
+        this.sicknoteExtensionService = sicknoteExtensionService;
         this.commentService = commentService;
         this.applicationInteractionService = applicationInteractionService;
         this.sickNoteMailService = sickNoteMailService;
@@ -120,8 +124,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
-        // make sick note inactive
         final SickNote convertedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
+
+        sicknoteExtensionService.updateExtensionsForConvertedSickNote(convertedSickNote);
 
         commentService.create(convertedSickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         applicationInteractionService.createFromConvertedSickNote(application, converter);

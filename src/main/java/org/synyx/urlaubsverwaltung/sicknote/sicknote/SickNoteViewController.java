@@ -36,7 +36,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtendPreviewDto;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
@@ -80,7 +80,7 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
-    private final SubmittedSickNoteExtensionService sickNoteExtensionService;
+    private final SickNoteExtensionService sickNoteExtensionService;
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
@@ -97,7 +97,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
-                           SubmittedSickNoteExtensionService sickNoteExtensionService,
+                           SickNoteExtensionService sickNoteExtensionService,
                            SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService,
                            PersonService personService, DepartmentService departmentService, SickNoteValidator sickNoteValidator,

@@ -3,7 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 enum SickNoteExtensionStatus {
 
     /**
-     * Meanwhile, a newer {@link SickNoteExtension} exists.
+     * Meanwhile, a newer {@link SickNoteExtension} exists or the referenced
+     * {@link org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote} has been converted.
      */
     SUPERSEDED,
 

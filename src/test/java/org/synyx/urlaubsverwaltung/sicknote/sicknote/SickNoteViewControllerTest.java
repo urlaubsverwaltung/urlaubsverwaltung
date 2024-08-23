@@ -31,7 +31,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
@@ -92,7 +92,7 @@ class SickNoteViewControllerTest {
     @Mock
     private SickNoteTypeService sickNoteTypeService;
     @Mock
-    private SubmittedSickNoteExtensionService sickNoteExtensionService;
+    private SickNoteExtensionService sickNoteExtensionService;
     @Mock
     private SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     @Mock
