@@ -272,19 +272,31 @@
         <div th:if="${sickNotePreviewCurrent != null}" class="tw-mt-8">
           <div class="section-heading">
             <div class="tw-flex tw-items-baseline tw-pb-2 tw-border-b-2 dark:tw-border-b dark:tw-border-zinc-600">
-              <h2>Krankmeldung erweitern</h2>
+              <h2 th:text="#{sicknote.extend.submitted.extension-title}">Krankmeldung verlängern</h2>
             </div>
           </div>
           <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
-            <p class="tw-mt-4">Max Muster möchte die Krankmeldung erweitern.</p>
+            <p class="tw-mt-4" th:text="#{sicknote.extend.submitted.wants-to-extend.hint(${sickNote.person.niceName})}">
+              Max Muster möchte die Krankmeldung erweitern.
+            </p>
           </th:block>
           <th:block th:if="${#bools.isFalse(canAcceptSubmittedExtension)}">
-            <p class="tw-mt-4">Eine berechtigte Person muss die geänderte Krankmeldung akzeptieren.</p>
+            <p class="tw-mt-4" th:text="#{sicknote.extend.submitted.has-to-be-accepted.hint}">
+              Eine berechtigte Person muss die geänderte Krankmeldung akzeptieren.
+            </p>
           </th:block>
-          <div class="tw-mt-8">
-            <th:block
-              th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${sickNotePreviewCurrent}, ${sickNotePreviewNext})}"
-            ></th:block>
+          <div class="tw-mt-4">
+            <details class="[&>summary>svg]:open:tw-rotate-90">
+              <summary class="tw-cursor-pointer tw-flex tw-items-center tw-gap-1">
+                <svg th:replace="~{icon/chevron-right::svg(className='tw-w-4 tw-h-4 tw-transition-transform')}"></svg>
+                Vorschau der Verlängerung
+              </summary>
+              <div class="tw-mt-4">
+                <th:block
+                  th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${sickNotePreviewCurrent}, ${sickNotePreviewNext})}"
+                ></th:block>
+              </div>
+            </details>
           </div>
           <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
             <form
@@ -293,7 +305,9 @@
               method="post"
               class="tw-mt-8"
             >
-              <button type="submit" class="button-main-green">Akzeptieren</button>
+              <button type="submit" class="button-main-green" th:text="#{sicknote.extend.accept.button.text}">
+                Verlängerung Akzeptieren
+              </button>
             </form>
           </th:block>
         </div>
