@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteEntity;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
@@ -27,18 +27,20 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
     private final SickNoteExtensionRepository extensionRepository;
     private final SickNoteService sickNoteService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
+    private final SickNoteMapper sickNoteMapper;
 
-    SubmittedSickNoteServiceImpl(SickNoteExtensionRepository extensionRepository, SickNoteService sickNoteService, WorkingTimeCalendarService workingTimeCalendarService) {
+    SubmittedSickNoteServiceImpl(SickNoteExtensionRepository extensionRepository, SickNoteService sickNoteService, WorkingTimeCalendarService workingTimeCalendarService, SickNoteMapper sickNoteMapper) {
         this.extensionRepository = extensionRepository;
         this.sickNoteService = sickNoteService;
         this.workingTimeCalendarService = workingTimeCalendarService;
+        this.sickNoteMapper = sickNoteMapper;
     }
 
     @Override
     public List<SubmittedSickNote> findSubmittedSickNotes(List<Person> persons) {
-        final Stream<SubmittedSickNote> extensions = findExtensionsWithStatusSubmitted(persons);
         final Stream<SubmittedSickNote> sickNotes = findSickNotesWithStatusSubmitted(persons);
-        return Stream.concat(extensions, sickNotes).distinct().toList();
+        final Stream<SubmittedSickNote> extensions = findExtensionsWithStatusSubmitted(persons);
+        return Stream.concat(sickNotes, extensions).distinct().toList();
     }
 
     private Stream<SubmittedSickNote> findSickNotesWithStatusSubmitted(List<Person> persons) {
@@ -66,7 +68,7 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
                 final Person person = sickNoteEntity.getPerson();
                 final WorkingTimeCalendar workingTimeCalendar = workingTimesByPersons.get(person);
 
-                final SickNote sickNote = toSickNote(sickNoteEntity, workingTimeCalendar);
+                final SickNote sickNote = sickNoteMapper.toSickNote(sickNoteEntity, workingTimeCalendar);
 
                 final BigDecimal additionalWorkdays = workingTimeCalendar.workingTime(sickNote.getEndDate(), extensionEntity.getNewEndDate())
                     // workingTime for the same date is 1. therefore we have to subtract 1 for "additional" days
@@ -109,28 +111,5 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
             entity.getStatus(),
             additionalWorkdays
         );
-    }
-
-    private static SickNote toSickNote(SickNoteEntity entity, WorkingTimeCalendar workingTimeCalendar) {
-
-        final LocalDate startDate = entity.getStartDate();
-        final LocalDate endDate = entity.getEndDate();
-        final DayLength dayLength = entity.getDayLength();
-
-        return SickNote.builder()
-            .id(entity.getId())
-            .person(entity.getPerson())
-            .applier(entity.getApplier())
-            .sickNoteType(entity.getSickNoteType())
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(dayLength)
-            .aubStartDate(entity.getAubStartDate())
-            .aubEndDate(entity.getAubEndDate())
-            .lastEdited(entity.getLastEdited())
-            .endOfSickPayNotificationSend(entity.getEndOfSickPayNotificationSend())
-            .status(entity.getStatus())
-            .workingTimeCalendar(workingTimeCalendar)
-            .build();
     }
 }
