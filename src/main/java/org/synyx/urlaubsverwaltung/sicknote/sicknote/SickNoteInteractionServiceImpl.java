@@ -143,6 +143,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
         LOG.info("Cancelled sick note: {}", cancelledSickNote);
 
+        sicknoteExtensionService.updateExtensionsForConvertedSickNote(cancelledSickNote);
+
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 
         sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote);

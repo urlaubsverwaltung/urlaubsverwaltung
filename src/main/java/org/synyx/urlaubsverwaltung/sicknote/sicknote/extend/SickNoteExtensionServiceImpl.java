@@ -51,7 +51,9 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
 
     @Override
     public void updateExtensionsForConvertedSickNote(SickNote sickNote) {
-        if (sickNote.getStatus() == SickNoteStatus.CONVERTED_TO_VACATION) {
+        if (sickNote.getStatus() == SickNoteStatus.CONVERTED_TO_VACATION
+            || sickNote.getStatus() == SickNoteStatus.CANCELLED) {
+
             final List<SickNoteExtensionEntity> toSave = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNote.getId())
                 .stream()
                 .filter(e -> e.getStatus() == SUBMITTED)

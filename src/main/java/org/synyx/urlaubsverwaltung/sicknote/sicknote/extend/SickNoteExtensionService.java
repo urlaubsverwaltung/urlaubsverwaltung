@@ -49,7 +49,7 @@ public interface SickNoteExtensionService {
      * Update the status of all referenced {@link SickNoteExtension} to match the new {@link SickNote#getStatus() status}.
      *
      * <p>
-     * e.g. submitted extensions will be set to superseded if sickNote has been converted to vacation.
+     * e.g. submitted extensions will be set to superseded if sickNote has been converted to vacation or has been cancelled.
      *
      * @param sickNote {@link SickNote} to update referenced extensions
      */
