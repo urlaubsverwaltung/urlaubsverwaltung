@@ -43,7 +43,7 @@ class SickNoteExtensionInteractionServiceImplTest {
     private SickNoteExtensionInteractionServiceImpl sut;
 
     @Mock
-    private SickNoteExtensionService sickNoteExtensionService;
+    private SickNoteExtensionServiceImpl sickNoteExtensionService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock

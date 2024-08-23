@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -35,13 +34,14 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtendPreviewDto;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreview;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionPreviewService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -80,8 +80,8 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
+    private final SubmittedSickNoteExtensionService sickNoteExtensionService;
     private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
-    private final SickNoteExtensionPreviewService sickNoteExtensionPreviewService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
@@ -95,11 +95,10 @@ class SickNoteViewController implements HasLaunchpad {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
 
-    @Autowired
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
+                           SubmittedSickNoteExtensionService sickNoteExtensionService,
                            SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
-                           SickNoteExtensionPreviewService sickNoteExtensionPreviewService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService,
                            PersonService personService, DepartmentService departmentService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
@@ -109,8 +108,8 @@ class SickNoteViewController implements HasLaunchpad {
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
         this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
-        this.sickNoteExtensionPreviewService = sickNoteExtensionPreviewService;
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
@@ -150,11 +149,11 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
-            sickNoteExtensionPreviewService.findExtensionPreviewOfSickNote(sickNote.getId())
-                .ifPresent(preview -> {
+            sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)
+                .ifPresent(extension -> {
                     model.addAttribute("canAcceptSubmittedExtension", signedInUser.hasAnyRole(OFFICE, SICK_NOTE_EDIT));
                     model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
-                    model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(preview));
+                    model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
                 });
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
@@ -594,7 +593,8 @@ class SickNoteViewController implements HasLaunchpad {
         return new SickNoteExtendPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
     }
 
-    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNoteExtensionPreview preview) {
-        return new SickNoteExtendPreviewDto(preview.startDate(), preview.endDate(), preview.workingDays());
+    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote, SickNoteExtension extension) {
+        final BigDecimal workingDays = sickNote.getWorkDays().add(extension.additionalWorkdays());
+        return new SickNoteExtendPreviewDto(sickNote.getStartDate(), extension.nextEndDate(), workingDays);
     }
 }

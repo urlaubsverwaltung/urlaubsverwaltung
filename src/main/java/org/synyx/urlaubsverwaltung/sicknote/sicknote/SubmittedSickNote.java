@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -61,5 +62,18 @@ public record SubmittedSickNote(SickNote sickNote, Optional<SickNoteExtension> e
      */
     public boolean extensionSubmitted() {
         return extension.isPresent();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubmittedSickNote that = (SubmittedSickNote) o;
+        return Objects.equals(sickNote, that.sickNote);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sickNote);
     }
 }

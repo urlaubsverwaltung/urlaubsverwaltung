@@ -38,7 +38,7 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
     public List<SubmittedSickNote> findSubmittedSickNotes(List<Person> persons) {
         final Stream<SubmittedSickNote> extensions = findExtensionsWithStatusSubmitted(persons);
         final Stream<SubmittedSickNote> sickNotes = findSickNotesWithStatusSubmitted(persons);
-        return Stream.concat(extensions, sickNotes).toList();
+        return Stream.concat(extensions, sickNotes).distinct().toList();
     }
 
     private Stream<SubmittedSickNote> findSickNotesWithStatusSubmitted(List<Person> persons) {
@@ -68,7 +68,10 @@ class SubmittedSickNoteServiceImpl implements SubmittedSickNoteService {
 
                 final SickNote sickNote = toSickNote(sickNoteEntity, workingTimeCalendar);
 
-                final BigDecimal additionalWorkdays = workingTimeCalendar.workingTime(sickNote.getEndDate(), extensionEntity.getNewEndDate());
+                final BigDecimal additionalWorkdays = workingTimeCalendar.workingTime(sickNote.getEndDate(), extensionEntity.getNewEndDate())
+                    // workingTime for the same date is 1. therefore we have to subtract 1 for "additional" days
+                    .subtract(BigDecimal.ONE);
+
                 final SickNoteExtension extension = toSickNoteExtension(extensionEntity, additionalWorkdays);
 
                 return new SubmittedSickNote(sickNote, Optional.of(extension));
