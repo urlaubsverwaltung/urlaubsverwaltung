@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.EXTENSION_SUBMITTED;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 
 class SickNoteStatusTest {
@@ -17,7 +16,7 @@ class SickNoteStatusTest {
     @Test
     void ensureActiveApplicationStatusAreCorrectlyDefined() {
         assertThat(SickNoteStatus.activeStatuses())
-            .containsExactly(SUBMITTED, EXTENSION_SUBMITTED, ACTIVE);
+            .containsExactly(SUBMITTED, ACTIVE);
     }
 
     @Test

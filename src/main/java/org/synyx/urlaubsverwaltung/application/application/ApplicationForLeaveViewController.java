@@ -140,7 +140,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private void prepareOtherSubmittedSickNotes(Model model, Person signedInUser, Locale locale) {
         final List<SubmittedSickNote> sickNotes = sickNoteService.findSubmittedSickNotes(getPersonsForRelevantSubmittedSickNotes(signedInUser));
-        final List<SickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(sickNotes, locale);
+        final List<SubmittedSickNoteDto> otherSickNotesDtos = mapToSickNoteDtoList(sickNotes, locale);
         model.addAttribute("otherSickNotes", otherSickNotesDtos);
     }
 
@@ -170,21 +170,20 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
-    private List<SickNoteDto> mapToSickNoteDtoList(List<SubmittedSickNote> sickNotes, Locale locale) {
+    private List<SubmittedSickNoteDto> mapToSickNoteDtoList(List<SubmittedSickNote> sickNotes, Locale locale) {
         return sickNotes.stream()
             .map(sickNote -> toView(sickNote, messageSource, locale))
             .toList();
     }
 
-    private static SickNoteDto toView(SubmittedSickNote submittedSickNote, MessageSource messageSource, Locale locale) {
+    private static SubmittedSickNoteDto toView(SubmittedSickNote submittedSickNote, MessageSource messageSource, Locale locale) {
         final SickNote sickNote = submittedSickNote.sickNote();
         final Person person = sickNote.getPerson();
-        return new SickNoteDto(
+        return new SubmittedSickNoteDto(
             sickNote.getId().toString(),
             sickNote.getWorkDays(),
             new SickNotePersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), sickNote.getId()),
             sickNote.getSickNoteType().getMessageKey(),
-            submittedSickNote.status().name(),
             toDurationOfAbsenceDescription(submittedSickNote, messageSource, locale),
             submittedSickNote.extensionSubmitted(),
             submittedSickNote.additionalWorkdays().orElse(null)

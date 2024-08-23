@@ -18,13 +18,6 @@ public record SubmittedSickNote(SickNote sickNote, Optional<SickNoteExtension> e
     }
 
     /**
-     * @return {@linkplain SickNoteStatus#EXTENSION_SUBMITTED} if optional extension exists, {@linkplain SickNote#getStatus()} otherwise.
-     */
-    public SickNoteStatus status() {
-        return extensionSubmitted() ? SickNoteStatus.EXTENSION_SUBMITTED : sickNote.getStatus();
-    }
-
-    /**
      * @return start date of the {@linkplain SickNote}
      */
     public LocalDate startDate() {

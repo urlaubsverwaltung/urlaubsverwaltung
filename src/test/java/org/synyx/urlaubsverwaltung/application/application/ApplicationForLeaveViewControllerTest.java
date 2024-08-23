@@ -1552,14 +1552,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1607,14 +1606,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1662,14 +1660,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1717,14 +1714,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED"))
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey"))
                 )
             )))
             .andExpect(view().name("application/application-overview"));
