@@ -75,32 +75,26 @@ class SickNoteExtensionServiceImpl implements SickNoteExtensionService {
     @Override
     public SickNoteExtension createSickNoteExtension(SickNote sickNote, LocalDate newEndDate) {
 
-        // first update existing extension entities status to be SUPERSEDED now
         final List<SickNoteExtensionEntity> entities = repository.findAllBySickNoteIdOrderByCreatedAtDesc(sickNote.getId());
-        for (SickNoteExtensionEntity entity : entities) {
-            if (entity.getStatus() == SUBMITTED) {
-                LOG.info("Update previous sickNoteExtension id={} status from SUBMITTED to SUPERSEDED.", entity.getId());
-                entity.setStatus(SUPERSEDED);
-            }
+
+        final SickNoteExtensionEntity extensionEntity;
+        if (!entities.isEmpty() && entities.getFirst().getStatus() == SUBMITTED) {
+            extensionEntity = entities.getFirst();
+            LOG.info("Update already submitted sickNoteExtension newEndDate from {} to {}", extensionEntity.getNewEndDate(), newEndDate);
+            extensionEntity.setNewEndDate(newEndDate);
+        } else {
+            LOG.info("Create sickNoteExtension for sickNote={} with newEndDate={}", sickNote.getId(), newEndDate);
+            extensionEntity = new SickNoteExtensionEntity();
+            extensionEntity.setSickNoteId(sickNote.getId());
+            extensionEntity.setNewEndDate(newEndDate);
+            extensionEntity.setCreatedAt(Instant.now(clock));
+            extensionEntity.setStatus(SUBMITTED);
         }
-        repository.saveAll(entities);
-
-        // then create new submitted extension entity
-
-        final SickNoteExtensionEntity extensionEntity = new SickNoteExtensionEntity();
-        extensionEntity.setSickNoteId(sickNote.getId());
-        extensionEntity.setNewEndDate(newEndDate);
-        extensionEntity.setCreatedAt(Instant.now(clock));
-        extensionEntity.setStatus(SUBMITTED);
 
         final SickNoteExtensionEntity saved = repository.save(extensionEntity);
 
         final BigDecimal additionalWorkdays = getWorkdays(sickNote.getPerson(), sickNote.getEndDate(), newEndDate);
-        final SickNoteExtension submittedExtension = toSickNoteExtension(saved, additionalWorkdays);
-
-        LOG.info("Created sickNoteExtension id={} of sickNote id={}", submittedExtension.id(), submittedExtension.sickNoteId());
-
-        return submittedExtension;
+        return toSickNoteExtension(saved, additionalWorkdays);
     }
 
     @Override

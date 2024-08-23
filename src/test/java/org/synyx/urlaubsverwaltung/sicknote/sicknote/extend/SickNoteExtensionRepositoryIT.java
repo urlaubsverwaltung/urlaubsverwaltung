@@ -16,6 +16,8 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 @Transactional
@@ -37,11 +39,16 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
+        person.setPermissions(List.of(USER, OFFICE));
+
         final SickNote sickNoteToSave = sickNoteService.save(SickNote.builder().person(person).startDate(now.minusDays(10)).endDate(now.minusDays(10)).status(SickNoteStatus.ACTIVE).build());
         final SickNote sickNote = sickNoteService.save(sickNoteToSave);
 
         final Long sickNoteId = sickNote.getId();
+
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1));
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(person, sickNoteId);
+
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2));
 
         final List<SickNoteExtensionEntity> actual = sut.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);

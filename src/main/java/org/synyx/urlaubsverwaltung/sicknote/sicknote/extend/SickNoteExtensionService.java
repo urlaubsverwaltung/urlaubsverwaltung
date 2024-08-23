@@ -19,7 +19,7 @@ public interface SickNoteExtensionService {
     /**
      * Creates a new {@linkplain SickNoteExtension} linked to the given {@linkplain SickNote}.
      * If there is a {@linkplain SickNoteExtensionStatus#SUBMITTED submitted} SickNoteExtension already,
-     * it will be set to status {@linkplain SickNoteExtensionStatus#SUPERSEDED SUPERSEDED}.
+     * it will be updated to the next newEndDate.
      *
      * <p>
      * This method does not handle authorization. You have to check this upfront!
