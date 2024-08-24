@@ -50,7 +50,7 @@ import java.nio.file.Paths;
 @Documented
 @Inherited
 @UsePlaywright(UiTest.CustomOptions.class)
-@ExtendWith({ TestRecordVideoExtension.class })
+@ExtendWith({ PlaywrightTraceExtension.class, TestRecordVideoExtension.class })
 @ContextConfiguration(initializers = UITestInitializer.class)
 public @interface UiTest {
 
