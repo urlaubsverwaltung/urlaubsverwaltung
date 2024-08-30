@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.SettingsAbsenceTypesPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -44,7 +45,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.util.Locale.GERMAN;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -84,6 +84,7 @@ class CustomAbsenceTypeUIIT {
         final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
@@ -93,29 +94,29 @@ class CustomAbsenceTypeUIIT {
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
-        settingsPage.navigation().clickAbsenceTypes();
-        settingsPage.addNewVacationType();
+        settingsPage.navigation().goToAbsenceTypes();
+        settingsAbsenceTypesPage.addNewVacationType();
 
         // ensure at least one translation required error hint
-        settingsPage.saveSettings();
-        assertThat(settingsPage.vacationTypeMissingTranslationError(settingsPage.lastVacationType())).isVisible();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).isVisible();
 
         // ensure saving valid vacation type succeeds
-        settingsPage.setVacationTypeLabel(settingsPage.lastVacationType(), GERMAN, "Biertag");
-        settingsPage.saveSettings();
-        assertThat(settingsPage.vacationTypeMissingTranslationError(settingsPage.lastVacationType())).not().isVisible();
+        settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).not().isVisible();
 
         // enable vacation type to ensure selecting it later creating a new application for leave
-        final Locator status = settingsPage.vacationTypeStatusCheckbox(settingsPage.lastVacationType());
+        final Locator status = settingsAbsenceTypesPage.vacationTypeStatusCheckbox(settingsAbsenceTypesPage.lastVacationType());
         assertThat(status).not().isChecked();
         status.check();
-        settingsPage.saveSettings();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
 
         // ensure unique vacation type name error hint
-        settingsPage.addNewVacationType();
-        settingsPage.setVacationTypeLabel(settingsPage.lastVacationType(), GERMAN, "Biertag");
-        settingsPage.saveSettings();
-        assertThat(settingsPage.vacationTypeUniqueTranslationError(settingsPage.lastVacationType(), GERMAN)).isVisible();
+        settingsAbsenceTypesPage.addNewVacationType();
+        settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        assertThat(settingsAbsenceTypesPage.vacationTypeUniqueTranslationError(settingsAbsenceTypesPage.lastVacationType(), GERMAN)).isVisible();
 
         // ensure vacation type is selectable creating a new application for leave
         navigationPage.quickAdd.click();
@@ -142,7 +143,7 @@ class CustomAbsenceTypeUIIT {
 
         final Year currentYear = Year.now();
         final LocalDate firstDayOfYear = currentYear.atDay(1);
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).toList();
         workingTimeWriteService.touch(workingDays, firstDayOfYear, savedPerson);
 
         final LocalDate lastDayOfYear = firstDayOfYear.withMonth(DECEMBER.getValue()).withDayOfMonth(31);

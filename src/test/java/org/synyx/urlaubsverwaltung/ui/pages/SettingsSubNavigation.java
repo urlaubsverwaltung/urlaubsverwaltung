@@ -26,7 +26,7 @@ public class SettingsSubNavigation {
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
-    public void clickAbsenceTypes() {
+    public void goToAbsenceTypes() {
         page.locator(ABSENCE_TYPES_TAB_SELECTOR).click();
         page.waitForURL(Pattern.compile("/settings/absence-types$"));
     }
