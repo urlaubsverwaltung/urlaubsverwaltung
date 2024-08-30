@@ -502,6 +502,25 @@ für weitere Informationen.
 
 Um diesen zu nutzen, muss beim Starten des Tests die Umgebungsvariable `PWDEBUG=1` gesetzt werden.
 
+#### UI-Test Artefakte
+
+Unsere Playwright UI Tests erzeugen bei Fehlschlag zwei Artefakte:
+
+- Video
+- [Trace Report](https://playwright.dev/java/docs/trace-viewer-intro)
+
+Die Artefakte sind im `target` Verzeichnis zu finden.  
+
+Videos sind zur schnellen Analyse nützlich, da sie z. B. direkt im Browser angeschaut werden können.
+
+Wenn das Video nicht ausreicht, kann der Trace Report zur detaillierten Analyse genutzt werden.  
+Hierzu das `zip` entweder auf https://trace.playwright.dev hochladen oder die lokale laufende progressive Webapp
+bei sich selbst starten mit z. B. maven:
+
+```bash
+./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="show-trace target/FAILED-test.zip"
+```
+
 ### Release
 
 ### GitHub action
