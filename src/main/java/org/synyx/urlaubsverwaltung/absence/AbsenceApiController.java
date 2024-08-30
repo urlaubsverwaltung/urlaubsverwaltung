@@ -168,7 +168,7 @@ public class AbsenceApiController {
 
         Optional<Long> absenceId = recordInfo.getId();
         if (VacationCategory.OVERTIME.name().equals(category) && absenceId.isPresent()) {
-            absenceDto.add(linkTo(methodOn(OvertimeAbsenceApiController.class).overtimeAbsence(recordInfo.getPerson().getId(), absenceId.get())).withRel("usedOvertime"));
+            absenceDto.add(linkTo(methodOn(OvertimeAbsenceApiController.class).overtimeAbsence(recordInfo.getPerson().getId(), absenceId.get())).withRel("overtime"));
         }
         return absenceDto;
     }

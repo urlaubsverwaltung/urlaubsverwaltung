@@ -73,7 +73,7 @@ public class OvertimeAbsenceApiController {
 
         if (application.getHours() == null) {
             LOG.error("hours duration unknown for {}", application);
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Absence is of category OVERTIME, but usedOvertimeDuration is not know.");
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Absence is of category OVERTIME, but duration is not know.");
         }
 
         return new OvertimeAbsenceDto(absenceId, application.getHours());

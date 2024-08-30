@@ -58,7 +58,7 @@ class OvertimeAbsenceApiControllerTest {
             .andExpect(content().json("""
                 {
                     "id": 3,
-                    "usedOvertimeDuration": "PT3H40M"
+                    "duration": "PT3H40M"
                 }
                 """));
 

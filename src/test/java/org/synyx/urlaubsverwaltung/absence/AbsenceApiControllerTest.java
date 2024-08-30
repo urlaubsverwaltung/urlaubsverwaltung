@@ -229,7 +229,7 @@ class AbsenceApiControllerTest {
                       "status": "WAITING",
                       "links": [
                           {
-                            "rel": "usedOvertime",
+                            "rel": "overtime",
                             "href": "http://localhost/api/persons/23/absences/42/overtime"
                           }
                       ]

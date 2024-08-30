@@ -14,18 +14,18 @@ public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> 
         example = "PT8H",
         type = "string",
         format = "duration")
-    private final Duration usedOvertimeDuration;
+    private final Duration duration;
 
-    public OvertimeAbsenceDto(Long id, Duration usedOvertimeDuration) {
+    public OvertimeAbsenceDto(Long id, Duration duration) {
         this.id = id;
-        this.usedOvertimeDuration = usedOvertimeDuration;
+        this.duration = duration;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Duration getUsedOvertimeDuration() {
-        return usedOvertimeDuration;
+    public Duration getDuration() {
+        return duration;
     }
 }
