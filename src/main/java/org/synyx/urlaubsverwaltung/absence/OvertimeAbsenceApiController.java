@@ -65,12 +65,7 @@ public class OvertimeAbsenceApiController {
         @Parameter(description = "ID of the absence")
         @PathVariable("absenceId")
         Long absenceId) {
-        ResponseStatusException notFoundException = new ResponseStatusException(NOT_FOUND, "No absence for personId=" + personId + " and absenceId=" + absenceId);
-        Application application = applicationService.getApplicationById(absenceId).orElseThrow(() -> notFoundException);
-
-        if (!application.getPerson().getId().equals(personId)) {
-            throw notFoundException;
-        }
+        Application application = getApplicationOfPerson(personId, absenceId);
 
         if (!application.getVacationType().isOfCategory(VacationCategory.OVERTIME)) {
             throw new ResponseStatusException(BAD_REQUEST, "Absence does not have category OVERTIME.");
@@ -82,5 +77,11 @@ public class OvertimeAbsenceApiController {
         }
 
         return new OvertimeAbsenceDto(absenceId, application.getHours());
+    }
+
+    private Application getApplicationOfPerson(Long personId, Long absenceId) {
+        return applicationService.getApplicationById(absenceId)
+            .filter(application -> application.getPerson().getId().equals(personId))
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "No absence for personId=" + personId + " and absenceId=" + absenceId));
     }
 }
