@@ -21,7 +21,7 @@ public class SettingsSubNavigation {
         this.page = page;
     }
 
-    public void clickWorkingTime() {
+    public void goToWorkingTime() {
         page.waitForResponse(Response::ok, () -> page.locator(WORKING_TIME_TAB_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }

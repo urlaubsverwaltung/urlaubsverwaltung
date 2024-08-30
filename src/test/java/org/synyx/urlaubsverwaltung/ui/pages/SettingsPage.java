@@ -7,8 +7,6 @@ import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 public class SettingsPage {
 
-    private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
-    private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
     private static final String HALF_DAY_DISABLE_SELECTOR = "[data-test-id=vacation-half-day-disable]";
 
@@ -20,14 +18,6 @@ public class SettingsPage {
 
     public SettingsSubNavigation navigation() {
         return new SettingsSubNavigation(page);
-    }
-
-    public void enableOvertime() {
-        page.locator(OVERTIME_ENABLED_SELECTOR).click();
-    }
-
-    public void disableOvertime() {
-        page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
     /**

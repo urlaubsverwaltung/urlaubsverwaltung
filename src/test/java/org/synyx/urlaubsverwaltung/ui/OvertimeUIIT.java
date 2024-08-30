@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.SettingsWorkingTimePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -83,6 +84,7 @@ class OvertimeUIIT {
         final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
@@ -91,9 +93,9 @@ class OvertimeUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().clickWorkingTime();
-        settingsPage.enableOvertime();
-        settingsPage.saveSettings();
+        settingsPage.navigation().goToWorkingTime();
+        settingsWorkingTimePage.enableOvertime();
+        settingsWorkingTimePage.submitOvertimeForm();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
         navigationPage.quickAdd.click();
