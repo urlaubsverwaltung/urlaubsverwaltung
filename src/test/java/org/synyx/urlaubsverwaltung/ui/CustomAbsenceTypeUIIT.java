@@ -93,7 +93,7 @@ class CustomAbsenceTypeUIIT {
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
-        settingsPage.clickAbsenceTypesTab();
+        settingsPage.navigation().clickAbsenceTypes();
         settingsPage.addNewVacationType();
 
         // ensure at least one translation required error hint

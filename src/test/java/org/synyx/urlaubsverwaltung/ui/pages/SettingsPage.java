@@ -5,15 +5,12 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
 
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
 
 public class SettingsPage {
 
-    private static final String WORKING_TIME_TAB_SELECTOR = "[data-test-id=settings-tab-working-time]";
-    private static final String ABSENCE_TYPES_TAB_SELECTOR = "[data-test-id=settings-tab-absence-types]";
     private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
     private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
@@ -25,14 +22,8 @@ public class SettingsPage {
         this.page = page;
     }
 
-    public void clickWorkingTimeTab() {
-        page.waitForResponse(Response::ok, () -> page.locator(WORKING_TIME_TAB_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
-    }
-
-    public void clickAbsenceTypesTab() {
-        page.locator(ABSENCE_TYPES_TAB_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/settings/absence-types$"));
+    public SettingsSubNavigation navigation() {
+        return new SettingsSubNavigation(page);
     }
 
     public void enableOvertime() {
