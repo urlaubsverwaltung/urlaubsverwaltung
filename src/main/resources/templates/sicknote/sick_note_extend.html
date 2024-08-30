@@ -155,6 +155,7 @@
                 id="extend-to-date-input"
                 name="extendToDate"
                 class="form-control sicknote-extend-button"
+                data-test-id="sicknote-custom-next-end-date-input"
                 th:classappend="${selectedExtend == 'custom' ? 'sicknote-extend-button--selected' : ''}"
                 th:field="*{extendToDate}"
                 th:errorclass="error"
@@ -231,7 +232,10 @@
                   <div class="sick-note-extension-preview-arrow">
                     <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
                   </div>
-                  <div class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted">
+                  <div
+                    class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted"
+                    data-test-id="sick-note-extension-next-preview"
+                  >
                     <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
                       Vorschau geänderte Krankmeldung
                     </div>
@@ -273,6 +277,7 @@
               <button
                 type="submit"
                 class="button-main-green tw-w-full sm:tw-w-56"
+                data-test-id="extension-submit-button"
                 th:text="#{sicknote.extend.form.submit.text}"
               >
                 Weiter Krank melden

@@ -31,4 +31,12 @@ public class SettingsPage {
     public void clickDisableHalfDayAbsence() {
         page.locator(HALF_DAY_DISABLE_SELECTOR).click();
     }
+
+    public void clickUserSubmitSickNotesAllowed() {
+        page.locator("[data-test-id=user-allowed-to-submit-sicknote-input][value=true]").click();
+    }
+
+    public void clickUserToSubmitSickNotesForbidden() {
+        page.locator("[data-test-id=user-allowed-to-submit-sicknote-input][value=false]").click();
+    }
 }
