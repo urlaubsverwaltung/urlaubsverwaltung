@@ -4,9 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
@@ -20,9 +18,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -90,12 +86,8 @@ class OvertimeAbsenceApiControllerTest {
             .andExpect(status().isNotFound());
     }
 
-    static Stream<Arguments> nonOvertimeCategories() {
-        return Arrays.stream(VacationCategory.values()).filter(c -> !c.equals(OVERTIME)).map(Arguments::of);
-    }
-
     @ParameterizedTest
-    @MethodSource("nonOvertimeCategories")
+    @EnumSource(value = VacationCategory.class, names = "OVERTIME", mode = EnumSource.Mode.EXCLUDE)
     void differentVacationCategory(final VacationCategory category) throws Exception {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
