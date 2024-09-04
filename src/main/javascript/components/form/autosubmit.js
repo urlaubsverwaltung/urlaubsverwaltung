@@ -22,7 +22,7 @@ export function initAutosubmit() {
 
   document.addEventListener("duetChange", function (event) {
     const { defaultPrevented, target } = event;
-    if (defaultPrevented || textInput(target)) {
+    if (defaultPrevented || textInput(target) || !event.target.value) {
       // `change` is not of interest for text inputs which are triggered by `keyup`
       return;
     }
