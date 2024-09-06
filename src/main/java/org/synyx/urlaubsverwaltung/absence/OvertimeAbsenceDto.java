@@ -16,7 +16,7 @@ public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> 
         format = "duration")
     private final Duration duration;
 
-    public OvertimeAbsenceDto(Long id, Duration duration) {
+    OvertimeAbsenceDto(Long id, Duration duration) {
         this.id = id;
         this.duration = duration;
     }
