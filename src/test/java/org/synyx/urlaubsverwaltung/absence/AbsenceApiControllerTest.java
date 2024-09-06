@@ -192,6 +192,53 @@ class AbsenceApiControllerTest {
             """, true));
     }
 
+    @Test
+    void ensureCorrectConversionOfOvertimeVacationNoon() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(23L);
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
+
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, "OVERTIME", 1L, false);
+        final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonVacation);
+        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
+
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
+
+        perform(
+            get("/api/persons/23/absences")
+                .param("from", "2016-01-01")
+                .param("to", "2016-12-31")
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(content().json("""
+            {
+                "absences": [
+                    {
+                      "date": "2016-01-02",
+                      "id": 42,
+                      "absent": "NOON",
+                      "absentNumeric": 0.5,
+                      "absenceType": "VACATION",
+                      "category": "OVERTIME",
+                      "typeId": 1,
+                      "status": "WAITING",
+                      "links": [
+                          {
+                            "rel": "overtime",
+                            "href": "http://localhost/api/persons/23/absences/42/overtime"
+                          }
+                      ]
+                    }
+                ]
+            }
+            """, true));
+    }
+
     // SICK ------------------------------------------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfSickFullDay() throws Exception {
