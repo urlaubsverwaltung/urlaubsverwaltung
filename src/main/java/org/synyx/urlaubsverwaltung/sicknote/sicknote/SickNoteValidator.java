@@ -5,7 +5,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
@@ -37,7 +36,6 @@ public class SickNoteValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
-    private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
     private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "sicknote.error.noValidWorkingTime";
@@ -143,28 +141,12 @@ public class SickNoteValidator implements Validator {
 
         if (aubStartDate != null && aubEndDate != null) {
             validatePeriod(aubStartDate, aubEndDate, dayLength, ATTRIBUTE_AUB_END_DATE, errors);
-
-            final LocalDate sickNoteStartDate = sickNote.getStartDate();
-            final LocalDate sickNoteEndDate = sickNote.getEndDate();
-
-            if (sickNoteStartDate != null && sickNoteEndDate != null) {
-                // Intervals are inclusive of the start instant and exclusive of the end, i.e. add one day at the end
-                final DateRange sickNoteDateRange = new DateRange(sickNoteStartDate, sickNoteEndDate);
-
-                if (!sickNoteDateRange.isOverlapping(new DateRange(aubStartDate, aubStartDate))) {
-                    errors.rejectValue(ATTRIBUTE_AUB_START_DATE, ERROR_PERIOD_SICK_NOTE);
-                }
-
-                if (!sickNoteDateRange.isOverlapping(new DateRange(aubEndDate, aubEndDate))) {
-                    errors.rejectValue(ATTRIBUTE_AUB_END_DATE, ERROR_PERIOD_SICK_NOTE);
-                }
-            }
         }
     }
 
     private void validateNotNull(LocalDate date, String field, Errors errors) {
 
-        // may be that date field is null because of cast exception, than there is already a field error
+        // may be that date field is null because of cast exception, then there is already a field error
         if (date == null && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
