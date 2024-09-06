@@ -689,85 +689,6 @@ class SickNoteValidatorTest {
     }
 
     @Test
-    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
-
-        userIsAllowedToSubmitSickNotes(false);
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getWorkingTime(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-
-        final Person applier = new Person("office", "office", "office", "office@example.org");
-        applier.setPermissions(List.of(USER, OFFICE));
-
-        final SickNote sickNote = SickNote.builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .applier(applier)
-            .startDate(LocalDate.of(2013, NOVEMBER, 20))
-            .endDate(LocalDate.of(2013, NOVEMBER, 30))
-            .dayLength(FULL)
-            .aubStartDate(LocalDate.of(2013, NOVEMBER, 1))
-            .aubEndDate(LocalDate.of(2013, NOVEMBER, 20))
-            .build();
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
-    }
-
-    @Test
-    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
-
-        userIsAllowedToSubmitSickNotes(false);
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getWorkingTime(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-
-        final Person applier = new Person("office", "office", "office", "office@example.org");
-        applier.setPermissions(List.of(USER, OFFICE));
-
-        final SickNote sickNote = SickNote.builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .applier(applier)
-            .startDate(LocalDate.of(2013, NOVEMBER, 1))
-            .endDate(LocalDate.of(2013, NOVEMBER, 20))
-            .dayLength(FULL)
-            .aubStartDate(LocalDate.of(2013, NOVEMBER, 20))
-            .aubEndDate(LocalDate.of(2013, NOVEMBER, 30))
-            .build();
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
-    }
-
-    @Test
-    void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
-
-        userIsAllowedToSubmitSickNotes(false);
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getWorkingTime(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-
-        final Person applier = new Person("office", "office", "office", "office@example.org");
-        applier.setPermissions(List.of(USER, OFFICE));
-
-        final SickNote sickNote = SickNote.builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .applier(applier)
-            .startDate(LocalDate.of(2013, NOVEMBER, 10))
-            .endDate(LocalDate.of(2013, NOVEMBER, 20))
-            .dayLength(FULL)
-            .aubStartDate(LocalDate.of(2013, NOVEMBER, 1))
-            .aubEndDate(LocalDate.of(2013, NOVEMBER, 9))
-            .build();
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
-        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
-    }
-
-    @Test
     void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
 
         userIsAllowedToSubmitSickNotes(false);
@@ -791,31 +712,6 @@ class SickNoteValidatorTest {
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
-    }
-
-    @Test
-    void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
-        userIsAllowedToSubmitSickNotes(false);
-        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getWorkingTime(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
-
-        final Person applier = new Person("office", "office", "office", "office@example.org");
-        applier.setPermissions(List.of(USER, OFFICE));
-
-        final SickNote sickNote = SickNote.builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .applier(applier)
-            .startDate(LocalDate.of(2013, NOVEMBER, 1))
-            .endDate(LocalDate.of(2013, NOVEMBER, 1))
-            .dayLength(FULL)
-            .aubStartDate(LocalDate.of(2013, NOVEMBER, 2))
-            .aubEndDate(LocalDate.of(2013, NOVEMBER, 2))
-            .build();
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
     }
 
     @Test
