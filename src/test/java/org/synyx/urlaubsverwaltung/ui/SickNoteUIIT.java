@@ -122,9 +122,9 @@ class SickNoteUIIT {
     void ensureUserCanExtendSickNote(Page page) {
         final NavigationPage navigationPage = new NavigationPage(page);
 
-        final Person office = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person office = createPerson("Alfred-2", "Pennyworth-2", List.of(USER, OFFICE));
         login(page, office);
-        enableUserSickNoteCreation(page);
+        enableUserSickNoteCreation(page, true);
         navigationPage.logout();
 
         final Person user = createPerson("Dick", "Grayson", List.of(USER));
@@ -135,12 +135,18 @@ class SickNoteUIIT {
         sickNoteExtension(page, user, startDate, LocalDate.now(clock));
     }
 
-    private void enableUserSickNoteCreation(Page page) {
+    private void enableUserSickNoteCreation(Page page, boolean enable) {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
 
         navigationPage.clickSettings();
-        settingsPage.clickUserSubmitSickNotesAllowed();
+
+        if (enable) {
+            settingsPage.clickUserSubmitSickNotesAllowed();
+        } else {
+            settingsPage.clickUserToSubmitSickNotesForbidden();
+        }
+
         settingsPage.saveSettings();
     }
 

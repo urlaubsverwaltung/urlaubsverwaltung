@@ -269,12 +269,14 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_form";
         }
 
+        final boolean personIsApplier = sickNote.getPerson().equals(sickNote.getApplier());
+        final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+
         final SickNote updatedSickNote;
-        var isSubmission = sickNote.getPerson().equals(sickNote.getApplier()) && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-        if (isSubmission) {
-            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
-        } else {
+        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || (personIsApplier && !allowedToSubmitSickNotes)) {
             updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
+        } else {
+            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
         }
 
         return "redirect:/web/sicknote/" + updatedSickNote.getId();

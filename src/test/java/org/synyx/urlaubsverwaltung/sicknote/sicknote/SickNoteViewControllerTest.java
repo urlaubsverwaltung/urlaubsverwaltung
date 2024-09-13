@@ -1135,9 +1135,30 @@ class SickNoteViewControllerTest {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         when(sickNoteInteractionService.submit(any(SickNote.class), eq(signedInPerson), eq(null)))
+                .thenReturn(SickNote.builder().id(42L).build());
+
+        perform(post("/web/sicknote/").param("person.id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/web/sicknote/42"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "SICK_NOTE_ADD"})
+    void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessfulAndSubmissionIsActiveAndPersonHasRole(Role role) throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER, role));
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
                 .thenReturn(SickNote.builder().id(42L).build());
 
         perform(post("/web/sicknote/").param("person.id", "1"))
@@ -1177,8 +1198,11 @@ class SickNoteViewControllerTest {
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void ensureCreateSickNoteSucceedsWithDate(String givenDate) throws Exception {
 
+        userIsAllowedToSubmitSickNotes(false);
+
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
@@ -1199,7 +1223,12 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostNewSickNoteRedirectsToCreatedSickNote() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(new Person());
+        userIsAllowedToSubmitSickNotes(false);
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         doAnswer(invocation -> SickNote.builder(invocation.getArgument(0)).id(SOME_SICK_NOTE_ID).build())
             .when(sickNoteInteractionService).create(any(SickNote.class), any(Person.class), any());
