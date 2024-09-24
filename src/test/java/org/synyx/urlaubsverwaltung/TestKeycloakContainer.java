@@ -16,7 +16,7 @@ import static org.keycloak.admin.client.CreatedResponseUtil.getCreatedId;
 
 public class TestKeycloakContainer extends KeycloakContainer {
 
-    private static final String VERSION = "24.0.3";
+    private static final String VERSION = "25.0.1";
     private static final String IMAGE = "quay.io/keycloak/keycloak";
     public static final String REALM_URLAUBSVERWALTUNG = "urlaubsverwaltung";
 
