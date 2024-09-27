@@ -310,15 +310,27 @@
 
         <hr class="tw-w-full tw-m-0 tw-mt-6" />
 
-        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
-          <button
-            type="submit"
-            class="button-main-green tw-w-56"
-            th:text="${sickNote.id == null} ? #{action.apply.sicknote}: #{action.apply.sicknote.edit}"
-            data-test-id="sicknote-submit-button"
-          >
-            Neue Krankmeldung
-          </button>
+        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4" th:with="editMode=${sickNote.id == null}">
+          <th:block th:if="${editMode}">
+            <button
+              type="submit"
+              class="button-main-green tw-w-56"
+              th:text="#{action.apply.sicknote.edit}"
+              data-test-id="sicknote-submit-button"
+            >
+              Krankmeldung bearbeiten
+            </button>
+          </th:block>
+          <th:block th:if="${not editMode}">
+            <button
+              type="submit"
+              class="button-main-green tw-w-56"
+              th:text="#{action.apply.sicknote}"
+              data-test-id="sicknote-submit-button"
+            >
+              Neue Krankmeldung
+            </button>
+          </th:block>
           <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>
       </form>
