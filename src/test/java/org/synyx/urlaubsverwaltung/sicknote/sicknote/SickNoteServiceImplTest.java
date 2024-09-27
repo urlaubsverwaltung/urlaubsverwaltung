@@ -155,15 +155,15 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to))
             .thenReturn(List.of(entity, entity2));
 
-        final SickNote sickNote_1 = SickNote.builder().build();
-        final SickNote sickNote_2 = SickNote.builder().build();
+        final SickNote sickNote1 = SickNote.builder().build();
+        final SickNote sickNote2 = SickNote.builder().build();
         when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity, entity2), new DateRange(from, to)))
-            .thenReturn(List.of(sickNote_1, sickNote_2));
+            .thenReturn(List.of(sickNote1, sickNote2));
 
         final List<SickNote> sickNotes = sut.getAllActiveByPeriod(from, to);
         assertThat(sickNotes).hasSize(2);
-        assertThat(sickNotes.getFirst()).isSameAs(sickNote_1);
-        assertThat(sickNotes.get(1)).isSameAs(sickNote_2);
+        assertThat(sickNotes.getFirst()).isSameAs(sickNote1);
+        assertThat(sickNotes.get(1)).isSameAs(sickNote2);
     }
 
     @Test
