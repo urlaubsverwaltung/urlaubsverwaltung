@@ -40,6 +40,8 @@ import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURBO_REQUEST_ID;
 
@@ -145,7 +147,13 @@ class SickNoteExtendViewController implements HasLaunchpad {
         }
 
         if (isCreateExtendSubmit) {
+
             sickNoteExtensionInteractionService.submitSickNoteExtension(signedInUser, sickNote.getId(), sickNoteExtendDto.getEndDate());
+
+            if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD)) {
+                sickNoteExtensionService.acceptSubmittedExtension(sickNote.getId());
+            }
+
             redirectAttributes.addFlashAttribute("showExtensionCreatedFeedback", true);
             return "redirect:/web/sicknote/" + sickNote.getId();
         } else {
