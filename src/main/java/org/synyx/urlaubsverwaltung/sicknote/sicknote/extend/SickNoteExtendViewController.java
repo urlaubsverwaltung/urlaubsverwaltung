@@ -91,14 +91,14 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
     @PostMapping
     public String extendSickNote(@RequestParam(value = "extend", required = false) String extend,
-                                       @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
-                                       // hint if custom date has been submitted or not
-                                       @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
-                                       @ModelAttribute("sickNoteExtension") SickNoteExtendDto sickNoteExtendDto, Errors errors,
-                                       RedirectAttributes redirectAttributes,
-                                       Model model,
-                                       @RequestHeader(value = HEADER_TURBO_REQUEST_ID, required = false) Optional<UUID> turboRequestId,
-                                       HttpServletResponse response) {
+                                 @RequestParam(value = "extendToDate", required = false) LocalDate extendToDate,
+                                 // hint if custom date has been submitted or not
+                                 @RequestParam(value = "custom-date-preview", required = false) Optional<String> customDateSubmit,
+                                 @ModelAttribute("sickNoteExtension") SickNoteExtendDto sickNoteExtendDto, Errors errors,
+                                 RedirectAttributes redirectAttributes,
+                                 Model model,
+                                 @RequestHeader(value = HEADER_TURBO_REQUEST_ID, required = false) Optional<UUID> turboRequestId,
+                                 HttpServletResponse response) {
 
         final boolean hasUserSelectedDays = hasText(extend);
         final boolean hasUserSelectedCustomDate = customDateSubmit.isPresent();
