@@ -139,33 +139,38 @@ class SickNoteViewController implements HasLaunchpad {
         final Person sickNotePerson = sickNote.getPerson();
 
         final boolean isSamePerson = sickNotePerson.equals(signedInUser);
+        final boolean isOffice = signedInUser.hasRole(OFFICE);
 
         if (isSamePerson
-            || signedInUser.hasRole(OFFICE)
+            || isOffice
             || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
             || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
             || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
+
+            final boolean isAllowedToEditSickNote = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson);
 
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
             sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)
-                .ifPresent(extension -> {
-                    model.addAttribute("canAcceptSubmittedExtension", signedInUser.hasAnyRole(OFFICE, SICK_NOTE_EDIT));
-                    model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
-                    model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
-                });
+                .ifPresentOrElse(
+                    extension -> {
+                        model.addAttribute("extensionRequested", true);
+                        model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
+                        model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
+                    },
+                    () ->
+                        model.addAttribute("extensionRequested", false)
+                    );
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE)
-                    || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-                    || (isSamePerson && sickNote.isSubmitted()));
-            model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
-            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
-            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
+            model.addAttribute("canAcceptSickNote", isOffice || isAllowedToEditSickNote);
+            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || (isSamePerson && sickNote.isSubmitted()));
+            model.addAttribute("canConvertSickNote", isOffice);
+            model.addAttribute("canDeleteSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
+            model.addAttribute("canCommentSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 

@@ -34,7 +34,7 @@
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
             <div class="tw-flex tw-flex-row">
-              <th:block th:if="${canAcceptSickNote && sickNote.status.name == 'SUBMITTED'}">
+              <th:block th:if="${canAcceptSickNote && !extensionRequested && sickNote.status.name == 'SUBMITTED'}">
                 <button
                   type="button"
                   class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
@@ -97,7 +97,7 @@
         </div>
 
         <div class="actions">
-          <th:block th:if="${canAcceptSickNote}">
+          <th:block th:if="${canAcceptSickNote && !extensionRequested}">
             <form
               id="allow"
               class="form confirm alert alert-success"
@@ -303,7 +303,7 @@
               </div>
             </details>
           </div>
-          <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
+          <th:block th:if="${canAcceptSickNote && extensionRequested}">
             <form
               action="#"
               th:action="@{/web/sicknote/__${sickNote.id}__/extension/accept}"
