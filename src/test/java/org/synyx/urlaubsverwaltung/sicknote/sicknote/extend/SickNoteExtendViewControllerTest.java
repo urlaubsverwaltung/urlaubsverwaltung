@@ -91,7 +91,7 @@ class SickNoteExtendViewControllerTest {
             .andExpect(redirectedUrl("/web/sicknote/1"));
 
         verify(sickNoteExtensionInteractionService).submitSickNoteExtension(person, 1L, endDate);
-        verify(sickNoteExtensionService).acceptSubmittedExtension(1L);
+        verify(sickNoteExtensionInteractionService).acceptSubmittedExtension(person, 1L, null);
     }
 
     @Test

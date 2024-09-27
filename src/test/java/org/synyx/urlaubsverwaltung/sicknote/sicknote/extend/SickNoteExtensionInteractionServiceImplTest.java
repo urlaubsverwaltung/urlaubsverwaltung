@@ -166,7 +166,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             maintainer.setId(1L);
             maintainer.setPermissions(List.of(USER));
 
-            assertThatThrownBy(() -> sut.acceptSubmittedExtension(maintainer, 1L))
+            assertThatThrownBy(() -> sut.acceptSubmittedExtension(maintainer, 1L, ""))
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessage("person id=1 is not authorized to accept submitted sickNoteExtension");
 
@@ -185,7 +185,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             final SickNote sickNote = SickNote.builder().id(1L).build();
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
-            final SickNote actual = sut.acceptSubmittedExtension(maintainer, 1L);
+            final SickNote actual = sut.acceptSubmittedExtension(maintainer, 1L, "");
             assertThat(actual).isSameAs(sickNote);
         }
 
@@ -199,9 +199,9 @@ class SickNoteExtensionInteractionServiceImplTest {
             final SickNote sickNote = SickNote.builder().id(1L).build();
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
-            sut.acceptSubmittedExtension(maintainer, 1L);
+            sut.acceptSubmittedExtension(maintainer, 1L, "awesome comment");
 
-            verify(sickNoteCommentService).create(sickNote, EXTENSION_ACCEPTED, maintainer);
+            verify(sickNoteCommentService).create(sickNote, EXTENSION_ACCEPTED, maintainer, "awesome comment");
         }
 
         @Test
@@ -214,7 +214,7 @@ class SickNoteExtensionInteractionServiceImplTest {
             final SickNote sickNote = SickNote.builder().id(1L).build();
             when(sickNoteExtensionService.acceptSubmittedExtension(1L)).thenReturn(sickNote);
 
-            sut.acceptSubmittedExtension(maintainer, 1L);
+            sut.acceptSubmittedExtension(maintainer, 1L, "");
 
             final ArgumentCaptor<SickNoteUpdatedEvent> captor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
             verify(applicationEventPublisher).publishEvent(captor.capture());

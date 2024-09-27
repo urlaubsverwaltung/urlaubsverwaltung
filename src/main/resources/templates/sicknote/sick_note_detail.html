@@ -34,7 +34,7 @@
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
             <div class="tw-flex tw-flex-row">
-              <th:block th:if="${canAcceptSickNote && !extensionRequested && sickNote.status.name == 'SUBMITTED'}">
+              <th:block th:if="${canAcceptSickNote && (extensionRequested || sickNote.status.name == 'SUBMITTED')}">
                 <button
                   type="button"
                   class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
@@ -97,21 +97,30 @@
         </div>
 
         <div class="actions">
-          <th:block th:if="${canAcceptSickNote && !extensionRequested}">
+          <th:block th:if="${canAcceptSickNote}">
             <form
               id="allow"
               class="form confirm alert alert-success"
               th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
               method="post"
-              th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/accept?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/accept'}"
+              th:with="isShortcut=${param.shortcut != null && #lists.contains(param.shortcut, 'true')},
+                       redirectTo=@{/web/sicknote/submitted},
+                       acceptUrl=@{/web/sicknote/__${sickNote.id}__/accept},
+                       acceptExtensionUrl=@{/web/sicknote/__${sickNote.id}__/extension/accept},
+                       actionUrl=@{${extensionRequested ? acceptExtensionUrl : acceptUrl} (redirect=${isShortcut ? redirectTo : null})}"
               th:action="@{__${actionUrl}__}"
               th:object="${comment}"
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
               <div class="form-group">
-                <strong class="tw-font-medium" th:text="#{action.sicknote.allow}">
-                  Soll diese Krankmeldung wirklich angenommen werden?
+                <strong class="tw-font-medium">
+                  <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
+                    Soll diese Krankmeldung wirklich angenommen werden?
+                  </th:block>
+                  <th:block th:if="${extensionRequested}">
+                    Soll die Verlängerung der Krankmeldung wirklich angenommen werden?
+                  </th:block>
                 </strong>
               </div>
 
@@ -121,8 +130,9 @@
               </div>
 
               <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
-                <button type="submit" class="button-main-green tw-w-56" th:text="#{action.acceptSicknote}">
-                  Annehmen
+                <button type="submit" class="button-main-green tw-w-56">
+                  <th:block th:if="${not extensionRequested}" th:text="#{action.acceptSicknote}">Annehmen</th:block>
+                  <th:block th:if="${extensionRequested}">Verlängerung Annehmen</th:block>
                 </button>
                 <button
                   type="button"

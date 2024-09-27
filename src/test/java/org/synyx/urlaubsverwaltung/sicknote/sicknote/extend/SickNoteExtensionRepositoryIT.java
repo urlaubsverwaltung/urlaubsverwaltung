@@ -47,7 +47,7 @@ class SickNoteExtensionRepositoryIT  extends TestContainersBase {
         final Long sickNoteId = sickNote.getId();
 
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(1));
-        sickNoteExtensionInteractionService.acceptSubmittedExtension(person, sickNoteId);
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(person, sickNoteId, "");
 
         sickNoteExtensionInteractionService.submitSickNoteExtension(person, sickNoteId, now.plusDays(2));
 

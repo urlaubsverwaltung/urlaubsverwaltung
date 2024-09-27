@@ -32,9 +32,10 @@ public interface SickNoteExtensionInteractionService {
      *
      * @param maintainer with {@linkplain org.synyx.urlaubsverwaltung.person.Role role} OFFICE or SICK_NOTE_VIEW_ADD_EDIT
      * @param sickNoteId id of the {@linkplain SickNote} to extend
+     * @param comment optional comment, can be {@code null}
      * @return the saved sick note in ACTIVE state
      * @throws AccessDeniedException when maintainer is not authorized to accept the submitted extension
      * @throws IllegalStateException when neither {@linkplain SickNoteExtension} nor {@linkplain SickNote} exists
      */
-    SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId);
+    SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId, String comment);
 }

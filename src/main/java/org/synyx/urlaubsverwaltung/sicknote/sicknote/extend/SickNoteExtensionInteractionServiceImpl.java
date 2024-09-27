@@ -65,7 +65,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
     }
 
     @Override
-    public SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId) {
+    public SickNote acceptSubmittedExtension(Person maintainer, Long sickNoteId, String comment) {
 
         if (!maintainer.hasAnyRole(OFFICE, SICK_NOTE_EDIT)) {
             throw new AccessDeniedException("person id=%s is not authorized to accept submitted sickNoteExtension".formatted(maintainer.getId()));
@@ -74,7 +74,7 @@ class SickNoteExtensionInteractionServiceImpl implements SickNoteExtensionIntera
         final SickNote updatedSickNote = sickNoteExtensionService.acceptSubmittedExtension(sickNoteId);
 
         LOG.info("add extension accepted comment to sick note history.");
-        commentService.create(updatedSickNote, EXTENSION_ACCEPTED, maintainer);
+        commentService.create(updatedSickNote, EXTENSION_ACCEPTED, maintainer, comment);
 
         LOG.info("publish sickNoteUpdatedEvent for accepted sick note extension.");
         eventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));

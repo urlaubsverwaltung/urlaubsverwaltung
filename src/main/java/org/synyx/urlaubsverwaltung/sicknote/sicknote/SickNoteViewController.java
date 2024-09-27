@@ -187,12 +187,14 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PostMapping("/sicknote/{id}/extension/accept")
-    public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId) {
+    public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId,
+                                          @ModelAttribute("comment") SickNoteCommentFormDto comment,
+                                          @RequestParam(value = "redirect", required = false) String redirectUrl) {
 
         final Person signedInUser = personService.getSignedInUser();
-        sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId);
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId, comment.getText());
 
-        return "redirect:/web/sicknote/" + sickNoteId;
+        return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
     }
 
     @GetMapping("/sicknote/new")
@@ -390,11 +392,7 @@ class SickNoteViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
         }
 
-        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
-            return "redirect:" + redirectUrl;
-        }
-
-        return "redirect:/web/sicknote/" + sickNoteId;
+        return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_COMMENT')")
@@ -500,6 +498,13 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         return "redirect:/web/sicknote/" + cancelledSickNote.getId();
+    }
+
+    private String redirectToSickNoteDetailOr(String redirectUrl, Long sickNoteId) {
+        if ("/web/sicknote/submitted".equals(redirectUrl)) {
+            return "redirect:" + redirectUrl;
+        }
+        return "redirect:/web/sicknote/" + sickNoteId;
     }
 
     private boolean canAddSickNote(Person person, Person sickNotePerson) {
