@@ -32,8 +32,6 @@
   @apply tw-text-sm;
   @apply tw-font-normal;
 }
-.extend-label_date {
-}
 
 .button.sicknote-extend-button[disabled] {
   /*
