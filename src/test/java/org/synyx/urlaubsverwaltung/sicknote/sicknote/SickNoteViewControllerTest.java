@@ -49,6 +49,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -123,7 +124,9 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetNewSickNoteRedirectsWhenExtensionIsPossible() throws Exception {
+    void ensureGetNewSickNoteRedirectsWhenExtensionIsPossibleAndFeatureIsEnabled() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
 
         final Person person = personWithRole(USER, SICK_NOTE_ADD);
         person.setId(1L);
@@ -137,9 +140,29 @@ class SickNoteViewControllerTest {
             .andExpect(redirectedUrl("/web/sicknote/extend"));
     }
 
+    @Test
+    void ensureGetNewSickNoteDoesNotRedirectsWhenExtensionIsPossibleButFeatureIsDisabled() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(false);
+
+        final Person person = personWithRole(USER, SICK_NOTE_ADD);
+        person.setId(1L);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        perform(get("/web/sicknote/new").param("person", "1"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_form"));
+
+        verifyNoInteractions(sickNoteService);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"", "true"})
     void ensureGetNewSickNoteDoesNotRedirectWhenParameterExists(String givenParameter) throws Exception {
+
+        userIsAllowedToSubmitSickNotes(true);
 
         final Person person = personWithRole(USER, SICK_NOTE_ADD);
         person.setId(1L);
@@ -159,6 +182,8 @@ class SickNoteViewControllerTest {
     @ParameterizedTest
     @EnumSource(value = SickNoteCategory.class)
     void ensureGetSickNotePresetsCategory(SickNoteCategory givenCategory) throws Exception {
+
+        userIsAllowedToSubmitSickNotes(false);
 
         final Person personWithRole = personWithRole(USER, SICK_NOTE_ADD);
         personWithRole.setId(1L);
@@ -184,6 +209,8 @@ class SickNoteViewControllerTest {
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForRole(Role role) throws Exception {
+
+        userIsAllowedToSubmitSickNotes(false);
 
         final Person personWithRole = personWithRole(role, SICK_NOTE_ADD);
         personWithRole.setId(1L);
@@ -248,6 +275,8 @@ class SickNoteViewControllerTest {
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewWithOtherPersonForRole(Role role) throws Exception {
 
+        userIsAllowedToSubmitSickNotes(false);
+
         final Person personWithRole = personWithRole(role, SICK_NOTE_ADD);
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
@@ -272,6 +301,8 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForDepartmentHead() throws Exception {
 
+        userIsAllowedToSubmitSickNotes(false);
+
         final Person departmentHead = personWithRole(DEPARTMENT_HEAD, SICK_NOTE_ADD);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
@@ -292,6 +323,8 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForSecondStageAuthority() throws Exception {
 
+        userIsAllowedToSubmitSickNotes(false);
+
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
@@ -311,6 +344,8 @@ class SickNoteViewControllerTest {
 
     @Test
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForDepartmentHeadAndSecondStageAuthority() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(false);
 
         final Person departmentHeadAndSsa = new Person();
         departmentHeadAndSsa.setId(1L);
@@ -344,6 +379,8 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetNewSickNoteManagedMembersDistinct() throws Exception {
 
+        userIsAllowedToSubmitSickNotes(false);
+
         final Person departmentHeadAndSsa = new Person();
         departmentHeadAndSsa.setId(1L);
         departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
@@ -370,6 +407,8 @@ class SickNoteViewControllerTest {
 
     @Test
     void ensureGetNewSickNoteManagedMembersIsOrdered() throws Exception {
+
+        userIsAllowedToSubmitSickNotes(false);
 
         final Person departmentHeadAndSsa = new Person();
         departmentHeadAndSsa.setId(1L);

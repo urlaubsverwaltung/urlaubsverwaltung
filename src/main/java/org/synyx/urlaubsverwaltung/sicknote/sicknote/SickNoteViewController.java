@@ -197,7 +197,9 @@ class SickNoteViewController implements HasLaunchpad {
                               Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
-        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
+        final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+
+        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !userIsAllowedToSubmitSickNotes) {
             throw new AccessDeniedException(
                 "User '%s' has not the correct permissions to create a sick note".formatted(
                     signedInUser.getId()));
@@ -207,12 +209,14 @@ class SickNoteViewController implements HasLaunchpad {
             ? signedInUser
             : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
-        if (!noRedirect && sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
-            LOG.info("sick note of last work day found");
-            return "redirect:/web/sicknote/extend";
-        } else {
-            LOG.info("no sick note of last work day found");
+        if (userIsAllowedToSubmitSickNotes) {
+            final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
+            if (!noRedirect && sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
+                LOG.info("sick note of last work day found");
+                return "redirect:/web/sicknote/extend";
+            } else {
+                LOG.info("no sick note of last work day found");
+            }
         }
 
         model.addAttribute("signedInUser", signedInUser);
