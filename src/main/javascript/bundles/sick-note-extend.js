@@ -36,7 +36,7 @@ document.addEventListener("turbo:before-render", function (event) {
           }
         },
         beforeNodeRemoved(node) {
-          if (node.matches && node.matches("duet-date-picker")) {
+          if (node.matches?.("duet-date-picker")) {
             // do not remove duet-date-picker when it has been updated before
             return datepickers.includes(node);
           }
