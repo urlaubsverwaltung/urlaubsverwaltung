@@ -62,8 +62,4 @@ public class SickNoteDetailPage {
         final String notPresentText = messageSource.getMessage("sicknote.data.aub.notPresent", new Object[]{}, locale);
         return page.locator(AUB_DATE_SELECTOR).textContent().contains(notPresentText);
     }
-
-    public boolean showsExtensionHint(LocalDate nextEndDate) {
-        return false;
-    }
 }
