@@ -205,6 +205,10 @@ serviceMonitor:
 
 ## Further information
 
+### From chart versions < 6.0.0
+
+Only support k8s version >= 1.19
+
 ### From chart versions < 2.1.0
 
 improve k8s support for version >= 1.19
