@@ -17,6 +17,6 @@ spec:
       targetPort: http-management
       protocol: TCP
       name: http-management
-    {{- end}}
+    {{- end }}
   selector:
     {{- include "urlaubsverwaltung.selectorLabels" . | nindent 4 }}
