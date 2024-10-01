@@ -42,6 +42,10 @@ spec:
               containerPort: {{ .Values.customizedManagementServer.port }}
               protocol: TCP
             {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- tpl . $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- tpl . $ | nindent 12 }}
