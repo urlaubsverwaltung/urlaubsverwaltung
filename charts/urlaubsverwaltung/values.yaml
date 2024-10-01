@@ -37,20 +37,18 @@ startupProbe: |
 # Liveness probe configuration
 livenessProbe: |
   httpGet:
-    path: /actuator/health
+    path: /actuator/health/liveness
     port: http
-  initialDelaySeconds: 120
-  periodSeconds: 10
-  failureThreshold: 10
+  failureThreshold: 3
+  periodSeconds: 5
 
 # Readiness probe configuration
 readinessProbe: |
   httpGet:
-    path: /actuator/health
+    path: /actuator/health/readiness
     port: http
-  initialDelaySeconds: 60
-  periodSeconds: 10
-  failureThreshold: 10
+  failureThreshold: 2
+  periodSeconds: 5
 
 podSecurityContext:
   fsGroup: 1000
