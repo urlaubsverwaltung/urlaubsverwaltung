@@ -25,6 +25,15 @@ serviceAccount:
 
 podAnnotations: {}
 
+# Startup probe configuration
+startupProbe: |
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  initialDelaySeconds: 15
+  failureThreshold: 12
+  periodSeconds: 5
+
 # Liveness probe configuration
 livenessProbe: |
   httpGet:
