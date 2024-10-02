@@ -30,8 +30,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     private final GoogleCalendarClientProvider googleCalendarClientProvider;
 
-    private Optional<Calendar> maybeCalendarClient;
-
     @Autowired
     GoogleCalendarSyncProvider(GoogleCalendarClientProvider googleCalendarClientProvider) {
         this.googleCalendarClientProvider = googleCalendarClientProvider;
@@ -41,7 +39,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
-        maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
+        final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
         if (maybeCalendarClient.isPresent()) {
             final String calendarId = googleCalendarSettings.getCalendarId();
@@ -67,7 +65,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
-        maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
+        final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
         if (maybeCalendarClient.isPresent()) {
             final String calendarId = googleCalendarSettings.getCalendarId();
@@ -94,7 +92,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     public Optional<String> delete(String eventId, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
-        maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
+        final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
         if (maybeCalendarClient.isPresent()) {
             final String calendarId = googleCalendarSettings.getCalendarId();
@@ -114,7 +112,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
-        maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
+        final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
         if (maybeCalendarClient.isPresent()) {
             final String calendarId = googleCalendarSettings.getCalendarId();

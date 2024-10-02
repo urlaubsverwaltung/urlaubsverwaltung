@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
@@ -30,14 +32,17 @@ class SecurityWebConfiguration {
     private final SessionService sessionService;
     private final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final String loginFormUrl;
 
     SecurityWebConfiguration(PersonService personService, SessionService sessionService,
                              OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
-                             ClientRegistrationRepository clientRegistrationRepository) {
+                             ClientRegistrationRepository clientRegistrationRepository,
+                             @Value("${urlaubsverwaltung.security.oidc.loginFormUrl:#{null}}") String loginFormUrl) {
         this.personService = personService;
         this.sessionService = sessionService;
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
         this.clientRegistrationRepository = clientRegistrationRepository;
+        this.loginFormUrl = loginFormUrl;
     }
 
     @Bean
@@ -79,7 +84,7 @@ class SecurityWebConfiguration {
 
     @Bean
     @Order(4)
-    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository) throws Exception {
+    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder) throws Exception {
         return http
             .authorizeHttpRequests(requests ->
                 requests
@@ -107,9 +112,15 @@ class SecurityWebConfiguration {
                     .anyRequest().authenticated()
             )
             .oauth2Login(
-                loginCustomizer -> loginCustomizer.authorizationEndpoint(
-                    endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
-                )
+                loginCustomizer -> {
+                    loginCustomizer.authorizationEndpoint(
+                        endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
+                    );
+
+                    if (loginFormUrl != null) {
+                        loginCustomizer.loginPage(loginFormUrl);
+                    }
+                }
             )
             .logout(
                 logoutCustomizer -> logoutCustomizer.logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler)
@@ -117,7 +128,7 @@ class SecurityWebConfiguration {
             .securityContext(
                 securityContext -> securityContext.securityContextRepository(securityContextRepository)
             )
-            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository), BasicAuthenticationFilter.class)
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService, securityContextRepository, tenantContextHolder), BasicAuthenticationFilter.class)
             .build();
     }
 

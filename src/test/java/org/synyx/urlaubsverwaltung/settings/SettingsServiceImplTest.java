@@ -6,9 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,10 +28,20 @@ class SettingsServiceImplTest {
     @Test
     void ensureGetSettingsReturnsFromDB() {
         final Settings settings = new Settings();
-        settings.setId(1L);
-        when(settingsRepository.findById(1L)).thenReturn(Optional.of(settings));
+        when(settingsRepository.findAll()).thenReturn(List.of(settings));
 
         final Settings actualSettings = sut.getSettings();
         assertThat(actualSettings).isEqualTo(settings);
+    }
+
+    @Test
+    void ensureGetSettingsRequiresInitializationFirst() {
+
+        when(settingsRepository.findAll()).thenReturn(List.of());
+
+        assertThatThrownBy(() -> sut.getSettings())
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("No settings found in database!");
+
     }
 }

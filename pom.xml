@@ -33,6 +33,8 @@
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
     <docker-publish-registry-username>username</docker-publish-registry-username>
     <docker-publish-registry-password>password</docker-publish-registry-password>
+    <docker-image-name>${project.artifactId}</docker-image-name>
+    <docker-image-version>${project.version}</docker-image-version>
   </properties>
 
   <scm>
@@ -314,7 +316,7 @@
           <layout>ZIP</layout>
           <image>
             <name>
-              ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
+              ${docker-publish-registry}/${docker-publish-registry-path}/${docker-image-name}:${docker-image-version}
             </name>
             <env>
               <BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>120%</BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>

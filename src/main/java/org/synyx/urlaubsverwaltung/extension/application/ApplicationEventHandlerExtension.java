@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCreatedFromSickNoteEvent;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -171,6 +172,7 @@ public class ApplicationEventHandlerExtension {
             .requiresApprovalToCancel(vacationType.isRequiresApprovalToCancel())
             .color(vacationType.getColor().name())
             .visibleToEveryone(vacationType.isVisibleToEveryone())
+            .translationKey(getTranslationKey(vacationType))
             .build();
     }
 
@@ -230,5 +232,12 @@ public class ApplicationEventHandlerExtension {
 
     private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
         return absencePeriod -> dayLength.isNoon() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
+    }
+
+    private static String getTranslationKey(VacationType<?> vacationType) {
+        if (vacationType instanceof ProvidedVacationType providedVacationType) {
+            return providedVacationType.getMessageKey();
+        }
+        return null;
     }
 }

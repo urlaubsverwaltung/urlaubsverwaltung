@@ -3,11 +3,11 @@ package org.synyx.urlaubsverwaltung;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public class TestPostgreSQLContainer extends PostgreSQLContainer<TestPostgreSQLContainer> {
+public class SingleTenantTestPostgreSQLContainer extends PostgreSQLContainer<SingleTenantTestPostgreSQLContainer> {
 
     private static final String VERSION = "15.3";
 
-    public TestPostgreSQLContainer() {
+    public SingleTenantTestPostgreSQLContainer() {
         super(IMAGE + ":" + VERSION);
         this.withCommand("--max_connections=1000", "--shared_buffers=240MB");
     }
@@ -17,7 +17,7 @@ public class TestPostgreSQLContainer extends PostgreSQLContainer<TestPostgreSQLC
      *
      * <p>Usage:</p>
      * <pre><code>
-     * static final TestPostgreContainer postgre = new TestPostgreContainer();
+     * static final SingleTenantTestPostgreSQLContainer postgre = new SingleTenantTestPostgreSQLContainer();
      * &#64;DynamicPropertySource
      * static void setupDataSource(DynamicPropertySource registry) {
      *     postgre.start();

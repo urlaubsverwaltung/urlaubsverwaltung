@@ -20,7 +20,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 
 @Component
-class ApplicationReminderMailService {
+public class ApplicationReminderMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -37,7 +37,7 @@ class ApplicationReminderMailService {
         this.clock = clock;
     }
 
-    void sendWaitingApplicationsReminderNotification() {
+    public void sendWaitingApplicationsReminderNotification() {
 
         final boolean isRemindForWaitingApplicationsActive =
             settingsService.getSettings().getApplicationSettings().isRemindForWaitingApplications();
@@ -64,7 +64,7 @@ class ApplicationReminderMailService {
         }
     }
 
-    void sendUpcomingApplicationsReminderNotification() {
+    public void sendUpcomingApplicationsReminderNotification() {
 
         final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
         if (applicationSettings.isRemindForUpcomingApplications()) {
@@ -83,7 +83,7 @@ class ApplicationReminderMailService {
         applicationService.save(application);
     }
 
-    void sendUpcomingHolidayReplacementReminderNotification() {
+    public void sendUpcomingHolidayReplacementReminderNotification() {
 
         final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
         if (applicationSettings.isRemindForUpcomingHolidayReplacement()) {
