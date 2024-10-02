@@ -95,6 +95,7 @@
                   type="radio"
                   id="sickDays.userIsAllowedToSubmitSickNotes.true"
                   th:field="*{sickNoteSettings.userIsAllowedToSubmitSickNotes}"
+                  data-test-id="user-allowed-to-submit-sicknote-input"
                   value="true"
                 />
                 <th:block th:text="#{settings.sickDays.userIsAllowedToSubmitSickNotes.true}" />
@@ -104,6 +105,7 @@
                   type="radio"
                   id="sickNoteSettings.userIsAllowedToSubmitSickNotes.false"
                   th:field="*{sickNoteSettings.userIsAllowedToSubmitSickNotes}"
+                  data-test-id="user-allowed-to-submit-sicknote-input"
                   value="false"
                 />
                 <th:block th:text="#{settings.sickDays.userIsAllowedToSubmitSickNotes.false}" />

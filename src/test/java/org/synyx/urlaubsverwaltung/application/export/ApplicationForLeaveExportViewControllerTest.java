@@ -30,6 +30,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.math.BigDecimal.TEN;
 import static java.util.Locale.JAPANESE;
@@ -54,20 +55,31 @@ class ApplicationForLeaveExportViewControllerTest {
     private ApplicationForLeaveCsvExportService applicationForLeaveCsvExportService;
     @Mock
     private WorkDaysCountService workDaysCountService;
+    @Mock
+    private DateFormatAware dateFormatAware;
 
     private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveExportViewController(personService, applicationForLeaveExportService,
-            applicationForLeaveCsvExportService, new DateFormatAware(), clock);
+            applicationForLeaveCsvExportService, dateFormatAware, clock);
     }
 
     @Test
     void ensuresToDownloadCSVIfNotTheSameYearIsABadRequest() throws Exception {
-        perform(get("/web/application/export")
-            .param("from", "01.01.2022")
-            .param("to", "01.01.2023"))
+
+        final Locale locale = Locale.GERMAN;
+
+        when(dateFormatAware.parse("01.01.2022", locale)).thenReturn(Optional.of(LocalDate.of(2022, 1, 1)));
+        when(dateFormatAware.parse("01.01.2023", locale)).thenReturn(Optional.of(LocalDate.of(2023, 1, 1)));
+
+        perform(
+            get("/web/application/export")
+                .locale(locale)
+                .param("from", "01.01.2022")
+                .param("to", "01.01.2023")
+        )
             .andExpect(status().isBadRequest());
     }
 
@@ -109,6 +121,9 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/export")
             .locale(locale)
@@ -157,6 +172,9 @@ class ApplicationForLeaveExportViewControllerTest {
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
 
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
+
         perform(get("/web/application/export")
             .locale(locale)
             .param("from", "01.01.2019")
@@ -179,6 +197,9 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
@@ -253,6 +274,9 @@ class ApplicationForLeaveExportViewControllerTest {
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+        when(dateFormatAware.parse("01.08.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 8, 1)));
 
         perform(get("/web/application/export")
             .locale(locale)

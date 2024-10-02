@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -33,9 +33,15 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtendPreviewDto;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -44,9 +50,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -60,7 +68,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge;
 
 /**
  * Controller for {@link SickNote} purposes.
@@ -73,6 +80,8 @@ class SickNoteViewController implements HasLaunchpad {
     private final SickNoteInteractionService sickNoteInteractionService;
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
+    private final SickNoteExtensionService sickNoteExtensionService;
+    private final SickNoteExtensionInteractionService sickNoteExtensionInteractionService;
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
@@ -83,11 +92,15 @@ class SickNoteViewController implements HasLaunchpad {
     private final SettingsService settingsService;
     private final Clock clock;
 
-    @Autowired
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
+
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
-                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
-                           DepartmentService departmentService, SickNoteValidator sickNoteValidator,
+                           SickNoteExtensionService sickNoteExtensionService,
+                           SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService,
+                           PersonService personService, DepartmentService departmentService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
 
@@ -95,6 +108,8 @@ class SickNoteViewController implements HasLaunchpad {
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
+        this.sickNoteExtensionService = sickNoteExtensionService;
+        this.sickNoteExtensionInteractionService = sickNoteExtensionInteractionService;
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
@@ -124,23 +139,38 @@ class SickNoteViewController implements HasLaunchpad {
         final Person sickNotePerson = sickNote.getPerson();
 
         final boolean isSamePerson = sickNotePerson.equals(signedInUser);
+        final boolean isOffice = signedInUser.hasRole(OFFICE);
 
         if (isSamePerson
-            || signedInUser.hasRole(OFFICE)
+            || isOffice
             || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNotePerson)
             || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNotePerson)
             || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNotePerson)) {
+
+            final boolean isAllowedToEditSickNote = isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson);
+
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
+
+            sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)
+                .ifPresentOrElse(
+                    extension -> {
+                        model.addAttribute("extensionRequested", true);
+                        model.addAttribute("sickNotePreviewCurrent", toSickNoteExtensionPreviewDto(sickNote));
+                        model.addAttribute("sickNotePreviewNext", toSickNoteExtensionPreviewDto(sickNote, extension));
+                    },
+                    () ->
+                        model.addAttribute("extensionRequested", false)
+                    );
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canAcceptSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson));
-            model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
-            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
-            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
+            model.addAttribute("canAcceptSickNote", isOffice || isAllowedToEditSickNote);
+            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || (isSamePerson && sickNote.isSubmitted()));
+            model.addAttribute("canConvertSickNote", isOffice);
+            model.addAttribute("canDeleteSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
+            model.addAttribute("canCommentSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNotePerson));
 
@@ -156,31 +186,60 @@ class SickNoteViewController implements HasLaunchpad {
             signedInUser.getId(), sickNotePerson.getId()));
     }
 
-    @GetMapping("/sicknote/new")
-    public String newSickNote(@RequestParam(value = "person", required = false) Long personId, Model model) throws UnknownPersonException {
+    @PostMapping("/sicknote/{id}/extension/accept")
+    public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId,
+                                          @ModelAttribute("comment") SickNoteCommentFormDto comment,
+                                          @RequestParam(value = "redirect", required = false) String redirectUrl) {
 
         final Person signedInUser = personService.getSignedInUser();
+        sickNoteExtensionInteractionService.acceptSubmittedExtension(signedInUser, sickNoteId, comment.getText());
 
-        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes()) {
+        return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
+    }
+
+    @GetMapping("/sicknote/new")
+    public String newSickNote(@RequestParam(value = "person", required = false) Long personId,
+                              @RequestParam(value = "noExtensionRedirect", required = false) String noExtensionRedirect,
+                              @RequestParam(value = "category", required = false) Optional<SickNoteCategory> category,
+                              Model model) throws UnknownPersonException {
+
+        final Person signedInUser = personService.getSignedInUser();
+        final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+
+        if (!signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) && !userIsAllowedToSubmitSickNotes) {
             throw new AccessDeniedException(
                 "User '%s' has not the correct permissions to create a sick note".formatted(
                     signedInUser.getId()));
         }
 
-
-        final Person person = personId == null
+        final Person sickNotePerson = personId == null
             ? signedInUser
             : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        model.addAttribute("signedInUser", signedInUser);
-        model.addAttribute("person", person);
+        if (userIsAllowedToSubmitSickNotes) {
+            final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
+            if (!noRedirect && sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
+                LOG.info("sick note of last work day found");
+                return "redirect:/web/sicknote/extend";
+            } else {
+                LOG.info("no sick note of last work day found");
+            }
+        }
 
-        model.addAttribute("sickNote", new SickNoteFormDto());
+        model.addAttribute("signedInUser", signedInUser);
+        model.addAttribute("person", sickNotePerson);
+
+        final List<SickNoteType> sickNoteTypes = sickNoteTypeService.getSickNoteTypes();
+
+        final SickNoteFormDto sickNoteFormDto = new SickNoteFormDto();
+        category.flatMap(cat -> sickNoteTypes.stream().filter(type -> type.isOfCategory(cat)).findFirst()).ifPresent(sickNoteFormDto::setSickNoteType);
+
+        model.addAttribute("sickNote", sickNoteFormDto);
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
-        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, person));
-        model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
+        model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
+        model.addAttribute("sickNoteTypes", sickNoteTypes);
 
         addVacationTypeColorsToModel(model);
 
@@ -221,18 +280,19 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_form";
         }
 
+        final boolean personIsApplier = sickNote.getPerson().equals(sickNote.getApplier());
+        final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
+
         final SickNote updatedSickNote;
-        var isSubmission = sickNote.getPerson().equals(sickNote.getApplier()) && settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
-        if (isSubmission) {
-            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
-        } else {
+        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || (personIsApplier && !allowedToSubmitSickNotes)) {
             updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
+        } else {
+            updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
         }
 
         return "redirect:/web/sicknote/" + updatedSickNote.getId();
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
@@ -244,7 +304,9 @@ class SickNoteViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         final Person sickNotePerson = sickNote.getPerson();
 
-        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)) {
+        if (!signedInUser.hasRole(OFFICE)
+                && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
+                && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit the sick note of user '%s'",
                 signedInUser.getId(), sickNotePerson.getId()));
@@ -253,6 +315,7 @@ class SickNoteViewController implements HasLaunchpad {
         final SickNoteFormDto sickNoteFormDto = toSickNoteForm(sickNote);
 
         model.addAttribute("sickNote", sickNoteFormDto);
+        model.addAttribute("person", sickNotePerson);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
         model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, sickNotePerson));
 
@@ -261,7 +324,6 @@ class SickNoteViewController implements HasLaunchpad {
         return "sicknote/sick_note_form";
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Long sickNoteId,
                                @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) throws UnknownSickNoteException {
@@ -272,15 +334,25 @@ class SickNoteViewController implements HasLaunchpad {
         }
 
         final SickNote persistedSickNote = maybeSickNote.get();
+        final Person signedInUser = personService.getSignedInUser();
+        final Person sickNotePerson = persistedSickNote.getPerson();
+
+        if (!signedInUser.hasRole(OFFICE)
+                && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
+                && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
+            throw new AccessDeniedException(format(
+                    "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+                    signedInUser.getId(), sickNotePerson.getId()));
+        }
+
         final SickNote editedSickNote = merge(persistedSickNote, sickNoteFormDto);
         sickNoteValidator.validate(editedSickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
             model.addAttribute("sickNote", sickNoteFormDto);
+            model.addAttribute("person", sickNotePerson);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
-
-            final Person signedInUser = personService.getSignedInUser();
             model.addAttribute("canAddSickNote", canAddSickNote(signedInUser, editedSickNote.getPerson()));
 
             addVacationTypeColorsToModel(model);
@@ -288,7 +360,6 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_form";
         }
 
-        final Person signedInUser = personService.getSignedInUser();
         sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteFormDto.getComment());
 
         return "redirect:/web/sicknote/" + sickNoteId;
@@ -321,11 +392,7 @@ class SickNoteViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("acceptSickNoteSuccess", true);
         }
 
-        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
-            return "redirect:" + redirectUrl;
-        }
-
-        return "redirect:/web/sicknote/" + sickNoteId;
+        return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_COMMENT')")
@@ -433,6 +500,13 @@ class SickNoteViewController implements HasLaunchpad {
         return "redirect:/web/sicknote/" + cancelledSickNote.getId();
     }
 
+    private String redirectToSickNoteDetailOr(String redirectUrl, Long sickNoteId) {
+        if ("/web/sicknote/submitted".equals(redirectUrl)) {
+            return "redirect:" + redirectUrl;
+        }
+        return "redirect:/web/sicknote/" + sickNoteId;
+    }
+
     private boolean canAddSickNote(Person person, Person sickNotePerson) {
         return person.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(person, SICK_NOTE_ADD, sickNotePerson);
     }
@@ -517,5 +591,26 @@ class SickNoteViewController implements HasLaunchpad {
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
+    }
+
+    private static SickNote merge(SickNote sickNote, SickNoteFormDto sickNoteFormDto) {
+        return SickNote.builder(sickNote)
+            .person(sickNoteFormDto.getPerson())
+            .sickNoteType(sickNoteFormDto.getSickNoteType())
+            .startDate(sickNoteFormDto.getStartDate())
+            .endDate(sickNoteFormDto.getEndDate())
+            .dayLength(sickNoteFormDto.getDayLength())
+            .aubStartDate(sickNoteFormDto.getAubStartDate())
+            .aubEndDate(sickNoteFormDto.getAubEndDate())
+            .build();
+    }
+
+    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote) {
+        return new SickNoteExtendPreviewDto(sickNote.getStartDate(), sickNote.getEndDate(), sickNote.getWorkDays());
+    }
+
+    private SickNoteExtendPreviewDto toSickNoteExtensionPreviewDto(SickNote sickNote, SickNoteExtension extension) {
+        final BigDecimal workingDays = sickNote.getWorkDays().add(extension.additionalWorkdays());
+        return new SickNoteExtendPreviewDto(sickNote.getStartDate(), extension.nextEndDate(), workingDays);
     }
 }

@@ -19,11 +19,13 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +56,164 @@ class WorkingTimeCalendarServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new WorkingTimeCalendarServiceImpl(workingTimeRepository, publicHolidaysService, settingsService);
+    }
+
+    @Test
+    void ensureGetNextWorkingDayFollowingTo() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2024, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(ZERO);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(ZERO);
+        workingTimeEntity.setSunday(ZERO);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            .thenReturn(List.of(workingTimeEntity));
+
+        final Function<LocalDate, Optional<LocalDate>> get =
+            date -> sut.getNextWorkingDayFollowingTo(person, date);
+
+        // first day of valid(From) workingTime
+        assertThat(get.apply(LocalDate.of(2024, 1, 1))).hasValue(LocalDate.of(2024, 1, 2));
+
+        // within valid working time
+        assertThat(get.apply(LocalDate.of(2024, 7, 15))).hasValue(LocalDate.of(2024, 7, 16));
+        assertThat(get.apply(LocalDate.of(2024, 7, 16))).hasValue(LocalDate.of(2024, 7, 18));
+        assertThat(get.apply(LocalDate.of(2024, 7, 17))).hasValue(LocalDate.of(2024, 7, 18));
+        assertThat(get.apply(LocalDate.of(2024, 7, 18))).hasValue(LocalDate.of(2024, 7, 19));
+        assertThat(get.apply(LocalDate.of(2024, 7, 19))).hasValue(LocalDate.of(2024, 7, 22));
+        assertThat(get.apply(LocalDate.of(2024, 7, 20))).hasValue(LocalDate.of(2024, 7, 22));
+        assertThat(get.apply(LocalDate.of(2024, 7, 21))).hasValue(LocalDate.of(2024, 7, 22));
+
+        // future
+        assertThat(get.apply(LocalDate.of(2024, 12, 31))).hasValue(LocalDate.of(2025, 1, 2));
+        assertThat(get.apply(LocalDate.of(2025, 1, 1))).hasValue(LocalDate.of(2025, 1, 2));
+    }
+
+    @Test
+    void ensureGetNextWorkingDayFollowingToReturnsDateOfFutureWorkingTime() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2024, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(ZERO);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(ZERO);
+        workingTimeEntity.setSunday(ZERO);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityValidFromJuly = new WorkingTimeEntity();
+        workingTimeEntityValidFromJuly.setValidFrom(LocalDate.of(2024, JULY, 1));
+        workingTimeEntityValidFromJuly.setPerson(person);
+        workingTimeEntityValidFromJuly.setMonday(ZERO);
+        workingTimeEntityValidFromJuly.setTuesday(ZERO);
+        workingTimeEntityValidFromJuly.setWednesday(ZERO);
+        workingTimeEntityValidFromJuly.setThursday(ZERO);
+        workingTimeEntityValidFromJuly.setFriday(FULL);
+        workingTimeEntityValidFromJuly.setSaturday(FULL);
+        workingTimeEntityValidFromJuly.setSunday(FULL);
+        workingTimeEntityValidFromJuly.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            // note that returned list has to be ordered by validFrom!
+            .thenReturn(List.of(workingTimeEntityValidFromJuly, workingTimeEntity));
+
+        final Function<LocalDate, Optional<LocalDate>> get =
+            date -> sut.getNextWorkingDayFollowingTo(person, date);
+
+        // outside of future workingTime, but next working day is within future workingTime
+        assertThat(get.apply(LocalDate.of(2024, 6, 30))).hasValue(LocalDate.of(2024, 7, 5));
+
+        // within valid working time
+        assertThat(get.apply(LocalDate.of(2024, 7, 1))).hasValue(LocalDate.of(2024, 7, 5));
+        assertThat(get.apply(LocalDate.of(2024, 7, 2))).hasValue(LocalDate.of(2024, 7, 5));
+        assertThat(get.apply(LocalDate.of(2024, 7, 3))).hasValue(LocalDate.of(2024, 7, 5));
+        assertThat(get.apply(LocalDate.of(2024, 7, 4))).hasValue(LocalDate.of(2024, 7, 5));
+        assertThat(get.apply(LocalDate.of(2024, 7, 5))).hasValue(LocalDate.of(2024, 7, 6));
+        assertThat(get.apply(LocalDate.of(2024, 7, 6))).hasValue(LocalDate.of(2024, 7, 7));
+        assertThat(get.apply(LocalDate.of(2024, 7, 7))).hasValue(LocalDate.of(2024, 7, 12));
+    }
+
+    @Test
+    void ensureGetNextWorkingDayFollowingToReturnsEmptyOptionalWhenEmptyWorkingTimes() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            .thenReturn(List.of());
+
+        final Optional<LocalDate> actual = sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, 7, 21));
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureGetNextWorkingDayFollowingToReturnsEmptyOptionalWhenThereAreNoWorkingTimesPresentInThePast() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2024, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(ZERO);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(ZERO);
+        workingTimeEntity.setSunday(ZERO);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            .thenReturn(List.of(workingTimeEntity));
+
+        final Function<LocalDate, Optional<LocalDate>> get =
+            date -> sut.getNextWorkingDayFollowingTo(person, date);
+
+        assertThat(get.apply(LocalDate.of(2023, 12, 30))).isEmpty();
+
+        // is present because the next day matches a workingTime
+        assertThat(get.apply(LocalDate.of(2023, 12, 31))).isPresent();
+    }
+
+    @Test
+    void ensureGetNextWorkingDayFollowingToDoesNotThrowStackoverflowForWorkingTimeWithoutWorkingDays() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2024, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(ZERO);
+        workingTimeEntity.setTuesday(ZERO);
+        workingTimeEntity.setWednesday(ZERO);
+        workingTimeEntity.setThursday(ZERO);
+        workingTimeEntity.setFriday(ZERO);
+        workingTimeEntity.setSaturday(ZERO);
+        workingTimeEntity.setSunday(ZERO);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
+            .thenReturn(List.of(workingTimeEntity));
+
+        assertThat(sut.getNextWorkingDayFollowingTo(person, LocalDate.of(2024, 7, 21))).isEmpty();
     }
 
     @Test

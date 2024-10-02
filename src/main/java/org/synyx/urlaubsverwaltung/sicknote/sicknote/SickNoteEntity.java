@@ -23,7 +23,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  */
 @Entity
 @Table(name = "sick_note")
-class SickNoteEntity {
+public class SickNoteEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -78,7 +78,7 @@ class SickNoteEntity {
     @Enumerated(STRING)
     private SickNoteStatus status;
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -86,7 +86,7 @@ class SickNoteEntity {
         this.id = id;
     }
 
-    Person getPerson() {
+    public Person getPerson() {
         return person;
     }
 
@@ -94,7 +94,7 @@ class SickNoteEntity {
         this.person = person;
     }
 
-    Person getApplier() {
+    public Person getApplier() {
         return applier;
     }
 
@@ -102,7 +102,7 @@ class SickNoteEntity {
         this.applier = applier;
     }
 
-    SickNoteType getSickNoteType() {
+    public SickNoteType getSickNoteType() {
         return sickNoteType;
     }
 
@@ -110,7 +110,7 @@ class SickNoteEntity {
         this.sickNoteType = sickNoteType;
     }
 
-    LocalDate getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
@@ -118,7 +118,7 @@ class SickNoteEntity {
         this.startDate = startDate;
     }
 
-    LocalDate getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
@@ -126,7 +126,7 @@ class SickNoteEntity {
         this.endDate = endDate;
     }
 
-    DayLength getDayLength() {
+    public DayLength getDayLength() {
         return dayLength;
     }
 
@@ -134,7 +134,7 @@ class SickNoteEntity {
         this.dayLength = dayLength;
     }
 
-    LocalDate getAubStartDate() {
+    public LocalDate getAubStartDate() {
         return this.aubStartDate;
     }
 
@@ -142,7 +142,7 @@ class SickNoteEntity {
         this.aubStartDate = aubStartDate;
     }
 
-    LocalDate getAubEndDate() {
+    public LocalDate getAubEndDate() {
         return this.aubEndDate;
     }
 
@@ -150,7 +150,7 @@ class SickNoteEntity {
         this.aubEndDate = aubEndDate;
     }
 
-    LocalDate getLastEdited() {
+    public LocalDate getLastEdited() {
         return this.lastEdited;
     }
 
@@ -158,7 +158,7 @@ class SickNoteEntity {
         this.lastEdited = lastEdited;
     }
 
-    LocalDate getEndOfSickPayNotificationSend() {
+    public LocalDate getEndOfSickPayNotificationSend() {
         return endOfSickPayNotificationSend;
     }
 
@@ -166,7 +166,7 @@ class SickNoteEntity {
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
     }
 
-    SickNoteStatus getStatus() {
+    public SickNoteStatus getStatus() {
         return status;
     }
 

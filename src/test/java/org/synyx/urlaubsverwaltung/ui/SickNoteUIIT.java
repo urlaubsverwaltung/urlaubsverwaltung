@@ -21,8 +21,10 @@ import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
+import org.synyx.urlaubsverwaltung.ui.pages.SickNoteExtensionPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteOverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -97,46 +99,109 @@ class SickNoteUIIT {
     private WorkingTimeWriteService workingTimeWriteService;
     @Autowired
     private MessageSource messageSource;
+    @Autowired
+    private Clock clock;
 
     @Test
     void ensureSickNote(Page page) {
+
         final Person person = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        login(page, person);
 
-        final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
-
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
-        sickNote(page, person);
+        sickNote(page, person, LocalDate.of(2022, FEBRUARY, 23));
         sickNoteWithIncapacityCertificate(page, person);
         childSickNote(page, person);
         childSickNoteWithIncapacityCertificate(page, person);
         sickNoteStatisticListView(page, person);
     }
 
-    private void sickNote(Page page, Person person) {
+    @Test
+    void ensureUserCanExtendSickNote(Page page) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+
+        final Person office = createPerson("Alfred-2", "Pennyworth-2", List.of(USER, OFFICE));
+        login(page, office);
+        enableUserSickNoteCreation(page, true);
+        navigationPage.logout();
+
+        final Person user = createPerson("Dick", "Grayson", List.of(USER));
+        login(page, user);
+
+        final LocalDate startDate = LocalDate.now(clock).minusDays(1);
+        sickNote(page, user, startDate);
+        sickNoteExtension(page, user, startDate, LocalDate.now(clock));
+    }
+
+    private void enableUserSickNoteCreation(Page page, boolean enable) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsPage settingsPage = new SettingsPage(page);
+
+        navigationPage.clickSettings();
+
+        if (enable) {
+            settingsPage.clickUserSubmitSickNotesAllowed();
+        } else {
+            settingsPage.clickUserToSubmitSickNotesForbidden();
+        }
+
+        settingsPage.saveSettings();
+    }
+
+    private void login(Page page, Person person) {
+        final LoginPage loginPage = new LoginPage(page);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
+    }
+
+    private void sickNote(Page page, Person person, LocalDate startDate) {
+
+        createSickNote(page, person, startDate);
+
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
+        assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(startDate)).isTrue();
+        assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
+    }
+
+    private void createSickNote(Page page, Person person, LocalDate startDate) {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SickNotePage sickNotePage = new SickNotePage(page);
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newSickNote();
+
+        if (person.hasRole(OFFICE)) {
+            assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
+        }
+        assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
+        assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
+
+        sickNotePage.startDate(startDate);
+        assertThat(sickNotePage.showsToDate(startDate)).isTrue();
+
+        sickNotePage.submit();
+    }
+
+    private void sickNoteExtension(Page page, Person person, LocalDate startDate, LocalDate nextEndDate) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
 
-        assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
-        assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
-        assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
+        assertThat(sickNoteExtensionPage.isVisible()).isTrue();
+        sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
 
-        sickNotePage.startDate(LocalDate.of(2022, FEBRUARY, 23));
-        assertThat(sickNotePage.showsToDate(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
+        assertThat(sickNoteExtensionPage.showsExtensionPreview(startDate, nextEndDate)).isTrue();
+        sickNoteExtensionPage.submit();
 
-        sickNotePage.submit();
-
+        // no extension hint shown since sick note has not been accepted yet (sick note has been edited right away)
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
-        assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(startDate)).isTrue();
     }
 
     private void sickNoteWithIncapacityCertificate(Page page, Person person) {

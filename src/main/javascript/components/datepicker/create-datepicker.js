@@ -191,13 +191,22 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.localization = localisation;
 
   const name = dateElement.getAttribute("name");
+  const originalStyle = dateElement.getAttribute("style") ?? "";
   const value = dateElement.dataset.isoValue || "";
 
-  duetDateElement.setAttribute("style", "--duet-radius=0");
+  duetDateElement.setAttribute("style", "--duet-radius=0;" + originalStyle);
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+  duetDateElement.setAttribute("min", dateElement.getAttribute("min"));
+  duetDateElement.setAttribute("max", dateElement.getAttribute("max"));
   duetDateElement.setAttribute("name", name);
   duetDateElement.setAttribute("value", value);
+
+  for (const attributeName of dateElement.getAttributeNames()) {
+    if (attributeName.startsWith("data-") && attributeName !== "data-test-id") {
+      duetDateElement.setAttribute(attributeName, dateElement.getAttribute(attributeName));
+    }
+  }
 
   // cache initial value as fallback for history.popstate handling.
   // first it is looked at the URL. If there is no value set for `name` then this initial value is used.

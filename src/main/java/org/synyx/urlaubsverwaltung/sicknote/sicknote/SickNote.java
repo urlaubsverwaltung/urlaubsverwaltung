@@ -160,6 +160,10 @@ public class SickNote {
         return SickNoteStatus.activeStatuses().contains(this.status);
     }
 
+    public boolean isSubmitted() {
+        return SickNoteStatus.SUBMITTED.equals(getStatus());
+    }
+
     public boolean isAubPresent() {
         return getAubStartDate() != null && getAubEndDate() != null;
     }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import jakarta.annotation.Nullable;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -52,10 +53,10 @@ public interface SickNoteInteractionService {
      *
      * @param sickNote to be updated
      * @param editor   the person who updates the sick note
-     * @param comment  giving further information
+     * @param comment  optional comment giving further information, can be {@code null}
      * @return the updated sick note
      */
-    SickNote update(SickNote sickNote, Person editor, String comment);
+    SickNote update(SickNote sickNote, Person editor, @Nullable String comment);
 
     /**
      * Convert a sick note to an allowed application for leave.

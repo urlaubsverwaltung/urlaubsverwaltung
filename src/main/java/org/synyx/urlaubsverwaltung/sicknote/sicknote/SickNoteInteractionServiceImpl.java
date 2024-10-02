@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -12,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -31,6 +33,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SickNoteService sickNoteService;
+    private final SickNoteExtensionService sicknoteExtensionService;
     private final SickNoteCommentService commentService;
     private final ApplicationInteractionService applicationInteractionService;
     private final SickNoteMailService sickNoteMailService;
@@ -38,13 +41,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
+                                   SickNoteExtensionService sicknoteExtensionService,
                                    SickNoteCommentService commentService,
                                    ApplicationInteractionService applicationInteractionService,
                                    SickNoteMailService sickNoteMailService,
-                                   ApplicationEventPublisher applicationEventPublisher
-    ) {
+                                   ApplicationEventPublisher applicationEventPublisher) {
 
         this.sickNoteService = sickNoteService;
+        this.sicknoteExtensionService = sicknoteExtensionService;
         this.commentService = commentService;
         this.applicationInteractionService = applicationInteractionService;
         this.sickNoteMailService = sickNoteMailService;
@@ -103,9 +107,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote update(SickNote sickNote, Person editor, String comment) {
+    public SickNote update(SickNote sickNote, Person editor, @Nullable String comment) {
 
-        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).build());
         LOG.info("Updated sick note: {}", updatedSickNote);
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
@@ -120,8 +124,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
-        // make sick note inactive
         final SickNote convertedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
+
+        sicknoteExtensionService.updateExtensionsForConvertedSickNote(convertedSickNote);
 
         commentService.create(convertedSickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         applicationInteractionService.createFromConvertedSickNote(application, converter);
@@ -137,6 +142,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
         LOG.info("Cancelled sick note: {}", cancelledSickNote);
+
+        sicknoteExtensionService.updateExtensionsForConvertedSickNote(cancelledSickNote);
 
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 

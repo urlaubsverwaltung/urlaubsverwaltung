@@ -24,7 +24,12 @@ legend {
   @apply tw-duration-150;
   @apply tw-ease-in-out;
   @apply tw-rounded-md;
-  @apply dark:tw-border-neutral-600 !important;
+
+  :not([class*="tw-border-"]) {
+    /* actually colors are meant here, like tw-border-blue-400 */
+    /* however tw-border-*-* is not a valid selector */
+    @apply dark:tw-border-neutral-600 !important;
+  }
 }
 
 .details-dropdown-input .details-dropdown_summary {

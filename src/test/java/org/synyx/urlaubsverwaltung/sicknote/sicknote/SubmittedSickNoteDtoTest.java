@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-class SickNoteDtoTest {
+class SubmittedSickNoteDtoTest {
 
     @ParameterizedTest
     @EnumSource(value = SickNoteStatus.class, names = {"ACTIVE", "SUBMITTED"})

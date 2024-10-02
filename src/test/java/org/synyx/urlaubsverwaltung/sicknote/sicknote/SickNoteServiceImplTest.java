@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -36,6 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,12 +49,14 @@ class SickNoteServiceImplTest {
     private SettingsService settingsService;
     @Mock
     private WorkingTimeCalendarService workingTimeCalendarService;
+    @Mock
+    private SickNoteMapper sickNoteMapper;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2021-06-28T00:00:00.00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, fixedClock);
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, sickNoteMapper, fixedClock);
     }
 
     @Test
@@ -84,7 +86,11 @@ class SickNoteServiceImplTest {
             .status(ACTIVE)
             .build();
 
-        final SickNote actualSavedSickNote = sut.save(sickNote);
+        final SickNote expectedSickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(any(SickNoteEntity.class))).thenReturn(expectedSickNote);
+
+        final SickNote actual = sut.save(sickNote);
+        assertThat(actual).isSameAs(expectedSickNote);
 
         final ArgumentCaptor<SickNoteEntity> captor = ArgumentCaptor.forClass(SickNoteEntity.class);
         verify(sickNoteRepository).save(captor.capture());
@@ -102,179 +108,222 @@ class SickNoteServiceImplTest {
             assertThat(entityToSave.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
             assertThat(entityToSave.getStatus()).isEqualTo(ACTIVE);
         });
-
-        assertThat(actualSavedSickNote.getId()).isEqualTo(42);
-        assertThat(actualSavedSickNote.getPerson()).isSameAs(person);
-        assertThat(actualSavedSickNote.getApplier()).isSameAs(applier);
-        assertThat(actualSavedSickNote.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actualSavedSickNote.getStartDate()).isEqualTo(startDate);
-        assertThat(actualSavedSickNote.getEndDate()).isEqualTo(endDate);
-        assertThat(actualSavedSickNote.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actualSavedSickNote.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actualSavedSickNote.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actualSavedSickNote.getLastEdited()).isEqualTo(LocalDate.now(fixedClock));
-        assertThat(actualSavedSickNote.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actualSavedSickNote.getStatus()).isEqualTo(ACTIVE);
     }
 
     @Test
     void getById() {
+
         final Person person = new Person();
         person.setId(1L);
 
-        final Person applier = new Person();
-        applier.setId(2L);
-
-        final SickNoteType sickNoteType = new SickNoteType();
         final LocalDate now = LocalDate.now(fixedClock);
         final LocalDate startDate = now.minusDays(10);
         final LocalDate endDate = now.minusDays(6);
-        final LocalDate aubStartDate = endDate.minusDays(2);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
         entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
         entity.setStartDate(startDate);
         entity.setEndDate(endDate);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate);
-        entity.setAubEndDate(endDate);
-        entity.setLastEdited(now);
-        entity.setEndOfSickPayNotificationSend(endDate);
-        entity.setStatus(ACTIVE);
 
         when(sickNoteRepository.findById(1L)).thenReturn(Optional.of(entity));
 
         final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(person, workingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity, workingTimeCalendar)).thenReturn(sickNote);
 
         final Optional<SickNote> actualMaybe = sut.getById(1L);
-        assertThat(actualMaybe).isPresent();
-
-        final SickNote actual = actualMaybe.get();
-        assertThat(actual.getId()).isEqualTo(1);
-        assertThat(actual.getPerson()).isSameAs(person);
-        assertThat(actual.getApplier()).isSameAs(applier);
-        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actual.getStartDate()).isEqualTo(startDate);
-        assertThat(actual.getEndDate()).isEqualTo(endDate);
-        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actual.getLastEdited()).isEqualTo(now);
-        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
-        assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(actualMaybe).isPresent().get().isSameAs(sickNote);
     }
 
     @Test
     void getAllActiveByYear() {
-        final Person person = new Person();
-        final Person applier = new Person();
-        final SickNoteType sickNoteType = new SickNoteType();
-        final LocalDate now = LocalDate.now(fixedClock);
-        final LocalDate startDate1 = now.minusDays(10);
-        final LocalDate endDate1 = now.minusDays(8);
-        final LocalDate aubStartDate1 = endDate1.minusDays(8);
-        final LocalDate startDate2 = now.minusDays(5);
-        final LocalDate endDate2 = now.minusDays(5);
+
+        final LocalDate from = LocalDate.now(fixedClock).minusDays(11);
+        final LocalDate to = LocalDate.now(fixedClock);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
-        entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
-        entity.setStartDate(startDate1);
-        entity.setEndDate(endDate1);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate1);
-        entity.setAubEndDate(endDate1);
-        entity.setLastEdited(now);
-        entity.setEndOfSickPayNotificationSend(endDate1);
-        entity.setStatus(ACTIVE);
 
         final SickNoteEntity entity2 = new SickNoteEntity();
         entity2.setId(2L);
-        entity2.setPerson(person);
-        entity2.setApplier(applier);
-        entity2.setSickNoteType(sickNoteType);
-        entity2.setStartDate(startDate2);
-        entity2.setEndDate(endDate2);
-        entity2.setDayLength(DayLength.FULL);
-        entity2.setLastEdited(now);
-        entity2.setStatus(ACTIVE);
-
-        final LocalDate from = startDate1.minusDays(1);
-        final LocalDate to = now;
 
         when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to))
             .thenReturn(List.of(entity, entity2));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(from, to))).thenReturn(Map.of(person, workingTimeCalendar));
+        final SickNote sickNote1 = SickNote.builder().build();
+        final SickNote sickNote2 = SickNote.builder().build();
+        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity, entity2), new DateRange(from, to)))
+            .thenReturn(List.of(sickNote1, sickNote2));
 
         final List<SickNote> sickNotes = sut.getAllActiveByPeriod(from, to);
         assertThat(sickNotes).hasSize(2);
-        assertThat(sickNotes.get(0)).satisfies(sickNote -> {
-            assertThat(sickNote.getId()).isEqualTo(1);
-            assertThat(sickNote.getPerson()).isSameAs(person);
-            assertThat(sickNote.getApplier()).isSameAs(applier);
-            assertThat(sickNote.getSickNoteType()).isEqualTo(sickNoteType);
-            assertThat(sickNote.getStartDate()).isEqualTo(startDate1);
-            assertThat(sickNote.getEndDate()).isEqualTo(endDate1);
-            assertThat(sickNote.getDayLength()).isEqualTo(DayLength.FULL);
-            assertThat(sickNote.getAubStartDate()).isEqualTo(aubStartDate1);
-            assertThat(sickNote.getAubEndDate()).isEqualTo(endDate1);
-            assertThat(sickNote.getLastEdited()).isEqualTo(now);
-            assertThat(sickNote.getEndOfSickPayNotificationSend()).isEqualTo(endDate1);
-            assertThat(sickNote.getStatus()).isEqualTo(ACTIVE);
-            assertThat(sickNote.getWorkDays()).isEqualTo(BigDecimal.valueOf(3));
-        });
-        assertThat(sickNotes.get(1)).satisfies(sickNote -> {
-            assertThat(sickNote.getId()).isEqualTo(2);
-            assertThat(sickNote.getPerson()).isSameAs(person);
-            assertThat(sickNote.getApplier()).isSameAs(applier);
-            assertThat(sickNote.getSickNoteType()).isEqualTo(sickNoteType);
-            assertThat(sickNote.getStartDate()).isEqualTo(startDate2);
-            assertThat(sickNote.getEndDate()).isEqualTo(endDate2);
-            assertThat(sickNote.getDayLength()).isEqualTo(DayLength.FULL);
-            assertThat(sickNote.getAubStartDate()).isNull();
-            assertThat(sickNote.getAubEndDate()).isNull();
-            assertThat(sickNote.getLastEdited()).isEqualTo(now);
-            assertThat(sickNote.getEndOfSickPayNotificationSend()).isNull();
-            assertThat(sickNote.getStatus()).isEqualTo(ACTIVE);
-            assertThat(sickNote.getWorkDays()).isEqualTo(BigDecimal.valueOf(1));
-        });
+        assertThat(sickNotes.getFirst()).isSameAs(sickNote1);
+        assertThat(sickNotes.get(1)).isSameAs(sickNote2);
     }
 
     @Test
-    void getSickNotesReachingEndOfSickPay() {
+    void ensureSickNoteOfYesterdayWithPersonWorkingYesterday() {
+
         final Person person = new Person();
-        final Person applier = new Person();
-        final SickNoteType sickNoteType = new SickNoteType();
-        final LocalDate startDate = LocalDate.of(2022, 12, 5);
-        final LocalDate endDate = LocalDate.of(2022, 12, 9);
-        final LocalDate aubStartDate = LocalDate.of(2022, 12, 7);
-        final LocalDate aubEndDate = LocalDate.of(2022, 12, 9);
-        final LocalDate lastEditedDate = LocalDate.of(2022, 12, 10);
+        person.setId(1L);
+
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(1);
+        final LocalDate endDate = now.minusDays(1);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
         entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
         entity.setStartDate(startDate);
         entity.setEndDate(endDate);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate);
-        entity.setAubEndDate(aubEndDate);
-        entity.setLastEdited(lastEditedDate);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now))
+            .thenReturn(Optional.of(entity));
+
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(endDate, now, date -> fullWorkingDayInformation());
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, now)))
+            .thenReturn(Map.of(person, new WorkingTimeCalendar(personWorkingTimeByDate)));
+
+        final Map<LocalDate, WorkingDayInformation> sickNoteWorkDayInfo = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar entityWorkingTimeCalendar = new WorkingTimeCalendar(sickNoteWorkDayInfo);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(person, entityWorkingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().id(1L).build();
+        when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
+
+        final Optional<SickNote> actual = sut.getSickNoteOfYesterdayOrLastWorkDay(person);
+        assertThat(actual).isPresent().get().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureSickNoteOfYesterdayWithPersonNotWorkingYesterday() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(1);
+        final LocalDate endDate = now.minusDays(1);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now))
+            .thenReturn(Optional.of(entity));
+
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(endDate.minusDays(1), now, date -> fullWorkingDayInformation());
+        personWorkingTimeByDate.remove(endDate);
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, now)))
+            .thenReturn(Map.of(person, workingTimeCalendar));
+
+        final Map<LocalDate, WorkingDayInformation> sickNoteWorkDayInfo = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar entityWorkingTimeCalendar = new WorkingTimeCalendar(sickNoteWorkDayInfo);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(person, entityWorkingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
+
+        final Optional<SickNote> actual = sut.getSickNoteOfYesterdayOrLastWorkDay(person);
+        assertThat(actual).isPresent().get().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureSickNoteOfLastWorkDayWithPersonNotWorkingYesterday() {
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(2);
+        final LocalDate endDate = now.minusDays(2);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now))
+            .thenReturn(Optional.of(entity));
+
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(endDate, now, date -> fullWorkingDayInformation());
+        personWorkingTimeByDate.remove(now.minusDays(1));
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, now)))
+            .thenReturn(Map.of(person, workingTimeCalendar));
+
+        final Map<LocalDate, WorkingDayInformation> sickNoteWorkDayInfo = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar entityWorkingTimeCalendar = new WorkingTimeCalendar(sickNoteWorkDayInfo);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(person, entityWorkingTimeCalendar));
+
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity, entityWorkingTimeCalendar)).thenReturn(sickNote);
+
+        final Optional<SickNote> actual = sut.getSickNoteOfYesterdayOrLastWorkDay(person);
+        assertThat(actual).isPresent().get().isSameAs(sickNote);
+    }
+
+    @Test
+    void ensureNoSickNoteIfBetweenLastSickNoteAndTodayPersonWasWorking() {
+        final Person person = new Person();
+        person.setId(1L);
+
+        final LocalDate now = LocalDate.now(fixedClock);
+        final LocalDate startDate = now.minusDays(2);
+        final LocalDate endDate = now.minusDays(2);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now)).thenReturn(Optional.of(entity));
+
+        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(endDate, now, date -> fullWorkingDayInformation());
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(endDate, now))).thenReturn(Map.of(person, workingTimeCalendar));
+
+        assertThat(sut.getSickNoteOfYesterdayOrLastWorkDay(person)).isEmpty();
+    }
+
+    @Test
+    void ensureNoSickNoteOfYesterdayOrLastWorkDayIfNoSickNoteExists() {
+
+        final LocalDate now = LocalDate.now(fixedClock);
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        when(sickNoteRepository.findFirstByPersonAndStatusInAndEndDateIsLessThanOrderByEndDateDesc(person, List.of(SUBMITTED, ACTIVE), now)).thenReturn(Optional.empty());
+        assertThat(sut.getSickNoteOfYesterdayOrLastWorkDay(person)).isEmpty();
+    }
+
+    @Test
+    void getSickNotesReachingEndOfSickPay() {
+
+        final Person person = new Person();
+        final LocalDate startDate = LocalDate.of(2022, 12, 5);
+        final LocalDate endDate = LocalDate.of(2022, 12, 9);
+
+        final SickNoteEntity entity = new SickNoteEntity();
+        entity.setId(1L);
+        entity.setPerson(person);
+        entity.setStartDate(startDate);
+        entity.setEndDate(endDate);
         entity.setEndOfSickPayNotificationSend(endDate);
-        entity.setStatus(ACTIVE);
 
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
         sickNoteSettings.setMaximumSickPayDays(5);
@@ -287,102 +336,46 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(5, 2, LocalDate.of(2021, 6, 28)))
             .thenReturn(List.of(entity));
 
-        final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
-        assertThat(sickNotesReachingEndOfSickPay).hasSize(1);
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNote(entity)).thenReturn(sickNote);
 
-        final SickNote actual = sickNotesReachingEndOfSickPay.get(0);
-        assertThat(actual.getId()).isEqualTo(1);
-        assertThat(actual.getPerson()).isSameAs(person);
-        assertThat(actual.getApplier()).isSameAs(applier);
-        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actual.getStartDate()).isEqualTo(startDate);
-        assertThat(actual.getEndDate()).isEqualTo(endDate);
-        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actual.getLastEdited()).isEqualTo(lastEditedDate);
-        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
+        final List<SickNote> actual = sut.getSickNotesReachingEndOfSickPay();
+        assertThat(actual).hasSize(1).first().isSameAs(sickNote);
     }
 
     @Test
     void getForStatesSince() {
-        final Person person = new Person();
-        person.setId(1L);
 
-        final Person applier = new Person();
-        applier.setId(2L);
-
-        final SickNoteType sickNoteType = new SickNoteType();
         final LocalDate now = LocalDate.now(fixedClock);
-        final LocalDate startDate = now.minusDays(10);
-        final LocalDate endDate = now.minusDays(6);
-        final LocalDate aubStartDate = endDate.minusDays(2);
+        final LocalDate since = now.minusDays(30);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
-        entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
-        entity.setStartDate(startDate);
-        entity.setEndDate(endDate);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate);
-        entity.setAubEndDate(endDate);
-        entity.setLastEdited(now);
-        entity.setEndOfSickPayNotificationSend(endDate);
-        entity.setStatus(ACTIVE);
 
-        final LocalDate since = now.minusDays(30);
+        when(sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(ACTIVE), since))
+            .thenReturn(List.of(entity));
 
-        when(sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(ACTIVE), since)).thenReturn(List.of(entity));
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity), new DateRange(since, now)))
+            .thenReturn(List.of(sickNote));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
-
-        final List<SickNote> sickNotes = sut.getForStatesSince(List.of(ACTIVE), since);
-        assertThat(sickNotes).hasSize(1);
-
-        final SickNote actual = sickNotes.get(0);
-        assertThat(actual.getId()).isEqualTo(1);
-        assertThat(actual.getPerson()).isSameAs(person);
-        assertThat(actual.getApplier()).isSameAs(applier);
-        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actual.getStartDate()).isEqualTo(startDate);
-        assertThat(actual.getEndDate()).isEqualTo(endDate);
-        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actual.getLastEdited()).isEqualTo(now);
-        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
-        assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
+        final List<SickNote> actual = sut.getForStatesSince(List.of(ACTIVE), since);
+        assertThat(actual).hasSize(1).first().isSameAs(sickNote);
     }
 
     @Test
     void getForStatesAndPerson() {
+
         final Person person = new Person();
-        final Person applier = new Person();
-        final SickNoteType sickNoteType = new SickNoteType();
         final LocalDate now = LocalDate.now(fixedClock);
         final LocalDate startDate = now.minusDays(10);
         final LocalDate endDate = now.minusDays(6);
-        final LocalDate aubStartDate = endDate.minusDays(2);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
         entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
         entity.setStartDate(startDate);
         entity.setEndDate(endDate);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate);
-        entity.setAubEndDate(endDate);
-        entity.setLastEdited(now);
-        entity.setEndOfSickPayNotificationSend(endDate);
-        entity.setStatus(ACTIVE);
 
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
@@ -390,31 +383,17 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons))
                 .thenReturn(List.of(entity));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity), new DateRange(startDate, endDate)))
+            .thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
-        assertThat(sickNotes).hasSize(1);
-
-        final SickNote actual = sickNotes.getFirst();
-        assertThat(actual.getId()).isEqualTo(1);
-        assertThat(actual.getPerson()).isSameAs(person);
-        assertThat(actual.getApplier()).isSameAs(applier);
-        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actual.getStartDate()).isEqualTo(startDate);
-        assertThat(actual.getEndDate()).isEqualTo(endDate);
-        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actual.getLastEdited()).isEqualTo(now);
-        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
-        assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(sickNotes).hasSize(1).first().isSameAs(sickNote);
     }
 
     @Test
     void getForStatesAndPersonWithEmptyResult() {
+
         final Person person = new Person();
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
@@ -428,27 +407,17 @@ class SickNoteServiceImplTest {
 
     @Test
     void getForStatesAndPersonSince() {
+
         final Person person = new Person();
-        final Person applier = new Person();
-        final SickNoteType sickNoteType = new SickNoteType();
         final LocalDate now = LocalDate.now(fixedClock);
         final LocalDate startDate = now.minusDays(10);
         final LocalDate endDate = now.minusDays(6);
-        final LocalDate aubStartDate = endDate.minusDays(2);
 
         final SickNoteEntity entity = new SickNoteEntity();
         entity.setId(1L);
         entity.setPerson(person);
-        entity.setApplier(applier);
-        entity.setSickNoteType(sickNoteType);
         entity.setStartDate(startDate);
         entity.setEndDate(endDate);
-        entity.setDayLength(DayLength.FULL);
-        entity.setAubStartDate(aubStartDate);
-        entity.setAubEndDate(endDate);
-        entity.setLastEdited(now);
-        entity.setEndOfSickPayNotificationSend(endDate);
-        entity.setStatus(ACTIVE);
 
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
@@ -457,27 +426,12 @@ class SickNoteServiceImplTest {
         when(sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(openSickNoteStatuses, persons, since))
             .thenReturn(List.of(entity));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(since, now, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
+        final SickNote sickNote = SickNote.builder().build();
+        when(sickNoteMapper.toSickNoteWithWorkDays(List.of(entity), new DateRange(since, now)))
+            .thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPersonSince(openSickNoteStatuses, persons, since);
-        assertThat(sickNotes).hasSize(1);
-
-        final SickNote actual = sickNotes.get(0);
-        assertThat(actual.getId()).isEqualTo(1);
-        assertThat(actual.getPerson()).isSameAs(person);
-        assertThat(actual.getApplier()).isSameAs(applier);
-        assertThat(actual.getSickNoteType()).isEqualTo(sickNoteType);
-        assertThat(actual.getStartDate()).isEqualTo(startDate);
-        assertThat(actual.getEndDate()).isEqualTo(endDate);
-        assertThat(actual.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(actual.getAubStartDate()).isEqualTo(aubStartDate);
-        assertThat(actual.getAubEndDate()).isEqualTo(endDate);
-        assertThat(actual.getLastEdited()).isEqualTo(now);
-        assertThat(actual.getEndOfSickPayNotificationSend()).isEqualTo(endDate);
-        assertThat(actual.getStatus()).isEqualTo(ACTIVE);
-        assertThat(actual.getWorkDays()).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(sickNotes).hasSize(1).first().isSameAs(sickNote);
     }
 
     @Test

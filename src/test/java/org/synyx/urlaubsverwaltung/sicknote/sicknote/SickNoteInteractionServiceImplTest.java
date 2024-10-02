@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -37,6 +39,8 @@ class SickNoteInteractionServiceImplTest {
 
     @Mock
     private SickNoteService sickNoteService;
+    @Mock
+    private SickNoteExtensionService sickNoteExtensionService;
     @Mock
     private SickNoteCommentService commentService;
     @Mock
@@ -162,21 +166,17 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .startDate(LocalDate.now(UTC))
-            .endDate(LocalDate.now(UTC))
-            .dayLength(DayLength.FULL)
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .build();
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .build();
 
         sut.update(sickNote, creator, comment);
 
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, comment);
-
-        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
-        verify(sickNoteService).save(captor.capture());
-        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
         final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
@@ -187,6 +187,31 @@ class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteMailService).sendEditedToSickPerson(sickNote);
     }
+
+    @Test
+    void ensureStatusIsPreservedInUpdatedSickNote() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final String comment = "test comment";
+        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .status(SickNoteStatus.SUBMITTED)
+                .build();
+
+        sut.update(sickNote, creator, comment);
+
+        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+        verify(sickNoteService).save(captor.capture());
+        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.SUBMITTED);
+    }
+
 
     @Test
     void ensureCancelledSickNoteIsPersisted() {
@@ -245,50 +270,72 @@ class SickNoteInteractionServiceImplTest {
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
     }
 
-    @Test
-    void ensureConvertedSickNoteIsPersisted() {
+    @Nested
+    class Convert {
 
-        when(sickNoteService.save(any())).then(returnsFirstArg());
+        @Test
+        void ensureConvertedSickNoteIsPersisted() {
 
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+            when(sickNoteService.save(any())).then(returnsFirstArg());
 
-        final Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(LocalDate.now(UTC));
-        applicationForLeave.setEndDate(LocalDate.now(UTC));
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+            final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
-        final SickNote sickNote = SickNote.builder()
-            .id(42L)
-            .startDate(LocalDate.now(UTC))
-            .endDate(LocalDate.now(UTC))
-            .dayLength(DayLength.FULL)
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .build();
+            final Application applicationForLeave = new Application();
+            applicationForLeave.setStartDate(LocalDate.now(UTC));
+            applicationForLeave.setEndDate(LocalDate.now(UTC));
+            applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
+            applicationForLeave.setDayLength(DayLength.FULL);
+            applicationForLeave.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
-        final SickNote convertedSickNote = sut.convert(sickNote, applicationForLeave, creator);
-        assertThat(convertedSickNote).isNotNull();
-        assertThat(convertedSickNote.getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
+            final SickNote sickNote = SickNote.builder()
+                .id(42L)
+                .startDate(LocalDate.now(UTC))
+                .endDate(LocalDate.now(UTC))
+                .dayLength(DayLength.FULL)
+                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+                .build();
 
-        // assert sick note correctly updated
-        verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, creator);
+            final SickNote convertedSickNote = sut.convert(sickNote, applicationForLeave, creator);
+            assertThat(convertedSickNote).isNotNull();
+            assertThat(convertedSickNote.getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
 
-        // assert application for leave correctly created
-        verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, creator);
+            // assert sick note correctly updated
+            verify(sickNoteService).save(sickNote);
+            verify(commentService).create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, creator);
 
-        final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
-        verify(sickNoteService).save(captor.capture());
-        assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
+            // assert application for leave correctly created
+            verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, creator);
 
-        final ArgumentCaptor<SickNoteToApplicationConvertedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteToApplicationConvertedEvent.class);
-        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
-        final SickNoteToApplicationConvertedEvent sickNoteToApplicationConvertedEvent = eventCaptor.getValue();
-        assertThat(sickNoteToApplicationConvertedEvent.sickNote()).isEqualTo(convertedSickNote);
-        assertThat(sickNoteToApplicationConvertedEvent.application()).isEqualTo(applicationForLeave);
-        assertThat(sickNoteToApplicationConvertedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
-        assertThat(sickNoteToApplicationConvertedEvent.id()).isNotNull();
+            final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+            verify(sickNoteService).save(captor.capture());
+            assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
+
+            final ArgumentCaptor<SickNoteToApplicationConvertedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteToApplicationConvertedEvent.class);
+            verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+            final SickNoteToApplicationConvertedEvent sickNoteToApplicationConvertedEvent = eventCaptor.getValue();
+            assertThat(sickNoteToApplicationConvertedEvent.sickNote()).isEqualTo(convertedSickNote);
+            assertThat(sickNoteToApplicationConvertedEvent.application()).isEqualTo(applicationForLeave);
+            assertThat(sickNoteToApplicationConvertedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(sickNoteToApplicationConvertedEvent.id()).isNotNull();
+        }
+
+        @Test
+        void ensureConvertUpdatesExtensions() {
+
+            final Person person = new Person();
+            final SickNote sickNote = SickNote.builder().build();
+            final Application application = new Application();
+
+            final SickNote savedSickNote = SickNote.builder().build();
+            when(sickNoteService.save(any(SickNote.class))).thenReturn(savedSickNote);
+
+            sut.convert(sickNote, application, person);
+
+            final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
+            verify(sickNoteExtensionService).updateExtensionsForConvertedSickNote(captor.capture());
+
+            assertThat(captor.getValue()).isSameAs(savedSickNote);
+        }
     }
 
     @Test

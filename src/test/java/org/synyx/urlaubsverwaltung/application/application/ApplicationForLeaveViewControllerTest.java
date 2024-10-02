@@ -21,7 +21,8 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SubmittedSickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SubmittedSickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
@@ -72,8 +73,7 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-
-    private SickNoteService sickNoteService;
+    private SubmittedSickNoteService submittedSickNoteService;
     @Mock
     private WorkDaysCountService workDaysCountService;
     @Mock
@@ -92,7 +92,7 @@ class ApplicationForLeaveViewControllerTest {
 
         userIsAllowedToSubmitSickNotes(false);
 
-        sut = new ApplicationForLeaveViewController(applicationService, sickNoteService, workDaysCountService, departmentService,
+        sut = new ApplicationForLeaveViewController(applicationService, submittedSickNoteService, workDaysCountService, departmentService,
             personService, settingsService, clock, messageSource);
     }
 
@@ -1523,16 +1523,18 @@ class ApplicationForLeaveViewControllerTest {
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
-        final SickNote sickNote = SickNote.builder()
-            .id(1L)
-            .sickNoteType(anySickNoteType())
-            .person(person)
-            .status(SUBMITTED)
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(FULL)
-            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-            .build();
+        final SubmittedSickNote submittedSickNote = new SubmittedSickNote(
+            SickNote.builder()
+                .id(1L)
+                .sickNoteType(anySickNoteType())
+                .person(person)
+                .status(SUBMITTED)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+                .build()
+        );
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
@@ -1542,7 +1544,7 @@ class ApplicationForLeaveViewControllerTest {
 
         // other sicknotes
         userIsAllowedToSubmitSickNotes(true);
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(submittedSickNoteService.findSubmittedSickNotes(List.of(person))).thenReturn(List.of(submittedSickNote));
 
         perform(get(path)).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
@@ -1550,14 +1552,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1576,16 +1577,18 @@ class ApplicationForLeaveViewControllerTest {
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
-        final SickNote sickNote = SickNote.builder()
-            .id(1L)
-            .sickNoteType(anySickNoteType())
-            .person(person)
-            .status(SUBMITTED)
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(FULL)
-            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-            .build();
+        final SubmittedSickNote submittedSickNote = new SubmittedSickNote(
+            SickNote.builder()
+                .id(1L)
+                .sickNoteType(anySickNoteType())
+                .person(person)
+                .status(SUBMITTED)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+                .build()
+        );
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD, SICK_NOTE_EDIT));
@@ -1595,7 +1598,7 @@ class ApplicationForLeaveViewControllerTest {
 
         // other sicknotes
         userIsAllowedToSubmitSickNotes(true);
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(submittedSickNoteService.findSubmittedSickNotes(List.of(person))).thenReturn(List.of(submittedSickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(departmentHead)))
@@ -1603,14 +1606,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1629,16 +1631,18 @@ class ApplicationForLeaveViewControllerTest {
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
-        final SickNote sickNote = SickNote.builder()
-            .id(1L)
-            .sickNoteType(anySickNoteType())
-            .person(person)
-            .status(SUBMITTED)
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(FULL)
-            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-            .build();
+        final SubmittedSickNote submittedSickNote = new SubmittedSickNote(
+            SickNote.builder()
+                .id(1L)
+                .sickNoteType(anySickNoteType())
+                .person(person)
+                .status(SUBMITTED)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+                .build()
+        );
 
         final Person secondStageAuthority = new Person();
         secondStageAuthority.setPermissions(List.of(SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT));
@@ -1648,7 +1652,7 @@ class ApplicationForLeaveViewControllerTest {
 
         // other sicknotes
         userIsAllowedToSubmitSickNotes(true);
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(submittedSickNoteService.findSubmittedSickNotes(List.of(person))).thenReturn(List.of(submittedSickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStageAuthority)))
@@ -1656,14 +1660,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
                     hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED")),
                     hasProperty("durationOfAbsenceDescription")
                 )
             )))
@@ -1682,16 +1685,18 @@ class ApplicationForLeaveViewControllerTest {
             startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY),
             endDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
-        final SickNote sickNote = SickNote.builder()
-            .id(1L)
-            .sickNoteType(anySickNoteType())
-            .person(person)
-            .status(SUBMITTED)
-            .startDate(startDate)
-            .endDate(endDate)
-            .dayLength(FULL)
-            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
-            .build();
+        final SubmittedSickNote submittedSickNote = new SubmittedSickNote(
+            SickNote.builder()
+                .id(1L)
+                .sickNoteType(anySickNoteType())
+                .person(person)
+                .status(SUBMITTED)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(FULL)
+                .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
+                .build()
+        );
 
         final Person boss = new Person();
         boss.setPermissions(List.of(BOSS, SICK_NOTE_EDIT));
@@ -1701,7 +1706,7 @@ class ApplicationForLeaveViewControllerTest {
 
         // other sicknotes
         userIsAllowedToSubmitSickNotes(true);
-        when(sickNoteService.getForStatesAndPerson(List.of(SUBMITTED), List.of(person))).thenReturn(List.of(sickNote));
+        when(submittedSickNoteService.findSubmittedSickNotes(List.of(person))).thenReturn(List.of(submittedSickNote));
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(boss)))
@@ -1709,14 +1714,13 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherSickNotes", hasSize(1)))
             .andExpect(model().attribute("otherSickNotes", hasItems(
                 allOf(
-                    instanceOf(SickNoteDto.class),
+                    instanceOf(SubmittedSickNoteDto.class),
                     hasProperty("id", equalTo("1")),
                     hasProperty("workDays", equalTo(BigDecimal.valueOf(2L))),
                     hasProperty("person",
                         hasProperty("name", equalTo("Hans Dampf"))
                     ),
-                    hasProperty("type", equalTo("sickNoteTypeMessageKey")),
-                    hasProperty("status", equalTo("SUBMITTED"))
+                    hasProperty("type", equalTo("sickNoteTypeMessageKey"))
                 )
             )))
             .andExpect(view().name("application/application-overview"));

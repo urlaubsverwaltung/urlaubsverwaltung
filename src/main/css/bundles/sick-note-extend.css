@@ -1,0 +1,162 @@
+@import "../components/sick-note-extension-preview.css";
+
+.extend-action-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.extend-action-grid > button:not(:first-child),
+.extend-action-grid > input[type="date"],
+.extend-action-grid > duet-date-picker {
+  margin-top: 1rem;
+}
+
+.extend-action-grid > duet-date-picker {
+  height: 100%;
+}
+
+/* override bootstrap stuff */
+.extend-action-grid > label {
+  margin: 0 !important;
+  font-weight: normal;
+}
+
+.extend-action-grid > span,
+.extend-action-grid > label {
+  margin-top: 0.25rem !important; /* important to override label bootstrap override o.O */
+}
+
+.extend-label {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  @apply tw-text-sm;
+  @apply tw-font-normal;
+}
+
+.button.sicknote-extend-button[disabled] {
+  /*
+  hotwired/turbo disables this button on form submit.
+  default styling of button:disabled (see buttons.css) is a forbidden cursor.
+  however, we don't want cursor to flickering in this case
+   */
+  cursor: pointer;
+}
+
+.sicknote-extend-button {
+  @apply tw-border-2;
+}
+
+.sicknote-extend-button[aria-pressed="true"],
+.sicknote-extend-button--selected {
+  @apply tw-border-blue-400;
+  @apply hover:dark:tw-border-blue-400; /* override button hover selector for dark theme */
+}
+
+@screen xs {
+  .extend-action-grid {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 0.5rem;
+    align-items: center;
+  }
+
+  .extend-action-grid > * {
+    margin: unset !important;
+  }
+
+  /* buttons */
+  .extend-action-grid > button:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(3) {
+    grid-row: 3;
+    grid-column: 1;
+  }
+  .extend-action-grid > input[type="date"],
+  .extend-action-grid > duet-date-picker {
+    grid-row: 4;
+    grid-column: 1;
+  }
+
+  /* labels */
+  .extend-action-grid > span:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .extend-action-grid > span:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  .extend-action-grid > span:nth-of-type(3) {
+    grid-row: 3;
+    grid-column: 2;
+  }
+  .extend-action-grid > label {
+    grid-row: 4;
+    grid-column: 2;
+  }
+  .extend-label {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
+    width: 100%;
+  }
+  .extend-label_date {
+    display: block;
+  }
+}
+
+@screen md {
+  .extend-action-grid {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 0.25rem;
+    grid-template-columns: fit-content(1fr);
+  }
+
+  /* buttons */
+  .extend-action-grid > button:nth-of-type(1) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .extend-action-grid > button:nth-of-type(2) {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .extend-action-grid > button:nth-of-type(3) {
+    grid-row: 1;
+    grid-column: 3;
+  }
+  .extend-action-grid > input[type="date"],
+  .extend-action-grid > duet-date-picker {
+    grid-row: 1;
+    grid-column: 4;
+  }
+
+  /* labels */
+  .extend-action-grid > span:nth-of-type(1) {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .extend-action-grid > span:nth-of-type(2) {
+    grid-row: 2;
+    grid-column: 2;
+  }
+  .extend-action-grid > span:nth-of-type(3) {
+    grid-row: 2;
+    grid-column: 3;
+  }
+  .extend-action-grid > label {
+    grid-row: 2;
+    grid-column: 4;
+  }
+
+  .extend-label {
+    text-align: center;
+  }
+}

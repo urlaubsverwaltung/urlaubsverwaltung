@@ -51,7 +51,7 @@ describe("create-datepicker", () => {
 
     const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(datepicker.getAttribute("style")).toBe("--duet-radius=0");
+    expect(datepicker.getAttribute("style")).toBe("--duet-radius=0;");
   });
 
   test("assigns original 'id' attribute", async () => {

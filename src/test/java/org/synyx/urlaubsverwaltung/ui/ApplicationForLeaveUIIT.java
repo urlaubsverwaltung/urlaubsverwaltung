@@ -23,7 +23,8 @@ import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
-import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsWorkingTimePage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -99,6 +100,7 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
@@ -109,9 +111,9 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.clickWorkingTimeTab();
-        settingsPage.disableOvertime();
-        settingsPage.saveSettings();
+        settingsPage.navigation().goToWorkingTime();
+        settingsWorkingTimePage.disableOvertime();
+        settingsWorkingTimePage.submitOvertimeForm();
 
         navigationPage.logout();
 
@@ -137,6 +139,7 @@ class ApplicationForLeaveUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
@@ -144,9 +147,9 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.clickWorkingTimeTab();
-        settingsPage.enableOvertime();
-        settingsPage.saveSettings();
+        settingsPage.navigation().goToWorkingTime();
+        settingsWorkingTimePage.enableOvertime();
+        settingsWorkingTimePage.submitOvertimeForm();
 
         navigationPage.logout();
 
@@ -262,6 +265,7 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
@@ -273,9 +277,9 @@ class ApplicationForLeaveUIIT {
 
         // ensure overtime feature is enabled
         navigationPage.clickSettings();
-        settingsPage.clickWorkingTimeTab();
-        settingsPage.enableOvertime();
-        settingsPage.saveSettings();
+        settingsPage.navigation().goToWorkingTime();
+        settingsWorkingTimePage.enableOvertime();
+        settingsWorkingTimePage.submitOvertimeForm();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
         navigationPage.quickAdd.click();

@@ -69,14 +69,14 @@
       </ul>
     </th:block>
 
-    <th:block th:fragment="save-button">
+    <th:block th:fragment="save-button" th:with="testId=${#strings.isEmpty(testId) ? 'settings-save-button' : testId}">
       <div class="form-section tw-mt-8">
         <div class="tw-mb-16">
           <button
             th:text="#{action.save}"
             type="submit"
             class="button-main-green"
-            data-test-id="settings-save-button"
+            th:data-test-id="${testId}"
             data-turbo="false"
           ></button>
         </div>

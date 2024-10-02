@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
+    <title th:text="#{sicknote.extend.header.title}">Krankmeldung erweitern</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/sick-note-extend.css}" data-turbo-track="dynamic" />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.personId = /*[[${sickNotePersonId}]]*/ "personId";
+        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        /*]]>*/
+      </script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('sick_note_extend.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="sick_note_extend.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+    <main th:fragment="main">
+      <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 md:tw-px-0 lg:tw-px-12 xl:tw-px-0">
+        <h1 class="tw-sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
+        <div class="tw-mt-4 tw-grid tw-grid-cols-2 tw-gap-2 tw-flex-wrap sm:tw-flex lg:tw-mt-0">
+          <a
+            href="#"
+            th:href="@{/web/sicknote/new (noExtensionRedirect)}"
+            class="button button-main tw-text-center tw-text-wrap tw-flex tw-flex-col tw-justify-start xs:tw-flex-row tw-flex-wrap tw-gap-1 sm:tw-gap-2"
+          >
+            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4 tw-shrink-0')}"></svg>
+            <span th:text="#{sicknote.extend.create-new.button.text}">neue Krankmeldung</span>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/sicknote/new (noExtensionRedirect=${''}, category=${'SICK_NOTE_CHILD'})}"
+            class="button button-main tw-text-center tw-text-wrap tw-flex tw-flex-col tw-justify-start xs:tw-flex-row tw-flex-wrap tw-gap-1 sm:tw-gap-2"
+          >
+            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4 tw-shrink-0')}"></svg>
+            <span class="tw-text-wrap" th:text="#{sicknote.extend.create-new.child.button.text}"
+              >neue Kind-Krankmeldung</span
+            >
+          </a>
+        </div>
+        <div th:if="${showFillFormFeedback}" class="tw-mt-8">
+          <p class="alert alert--outline alert-danger" th:text="#{sicknote.extend.fill-form-feedback}">
+            Gebe bitte noch an, wie viele Tage du voraussichtlich noch krank sein wirst.
+          </p>
+        </div>
+        <h2 class="tw-mt-12" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
+        <th:block th:if="${not sickNoteTypeChild}">
+          <p
+            class="tw-m-0 tw-mt-8"
+            th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
+          >
+            Du hast eine Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
+          </p>
+          <p class="tw-m-0 tw-mt-4 md:tw-mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
+            Wie lange bist du vorraussichtlich noch krank?
+          </p>
+        </th:block>
+        <th:block th:if="${sickNoteTypeChild}">
+          <p
+            class="tw-m-0 tw-mt-8"
+            th:text="#{sicknote.extend.child.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
+          >
+            Du hast eine Kind-Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
+          </p>
+          <p class="tw-m-0 tw-mt-4 md:tw-mt-0.5" th:text="#{sicknote.extend.child.paragraph.duration}">
+            Wie lange ist dein Kind vorraussichtlich noch krank?
+          </p>
+        </th:block>
+        <p
+          class="tw-m-0 tw-mt-4 tw-max-w-screen-sm tw-flex tw-gap-1.5 dark:tw-text-yellow-500"
+          th:if="${existingExtensionEndDate != null}"
+        >
+          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-shrink-0 tw-mt-0.5')}"></svg>
+          <span th:text="#{sicknote.extend.extension-exists(${#temporals.format(existingExtensionEndDate, 'SHORT')})}">
+            Es existiert bereits eine Verlängerung der Krankmeldung bis zum Freitag, 23. August 2024. Diese wird hiermit
+            überschrieben.
+          </span>
+        </p>
+        <div class="tw-mt-8">
+          <form
+            method="post"
+            action="#"
+            th:action="@{/web/sicknote/extend}"
+            class="tw-mt-8 tw-space-y-8"
+            th:object="${sickNoteExtension}"
+            data-turbo="true"
+          >
+            <input type="hidden" name="sickNoteId" th:value="${sickNoteExtension.sickNoteId}" />
+            <input type="hidden" name="startDate" th:value="${sickNoteExtension.startDate}" />
+            <input type="hidden" name="endDate" th:value="${sickNoteExtension.endDate}" />
+            <div class="extend-action-grid tw-max-w-3xl">
+              <button
+                type="submit"
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == '1'}"
+                th:text="#{sicknote.extend.duration.plus-workday.label(1)}"
+                name="extend"
+                value="1"
+              >
+                + 1 Tag
+              </button>
+              <span
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + plusOneWorkdayWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
+                einschließlich heute
+              </span>
+              <button
+                type="submit"
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == '2'}"
+                th:text="#{sicknote.extend.duration.plus-workday.label(2)}"
+                name="extend"
+                value="2"
+              >
+                + 2 Tage
+              </button>
+              <span
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + plusTwoWorkdaysWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
+                einschließlich morgen
+              </span>
+              <button
+                class="button sicknote-extend-button"
+                th:aria-pressed="${selectedExtend == 'end-of-week'}"
+                th:text="#{sicknote.extend.duration.end-of-week.label}"
+                name="extend"
+                value="end-of-week"
+              >
+                Ende der Woche
+              </button>
+              <span
+                class="extend-label"
+                th:with="word=${'<span class=extend-label_date>' + untilEndOfWeekWord + '</span>'}"
+                th:utext="#{sicknote.extend.duration.hint.label(${word})}"
+              >
+                einschließlich xxx
+              </span>
+              <input
+                type="date"
+                id="extend-to-date-input"
+                name="extendToDate"
+                class="form-control sicknote-extend-button"
+                data-test-id="sicknote-custom-next-end-date-input"
+                th:classappend="${selectedExtend == 'custom' ? 'sicknote-extend-button--selected' : ''}"
+                th:field="*{extendToDate}"
+                th:errorclass="error"
+                data-auto-submit="submit-date-button"
+                data-auto-submit-delay="100"
+                th:value="${extendToDate}"
+                th:min="${#temporals.format(today, 'yyyy-MM-dd')}"
+                th:data-iso-value="${#temporals.format(extendToDate, 'yyyy-MM-dd')}"
+              />
+              <span>
+                <label
+                  for="extend-to-date-input"
+                  class="tw-m-0 extend-label"
+                  th:text="#{sicknote.extend.duration.custom.label}"
+                >
+                  Anderer Tag
+                </label>
+                <button
+                  type="submit"
+                  id="submit-date-button"
+                  name="custom-date-preview"
+                  class="button"
+                  data-js-class="tw-sr-only"
+                  th:text="#{sicknote.extend.duration.custom.submit.text}"
+                >
+                  Vorschau
+                </button>
+              </span>
+            </div>
+            <p class="tw-mt-1 tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('endDate')}">
+              <th:block th:errors="*{endDate}">endDate error message</th:block>
+            </p>
+            <th:block th:if="${not #fields.hasAnyErrors() && sickNotePreviewNext != null}">
+              <div
+                th:fragment="sick-note-extension-preview(sickNotePreviewCurrent, sickNotePreviewNext)"
+                class="sick-note-extension-preview-container"
+              >
+                <div class="sick-note-extension-preview">
+                  <div class="sick-note-extension-preview-card">
+                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
+                      Aktuelle Krankmeldung
+                    </div>
+                    <div class="sick-note-extension-preview-card_inner">
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.current.start.label}"
+                        >von</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewCurrent.startDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.current.end.label}"
+                        >bis</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewCurrent.endDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                    </div>
+                    <div
+                      class="sick-note-extension-preview-card_inner_workdays"
+                      th:text="#{sicknote.extend.preview.days-between(${sickNotePreviewCurrent.workingDays})}"
+                    >
+                      entspricht x Arbeitstagen
+                    </div>
+                  </div>
+                  <div class="sick-note-extension-preview-arrow">
+                    <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
+                  </div>
+                  <div
+                    class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted"
+                    data-test-id="sick-note-extension-next-preview"
+                  >
+                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
+                      Vorschau geänderte Krankmeldung
+                    </div>
+                    <div class="sick-note-extension-preview-card_inner">
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.new.start.label}"
+                        >von</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewNext.startDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                      <span
+                        class="sick-note-extension-preview-card_inner_label"
+                        th:text="#{sicknote.extend.preview.new.end.label}"
+                        >Verlängerung bis</span
+                      >
+                      <span
+                        class="sick-note-extension-preview-card_inner_date"
+                        th:text="${#temporals.format(sickNotePreviewNext.endDate, 'FULL')}"
+                      >
+                        xx.xx.xxxx
+                      </span>
+                    </div>
+                    <div
+                      class="sick-note-extension-preview-card_inner_workdays"
+                      th:text="#{sicknote.extend.preview.days-between(${sickNotePreviewNext.workingDays})}"
+                    >
+                      entspricht x Arbeitstagen
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </th:block>
+            <div>
+              <button
+                type="submit"
+                class="button-main-green tw-w-full sm:tw-w-56"
+                data-test-id="extension-submit-button"
+                th:text="#{sicknote.extend.form.submit.text}"
+              >
+                Weiter Krank melden
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
