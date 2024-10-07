@@ -3,12 +3,12 @@ import { addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "../ab
 describe("absence-style-properties", () => {
   describe("addAbsenceTypeStyleToNode", () => {
     beforeEach(() => {
-      window.uv = {};
-      window.uv.vacationTypes = {};
-      window.uv.vacationTypes.colors = {};
-      window.uv.vacationTypes.colors[1] = "color-1";
-      window.uv.vacationTypes.colors[2] = "color-2";
-      window.uv.vacationTypes.colors[3] = "color-3";
+      globalThis.uv = {};
+      globalThis.uv.vacationTypes = {};
+      globalThis.uv.vacationTypes.colors = {};
+      globalThis.uv.vacationTypes.colors[1] = "color-1";
+      globalThis.uv.vacationTypes.colors[2] = "color-2";
+      globalThis.uv.vacationTypes.colors[3] = "color-3";
     });
 
     it.each([

@@ -9,10 +9,10 @@ $(document).ready(async function () {
   document.querySelector("#person-select")?.addEventListener("change", function (event) {
     const parameters = new URLSearchParams();
     parameters.set("personId", event.currentTarget.value);
-    window.location.href = window.location.pathname + "?" + parameters.toString();
+    globalThis.location.href = globalThis.location.pathname + "?" + parameters.toString();
   });
 
-  const apiPrefix = window.uv.apiPrefix;
+  const apiPrefix = globalThis.uv.apiPrefix;
 
   let fromDateElement;
   let toDateElement;
@@ -53,7 +53,7 @@ $(document).ready(async function () {
   toDateElement = toDateResult.value;
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
-  const { from, to } = Object.fromEntries(new URLSearchParams(window.location.search));
+  const { from, to } = Object.fromEntries(new URLSearchParams(globalThis.location.search));
   if (from) {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);

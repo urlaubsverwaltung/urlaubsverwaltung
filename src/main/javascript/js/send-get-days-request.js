@@ -18,11 +18,11 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   let text;
 
   if (!workDays) {
-    text = window.uv.i18n["application.applier.invalidPeriod"];
+    text = globalThis.uv.i18n["application.applier.invalidPeriod"];
   } else if (workDays === "1.0") {
-    text = formatNumber(workDays) + " " + window.uv.i18n["application.applier.day"];
+    text = formatNumber(workDays) + " " + globalThis.uv.i18n["application.applier.day"];
   } else {
-    text = formatNumber(workDays) + " " + window.uv.i18n["application.applier.days"];
+    text = formatNumber(workDays) + " " + globalThis.uv.i18n["application.applier.days"];
   }
 
   element.innerHTML = text;

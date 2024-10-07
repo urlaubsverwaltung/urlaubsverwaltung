@@ -1,7 +1,7 @@
 import { createDatepicker } from "../../components/datepicker";
 
 function getPersonId() {
-  return window.uv.personId;
+  return globalThis.uv.personId;
 }
 
-createDatepicker("#validFrom", { urlPrefix: window.uv.apiPrefix, getPersonId });
+createDatepicker("#validFrom", { urlPrefix: globalThis.uv.apiPrefix, getPersonId });

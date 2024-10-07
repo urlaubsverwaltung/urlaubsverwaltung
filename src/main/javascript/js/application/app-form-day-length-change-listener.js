@@ -10,7 +10,7 @@ function getPersonId() {
 $(document).ready(function () {
   // re-calculate vacation days when changing the day length
 
-  const urlPrefix = window.uv.apiPrefix;
+  const urlPrefix = globalThis.uv.apiPrefix;
 
   for (const element of document.querySelectorAll("input[name='dayLength']"))
     element.addEventListener("change", (event) => {
