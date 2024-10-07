@@ -81,8 +81,8 @@ function getVacationTypeColors(absences) {
     }
   }
 
-  const colorMorningOrFull = window.uv.vacationTypes.colors[typeIdMorningOrFull];
-  const colorNoon = window.uv.vacationTypes.colors[typeIdNoon];
+  const colorMorningOrFull = globalThis.uv.vacationTypes.colors[typeIdMorningOrFull];
+  const colorNoon = globalThis.uv.vacationTypes.colors[typeIdNoon];
 
   return [colorMorningOrFull, colorNoon];
 }

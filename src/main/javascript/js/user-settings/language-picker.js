@@ -32,14 +32,14 @@ userSettingsForm.addEventListener("change", function (event) {
   }
 });
 
-window.addEventListener("keyup", function (event) {
+globalThis.addEventListener("keyup", function (event) {
   if (!languageGroupFocused) {
     focusManager.clean();
   }
   languageGroupFocusedWithKeyboard = languageGroupFocused && event.key === "Tab";
 });
 
-window.addEventListener("click", function (event) {
+globalThis.addEventListener("click", function (event) {
   if (!childOfLanguage(event.target)) {
     focusManager.clean();
   }

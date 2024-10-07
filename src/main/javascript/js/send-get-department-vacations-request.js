@@ -32,7 +32,7 @@ export default async function sendGetDepartmentVacationsRequest(
   const vacations = data.vacations;
 
   const element = document.querySelector(elementSelector);
-  element.innerHTML = `${vacations.length} ${window.uv.i18n["application.applier.applicationsOfColleagues"]}`;
+  element.innerHTML = `${vacations.length} ${globalThis.uv.i18n["application.applier.applicationsOfColleagues"]}`;
 
   if (vacations.length > 0) {
     let lastPersonName = -1;
@@ -61,7 +61,7 @@ function createHtmlForVacation(vacation, isNewPerson) {
 
   html += `<li class="tw-flex tw-items-center tw-pl-5">`;
   if (vacation.status === "ALLOWED") {
-    html += `<span class="tw-text-emerald-500 tw-absolute tw--ml-5" title="${window.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
+    html += `<span class="tw-text-emerald-500 tw-absolute tw--ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
   }
 
   let dateInformation = `${startDate} - ${endDate}`;

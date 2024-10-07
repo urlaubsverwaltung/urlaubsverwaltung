@@ -12,7 +12,7 @@ import "./datepicker.css";
 import "../calendar/calendar.css";
 
 // register @duet/datepicker
-defineCustomElements(window);
+defineCustomElements(globalThis);
 
 const noop = () => {};
 
@@ -57,7 +57,7 @@ onTurboBeforeRenderRestore(function (event) {
     // the cached turbo snapshot does not contain the "previous" value but the already changed one.
     // (form submit and rendering happens on submit-click AFTER selecting a date. snapshot is created on form submit.)
     const name = duetDatePicker.getAttribute("name");
-    const value = new URLSearchParams(window.location.search).get(name) ?? initialValues.get(name) ?? "";
+    const value = new URLSearchParams(globalThis.location.search).get(name) ?? initialValues.get(name) ?? "";
     duetDatePicker.setAttribute("value", value);
 
     waitForDatePickerHydration(duetDatePicker).then(() => {
@@ -67,7 +67,7 @@ onTurboBeforeRenderRestore(function (event) {
 });
 
 export async function createDatepicker(selector, options) {
-  const { localisation } = window.uv.datepicker;
+  const { localisation } = globalThis.uv.datepicker;
   const { dateAdapter, dateFormatShort } = createDatepickerLocalization({ locale: localisation.locale });
 
   const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);

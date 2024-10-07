@@ -1,11 +1,11 @@
 import { enUS as en } from "date-fns/locale/en-US";
 
-window.__datefnsLocale__ = window.__datefnsLocale__ || en;
+globalThis.__datefnsLocale__ = globalThis.__datefnsLocale__ || en;
 
 export function setLocale(locale) {
-  window.__datefnsLocale__ = locale;
+  globalThis.__datefnsLocale__ = locale;
 }
 
 export default function resolveLocale() {
-  return window.__datefnsLocale__;
+  return globalThis.__datefnsLocale__;
 }

@@ -678,8 +678,8 @@ const View = (function () {
     function style() {
       // could be morning=sick and noon=vacation
       const [idMorningOrFull, idNoon] = assert.typeId(date);
-      const colorMorningOrFull = `var(--absence-color-${window.uv.vacationTypes.colors[idMorningOrFull]})`;
-      const colorNoon = `var(--absence-color-${window.uv.vacationTypes.colors[idNoon]})`;
+      const colorMorningOrFull = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
+      const colorNoon = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idNoon]})`;
       return [
         assert.isPublicHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
         assert.isPublicHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
@@ -1025,7 +1025,7 @@ const Controller = (function () {
         document.body.classList.remove(CSS.mousedown);
       });
 
-      const smScreenQuery = window.matchMedia("(max-width: 640px)");
+      const smScreenQuery = globalThis.matchMedia("(max-width: 640px)");
       if (smScreenQuery.matches) {
         for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.add("button");
@@ -1070,7 +1070,7 @@ const Calendar = (function () {
 /**
  * @export
  */
-window.Urlaubsverwaltung = {
+globalThis.Urlaubsverwaltung = {
   Calendar: Calendar,
   HolidayService: HolidayService,
 };

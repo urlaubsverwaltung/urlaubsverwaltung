@@ -2,7 +2,7 @@ import { post } from "../fetch";
 
 const html = document.querySelector("html");
 const themeColorMetaElement = document.querySelector("meta[name='theme-color']");
-const mediaQueryDark = window.matchMedia("(prefers-color-scheme: dark)");
+const mediaQueryDark = globalThis.matchMedia("(prefers-color-scheme: dark)");
 const userSettingsForm = document.querySelector("#user-settings-form");
 
 let darkTheme = html.classList.contains("tw-dark") || (html.classList.contains("tw-system") && mediaQueryDark.matches);
