@@ -5,7 +5,7 @@ import { setLocale } from "../../../lib/date-fns/locale-resolver";
 
 describe("create-datepicker", () => {
   beforeEach(() => {
-    window.uv = {
+    globalThis.uv = {
       datepicker: {
         localisation: datepickerLocalisation(),
       },
@@ -140,7 +140,7 @@ describe("create-datepicker", () => {
 
   describe.each([["en"], ["de"], ["de-de"]])("with browser locale '%s'", (givenLanguage) => {
     beforeEach(() => {
-      jest.spyOn(window.navigator, "language", "get").mockReturnValue(givenLanguage);
+      jest.spyOn(globalThis.navigator, "language", "get").mockReturnValue(givenLanguage);
     });
 
     describe("fetches absences and public-holidays when datepicker is opened", () => {
@@ -1009,7 +1009,7 @@ describe("create-datepicker", () => {
   });
 
   test.each([["en"], ["de"]])("formats date with 'dd.MM.yyyy' for browser locale=%s", async (givenLanguage) => {
-    jest.spyOn(window.navigator, "language", "get").mockReturnValue(givenLanguage);
+    jest.spyOn(globalThis.navigator, "language", "get").mockReturnValue(givenLanguage);
 
     document.body.innerHTML = `
       <input value="24.12.2020" data-iso-value="2020-12-24" />

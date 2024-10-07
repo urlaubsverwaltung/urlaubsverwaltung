@@ -4,7 +4,7 @@ import "../js/hotwire-turbo-progressbar";
 import { initAutosubmit } from "../components/form";
 import { navigate } from "../js/navigate";
 
-window.navigate = navigate;
+globalThis.navigate = navigate;
 
 initAutosubmit();
 
