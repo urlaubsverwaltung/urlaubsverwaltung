@@ -19,7 +19,7 @@ jest.mock("date-fns/format", () => {
 
 describe("send-get-department-vacations-request", () => {
   beforeEach(() => {
-    window.uv = {
+    globalThis.uv = {
       i18n: {
         "application.applier.applicationsOfColleagues": "i18n:application.applier.applicationsOfColleagues",
         "application.applier.none": "i18n:application.applier.none",

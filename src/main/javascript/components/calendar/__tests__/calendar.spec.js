@@ -10,7 +10,7 @@ describe("calendar", () => {
   function mockDate(isoDate) {
     /* eslint-disable unicorn/prevent-abbreviations */
 
-    window.Date = class extends RealDate {
+    globalThis.Date = class extends RealDate {
       static [Symbol.hasInstance](instance) {
         return instance[dateInstanceIdentifier];
       }
@@ -33,12 +33,12 @@ describe("calendar", () => {
   afterEach(cleanup);
 
   beforeEach(() => {
-    window.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    globalThis.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
   });
 
   afterEach(() => {
     fetchMock.restore();
-    window.Date = RealDate;
+    globalThis.Date = RealDate;
   });
 
   it("renders", async () => {
@@ -319,23 +319,28 @@ describe("calendar", () => {
   });
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
-    return window.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
+    return globalThis.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
   }
 
   function renderCalendar(holidayService) {
     // note: Date is mocked in calendarTestSetup to return a fixed date value
     const referenceDate = new Date();
     const i18n = (messageKey) => `i18n:${messageKey}`;
-    window.Urlaubsverwaltung.Calendar.init(document.querySelector("#datepicker"), holidayService, referenceDate, i18n);
+    globalThis.Urlaubsverwaltung.Calendar.init(
+      document.querySelector("#datepicker"),
+      holidayService,
+      referenceDate,
+      i18n,
+    );
   }
 
   async function calendarTestSetup() {
-    window.uv = {};
+    globalThis.uv = {};
     // 0=sunday, 1=monday
-    window.uv.weekStartsOn = 1;
+    globalThis.uv.weekStartsOn = 1;
 
-    window.uv.vacationTypes = {};
-    window.uv.vacationTypes.colors = {
+    globalThis.uv.vacationTypes = {};
+    globalThis.uv.vacationTypes.colors = {
       1: "#B4D455",
     };
 

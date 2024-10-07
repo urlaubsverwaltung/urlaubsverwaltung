@@ -6,7 +6,7 @@ function getPersonId() {
 }
 
 $(document).ready(async function () {
-  const urlPrefix = window.uv.apiPrefix;
+  const urlPrefix = globalThis.uv.apiPrefix;
 
   let startDateElement;
   let endDateElement;

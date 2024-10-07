@@ -4,11 +4,11 @@ import tooltip from "../../tooltip";
 jest.mock("../../tooltip", () => jest.fn());
 
 describe("copy-to-clipboard-input", () => {
-  const { clipboard } = window.navigator;
+  const { clipboard } = globalThis.navigator;
 
   beforeEach(() => {
-    delete window.navigator.clipboard;
-    window.navigator.clipboard = {
+    delete globalThis.navigator.clipboard;
+    globalThis.navigator.clipboard = {
       writeText: jest.fn(() => Promise.resolve()),
     };
   });
@@ -18,7 +18,7 @@ describe("copy-to-clipboard-input", () => {
       document.body.firstElementChild.remove();
     }
 
-    window.navigator.clipboard = clipboard;
+    globalThis.navigator.clipboard = clipboard;
 
     jest.clearAllMocks();
   });

@@ -6,7 +6,7 @@ jest.mock("../send-get-days-request-for-turn-of-the-year");
 
 describe("send-get-days-request", function () {
   beforeEach(function () {
-    window.uv = {
+    globalThis.uv = {
       // just reset keys set explicitly in the tests below
       i18n: {},
     };
@@ -83,7 +83,7 @@ describe("send-get-days-request", function () {
   it("renders 'invalid periods' when response returns no workDays", async function () {
     fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
 
-    window.uv.i18n["application.applier.invalidPeriod"] = "booooo, invalid!";
+    globalThis.uv.i18n["application.applier.invalidPeriod"] = "booooo, invalid!";
 
     const urlPrefix = "/url-prefix";
     const startDate = new Date("2021-09-19");
@@ -104,7 +104,7 @@ describe("send-get-days-request", function () {
       workDays: "1.0",
     });
 
-    window.uv.i18n["application.applier.day"] = "day";
+    globalThis.uv.i18n["application.applier.day"] = "day";
 
     const urlPrefix = "/url-prefix";
     const startDate = new Date("2021-09-19");
@@ -125,7 +125,7 @@ describe("send-get-days-request", function () {
       workDays: "1.5",
     });
 
-    window.uv.i18n["application.applier.days"] = "days";
+    globalThis.uv.i18n["application.applier.days"] = "days";
 
     const urlPrefix = "/url-prefix";
     const startDate = new Date("2021-09-19");

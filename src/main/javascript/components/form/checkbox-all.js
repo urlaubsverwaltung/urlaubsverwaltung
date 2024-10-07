@@ -33,10 +33,10 @@ export class CheckboxAll extends HTMLInputElement {
       }
     };
 
-    window.addEventListener("change", handleChange);
+    globalThis.addEventListener("change", handleChange);
 
     this.cleanup = () => {
-      window.removeEventListener("change", handleChange);
+      globalThis.removeEventListener("change", handleChange);
     };
   }
 

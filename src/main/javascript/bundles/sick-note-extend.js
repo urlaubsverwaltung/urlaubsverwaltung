@@ -51,8 +51,8 @@ document.addEventListener("turbo:render", function () {
 });
 
 await createDatepicker("#extend-to-date-input", {
-  urlPrefix: window.uv.apiPrefix,
+  urlPrefix: globalThis.uv.apiPrefix,
   getPersonId: () => {
-    return window.uv.personId;
+    return globalThis.uv.personId;
   },
 });
