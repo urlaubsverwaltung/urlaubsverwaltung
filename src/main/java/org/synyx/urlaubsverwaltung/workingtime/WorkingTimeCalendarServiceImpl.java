@@ -98,7 +98,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 try {
                     return getSameOrNextWorkingDay(date.plusDays(1), workingTimeSupplier);
                 } catch(StackOverflowError e) {
-                    LOG.warn("could not get same or next workingDay due to workingTime without working days.", e);
+                    LOG.warn("could not get same or next workingDay due to workingTime without working days.");
                     return Optional.empty();
                 }
             }
