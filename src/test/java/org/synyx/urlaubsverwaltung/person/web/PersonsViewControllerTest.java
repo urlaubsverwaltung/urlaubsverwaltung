@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -38,6 +39,7 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
@@ -690,20 +692,25 @@ class PersonsViewControllerTest {
 
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
 
-        final int currentYear = Year.now(clock).getValue();
-        final LocalDate startDate = LocalDate.of(currentYear, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(currentYear, DECEMBER, 31);
-        final LocalDate expiryDate = of(currentYear, APRIL, 1);
+        final Year year = Year.now(clock);
+        final LocalDate startDate = LocalDate.of(year.getValue(), JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(year.getValue(), DECEMBER, 31);
+        final LocalDate expiryDate = of(year.getValue(), APRIL, 1);
 
         final Account account = new Account(person, startDate, endDate, doExpire, expiryDate, valueOf(30), remainingVacationDays, ZERO, null);
         account.setActualVacationDays(valueOf(30));
-        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(year.getValue(), List.of(person))).thenReturn(List.of(account));
+
+        final Account accountNextYear = new Account(person, startDate, endDate, doExpire, expiryDate, valueOf(30), remainingVacationDays, ZERO, null);
+        accountNextYear.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), List.of(person))).thenReturn(List.of(accountNextYear));
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))
             .andExpect(
@@ -739,20 +746,25 @@ class PersonsViewControllerTest {
 
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
 
-        final int currentYear = Year.now(clock).getValue();
-        final LocalDate startDate = LocalDate.of(currentYear, JANUARY, 1);
-        final LocalDate endDate = LocalDate.of(currentYear, DECEMBER, 31);
-        final LocalDate expiryDate = of(currentYear, APRIL, 1);
+        final Year year = Year.now(clock);
+        final LocalDate startDate = LocalDate.of(year.getValue(), JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(year.getValue(), DECEMBER, 31);
+        final LocalDate expiryDate = of(year.getValue(), APRIL, 1);
 
         final Account account = new Account(person, startDate, endDate, true, expiryDate, valueOf(30), valueOf(5), ZERO, null);
         account.setActualVacationDays(valueOf(30));
-        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(year.getValue(), List.of(person))).thenReturn(List.of(account));
+
+        final Account accountNextYear = new Account(person, startDate, endDate, true, expiryDate, valueOf(30), valueOf(5), ZERO, null);
+        accountNextYear.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(year.plusYears(1).getValue(), List.of(person))).thenReturn(List.of(accountNextYear));
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(valueOf(30))
             .withRemainingVacation(valueOf(5))
             .build();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear)))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         perform(get("/web/person"))
             .andExpect(
