@@ -7,9 +7,9 @@ jest.mock("../../lib/date-fns/locale-resolver");
 
 describe("date-fns-localized", () => {
   let uvLanguage = "";
-  window.uv = {};
+  globalThis.uv = {};
 
-  Object.defineProperty(window.uv, "language", {
+  Object.defineProperty(globalThis.uv, "language", {
     get() {
       return uvLanguage;
     },

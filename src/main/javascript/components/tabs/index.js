@@ -7,7 +7,7 @@ import "bootstrap/js/tab";
    * then it will be opened.
    */
   function activateTabFromAnchorLink() {
-    const url = window.location.href;
+    const url = globalThis.location.href;
     const tabName = url.split("#")[1];
     if (tabName) {
       activeTab(tabName);
