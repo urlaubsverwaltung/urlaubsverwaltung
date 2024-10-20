@@ -1,3 +1,3 @@
 export function navigate(url) {
-  window.location.href = url;
+  globalThis.location.href = url;
 }

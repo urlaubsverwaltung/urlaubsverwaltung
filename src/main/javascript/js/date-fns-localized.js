@@ -1,7 +1,7 @@
 import { setLocale } from "../lib/date-fns/locale-resolver";
 
-const language = window.uv.language.slice(0, 2);
-const subtag = window.uv.language.slice(3);
+const language = globalThis.uv.language.slice(0, 2);
+const subtag = globalThis.uv.language.slice(3);
 
 switch (language) {
   case "de": {

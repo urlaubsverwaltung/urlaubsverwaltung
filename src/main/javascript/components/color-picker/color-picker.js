@@ -200,7 +200,7 @@ class ColorPicker extends HTMLDivElement {
   #repositionDialog() {
     // dialog could overflow on x-axis -> move dialog to the left if this is the case to avoid horizontal scrolling
     const { left } = this.getBoundingClientRect();
-    const { width } = window.getComputedStyle(this.#dialog);
+    const { width } = globalThis.getComputedStyle(this.#dialog);
     const widthValue = Number(width.slice(0, Math.max(0, width.length - 2))); // omit `"px"`
     const windowWidth = window.innerWidth;
     if (left + widthValue > windowWidth) {

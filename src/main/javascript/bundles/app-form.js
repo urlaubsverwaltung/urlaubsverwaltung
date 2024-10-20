@@ -10,4 +10,4 @@ import "../components/application-replacement-select";
 
 import holidayReplacementChanged from "../js/application/holiday-replacement-changed";
 
-window.holidayReplacementChanged = holidayReplacementChanged;
+globalThis.holidayReplacementChanged = holidayReplacementChanged;

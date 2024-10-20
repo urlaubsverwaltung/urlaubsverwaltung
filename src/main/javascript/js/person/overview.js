@@ -3,16 +3,16 @@ import { getYear, setYear, startOfYear, subMonths, addMonths } from "date-fns";
 import "../../components/calendar";
 
 $(document).ready(function () {
-  const personId = window.uv.personId;
-  const webPrefix = window.uv.webPrefix;
-  const apiPrefix = window.uv.apiPrefix;
+  const personId = globalThis.uv.personId;
+  const webPrefix = globalThis.uv.webPrefix;
+  const apiPrefix = globalThis.uv.apiPrefix;
 
   function i18n(messageKey) {
-    return window.uv.i18n[messageKey] || `/i18n:${messageKey}/`;
+    return globalThis.uv.i18n[messageKey] || `/i18n:${messageKey}/`;
   }
 
   function getUrlParameter(name) {
-    return new URL(window.location).searchParams.get(name);
+    return new URL(globalThis.location).searchParams.get(name);
   }
 
   function initCalendar() {

@@ -117,7 +117,7 @@ describe("nav-tabs", function () {
   });
 
   it("replaces the URL when nav-tab is clicked", function () {
-    jest.spyOn(window.history, "replaceState");
+    jest.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `
@@ -148,14 +148,22 @@ describe("nav-tabs", function () {
     const navTabBLink = document.querySelector("li[data-content='#content-bbb'] a");
 
     navTabBLink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(window.history.replaceState).toHaveBeenLastCalledWith(undefined, undefined, "http://localhost/#content-bbb");
+    expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
+      undefined,
+      undefined,
+      "http://localhost/#content-bbb",
+    );
 
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    expect(window.history.replaceState).toHaveBeenLastCalledWith(undefined, undefined, "http://localhost/#content-aaa");
+    expect(globalThis.history.replaceState).toHaveBeenLastCalledWith(
+      undefined,
+      undefined,
+      "http://localhost/#content-aaa",
+    );
   });
 
   it("does not replace the URL when the current active nav-tab is clicked", function () {
-    jest.spyOn(window.history, "replaceState");
+    jest.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
     div.innerHTML = `
@@ -177,6 +185,6 @@ describe("nav-tabs", function () {
     const navTabALink = document.querySelector("li[data-content='#content-aaa'] a");
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(window.history.replaceState).not.toHaveBeenCalled();
+    expect(globalThis.history.replaceState).not.toHaveBeenCalled();
   });
 });
