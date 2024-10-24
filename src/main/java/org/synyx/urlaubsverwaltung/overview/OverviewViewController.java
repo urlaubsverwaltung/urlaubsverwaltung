@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -35,6 +36,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
@@ -224,9 +226,10 @@ public class OverviewViewController implements HasLaunchpad {
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         if (maybeAccount.isPresent()) {
             final Account account = maybeAccount.get();
-            final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
 
-            final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
+            final List<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person).stream().toList();
+            final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), accountNextYear);
+            final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
