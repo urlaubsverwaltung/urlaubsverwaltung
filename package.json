@@ -63,7 +63,7 @@
     "@babel/eslint-parser": "7.25.7",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.25.7",
-    "@eslint/js": "9.11.1",
+    "@eslint/js": "9.13.0",
     "@types/jest": "29.5.13",
     "autoprefixer": "10.4.20",
     "babel-jest": "29.7.0",
