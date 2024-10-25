@@ -5,10 +5,11 @@ import de.focus_shift.jollyday.core.ManagerParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 @Configuration
 class PublicHolidayConfiguration {
@@ -17,12 +18,8 @@ class PublicHolidayConfiguration {
 
     @Bean
     Map<String, HolidayManager> holidayManagerMap() {
-        final Map<String, HolidayManager> countryMap = new HashMap<>();
-        COUNTRIES.forEach(country -> {
-            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            final URL url = cl.getResource("Holidays_" + country + ".xml");
-            countryMap.put(country, HolidayManager.getInstance(ManagerParameters.create(url)));
-        });
-        return countryMap;
+        return COUNTRIES.stream()
+            .map(country -> HolidayManager.getInstance(ManagerParameters.create(country)))
+            .collect(toMap(holidayManager -> holidayManager.getManagerParameter().getDisplayName(), Function.identity()));
     }
 }

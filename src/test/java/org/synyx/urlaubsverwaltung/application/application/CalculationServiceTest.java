@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import de.focus_shift.jollyday.core.HolidayCalendar;
 import de.focus_shift.jollyday.core.HolidayManager;
-import de.focus_shift.jollyday.core.ManagerParameter;
 import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -1168,9 +1167,6 @@ class CalculationServiceTest {
     }
 
     private HolidayManager getHolidayManager() {
-        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final URL url = cl.getResource("Holidays_de.xml");
-        final ManagerParameter managerParameter = ManagerParameters.create(url);
-        return HolidayManager.getInstance(managerParameter);
+        return HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY));
     }
 }

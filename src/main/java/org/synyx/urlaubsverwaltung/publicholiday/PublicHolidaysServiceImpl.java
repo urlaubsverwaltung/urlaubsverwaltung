@@ -5,18 +5,21 @@ import de.focus_shift.jollyday.core.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static de.focus_shift.jollyday.core.HolidayType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -36,6 +39,10 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
     @Override
     public boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+        if (isChristmasEve(date) || isNewYearsEve(date)) {
+            return true;
+        }
+
         return getHolidayManager(federalState)
             .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
             .orElse(false);
@@ -80,9 +87,32 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return getHolidayManager(federalState)
-            .map(holidayManager -> holidayManager.getHolidays(from, to, federalState.getCodes()))
+
+        final Set<Holiday> holidays = getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.getHolidays(from, to, PUBLIC_HOLIDAY, federalState.getCodes()))
             .orElseGet(Set::of);
+
+        final DateRange requestRange = new DateRange(from, to);
+
+        final LocalDate christmasFrom = LocalDate.of(from.getYear(), Month.DECEMBER, 24);
+        if (requestRange.isOverlapping(new DateRange(christmasFrom, christmasFrom))) {
+            holidays.add(new Holiday(christmasFrom, "CHRISTMAS_EVE", PUBLIC_HOLIDAY));
+        }
+        final LocalDate christmasTo = LocalDate.of(to.getYear(), Month.DECEMBER, 24);
+        if (requestRange.isOverlapping(new DateRange(christmasTo, christmasTo))) {
+            holidays.add(new Holiday(christmasTo, "CHRISTMAS_EVE", PUBLIC_HOLIDAY));
+        }
+
+        final LocalDate newYearFrom = LocalDate.of(from.getYear(), Month.DECEMBER, 31);
+        if (requestRange.isOverlapping(new DateRange(newYearFrom, newYearFrom))) {
+            holidays.add(new Holiday(newYearFrom, "NEW_YEARS_EVE", PUBLIC_HOLIDAY));
+        }
+        final LocalDate newYearTo = LocalDate.of(to.getYear(), Month.DECEMBER, 31);
+        if (requestRange.isOverlapping(new DateRange(newYearTo, newYearTo))) {
+            holidays.add(new Holiday(newYearTo, "NEW_YEARS_EVE", PUBLIC_HOLIDAY));
+        }
+
+        return holidays;
     }
 
     private Optional<HolidayManager> getHolidayManager(FederalState federalState) {
