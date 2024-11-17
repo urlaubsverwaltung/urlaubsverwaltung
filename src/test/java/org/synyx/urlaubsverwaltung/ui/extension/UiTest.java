@@ -5,6 +5,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.junit.Options;
 import com.microsoft.playwright.junit.OptionsFactory;
 import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -52,20 +53,25 @@ import java.nio.file.Paths;
 @UsePlaywright(UiTest.CustomOptions.class)
 @ExtendWith({ PlaywrightTraceExtension.class, TestRecordVideoExtension.class })
 @ContextConfiguration(initializers = UITestInitializer.class)
+@Tag("ui")
 public @interface UiTest {
 
     class CustomOptions implements OptionsFactory {
 
         @Override
         public Options getOptions() {
+
+            // webkit | firefox | chromium (playwright-default)
+            final String browser = System.getProperty("browser", "chromium");
+
             return new Options()
-//                .setBrowserName("chromium") // webkit | firefox | chromium (default)
+                .setBrowserName(browser)
                 .setConnectOptions(new BrowserType.ConnectOptions()
                     // increase to make test steps slower and be able to follow it with your own eyes.
                     .setSlowMo(200)
                 )
                 .setContextOptions(new Browser.NewContextOptions()
-                    .setRecordVideoDir(Paths.get("target"))
+                    .setRecordVideoDir(Paths.get("target/ui-test", browser))
                     .setLocale("de")
                     .setScreenSize(1500, 2000)
                     .setViewportSize(1500, 2000)

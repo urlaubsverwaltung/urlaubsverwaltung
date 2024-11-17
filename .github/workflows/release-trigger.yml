@@ -38,7 +38,7 @@ jobs:
         run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps chromium"
 
       - name: Build
-        run: ./mvnw -Pcoverage clean verify
+        run: ./mvnw verify
 
       - name: Setup git user
         uses: fregante/setup-git-user@v2
@@ -49,6 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_FOLDER: .chglog/
           FILENAME: ${{ github.event.inputs.releaseVersion }}
+
       - name: Commit Release Notes
         run: |
           git add .chglog/*.md

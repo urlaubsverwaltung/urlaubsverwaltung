@@ -465,6 +465,45 @@
   </build>
 
   <profiles>
+    <!-- Run only UI Tests with `mvn verify` ignoring other integration tests -->
+    <profile>
+      <id>ui-test</id>
+      <build>
+        <plugins>
+          <!-- skip javascript linting and tests -->
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>npm-lint</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>npm-test</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- skip unit tests -->
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+          <!-- run ui tests -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <groups>ui</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>coverage</id>
       <build>
