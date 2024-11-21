@@ -85,7 +85,7 @@ jobs:
 
       - name: Upload artifacts of failed tests
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ always() && hashFiles('target/ui-test/**/FAILED-*') != '' }}
         with:
           name: failed-ui-tests
           path: target/ui-test/**/FAILED-*
