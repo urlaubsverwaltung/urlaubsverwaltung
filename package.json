@@ -67,7 +67,7 @@
     "@types/jest": "29.5.14",
     "autoprefixer": "10.4.20",
     "babel-jest": "29.7.0",
-    "concurrently": "9.0.1",
+    "concurrently": "9.1.0",
     "cross-env": "7.0.3",
     "cssnano": "7.0.6",
     "date-fns": "3.6.0",
