@@ -18,9 +18,11 @@ on:
 
 env:
   MAVEN_ARGS: "--no-transfer-progress --errors --fail-at-end --show-version"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1  # required browsers are installed below
 
 jobs:
-  trigger-release:
+  run-unit-and-integration-tests:
+    name: "Run unit and integration tests"
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -34,11 +36,51 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Install Playwright Browsers (UI tests)
-        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps chromium"
-
       - name: Build
-        run: ./mvnw verify
+        run: ./mvnw verify -Dgroups="!ui"
+
+  run-ui-test:
+    name: "Run UI tests"
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        browser: ["chromium", "firefox", "webkit"]
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-ui-test-${{ matrix.browser }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'liberica'
+          java-version: 21
+          cache: 'maven'
+
+      - name: Install Playwright Browsers (UI tests)
+        run: ./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="install --with-deps ${{matrix.browser}}"
+
+      - name: Test
+        run: ./mvnw dependency:go-offline verify -Pui-test -Dbrowser=${{matrix.browser}}
+
+      - name: Upload artifacts of failed tests
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: failed-ui-tests
+          path: target/ui-test/**/FAILED-*
+
+  create-tag-and-release-notes:
+    name: "Create tag and release notes"
+    needs:
+      - run-unit-and-integration-tests
+      - run-ui-test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup git user
         uses: fregante/setup-git-user@v2
