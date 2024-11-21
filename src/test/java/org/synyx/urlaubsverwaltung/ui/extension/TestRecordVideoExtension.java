@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.extension;
 
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.nio.file.Paths;
 
+import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrCreateBrowserContext;
 import static com.microsoft.playwright.impl.junit.PageExtension.getOrCreatePage;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -38,7 +40,7 @@ public class TestRecordVideoExtension implements AfterEachCallback {
             }
         } else {
             // rename video file
-            final String newVideoFilePath = normalizeVideoFileName("target/FAILED-%s.webm".formatted(context.getDisplayName()));
+            final String newVideoFilePath = videoPath(context);
             final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
             final boolean isMoved = videoFile.renameTo(newVideoFile);
             if (!isMoved) {
@@ -47,7 +49,16 @@ public class TestRecordVideoExtension implements AfterEachCallback {
         }
     }
 
+    private static String videoPath(ExtensionContext context) {
+
+        final BrowserContext browserContext = getOrCreateBrowserContext(context);
+        final String browser = browserContext.browser().browserType().name();
+
+        return normalizeVideoFileName("target/ui-test/%s/FAILED-%s.webm".formatted(browser, context.getDisplayName()));
+    }
+
     private static String normalizeVideoFileName(String original) {
         return original.replaceAll(" ", "_");
     }
 }
+

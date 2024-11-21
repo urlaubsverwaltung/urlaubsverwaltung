@@ -7,7 +7,7 @@ on:
 
 jobs:
   check-links-in-chglog:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
@@ -19,7 +19,7 @@ jobs:
 
 
   check-links-in-examples:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
@@ -30,7 +30,7 @@ jobs:
           folder-path: '.examples'
 
   check-links-in-charts:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
@@ -41,7 +41,7 @@ jobs:
           folder-path: 'charts'
 
   check-links-in-root:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.15

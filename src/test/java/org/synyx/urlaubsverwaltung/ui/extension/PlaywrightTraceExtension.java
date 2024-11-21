@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrCreateBrowserContext;
@@ -13,7 +14,7 @@ import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrC
 class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext extensionContext) {
 
         final BrowserContext context = getOrCreateBrowserContext(extensionContext);
 
@@ -24,7 +25,7 @@ class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback 
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) throws Exception {
+    public void afterEach(ExtensionContext extensionContext) {
 
         final boolean succeeded = extensionContext.getExecutionException().isEmpty();
         final BrowserContext browserContext = getOrCreateBrowserContext(extensionContext);
@@ -32,10 +33,18 @@ class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback 
         if (succeeded) {
             browserContext.tracing().stop();
         } else {
-            final String filename = normalize("target/FAILED-%s.zip".formatted(extensionContext.getDisplayName()));
-            browserContext.tracing().stop(new Tracing.StopOptions()
-                .setPath(Paths.get(filename)));
+            final String filename = filePath(extensionContext);
+            final Path path = Paths.get(filename);
+            browserContext.tracing().stop(new Tracing.StopOptions().setPath(path));
         }
+    }
+
+    private static String filePath(ExtensionContext context) {
+
+        final BrowserContext browserContext = getOrCreateBrowserContext(context);
+        final String browser = browserContext.browser().browserType().name();
+
+        return normalize("target/ui-test/%s/FAILED-%s.zip".formatted(browser, context.getDisplayName()));
     }
 
     private static String normalize(String original) {
