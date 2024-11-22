@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
+import de.focus_shift.jollyday.core.HolidayCalendar;
 import de.focus_shift.jollyday.core.HolidayManager;
 import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,6 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -26,6 +26,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -182,9 +183,33 @@ class PublicHolidaysServiceImplTest {
             .containsExactly(DayLength.NOON);
     }
 
+    @Test
+    void ensureGetPublicHolidaysReturnsChristmasForMultipleYears() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
+
+        assertThat(publicHolidays).contains(
+            new PublicHoliday(LocalDate.of(2020, DECEMBER, 24), null, null),
+            new PublicHoliday(LocalDate.of(2021, DECEMBER, 24), null, null),
+            new PublicHoliday(LocalDate.of(2023, DECEMBER, 24), null, null));
+    }
+
+    @Test
+    void ensureGetPublicHolidaysReturnsNewYearsEveForMultipleYears() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
+
+        assertThat(publicHolidays).contains(
+            new PublicHoliday(LocalDate.of(2020, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2021, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2023, DECEMBER, 31), null, null));
+    }
+
     private HolidayManager getHolidayManager() {
-        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final URL url = cl.getResource("Holidays_de.xml");
-        return HolidayManager.getInstance(ManagerParameters.create(url));
+        return HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY));
     }
 }
