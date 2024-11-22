@@ -26,6 +26,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -180,6 +181,32 @@ class PublicHolidaysServiceImplTest {
             .hasSize(1)
             .extracting(PublicHoliday::dayLength)
             .containsExactly(DayLength.NOON);
+    }
+
+    @Test
+    void ensureGetPublicHolidaysReturnsChristmasForMultipleYears() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
+
+        assertThat(publicHolidays).contains(
+            new PublicHoliday(LocalDate.of(2020, DECEMBER, 24), null, null),
+            new PublicHoliday(LocalDate.of(2021, DECEMBER, 24), null, null),
+            new PublicHoliday(LocalDate.of(2023, DECEMBER, 24), null, null));
+    }
+
+    @Test
+    void ensureGetPublicHolidaysReturnsNewYearsEveForMultipleYears() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
+
+        assertThat(publicHolidays).contains(
+            new PublicHoliday(LocalDate.of(2020, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2021, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2023, DECEMBER, 31), null, null));
     }
 
     private HolidayManager getHolidayManager() {

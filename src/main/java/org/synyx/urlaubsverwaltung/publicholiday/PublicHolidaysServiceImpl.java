@@ -94,22 +94,17 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
         final DateRange requestRange = new DateRange(from, to);
 
-        final LocalDate christmasFrom = LocalDate.of(from.getYear(), Month.DECEMBER, 24);
-        if (requestRange.isOverlapping(new DateRange(christmasFrom, christmasFrom))) {
-            holidays.add(new Holiday(christmasFrom, "CHRISTMAS_EVE", PUBLIC_HOLIDAY));
-        }
-        final LocalDate christmasTo = LocalDate.of(to.getYear(), Month.DECEMBER, 24);
-        if (requestRange.isOverlapping(new DateRange(christmasTo, christmasTo))) {
-            holidays.add(new Holiday(christmasTo, "CHRISTMAS_EVE", PUBLIC_HOLIDAY));
-        }
-
-        final LocalDate newYearFrom = LocalDate.of(from.getYear(), Month.DECEMBER, 31);
-        if (requestRange.isOverlapping(new DateRange(newYearFrom, newYearFrom))) {
-            holidays.add(new Holiday(newYearFrom, "NEW_YEARS_EVE", PUBLIC_HOLIDAY));
-        }
-        final LocalDate newYearTo = LocalDate.of(to.getYear(), Month.DECEMBER, 31);
-        if (requestRange.isOverlapping(new DateRange(newYearTo, newYearTo))) {
-            holidays.add(new Holiday(newYearTo, "NEW_YEARS_EVE", PUBLIC_HOLIDAY));
+        int year = from.getYear();
+        while (year <= to.getYear()) {
+            final LocalDate christmas = LocalDate.of(year, Month.DECEMBER, 24);
+            if (requestRange.isOverlapping(new DateRange(christmas, christmas))) {
+                holidays.add(new Holiday(christmas, "CHRISTMAS_EVE", PUBLIC_HOLIDAY));
+            }
+            final LocalDate newYear = LocalDate.of(year, Month.DECEMBER, 31);
+            if (requestRange.isOverlapping(new DateRange(newYear, newYear))) {
+                holidays.add(new Holiday(newYear, "NEW_YEARS_EVE", PUBLIC_HOLIDAY));
+            }
+            year++;
         }
 
         return holidays;
