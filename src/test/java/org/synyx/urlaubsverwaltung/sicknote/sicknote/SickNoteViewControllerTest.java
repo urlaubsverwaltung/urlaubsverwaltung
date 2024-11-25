@@ -1162,7 +1162,7 @@ class SickNoteViewControllerTest {
         when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
             .thenReturn(SickNote.builder().id(42L).build());
 
-        perform(post("/web/sicknote/").param("person.id", "1"))
+        perform(post("/web/sicknote").param("person.id", "1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/sicknote/42"));
     }
@@ -1180,7 +1180,7 @@ class SickNoteViewControllerTest {
         when(sickNoteInteractionService.submit(any(SickNote.class), eq(signedInPerson), eq(null)))
                 .thenReturn(SickNote.builder().id(42L).build());
 
-        perform(post("/web/sicknote/").param("person.id", "1"))
+        perform(post("/web/sicknote").param("person.id", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/web/sicknote/42"));
     }
@@ -1200,7 +1200,7 @@ class SickNoteViewControllerTest {
         when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
                 .thenReturn(SickNote.builder().id(42L).build());
 
-        perform(post("/web/sicknote/").param("person.id", "1"))
+        perform(post("/web/sicknote").param("person.id", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/web/sicknote/42"));
     }
@@ -1248,7 +1248,7 @@ class SickNoteViewControllerTest {
             .thenReturn(SickNote.builder().id(42L).build());
 
         perform(
-            post("/web/sicknote/")
+            post("/web/sicknote")
                 .param("startDate", givenDate)
                 .param("endDate", givenDate)
                 .param("aubStartDate", givenDate)
@@ -1272,7 +1272,7 @@ class SickNoteViewControllerTest {
         doAnswer(invocation -> SickNote.builder(invocation.getArgument(0)).id(SOME_SICK_NOTE_ID).build())
             .when(sickNoteInteractionService).create(any(SickNote.class), any(Person.class), any());
 
-        perform(post("/web/sicknote/").param("person.id", "1"))
+        perform(post("/web/sicknote").param("person.id", "1"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }

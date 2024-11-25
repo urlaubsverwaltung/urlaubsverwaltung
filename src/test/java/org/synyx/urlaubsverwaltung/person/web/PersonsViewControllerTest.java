@@ -469,7 +469,7 @@ class PersonsViewControllerTest {
 
         mockDefaultPageRequest(person);
 
-        perform(get("/web/person/")
+        perform(get("/web/person")
 
             .param("year", "1985")
         )
@@ -491,7 +491,7 @@ class PersonsViewControllerTest {
 
         mockDefaultPageRequest(person);
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("selectedYear", 2022))
             .andExpect(model().attribute("currentYear", 2022));
     }
@@ -508,7 +508,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of());
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
 
         verifyNoMoreInteractions(departmentService);
@@ -526,7 +526,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of());
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
 
         verifyNoMoreInteractions(departmentService);
@@ -543,7 +543,7 @@ class PersonsViewControllerTest {
         final Department department = new Department();
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(department));
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
     }
 
@@ -560,7 +560,7 @@ class PersonsViewControllerTest {
         department.setName("awesome-department");
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(department));
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(
                 model().attribute("departments", allOf(
                     hasSize(1),
@@ -592,7 +592,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(department, department3));
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(department, department2));
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(3)));
     }
 
@@ -607,7 +607,7 @@ class PersonsViewControllerTest {
         final Department department = new Department();
         when(departmentService.getAssignedDepartmentsOfMember(user)).thenReturn(List.of(department));
 
-        perform(get("/web/person/"))
+        perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
     }
 
