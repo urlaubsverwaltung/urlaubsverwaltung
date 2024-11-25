@@ -14,9 +14,9 @@ import org.simplejavamail.converter.EmailConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
@@ -97,9 +97,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Autowired
     private MessageSource messageSource;
 
-    @MockBean
+    @MockitoBean
     private MailRecipientService mailRecipientService;
-    @MockBean
+    @MockitoBean
     private DepartmentService departmentService;
 
     @TestConfiguration

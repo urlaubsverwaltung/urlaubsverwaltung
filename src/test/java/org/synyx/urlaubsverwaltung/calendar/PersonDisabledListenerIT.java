@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
@@ -15,11 +15,11 @@ import static org.mockito.Mockito.verify;
 @ContextConfiguration(classes = {PersonDisabledListener.class})
 class PersonDisabledListenerIT extends TestContainersBase {
 
-    @MockBean
+    @MockitoBean
     private PersonCalendarService personCalendarService;
-    @MockBean
+    @MockitoBean
     private DepartmentCalendarService departmentCalendarService;
-    @MockBean
+    @MockitoBean
     private CompanyCalendarService companyCalendarService;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
