@@ -52,7 +52,7 @@ springdoc:
 management:
   endpoint:
     prometheus:
-      enabled: false
+      access: read_only
   endpoints:
     web:
       exposure:
