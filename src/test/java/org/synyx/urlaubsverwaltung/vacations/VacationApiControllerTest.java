@@ -24,6 +24,7 @@ import static java.time.LocalDate.of;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -249,7 +250,7 @@ class VacationApiControllerTest {
                   ],
                   "links": []
                 }
-                """,true));
+                """, STRICT));
     }
 
     @Test

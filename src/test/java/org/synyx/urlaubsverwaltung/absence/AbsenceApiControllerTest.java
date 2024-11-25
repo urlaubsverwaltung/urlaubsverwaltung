@@ -21,6 +21,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,7 +65,7 @@ class AbsenceApiControllerTest {
             {
               "absences": []
             }
-            """, true));
+            """, STRICT));
     }
 
     // VACATION --------------------------------------------------------------------------------------------------------
@@ -107,7 +108,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -148,7 +149,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -189,7 +190,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -236,7 +237,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     // SICK ------------------------------------------------------------------------------------------------------------
@@ -279,7 +280,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -320,7 +321,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -361,7 +362,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     // VACATION / SICK - COMBINATION -----------------------------------------------------------------------------------
@@ -415,7 +416,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -468,7 +469,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     // VACATION / PUBLIC-HOLIDAY - COMBINATION -------------------------------------------------------------------------
@@ -522,7 +523,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
 
@@ -566,7 +567,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -608,7 +609,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -670,7 +671,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -722,7 +723,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
@@ -775,7 +776,7 @@ class AbsenceApiControllerTest {
                     }
                 ]
             }
-            """, true));
+            """, STRICT));
     }
 
     @Test
