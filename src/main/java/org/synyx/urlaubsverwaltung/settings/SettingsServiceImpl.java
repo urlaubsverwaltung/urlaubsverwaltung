@@ -31,11 +31,9 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Settings getSettings() {
-        return settingsRepository.findById(1L)
+        return settingsRepository.findAll().stream().findFirst()
             .orElseGet(() -> {
-                final Settings settings = new Settings();
-                settings.setId(1L);
-                final Settings savedSettings = settingsRepository.save(settings);
+                final Settings savedSettings = settingsRepository.save(new Settings());
                 LOG.info("Saved initial settings {}", savedSettings);
                 return savedSettings;
             });
