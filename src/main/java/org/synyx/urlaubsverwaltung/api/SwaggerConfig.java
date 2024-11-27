@@ -7,14 +7,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springdoc.core.properties.SpringDocConfigProperties;
-import org.springdoc.core.properties.SwaggerUiConfigProperties;
-import org.springdoc.core.properties.SwaggerUiOAuthProperties;
-import org.springdoc.core.providers.ObjectMapperProvider;
-import org.springdoc.core.utils.Constants;
-import org.springdoc.webmvc.ui.SwaggerIndexPageTransformer;
-import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
-import org.springdoc.webmvc.ui.SwaggerWelcomeCommon;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,11 +30,11 @@ public class SwaggerConfig {
                     .version(version)
                     .description(
                         """
-                        This API provides the functionality to
+                            This API provides the functionality to
 
-                        * fetch absences, vacations, sick notes, public holidays, persons, and many more...
-                        * create persons
-                        """
+                            * fetch absences, vacations, sick notes, public holidays, persons, and many more...
+                            * create persons
+                            """
                     )
                     .contact(
                         new Contact()
@@ -67,15 +59,5 @@ public class SwaggerConfig {
                     .bearerFormat("JWT"))
             );
 
-    }
-
-    @Bean
-    public SwaggerIndexTransformer indexPageTransformer(SpringDocConfigProperties springDocConfigProperties, SwaggerUiConfigProperties swaggerUiConfig, SwaggerUiOAuthProperties swaggerUiOAuthProperties, SwaggerWelcomeCommon swaggerWelcomeCommon, ObjectMapperProvider objectMapperProvider) {
-        return new SwaggerIndexPageTransformer(swaggerUiConfig, swaggerUiOAuthProperties, swaggerWelcomeCommon, objectMapperProvider) {
-            @Override
-            protected String overwriteSwaggerDefaultUrl(String html) {
-                return html.replace(Constants.SWAGGER_UI_DEFAULT_URL, springDocConfigProperties.getApiDocs().getPath());
-            }
-        };
     }
 }

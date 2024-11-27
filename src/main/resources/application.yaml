@@ -45,10 +45,6 @@ server:
     min-response-size: 1024
     enabled: true
 
-springdoc:
-  swagger-ui:
-    disable-swagger-default-url: true
-
 management:
   endpoint:
     prometheus:
