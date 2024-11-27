@@ -63,7 +63,7 @@ class CompanyCalendar {
     }
 
     public void generateSecret() {
-        secret = RandomStringUtils.randomAlphanumeric(SECRET_LENGTH);
+        secret = RandomStringUtils.secure().nextAlphanumeric(SECRET_LENGTH);
     }
 
     public String getSecret() {

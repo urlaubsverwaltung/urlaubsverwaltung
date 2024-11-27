@@ -60,7 +60,7 @@ management:
     port: 8081
   endpoint:
     prometheus:
-      enabled: true
+      access: read_only
   endpoints:
     web:
       exposure:

@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.config;
 import net.javacrumbs.shedlock.core.DefaultLockingTaskExecutor;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
-import org.springframework.boot.task.TaskSchedulerBuilder;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -26,7 +26,7 @@ class SchedulerConfiguration {
     }
 
     @Bean
-    ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
+    ThreadPoolTaskScheduler taskScheduler(ThreadPoolTaskSchedulerBuilder builder) {
         return builder.build();
     }
 }

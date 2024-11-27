@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,6 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,7 +38,7 @@ class PersonApiControllerIT extends TestContainersBase {
     @Autowired
     private WebApplicationContext context;
 
-    @MockBean
+    @MockitoBean
     private PersonService personService;
 
     @Test
@@ -84,7 +85,7 @@ class PersonApiControllerIT extends TestContainersBase {
                             }
                           }
                         }
-                        """, true));
+                        """, STRICT));
     }
 
     @Test
@@ -140,7 +141,7 @@ class PersonApiControllerIT extends TestContainersBase {
                             }
                           }
                         }
-                        """, true));
+                        """, STRICT));
     }
 
 
@@ -221,7 +222,7 @@ class PersonApiControllerIT extends TestContainersBase {
                              }
                            ]
                          }
-                        """, true));
+                        """, STRICT));
     }
 
     @Test
@@ -271,7 +272,7 @@ class PersonApiControllerIT extends TestContainersBase {
                             }
                           }
                         }
-                        """, true));
+                        """, STRICT));
     }
 
     @Test

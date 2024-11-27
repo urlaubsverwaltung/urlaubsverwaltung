@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -37,17 +37,17 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @Autowired
     private WebApplicationContext context;
 
-    @MockBean
+    @MockitoBean
     private PersonService personService;
-    @MockBean
+    @MockitoBean
     private PersonCalendarService personCalendarService;
-    @MockBean
+    @MockitoBean
     private DepartmentCalendarService departmentCalendarService;
-    @MockBean
+    @MockitoBean
     private CompanyCalendarService companyCalendarService;
-    @MockBean
+    @MockitoBean
     private DepartmentService departmentService;
-    @MockBean
+    @MockitoBean
     private CalendarAccessibleService calendarAccessibleService;
 
     // =========================================================================================================

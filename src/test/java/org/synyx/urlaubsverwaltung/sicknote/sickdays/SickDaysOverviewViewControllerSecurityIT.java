@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -31,7 +31,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @Autowired
     private WebApplicationContext context;
 
-    @MockBean
+    @MockitoBean
     private PersonService personService;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);

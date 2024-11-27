@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,9 +25,11 @@ public class RolesFromClaimMappersProperties {
     @NotEmpty
     private String rolePrefix = "urlaubsverwaltung_";
 
+    @Valid
     @NotNull
     private ResourceAccessClaimMapperProperties resourceAccessClaim = new ResourceAccessClaimMapperProperties();
 
+    @Valid
     @NotNull
     private GroupClaimMapperProperties groupClaim = new GroupClaimMapperProperties();
 

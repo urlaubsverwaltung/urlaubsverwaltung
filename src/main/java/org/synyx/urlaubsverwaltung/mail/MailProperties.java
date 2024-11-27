@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties(prefix = "uv.mail")
+@ConfigurationProperties("uv.mail")
 public class MailProperties {
 
     @Email

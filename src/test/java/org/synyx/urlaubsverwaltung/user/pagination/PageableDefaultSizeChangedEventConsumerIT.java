@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.user.pagination;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.web.pageable.PageableDefaultSizeChangedEvent;
 
@@ -22,7 +22,7 @@ class PageableDefaultSizeChangedEventConsumerIT {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @MockBean
+    @MockitoBean
     private UserPaginationSettingsService userPaginationSettingsService;
 
     @Test

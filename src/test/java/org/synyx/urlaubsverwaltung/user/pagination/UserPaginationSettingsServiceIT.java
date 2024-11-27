@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ class UserPaginationSettingsServiceIT {
     @Autowired
     private UserPaginationSettingsService sut;
 
-    @MockBean
+    @MockitoBean
     private UserPaginationSettingsRepository repository;
 
     @Test

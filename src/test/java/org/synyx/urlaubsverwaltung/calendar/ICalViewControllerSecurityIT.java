@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -23,11 +23,11 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     @Autowired
     private WebApplicationContext context;
 
-    @MockBean
+    @MockitoBean
     private PersonCalendarService personCalendarService;
-    @MockBean
+    @MockitoBean
     private DepartmentCalendarService departmentCalendarService;
-    @MockBean
+    @MockitoBean
     private CompanyCalendarService companyCalendarService;
 
     @Test
