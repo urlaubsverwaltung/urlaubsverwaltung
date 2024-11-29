@@ -2,8 +2,8 @@ apiVersion: v2
 name: urlaubsverwaltung
 description: Helm Chart for the urlaubsverwaltung
 type: application
-version: "6.1.3"
-appVersion: 5.9.1
+version: "6.1.4"
+appVersion: 5.9.2
 keywords:
   - urlaub
 home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
