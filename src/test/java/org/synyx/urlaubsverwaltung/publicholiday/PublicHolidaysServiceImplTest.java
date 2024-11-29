@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN_MUENCHEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceImplTest {
@@ -202,6 +203,19 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
+
+        assertThat(publicHolidays).contains(
+            new PublicHoliday(LocalDate.of(2020, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2021, DECEMBER, 31), null, null),
+            new PublicHoliday(LocalDate.of(2023, DECEMBER, 31), null, null));
+    }
+
+    @Test
+    void ensureGetPublicHolidaysReturnsWhenPersonHasNoPublicHolidaysDefined() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2020, JANUARY, 1), of(2023, DECEMBER, 31), NONE);
 
         assertThat(publicHolidays).contains(
             new PublicHoliday(LocalDate.of(2020, DECEMBER, 31), null, null),

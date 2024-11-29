@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -90,7 +91,7 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
         final Set<Holiday> holidays = getHolidayManager(federalState)
             .map(holidayManager -> holidayManager.getHolidays(from, to, PUBLIC_HOLIDAY, federalState.getCodes()))
-            .orElseGet(Set::of);
+            .orElseGet(HashSet::new);
 
         final DateRange requestRange = new DateRange(from, to);
 
