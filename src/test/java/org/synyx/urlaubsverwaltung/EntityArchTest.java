@@ -15,6 +15,7 @@ class EntityArchTest {
         ArchRuleDefinition.classes()
             .that().areAnnotatedWith(Entity.class)
             .should().beAssignableTo(AbstractTenantAwareEntity.class)
+            .andShould().bePublic()
             .check(classes);
     }
 

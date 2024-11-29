@@ -16,7 +16,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "sick_note_extension")
-class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
+public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
