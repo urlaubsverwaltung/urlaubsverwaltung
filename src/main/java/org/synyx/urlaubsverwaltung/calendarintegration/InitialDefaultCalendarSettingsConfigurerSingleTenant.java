@@ -2,14 +2,12 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Component
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 class InitialDefaultCalendarSettingsConfigurerSingleTenant {
 
 

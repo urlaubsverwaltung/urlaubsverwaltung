@@ -1,16 +1,15 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 public class VacationDaysReminderConfiguration implements SchedulingConfigurer {
 
     private final AccountProperties accountProperties;

@@ -5,13 +5,12 @@ import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
 @ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 @EnableConfigurationProperties(TenancyConfigurationProperties.class)
 public class TenancyConfiguration {
 

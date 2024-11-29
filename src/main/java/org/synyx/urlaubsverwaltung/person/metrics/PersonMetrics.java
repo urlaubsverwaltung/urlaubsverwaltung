@@ -3,17 +3,15 @@ package org.synyx.urlaubsverwaltung.person.metrics;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.SingleTenantConfiguration;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 class PersonMetrics {
 
     private static final String METRIC_USERS_ACTIVE = "users.active";

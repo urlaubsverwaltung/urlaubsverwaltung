@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdatedEvent;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -19,7 +18,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 @ConditionalOnProperty(value = "uv.extensions.vacationtype.republish.enabled", havingValue = "true")
 @ConditionalOnBean(VacationTypeEventHandlerExtension.class)
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 class VacationTypeEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

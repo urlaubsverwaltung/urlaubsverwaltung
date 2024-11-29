@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -11,13 +10,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.IsSingleTenantMode;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties({OidcSecurityProperties.class, RolesFromClaimMappersProperties.class})
-@Conditional(IsSingleTenantMode.class)
+@ConditionalOnSingleTenantMode
 class OidcSecurityConfiguration {
 
     @Bean
