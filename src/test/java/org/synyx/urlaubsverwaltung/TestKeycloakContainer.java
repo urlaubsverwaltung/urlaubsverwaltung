@@ -24,9 +24,8 @@ public class TestKeycloakContainer extends KeycloakContainer {
         super(IMAGE + ":" + VERSION);
         this.withRealmImportFiles(
             "/docker/keycloak-export/master-realm.json",
-            "/docker/keycloak-export/master-users-0.json",
             "/docker/keycloak-export/urlaubsverwaltung-realm.json"
-        );
+            );
     }
 
     public String createUser(String username, String firstName, String lastName, String email, String secret) {
