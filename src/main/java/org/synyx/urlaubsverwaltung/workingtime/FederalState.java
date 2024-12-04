@@ -118,7 +118,11 @@ public enum FederalState {
 
     BELGIUM("be", "be"),
 
-    POLAND("pl", "pl");
+    POLAND("pl", "pl"),
+
+    USA_MARYLAND("us", "md"),
+    USA_VIRGINIA("us", "va"),
+    USA_WASHINGTON_DC("us", "dc");
 
     private final String[] codes;
 
