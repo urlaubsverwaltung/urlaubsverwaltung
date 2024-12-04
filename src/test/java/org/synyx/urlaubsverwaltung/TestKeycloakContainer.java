@@ -16,17 +16,16 @@ import static org.keycloak.admin.client.CreatedResponseUtil.getCreatedId;
 
 public class TestKeycloakContainer extends KeycloakContainer {
 
-    private static final String VERSION = "25.0.6";
+    private static final String VERSION = "26.0.6";
     private static final String IMAGE = "quay.io/keycloak/keycloak";
-    public static final String REALM_URLAUBSVERWALTUNG = "urlaubsverwaltung";
+    private static final String REALM_URLAUBSVERWALTUNG = "urlaubsverwaltung";
 
     public TestKeycloakContainer() {
         super(IMAGE + ":" + VERSION);
         this.withRealmImportFiles(
             "/docker/keycloak-export/master-realm.json",
-            "/docker/keycloak-export/master-users-0.json",
             "/docker/keycloak-export/urlaubsverwaltung-realm.json"
-        );
+            );
     }
 
     public String createUser(String username, String firstName, String lastName, String email, String secret) {
