@@ -6,10 +6,12 @@ import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.util.Map;
 
 @Service
+@ConditionalOnSingleTenantMode
 class SessionServiceImpl<S extends Session> implements SessionService {
 
     static final String RELOAD_AUTHORITIES = "reloadAuthorities";
