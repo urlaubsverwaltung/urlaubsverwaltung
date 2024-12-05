@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -108,7 +110,9 @@ class CalculationService {
         final BigDecimal vacationDaysAlreadyUsedNextYear = accountNextYear.map(vacationDaysService::getUsedRemainingVacationDays).orElse(ZERO);
 
         final Account account = maybeAccount.get();
-        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
+
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year));
+        final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
