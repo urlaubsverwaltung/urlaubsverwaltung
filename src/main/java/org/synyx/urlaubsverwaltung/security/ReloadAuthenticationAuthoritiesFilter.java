@@ -61,20 +61,17 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         final HttpSession session = request.getSession();
         sessionService.unmarkSessionToReloadAuthorities(session.getId());
 
-
         final SecurityContext context = SecurityContextHolder.getContext();
         final Authentication authentication = context.getAuthentication();
 
         final OAuth2AuthenticationToken oAuth2Auth = (OAuth2AuthenticationToken) authentication;
 
-        String tenantId = oAuth2Auth.getAuthorizedClientRegistrationId();
+        final String tenantId = oAuth2Auth.getAuthorizedClientRegistrationId();
 
         try {
             tenantContextHolder.setTenantId(new TenantId(tenantId));
             final Person signedInUser = personService.getSignedInUser();
             final List<GrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
-
-
             final Authentication updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
 
             context.setAuthentication(updatedAuthentication);
@@ -83,10 +80,6 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         } finally {
             tenantContextHolder.clear();
         }
-
-
-
-
 
         chain.doFilter(request, response);
     }
