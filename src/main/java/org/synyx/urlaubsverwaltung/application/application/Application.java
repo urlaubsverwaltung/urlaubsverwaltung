@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
@@ -314,12 +316,20 @@ public class Application {
         return hours;
     }
 
+    public Duration getOvertimeReductionShareFor(DateRange dateRange) {
+        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
+            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + getVacationType());
+        }
+        return getHoursForDateRange(dateRange);
+    }
+
     private Duration getHoursForDateRange(DateRange dateRange) {
         final DateRange overtimeDateRange = new DateRange(startDate, endDate);
         final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
 
+        final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(Duration.ZERO);
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-        final BigDecimal secondsProRata = toFormattedDecimal(hours)
+        final BigDecimal secondsProRata = toFormattedDecimal(overtimeReductionHours)
             .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
             .multiply(toFormattedDecimal(durationOfOverlap))
             .setScale(0, HALF_EVEN);
@@ -349,6 +359,9 @@ public class Application {
     }
 
     public Map<Integer, Duration> getHoursByYear() {
+        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
+            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + getVacationType());
+        }
         return this.splitByYear().stream().collect(Collectors.toMap(
             dateRangeForYear -> dateRangeForYear.startDate().getYear(),
             this::getHoursForDateRange));
