@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -26,15 +25,11 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.util.Optional;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 
 @Service
 class CalendarSyncService {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final CalendarSettingsService calendarSettingsService;
