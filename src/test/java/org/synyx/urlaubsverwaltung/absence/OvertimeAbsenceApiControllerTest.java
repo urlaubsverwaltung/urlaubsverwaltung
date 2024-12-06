@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -42,15 +44,22 @@ class OvertimeAbsenceApiControllerTest {
 
     @Test
     void threeHoursForty() throws Exception {
+
+        final LocalDate date = LocalDate.of(2016, 1, 1);
+        final var duration = Duration.ofHours(3).plusMinutes(40);
+
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
         long applicationId = 3L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setPerson(person);
-        application.setHours(Duration.ofHours(3).plusMinutes(40));
+        application.setStartDate(date);
+        application.setEndDate(date);
+        application.setHours(duration);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
+        when(applicationService.partitionOvertimeReduction(application)).thenReturn(Map.of(date, duration));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())
@@ -58,7 +67,53 @@ class OvertimeAbsenceApiControllerTest {
             .andExpect(content().json("""
                 {
                     "id": 3,
-                    "duration": "PT3H40M"
+                    "duration": "PT3H40M",
+                    "durationShares": [
+                        {
+                            "date": "2016-01-01",
+                            "duration": "PT3H40M"
+                        }
+                    ]
+                }
+                """));
+
+    }
+
+    @Test
+    void multipleDays() throws Exception {
+        final LocalDate startDate = LocalDate.of(2016, 1, 1);
+        final LocalDate endDate = LocalDate.of(2016, 1, 2);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2L);
+        long applicationId = 3L;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setHours(Duration.ofHours(8));
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
+        when(applicationService.partitionOvertimeReduction(application)).thenReturn(Map.of(startDate, Duration.ofHours(4), endDate, Duration.ofHours(4)));
+
+        perform(get("/api/persons/2/absences/3/overtime"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(content().json("""
+                {
+                    "id": 3,
+                    "duration": "PT8H",
+                    "durationShares": [
+                        {
+                            "date": "2016-01-01",
+                            "duration": "PT4H"
+                        },
+                        {
+                            "date": "2016-01-02",
+                            "duration": "PT4H"
+                        }
+                    ]
                 }
                 """));
 
