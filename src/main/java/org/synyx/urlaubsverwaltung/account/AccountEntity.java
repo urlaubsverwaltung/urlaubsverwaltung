@@ -48,7 +48,6 @@ public class AccountEntity extends AbstractTenantAwareEntity {
     private String comment;
 
     protected AccountEntity() {
-        /* OK */
         super();
     }
 
