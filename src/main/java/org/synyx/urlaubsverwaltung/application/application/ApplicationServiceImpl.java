@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -142,6 +143,22 @@ class ApplicationServiceImpl implements ApplicationService {
         return persons.stream()
             .map(person -> Map.entry(person, overtimeReductionByPerson.getOrDefault(person, Duration.ZERO)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static Duration getOvertimeReductionShareFor(Application application, LocalDate date) {
+        return application.getOvertimeReductionShareFor(new DateRange(date, date));
+    }
+
+    public Map<LocalDate, Duration> partitionOvertimeReduction(Application application) {
+        if (application.getVacationType() == null || !OVERTIME.equals(application.getVacationType().getCategory())) {
+            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + application.getVacationType());
+        }
+        final Map<LocalDate, Duration> partitionedDuration = new HashMap<>();
+        final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
+        for (LocalDate date : applicationDateRage.stream().toList()) {
+            partitionedDuration.put(date, getOvertimeReductionShareFor(application, date));
+        }
+        return partitionedDuration;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -19,15 +20,18 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Duration.ZERO;
+import static java.time.Duration.ofHours;
 import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -580,7 +584,6 @@ class ApplicationServiceImplTest {
         vacationTypeEntity.setCategory(OVERTIME);
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
-        applicationEntity.setHours(Duration.ofHours(10));
         applicationEntity.setPerson(batman);
         applicationEntity.setStartDate(LocalDate.of(2022, 8, 10));
         applicationEntity.setEndDate(LocalDate.of(2022, 8, 12));
@@ -631,5 +634,47 @@ class ApplicationServiceImplTest {
 
         assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
             .containsEntry(batman, Duration.parse("PT5H27M16S"));
+    }
+
+    @Test
+    void ensurePartitionOvertimeReductionForSingleDays() {
+        LocalDate date = LocalDate.of(2022, 8, 10);
+
+        final Application application = new Application();
+        application.setStartDate(date);
+        application.setEndDate(date);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        application.setHours(Duration.ofHours(3).plusMinutes(40));
+
+        final var partitionedDurations = sut.partitionOvertimeReduction(application);
+
+        Map<LocalDate, Duration> expected = Map.of(
+            date, Duration.ofHours(3).plusMinutes(40));
+
+        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(expected);
+    }
+
+    @Test
+    void ensurePartitionOvertimeReductionForMultipleDays() {
+        LocalDate startDate = LocalDate.of(2022, 8, 10);
+        LocalDate middleDate = LocalDate.of(2022, 8, 11);
+        LocalDate endDate = LocalDate.of(2022, 8, 12);
+
+        final Application application = new Application();
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        application.setHours(Duration.ofHours(12));
+
+        final var partitionedDurations = sut.partitionOvertimeReduction(application);
+
+        Map<LocalDate, Duration> expected = Map.of(
+            startDate, ofHours(4),
+            middleDate, ofHours(4),
+            endDate, ofHours(4));
+
+        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(expected);
     }
 }
