@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -25,6 +25,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Configuration
+@EnableConfigurationProperties(Oauth2LoginConfigurationProperties.class)
 @EnableMethodSecurity
 class SecurityWebConfiguration {
 
@@ -32,17 +33,17 @@ class SecurityWebConfiguration {
     private final SessionService sessionService;
     private final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
     private final ClientRegistrationRepository clientRegistrationRepository;
-    private final String loginFormUrl;
+    private final Oauth2LoginConfigurationProperties oauth2LoginConfigurationProperties;
 
     SecurityWebConfiguration(PersonService personService, SessionService sessionService,
                              OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
                              ClientRegistrationRepository clientRegistrationRepository,
-                             @Value("${urlaubsverwaltung.security.oidc.loginFormUrl:#{null}}") String loginFormUrl) {
+                             Oauth2LoginConfigurationProperties oauth2LoginConfigurationProperties) {
         this.personService = personService;
         this.sessionService = sessionService;
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
         this.clientRegistrationRepository = clientRegistrationRepository;
-        this.loginFormUrl = loginFormUrl;
+        this.oauth2LoginConfigurationProperties = oauth2LoginConfigurationProperties;
     }
 
     @Bean
@@ -117,8 +118,9 @@ class SecurityWebConfiguration {
                         endpointCustomizer -> endpointCustomizer.authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository))
                     );
 
-                    if (loginFormUrl != null) {
-                        loginCustomizer.loginPage(loginFormUrl);
+                    final String loginPageUrl = oauth2LoginConfigurationProperties.getLoginPageUrl();
+                    if (loginPageUrl != null && !loginPageUrl.isBlank()) {
+                        loginCustomizer.loginPage(loginPageUrl);
                     }
                 }
             )

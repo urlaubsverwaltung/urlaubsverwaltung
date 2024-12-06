@@ -11,7 +11,7 @@
       </not>
     </preConditions>
     <addColumn tableName="account">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="account">
       <column name="tenant_id" value="default" />
@@ -26,7 +26,7 @@
       </not>
     </preConditions>
     <addColumn tableName="application">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="application">
       <column name="tenant_id" value="default" />
@@ -42,7 +42,7 @@
       </not>
     </preConditions>
     <addColumn tableName="application_comment">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="application_comment">
       <column name="tenant_id" value="default" />
@@ -57,7 +57,7 @@
       </not>
     </preConditions>
     <addColumn tableName="special_leave_settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="special_leave_settings">
       <column name="tenant_id" value="default" />
@@ -72,7 +72,7 @@
       </not>
     </preConditions>
     <addColumn tableName="vacation_type">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="vacation_type">
       <column name="tenant_id" value="default" />
@@ -87,7 +87,7 @@
       </not>
     </preConditions>
     <addColumn tableName="calendar_accessible">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="calendar_accessible">
       <column name="tenant_id" value="default" />
@@ -102,7 +102,7 @@
       </not>
     </preConditions>
     <addColumn tableName="company_calendar">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="company_calendar">
       <column name="tenant_id" value="default" />
@@ -117,7 +117,7 @@
       </not>
     </preConditions>
     <addColumn tableName="department_calendar">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="department_calendar">
       <column name="tenant_id" value="default" />
@@ -132,7 +132,7 @@
       </not>
     </preConditions>
     <addColumn tableName="person_calendar">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="person_calendar">
       <column name="tenant_id" value="default" />
@@ -147,7 +147,7 @@
       </not>
     </preConditions>
     <addColumn tableName="absence_mapping">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="absence_mapping">
       <column name="tenant_id" value="default" />
@@ -162,7 +162,7 @@
       </not>
     </preConditions>
     <addColumn tableName="calendar_integration_settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="calendar_integration_settings">
       <column name="tenant_id" value="default" />
@@ -177,7 +177,7 @@
       </not>
     </preConditions>
     <addColumn tableName="department">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="department">
       <column name="tenant_id" value="default" />
@@ -192,7 +192,7 @@
       </not>
     </preConditions>
     <addColumn tableName="user_notification_settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="user_notification_settings">
       <column name="tenant_id" value="default" />
@@ -207,7 +207,7 @@
       </not>
     </preConditions>
     <addColumn tableName="overtime">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="overtime">
       <column name="tenant_id" value="default" />
@@ -222,7 +222,7 @@
       </not>
     </preConditions>
     <addColumn tableName="overtime_comment">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="overtime_comment">
       <column name="tenant_id" value="default" />
@@ -237,7 +237,7 @@
       </not>
     </preConditions>
     <addColumn tableName="person">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="person">
       <column name="tenant_id" value="default" />
@@ -252,7 +252,7 @@
       </not>
     </preConditions>
     <addColumn tableName="person_basedata">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="person_basedata">
       <column name="tenant_id" value="default" />
@@ -267,7 +267,7 @@
       </not>
     </preConditions>
     <addColumn tableName="settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="settings">
       <column name="tenant_id" value="default" />
@@ -282,7 +282,7 @@
       </not>
     </preConditions>
     <addColumn tableName="sick_note">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="sick_note">
       <column name="tenant_id" value="default" />
@@ -297,7 +297,7 @@
       </not>
     </preConditions>
     <addColumn tableName="sick_note_type">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="sick_note_type">
       <column name="tenant_id" value="default" />
@@ -312,7 +312,7 @@
       </not>
     </preConditions>
     <addColumn tableName="sick_note_comment">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="sick_note_comment">
       <column name="tenant_id" value="default" />
@@ -327,7 +327,7 @@
       </not>
     </preConditions>
     <addColumn tableName="sick_note_extension">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="sick_note_extension">
       <column name="tenant_id" value="default" />
@@ -342,7 +342,7 @@
       </not>
     </preConditions>
     <addColumn tableName="user_pagination_settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="user_pagination_settings">
       <column name="tenant_id" value="default" />
@@ -357,7 +357,7 @@
       </not>
     </preConditions>
     <addColumn tableName="user_settings">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="user_settings">
       <column name="tenant_id" value="default" />
@@ -372,7 +372,7 @@
       </not>
     </preConditions>
     <addColumn tableName="working_time">
-      <column name="tenant_id" type="VARCHAR(255)" />
+      <column name="tenant_id" type="text" />
     </addColumn>
     <update tableName="working_time">
       <column name="tenant_id" value="default" />
