@@ -44,9 +44,10 @@ public class OvertimeAbsenceApiController {
     }
 
     @Operation(
-        summary = "Returns the amount of overtime used for a specific absence of category OVERTIME",
+        summary = "Returns the amount of overtime used for a specific application of category OVERTIME.",
         description = """
-            Returns the amount of overtime used for a specific absence of category OVERTIME.
+            Returns the amount of overtime used for a specific application of category OVERTIME.
+            This includes a list of date-duration tuples, which divides the full duration across the whole application date range.
 
             Needed basic authorities:
             * user
@@ -58,7 +59,7 @@ public class OvertimeAbsenceApiController {
             * boss or office         - if the requested absences of the person id is any id but not of the authenticated user
             """
     )
-    @GetMapping(value = ABSENCES + "/{absenceId}/overtime", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
+    @GetMapping(value = ABSENCES + "/{applicationId}/overtime", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
@@ -67,10 +68,10 @@ public class OvertimeAbsenceApiController {
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
         Long personId,
-        @Parameter(description = "ID of the absence")
-        @PathVariable("absenceId")
-        Long absenceId) {
-        Application application = getApplicationOfPerson(personId, absenceId);
+        @Parameter(description = "ID of the application")
+        @PathVariable("applicationId")
+        Long applicationId) {
+        Application application = getApplicationOfPerson(personId, applicationId);
 
         if (!application.getVacationType().isOfCategory(VacationCategory.OVERTIME)) {
             throw new ResponseStatusException(BAD_REQUEST, "Absence does not have category OVERTIME.");
@@ -81,7 +82,10 @@ public class OvertimeAbsenceApiController {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Absence is of category OVERTIME, but duration is not know.");
         }
 
-        return new OvertimeAbsenceDto(absenceId, application.getHours());
+        final var partitionedDurations = applicationService.partitionOvertimeReduction(application);
+        final var durationShares = partitionedDurations.entrySet().stream()
+            .map(e -> new DatedDurationShareDto(e.getKey(), e.getValue())).toList();
+        return new OvertimeAbsenceDto(applicationId, application.getHours(), durationShares);
     }
 
     private Application getApplicationOfPerson(Long personId, Long absenceId) {
