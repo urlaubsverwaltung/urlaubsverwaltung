@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-
-import java.util.Iterator;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
