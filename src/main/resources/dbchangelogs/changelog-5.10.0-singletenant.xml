@@ -1,0 +1,382 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+  <changeSet author="grafjo" id="account-tenancy">
+    <preConditions>
+      <tableExists tableName="account"/>
+      <not>
+        <columnExists tableName="account" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="account">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="account">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="application-tenancy">
+    <preConditions>
+      <tableExists tableName="application"/>
+      <not>
+        <columnExists tableName="application" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="application">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="application">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+
+  <changeSet author="grafjo" id="application-comment-tenancy">
+    <preConditions>
+      <tableExists tableName="application_comment"/>
+      <not>
+        <columnExists tableName="application_comment" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="application_comment">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="application_comment">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="special-leave-settings-tenancy">
+    <preConditions>
+      <tableExists tableName="special_leave_settings"/>
+      <not>
+        <columnExists tableName="special_leave_settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="special_leave_settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="special_leave_settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="vacation-type-tenancy">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+      <not>
+        <columnExists tableName="vacation_type" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="vacation_type">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="vacation_type">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="calendar-accessible-tenancy">
+    <preConditions>
+      <tableExists tableName="calendar_accessible"/>
+      <not>
+        <columnExists tableName="calendar_accessible" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="calendar_accessible">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="calendar_accessible">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="company-calendar-tenancy">
+    <preConditions>
+      <tableExists tableName="company_calendar"/>
+      <not>
+        <columnExists tableName="company_calendar" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="company_calendar">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="company_calendar">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="department-calendar-tenancy">
+    <preConditions>
+      <tableExists tableName="department_calendar"/>
+      <not>
+        <columnExists tableName="department_calendar" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="department_calendar">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="department_calendar">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="person-calendar-tenancy">
+    <preConditions>
+      <tableExists tableName="person_calendar"/>
+      <not>
+        <columnExists tableName="person_calendar" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="person_calendar">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="person_calendar">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="absence-mapping-tenancy">
+    <preConditions>
+      <tableExists tableName="absence_mapping"/>
+      <not>
+        <columnExists tableName="absence_mapping" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="absence_mapping">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="absence_mapping">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="calendar-integration-settings-tenancy">
+    <preConditions>
+      <tableExists tableName="calendar_integration_settings"/>
+      <not>
+        <columnExists tableName="calendar_integration_settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="calendar_integration_settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="calendar_integration_settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="department-tenancy">
+    <preConditions>
+      <tableExists tableName="department"/>
+      <not>
+        <columnExists tableName="department" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="department">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="department">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="user-notification-settings-tenancy">
+    <preConditions>
+      <tableExists tableName="user_notification_settings"/>
+      <not>
+        <columnExists tableName="user_notification_settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="user_notification_settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="user_notification_settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="overtime-tenancy">
+    <preConditions>
+      <tableExists tableName="overtime"/>
+      <not>
+        <columnExists tableName="overtime" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="overtime">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="overtime">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="overtime-comment-tenancy">
+    <preConditions>
+      <tableExists tableName="overtime_comment"/>
+      <not>
+        <columnExists tableName="overtime_comment" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="overtime_comment">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="overtime_comment">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="person-tenancy">
+    <preConditions>
+      <tableExists tableName="person"/>
+      <not>
+        <columnExists tableName="person" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="person">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="person">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="person-basedata-tenancy">
+    <preConditions>
+      <tableExists tableName="person_basedata"/>
+      <not>
+        <columnExists tableName="person_basedata" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="person_basedata">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="person_basedata">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="settings-tenancy">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="sick-note-tenancy">
+    <preConditions>
+      <tableExists tableName="sick_note"/>
+      <not>
+        <columnExists tableName="sick_note" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="sick_note">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="sick_note">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="sick-note-type-tenancy">
+    <preConditions>
+      <tableExists tableName="sick_note_type"/>
+      <not>
+        <columnExists tableName="sick_note_type" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="sick_note_type">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="sick_note_type">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="sick-note-comment-tenancy">
+    <preConditions>
+      <tableExists tableName="sick_note_comment"/>
+      <not>
+        <columnExists tableName="sick_note_comment" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="sick_note_comment">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="sick_note_comment">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="sick-note-extension-tenancy">
+    <preConditions>
+      <tableExists tableName="sick_note_extension"/>
+      <not>
+        <columnExists tableName="sick_note_extension" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="sick_note_extension">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="sick_note_extension">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="user-pagination-settings-tenancy">
+    <preConditions>
+      <tableExists tableName="user_pagination_settings"/>
+      <not>
+        <columnExists tableName="user_pagination_settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="user_pagination_settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="user_pagination_settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="user-settings-tenancy">
+    <preConditions>
+      <tableExists tableName="user_settings"/>
+      <not>
+        <columnExists tableName="user_settings" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="user_settings">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="user_settings">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+  <changeSet author="grafjo" id="working-time-tenancy">
+    <preConditions>
+      <tableExists tableName="working_time"/>
+      <not>
+        <columnExists tableName="working_time" columnName="tenant_id"/>
+      </not>
+    </preConditions>
+    <addColumn tableName="working_time">
+      <column name="tenant_id" type="text"/>
+    </addColumn>
+    <update tableName="working_time">
+      <column name="tenant_id" value="default"/>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

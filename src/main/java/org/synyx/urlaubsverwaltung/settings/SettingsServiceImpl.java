@@ -32,10 +32,18 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public Settings getSettings() {
         return settingsRepository.findAll().stream().findFirst()
-            .orElseGet(() -> {
-                final Settings savedSettings = settingsRepository.save(new Settings());
-                LOG.info("Saved initial settings {}", savedSettings);
-                return savedSettings;
-            });
+            .orElseThrow(() -> new IllegalStateException("No settings found in database!"));
+    }
+
+    @Override
+    public void insertDefaultSettings() {
+
+        final long count = settingsRepository.count();
+
+        if (count == 0) {
+            final Settings settings = new Settings();
+            final Settings savedSettings = settingsRepository.save(settings);
+            LOG.info("Saved initial settings {}", savedSettings);
+        }
     }
 }

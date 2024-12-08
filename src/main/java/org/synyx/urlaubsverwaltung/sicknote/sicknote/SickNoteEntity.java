@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  */
 @Entity
 @Table(name = "sick_note")
-public class SickNoteEntity {
+public class SickNoteEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

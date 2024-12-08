@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.extension;
 
 
+import de.focus_shift.urlaubsverwaltung.extension.api.person.MailNotificationDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.RoleDTO;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +12,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -24,6 +26,7 @@ class PersonDTOMapperTest {
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
             person.setId(1L);
             person.setPermissions(Set.of(USER));
+            person.setNotifications(Set.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
 
@@ -34,6 +37,7 @@ class PersonDTOMapperTest {
             assertThat(dto.getFirstName()).isEqualTo("Marlene");
             assertThat(dto.getEmail()).isEqualTo("muster@example.org");
             assertThat(dto.getPermissions()).containsOnly(RoleDTO.USER);
+            assertThat(dto.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
             assertThat(dto.isEnabled()).isTrue();
         }
 
@@ -43,6 +47,7 @@ class PersonDTOMapperTest {
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
             person.setId(1L);
             person.setPermissions(Set.of(INACTIVE));
+            person.setNotifications(Set.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
 
@@ -53,6 +58,7 @@ class PersonDTOMapperTest {
             assertThat(dto.getFirstName()).isEqualTo("Marlene");
             assertThat(dto.getEmail()).isEqualTo("muster@example.org");
             assertThat(dto.getPermissions()).isEmpty();
+            assertThat(dto.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
             assertThat(dto.isEnabled()).isFalse();
         }
     }
@@ -70,6 +76,7 @@ class PersonDTOMapperTest {
                 .email("muster@example.org")
                 .enabled(true)
                 .permissions(Set.of(RoleDTO.USER))
+                .notifications(Set.of(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED))
                 .build();
 
             final Person person = PersonDTOMapper.toPerson(personDTO);
@@ -81,6 +88,7 @@ class PersonDTOMapperTest {
             assertThat(person.getFirstName()).isEqualTo("Marlene");
             assertThat(person.getEmail()).isEqualTo("muster@example.org");
             assertThat(person.getPermissions()).containsOnly(Role.USER);
+            assertThat(person.getNotifications()).containsOnly(NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
             assertThat(person.isActive()).isTrue();
         }
 
@@ -94,6 +102,7 @@ class PersonDTOMapperTest {
                 .firstName("Marlene")
                 .email("muster@example.org")
                 .permissions(Set.of())
+                .notifications(Set.of(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED))
                 .build()
                 .disable();
 
@@ -106,6 +115,7 @@ class PersonDTOMapperTest {
             assertThat(person.getFirstName()).isEqualTo("Marlene");
             assertThat(person.getEmail()).isEqualTo("muster@example.org");
             assertThat(person.getPermissions()).containsOnly(INACTIVE);
+            assertThat(person.getNotifications()).containsOnly(NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
             assertThat(person.isActive()).isFalse();
         }
     }

@@ -39,7 +39,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
     @Autowired
     TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
+                                       AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
@@ -48,7 +48,7 @@ public class TurnOfTheYearAccountUpdaterService {
         this.clock = clock;
     }
 
-    void updateAccountsForNextPeriod() {
+    public void updateAccountsForNextPeriod() {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 

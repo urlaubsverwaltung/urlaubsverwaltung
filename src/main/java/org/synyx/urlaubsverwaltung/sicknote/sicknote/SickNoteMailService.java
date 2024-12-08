@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
-class SickNoteMailService {
+public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -60,7 +60,7 @@ class SickNoteMailService {
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
     @Async
-    void sendEndOfSickPayNotification() {
+    public void sendEndOfSickPayNotification() {
 
         final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
@@ -198,10 +198,10 @@ class SickNoteMailService {
     @Async
     void sendSickNoteAcceptedNotificationToSickPerson(SickNote acceptedSickNote, Person maintainer) {
         final Mail mailToApplicant = Mail.builder()
-                .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
-                .withSubject("subject.sicknote.accepted_by_management.to_applicant")
-                .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
-                .build();
+            .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
+            .withSubject("subject.sicknote.accepted_by_management.to_applicant")
+            .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+            .build();
         mailService.send(mailToApplicant);
     }
 
@@ -239,14 +239,14 @@ class SickNoteMailService {
     @Async
     void sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(SickNote acceptedSickNote, Person maintainer) {
         final List<Person> recipients =
-                mailRecipientService.getRecipientsOfInterest(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)
-                        .stream().filter(recipient -> !recipient.equals(maintainer))
-                        .toList();
+            mailRecipientService.getRecipientsOfInterest(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT)
+                .stream().filter(recipient -> !recipient.equals(maintainer))
+                .toList();
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
-                .withRecipient(recipients)
-                .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
-                .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
-                .build();
+            .withRecipient(recipients)
+            .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+            .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);
     }

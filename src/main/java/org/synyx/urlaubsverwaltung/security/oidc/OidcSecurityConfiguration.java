@@ -10,11 +10,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties({OidcSecurityProperties.class, RolesFromClaimMappersProperties.class})
+@ConditionalOnSingleTenantMode
 class OidcSecurityConfiguration {
 
     @Bean

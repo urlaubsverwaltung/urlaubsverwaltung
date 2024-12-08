@@ -11,13 +11,14 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Period;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
-class PersonCalendar {
+public class PersonCalendar extends AbstractTenantAwareEntity {
 
     private static final int SECRET_LENGTH = 32;
 

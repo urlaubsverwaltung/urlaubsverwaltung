@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.extension;
 
 
+import de.focus_shift.urlaubsverwaltung.extension.api.person.MailNotificationDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.RoleDTO;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -43,6 +45,7 @@ class PersonServiceExtensionImplTest {
         final Person createdPerson = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
         createdPerson.setId(personDTO.getId());
         createdPerson.setPermissions(Set.of(Role.USER));
+        createdPerson.setNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         return createdPerson;
     }
 
@@ -59,6 +62,7 @@ class PersonServiceExtensionImplTest {
             .email("muster@example.org")
             .enabled(true)
             .permissions(Set.of(RoleDTO.USER))
+            .notifications(Set.of(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED))
             .build();
     }
 
@@ -68,6 +72,7 @@ class PersonServiceExtensionImplTest {
         final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         createdPerson.setId(1L);
         createdPerson.setPermissions(List.of(Role.USER));
+        createdPerson.setNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         when(personService.create(any(String.class), any(String.class), any(String.class), any(String.class))).thenReturn(createdPerson);
 
         final PersonDTO createdDTO = sut.create(anyPersonDTO());
@@ -77,6 +82,7 @@ class PersonServiceExtensionImplTest {
         assertThat(createdDTO.getFirstName()).isEqualTo("Marlene");
         assertThat(createdDTO.getEmail()).isEqualTo("muster@example.org");
         assertThat(createdDTO.getPermissions()).containsOnly(RoleDTO.USER);
+        assertThat(createdDTO.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
         assertThat(createdDTO.isEnabled()).isTrue();
     }
 
@@ -96,6 +102,7 @@ class PersonServiceExtensionImplTest {
         assertThat(updatedPersonDTO.getFirstName()).isEqualTo("Marlene");
         assertThat(updatedPersonDTO.getEmail()).isEqualTo("muster@example.org");
         assertThat(updatedPersonDTO.getPermissions()).containsOnly(RoleDTO.USER);
+        assertThat(updatedPersonDTO.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
         assertThat(updatedPersonDTO.isEnabled()).isTrue();
 
 
@@ -300,6 +307,7 @@ class PersonServiceExtensionImplTest {
         assertThat(appointedPerson.getFirstName()).isEqualTo("Marlene");
         assertThat(appointedPerson.getEmail()).isEqualTo("muster@example.org");
         assertThat(appointedPerson.getPermissions()).containsOnly(RoleDTO.USER);
+        assertThat(appointedPerson.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
         assertThat(appointedPerson.isEnabled()).isTrue();
 
         ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);

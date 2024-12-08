@@ -4,15 +4,12 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets.Details;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.CalendarScopes;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -43,31 +39,42 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     private final CalendarSettingsService calendarSettingsService;
     private final CalendarSyncService calendarSyncService;
-
-    private GoogleAuthorizationCodeFlow flow;
+    private final GoogleAuthorizationCodeFlowFactory googleAuthorizationCodeFlowFactory;
 
     @Autowired
     GoogleCalendarOAuthHandshakeViewController(
         CalendarSettingsService calendarSettingsService,
-        CalendarSyncService calendarSyncService
+        CalendarSyncService calendarSyncService,
+        GoogleAuthorizationCodeFlowFactory googleAuthorizationCodeFlowFactory
     ) throws GeneralSecurityException, IOException {
 
         this.calendarSettingsService = calendarSettingsService;
         this.calendarSyncService = calendarSyncService;
+        this.googleAuthorizationCodeFlowFactory = googleAuthorizationCodeFlowFactory;
+
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    }
+
+    private static HttpResponse checkGoogleCalendar(Calendar client, CalendarSettings calendarSettings) throws IOException {
+        final String calendarId = calendarSettings.getGoogleCalendarSettings().getCalendarId();
+        return client.calendars()
+            .get(calendarId)
+            .buildHttpRequestUsingHead().execute();
     }
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/google-api-handshake")
-    public String googleConnectionStatus(HttpServletRequest request) {
+    public String googleConnectionStatus(HttpServletRequest request) throws GeneralSecurityException, IOException {
         return "redirect:" + authorize(request.getRequestURL().toString());
     }
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping(value = "/google-api-handshake", params = "code")
-    public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
+    public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) throws GeneralSecurityException, IOException {
 
-        String redirectUrl = request.getRequestURL().toString();
+        final String redirectUrl = request.getRequestURL().toString();
+
+        final GoogleAuthorizationCodeFlow flow = createGoogleAuthorizationCodeFlow();
 
         try {
             final TokenResponse response = flow.newTokenRequest(code).setRedirectUri(redirectUrl).execute();
@@ -101,34 +108,19 @@ public class GoogleCalendarOAuthHandshakeViewController {
         return "redirect:/web/settings/calendar-sync";
     }
 
-    private static HttpResponse checkGoogleCalendar(Calendar client, CalendarSettings calendarSettings) throws IOException {
-        final String calendarId = calendarSettings.getGoogleCalendarSettings().getCalendarId();
-        return client.calendars()
-            .get(calendarId)
-            .buildHttpRequestUsingHead().execute();
-    }
+    private String authorize(String redirectUri) throws GeneralSecurityException, IOException {
 
-    private String authorize(String redirectUri) {
+        final AuthorizationCodeRequestUrl authorizationUrl = createGoogleAuthorizationCodeFlow()
+            .newAuthorizationUrl()
+            .setRedirectUri(redirectUri);
 
-        final GoogleCalendarSettings googleCalendarSettings = calendarSettingsService.getCalendarSettings().getGoogleCalendarSettings();
-
-        final Details web = new Details();
-        web.setClientId(googleCalendarSettings.getClientId());
-        web.setClientSecret(googleCalendarSettings.getClientSecret());
-
-        final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
-
-        clientSecrets.setWeb(web);
-
-        flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
-            Collections.singleton(CalendarScopes.CALENDAR))
-            .setApprovalPrompt("force")
-            .setAccessType("offline")
-            .build();
-
-        final AuthorizationCodeRequestUrl authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri);
         LOG.info("using authorizationUrl {}", authorizationUrl);
 
         return authorizationUrl.build();
+    }
+
+    private GoogleAuthorizationCodeFlow createGoogleAuthorizationCodeFlow() throws GeneralSecurityException, IOException {
+        final GoogleCalendarSettings googleCalendarSettings = calendarSettingsService.getCalendarSettings().getGoogleCalendarSettings();
+        return googleAuthorizationCodeFlowFactory.create(googleCalendarSettings.getClientId(), googleCalendarSettings.getClientSecret());
     }
 }

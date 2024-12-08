@@ -6,8 +6,10 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
+@ConditionalOnSingleTenantMode
 class SickNoteMailConfiguration implements SchedulingConfigurer {
 
     private final SickNoteProperties sickNoteProperties;

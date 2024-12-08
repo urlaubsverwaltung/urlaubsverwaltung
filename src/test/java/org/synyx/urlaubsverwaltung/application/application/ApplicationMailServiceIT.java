@@ -18,7 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -81,7 +81,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost", "spring.main.allow-bean-definition-overriding=true"})
 @Transactional
-class ApplicationMailServiceIT extends TestContainersBase {
+class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);

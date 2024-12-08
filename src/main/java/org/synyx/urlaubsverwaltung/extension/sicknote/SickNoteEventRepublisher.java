@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCreatedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 @ConditionalOnProperty(value = "uv.extensions.sicknote.republish.enabled", havingValue = "true")
 @ConditionalOnBean(SickNoteEventHandlerExtension.class)
+@ConditionalOnSingleTenantMode
 public class SickNoteEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

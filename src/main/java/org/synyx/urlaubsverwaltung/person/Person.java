@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -25,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
  * This class describes a person.
  */
 @Entity
-public class Person {
+public class Person extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

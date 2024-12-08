@@ -6,12 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.SequenceGenerator;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Inheritance
-abstract class CalendarAccessible {
+public abstract class CalendarAccessible extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
