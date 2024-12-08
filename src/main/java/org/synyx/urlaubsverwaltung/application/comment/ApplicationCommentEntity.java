@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -19,7 +20,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
 
 @Entity(name = "application_comment")
-class ApplicationCommentEntity {
+public class ApplicationCommentEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

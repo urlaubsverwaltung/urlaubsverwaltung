@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 @Component
 @ConditionalOnProperty(value = "uv.extensions.application.republish.enabled", havingValue = "true")
 @ConditionalOnBean(ApplicationEventHandlerExtension.class)
+@ConditionalOnSingleTenantMode
 public class ApplicationEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

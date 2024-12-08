@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
 @Entity(name = "account")
-public class AccountEntity {
+public class AccountEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -47,7 +48,7 @@ public class AccountEntity {
     private String comment;
 
     protected AccountEntity() {
-        /* OK */
+        super();
     }
 
     public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,

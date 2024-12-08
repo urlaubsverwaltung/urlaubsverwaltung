@@ -3,12 +3,13 @@ package org.synyx.urlaubsverwaltung.notification;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "user_notification_settings")
-class UserNotificationSettingsEntity {
+public class UserNotificationSettingsEntity extends AbstractTenantAwareEntity {
 
     @Id
     private Long personId;

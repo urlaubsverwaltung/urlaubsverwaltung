@@ -7,8 +7,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.application.ApplicationProperties;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
+import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
+@ConditionalOnSingleTenantMode
 class ApplicationReminderMailConfiguration implements SchedulingConfigurer {
 
     private final ApplicationProperties applicationProperties;

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Period;
 
@@ -19,7 +20,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Entity
-class DepartmentCalendar {
+public class DepartmentCalendar extends AbstractTenantAwareEntity {
 
     private static final int SECRET_LENGTH = 32;
 

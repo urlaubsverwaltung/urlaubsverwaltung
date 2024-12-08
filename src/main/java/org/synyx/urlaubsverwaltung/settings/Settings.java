@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.util.Objects;
@@ -22,7 +23,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * Represents the settings / business rules for the application.
  */
 @Entity
-public class Settings {
+public class Settings extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

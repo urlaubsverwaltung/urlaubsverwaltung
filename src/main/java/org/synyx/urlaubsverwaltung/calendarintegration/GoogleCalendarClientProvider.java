@@ -29,8 +29,6 @@ class GoogleCalendarClientProvider {
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
 
-    private Optional<Calendar> maybeCalendarClient = Optional.empty();
-    private int refreshTokenHashCode;
 
     /**
      * Build and return an authorized google calendar client.
@@ -38,13 +36,7 @@ class GoogleCalendarClientProvider {
      * @return an authorized calendar client service
      */
     Optional<Calendar> getCalendarClient(GoogleCalendarSettings googleCalendarSettings) {
-
-        final String refreshToken = googleCalendarSettings.getRefreshToken();
-        if (maybeCalendarClient.isEmpty() || refreshToken == null || refreshTokenHashCode != refreshToken.hashCode()) {
-            maybeCalendarClient = createCalendarClient(googleCalendarSettings);
-        }
-
-        return maybeCalendarClient;
+        return createCalendarClient(googleCalendarSettings);
     }
 
     private Optional<Calendar> createCalendarClient(GoogleCalendarSettings googleCalendarSettings) {
@@ -55,9 +47,6 @@ class GoogleCalendarClientProvider {
         }
 
         final String refreshToken = googleCalendarSettings.getRefreshToken();
-        if (refreshToken != null) {
-            refreshTokenHashCode = refreshToken.hashCode();
-        }
 
         final TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(refreshToken);

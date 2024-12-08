@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.synyx.urlaubsverwaltung.SingleTenantTestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
-import org.synyx.urlaubsverwaltung.TestPostgreSQLContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -59,7 +59,7 @@ class CustomAbsenceTypeUIIT {
     private int port;
 
     @Container
-    private static final TestPostgreSQLContainer postgre = new TestPostgreSQLContainer();
+    private static final SingleTenantTestPostgreSQLContainer postgre = new SingleTenantTestPostgreSQLContainer();
     @Container
     private static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 

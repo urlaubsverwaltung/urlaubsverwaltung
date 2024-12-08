@@ -17,4 +17,6 @@ public interface SettingsService {
      * @return settings for the application
      */
     Settings getSettings();
+
+    void insertDefaultSettings();
 }

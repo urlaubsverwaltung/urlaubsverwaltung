@@ -10,4 +10,6 @@ public interface SickNoteTypeService {
      * @return list of all types
      */
     List<SickNoteType> getSickNoteTypes();
+
+    void insertDefaultSickNoteTypes();
 }

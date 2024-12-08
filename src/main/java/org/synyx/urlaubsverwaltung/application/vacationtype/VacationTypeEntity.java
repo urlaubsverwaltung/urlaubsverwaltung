@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.util.Locale;
 import java.util.Map;
@@ -22,7 +23,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * @since 2.15.0
  */
 @Entity(name = "vacation_type")
-public class VacationTypeEntity {
+public class VacationTypeEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

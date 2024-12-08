@@ -2,6 +2,8 @@ uv:
   mail:
     fromDisplayName: Urlaubsverwaltung
     replyToDisplayName: Urlaubsverwaltung
+  tenant:
+    mode: single
 
 spring:
   web:

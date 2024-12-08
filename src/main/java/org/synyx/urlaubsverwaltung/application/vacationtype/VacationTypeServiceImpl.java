@@ -2,10 +2,8 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,44 +143,49 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         }
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    void insertDefaultVacationTypes() {
+    @Override
+    public void insertDefaultVacationTypes() {
         final long count = vacationTypeRepository.count();
+
         if (count == 0) {
-
-            final VacationTypeEntity holiday = createVacationTypeEntity(true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
-            final VacationTypeEntity specialleave = createVacationTypeEntity(true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
-            final VacationTypeEntity unpaidleave = createVacationTypeEntity(true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
-            final VacationTypeEntity overtime = createVacationTypeEntity(true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
-            final VacationTypeEntity parentalLeave = createVacationTypeEntity(false, OTHER, "application.data.vacationType.parentalLeave", true, true, YELLOW, false);
-            final VacationTypeEntity maternityProtection = createVacationTypeEntity(false, OTHER, "application.data.vacationType.maternityProtection", true, true, YELLOW, false);
-            final VacationTypeEntity sabbatical = createVacationTypeEntity(false, OTHER, "application.data.vacationType.sabbatical", true, true, YELLOW, false);
-            final VacationTypeEntity paidLeave = createVacationTypeEntity(false, OTHER, "application.data.vacationType.paidLeave", true, true, YELLOW, false);
-            final VacationTypeEntity cure = createVacationTypeEntity(false, OTHER, "application.data.vacationType.cure", true, true, YELLOW, false);
-            final VacationTypeEntity education = createVacationTypeEntity(false, OTHER, "application.data.vacationType.education", true, true, YELLOW, false);
-            final VacationTypeEntity homeOffice = createVacationTypeEntity(false, OTHER, "application.data.vacationType.homeOffice", true, true, YELLOW, false);
-            final VacationTypeEntity outOfOffice = createVacationTypeEntity(false, OTHER, "application.data.vacationType.outOfOffice", true, true, YELLOW, false);
-            final VacationTypeEntity training = createVacationTypeEntity(false, OTHER, "application.data.vacationType.training", true, true, YELLOW, false);
-            final VacationTypeEntity employmentBan = createVacationTypeEntity(false, OTHER, "application.data.vacationType.employmentBan", true, true, YELLOW, false);
-            final VacationTypeEntity educationalLeave = createVacationTypeEntity(false, OTHER, "application.data.vacationType.educationalLeave", true, true, YELLOW, false);
-
-            final List<VacationTypeEntity> vacationTypes = List.of(holiday, holiday, specialleave, unpaidleave, overtime, parentalLeave, maternityProtection, sabbatical, paidLeave, cure, education, homeOffice, outOfOffice, training, employmentBan, educationalLeave);
-            final List<VacationTypeEntity> savesVacationTypes = vacationTypeRepository.saveAll(vacationTypes);
-            LOG.info("Saved initial vacation types {}", savesVacationTypes);
+            LOG.info("No initial vacation types exists - going to create them.");
+            final List<VacationType<?>> vacationTypes = getInitialVacationTypes();
+            createVacationTypes(vacationTypes);
+            LOG.info("Saved {} initial vacation types", vacationTypes.size());
         }
     }
 
-    private static VacationTypeEntity createVacationTypeEntity(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setCustom(false);
-        vacationTypeEntity.setActive(active);
-        vacationTypeEntity.setCategory(category);
-        vacationTypeEntity.setMessageKey(messageKey);
-        vacationTypeEntity.setRequiresApprovalToApply(requiresApprovalToApply);
-        vacationTypeEntity.setRequiresApprovalToCancel(requiresApprovalToCancel);
-        vacationTypeEntity.setColor(color);
-        vacationTypeEntity.setVisibleToEveryone(visibleToEveryone);
-        return vacationTypeEntity;
+    private List<VacationType<?>> getInitialVacationTypes() {
+        final ProvidedVacationType holiday = createProvidedVacationType(true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
+        final ProvidedVacationType specialleave = createProvidedVacationType(true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
+        final ProvidedVacationType unpaidleave = createProvidedVacationType(true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
+        final ProvidedVacationType overtime = createProvidedVacationType(true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
+        final ProvidedVacationType parentalLeave = createProvidedVacationType(false, OTHER, "application.data.vacationType.parentalLeave", true, true, YELLOW, false);
+        final ProvidedVacationType maternityProtection = createProvidedVacationType(false, OTHER, "application.data.vacationType.maternityProtection", true, true, YELLOW, false);
+        final ProvidedVacationType sabbatical = createProvidedVacationType(false, OTHER, "application.data.vacationType.sabbatical", true, true, YELLOW, false);
+        final ProvidedVacationType paidLeave = createProvidedVacationType(false, OTHER, "application.data.vacationType.paidLeave", true, true, YELLOW, false);
+        final ProvidedVacationType cure = createProvidedVacationType(false, OTHER, "application.data.vacationType.cure", true, true, YELLOW, false);
+        final ProvidedVacationType education = createProvidedVacationType(false, OTHER, "application.data.vacationType.education", true, true, YELLOW, false);
+        final ProvidedVacationType homeOffice = createProvidedVacationType(false, OTHER, "application.data.vacationType.homeOffice", true, true, YELLOW, false);
+        final ProvidedVacationType outOfOffice = createProvidedVacationType(false, OTHER, "application.data.vacationType.outOfOffice", true, true, YELLOW, false);
+        final ProvidedVacationType training = createProvidedVacationType(false, OTHER, "application.data.vacationType.training", true, true, YELLOW, false);
+        final ProvidedVacationType employmentBan = createProvidedVacationType(false, OTHER, "application.data.vacationType.employmentBan", true, true, YELLOW, false);
+        final ProvidedVacationType educationalLeave = createProvidedVacationType(false, OTHER, "application.data.vacationType.educationalLeave", true, true, YELLOW, false);
+
+        return List.of(holiday, specialleave, unpaidleave, overtime, parentalLeave, maternityProtection, sabbatical, paidLeave, cure, education, homeOffice, outOfOffice, training, employmentBan, educationalLeave);
+    }
+
+    private ProvidedVacationType createProvidedVacationType(boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
+        return ProvidedVacationType.builder(messageSource)
+            .id(null)
+            .active(active)
+            .category(category)
+            .messageKey(messageKey)
+            .requiresApprovalToApply(requiresApprovalToApply)
+            .requiresApprovalToCancel(requiresApprovalToCancel)
+            .color(color)
+            .visibleToEveryone(visibleToEveryone)
+            .build();
     }
 
     private static CustomVacationType updateCustomVacationType(CustomVacationType customVacationType, VacationTypeUpdate vacationTypeUpdate) {

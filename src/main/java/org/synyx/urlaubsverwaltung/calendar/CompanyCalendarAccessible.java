@@ -3,5 +3,5 @@ package org.synyx.urlaubsverwaltung.calendar;
 import jakarta.persistence.Entity;
 
 @Entity
-class CompanyCalendarAccessible extends CalendarAccessible {
+public class CompanyCalendarAccessible extends CalendarAccessible {
 }
