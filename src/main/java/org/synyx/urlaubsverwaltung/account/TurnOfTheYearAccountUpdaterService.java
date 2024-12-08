@@ -39,7 +39,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
     @Autowired
     TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
+                                       AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;

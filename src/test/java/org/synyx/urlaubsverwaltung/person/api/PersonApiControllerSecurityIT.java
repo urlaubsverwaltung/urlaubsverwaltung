@@ -6,8 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,9 +44,9 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
     @Test
     void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnCurrentPerson() throws Exception {
         perform(
-                get("/api/persons/me")
+            get("/api/persons/me")
         )
-                .andExpect(status().is4xxClientError());
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -55,23 +55,23 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(new Person()));
 
         perform(get("/api/persons/me")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
         ).andExpect(status().isOk());
     }
 
     @Test
     void ensureAccessIsUnAuthorizedIfNoAuthenticationIsAvailableOnSpecificPerson() throws Exception {
         perform(
-                get("/api/persons/1")
+            get("/api/persons/1")
         )
-                .andExpect(status().is4xxClientError());
+            .andExpect(status().is4xxClientError());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"USER", "INACTIVE"})
     void ensureAccessIsForbiddenForOtherUsersOnSpecificPerson(final String role) throws Exception {
         perform(get("/api/persons/1")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         ).andExpect(status().isForbidden());
     }
 
@@ -82,7 +82,7 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         perform(get("/api/persons/1")
-                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
         ).andExpect(status().isOk());
     }
 
@@ -97,10 +97,10 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(
-                get("/api/persons/1")
-                        .with(oidcLogin().idToken(builder -> builder.subject("departmentHead")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+            get("/api/persons/1")
+                .with(oidcLogin().idToken(builder -> builder.subject("departmentHead")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
         )
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -114,10 +114,10 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(
-                get("/api/persons/1")
-                        .with(oidcLogin().idToken(builder -> builder.subject("ssa")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+            get("/api/persons/1")
+                .with(oidcLogin().idToken(builder -> builder.subject("ssa")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
         )
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -128,10 +128,10 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
-                get("/api/persons/1")
-                        .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
+            get("/api/persons/1")
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
         )
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -142,10 +142,10 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
-                get("/api/persons/1")
-                        .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
+            get("/api/persons/1")
+                .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
         )
-                .andExpect(status().isForbidden());
+            .andExpect(status().isForbidden());
     }
 
     @Test

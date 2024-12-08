@@ -24,7 +24,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 @AnalyzeClasses(
     packages = "org.synyx.urlaubsverwaltung",
-    importOptions = { DoNotIncludeTests.class }
+    importOptions = {DoNotIncludeTests.class}
 )
 class SingleTenantArchTest {
 
