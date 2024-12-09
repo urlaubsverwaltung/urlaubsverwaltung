@@ -18,6 +18,8 @@ import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -164,12 +166,14 @@ class ApplicationTest {
         final Application application = new Application();
         application.setStartDate(LocalDate.of(2022, 12, 30));
         application.setEndDate(LocalDate.of(2023, 1, 2));
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         application.setHours(Duration.ofHours(20));
 
         final Map<Integer, Duration> hoursByYear = application.getHoursByYear();
 
-        assertThat(hoursByYear).containsEntry(2022, Duration.ofHours(10));
-        assertThat(hoursByYear).containsEntry(2023, Duration.ofHours(10));
+        assertThat(hoursByYear).hasSize(2)
+            .containsEntry(2022, Duration.ofHours(10))
+            .containsEntry(2023, Duration.ofHours(10));
     }
 
     @Test
