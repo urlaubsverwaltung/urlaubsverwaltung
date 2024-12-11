@@ -218,7 +218,8 @@ class SickNoteViewController implements HasLaunchpad {
 
         if (userIsAllowedToSubmitSickNotes) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
-            if (!noRedirect && sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson).isPresent()) {
+            final Optional<SickNote> sickNoteOfYesterdayOrLastWorkDay = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson);
+            if (!noRedirect && (sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull())) {
                 LOG.info("sick note of last work day found");
                 return "redirect:/web/sicknote/extend";
             } else {

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -25,10 +26,13 @@ import java.util.Optional;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -57,9 +61,35 @@ class SickNoteExtendViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new SickNoteExtendViewController(personService, workingTimeCalendarService,
-             sickNoteService, sickNoteExtensionService,
-             sickNoteExtensionInteractionService,
-             sickNoteExtendValidator, dateFormatAware, clock);
+            sickNoteService, sickNoteExtensionService,
+            sickNoteExtensionInteractionService,
+            sickNoteExtendValidator, dateFormatAware, clock);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = {"FULL", "ZERO"}, mode = EnumSource.Mode.EXCLUDE)
+    void ensuresSickNoteExtendViewIsNotDisplayedForSickNotes(final DayLength dayLength) throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final SickNote currentActiveSickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .dayLength(dayLength)
+            .build();
+
+        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person))
+            .thenReturn(Optional.of(currentActiveSickNote));
+
+        perform(
+            get("/web/sicknote/extend")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extended_not_found"));
     }
 
     @ParameterizedTest
@@ -77,6 +107,7 @@ class SickNoteExtendViewControllerTest {
         final SickNote currentActiveSickNote = SickNote.builder()
             .id(1L)
             .person(person)
+            .dayLength(FULL)
             .build();
 
         when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person))
@@ -108,6 +139,7 @@ class SickNoteExtendViewControllerTest {
         final SickNote currentActiveSickNote = SickNote.builder()
             .id(1L)
             .person(person)
+            .dayLength(FULL)
             .build();
 
         when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person))
@@ -122,6 +154,36 @@ class SickNoteExtendViewControllerTest {
             .andExpect(redirectedUrl("/web/sicknote/1"));
 
         verify(sickNoteExtensionInteractionService).submitSickNoteExtension(person, 1L, endDate);
+        verifyNoInteractions(sickNoteExtensionService);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = {"FULL", "ZERO"}, mode = EnumSource.Mode.EXCLUDE)
+    void ensureExtensionDoesNoRedirectOnHalfDaySickNotes(final DayLength dayLength) throws Exception {
+
+        final Person person = new Person();
+        person.setId(1L);
+        person.setPermissions(List.of(USER, BOSS));
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final SickNote currentActiveSickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .dayLength(dayLength)
+            .build();
+
+        when(sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(person))
+            .thenReturn(Optional.of(currentActiveSickNote));
+
+        perform(
+            post("/web/sicknote/extend")
+                .param("sickNoteId", "1")
+                .param("endDate", "2024-09-27")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("sicknote/sick_note_extended_not_found"));
+
         verifyNoInteractions(sickNoteExtensionService);
     }
 
