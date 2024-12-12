@@ -198,6 +198,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public List<Person> getAllPersons() {
+        return personRepository.findAll();
+    }
+
+    @Override
     public Person getSignedInUser() {
 
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
