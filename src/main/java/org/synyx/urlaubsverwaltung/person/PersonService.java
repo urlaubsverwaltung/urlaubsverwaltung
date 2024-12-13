@@ -118,6 +118,11 @@ public interface PersonService {
      */
     Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery);
 
+
+    /**
+     * Retrieves all Persons regardless of whether they are active or inactive.
+     */
+    List<Person> getAllPersons();
     /**
      * This method allows to get the signed in user.
      *

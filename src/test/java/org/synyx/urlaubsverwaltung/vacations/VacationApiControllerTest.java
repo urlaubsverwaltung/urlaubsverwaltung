@@ -183,6 +183,7 @@ class VacationApiControllerTest {
                         "firstName": "Marlene",
                         "lastName": "Muster",
                         "niceName": "Marlene Muster",
+                        "active": true,
                         "links": [
                           {
                             "rel": "self",
@@ -220,6 +221,7 @@ class VacationApiControllerTest {
                         "firstName": "Marlene",
                         "lastName": "Muster",
                         "niceName": "Marlene Muster",
+                        "active": true,
                         "links": [
                           {
                             "rel": "self",
