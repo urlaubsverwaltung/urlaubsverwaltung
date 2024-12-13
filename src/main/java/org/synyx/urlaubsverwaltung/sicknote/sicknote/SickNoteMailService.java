@@ -29,6 +29,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -148,6 +149,22 @@ public class SickNoteMailService {
             .withTemplate("sick_note_edited_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
             .build();
         mailService.send(mailToApplicant);
+    }
+
+    @Async
+    void sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(SickNote editedSickNote, String comment, Person editor) {
+
+        final List<Person> recipientsWithoutEditor =
+            mailRecipientService.getRecipientsOfInterest(editedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT).stream()
+                .filter(recipient -> !recipient.equals(editor)).toList();
+
+        final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
+            .withRecipient(recipientsWithoutEditor)
+            .withSubject("subject.sicknote.edited_by_management.to_management", editor.getNiceName())
+            .withTemplate("sick_note_edited_by_management_to_management", locale -> Map.of("sickNote", editedSickNote, "comment", comment))
+            .build();
+
+        mailService.send(mailToOfficeAndResponsibleManagement);
     }
 
     /**
