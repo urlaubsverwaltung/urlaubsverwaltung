@@ -71,19 +71,19 @@ public class WorkingTimeEntity extends AbstractTenantAwareEntity {
         this.id = id;
     }
 
-    Person getPerson() {
+    public Person getPerson() {
         return person;
     }
 
-    void setPerson(Person person) {
+    public void setPerson(Person person) {
         this.person = person;
     }
 
-    LocalDate getValidFrom() {
+    public LocalDate getValidFrom() {
         return this.validFrom;
     }
 
-    void setValidFrom(LocalDate validFrom) {
+    public void setValidFrom(LocalDate validFrom) {
         this.validFrom = validFrom;
     }
 
@@ -143,11 +143,11 @@ public class WorkingTimeEntity extends AbstractTenantAwareEntity {
         this.sunday = sunday;
     }
 
-    FederalState getFederalStateOverride() {
+    public FederalState getFederalStateOverride() {
         return federalStateOverride;
     }
 
-    void setFederalStateOverride(FederalState federalState) {
+    public void setFederalStateOverride(FederalState federalState) {
         this.federalStateOverride = federalState;
     }
 

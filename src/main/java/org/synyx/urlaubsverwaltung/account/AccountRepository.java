@@ -23,4 +23,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     @Modifying
     void deleteByPerson(Person person);
+
+    List<AccountEntity> findAllByPersonId(Long personId);
 }

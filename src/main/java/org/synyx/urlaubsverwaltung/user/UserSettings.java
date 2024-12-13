@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.user;
 import java.util.Locale;
 import java.util.Optional;
 
-class UserSettings {
+public class UserSettings {
 
     private final Theme theme;
     private final Locale locale;
@@ -13,21 +13,21 @@ class UserSettings {
         this(theme, null, null);
     }
 
-    UserSettings(Theme theme, Locale locale, Locale localeBrowserSpecific) {
+    public UserSettings(Theme theme, Locale locale, Locale localeBrowserSpecific) {
         this.theme = theme;
         this.locale = locale;
         this.localeBrowserSpecific = localeBrowserSpecific;
     }
 
-    Theme theme() {
+    public Theme theme() {
         return theme;
     }
 
-    Optional<Locale> locale() {
+    public Optional<Locale> locale() {
         return Optional.ofNullable(locale);
     }
 
-    Optional<Locale> localeBrowserSpecific() {
+    public Optional<Locale> localeBrowserSpecific() {
         return Optional.ofNullable(localeBrowserSpecific);
     }
 }

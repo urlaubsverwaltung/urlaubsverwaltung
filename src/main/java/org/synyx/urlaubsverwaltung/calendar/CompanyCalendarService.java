@@ -24,7 +24,7 @@ import java.util.Optional;
 
 
 @Service
-class CompanyCalendarService {
+public class CompanyCalendarService {
 
     private final AbsenceService absenceService;
     private final CompanyCalendarRepository companyCalendarRepository;
@@ -56,7 +56,7 @@ class CompanyCalendarService {
         return companyCalendarRepository.save(companyCalendar);
     }
 
-    Optional<CompanyCalendar> getCompanyCalendar(long personId) {
+    public Optional<CompanyCalendar> getCompanyCalendar(long personId) {
 
         final Person person = getPersonOrThrow(personId);
 

@@ -171,6 +171,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public List<Person> getAllPersons() {
+        return personRepository.findAllByOrderByIdAsc();
+    }
+
+    @Override
     public Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery) {
         final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());

@@ -47,6 +47,12 @@ public class CompanyCalendar extends AbstractTenantAwareEntity {
         this.person = person;
     }
 
+    public CompanyCalendar(Person person, Period calendarPeriod, String secret) {
+        this.person = person;
+        this.calendarPeriod = calendarPeriod;
+        this.secret = secret;
+    }
+
     public Long getId() {
         return id;
     }

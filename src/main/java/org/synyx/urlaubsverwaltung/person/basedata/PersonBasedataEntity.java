@@ -32,7 +32,7 @@ public class PersonBasedataEntity extends AbstractTenantAwareEntity {
     @Size(max = 500)
     private String additionalInformation;
 
-    protected PersonBasedataEntity() {
+    public PersonBasedataEntity() {
         // OK
     }
 

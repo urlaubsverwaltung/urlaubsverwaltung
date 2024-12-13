@@ -18,4 +18,6 @@ public interface UserSettingsService {
      * @return map of persons and their effective locale
      */
     Map<Person, Locale> getEffectiveLocale(List<Person> persons);
+
+    UserSettings getUserSettingsForPerson(Person person);
 }

@@ -24,7 +24,7 @@ import java.util.Optional;
 
 
 @Service
-class DepartmentCalendarService {
+public class DepartmentCalendarService {
 
     private final AbsenceService absenceService;
     private final DepartmentService departmentService;
@@ -35,7 +35,7 @@ class DepartmentCalendarService {
     private final Clock clock;
 
     @Autowired
-    public DepartmentCalendarService(AbsenceService absenceService, DepartmentService departmentService,
+    DepartmentCalendarService(AbsenceService absenceService, DepartmentService departmentService,
                                      PersonService personService, DepartmentCalendarRepository departmentCalendarRepository, ICalService iCalService, MessageSource messageSource, Clock clock) {
 
         this.absenceService = absenceService;
@@ -78,6 +78,10 @@ class DepartmentCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         return departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
+    }
+
+    public List<DepartmentCalendar> getCalendarsForPerson(Long personId) {
+        return departmentCalendarRepository.findByPersonId(personId);
     }
 
     ByteArrayResource getCalendarForDepartment(Long departmentId, Long personId, String secret, Locale locale) {

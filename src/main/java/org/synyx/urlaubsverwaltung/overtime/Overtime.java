@@ -63,11 +63,15 @@ public class Overtime extends AbstractTenantAwareEntity {
     }
 
     public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
+        this(person, startDate, endDate, duration, LocalDate.now(UTC));
+    }
+
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
-        this.lastModificationDate = LocalDate.now(UTC);
+        this.lastModificationDate = lastModificationDate;
     }
 
     public Long getId() {

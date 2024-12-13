@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote.extend;
 
-enum SickNoteExtensionStatus {
+public enum SickNoteExtensionStatus {
 
     /**
      * Meanwhile, a newer {@link SickNoteExtension} exists or the referenced

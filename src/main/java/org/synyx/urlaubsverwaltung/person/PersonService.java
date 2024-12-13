@@ -86,6 +86,14 @@ public interface PersonService {
      */
     List<Person> getActivePersons();
 
+
+    /**
+     * returns all persons ordered by id.
+     *
+     * @return returns all persons
+     */
+    List<Person> getAllPersons();
+
     /**
      * Find all active persons matching the given query.
      *

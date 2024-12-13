@@ -109,4 +109,12 @@ public interface OvertimeService {
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
     boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
+
+    /**
+     * Get all overtime hours of the given person.
+     *
+     * @param personId id of the given person
+     * @return all overtime hours of the given person
+     */
+    List<Overtime> getAllOvertimesByPersonId(Long personId);
 }

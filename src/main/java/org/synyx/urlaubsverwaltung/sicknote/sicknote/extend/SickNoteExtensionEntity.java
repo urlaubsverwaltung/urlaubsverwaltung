@@ -51,7 +51,7 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
         return sickNoteId;
     }
 
-    void setSickNoteId(Long extensionOfSickNoteId) {
+    public void setSickNoteId(Long extensionOfSickNoteId) {
         this.sickNoteId = extensionOfSickNoteId;
     }
 
@@ -59,7 +59,7 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
         return createdAt;
     }
 
-    void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -67,7 +67,7 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
         return newEndDate;
     }
 
-    void setNewEndDate(LocalDate newEndDate) {
+    public void setNewEndDate(LocalDate newEndDate) {
         this.newEndDate = newEndDate;
     }
 
@@ -75,7 +75,7 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
         return isAub;
     }
 
-    void setAub(boolean aub) {
+    public void setAub(boolean aub) {
         isAub = aub;
     }
 
@@ -83,7 +83,7 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
         return status;
     }
 
-    void setStatus(SickNoteExtensionStatus status) {
+    public void setStatus(SickNoteExtensionStatus status) {
         this.status = status;
     }
 

@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.List;
 
 @Service
-class CalendarAccessibleService {
+public class CalendarAccessibleService {
 
     private final CompanyCalendarService companyCalendarService;
     private final CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
@@ -20,7 +20,7 @@ class CalendarAccessibleService {
         this.companyCalendarAccessibleRepository = companyCalendarAccessibleRepository;
     }
 
-    boolean isCompanyCalendarAccessible() {
+    public boolean isCompanyCalendarAccessible() {
         final List<CompanyCalendarAccessible> companyCalendarAccessibleList = companyCalendarAccessibleRepository.findAll();
 
         if (companyCalendarAccessibleList.isEmpty()) {
