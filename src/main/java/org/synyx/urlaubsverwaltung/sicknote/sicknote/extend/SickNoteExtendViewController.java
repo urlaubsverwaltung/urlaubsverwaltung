@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +33,6 @@ import java.util.UUID;
 
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SUNDAY;
-import static java.time.format.FormatStyle.FULL;
 import static java.time.temporal.TemporalAdjusters.next;
 import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
@@ -77,7 +77,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
-        if (maybeSickNote.isEmpty()) {
+        if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
             return "sicknote/sick_note_extended_not_found";
         }
 
@@ -108,8 +108,8 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         final Optional<SickNote> maybeSickNote = getSickNoteOfYesterdayOrLastWorkDay(signedInUser);
-        if (maybeSickNote.isEmpty()) {
-            return"sicknote/sick_note_extended_not_found";
+        if (maybeSickNote.isEmpty() || maybeSickNote.get().getDayLength().isHalfDay()) {
+            return "sicknote/sick_note_extended_not_found";
         }
 
         if (!hasUserSelectedCustomDate) {
@@ -228,10 +228,10 @@ class SickNoteExtendViewController implements HasLaunchpad {
         model.addAttribute("today", today);
         model.addAttribute("sickNoteTypeChild", sickNote.getSickNoteType().getCategory().equals(SICK_NOTE_CHILD));
         model.addAttribute("extendToDate", extendToDate == null ? today : extendToDate);
-        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(sickNote.getEndDate(), FULL));
-        model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FULL));
-        model.addAttribute("plusTwoWorkdaysWord", dateFormatAware.formatWord(plusTwoWorkdaysDate, FULL));
-        model.addAttribute("untilEndOfWeekWord", dateFormatAware.formatWord(endOfWeek(), FULL));
+        model.addAttribute("sickNoteEndDateWord", dateFormatAware.formatWord(sickNote.getEndDate(), FormatStyle.FULL));
+        model.addAttribute("plusOneWorkdayWord", dateFormatAware.formatWord(plusOneWorkdayDate, FormatStyle.FULL));
+        model.addAttribute("plusTwoWorkdaysWord", dateFormatAware.formatWord(plusTwoWorkdaysDate, FormatStyle.FULL));
+        model.addAttribute("untilEndOfWeekWord", dateFormatAware.formatWord(endOfWeek(), FormatStyle.FULL));
     }
 
     private void prepareSickNoteExtendPreview(Person signedInUser, SickNote sickNote, SickNoteExtendDto sickNoteExtendDto, String extend,
