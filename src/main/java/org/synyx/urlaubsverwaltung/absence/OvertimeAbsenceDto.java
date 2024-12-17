@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.Duration;
+import java.util.List;
+
 
 public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> {
 
@@ -16,9 +18,12 @@ public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> 
         format = "duration")
     private final Duration duration;
 
-    OvertimeAbsenceDto(Long id, Duration duration) {
+    private final List<DatedDurationShareDto> durationShares;
+
+    OvertimeAbsenceDto(Long id, Duration duration, List<DatedDurationShareDto> durationShares) {
         this.id = id;
         this.duration = duration;
+        this.durationShares = durationShares;
     }
 
     public Long getId() {
@@ -27,5 +32,9 @@ public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> 
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public List<DatedDurationShareDto> getDurationShares() {
+        return durationShares;
     }
 }
