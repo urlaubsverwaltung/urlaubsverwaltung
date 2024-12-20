@@ -129,6 +129,7 @@ public interface ApplicationService {
      * @return list of all matching {@link Application}s
      */
     List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+
     /**
      * Get all {@link Application}s with specific states for the given date range
      *
@@ -150,6 +151,16 @@ public interface ApplicationService {
     Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until);
 
     Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate before);
+
+    /**
+     * Partition the overtime reduction duration of this application over all involved days.
+     * The sum of these mapped durations equals the duration of the application.
+     * This partitioning weights all days evenly  and doesn't account for half days, weekends etc.
+     *
+     * @param application to get the total hours of overtime reduction for
+     * @return a mapping of durations to the days involved in this application, never {@code null}
+     */
+    Map<LocalDate, Duration> partitionOvertimeReduction(Application application);
 
     /**
      * Get a list of all active replacements of the given person and that are active at the given date
