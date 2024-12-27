@@ -59,8 +59,12 @@ public record SubmittedSickNote(SickNote sickNote, Optional<SickNoteExtension> e
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SubmittedSickNote that = (SubmittedSickNote) o;
         return Objects.equals(sickNote, that.sickNote);
     }

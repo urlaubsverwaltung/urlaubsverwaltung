@@ -85,8 +85,12 @@ public class UserSettingsEntity extends AbstractTenantAwareEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UserSettingsEntity that = (UserSettingsEntity) o;
         return Objects.equals(personId, that.personId);
     }

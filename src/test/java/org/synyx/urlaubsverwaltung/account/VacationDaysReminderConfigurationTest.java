@@ -53,9 +53,9 @@ class VacationDaysReminderConfigurationTest {
         remindForCurrentlyLeftVacationDaysCronTask.getRunnable().run();
         verify(vacationDaysReminderService).remindForCurrentlyLeftVacationDays();
 
-        final CronTask ForExpiredRemainingVacationDaysCronTask = cronTaskList.get(1);
-        assertThat(ForExpiredRemainingVacationDaysCronTask.getExpression()).isEqualTo("0 0 6 * * *");
-        ForExpiredRemainingVacationDaysCronTask.getRunnable().run();
+        final CronTask forExpiredRemainingVacationDaysCronTask = cronTaskList.get(1);
+        assertThat(forExpiredRemainingVacationDaysCronTask.getExpression()).isEqualTo("0 0 6 * * *");
+        forExpiredRemainingVacationDaysCronTask.getRunnable().run();
         verify(vacationDaysReminderService).notifyForExpiredRemainingVacationDays();
     }
 }

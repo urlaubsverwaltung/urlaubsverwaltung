@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import java.math.BigDecimal;
 
-public class SickDaysOverviewDto {
+public final class SickDaysOverviewDto {
 
     private final long personId;
     private final String personAvatarUrl;

@@ -83,8 +83,8 @@ class SickNoteViewControllerTest {
 
     private SickNoteViewController sut;
 
-    private final long UNKNOWN_SICK_NOTE_ID = 0;
-    private final long SOME_SICK_NOTE_ID = 15;
+    private static final long UNKNOWN_SICK_NOTE_ID = 0;
+    private static final long SOME_SICK_NOTE_ID = 15;
 
     @Mock
     private SickNoteService sickNoteService;

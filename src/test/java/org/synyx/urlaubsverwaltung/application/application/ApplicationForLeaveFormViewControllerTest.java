@@ -680,15 +680,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person signedInUser = personWithRole(USER);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -697,15 +696,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -715,15 +713,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(signedInUser), any(Person.class))).thenReturn(false);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -753,15 +750,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person signedInUser = personWithRole(USER, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -771,15 +767,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(signedInUser), any(Person.class))).thenReturn(false);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -809,15 +804,14 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person signedInUser = personWithRole(USER, BOSS);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        assertThatThrownBy(() -> {
+        assertThatThrownBy(() ->
             perform(post("/web/application")
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
                 .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
-            );
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+            )).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
-public class PaginationPageLinkBuilder {
+public final class PaginationPageLinkBuilder {
 
     private PaginationPageLinkBuilder() {
     }

@@ -21,7 +21,7 @@ public class ApplicationSettings {
     /**
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
      */
-    private boolean remindForWaitingApplications = false;
+    private boolean remindForWaitingApplications;
 
     /**
      * Specifies if applications can be done for half-day leave
@@ -37,7 +37,7 @@ public class ApplicationSettings {
     /**
      * Activates a notification {daysBeforeRemindForUpcomingApplications} days before upcoming applications
      */
-    private boolean remindForUpcomingApplications = false;
+    private boolean remindForUpcomingApplications;
 
     /**
      * Specifies when a reminder for upcoming application should be sent
@@ -47,7 +47,7 @@ public class ApplicationSettings {
     /**
      * Activates a notification after {daysBeforeRemindForUpcomingHolidayReplacement} days for upcoming replacement
      */
-    private boolean remindForUpcomingHolidayReplacement = false;
+    private boolean remindForUpcomingHolidayReplacement;
 
     /**
      * Specifies when a reminder for upcoming replacement should be sent

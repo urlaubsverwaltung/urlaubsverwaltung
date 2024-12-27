@@ -46,7 +46,7 @@ class SickDaysStatisticsViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
 
-    private final static Clock clock = Clock.systemUTC();
+    private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {

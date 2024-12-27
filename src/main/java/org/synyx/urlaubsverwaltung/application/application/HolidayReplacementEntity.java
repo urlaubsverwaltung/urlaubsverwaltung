@@ -43,8 +43,12 @@ public class HolidayReplacementEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         HolidayReplacementEntity that = (HolidayReplacementEntity) o;
         return Objects.equals(getPerson(), that.getPerson()) && Objects.equals(getNote(), that.getNote());
     }

@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 
-public class AbsenceTypeSettingsDtoMapper {
+public final class AbsenceTypeSettingsDtoMapper {
 
     private AbsenceTypeSettingsDtoMapper() {
     }

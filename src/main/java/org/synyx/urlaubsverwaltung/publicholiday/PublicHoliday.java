@@ -34,8 +34,12 @@ public record PublicHoliday(LocalDate date, DayLength dayLength, String descript
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PublicHoliday that = (PublicHoliday) o;
         return Objects.equals(date, that.date);
     }

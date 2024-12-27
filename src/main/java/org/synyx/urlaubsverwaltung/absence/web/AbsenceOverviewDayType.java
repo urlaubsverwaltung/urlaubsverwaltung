@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
-public class AbsenceOverviewDayType {
+public final class AbsenceOverviewDayType {
 
     private final boolean waitingSickNoteMorning;
     private final boolean waitingSickNoteNoon;
@@ -162,33 +162,33 @@ public class AbsenceOverviewDayType {
 
     public static class Builder {
 
-        private boolean waitingSickNoteMorning = false;
-        private boolean waitingSickNoteNoon = false;
-        private boolean waitingSickNoteFull = false;
+        private boolean waitingSickNoteMorning;
+        private boolean waitingSickNoteNoon;
+        private boolean waitingSickNoteFull;
 
-        private boolean activeSickNoteMorning = false;
-        private boolean activeSickNoteNoon = false;
-        private boolean activeSickNoteFull = false;
+        private boolean activeSickNoteMorning;
+        private boolean activeSickNoteNoon;
+        private boolean activeSickNoteFull;
 
-        private boolean absenceMorning = false;
-        private boolean absenceNoon = false;
-        private boolean absenceFull = false;
+        private boolean absenceMorning;
+        private boolean absenceNoon;
+        private boolean absenceFull;
 
-        private boolean waitingAbsenceMorning = false;
-        private boolean waitingAbsenceNoon = false;
-        private boolean waitingAbsenceFull = false;
+        private boolean waitingAbsenceMorning;
+        private boolean waitingAbsenceNoon;
+        private boolean waitingAbsenceFull;
 
-        private boolean temporaryAllowedAbsenceMorning = false;
-        private boolean temporaryAllowedAbsenceNoon = false;
-        private boolean temporaryAllowedAbsenceFull = false;
+        private boolean temporaryAllowedAbsenceMorning;
+        private boolean temporaryAllowedAbsenceNoon;
+        private boolean temporaryAllowedAbsenceFull;
 
-        private boolean allowedCancellationRequestedAbsenceMorning = false;
-        private boolean allowedCancellationRequestedAbsenceNoon = false;
-        private boolean allowedCancellationRequestedAbsenceFull = false;
+        private boolean allowedCancellationRequestedAbsenceMorning;
+        private boolean allowedCancellationRequestedAbsenceNoon;
+        private boolean allowedCancellationRequestedAbsenceFull;
 
-        private boolean publicHolidayMorning = false;
-        private boolean publicHolidayNoon = false;
-        private boolean publicHolidayFull = false;
+        private boolean publicHolidayMorning;
+        private boolean publicHolidayNoon;
+        private boolean publicHolidayFull;
 
         private VacationTypeColor colorMorning;
         private VacationTypeColor colorNoon;

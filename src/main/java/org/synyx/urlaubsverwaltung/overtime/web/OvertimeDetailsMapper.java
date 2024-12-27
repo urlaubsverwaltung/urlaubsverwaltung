@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class OvertimeDetailsMapper {
+final class OvertimeDetailsMapper {
 
     private OvertimeDetailsMapper() {
         // ok

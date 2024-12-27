@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.settings;
 
 import org.springframework.validation.Errors;
 
-public class SickNoteSettingsValidator {
+public final class SickNoteSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";

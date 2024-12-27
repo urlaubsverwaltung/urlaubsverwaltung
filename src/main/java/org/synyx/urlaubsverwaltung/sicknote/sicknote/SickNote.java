@@ -13,7 +13,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class SickNote {
+public final class SickNote {
 
     private final Long id;
     private final Person person;
@@ -194,8 +194,12 @@ public class SickNote {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SickNote sickNote = (SickNote) o;
         return Objects.equals(person, sickNote.person)
             && Objects.equals(applier, sickNote.applier)

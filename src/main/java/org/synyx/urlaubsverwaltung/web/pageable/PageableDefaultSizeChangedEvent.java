@@ -35,8 +35,12 @@ public final class PageableDefaultSizeChangedEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PageableDefaultSizeChangedEvent that = (PageableDefaultSizeChangedEvent) o;
         return newPageableDefaultSize == that.newPageableDefaultSize && Objects.equals(personId, that.personId);
     }
