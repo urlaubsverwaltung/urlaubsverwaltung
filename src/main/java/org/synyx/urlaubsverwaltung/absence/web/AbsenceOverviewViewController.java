@@ -34,15 +34,9 @@ import java.time.Year;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
@@ -53,11 +47,7 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.*;
 
 @RequestMapping("/web/absences")
 @Controller
@@ -164,25 +154,27 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return "absences/absences-overview";
     }
 
-    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType<?>> vacationTypes, Locale locale) {
+    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(
+        boolean isSignedInUserAllowedToSeeAbsences,
+        boolean isSignedInUserInOverview,
+        List<VacationType<?>> vacationTypes,
+        Locale locale) {
 
-        List<VacationTypeColorDto> vacationTypeColorDtos;
+        Function<VacationType<?>, VacationTypeColorDto> toDto = vacationType -> toVacationTypeColorsDto(vacationType,
+            locale);
+        List<VacationType<?>> activeVacationTypes =
+            vacationTypes.stream().filter(VacationType::isActive).toList();
+        List<VacationTypeColorDto> vacationTypeColorDtos = new ArrayList<>();
 
-        final Function<VacationType<?>, VacationTypeColorDto> toVacationTypeColorsDto = vacationType -> toVacationTypeColorsDto(vacationType, locale);
-        final List<VacationType<?>> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).toList();
-
-        if (isSignedInUserAllowedToSeeAbsences) {
-            vacationTypeColorDtos = activeVacationTypes.stream().map(toVacationTypeColorsDto).toList();
+        if (isSignedInUserAllowedToSeeAbsences || isSignedInUserInOverview) {
+            vacationTypeColorDtos.addAll(activeVacationTypes.stream().map(toDto).toList());
         } else {
-            if (isSignedInUserInOverview) {
-                vacationTypeColorDtos = activeVacationTypes.stream().map(toVacationTypeColorsDto).collect(Collectors.toList());
-            } else {
-                vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(toVacationTypeColorsDto).collect(Collectors.toList());
-            }
+            vacationTypeColorDtos.addAll(activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(toDto).toList());
             if (activeVacationTypes.stream().anyMatch(vacationType -> !vacationType.isVisibleToEveryone())) {
                 vacationTypeColorDtos.add(getAnonymizedAbsenceTypeColor(locale));
             }
         }
+
         return vacationTypeColorDtos;
     }
 
