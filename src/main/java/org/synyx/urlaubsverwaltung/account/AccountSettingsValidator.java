@@ -9,7 +9,7 @@ import java.time.Year;
 
 import static java.time.Month.FEBRUARY;
 
-public final class AccountSettingsValidator {
+public class AccountSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";

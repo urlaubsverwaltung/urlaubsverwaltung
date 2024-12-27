@@ -6,7 +6,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class SpecialLeaveDtoMapper {
+class SpecialLeaveDtoMapper {
 
     private SpecialLeaveDtoMapper() {
         // ok

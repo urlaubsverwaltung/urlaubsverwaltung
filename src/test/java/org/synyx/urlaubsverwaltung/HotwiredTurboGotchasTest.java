@@ -80,7 +80,7 @@ class HotwiredTurboGotchasTest {
         return method ->
             method.getParameters().stream().anyMatch(javaParameter ->
                 javaParameter.tryGetAnnotationOfType(RequestHeader.class)
-                    .map(a -> "Turbo-Frame".equals(a.name()))
+                    .map(a -> a.name().equals("Turbo-Frame"))
                     .orElse(false));
     }
 

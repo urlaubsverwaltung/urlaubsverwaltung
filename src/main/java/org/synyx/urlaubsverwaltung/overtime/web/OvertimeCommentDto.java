@@ -35,12 +35,8 @@ public class OvertimeCommentDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         OvertimeCommentDto that = (OvertimeCommentDto) o;
         return Objects.equals(person, that.person) && Objects.equals(action, that.action) && Objects.equals(date, that.date) && Objects.equals(text, that.text);
     }

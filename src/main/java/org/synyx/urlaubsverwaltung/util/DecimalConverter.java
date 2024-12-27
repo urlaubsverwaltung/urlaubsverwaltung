@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.util;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-public final class DecimalConverter {
+public class DecimalConverter {
 
     private static final char[] ZEROES = new char[]{'0', '0', '0', '0', '0', '0', '0', '0', '0'};
     private static final BigDecimal ONE_BILLION = new BigDecimal(1000000000L);

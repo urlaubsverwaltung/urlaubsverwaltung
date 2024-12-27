@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-public final class PersonDto {
+public class PersonDto {
 
     private final long id;
 

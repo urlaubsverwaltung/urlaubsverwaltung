@@ -7,12 +7,8 @@ public record HolidayAccountVacationDays(Account account, VacationDaysLeft vacat
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         HolidayAccountVacationDays that = (HolidayAccountVacationDays) o;
         return Objects.equals(account, that.account);
     }

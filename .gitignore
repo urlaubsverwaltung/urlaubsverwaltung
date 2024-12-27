@@ -33,4 +33,3 @@ src/test/resources/google_oauth.properties
 
 # ignore chart requirements
 charts/urlaubsverwaltung/charts/
-/.pmd/.cache

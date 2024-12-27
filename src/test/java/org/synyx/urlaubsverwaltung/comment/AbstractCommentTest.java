@@ -35,7 +35,7 @@ class AbstractCommentTest {
             .isThrownBy(comment::getDate);
     }
 
-    private final class TestComment extends AbstractComment {
+    private class TestComment extends AbstractComment {
 
         private TestComment(Clock clock) {
             super(clock);

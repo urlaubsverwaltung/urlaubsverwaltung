@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DepartmentDtoTest {
 
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void ensureDepartmentResponseCreatedCorrectly() {
@@ -27,7 +27,7 @@ class DepartmentDtoTest {
         department.setDescription(expectedDescription);
 
         final String expectedLastModification = "2019-08-02";
-        final LocalDate lastModification = LocalDate.parse(expectedLastModification, dateTimeFormatter);
+        final LocalDate lastModification = LocalDate.parse(expectedLastModification, DATE_TIME_FORMATTER);
         department.setLastModification(lastModification);
 
         List<Person> members = new ArrayList<>();

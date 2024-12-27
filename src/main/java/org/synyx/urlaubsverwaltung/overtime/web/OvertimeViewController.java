@@ -8,7 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -283,8 +289,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
-        boolean canAddOvertimeForAnotherUser =
-            signedInUser.hasRole(OFFICE) || signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly();
+        boolean canAddOvertimeForAnotherUser = signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
         model.addAttribute("canAddOvertimeForAnotherUser", canAddOvertimeForAnotherUser);
 
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());

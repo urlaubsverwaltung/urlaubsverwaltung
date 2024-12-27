@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
 
-public final class ApplicationReplacementDto {
+public class ApplicationReplacementDto {
 
     private final ApplicationPersonDto person;
     private final String note;
@@ -60,7 +60,7 @@ public final class ApplicationReplacementDto {
         return new Builder();
     }
 
-    public static final class Builder {
+    public static class Builder {
         private ApplicationPersonDto person;
         private String note;
         private boolean pending;

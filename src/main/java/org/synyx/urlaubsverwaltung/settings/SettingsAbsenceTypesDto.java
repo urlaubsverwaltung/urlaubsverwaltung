@@ -37,12 +37,8 @@ public class SettingsAbsenceTypesDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SettingsAbsenceTypesDto that = (SettingsAbsenceTypesDto) o;
         return Objects.equals(id, that.id)
             && Objects.equals(absenceTypeSettings, that.absenceTypeSettings)

@@ -43,12 +43,8 @@ public class OvertimeDetailPersonDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         OvertimeDetailPersonDto that = (OvertimeDetailPersonDto) o;
         return Objects.equals(email, that.email);
     }

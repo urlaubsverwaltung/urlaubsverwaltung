@@ -11,7 +11,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_R
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-final class ApplicationForLeavePermissionEvaluator {
+class ApplicationForLeavePermissionEvaluator {
 
     private ApplicationForLeavePermissionEvaluator() {
         // ok
@@ -19,12 +19,12 @@ final class ApplicationForLeavePermissionEvaluator {
 
     static boolean isAllowedToAllowWaitingApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return application.hasStatus(WAITING)
-            && (signedInUser.hasRole(BOSS) || (isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser));
+            && (signedInUser.hasRole(BOSS) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser)));
     }
 
     static boolean isAllowedToAllowTemporaryAllowedApplication(Application application, Person signedInUser, boolean isSecondStageAuthorityOfPerson) {
         return application.hasStatus(TEMPORARY_ALLOWED)
-            && (signedInUser.hasRole(BOSS) || isSecondStageAuthorityOfPerson && !application.getPerson().equals(signedInUser));
+            && (signedInUser.hasRole(BOSS) || (isSecondStageAuthorityOfPerson && !application.getPerson().equals(signedInUser)));
     }
 
     static boolean isAllowedToRejectApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
@@ -41,37 +41,37 @@ final class ApplicationForLeavePermissionEvaluator {
 
     static boolean isAllowedToCancelApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL));
+            && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
     static boolean isAllowedToCancelDirectlyApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApprovalToCancel) {
         return (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
             && !requiresApprovalToCancel
-            && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL));
+            && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
     static boolean isAllowedToStartCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApprovalToCancel) {
         return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
             && requiresApprovalToCancel
-            && !(signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL));
+            && !(signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
     static boolean isAllowedToDeclineCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)
-            && (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED));
+            && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)));
     }
 
     static boolean isAllowedToEditApplication(Application application, Person signedInUser) {
-        return application.hasStatus(WAITING) && application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE);
+        return (application.hasStatus(WAITING) && application.getPerson().equals(signedInUser)) || signedInUser.hasRole(OFFICE);
     }
 
     static boolean isAllowedToRemindApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
-            && application.getPerson().equals(signedInUser) && !(signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
+            && (application.getPerson().equals(signedInUser) && !(signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson));
     }
 
     static boolean isAllowedToReferApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
-            && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || (isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser));
+            && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser)));
     }
 }

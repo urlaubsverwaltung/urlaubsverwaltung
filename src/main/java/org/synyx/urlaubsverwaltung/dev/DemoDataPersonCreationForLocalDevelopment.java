@@ -38,8 +38,10 @@ public class DemoDataPersonCreationForLocalDevelopment {
     // AvailabilityChangeEvent is after ApplicationStartedEvent which creates sick note type definitions in database which are needed for demo data creations
     @EventListener(AvailabilityChangeEvent.class)
     public void onAvailabilityChange(AvailabilityChangeEvent<? extends AvailabilityState> event) {
-        if (event.getState() instanceof LivenessState livenessState && CORRECT.equals(livenessState)) {
-            createDemoPersons();
+        if (event.getState() instanceof LivenessState livenessState) {
+            if (CORRECT.equals(livenessState)) {
+                createDemoPersons();
+            }
         }
     }
 

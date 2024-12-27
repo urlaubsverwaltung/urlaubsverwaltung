@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
-public final class SpecialLeaveSettingsDtoMapper {
+public class SpecialLeaveSettingsDtoMapper {
 
     private SpecialLeaveSettingsDtoMapper() {
     }

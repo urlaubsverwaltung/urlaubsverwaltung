@@ -7,7 +7,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -226,8 +230,8 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final List<DepartmentCalendarDto> departmentCalendarDtos = new ArrayList<>(departments.size());
 
         if (activeDepartmentId != null && departments.stream().noneMatch(department -> department.getId().equals(activeDepartmentId))) {
-            throw new ResponseStatusException(BAD_REQUEST,
-                format("person=%s is not a member of department=%s", personId, activeDepartmentId));
+            throw new ResponseStatusException(BAD_REQUEST, String.format(
+                "person=%s is not a member of department=%s", personId, activeDepartmentId));
         }
 
         for (Department department : departments) {

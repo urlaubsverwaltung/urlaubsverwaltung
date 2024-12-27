@@ -32,13 +32,14 @@ public enum SupportedLanguages {
      * @throws IllegalArgumentException if there is no SupportedLanguage with the specified locale
      */
     public static Optional<SupportedLanguages> valueOfLocale(Locale locale) {
-        return Arrays.stream(values())
+        return Arrays.stream(SupportedLanguages.values())
             .filter(supportedLanguages -> supportedLanguages.locale.equals(locale))
             .findFirst();
     }
+
     public static int compareSupportedLanguageLocale(Locale l1, Locale l2) {
         // locale of not supported language will be sorted last
-        final int length = values().length;
+        final int length = SupportedLanguages.values().length;
         final Integer i = valueOfLocale(l1).map(Enum::ordinal).orElse(length);
         final Integer i1 = valueOfLocale(l2).map(Enum::ordinal).orElse(length);
         return i.compareTo(i1);

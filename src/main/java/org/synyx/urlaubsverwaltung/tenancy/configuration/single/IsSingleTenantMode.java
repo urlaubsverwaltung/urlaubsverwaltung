@@ -12,6 +12,10 @@ public class IsSingleTenantMode implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         final String property = context.getEnvironment().getProperty(URLAUBSVERWALTUNG_TENANT_MODE);
-        return property == null || property.isBlank();
+
+        if (property == null || property.isBlank()) {
+            return true;
+        }
+        return SINGLE_MODE.equals(property);
     }
 }

@@ -91,17 +91,17 @@ class OidcLoginLoggerTest {
     private ListAppender<ILoggingEvent> loggingEventAppender() {
 
         // get Logback Logger
-        final Logger oidcLoginLoggerLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
+        final Logger OidcLoginLoggerLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
 
         // because of global test logging level WARN
-        oidcLoginLoggerLogger.setLevel(INFO);
+        OidcLoginLoggerLogger.setLevel(INFO);
 
         // create and start a ListAppender
         final ListAppender<ILoggingEvent> loggingEventAppender = new ListAppender<>();
         loggingEventAppender.start();
 
         // add the appender to the logger
-        oidcLoginLoggerLogger.addAppender(loggingEventAppender);
+        OidcLoginLoggerLogger.addAppender(loggingEventAppender);
 
         return loggingEventAppender;
     }

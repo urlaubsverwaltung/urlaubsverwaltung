@@ -99,12 +99,8 @@ public final class OvertimeListRecordDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         OvertimeListRecordDto that = (OvertimeListRecordDto) o;
         return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate)
             && Objects.equals(duration, that.duration) && Objects.equals(sum, that.sum)

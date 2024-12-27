@@ -27,12 +27,8 @@ public final class UserNotificationSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         UserNotificationSettings that = (UserNotificationSettings) o;
         return restrictToDepartments == that.restrictToDepartments && Objects.equals(personId, that.personId);
     }

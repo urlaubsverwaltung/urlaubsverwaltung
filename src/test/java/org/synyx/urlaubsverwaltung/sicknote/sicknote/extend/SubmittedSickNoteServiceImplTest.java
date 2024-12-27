@@ -180,10 +180,11 @@ class SubmittedSickNoteServiceImplTest {
             when(sickNoteMapper.toSickNote(sickNoteEntity, workingTimeCalendar)).thenReturn(sickNote);
 
             final List<SubmittedSickNote> actual = sut.findSubmittedSickNotes(List.of(person));
-            assertThat(actual.getFirst().extension()).hasValueSatisfying(extension ->
+            assertThat(actual.getFirst().extension()).hasValueSatisfying(extension -> {
                 // sickNote: 2 workingdays
                 // extension: +1
-                assertThat(extension.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(1)));
+                assertThat(extension.additionalWorkdays()).isEqualTo(BigDecimal.valueOf(1));
+            });
         }
 
         @Test

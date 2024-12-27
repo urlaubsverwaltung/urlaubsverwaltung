@@ -21,7 +21,7 @@ class MenuPropertiesTest {
 
     @BeforeEach
     void setUp() {
-        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+        try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
             validator = validatorFactory.getValidator();
         }
     }

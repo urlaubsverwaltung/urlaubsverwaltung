@@ -8,22 +8,22 @@ public class DemoDataProperties {
     /**
      * Enables the creation of demo data based on person created events
      */
-    private boolean create;
+    private boolean create = false;
 
     /**
      * Enabled the creation of demo data persons for local development
      */
-    private boolean localDevelopment;
+    private boolean localDevelopment = false;
 
     /**
      * Number of additional inactive users to create
      */
-    private int additionalInactiveUser;
+    private int additionalInactiveUser = 0;
 
     /**
      * Number of additional active users to create
      */
-    private int additionalActiveUser;
+    private int additionalActiveUser = 0;
 
     public boolean isCreate() {
         return create;

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.springframework.validation.Errors;
 
-public final class WorkTimeSettingsValidator {
+public class WorkTimeSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_WORKING_TIME_MANDATORY = "settings.workingTime.error.mandatory";

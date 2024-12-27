@@ -190,12 +190,8 @@ class SortComparatorTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             StringBox stringBox = (StringBox) o;
             return Objects.equals(value, stringBox.value);
         }
@@ -242,12 +238,8 @@ class SortComparatorTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             SomeClassToSort that = (SomeClassToSort) o;
             return integer == that.integer && Objects.equals(string, that.string) && Objects.equals(innerClass, that.innerClass);
         }
@@ -280,12 +272,8 @@ class SortComparatorTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
             InnerClass that = (InnerClass) o;
             return Objects.equals(bigDecimal, that.bigDecimal);
         }

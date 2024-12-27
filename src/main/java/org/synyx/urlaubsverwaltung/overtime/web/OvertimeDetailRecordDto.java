@@ -65,12 +65,8 @@ public class OvertimeDetailRecordDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         OvertimeDetailRecordDto that = (OvertimeDetailRecordDto) o;
         return Objects.equals(id, that.id) && Objects.equals(person, that.person) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate) && Objects.equals(duration, that.duration) && Objects.equals(durationByYear, that.durationByYear) && Objects.equals(lastModificationDate, that.lastModificationDate);
     }

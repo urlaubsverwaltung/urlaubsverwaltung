@@ -38,7 +38,13 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.person.Role.*;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 
 /**
  * Controller for showing applications for leave in a certain state.
@@ -152,8 +158,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {
         return signedInUser.hasRole(OFFICE)
-            || signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && signedInUser.hasAnyRole(BOSS,
-            DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+            || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private static boolean isAllowedToAccessOtherApplications(Person signedInUser) {
@@ -162,8 +167,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private static boolean isAllowedToAccessSickNoteSubmissions(Person signedInUser) {
         return signedInUser.hasRole(OFFICE)
-            || signedInUser.hasRole(SICK_NOTE_EDIT) && signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD,
-            SECOND_STAGE_AUTHORITY);
+            || (signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasAnyRole(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)));
     }
 
     private List<SubmittedSickNoteDto> mapToSickNoteDtoList(List<SubmittedSickNote> sickNotes, Locale locale) {
@@ -214,12 +218,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final boolean isOwn = person.equals(signedInUser);
 
         final boolean isAllowedToEdit = isWaiting && isOwn;
-        final boolean isAllowedToTemporaryApprove =
-            twoStageApproval && isWaiting && isDepartmentHeadOfPerson && !isOwn && !isBoss && !isSecondStageAuthorityOfPerson;
-        final boolean isAllowedToApprove =
-            isWaiting && (isBoss || (isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn) || isTemporaryAllowed && (isBoss || isSecondStageAuthorityOfPerson && !isOwn);
-        final boolean isAllowedToCancel =
-            (isWaiting || isTemporaryAllowed || isAllowed) && isOwn || (isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice;
+        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHeadOfPerson && !isOwn) && !isBoss && !isSecondStageAuthorityOfPerson;
+        final boolean isAllowedToApprove = (isWaiting && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn))) || (isTemporaryAllowed && (isBoss || (isSecondStageAuthorityOfPerson && !isOwn)));
+        final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
         final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
 
         return ApplicationForLeaveDto.builder()
@@ -315,7 +316,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         }
 
         final List<Application> cancellationRequests = new ArrayList<>();
-        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)) {
+        if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED))) {
             cancellationRequests.addAll(applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED)));
         } else {
             if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)) {
@@ -435,7 +436,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private List<Person> getPersonsForRelevantSubmittedSickNotes(Person signedInUser) {
 
-        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) && signedInUser.hasRole(SICK_NOTE_EDIT)) {
+        if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(SICK_NOTE_EDIT))) {
             return personService.getActivePersons().stream().filter(person -> !person.equals(signedInUser)).toList();
         }
 

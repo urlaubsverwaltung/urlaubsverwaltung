@@ -241,7 +241,7 @@ final class PersonNotificationsMapper {
     /**
      * Internal {@link PersonNotificationDto} to be able to calculate number of personal and department related notifications.
      */
-    private static final class PersonNotificationDtoDepartmentAware extends PersonNotificationDto {
+    private static class PersonNotificationDtoDepartmentAware extends PersonNotificationDto {
         private final boolean departmentAware;
 
         private PersonNotificationDtoDepartmentAware(boolean departmentAware, boolean visible, boolean active) {

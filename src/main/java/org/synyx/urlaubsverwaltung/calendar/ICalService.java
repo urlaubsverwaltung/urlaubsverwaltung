@@ -7,7 +7,14 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
-import net.fortuna.ical4j.model.property.*;
+import net.fortuna.ical4j.model.property.Attendee;
+import net.fortuna.ical4j.model.property.Organizer;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.RefreshInterval;
+import net.fortuna.ical4j.model.property.Sequence;
+import net.fortuna.ical4j.model.property.Transp;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -163,7 +170,7 @@ public class ICalService {
         final boolean validation = !calendar.getComponents().isEmpty();
 
         final ByteArrayResource byteArrayResource;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             final CalendarOutputter calendarOutputter = new CalendarOutputter(validation);
             calendarOutputter.output(calendar, byteArrayOutputStream);
             byteArrayResource = new ByteArrayResource(byteArrayOutputStream.toByteArray());

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.springframework.validation.Errors;
 
-public final class TimeSettingsValidator {
+public class TimeSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";

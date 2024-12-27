@@ -9,16 +9,16 @@ import java.util.Objects;
 public class GoogleCalendarSettings {
 
     @Column(name = "google_client_id")
-    private String clientId;
+    private String clientId = null;
 
     @Column(name = "google_client_secret")
-    private String clientSecret;
+    private String clientSecret = null;
 
     @Column(name = "google_calendar_id")
-    private String calendarId;
+    private String calendarId = null;
 
     @Column(name = "google_refresh_token")
-    private String refreshToken;
+    private String refreshToken = null;
 
     public String getRefreshToken() {
         return refreshToken;
@@ -54,12 +54,8 @@ public class GoogleCalendarSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         GoogleCalendarSettings that = (GoogleCalendarSettings) o;
         return Objects.equals(getClientId(), that.getClientId()) &&
             Objects.equals(getClientSecret(), that.getClientSecret()) &&

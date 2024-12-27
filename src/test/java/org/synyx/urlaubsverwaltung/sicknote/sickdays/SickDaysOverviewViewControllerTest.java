@@ -185,7 +185,7 @@ class SickDaysOverviewViewControllerTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2019, 1, 1),
             LocalDate.of(2019, 12, 31),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 

@@ -21,12 +21,8 @@ public class VacationTypeDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         VacationTypeDto that = (VacationTypeDto) o;
         return Objects.equals(id, that.id) && Objects.equals(color, that.color);
     }

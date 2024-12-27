@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-final class PersonDTOMapper {
+class PersonDTOMapper {
 
     private PersonDTOMapper() {
         // Utility classes should not have public constructors java:S1118

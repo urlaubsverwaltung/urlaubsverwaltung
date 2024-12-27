@@ -47,12 +47,8 @@ public class SettingsAbsencesDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SettingsAbsencesDto that = (SettingsAbsencesDto) o;
         return Objects.equals(id, that.id)
             && Objects.equals(accountSettings, that.accountSettings)

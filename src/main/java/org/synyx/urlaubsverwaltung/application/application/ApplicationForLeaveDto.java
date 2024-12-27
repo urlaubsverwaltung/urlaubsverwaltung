@@ -5,7 +5,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
 
-public final class ApplicationForLeaveDto {
+public class ApplicationForLeaveDto {
 
     private final long id;
     private final ApplicationPersonDto person;

@@ -67,7 +67,7 @@ public class RolesFromClaimMappersProperties {
 
     public static class ResourceAccessClaimMapperProperties {
 
-        private boolean enabled;
+        private boolean enabled = false;
 
         @NotEmpty
         private String resourceApp = "urlaubsverwaltung";
@@ -91,7 +91,7 @@ public class RolesFromClaimMappersProperties {
 
     public static class GroupClaimMapperProperties {
 
-        private boolean enabled;
+        private boolean enabled = false;
 
         @NotEmpty
         private String claimName = "groups";

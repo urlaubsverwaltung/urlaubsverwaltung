@@ -129,8 +129,9 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics ->
-            assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test
@@ -208,8 +209,9 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(secondStageAuthority, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics ->
-            assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test
@@ -416,8 +418,9 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(boss, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics ->
-            assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test

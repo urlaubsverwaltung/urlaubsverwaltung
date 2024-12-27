@@ -6,8 +6,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
-final class OvertimeDetailsMapper {
+class OvertimeDetailsMapper {
 
     private OvertimeDetailsMapper() {
         // ok
@@ -21,7 +22,7 @@ final class OvertimeDetailsMapper {
 
         final List<OvertimeCommentDto> commentDtos = comments.stream()
             .map(OvertimeDetailsMapper::mapComment)
-            .toList();
+            .collect(Collectors.toList());
 
         return new OvertimeDetailsDto(record, commentDtos, totalOvertime, leftOvertime);
     }

@@ -65,12 +65,8 @@ public class UserPaginationSettingsEntity extends AbstractTenantAwareEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         UserPaginationSettingsEntity that = (UserPaginationSettingsEntity) o;
         return Objects.equals(personId, that.personId);
     }

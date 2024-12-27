@@ -727,7 +727,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(vacationTypeService.getById(3L))
             .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(3L).messageKey("message_key_3").category(UNPAIDLEAVE).build()));
 
-        Consumer<ApplicationForLeaveFormVacationTypeDto> assertHoursNotMandatory = vacationTypeDto -> {
+        Consumer<ApplicationForLeaveFormVacationTypeDto> assertHoursNotMandatory = (vacationTypeDto) -> {
             appForm.setVacationType(vacationTypeDto);
             appForm.setHours(null);
 
