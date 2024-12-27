@@ -8,11 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -172,10 +168,10 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        if (hasText(section) && !section.equals(ACTIVE_CONTENT_SELF)) {
-            return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
-        } else {
+        if (hasText(section) && ACTIVE_CONTENT_SELF.equals(section)) {
             return format("redirect:/web/person/%s/notifications", person.getId());
+        } else {
+            return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
         }
     }
 }
