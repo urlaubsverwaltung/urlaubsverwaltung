@@ -18,11 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
-import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
-import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
-import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
+import org.synyx.urlaubsverwaltung.ui.pages.*;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsWorkingTimePage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
@@ -41,13 +37,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
-import static java.time.DayOfWeek.THURSDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.DayOfWeek.*;
 import static java.time.LocalDate.now;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
@@ -154,7 +144,7 @@ class ApplicationForLeaveUIIT {
         navigationPage.logout();
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), (userPerson.getEmail())));
+        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 

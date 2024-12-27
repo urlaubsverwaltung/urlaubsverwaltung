@@ -230,7 +230,7 @@ public class OverlapService {
         }
 
         // check if intervals abut or gap
-        for (int i = 0; (i + 1) < listOfOverlaps.size(); i++) {
+        for (int i = 0; i + 1 < listOfOverlaps.size(); i++) {
             // if they don't abut, you can calculate the gap
             // test if end of interval is equals resp. one day plus of start of other interval
             // e.g. if period 1: 16.-18. and period 2: 19.-20 --> they abut

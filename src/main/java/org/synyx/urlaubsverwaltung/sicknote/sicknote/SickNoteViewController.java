@@ -8,13 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -28,11 +22,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
+import org.synyx.urlaubsverwaltung.sicknote.comment.*;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtendPreviewDto;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtension;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInteractionService;
@@ -57,16 +47,7 @@ import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
+import static org.synyx.urlaubsverwaltung.person.Role.*;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
@@ -167,7 +148,8 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("comments", comments);
 
             model.addAttribute("canAcceptSickNote", isOffice || isAllowedToEditSickNote);
-            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || (isSamePerson && sickNote.isSubmitted()));
+            model.addAttribute("canEditSickNote",
+                isOffice || isAllowedToEditSickNote || isSamePerson && sickNote.isSubmitted());
             model.addAttribute("canConvertSickNote", isOffice);
             model.addAttribute("canDeleteSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
             model.addAttribute("canCommentSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
@@ -219,7 +201,7 @@ class SickNoteViewController implements HasLaunchpad {
         if (userIsAllowedToSubmitSickNotes) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
             final Optional<SickNote> sickNoteOfYesterdayOrLastWorkDay = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson);
-            if (!noRedirect && (sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull())) {
+            if (!noRedirect && sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull()) {
                 LOG.info("sick note of last work day found");
                 return "redirect:/web/sicknote/extend";
             } else {
@@ -285,7 +267,7 @@ class SickNoteViewController implements HasLaunchpad {
         final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
 
         final SickNote updatedSickNote;
-        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || (personIsApplier && !allowedToSubmitSickNotes)) {
+        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || personIsApplier && !allowedToSubmitSickNotes) {
             updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
         } else {
             updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());
