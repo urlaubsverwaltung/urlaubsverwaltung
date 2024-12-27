@@ -94,7 +94,7 @@ public class OverviewViewController implements HasLaunchpad {
         return "redirect:/web/overview";
     }
 
-    @GetMapping("/web/overview")
+    @GetMapping("web/overview")
     public String showOverview(@RequestParam(value = "year", required = false) String year) {
         final Person signedInUser = personService.getSignedInUser();
         if (hasText(year)) {
@@ -104,7 +104,7 @@ public class OverviewViewController implements HasLaunchpad {
         return "redirect:/web/person/" + signedInUser.getId() + "/overview";
     }
 
-    @GetMapping("/web/person/{personId}/overview")
+    @GetMapping("web/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Long personId,
                                @RequestParam(value = "year", required = false) Integer year, Model model, Locale locale)
         throws UnknownPersonException {

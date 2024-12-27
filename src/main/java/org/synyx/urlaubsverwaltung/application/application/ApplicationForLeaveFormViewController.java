@@ -124,7 +124,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-    @GetMapping("/application/new")
+    @GetMapping("application/new")
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Long personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
@@ -264,7 +264,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "application/application_form";
     }
 
-    @PostMapping("/application")
+    @PostMapping("application")
     public String newApplication(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                  Model model, Locale locale, RedirectAttributes redirectAttributes) {
         LOG.info("POST new application received: {}", appForm);
@@ -310,7 +310,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 
-    @GetMapping("/application/{applicationId}/edit")
+    @GetMapping("application/{applicationId}/edit")
     public String editApplicationForm(@PathVariable("applicationId") Long applicationId, Model model, Locale locale) {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
@@ -342,7 +342,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "application/application_form";
     }
 
-    @PostMapping("/application/{applicationId}/edit")
+    @PostMapping("application/{applicationId}/edit")
     public String sendEditApplicationForm(@PathVariable("applicationId") Long applicationId,
                                           @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                           Model model, Locale locale, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {

@@ -81,7 +81,7 @@ public class PersonsViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
-    @GetMapping("/person")
+    @GetMapping("person")
     public String showPerson(@RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
                              @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,

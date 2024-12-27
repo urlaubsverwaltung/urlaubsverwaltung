@@ -65,7 +65,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personService.getSignedInUser().getId());
     }
 
-    @GetMapping("/persons/{personId}")
+    @GetMapping("persons/{personId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String index(@PathVariable int personId, Model model) {
 
@@ -83,7 +83,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return "calendarsharing/index";
     }
 
-    @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
+    @GetMapping("persons/{personId}/departments/{activeDepartmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String indexDepartment(@PathVariable long personId, @PathVariable long activeDepartmentId, Model model) {
 

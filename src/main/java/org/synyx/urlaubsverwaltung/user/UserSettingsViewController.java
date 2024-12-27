@@ -45,7 +45,7 @@ class UserSettingsViewController implements HasLaunchpad {
         this.userSettingsDtoValidator = userSettingsDtoValidator;
     }
 
-    @GetMapping("/person/{personId}/settings")
+    @GetMapping("person/{personId}/settings")
     String userSettings(@PathVariable("personId") Long personId, Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -61,7 +61,7 @@ class UserSettingsViewController implements HasLaunchpad {
         return "user/user-settings";
     }
 
-    @PostMapping("/person/{personId}/settings")
+    @PostMapping("person/{personId}/settings")
     String updateUserSettings(@PathVariable("personId") Long personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto,
                               Errors errors, Locale locale) {
 

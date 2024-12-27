@@ -127,7 +127,7 @@ class SickNoteViewController implements HasLaunchpad {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-    @GetMapping("/sicknote/{id}")
+    @GetMapping("sicknote/{id}")
     public String sickNoteDetails(@PathVariable("id") Long id,
                                   @RequestParam(value = "action", required = false) String action,
                                   @RequestParam(value = "shortcut", required = false) boolean shortcut,
@@ -186,7 +186,7 @@ class SickNoteViewController implements HasLaunchpad {
             signedInUser.getId(), sickNotePerson.getId()));
     }
 
-    @PostMapping("/sicknote/{id}/extension/accept")
+    @PostMapping("sicknote/{id}/extension/accept")
     public String acceptSickNoteExtension(@PathVariable("id") Long sickNoteId,
                                           @ModelAttribute("comment") SickNoteCommentFormDto comment,
                                           @RequestParam(value = "redirect", required = false) String redirectUrl) {
@@ -197,7 +197,7 @@ class SickNoteViewController implements HasLaunchpad {
         return redirectToSickNoteDetailOr(redirectUrl, sickNoteId);
     }
 
-    @GetMapping("/sicknote/new")
+    @GetMapping("sicknote/new")
     public String newSickNote(@RequestParam(value = "person", required = false) Long personId,
                               @RequestParam(value = "noExtensionRedirect", required = false) String noExtensionRedirect,
                               @RequestParam(value = "category", required = false) Optional<SickNoteCategory> category,
@@ -247,7 +247,7 @@ class SickNoteViewController implements HasLaunchpad {
         return "sicknote/sick_note_form";
     }
 
-    @PostMapping("/sicknote")
+    @PostMapping("sicknote")
     public String addOrSubmitNewSickNote(@ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -294,7 +294,7 @@ class SickNoteViewController implements HasLaunchpad {
         return "redirect:/web/sicknote/" + updatedSickNote.getId();
     }
 
-    @GetMapping("/sicknote/{id}/edit")
+    @GetMapping("sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
@@ -325,7 +325,7 @@ class SickNoteViewController implements HasLaunchpad {
         return "sicknote/sick_note_form";
     }
 
-    @PostMapping("/sicknote/{id}/edit")
+    @PostMapping("sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Long sickNoteId,
                                @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) throws UnknownSickNoteException {
 
@@ -367,7 +367,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
-    @PostMapping("/sicknote/{id}/accept")
+    @PostMapping("sicknote/{id}/accept")
     public String acceptSickNote(@PathVariable("id") Long sickNoteId,
                                  @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors,
                                  @RequestParam(value = "redirect", required = false) String redirectUrl,
@@ -397,7 +397,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_COMMENT')")
-    @PostMapping("/sicknote/{id}/comment")
+    @PostMapping("sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Long id,
                              @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownSickNoteException {
@@ -423,7 +423,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/sicknote/{id}/convert")
+    @GetMapping("sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model)
         throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
@@ -440,7 +440,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/sicknote/{id}/convert")
+    @PostMapping("sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Long id,
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm,
                                             Errors errors, Model model)
@@ -465,7 +465,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
-    @PostMapping("/sicknote/{id}/cancel")
+    @PostMapping("sicknote/{id}/cancel")
     public String cancelSickNote(@PathVariable("id") Long id,
                                  @ModelAttribute("comment") SickNoteCommentFormDto comment,
                                  Errors errors,

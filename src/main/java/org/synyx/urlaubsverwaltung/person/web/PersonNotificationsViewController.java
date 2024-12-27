@@ -67,13 +67,13 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         this.settingsService = settingsService;
     }
 
-    @GetMapping("/person/{personId}/notifications")
+    @GetMapping("person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String showPersonNotifications(@PathVariable long personId, Model model) throws UnknownPersonException {
         return showNotifications(false, personId, model);
     }
 
-    @GetMapping("/person/{personId}/notifications/departments")
+    @GetMapping("person/{personId}/notifications/departments")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String showDepartmentNotifications(@PathVariable int personId, Model model) throws UnknownPersonException {
         return showNotifications(true, personId, model);
@@ -111,7 +111,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         return "person/person_notifications";
     }
 
-    @PostMapping("/person/{personId}/notifications")
+    @PostMapping("person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String editSelfNotifications(@PathVariable int personId,
                                         @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
@@ -121,7 +121,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         return editNotifications(false, personId, newPersonNotificationsDto, errors, model, redirectAttributes, ACTIVE_CONTENT_SELF);
     }
 
-    @PostMapping("/person/{personId}/notifications/departments")
+    @PostMapping("person/{personId}/notifications/departments")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String editDepartmentsNotifications(@PathVariable long personId,
                                                @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
@@ -172,7 +172,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        if (hasText(section)) {
+        if (hasText(section) && !section.equals(ACTIVE_CONTENT_SELF)) {
             return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
         } else {
             return format("redirect:/web/person/%s/notifications", person.getId());

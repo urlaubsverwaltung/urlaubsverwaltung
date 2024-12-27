@@ -65,7 +65,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_BOSS_OR_OFFICE)
-    @GetMapping("/department")
+    @GetMapping("department")
     public String showAllDepartments(Model model) {
 
         final List<Department> departments = departmentService.getAllDepartments();
@@ -78,7 +78,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/department/new")
+    @GetMapping("department/new")
     public String newDepartmentForm(Model model) {
 
         final List<Person> persons = personService.getActivePersons();
@@ -89,7 +89,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/department/new")
+    @PostMapping("department/new")
     public String newDepartment(@ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
 
@@ -115,7 +115,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/department/{departmentId}/edit")
+    @GetMapping("department/{departmentId}/edit")
     public String editDepartment(@PathVariable("departmentId") Long departmentId, Model model)
         throws UnknownDepartmentException {
 
@@ -133,7 +133,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/department/{departmentId}")
+    @PostMapping("department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Long departmentId,
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) {
@@ -199,7 +199,7 @@ public class DepartmentViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/department/{departmentId}/delete")
+    @PostMapping("department/{departmentId}/delete")
     public String deleteDepartment(@PathVariable("departmentId") Long departmentId,
                                    RedirectAttributes redirectAttributes) {
 

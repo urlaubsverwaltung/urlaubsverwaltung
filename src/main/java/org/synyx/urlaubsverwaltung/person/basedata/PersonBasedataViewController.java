@@ -36,7 +36,7 @@ public class PersonBasedataViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/person/{personId}/basedata")
+    @GetMapping("person/{personId}/basedata")
     public String showPersonBasedata(@PathVariable("personId") Long personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -49,7 +49,7 @@ public class PersonBasedataViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/basedata")
+    @PostMapping("person/{personId}/basedata")
     public String editPersonBasedata(@PathVariable("personId") Long personId,
                                      @Valid @ModelAttribute("personBasedata") PersonBasedataDto basedataDto, Errors errors, Model model, RedirectAttributes redirectAttributes) {
 

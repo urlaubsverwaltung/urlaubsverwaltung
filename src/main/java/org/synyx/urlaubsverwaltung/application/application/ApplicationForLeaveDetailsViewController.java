@@ -116,7 +116,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         this.clock = clock;
     }
 
-    @GetMapping("/{applicationId}")
+    @GetMapping("{applicationId}")
     public String showApplicationDetail(@PathVariable("applicationId") Long applicationId,
                                         @RequestParam(value = "year", required = false) Integer requestedYear,
                                         @RequestParam(value = "action", required = false) String action,
@@ -145,7 +145,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @PostMapping("/{applicationId}/allow")
+    @PostMapping("{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Long applicationId,
                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
                                    @RequestParam(value = "redirect", required = false) String redirectUrl,
@@ -200,7 +200,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      * he can ask another boss to decide about this application (an email is sent).
      */
     @PreAuthorize(IS_PRIVILEGED_USER)
-    @PostMapping("/{applicationId}/refer")
+    @PostMapping("{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Long applicationId,
                                    @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException {
@@ -230,7 +230,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
-    @PostMapping("/{applicationId}/reject")
+    @PostMapping("{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Long applicationId,
                                     @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
                                     @RequestParam(value = "redirect", required = false) String redirectUrl,
@@ -278,7 +278,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      *
      * Cancelling an application for leave on behalf for someone is allowed only for Office.
      */
-    @PostMapping("/{applicationId}/cancel")
+    @PostMapping("{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Long applicationId,
                                     @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
                                     RedirectAttributes redirectAttributes)
@@ -325,7 +325,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     /*
      * Cancel the cancellation request of an application for leave.
      */
-    @PostMapping("/{applicationId}/decline-cancellation-request")
+    @PostMapping("{applicationId}/decline-cancellation-request")
     public String declineCancellationRequestApplication(@PathVariable("applicationId") Long applicationId,
                                                         @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
                                                         RedirectAttributes redirectAttributes)
@@ -360,7 +360,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     /*
      * Remind the bosses about the decision of an application for leave.
      */
-    @PostMapping("/{applicationId}/remind")
+    @PostMapping("{applicationId}/remind")
     public String remindBoss(@PathVariable("applicationId") Long applicationId,
                              RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 

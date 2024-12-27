@@ -73,7 +73,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/person/{personId}/workingtime")
+    @GetMapping("person/{personId}/workingtime")
     public String getWorkingTime(@PathVariable("personId") Long personId, Model model)
         throws UnknownPersonException {
 
@@ -91,7 +91,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/workingtime")
+    @PostMapping("person/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Long personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Errors errors,
                                     Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {

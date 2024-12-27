@@ -76,7 +76,7 @@ public class PersonDeleteViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/delete")
+    @PostMapping("person/{personId}/delete")
     public String deletePersonConfirmed(@PathVariable("personId") Long personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person personToDelete = getPerson(personId);

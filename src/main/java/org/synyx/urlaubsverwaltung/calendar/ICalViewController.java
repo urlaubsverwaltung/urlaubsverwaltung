@@ -37,7 +37,7 @@ public class ICalViewController {
         this.companyCalendarService = companyCalendarService;
     }
 
-    @GetMapping("/persons/{personId}/calendar")
+    @GetMapping("persons/{personId}/calendar")
     @ResponseBody
     public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 
@@ -55,7 +55,7 @@ public class ICalViewController {
         return new String(iCal.getByteArray());
     }
 
-    @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
+    @GetMapping("departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
     public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Long departmentId, @PathVariable Long personId, @RequestParam String secret) {
 
@@ -73,7 +73,7 @@ public class ICalViewController {
         return new String(iCal.getByteArray());
     }
 
-    @GetMapping("/company/persons/{personId}/calendar")
+    @GetMapping("company/persons/{personId}/calendar")
     @ResponseBody
     public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 

@@ -63,7 +63,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/google-api-handshake")
+    @GetMapping("google-api-handshake")
     public String googleConnectionStatus(HttpServletRequest request) throws GeneralSecurityException, IOException {
         return "redirect:" + authorize(request.getRequestURL().toString());
     }

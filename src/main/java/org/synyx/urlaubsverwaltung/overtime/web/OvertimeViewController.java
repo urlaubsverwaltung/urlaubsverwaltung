@@ -87,7 +87,7 @@ public class OvertimeViewController implements HasLaunchpad {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-    @GetMapping("/overtime")
+    @GetMapping("overtime")
     public String showPersonalOvertime() {
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
@@ -136,7 +136,7 @@ public class OvertimeViewController implements HasLaunchpad {
         return "overtime/overtime_list";
     }
 
-    @GetMapping("/overtime/{id}")
+    @GetMapping("overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -169,7 +169,7 @@ public class OvertimeViewController implements HasLaunchpad {
         return "overtime/overtime_details";
     }
 
-    @GetMapping("/overtime/new")
+    @GetMapping("overtime/new")
     public String recordOvertime(
         @RequestParam(value = "person", required = false) Long personId, Model model)
         throws UnknownPersonException {
@@ -195,7 +195,7 @@ public class OvertimeViewController implements HasLaunchpad {
         return "overtime/overtime_form";
     }
 
-    @PostMapping("/overtime")
+    @PostMapping("overtime")
     public String recordOvertime(@Valid @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
                                  Model model, RedirectAttributes redirectAttributes) {
 
@@ -222,7 +222,7 @@ public class OvertimeViewController implements HasLaunchpad {
         return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
 
-    @GetMapping("/overtime/{id}/edit")
+    @GetMapping("overtime/{id}/edit")
     public String editOvertime(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -240,7 +240,7 @@ public class OvertimeViewController implements HasLaunchpad {
         return "overtime/overtime_form";
     }
 
-    @PostMapping("/overtime/{id}")
+    @PostMapping("overtime/{id}")
     public String updateOvertime(@PathVariable("id") Long id,
                                  @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
                                  Model model, RedirectAttributes redirectAttributes) throws UnknownOvertimeException {

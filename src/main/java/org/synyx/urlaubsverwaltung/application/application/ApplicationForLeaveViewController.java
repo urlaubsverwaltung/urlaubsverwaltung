@@ -75,19 +75,19 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         this.messageSource = messageSource;
     }
 
-    @GetMapping("/application")
+    @GetMapping("application")
     public String showApplication(Model model, Locale locale) {
         prepareApplicationModels(model, locale, Tab.APPLICATION);
         return "application/application-overview";
     }
 
-    @GetMapping("/application/replacement")
+    @GetMapping("application/replacement")
     public String showApplicationWithReplacementContent(Model model, Locale locale) {
         prepareApplicationModels(model, locale, Tab.REPLACEMENT);
         return "application/application-overview";
     }
 
-    @GetMapping("/sicknote/submitted")
+    @GetMapping("sicknote/submitted")
     public String showApplicationWithSickNoteSubmittedContent(Model model, Locale locale) {
         prepareApplicationModels(model, locale, Tab.SICK_NOTE);
         return "application/application-overview";

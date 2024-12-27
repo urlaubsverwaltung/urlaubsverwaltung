@@ -63,7 +63,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
-    @GetMapping("/sickdays")
+    @GetMapping("sickdays")
     public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
                                    @RequestParam(value = "to", defaultValue = "") String to,
                                    @RequestParam(value = "query", required = false, defaultValue = "") String query,

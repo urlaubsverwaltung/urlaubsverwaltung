@@ -65,7 +65,7 @@ public class AccountViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/person/{personId}/account")
+    @GetMapping("person/{personId}/account")
     public String editAccount(@PathVariable("personId") Long personId,
                               @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
@@ -90,7 +90,7 @@ public class AccountViewController implements HasLaunchpad {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/account")
+    @PostMapping("person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Long personId,
                                 @ModelAttribute("account") AccountForm accountForm, Errors errors, Model model,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {

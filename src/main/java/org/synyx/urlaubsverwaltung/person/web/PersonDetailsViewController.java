@@ -59,7 +59,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
         this.clock = clock;
     }
 
-    @GetMapping("/person/{personId}")
+    @GetMapping("person/{personId}")
     public String showPersonInformation(@PathVariable("personId") Long personId,
                                         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                                         Model model) throws UnknownPersonException {
