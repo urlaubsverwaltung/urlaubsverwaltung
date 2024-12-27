@@ -40,7 +40,7 @@ class SickDaysDetailedStatisticsTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, 1, 1),
             LocalDate.of(2022, 12, 31),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
@@ -142,7 +142,7 @@ class SickDaysDetailedStatisticsTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, 1, 1),
             LocalDate.of(2022, 12, 31),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
