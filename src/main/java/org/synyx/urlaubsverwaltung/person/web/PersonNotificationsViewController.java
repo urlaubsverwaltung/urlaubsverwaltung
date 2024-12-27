@@ -113,7 +113,8 @@ public class PersonNotificationsViewController implements HasLaunchpad {
                                         Errors errors,
                                         Model model,
                                         RedirectAttributes redirectAttributes) throws UnknownPersonException {
-        return editNotifications(false, personId, newPersonNotificationsDto, errors, model, redirectAttributes, ACTIVE_CONTENT_SELF);
+        return editNotifications(newPersonNotificationsDto, personId, errors, model, false, redirectAttributes,
+            ACTIVE_CONTENT_SELF);
     }
 
     @PostMapping("person/{personId}/notifications/departments")
@@ -123,12 +124,14 @@ public class PersonNotificationsViewController implements HasLaunchpad {
                                                Errors errors,
                                                Model model,
                                                RedirectAttributes redirectAttributes) throws UnknownPersonException {
-        return editNotifications(true, personId, newPersonNotificationsDto, errors, model, redirectAttributes, ACTIVE_CONTENT_DEPARTMENTS);
+        return editNotifications(newPersonNotificationsDto, personId, errors, model, true, redirectAttributes,
+            ACTIVE_CONTENT_DEPARTMENTS);
     }
 
 
-    private String editNotifications(boolean isDepartmentSection, long personId, PersonNotificationsDto newPersonNotificationsDto, Errors errors,
-                                     Model model, RedirectAttributes redirectAttributes, String section) throws UnknownPersonException {
+    private String editNotifications(PersonNotificationsDto newPersonNotificationsDto, long personId, Errors errors,
+                                     Model model, boolean isDepartmentSection,
+                                     RedirectAttributes redirectAttributes, String section) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
