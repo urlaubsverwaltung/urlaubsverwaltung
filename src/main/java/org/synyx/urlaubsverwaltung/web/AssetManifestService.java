@@ -74,8 +74,8 @@ public class AssetManifestService {
         try {
             return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getInputStream();
         } catch (IOException e) {
-            final String message = String.format("could not read %s. please ensure 'npm run build' has been executed.", ASSETS_MANIFEST_FILE);
-            throw new IllegalStateException(message);
+            throw new IllegalStateException(
+                format("could not read %s. please ensure 'npm run build' has been executed.", ASSETS_MANIFEST_FILE));
         }
     }
 }
