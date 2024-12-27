@@ -28,7 +28,6 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
@@ -168,7 +167,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        if (hasText(section) && ACTIVE_CONTENT_SELF.equals(section)) {
+        if (ACTIVE_CONTENT_SELF.equals(section)) {
             return format("redirect:/web/person/%s/notifications", person.getId());
         } else {
             return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
