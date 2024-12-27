@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.apache.commons.validator.routines.DateValidator;
 import org.springframework.validation.Errors;
 
 import java.time.DateTimeException;
@@ -58,7 +59,7 @@ public class AccountSettingsValidator {
     @SuppressWarnings("java:S2201")
     private static boolean validDate(Year year, Month month, int dayOfMonth) {
         try {
-            LocalDate.of(year.getValue(), month, dayOfMonth);
+            DateValidator.getInstance().validate(LocalDate.of(year.getValue(), month, dayOfMonth).toString());
             return true;
         } catch (DateTimeException e) {
             return false;
