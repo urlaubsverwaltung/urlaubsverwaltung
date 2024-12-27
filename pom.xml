@@ -477,9 +477,6 @@
           <analysisCacheLocation>${project.basedir}/.pmd/.cache</analysisCacheLocation>
           <excludeFromFailureFile>${project.basedir}/.pmd/exclude.properties</excludeFromFailureFile>
           <printFailingErrors>true</printFailingErrors>
-<!--          <rulesets>-->
-<!--            <ruleset>${project.basedir}/.pmd/ruleset.xml</ruleset>-->
-<!--          </rulesets>-->
         </configuration>
         <executions>
           <execution>
