@@ -18,7 +18,7 @@ class RolesFromClaimMappersPropertiesTest {
 
     @BeforeEach
     void setUp() {
-        try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
             validator = validatorFactory.getValidator();
         }
     }
