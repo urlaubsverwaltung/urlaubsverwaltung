@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SickNoteFormDtoTest {
 
-    private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
+    private final LocalDate day20190416 = LocalDate.of(2019, 4, 16);
     private final Long id = 1L;
     private final Person person = new Person();
     private final SickNoteType type = new SickNoteType();
@@ -95,11 +95,11 @@ class SickNoteFormDtoTest {
         sut.setId(id);
         sut.setPerson(person);
         sut.setSickNoteType(type);
-        sut.setStartDate(day2019_04_16);
-        sut.setEndDate(day2019_04_16);
+        sut.setStartDate(day20190416);
+        sut.setEndDate(day20190416);
         sut.setDayLength(DayLength.FULL);
-        sut.setAubStartDate(day2019_04_16);
-        sut.setAubEndDate(day2019_04_16);
+        sut.setAubStartDate(day20190416);
+        sut.setAubEndDate(day20190416);
         sut.setComment("my comment");
 
         assertThat(sut).hasToString("SickNoteForm{id=1, person=Person{id='null'}, " +

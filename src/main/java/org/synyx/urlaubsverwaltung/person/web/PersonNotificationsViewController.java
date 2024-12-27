@@ -172,7 +172,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        if (hasText(section) && !section.equals(ACTIVE_CONTENT_SELF)) {
+        if (hasText(section)) {
             return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
         } else {
             return format("redirect:/web/person/%s/notifications", person.getId());

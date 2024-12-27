@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Duration;
 import java.util.List;
 
-class OvertimeDetailsMapper {
+final class OvertimeDetailsMapper {
 
     private OvertimeDetailsMapper() {
         // ok

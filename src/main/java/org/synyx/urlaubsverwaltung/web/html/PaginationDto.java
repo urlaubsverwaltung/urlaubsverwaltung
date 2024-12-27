@@ -25,8 +25,12 @@ public class PaginationDto<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PaginationDto<?> that = (PaginationDto<?>) o;
         return Objects.equals(page, that.page) && Objects.equals(pageLinkPrefix, that.pageLinkPrefix);
     }

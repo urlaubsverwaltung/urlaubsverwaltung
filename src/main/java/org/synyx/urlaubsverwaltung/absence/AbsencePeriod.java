@@ -55,8 +55,12 @@ public class AbsencePeriod {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AbsencePeriod that = (AbsencePeriod) o;
         return Objects.equals(absenceRecords, that.absenceRecords);
     }
@@ -132,8 +136,12 @@ public class AbsencePeriod {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Record absenceRecord = (Record) o;
             return Objects.equals(date, absenceRecord.date) && Objects.equals(person, absenceRecord.person);
         }
@@ -278,8 +286,12 @@ public class AbsencePeriod {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             AbstractRecordInfo that = (AbstractRecordInfo) o;
             return absenceType == that.absenceType && status == that.status;
         }

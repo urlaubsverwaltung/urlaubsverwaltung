@@ -67,8 +67,12 @@ public class PersonPermissionsDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PersonPermissionsDto that = (PersonPermissionsDto) o;
         return id.equals(that.id) && permissions.equals(that.permissions);
     }

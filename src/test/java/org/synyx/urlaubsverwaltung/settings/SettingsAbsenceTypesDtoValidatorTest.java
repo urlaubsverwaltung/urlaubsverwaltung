@@ -72,32 +72,32 @@ class SettingsAbsenceTypesDtoValidatorTest {
     @Test
     void ensureValidationFailsWhenLabelIsNotUnique() {
 
-        final AbsenceTypeSettingsItemDto absenceTypeDto_1 = new AbsenceTypeSettingsItemDto();
-        absenceTypeDto_1.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto absenceTypeDto1 = new AbsenceTypeSettingsItemDto();
+        absenceTypeDto1.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, "irgendein text"),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "")
         ));
 
-        final AbsenceTypeSettingsItemDto absenceTypeDto_2 = new AbsenceTypeSettingsItemDto();
-        absenceTypeDto_2.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto absenceTypeDto2 = new AbsenceTypeSettingsItemDto();
+        absenceTypeDto2.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, "irgendein text"),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "some text")
         ));
 
-        final AbsenceTypeSettingsItemDto absenceTypeDto_3 = new AbsenceTypeSettingsItemDto();
-        absenceTypeDto_3.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto absenceTypeDto3 = new AbsenceTypeSettingsItemDto();
+        absenceTypeDto3.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, ""),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "some text")
         ));
 
-        final AbsenceTypeSettingsItemDto absenceTypeDto_4 = new AbsenceTypeSettingsItemDto();
-        absenceTypeDto_4.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto absenceTypeDto4 = new AbsenceTypeSettingsItemDto();
+        absenceTypeDto4.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, "das hier ist ok"),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "")
         ));
 
         final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
-        absenceTypeSettingsDto.setItems(List.of(absenceTypeDto_1, absenceTypeDto_2, absenceTypeDto_3, absenceTypeDto_4));
+        absenceTypeSettingsDto.setItems(List.of(absenceTypeDto1, absenceTypeDto2, absenceTypeDto3, absenceTypeDto4));
 
         final SettingsAbsenceTypesDto dto = new SettingsAbsenceTypesDto();
         dto.setAbsenceTypeSettings(absenceTypeSettingsDto);
@@ -190,20 +190,20 @@ class SettingsAbsenceTypesDtoValidatorTest {
         providedAbsenceTypeDto.setMessageKey("provided.messagekey");
         providedAbsenceTypeDto.setLabels(List.of());
 
-        final AbsenceTypeSettingsItemDto customAbsenceTypeDto_1 = new AbsenceTypeSettingsItemDto();
-        customAbsenceTypeDto_1.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto customAbsenceTypeDto1 = new AbsenceTypeSettingsItemDto();
+        customAbsenceTypeDto1.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, "Jokertag"),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "")
         ));
 
-        final AbsenceTypeSettingsItemDto customAbsenceTypeDto_2 = new AbsenceTypeSettingsItemDto();
-        customAbsenceTypeDto_2.setLabels(List.of(
+        final AbsenceTypeSettingsItemDto customAbsenceTypeDto2 = new AbsenceTypeSettingsItemDto();
+        customAbsenceTypeDto2.setLabels(List.of(
             new AbsenceTypeSettingsItemLabelDto(Locale.GERMAN, "Familientag"),
             new AbsenceTypeSettingsItemLabelDto(Locale.ENGLISH, "")
         ));
 
         final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
-        absenceTypeSettingsDto.setItems(List.of(providedAbsenceTypeDto, customAbsenceTypeDto_1, customAbsenceTypeDto_2));
+        absenceTypeSettingsDto.setItems(List.of(providedAbsenceTypeDto, customAbsenceTypeDto1, customAbsenceTypeDto2));
 
         final SettingsAbsenceTypesDto dto = new SettingsAbsenceTypesDto();
         dto.setAbsenceTypeSettings(absenceTypeSettingsDto);

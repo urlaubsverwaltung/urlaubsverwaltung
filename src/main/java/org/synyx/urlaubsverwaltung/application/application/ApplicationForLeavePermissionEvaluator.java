@@ -11,7 +11,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_R
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-class ApplicationForLeavePermissionEvaluator {
+final class ApplicationForLeavePermissionEvaluator {
 
     private ApplicationForLeavePermissionEvaluator() {
         // ok

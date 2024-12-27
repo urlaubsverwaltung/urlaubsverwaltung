@@ -8,7 +8,7 @@ public class ExtensionConfigurationProperties {
      * when enabled application will bootstrap
      * beans required running external extensions
      */
-    private boolean enabled = false;
+    private boolean enabled;
 
     public boolean isEnabled() {
         return enabled;

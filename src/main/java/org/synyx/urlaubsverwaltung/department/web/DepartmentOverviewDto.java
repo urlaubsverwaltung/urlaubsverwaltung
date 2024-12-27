@@ -79,8 +79,12 @@ public class DepartmentOverviewDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DepartmentOverviewDto that = (DepartmentOverviewDto) o;
         return Objects.equals(id, that.id);
     }

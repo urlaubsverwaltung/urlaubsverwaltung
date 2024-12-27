@@ -476,7 +476,7 @@ class SickNoteViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);
         }
 
-        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
+        if ("/web/sicknote/submitted".equals(redirectUrl)) {
             return "redirect:" + redirectUrl;
         }
 

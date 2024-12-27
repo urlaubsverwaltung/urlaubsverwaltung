@@ -37,7 +37,7 @@ public class NavigationPage {
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
-    public static class QuickAdd {
+    public static final class QuickAdd {
         private static final String PLAIN_APPLICATION_SELECTOR = "[data-test-id=new-application]";
         private static final String BUTTON_SELECTOR = "[data-test-id=add-something-new]";
         private static final String POPUPMENU_SELECTOR = "[data-test-id=add-something-new-popupmenu]";

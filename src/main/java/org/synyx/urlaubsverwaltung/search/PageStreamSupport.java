@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class PageStreamSupport {
+public final class PageStreamSupport {
 
     private PageStreamSupport() {
         // Utility classes should not have public constructors java:S1118

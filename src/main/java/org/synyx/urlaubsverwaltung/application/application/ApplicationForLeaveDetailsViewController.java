@@ -169,7 +169,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("temporaryAllowSuccess", true);
         }
 
-        if (redirectUrl != null && redirectUrl.equals("/web/application")) {
+        if ("/web/application".equals(redirectUrl)) {
             return "redirect:" + redirectUrl;
         }
 
@@ -247,7 +247,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         applicationInteractionService.reject(application, signedInUser, Optional.ofNullable(comment.getText()));
         redirectAttributes.addFlashAttribute("rejectSuccess", true);
 
-        if (redirectUrl != null && redirectUrl.equals("/web/application")) {
+        if ("/web/application".equals(redirectUrl)) {
             return "redirect:" + redirectUrl;
         }
 

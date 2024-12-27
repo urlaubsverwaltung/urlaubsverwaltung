@@ -189,8 +189,12 @@ public final class VacationDaysLeft {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         VacationDaysLeft that = (VacationDaysLeft) o;
         return Objects.equals(vacationDays, that.vacationDays)
             && Objects.equals(remainingVacationDays, that.remainingVacationDays)

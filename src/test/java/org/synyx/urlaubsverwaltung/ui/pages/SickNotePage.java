@@ -73,13 +73,13 @@ public class SickNotePage {
     public boolean showsToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
         final String value = page.locator(TO_SELECTOR).inputValue();
-        return value.equals(expectedDateString);
+        return false;
     }
 
     public boolean showsAubToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
         final String value = page.locator(AUB_TO_SELECTOR).inputValue();
-        return value.equals(expectedDateString);
+        return false;
     }
 
     /**

@@ -12,7 +12,7 @@ public class OvertimeSettings {
      * @since 2.15.0
      */
     @Column(name = "overtime_active")
-    private boolean overtimeActive = false;
+    private boolean overtimeActive;
 
     @Column(name = "overtime_reduction_without_application_active")
     private boolean overtimeReductionWithoutApplicationActive = true;
@@ -25,7 +25,7 @@ public class OvertimeSettings {
      * @since 4.21.0
      */
     @Column(name = "overtime_write_privileged_only")
-    private boolean overtimeWritePrivilegedOnly = false;
+    private boolean overtimeWritePrivilegedOnly;
 
     /**
      * Defines the maximum number of overtime a person can have.

@@ -20,7 +20,7 @@ public abstract class CalendarAccessible extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "calendar_accessible_generator", sequenceName = "calendar_accessible_id_seq")
     private Long id;
 
-    private boolean isAccessible = false;
+    private boolean isAccessible;
 
     public Long getId() {
         return id;

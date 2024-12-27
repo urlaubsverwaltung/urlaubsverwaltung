@@ -35,8 +35,12 @@ public class AbsenceTypeSettingsItemLabelDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AbsenceTypeSettingsItemLabelDto that = (AbsenceTypeSettingsItemLabelDto) o;
         return Objects.equals(locale, that.locale) && Objects.equals(label, that.label);
     }

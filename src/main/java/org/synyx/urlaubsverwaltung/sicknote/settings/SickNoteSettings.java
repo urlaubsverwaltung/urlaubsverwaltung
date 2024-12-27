@@ -22,7 +22,7 @@ public class SickNoteSettings {
     /**
      * Allows users to submit sicknotes for themselves
      */
-    private boolean userIsAllowedToSubmitSickNotes = false;
+    private boolean userIsAllowedToSubmitSickNotes;
 
     public Integer getMaximumSickPayDays() {
         return maximumSickPayDays;

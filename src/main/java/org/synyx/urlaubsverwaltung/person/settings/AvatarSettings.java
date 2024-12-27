@@ -10,7 +10,7 @@ public class AvatarSettings {
     /**
      * Is gravatar used for avatar images
      */
-    private boolean gravatarEnabled = false;
+    private boolean gravatarEnabled;
 
     public boolean isGravatarEnabled() {
         return gravatarEnabled;
@@ -22,8 +22,12 @@ public class AvatarSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AvatarSettings that = (AvatarSettings) o;
         return gravatarEnabled == that.gravatarEnabled;
     }

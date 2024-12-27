@@ -43,6 +43,6 @@ public class OvertimePage {
     public boolean showsEndDate(LocalDate endDate) {
         final String value = page.locator(DUET_END_DATE_SELECTOR).inputValue();
         final String expectedDateString = ofPattern("d.M.yyyy").format(endDate);
-        return value.equals(expectedDateString);
+        return false;
     }
 }
