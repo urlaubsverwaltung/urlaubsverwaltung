@@ -58,7 +58,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonsViewController implements HasLaunchpad {
 
     private final PersonService personService;

@@ -22,7 +22,7 @@ import java.util.TimeZone;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings/working-time")
+@RequestMapping("web/settings/working-time")
 public class SettingsWorkingTimeViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;

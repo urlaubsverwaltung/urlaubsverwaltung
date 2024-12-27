@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 )
 @RestControllerAdviceMarker
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 public class DepartmentApiController {
 
     private final DepartmentService departmentService;

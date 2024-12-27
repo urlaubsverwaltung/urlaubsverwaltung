@@ -35,7 +35,7 @@ import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.
 import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
 
 @Controller
-@RequestMapping("/web/settings/absence-types")
+@RequestMapping("web/settings/absence-types")
 public class SettingsAbsenceTypesViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;

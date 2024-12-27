@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings/avatar")
+@RequestMapping("web/settings/avatar")
 public class SettingsAvatarViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;

@@ -73,7 +73,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  * Controller for {@link SickNote} purposes.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 class SickNoteViewController implements HasLaunchpad {
 
     private final SickNoteService sickNoteService;

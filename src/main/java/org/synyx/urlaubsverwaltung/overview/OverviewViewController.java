@@ -52,7 +52,7 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
  * overtime, applications for leave and sick notes.
  */
 @Controller
-@RequestMapping("/")
+@RequestMapping("")
 public class OverviewViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";

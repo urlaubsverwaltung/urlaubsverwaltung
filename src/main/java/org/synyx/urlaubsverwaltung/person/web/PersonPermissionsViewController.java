@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mer
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonPermissionsViewController implements HasLaunchpad {
 
     private final PersonService personService;

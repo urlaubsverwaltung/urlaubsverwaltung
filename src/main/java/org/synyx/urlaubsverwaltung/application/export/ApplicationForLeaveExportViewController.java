@@ -37,7 +37,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 @Controller
-@RequestMapping("/web/application")
+@RequestMapping("web/application")
 class ApplicationForLeaveExportViewController implements HasLaunchpad {
 
     private final PersonService personService;

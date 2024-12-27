@@ -37,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 )
 @RestControllerAdviceMarker
 @RestController
-@RequestMapping("/api/persons/{personId}/vacations")
+@RequestMapping("api/persons/{personId}/vacations")
 public class VacationApiController {
 
     public static final String VACATIONS = "vacations";

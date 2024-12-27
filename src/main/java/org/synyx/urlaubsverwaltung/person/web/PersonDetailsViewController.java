@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.m
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonDetailsViewController implements HasLaunchpad {
 
     private final PersonService personService;

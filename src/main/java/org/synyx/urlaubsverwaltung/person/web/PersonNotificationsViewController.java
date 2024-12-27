@@ -39,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.m
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonNotificationsViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

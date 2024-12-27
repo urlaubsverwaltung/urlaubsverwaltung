@@ -58,7 +58,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  * Controller to generate applications for leave statistics.
  */
 @Controller
-@RequestMapping("/web/application/statistics")
+@RequestMapping("web/application/statistics")
 class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
     private final PersonService personService;

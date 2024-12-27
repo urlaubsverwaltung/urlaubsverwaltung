@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings/calendar-sync")
+@RequestMapping("web/settings/calendar-sync")
 public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
     private final CalendarSettingsService calendarSettingsService;

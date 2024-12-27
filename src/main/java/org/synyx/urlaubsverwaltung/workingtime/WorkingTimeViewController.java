@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class WorkingTimeViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";

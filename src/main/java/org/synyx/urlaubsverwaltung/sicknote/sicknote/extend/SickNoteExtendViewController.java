@@ -46,7 +46,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SIC
 import static org.synyx.urlaubsverwaltung.web.HotwiredTurboConstants.HEADER_TURBO_REQUEST_ID;
 
 @Controller
-@RequestMapping("/web/sicknote/extend")
+@RequestMapping("web/sicknote/extend")
 class SickNoteExtendViewController implements HasLaunchpad {
 
     private final PersonService personService;

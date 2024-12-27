@@ -38,7 +38,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 )
 @RestControllerAdviceMarker
 @RestController
-@RequestMapping("/api/persons")
+@RequestMapping("api/persons")
 public class PersonApiController {
 
     private final PersonService personService;

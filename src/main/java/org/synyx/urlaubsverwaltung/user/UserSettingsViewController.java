@@ -26,7 +26,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 class UserSettingsViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

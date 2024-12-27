@@ -37,7 +37,7 @@ import static org.springframework.http.HttpStatus.OK;
  * Controller for statistics of sick notes resp. sick days.
  */
 @Controller
-@RequestMapping("/web/sickdays/statistics")
+@RequestMapping("web/sickdays/statistics")
 class SickDaysStatisticsViewController {
 
     private final SickDaysStatisticsService sickDaysStatisticsService;

@@ -54,7 +54,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * Manage overtime of persons.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class OvertimeViewController implements HasLaunchpad {
 
     private final OvertimeService overtimeService;

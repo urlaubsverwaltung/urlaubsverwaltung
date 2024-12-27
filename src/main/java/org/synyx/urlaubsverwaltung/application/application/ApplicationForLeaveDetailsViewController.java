@@ -74,7 +74,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 /**
  * Controller to manage applications for leave.
  */
-@RequestMapping("/web/application")
+@RequestMapping("web/application")
 @Controller
 class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 

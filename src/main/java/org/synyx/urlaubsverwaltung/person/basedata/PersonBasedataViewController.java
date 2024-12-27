@@ -23,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMappe
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonBasedataViewController implements HasLaunchpad {
 
     private final PersonBasedataService personBasedataService;

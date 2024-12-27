@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 )
 @RestControllerAdviceMarker
 @RestController
-@RequestMapping("/api/persons/{personId}")
+@RequestMapping("api/persons/{personId}")
 public class OvertimeAbsenceApiController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

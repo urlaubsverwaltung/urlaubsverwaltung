@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Hidden
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class ICalViewController {
 
     private final PersonCalendarService personCalendarService;

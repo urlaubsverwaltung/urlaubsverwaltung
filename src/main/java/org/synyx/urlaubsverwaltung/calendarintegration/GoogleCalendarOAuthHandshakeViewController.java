@@ -28,7 +28,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class GoogleCalendarOAuthHandshakeViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

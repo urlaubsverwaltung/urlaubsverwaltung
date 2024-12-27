@@ -74,7 +74,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * Controller to apply for leave.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

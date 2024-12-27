@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings/absences")
+@RequestMapping("web/settings/absences")
 public class SettingsAbsencesViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;

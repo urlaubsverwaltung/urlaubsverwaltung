@@ -36,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  * Controller to manage {@link Account}s of {@link org.synyx.urlaubsverwaltung.person.Person}s.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class AccountViewController implements HasLaunchpad {
 
     private final PersonService personService;

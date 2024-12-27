@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @Controller
-@RequestMapping("/web/calendars/share")
+@RequestMapping("web/calendars/share")
 public class CalendarSharingViewController implements HasLaunchpad {
 
     private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS = "redirect:/web/calendars/share/persons/%d";

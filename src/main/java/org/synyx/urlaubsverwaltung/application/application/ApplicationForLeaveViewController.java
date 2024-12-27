@@ -50,7 +50,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
  * Controller for showing applications for leave in a certain state.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private final ApplicationService applicationService;

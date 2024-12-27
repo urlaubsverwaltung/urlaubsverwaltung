@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings")
+@RequestMapping("web/settings")
 public class SettingsViewController implements HasLaunchpad {
 
     @GetMapping

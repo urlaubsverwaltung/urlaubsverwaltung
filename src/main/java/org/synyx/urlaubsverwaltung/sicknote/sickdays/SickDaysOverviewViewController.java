@@ -44,7 +44,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  * Controller for overview about the sick days of all users.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class SickDaysOverviewViewController implements HasLaunchpad {
 
     private final SickDaysStatisticsService sickDaysStatisticsService;

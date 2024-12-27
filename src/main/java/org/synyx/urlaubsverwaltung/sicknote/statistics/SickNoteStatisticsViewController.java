@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
  * Controller for statistics of sick notes resp. sick days.
  */
 @Controller
-@RequestMapping("/web/sicknote/statistics")
+@RequestMapping("web/sicknote/statistics")
 class SickNoteStatisticsViewController implements HasLaunchpad {
 
     private final SickNoteStatisticsService sickNoteStatisticsService;

@@ -19,7 +19,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web")
+@RequestMapping("web")
 public class PersonDeleteViewController implements HasLaunchpad {
 
     private final PersonService personService;

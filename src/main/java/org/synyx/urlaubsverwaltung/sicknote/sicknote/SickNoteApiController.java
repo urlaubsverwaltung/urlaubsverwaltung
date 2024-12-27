@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 @RestControllerAdviceMarker
 @Tag(name = "sick notes", description = "Sick Notes: Get all sick notes for a certain period")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 public class SickNoteApiController {
 
     public static final String SICKNOTES = "sicknotes";

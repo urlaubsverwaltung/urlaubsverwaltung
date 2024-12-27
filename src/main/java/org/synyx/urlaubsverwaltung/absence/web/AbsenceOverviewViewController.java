@@ -59,7 +59,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
-@RequestMapping("/web/absences")
+@RequestMapping("web/absences")
 @Controller
 public class AbsenceOverviewViewController implements HasLaunchpad {
 

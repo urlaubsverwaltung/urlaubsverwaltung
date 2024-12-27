@@ -7,7 +7,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("api")
 public class SwaggerUiController {
 
     @GetMapping({"", "/"})
