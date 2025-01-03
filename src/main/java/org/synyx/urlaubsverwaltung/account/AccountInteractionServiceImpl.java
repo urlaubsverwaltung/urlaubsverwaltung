@@ -199,7 +199,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
      * calculate remaining vacation days starting from today's month, round to ceiling
      */
     private BigDecimal getRemainingVacationDaysForThisYear(LocalDate today, Integer defaultVacationDays) {
-        final double vacationDaysPerMonth = ((double) defaultVacationDays) / 12;
+        final double vacationDaysPerMonth = (double) defaultVacationDays / 12;
         final int remainingMonthForThisYear = 12 - (today.getMonthValue() - 1);
         return new BigDecimal((int) Math.ceil(vacationDaysPerMonth * remainingMonthForThisYear));
     }

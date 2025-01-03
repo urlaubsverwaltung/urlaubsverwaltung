@@ -57,6 +57,6 @@ public class UserApiMethodSecurity {
         }
 
         final String usernameToCheck = person.get().getUsername();
-        return (usernameToCheck != null) && usernameToCheck.equals(authentication.getName());
+        return usernameToCheck != null && usernameToCheck.equals(authentication.getName());
     }
 }

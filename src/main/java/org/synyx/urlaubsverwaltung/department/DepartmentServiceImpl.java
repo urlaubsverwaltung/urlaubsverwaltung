@@ -19,15 +19,7 @@ import org.synyx.urlaubsverwaltung.search.SortComparator;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -412,8 +404,8 @@ class DepartmentServiceImpl implements DepartmentService {
     public boolean isPersonAllowedToManageDepartment(Person person, Department department) {
 
         return person.hasRole(OFFICE) || person.hasRole(BOSS) ||
-            (department.getDepartmentHeads().contains(person) && person.hasRole(DEPARTMENT_HEAD)) ||
-            (department.getSecondStageAuthorities().contains(person) && person.hasRole(SECOND_STAGE_AUTHORITY));
+            department.getDepartmentHeads().contains(person) && person.hasRole(DEPARTMENT_HEAD) ||
+            department.getSecondStageAuthorities().contains(person) && person.hasRole(SECOND_STAGE_AUTHORITY);
     }
 
     @Override

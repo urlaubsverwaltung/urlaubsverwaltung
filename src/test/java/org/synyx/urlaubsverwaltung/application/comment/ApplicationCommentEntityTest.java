@@ -18,7 +18,7 @@ class ApplicationCommentEntityTest {
     @Test
     void ensureDateIsSetOnInitialization() {
 
-        Consumer<ApplicationCommentEntity> assertDateIsSetToToday = (comment) -> {
+        Consumer<ApplicationCommentEntity> assertDateIsSetToToday = comment -> {
             assertThat(comment.getDate()).isEqualTo(Instant.now(Clock.systemUTC()).truncatedTo(DAYS));
         };
 
