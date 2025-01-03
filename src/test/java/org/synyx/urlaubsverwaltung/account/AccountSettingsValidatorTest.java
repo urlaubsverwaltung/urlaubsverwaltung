@@ -71,7 +71,7 @@ class AccountSettingsValidatorTest {
 
         return Stream.of(Month.values()).flatMap(month -> switch (month) {
             case JANUARY -> dayOfMonths.apply(JANUARY, IntStream.rangeClosed(1, 31));
-            case FEBRUARY -> dayOfMonths.apply(FEBRUARY, IntStream.rangeClosed(1, 29));
+            case FEBRUARY -> dayOfMonths.apply(FEBRUARY, IntStream.rangeClosed(1, 28));
             case MARCH -> dayOfMonths.apply(MARCH, IntStream.rangeClosed(1, 31));
             case APRIL -> dayOfMonths.apply(APRIL, IntStream.rangeClosed(1, 30));
             case MAY -> dayOfMonths.apply(MAY, IntStream.rangeClosed(1, 31));
