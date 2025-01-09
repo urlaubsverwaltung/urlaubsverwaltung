@@ -1,0 +1,28 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="grafjo" id="add-unique-department-names-per-tenant">
+    <preConditions>
+      <uniqueConstraintExists tableName="department" constraintName="unique_department_name"/>
+    </preConditions>
+
+    <dropUniqueConstraint tableName="department" constraintName="unique_department_name"/>
+    <addUniqueConstraint columnNames="name, tenant_id"
+                         constraintName="unique_department_name"
+                         tableName="department"/>
+  </changeSet>
+
+  <changeSet author="grafjo" id="add-unique-person-usernames-per-tenant">
+    <preConditions>
+      <uniqueConstraintExists tableName="person" constraintName="person_username_key"/>
+    </preConditions>
+
+    <dropUniqueConstraint tableName="person" constraintName="person_username_key"/>
+    <addUniqueConstraint columnNames="username, tenant_id"
+                         constraintName="person_username_key"
+                         tableName="person"/>
+
+  </changeSet>
+</databaseChangeLog>
