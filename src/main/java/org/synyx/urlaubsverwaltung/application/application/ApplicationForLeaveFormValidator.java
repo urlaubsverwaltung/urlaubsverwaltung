@@ -295,7 +295,7 @@ class ApplicationForLeaveFormValidator implements Validator {
             errors.reject(ERROR_PERIOD);
         }
 
-        if ((startTimeIsProvided && endTimeIsProvided) &&
+        if (startTimeIsProvided && endTimeIsProvided &&
             (endTime.isBefore(startTime) || endTime.equals(startTime))) {
             errors.reject(ERROR_PERIOD);
         }
@@ -311,7 +311,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         final BigDecimal hours = applicationForLeave.getHours();
         final Integer minutes = applicationForLeave.getMinutes();
         final boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
-        final boolean overtimeReductionInputRequiredButNotProvided = overtimeFunctionIsActive && (hours == null && minutes == null);
+        final boolean overtimeReductionInputRequiredButNotProvided = overtimeFunctionIsActive && hours == null && minutes == null;
 
         if (overtimeReductionInputRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
@@ -324,7 +324,7 @@ class ApplicationForLeaveFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_INVALID_HOURS);
         }
 
-        if (minutes != null && (minutes < 0 || (minutes == 0 && hoursNullOrZero))) {
+        if (minutes != null && (minutes < 0 || minutes == 0 && hoursNullOrZero)) {
             errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
 

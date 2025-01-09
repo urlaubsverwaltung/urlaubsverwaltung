@@ -566,7 +566,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private List<Person> getManagedPersons(Person signedInUser) {
 
-        if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_ADD))) {
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_ADD)) {
             return personService.getActivePersons();
         }
 

@@ -52,7 +52,7 @@ public class SickNoteStatisticsService {
 
     private List<SickNote> getSickNotes(Person person, LocalDate from, LocalDate to) {
 
-        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
             return sickNoteService.getAllActiveByPeriod(from, to);
         }
 

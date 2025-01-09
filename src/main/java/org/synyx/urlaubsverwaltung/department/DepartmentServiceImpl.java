@@ -412,8 +412,8 @@ class DepartmentServiceImpl implements DepartmentService {
     public boolean isPersonAllowedToManageDepartment(Person person, Department department) {
 
         return person.hasRole(OFFICE) || person.hasRole(BOSS) ||
-            (department.getDepartmentHeads().contains(person) && person.hasRole(DEPARTMENT_HEAD)) ||
-            (department.getSecondStageAuthorities().contains(person) && person.hasRole(SECOND_STAGE_AUTHORITY));
+            department.getDepartmentHeads().contains(person) && person.hasRole(DEPARTMENT_HEAD) ||
+            department.getSecondStageAuthorities().contains(person) && person.hasRole(SECOND_STAGE_AUTHORITY);
     }
 
     @Override

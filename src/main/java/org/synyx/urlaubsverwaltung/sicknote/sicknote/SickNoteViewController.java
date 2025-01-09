@@ -167,7 +167,7 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("comments", comments);
 
             model.addAttribute("canAcceptSickNote", isOffice || isAllowedToEditSickNote);
-            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || (isSamePerson && sickNote.isSubmitted()));
+            model.addAttribute("canEditSickNote", isOffice || isAllowedToEditSickNote || isSamePerson && sickNote.isSubmitted());
             model.addAttribute("canConvertSickNote", isOffice);
             model.addAttribute("canDeleteSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNotePerson));
             model.addAttribute("canCommentSickNote", isOffice || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNotePerson));
@@ -219,7 +219,7 @@ class SickNoteViewController implements HasLaunchpad {
         if (userIsAllowedToSubmitSickNotes) {
             final boolean noRedirect = noExtensionRedirect != null && (noExtensionRedirect.isEmpty() || "true".equalsIgnoreCase(noExtensionRedirect));
             final Optional<SickNote> sickNoteOfYesterdayOrLastWorkDay = sickNoteService.getSickNoteOfYesterdayOrLastWorkDay(sickNotePerson);
-            if (!noRedirect && (sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull())) {
+            if (!noRedirect && sickNoteOfYesterdayOrLastWorkDay.isPresent() && sickNoteOfYesterdayOrLastWorkDay.get().getDayLength().isFull()) {
                 LOG.info("sick note of last work day found");
                 return "redirect:/web/sicknote/extend";
             } else {
@@ -285,7 +285,7 @@ class SickNoteViewController implements HasLaunchpad {
         final boolean allowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
 
         final SickNote updatedSickNote;
-        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || (personIsApplier && !allowedToSubmitSickNotes)) {
+        if (signedInUser.hasAnyRole(OFFICE, SICK_NOTE_ADD) || personIsApplier && !allowedToSubmitSickNotes) {
             updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
         } else {
             updatedSickNote = sickNoteInteractionService.submit(sickNote, signedInUser, sickNoteFormDto.getComment());

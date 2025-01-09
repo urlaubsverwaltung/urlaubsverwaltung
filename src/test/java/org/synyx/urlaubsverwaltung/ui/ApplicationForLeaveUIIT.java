@@ -154,7 +154,7 @@ class ApplicationForLeaveUIIT {
         navigationPage.logout();
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), (userPerson.getEmail())));
+        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 

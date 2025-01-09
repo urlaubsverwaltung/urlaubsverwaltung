@@ -481,7 +481,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         return responsiblePersonService.getResponsibleManagersOf(personOfInterest)
             .stream()
             .filter(not(isEqual(signedInUser)))
-            .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || (person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING)))
+            .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING))
             .collect(toList());
     }
 

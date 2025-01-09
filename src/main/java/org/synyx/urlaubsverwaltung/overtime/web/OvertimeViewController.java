@@ -289,7 +289,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
-        boolean canAddOvertimeForAnotherUser = signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
+        boolean canAddOvertimeForAnotherUser = signedInUser.hasRole(OFFICE) || signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly();
         model.addAttribute("canAddOvertimeForAnotherUser", canAddOvertimeForAnotherUser);
 
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
