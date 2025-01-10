@@ -71,7 +71,7 @@ see https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases
 ### [urlaubsverwaltung-3.1.0](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.1.0)
 * Provide ical functionality [#583](https://github.com/urlaubsverwaltung/urlaubsverwaltung/pull/583) 
 * Remove html5 validation of addition and reduction of overtime [#834](https://github.com/urlaubsverwaltung/urlaubsverwaltung/pull/834) [#693](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/693)
-* Add micrometer export for [Stackdriver](https://micrometer.io/docs/registry/stackdriver)
+* Add micrometer export for [Stackdriver](https://micrometer.io/docs/registry/stackdriver) <!-- markdown-link-check-disable-line -->
 * Frontend asset tooling [#921](https://github.com/urlaubsverwaltung/urlaubsverwaltung/pull/921)
 * Improve user role edit form [#922](https://github.com/urlaubsverwaltung/urlaubsverwaltung/pull/922)
 * Fix coverage in builds [#929](https://github.com/urlaubsverwaltung/urlaubsverwaltung/pull/929)
@@ -384,7 +384,7 @@ see https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases
 * Verbesserte Beschreibung der Office-Rolle
 * Update test-emailaddresses to reduce chance to send spam [#253](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/253)
 * Betreff in E-Mail bei neu beantragtem Urlaub sollte Namen enthalten [#249](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/249)
-* Erweiterung der REST-API um die Schnittstelle [`/availabilities`](http://urlaubsverwaltung-demo.synyx.de/api/index.html#!/availabilities) [#208](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/208)
+* Erweiterung der REST-API um die Schnittstelle [`/availabilities`](http://urlaubsverwaltung-demo.synyx.de/api/index.html#!/availabilities) [#208](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/208) <!-- markdown-link-check-disable-line -->
 
 ### [urlaubsverwaltung-2.21.1](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.21.1)
 * Added additional exchange connection configuration (without domain) [#241](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/241) 
