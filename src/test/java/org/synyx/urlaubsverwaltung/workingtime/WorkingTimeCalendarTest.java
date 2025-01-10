@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,6 +9,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,11 +24,13 @@ import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 class WorkingTimeCalendarTest {
@@ -248,6 +252,55 @@ class WorkingTimeCalendarTest {
         );
     }
 
+    @Nested
+    class EnsureWorkingDayInformation {
+
+        static Stream<Arguments> truthyHalfDayPublicHolidayTuples() {
+            return Stream.of(
+                arguments(PUBLIC_HOLIDAY, WORKDAY),
+                arguments(PUBLIC_HOLIDAY, NO_WORKDAY),
+                arguments(PUBLIC_HOLIDAY, PUBLIC_HOLIDAY),
+                arguments(WORKDAY, PUBLIC_HOLIDAY),
+                arguments(NO_WORKDAY, PUBLIC_HOLIDAY),
+                arguments(PUBLIC_HOLIDAY, PUBLIC_HOLIDAY)
+            );
+        }
+
+        static Stream<Arguments> falsyHalfDayPublicHolidayTuples() {
+            return Stream.of(
+                arguments(NO_WORKDAY, NO_WORKDAY),
+                arguments(NO_WORKDAY, WORKDAY),
+                arguments(WORKDAY, NO_WORKDAY),
+                arguments(WORKDAY, WORKDAY)
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("falsyHalfDayPublicHolidayTuples")
+        void ensureHasHalfDayPublicHolidayReturnsFalse(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
+            final LocalDate date = LocalDate.of(2024, 12, 1);
+
+            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+            final boolean actual = sut.workingDays().get(date).hasHalfDayPublicHoliday();
+            assertThat(actual).isFalse();
+        }
+
+        @ParameterizedTest
+        @MethodSource("truthyHalfDayPublicHolidayTuples")
+        void ensureHasHalfDayPublicHolidayReturnsTrue(WorkingTimeCalendarEntryType morning, WorkingTimeCalendarEntryType noon) {
+            final LocalDate date = LocalDate.of(2024, 12, 1);
+
+            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, new WorkingDayInformation(null, morning, noon));
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+            final boolean actual = sut.workingDays().get(date).hasHalfDayPublicHoliday();
+            assertThat(actual).isTrue();
+        }
+    }
+
+
     private static WorkingDayInformation emptyWorkingDayInformation() {
         return new WorkingDayInformation(ZERO, NO_WORKDAY, NO_WORKDAY);
     }
@@ -256,7 +309,7 @@ class WorkingTimeCalendarTest {
         return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
     }
 
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
+    private static Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
         Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
         for (LocalDate date : new DateRange(from, to)) {
             map.put(date, dayLengthProvider.apply(date));
