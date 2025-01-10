@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+
 /**
  * Provides information about the {@link DayLength} on a given {@link LocalDate} including publicHolidays.
  * For instance:
@@ -77,7 +79,8 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
             BigDecimal workingTimeSum = BigDecimal.ZERO;
             for (LocalDate localDate : overlap.get()) {
                 final BigDecimal workingTime = workingTime(localDate).orElse(BigDecimal.ZERO);
-                if (application.getDayLength().isHalfDay()) {
+                final boolean hasHalfDayPublicHoliday = this.workingDays().get(application.getStartDate()).hasHalfDayPublicHoliday();
+                if (application.getDayLength().isHalfDay() && !hasHalfDayPublicHoliday) {
                     workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
                 } else {
                     workingTimeSum = workingTimeSum.add(workingTime);
@@ -148,6 +151,10 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
             WORKDAY,
             NO_WORKDAY,
             PUBLIC_HOLIDAY
+        }
+
+        public boolean hasHalfDayPublicHoliday() {
+            return morning == PUBLIC_HOLIDAY || noon == PUBLIC_HOLIDAY;
         }
     }
 }
