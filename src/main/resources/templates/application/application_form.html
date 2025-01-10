@@ -4,7 +4,7 @@
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title
-      th:text="${applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit}"
+      th:text="${applicationForLeaveForm != null && applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit}"
     >
       Neue Abwesenheit
     </title>
