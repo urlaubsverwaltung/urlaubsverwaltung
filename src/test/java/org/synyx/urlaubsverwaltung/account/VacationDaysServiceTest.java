@@ -42,6 +42,7 @@ import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.Month.SEPTEMBER;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Map.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -54,7 +55,9 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -457,7 +460,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -501,7 +504,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -545,7 +548,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -589,7 +592,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -633,7 +636,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -677,7 +680,7 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -685,6 +688,53 @@ class VacationDaysServiceTest {
             .notExpiring(ZERO)
             .forUsedVacationDaysBeforeExpiry(ZERO)
             .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(5))
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(account)).satisfies(holidayAccountVacationDays -> {
+            assertThat(holidayAccountVacationDays.account()).isEqualTo(account);
+            assertThat(holidayAccountVacationDays.vacationDaysYear()).isEqualTo(expectedDaysLeft);
+            assertThat(holidayAccountVacationDays.vacationDaysDateRange()).isEqualTo(expectedDaysLeft);
+        });
+    }
+
+    @Test
+    void ensureGetVacationDaysLeftWithHalfDayApplicationOnWorkingDayWithHalfPublicHoliday() {
+        final Person person = anyPerson();
+
+        final int year = 2022;
+        final LocalDate firstDayOfYear = LocalDate.of(year, JANUARY, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+        final LocalDate christmas = LocalDate.of(year, DECEMBER, 24);
+
+        final Account account = anyAccount(person, Year.of(year));
+        account.setAnnualVacationDays(BigDecimal.valueOf(30));
+        account.setActualVacationDays(BigDecimal.valueOf(30));
+        account.setRemainingVacationDays(BigDecimal.valueOf(0));
+
+        final Application application = anyApplication(person);
+        application.setDayLength(MORNING);
+        application.setStartDate(christmas);
+        application.setEndDate(christmas);
+
+        when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), firstDayOfYear, lastDayOfYear))
+            .thenReturn(List.of(application));
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(
+            Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY))
+        );
+
+        final Map<Account, HolidayAccountVacationDays> actual =
+            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+
+        final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(30))
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(0.5))
             .withVacationDaysUsedNextYear(ZERO)
             .build();
 
