@@ -264,6 +264,24 @@ class WorkingTimeCalendarTest {
             assertThat(actual).isEqualTo(BigDecimal.valueOf(2));
         }
 
+        @Test
+        void ensureWorkingTimeForApplicationWithoutWorkingDayInformation() {
+
+            final LocalDate applicationDate = LocalDate.of(2023, 3, 31);
+            final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 4, 30));
+
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(Map.of());
+
+            final Application application = new Application();
+            application.setStartDate(applicationDate);
+            application.setEndDate(applicationDate);
+            application.setDayLength(MORNING);
+
+            final BigDecimal actual = sut.workingTimeInDateRage(application, aprilDateRange);
+
+            assertThat(actual).isEqualTo(BigDecimal.ZERO);
+        }
+
         @ParameterizedTest
         @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
         void ensureWorkingTimeForHalfDayApplicationAtHalfPublicHoliday(DayLength dayLength) {
