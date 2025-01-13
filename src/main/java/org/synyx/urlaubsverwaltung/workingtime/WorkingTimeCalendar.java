@@ -79,8 +79,8 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
             BigDecimal workingTimeSum = BigDecimal.ZERO;
             for (LocalDate localDate : overlap.get()) {
                 final BigDecimal workingTime = workingTime(localDate).orElse(BigDecimal.ZERO);
-                final boolean hasHalfDayPublicHoliday = this.workingDays().get(application.getStartDate()).hasHalfDayPublicHoliday();
-                if (application.getDayLength().isHalfDay() && !hasHalfDayPublicHoliday) {
+                final WorkingDayInformation workingDayInformation = this.workingDays().get(application.getStartDate());
+                if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
                     workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
                 } else {
                     workingTimeSum = workingTimeSum.add(workingTime);
