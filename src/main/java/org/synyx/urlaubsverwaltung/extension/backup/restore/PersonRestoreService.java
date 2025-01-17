@@ -74,6 +74,9 @@ class PersonRestoreService {
     }
 
     private void importPersonBaseData(Long personId, PersonBaseDataDTO personBaseDataDTO) {
+        if (personBaseDataDTO == null) {
+            return;
+        }
         personBaseDataImportService.importPersonBaseData(personBaseDataDTO.toPersonBaseDataEntity(personId));
     }
 
