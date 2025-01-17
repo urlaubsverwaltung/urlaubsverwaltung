@@ -31,8 +31,10 @@ class VacationTypeEventHandlerExtension {
     private final ApplicationEventPublisher applicationEventPublisher;
 
 
-    VacationTypeEventHandlerExtension(TenantSupplier tenantSupplier,
-                                      ApplicationEventPublisher applicationEventPublisher) {
+    VacationTypeEventHandlerExtension(
+        TenantSupplier tenantSupplier,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.tenantSupplier = tenantSupplier;
         this.applicationEventPublisher = applicationEventPublisher;
     }

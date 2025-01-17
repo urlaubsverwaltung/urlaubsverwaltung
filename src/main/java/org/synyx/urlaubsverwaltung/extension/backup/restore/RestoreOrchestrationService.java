@@ -24,7 +24,7 @@ public class RestoreOrchestrationService {
     private final BackupVersionRestoreValidator backupVersionRestoreValidator;
     private final RestoreService restoreService;
 
-    public RestoreOrchestrationService(RestoreConfigurationProperties restoreConfiguration, ResetUrlaubsverwaltungService resetUrlaubsverwaltungService, BackupVersionRestoreValidator backupVersionRestoreValidator, RestoreService restoreService) {
+    RestoreOrchestrationService(RestoreConfigurationProperties restoreConfiguration, ResetUrlaubsverwaltungService resetUrlaubsverwaltungService, BackupVersionRestoreValidator backupVersionRestoreValidator, RestoreService restoreService) {
         this.restoreConfiguration = restoreConfiguration;
         this.resetUrlaubsverwaltungService = resetUrlaubsverwaltungService;
         this.backupVersionRestoreValidator = backupVersionRestoreValidator;

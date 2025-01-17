@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.extension.backup.restore;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @ConditionalOnBackupRestoreEnabled
@@ -14,7 +16,7 @@ import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSin
 @ConditionalOnSingleTenantMode
 class ApplicationReadyRestoreTrigger {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationReadyRestoreTrigger.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final BackupRestoreService backupRestoreService;
 

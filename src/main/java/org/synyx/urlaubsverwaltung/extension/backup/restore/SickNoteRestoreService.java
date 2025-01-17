@@ -28,7 +28,14 @@ class SickNoteRestoreService {
     private final SickNoteTypeService sickNoteTypeService;
     private final PersonService personService;
 
-    SickNoteRestoreService(SickNoteImportService sickNoteImportService, SickNoteTypeImportService sickNoteTypeImportService, SickNoteCommentImportService sickNoteCommentImportService, SickNoteExtensionImportService sickNoteExtensionImportService, SickNoteTypeService sickNoteTypeService, PersonService personService) {
+    SickNoteRestoreService(
+        SickNoteImportService sickNoteImportService,
+        SickNoteTypeImportService sickNoteTypeImportService,
+        SickNoteCommentImportService sickNoteCommentImportService,
+        SickNoteExtensionImportService sickNoteExtensionImportService,
+        SickNoteTypeService sickNoteTypeService,
+        PersonService personService
+    ) {
         this.sickNoteImportService = sickNoteImportService;
         this.sickNoteTypeImportService = sickNoteTypeImportService;
         this.sickNoteCommentImportService = sickNoteCommentImportService;
@@ -39,7 +46,7 @@ class SickNoteRestoreService {
 
     List<ImportedIdTuple> restore(SickNoteBackupDTO sickNotes) {
 
-        List<ImportedIdTuple> importedSickNoteTypes = importSickNoteTypes(sickNotes);
+        final List<ImportedIdTuple> importedSickNoteTypes = importSickNoteTypes(sickNotes);
 
         return sickNotes.sickNotes().stream().map(sickNoteDTO -> {
             final SickNoteType sickNoteType = findSickNoteType(importedSickNoteTypes, sickNoteDTO.sickNoteTypeId());

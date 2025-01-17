@@ -45,10 +45,11 @@ class FilesystemRestoreService implements BackupRestoreService {
 
     private void restoreBackup(Path backup) {
         LOG.info("Going to restore data from file={}", backup.toAbsolutePath());
-        readJsonFileToPojo(backup).ifPresentOrElse(dataToRestore -> {
-            restoreOrchestrationService.restoreData(dataToRestore);
-            LOG.info("Finished restoring data from file={}", backup.toAbsolutePath());
-        }, () -> LOG.warn("Could not restore data from file={}", backup.toAbsolutePath()));
+        readJsonFileToPojo(backup)
+            .ifPresentOrElse(dataToRestore -> {
+                restoreOrchestrationService.restoreData(dataToRestore);
+                LOG.info("Finished restoring data from file={}", backup.toAbsolutePath());
+            },() -> LOG.warn("Could not restore data from file={}", backup.toAbsolutePath()));
     }
 
     private Optional<UrlaubsverwaltungBackupDTO> readJsonFileToPojo(Path backup) {

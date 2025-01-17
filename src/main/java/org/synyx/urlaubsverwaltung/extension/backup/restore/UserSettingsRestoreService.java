@@ -25,5 +25,4 @@ class UserSettingsRestoreService {
         userPaginationSettingsImportService.importUserPaginationSettings(userSettingsDTO.userPaginationSettings().toUserPaginationSettingsEntity(personId));
         userNotificationSettingsImportService.importUserNotificationSettings(userSettingsDTO.userNotificationSettings().toUserNotificationSettingsEntity(personId));
     }
-
 }

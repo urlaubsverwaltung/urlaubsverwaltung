@@ -30,17 +30,19 @@ class OvertimeRestoreService {
 
     void restore(List<OvertimeDTO> overtimes) {
         overtimes.forEach(overtimeDTO -> personService.getPersonByUsername(overtimeDTO.externalIdOfOwner()).ifPresentOrElse(person -> {
-            Overtime importedOvertime = overtimeImportService.importOvertime(overtimeDTO.toOverTime(person));
+            final Overtime importedOvertime = overtimeImportService.importOvertime(overtimeDTO.toOverTime(person));
             importOvertimeComments(importedOvertime, overtimeDTO.overtimeComments());
         }, () -> LOG.warn("overtime owner with externalId={} not found - skip importing overtime!", overtimeDTO.externalIdOfOwner())));
 
     }
 
     private void importOvertimeComments(Overtime importedOvertime, List<OvertimeCommentDTO> overtimeCommentDTOS) {
-        overtimeCommentDTOS.forEach(commentDTO -> personService.getPersonByUsername(commentDTO.externalIdOfCommentAuthor()).ifPresentOrElse(commentAuthor -> {
-            final OvertimeComment overtimeComment = commentDTO.toOvertimeComment(importedOvertime, commentAuthor);
-            overtimeImportService.importOvertimeComment(overtimeComment);
-        }, () -> LOG.warn("overtime comment author with externalId={} for overtime={} not found - skip importing comment!", commentDTO.externalIdOfCommentAuthor(), importedOvertime)));
-
+        overtimeCommentDTOS.forEach(commentDTO ->
+            personService.getPersonByUsername(commentDTO.externalIdOfCommentAuthor())
+                .ifPresentOrElse(commentAuthor -> {
+                        final OvertimeComment overtimeComment = commentDTO.toOvertimeComment(importedOvertime, commentAuthor);
+                        overtimeImportService.importOvertimeComment(overtimeComment);
+                    }, () -> LOG.warn("overtime comment author with externalId={} for overtime={} not found - skip importing comment!", commentDTO.externalIdOfCommentAuthor(), importedOvertime)
+                ));
     }
 }

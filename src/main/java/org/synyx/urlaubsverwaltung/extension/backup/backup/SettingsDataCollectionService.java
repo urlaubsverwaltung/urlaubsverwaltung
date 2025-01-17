@@ -23,7 +23,7 @@ class SettingsDataCollectionService {
     }
 
     SettingsDTO collectSettings() {
-        Settings settings = settingsService.getSettings();
+        final Settings settings = settingsService.getSettings();
 
         return new SettingsDTO(settings.getId(),
             ApplicationSettingsDTO.of(settings.getApplicationSettings()),
@@ -35,5 +35,4 @@ class SettingsDataCollectionService {
             AvatarSettingsDTO.of(settings.getAvatarSettings())
         );
     }
-
 }

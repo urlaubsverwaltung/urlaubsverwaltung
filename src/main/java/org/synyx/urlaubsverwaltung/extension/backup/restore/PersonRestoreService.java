@@ -61,11 +61,13 @@ class PersonRestoreService {
     }
 
     private void importWorkingTimes(Person importedPerson, List<WorkingTimeDTO> workingTimeDTOS) {
-        workingTimeImportService.importWorkingTimes(workingTimeDTOS.stream().map(workingTimeDTO -> workingTimeDTO.toWorkingTimeEntity(importedPerson)).toList());
+        workingTimeImportService.importWorkingTimes(workingTimeDTOS.stream()
+            .map(workingTimeDTO -> workingTimeDTO.toWorkingTimeEntity(importedPerson))
+            .toList());
     }
 
     private void importAccounts(Person importedPerson, List<AccountDTO> accounts) {
-        List<AccountEntity> accountsToImport = accounts.stream()
+        final List<AccountEntity> accountsToImport = accounts.stream()
             .map(accountToImport -> accountToImport.toAccountEntity(importedPerson))
             .toList();
         accountImportService.importAccounts(accountsToImport);

@@ -19,11 +19,10 @@ class DepartmentDataCollectionService {
 
     List<DepartmentDTO> collectDepartments() {
         return departmentService.getAllDepartments().stream().map(department -> {
-            List<String> externalIdsOfDepartmentHeads = department.getDepartmentHeads().stream().map(Person::getUsername).toList();
-            List<String> externalIdsOfSecondStageAuthorities = department.getSecondStageAuthorities().stream().map(Person::getUsername).toList();
-            List<String> externalIdsOfMembers = department.getMembers().stream().map(Person::getUsername).toList();
+            final List<String> externalIdsOfDepartmentHeads = department.getDepartmentHeads().stream().map(Person::getUsername).toList();
+            final List<String> externalIdsOfSecondStageAuthorities = department.getSecondStageAuthorities().stream().map(Person::getUsername).toList();
+            final List<String> externalIdsOfMembers = department.getMembers().stream().map(Person::getUsername).toList();
             return new DepartmentDTO(department.getId(), department.getName(), department.getDescription(), department.getCreatedAt(), department.getLastModification(), department.isTwoStageApproval(), externalIdsOfDepartmentHeads, externalIdsOfSecondStageAuthorities, externalIdsOfMembers);
         }).toList();
     }
-
 }

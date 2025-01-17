@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.backup;
 
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
@@ -46,25 +47,90 @@ class ApplicationDataCollectionService {
     }
 
     ApplicationBackupDTO collectApplications(List<Person> allPersons, LocalDate from, LocalDate to) {
-        List<VacationTypeDTO> vacationTypes = vacationTypeService.getAllVacationTypes().stream().map(vacationType -> {
-            boolean isCustomVacationType = vacationType instanceof CustomVacationType;
-            String messageKey = null;
-            if (vacationType instanceof ProvidedVacationType lala) {
-                messageKey = lala.getMessageKey();
-            }
-            return new VacationTypeDTO(vacationType.getId(), vacationType.isActive(), VacationTypeCategoryDTO.valueOf(vacationType.getCategory().name()), vacationType.isRequiresApprovalToApply(), vacationType.isRequiresApprovalToCancel(), VacationTypeColorDTO.valueOf(vacationType.getColor().name()), vacationType.isVisibleToEveryone(), isCustomVacationType, messageKey, toLabels(vacationType));
-        }).toList();
-        List<ApplicationDTO> applications = allPersons.stream().map(person -> applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person).stream().map(application -> {
-            String bossExternalId = application.getBoss() != null ? application.getBoss().getUsername() : null;
-            String cancellerExternalId = application.getCanceller() != null ? application.getCanceller().getUsername() : null;
-            VacationType<?> vacationType = application.getVacationType();
-            List<HolidayReplacementDTO> holidayReplacements = application.getHolidayReplacements().stream().map(holidayReplacementEntity -> new HolidayReplacementDTO(holidayReplacementEntity.getPerson().getUsername(), holidayReplacementEntity.getNote())).toList();
-            List<ApplicationCommentDTO> applicationComments = applicationCommentService.getCommentsByApplication(application).stream().map(applicationComment -> new ApplicationCommentDTO(ApplicationCommentActionDTO.valueOf(applicationComment.action().name()), applicationComment.person().getUsername(), applicationComment.date(), applicationComment.text())).toList();
 
-            return new ApplicationDTO(application.getId(), application.getPerson().getUsername(), application.getApplier().getUsername(), bossExternalId, cancellerExternalId, application.isTwoStageApproval(), application.getStartDate(), application.getEndDate(), application.getStartTime(), application.getEndTime(), vacationType.getId(), DayLengthDTO.valueOf(application.getDayLength().name()), application.getReason(), holidayReplacements, application.getAddress(), application.getApplicationDate(), application.getCancelDate(), application.getEditedDate(), application.getRemindDate(), ApplicationStatusDTO.valueOf(application.getStatus().name()), application.isTeamInformed(), application.getHours(), application.getUpcomingHolidayReplacementNotificationSend(), application.getUpcomingApplicationsReminderSend(), applicationComments);
-        }).toList()).toList().stream().flatMap(Collection::stream).toList();
+        final List<VacationTypeDTO> vacationTypes = vacationTypeService.getAllVacationTypes().stream()
+            .map(this::createVacationTypeDTO)
+            .toList();
+
+        final List<ApplicationDTO> applications = allPersons.stream()
+            .map(person ->
+                applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person).stream()
+                    .map(application -> {
+
+                        final List<HolidayReplacementDTO> holidayReplacements = application.getHolidayReplacements().stream()
+                            .map(holidayReplacementEntity -> new HolidayReplacementDTO(holidayReplacementEntity.getPerson().getUsername(), holidayReplacementEntity.getNote()))
+                            .toList();
+
+                        final List<ApplicationCommentDTO> applicationComments = applicationCommentService.getCommentsByApplication(application).stream()
+                            .map(applicationComment -> new ApplicationCommentDTO(ApplicationCommentActionDTO.valueOf(applicationComment.action().name()), applicationComment.person().getUsername(), applicationComment.date(), applicationComment.text()))
+                            .toList();
+
+                        return createApplicationDTO(application, holidayReplacements, applicationComments);
+                    })
+                    .toList()
+            )
+            .flatMap(Collection::stream)
+            .toList();
 
         return new ApplicationBackupDTO(vacationTypes, applications);
+    }
+
+    private VacationTypeDTO createVacationTypeDTO(VacationType<?> vacationType) {
+
+        String messageKey = null;
+        if (vacationType instanceof ProvidedVacationType providedVacationType) {
+            messageKey = providedVacationType.getMessageKey();
+        }
+
+        return new VacationTypeDTO(
+            vacationType.getId(),
+            vacationType.isActive(),
+            VacationTypeCategoryDTO.valueOf(vacationType.getCategory().name()),
+            vacationType.isRequiresApprovalToApply(),
+            vacationType.isRequiresApprovalToCancel(),
+            VacationTypeColorDTO.valueOf(vacationType.getColor().name()),
+            vacationType.isVisibleToEveryone(),
+            vacationType instanceof CustomVacationType,
+            messageKey,
+            toLabels(vacationType)
+        );
+    }
+
+    private static ApplicationDTO createApplicationDTO(
+        Application application,
+        List<HolidayReplacementDTO> holidayReplacements,
+        List<ApplicationCommentDTO> applicationComments
+    ) {
+
+        final String bossExternalId = application.getBoss() != null ? application.getBoss().getUsername() : null;
+        final String cancellerExternalId = application.getCanceller() != null ? application.getCanceller().getUsername() : null;
+
+        return new ApplicationDTO(application.getId(),
+            application.getPerson().getUsername(),
+            application.getApplier().getUsername(),
+            bossExternalId,
+            cancellerExternalId,
+            application.isTwoStageApproval(),
+            application.getStartDate(),
+            application.getEndDate(),
+            application.getStartTime(),
+            application.getEndTime(),
+            application.getVacationType().getId(),
+            DayLengthDTO.valueOf(application.getDayLength().name()),
+            application.getReason(),
+            holidayReplacements,
+            application.getAddress(),
+            application.getApplicationDate(),
+            application.getCancelDate(),
+            application.getEditedDate(),
+            application.getRemindDate(),
+            ApplicationStatusDTO.valueOf(application.getStatus().name()),
+            application.isTeamInformed(),
+            application.getHours(),
+            application.getUpcomingHolidayReplacementNotificationSend(),
+            application.getUpcomingApplicationsReminderSend(),
+            applicationComments
+        );
     }
 
     private Map<Locale, String> toLabels(VacationType<?> vacationType) {
@@ -82,5 +148,4 @@ class ApplicationDataCollectionService {
     private Map<Locale, String> toLabels(CustomVacationType customVacationType) {
         return customVacationType.labelsByLocale().values().stream().collect(toMap(VacationTypeLabel::locale, VacationTypeLabel::label));
     }
-
 }

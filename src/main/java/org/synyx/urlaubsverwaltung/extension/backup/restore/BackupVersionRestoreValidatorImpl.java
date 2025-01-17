@@ -23,7 +23,7 @@ class BackupVersionRestoreValidatorImpl implements BackupVersionRestoreValidator
     @Override
     public boolean isValidBackupVersion(String backupVersion) {
         // to restore a backup the version of the backup must match the exact version of the running application!
-        boolean isValid = applicationVersion.equals(backupVersion);
+        final boolean isValid = applicationVersion.equals(backupVersion);
         LOG.info("backup version={} is {} with application version={}", backupVersion, isValid ? "compatible" : "incompatible", applicationVersion);
         return isValid;
     }

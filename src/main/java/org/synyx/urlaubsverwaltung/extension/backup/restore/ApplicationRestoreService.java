@@ -25,11 +25,19 @@ class ApplicationRestoreService {
     private final VacationTypeImportService vacationTypeImportService;
     private final PersonService personService;
 
-    ApplicationRestoreService(ApplicationCommentImportService applicationCommentImportService, ApplicationImportService applicationImportService, VacationTypeImportService vacationTypeImportService, PersonService personService) {
+    ApplicationRestoreService(ApplicationCommentImportService applicationCommentImportService,
+                              ApplicationImportService applicationImportService,
+                              VacationTypeImportService vacationTypeImportService,
+                              PersonService personService
+    ) {
         this.applicationCommentImportService = applicationCommentImportService;
         this.applicationImportService = applicationImportService;
         this.vacationTypeImportService = vacationTypeImportService;
         this.personService = personService;
+    }
+
+    List<ImportedIdTuple> restore(ApplicationBackupDTO applications) {
+        return importApplications(applications, importVacationTypes(applications));
     }
 
     /**
@@ -41,27 +49,24 @@ class ApplicationRestoreService {
         return createdVacationTypes.stream().filter(tuple -> tuple.idOfImport.equals(originVacationTypeId)).findFirst();
     }
 
-    List<ImportedIdTuple> restore(ApplicationBackupDTO applications) {
-        List<VacationTypeTuple> createdVacationTypes = importVacationTypes(applications);
-        return importApplications(applications, createdVacationTypes);
-    }
-
     private List<ImportedIdTuple> importApplications(ApplicationBackupDTO applications, List<VacationTypeTuple> createdVacationTypes) {
         return applications.applications().stream().map(applicationDTO -> resolveCreatedVacationTypeByOriginId(createdVacationTypes, applicationDTO.vacationTypeId()).map(vacationTypeTuple -> {
-            final ApplicationEntity createdApplicationEntity = importApplication(applicationDTO, vacationTypeTuple.createdVacationType);
-            importApplicationComments(applicationDTO.applicationComments(), createdApplicationEntity);
-            return new ImportedIdTuple(applicationDTO.id(), createdApplicationEntity.getId());
-        }).orElseThrow(() ->
-            // somehow we could not import given application to vacation type with origin Id = applicationDTO.vacationTypeId()
-            new IllegalStateException("Could not find vacation type with id " + applicationDTO.vacationTypeId()))
+                final ApplicationEntity createdApplicationEntity = importApplication(applicationDTO, vacationTypeTuple.createdVacationType);
+                importApplicationComments(applicationDTO.applicationComments(), createdApplicationEntity);
+                return new ImportedIdTuple(applicationDTO.id(), createdApplicationEntity.getId());
+            }).orElseThrow(() ->
+                // somehow we could not import given application to vacation type with origin Id = applicationDTO.vacationTypeId()
+                new IllegalStateException("Could not find vacation type with id " + applicationDTO.vacationTypeId()))
         ).toList();
     }
 
     private List<VacationTypeTuple> importVacationTypes(ApplicationBackupDTO applications) {
-        return applications.vacationTypes().stream().map(vacationType -> {
-            VacationTypeEntity createdVacationType = vacationTypeImportService.importVacationType(vacationType.toVacationType());
-            return new VacationTypeTuple(vacationType.id(), createdVacationType);
-        }).toList();
+        return applications.vacationTypes().stream()
+            .map(vacationType -> {
+                final VacationTypeEntity createdVacationType = vacationTypeImportService.importVacationType(vacationType.toVacationType());
+                return new VacationTypeTuple(vacationType.id(), createdVacationType);
+            })
+            .toList();
     }
 
     private void importApplicationComments(List<ApplicationCommentDTO> applicationComments, ApplicationEntity createdApplicationEntity) {
@@ -72,10 +77,12 @@ class ApplicationRestoreService {
     }
 
     private ApplicationEntity importApplication(ApplicationDTO applicationDTO, VacationTypeEntity createdVacationType) {
-        final List<HolidayReplacementEntity> holidayReplacements = applicationDTO.holidayReplacements().stream().map(replacementDTO -> {
-            final Person person = getPerson(replacementDTO.externalId());
-            return replacementDTO.toHolidayReplacementEntity(person);
-        }).toList();
+        final List<HolidayReplacementEntity> holidayReplacements = applicationDTO.holidayReplacements().stream()
+            .map(replacementDTO -> {
+                final Person person = getPerson(replacementDTO.externalId());
+                return replacementDTO.toHolidayReplacementEntity(person);
+            })
+            .toList();
 
         final Person person = getPerson(applicationDTO.personExternalId());
         final Person applier = getPerson(applicationDTO.applierExternalId());

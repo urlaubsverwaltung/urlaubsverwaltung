@@ -77,10 +77,15 @@ class CalendarsRestoreService {
     }
 
     private Department getDepartment(List<DepartmentDTO> departments, Long originalDepartmentId) {
-        return departments.stream().filter(departmentDTO -> departmentDTO.id().equals(originalDepartmentId)).findFirst().flatMap(departmentDTO -> departmentService.getDepartmentByName(departmentDTO.name())).orElseThrow(() -> new IllegalArgumentException("Could not restore department calendar because the department with originalId=%s does not exist - import that department first!".formatted(originalDepartmentId)));
+        return departments.stream()
+            .filter(departmentDTO -> departmentDTO.id().equals(originalDepartmentId))
+            .findFirst()
+            .flatMap(departmentDTO -> departmentService.getDepartmentByName(departmentDTO.name()))
+            .orElseThrow(() -> new IllegalArgumentException("Could not restore department calendar because the department with originalId=%s does not exist - import that department first!".formatted(originalDepartmentId)));
     }
 
     private Person getPerson(String externalId) {
-        return personService.getPersonByUsername(externalId).orElseThrow(() -> new IllegalArgumentException("Person with username=%s does not exist".formatted(externalId)));
+        return personService.getPersonByUsername(externalId)
+            .orElseThrow(() -> new IllegalArgumentException("Person with username=%s does not exist".formatted(externalId)));
     }
 }

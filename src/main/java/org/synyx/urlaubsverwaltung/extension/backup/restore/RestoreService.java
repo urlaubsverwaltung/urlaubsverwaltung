@@ -41,11 +41,11 @@ class RestoreService {
         settingsRestoreService.restore(backupToRestore.settings());
         personRestoreService.restore(backupToRestore.persons());
         overtimeRestoreService.restore(backupToRestore.overtimes());
-        List<ImportedIdTuple> createdSicknotes = sickNoteRestoreService.restore(backupToRestore.sickNotes());
 
-        List<ImportedIdTuple> createdApplications = applicationRestoreService.restore(backupToRestore.applications());
-
+        final List<ImportedIdTuple> createdApplications = applicationRestoreService.restore(backupToRestore.applications());
+        final List<ImportedIdTuple> createdSicknotes = sickNoteRestoreService.restore(backupToRestore.sickNotes());
         calendarIntegrationRestoreService.restore(backupToRestore.calendarIntegration(), createdApplications, createdSicknotes);
+
         departmentRestoreService.restore(backupToRestore.departments());
         calendarsRestoreService.restore(backupToRestore.calendars(), backupToRestore.departments());
         LOG.info("Finished restoring data");

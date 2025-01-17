@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.extension.backup.backup;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.backup.model.ApplicationBackupDTO;
@@ -20,11 +19,14 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 @ConditionalOnBackupCreateEnabled
 class BackupDataCollectionService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BackupDataCollectionService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final String applicationVersion;
     private final TenantSupplier tenantSupplier;
@@ -38,7 +40,17 @@ class BackupDataCollectionService {
     private final OvertimeDataCollectionService overtimeDataCollectionService;
     private final PersonDataCollectionService personDataCollectionService;
 
-    BackupDataCollectionService(@Value("${info.app.version}") String applicationVersion, TenantSupplier tenantSupplier, PersonService personService, CalendarIntegrationDataCollectionService calendarIntegrationDataCollectionService, CalendarDataCollectionService calendarDataCollectionService, SettingsDataCollectionService settingsDataCollectionService, DepartmentDataCollectionService departmentDataCollectionService, ApplicationDataCollectionService applicationDataCollectionService, SickNoteDataCollectionService sickNoteDataCollectionService, OvertimeDataCollectionService overtimeDataCollectionService, PersonDataCollectionService personDataCollectionService) {
+    BackupDataCollectionService(@Value("${info.app.version}") String applicationVersion,
+                                TenantSupplier tenantSupplier,
+                                PersonService personService,
+                                CalendarIntegrationDataCollectionService calendarIntegrationDataCollectionService,
+                                CalendarDataCollectionService calendarDataCollectionService,
+                                SettingsDataCollectionService settingsDataCollectionService,
+                                DepartmentDataCollectionService departmentDataCollectionService,
+                                ApplicationDataCollectionService applicationDataCollectionService,
+                                SickNoteDataCollectionService sickNoteDataCollectionService,
+                                OvertimeDataCollectionService overtimeDataCollectionService,
+                                PersonDataCollectionService personDataCollectionService) {
         this.applicationVersion = applicationVersion;
         this.tenantSupplier = tenantSupplier;
         this.personService = personService;
@@ -75,7 +87,7 @@ class BackupDataCollectionService {
 
         LOG.info("Collected data for backup");
 
-        return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, persons, overtimes, sickNotes, applications, departments, calendars, calendarIntegration, settings);
+        return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, persons, overtimes, sickNotes,
+            applications, departments, calendars, calendarIntegration, settings);
     }
-
 }

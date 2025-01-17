@@ -25,11 +25,15 @@ class CalendarIntegrationDataCollectionService {
     }
 
     CalendarIntegrationBackupDTO collectCalendarIntegration() {
-        return getCalendarSettings().map(existingSettings -> {
-            final CalendarIntegrationSettingsDTO calendarIntegrationSettingsDTO = new CalendarIntegrationSettingsDTO(existingSettings.getId(), existingSettings.getProvider(), GoogleCalendarSettingsDTO.of(existingSettings.getGoogleCalendarSettings()));
-            final List<AbsenceMappingDTO> absenceMappings = absenceMappingExportService.getAbsenceMappings().stream().map(AbsenceMappingDTO::of).toList();
-            return new CalendarIntegrationBackupDTO(calendarIntegrationSettingsDTO, absenceMappings);
-        }).orElse(null);
+        return getCalendarSettings()
+            .map(this::createCalendarIntegrationBackupDTO)
+            .orElse(null);
+    }
+
+    private CalendarIntegrationBackupDTO createCalendarIntegrationBackupDTO(CalendarSettings existingSettings) {
+        final CalendarIntegrationSettingsDTO calendarIntegrationSettingsDTO = new CalendarIntegrationSettingsDTO(existingSettings.getId(), existingSettings.getProvider(), GoogleCalendarSettingsDTO.of(existingSettings.getGoogleCalendarSettings()));
+        final List<AbsenceMappingDTO> absenceMappings = absenceMappingExportService.getAbsenceMappings().stream().map(AbsenceMappingDTO::of).toList();
+        return new CalendarIntegrationBackupDTO(calendarIntegrationSettingsDTO, absenceMappings);
     }
 
     private Optional<CalendarSettings> getCalendarSettings() {
@@ -39,5 +43,4 @@ class CalendarIntegrationDataCollectionService {
             return Optional.empty();
         }
     }
-
 }

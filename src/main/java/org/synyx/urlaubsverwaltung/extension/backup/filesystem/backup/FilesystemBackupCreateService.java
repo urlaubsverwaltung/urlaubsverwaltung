@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.extension.backup.filesystem.backup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.synyx.urlaubsverwaltung.extension.backup.backup.BackupCreateService;
 import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
 
@@ -13,9 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 class FilesystemBackupCreateService implements BackupCreateService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FilesystemBackupCreateService.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ObjectMapper objectMapper;
     private final FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties;

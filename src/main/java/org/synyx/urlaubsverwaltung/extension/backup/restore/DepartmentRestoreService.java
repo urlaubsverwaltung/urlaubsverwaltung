@@ -37,6 +37,9 @@ class DepartmentRestoreService {
      * @return
      */
     private List<Person> getPersons(List<String> externalIds) {
-        return externalIds.stream().map(personService::getPersonByUsername).filter(Optional::isPresent).map(Optional::get).toList();
+        return externalIds.stream()
+            .map(personService::getPersonByUsername)
+            .<Person>mapMulti(Optional::ifPresent)
+            .toList();
     }
 }
