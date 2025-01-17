@@ -14,11 +14,10 @@ public record DepartmentDTO(Long id, String name, String description, LocalDate 
                             List<String> externalIdsOfMembers) {
 
     public static List<DepartmentMemberEmbeddable> toDepartmentMembers(List<Person> members) {
-        final Instant accessionDate = Instant.now();
         return members.stream().map(person -> {
             final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
             memberEmbeddable.setPerson(person);
-            memberEmbeddable.setAccessionDate(accessionDate);
+            memberEmbeddable.setAccessionDate(Instant.parse("1970-01-01T00:00:00.000Z"));
             return memberEmbeddable;
         }).toList();
     }
@@ -32,8 +31,10 @@ public record DepartmentDTO(Long id, String name, String description, LocalDate 
         departmentEntity.setTwoStageApproval(this.twoStageApproval());
         departmentEntity.setDepartmentHeads(departmentHeads);
         departmentEntity.setSecondStageAuthorities(secondStageAuthorities);
-        List<DepartmentMemberEmbeddable> departmentMemberEmbeddables = toDepartmentMembers(members);
+
+        final List<DepartmentMemberEmbeddable> departmentMemberEmbeddables = toDepartmentMembers(members);
         departmentEntity.setMembers(departmentMemberEmbeddables);
+
         return departmentEntity;
     }
 }
