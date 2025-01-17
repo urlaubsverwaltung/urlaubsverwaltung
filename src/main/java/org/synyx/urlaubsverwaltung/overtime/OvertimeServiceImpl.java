@@ -178,6 +178,11 @@ class OvertimeServiceImpl implements OvertimeService {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    @Override
+    public List<Overtime> getAllOvertimesByPersonId(Long personId) {
+        return overtimeRepository.findAllByPersonId(personId);
+    }
+
     private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, int year) {
 
         final LocalDate lastDayOfLastYear = Year.of(year - 1).atDay(1).with(lastDayOfYear());

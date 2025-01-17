@@ -91,7 +91,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return person;
     }
 
-    void setPerson(Person person) {
+    public void setPerson(Person person) {
         this.person = person;
     }
 
@@ -99,7 +99,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return applier;
     }
 
-    void setApplier(Person applier) {
+    public void setApplier(Person applier) {
         this.applier = applier;
     }
 
@@ -107,7 +107,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return sickNoteType;
     }
 
-    void setSickNoteType(SickNoteType sickNoteType) {
+    public void setSickNoteType(SickNoteType sickNoteType) {
         this.sickNoteType = sickNoteType;
     }
 
@@ -115,7 +115,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return this.startDate;
     }
 
-    void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
@@ -123,7 +123,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return this.endDate;
     }
 
-    void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -131,7 +131,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return dayLength;
     }
 
-    void setDayLength(DayLength dayLength) {
+    public void setDayLength(DayLength dayLength) {
         this.dayLength = dayLength;
     }
 
@@ -139,7 +139,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return this.aubStartDate;
     }
 
-    void setAubStartDate(LocalDate aubStartDate) {
+    public void setAubStartDate(LocalDate aubStartDate) {
         this.aubStartDate = aubStartDate;
     }
 
@@ -147,7 +147,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return this.aubEndDate;
     }
 
-    void setAubEndDate(LocalDate aubEndDate) {
+    public void setAubEndDate(LocalDate aubEndDate) {
         this.aubEndDate = aubEndDate;
     }
 
@@ -155,7 +155,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return this.lastEdited;
     }
 
-    void setLastEdited(LocalDate lastEdited) {
+    public void setLastEdited(LocalDate lastEdited) {
         this.lastEdited = lastEdited;
     }
 
@@ -163,7 +163,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return endOfSickPayNotificationSend;
     }
 
-    void setEndOfSickPayNotificationSend(LocalDate endOfSickPayNotificationSend) {
+    public void setEndOfSickPayNotificationSend(LocalDate endOfSickPayNotificationSend) {
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
     }
 
@@ -171,7 +171,7 @@ public class SickNoteEntity extends AbstractTenantAwareEntity {
         return status;
     }
 
-    void setStatus(SickNoteStatus status) {
+    public void setStatus(SickNoteStatus status) {
         this.status = status;
     }
 

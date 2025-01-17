@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Embeddable
-class DepartmentMemberEmbeddable {
+public class DepartmentMemberEmbeddable {
 
     @ManyToOne
     @JoinColumn(name = "members_id", nullable = false)

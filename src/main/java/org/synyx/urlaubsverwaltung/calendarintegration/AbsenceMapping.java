@@ -39,7 +39,7 @@ public class AbsenceMapping extends AbstractTenantAwareEntity {
         /* OK */
     }
 
-    AbsenceMapping(Long absenceId, AbsenceMappingType absenceMappingType, String eventId) {
+    public AbsenceMapping(Long absenceId, AbsenceMappingType absenceMappingType, String eventId) {
         this.absenceId = absenceId;
         this.absenceMappingType = absenceMappingType;
         this.eventId = eventId;

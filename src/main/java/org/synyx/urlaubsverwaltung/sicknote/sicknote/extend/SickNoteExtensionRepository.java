@@ -20,4 +20,6 @@ interface SickNoteExtensionRepository extends CrudRepository<SickNoteExtensionEn
         where e.status = :status and s.person.id in :personIds
         """)
     List<SickNoteExtensionProjection> findAllByStatusAndPersonIsIn(@Param("status") SickNoteExtensionStatus status, @Param("personIds") Collection<Long> personIds);
+
+    List<SickNoteExtensionEntity> findAllBySickNoteId(Long sickNoteId);
 }

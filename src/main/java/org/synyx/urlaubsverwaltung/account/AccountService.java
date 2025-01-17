@@ -54,4 +54,12 @@ public interface AccountService {
      * @param person the person whose account should be deleted
      */
     void deleteAllByPerson(Person person);
+
+    /**
+     * Get all {@link Account}s for the given person.
+     *
+     * @param person to get the holidays accounts for
+     * @return {@link Account}s that matches the given parameters.
+     */
+    List<Account> getHolidaysAccountsByPerson(Person person);
 }

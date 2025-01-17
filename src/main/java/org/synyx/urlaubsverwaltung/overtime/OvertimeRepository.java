@@ -44,6 +44,8 @@ interface OvertimeRepository extends CrudRepository<Overtime, Long> {
 
     List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 
+    List<Overtime> findAllByPersonId(Long personId);
+
     @Modifying
     void deleteByPerson(Person personId);
 }

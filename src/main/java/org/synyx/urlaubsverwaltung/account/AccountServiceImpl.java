@@ -117,6 +117,16 @@ class AccountServiceImpl implements AccountService {
         accountRepository.deleteByPerson(person);
     }
 
+    @Override
+    public List<Account> getHolidaysAccountsByPerson(Person person) {
+
+        final CachedSupplier<Boolean> expireGlobally = new CachedSupplier<>(this::remainingVacationDaysExpireGlobally);
+
+        return accountRepository.findAllByPersonId(person.getId())
+            .stream()
+            .map(accountEntity -> this.mapToAccount(accountEntity, expireGlobally.get(), globallyExpiryDate(Year.of(accountEntity.getYear())))).toList();
+    }
+
     private boolean remainingVacationDaysExpireGlobally() {
         return settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
     }

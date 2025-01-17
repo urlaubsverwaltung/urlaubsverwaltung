@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.user;
 
-enum Theme {
+public enum Theme {
     /**
      * adapt theme to system setting
      */

@@ -57,11 +57,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
         maybePerson.flatMap(this::getLocale).ifPresent(this::setLocale);
     }
 
-    UserSettings getUserSettingsForPerson(Person person) {
-        final UserSettingsEntity entity = findForPersonOrGetDefault(person);
-        return toUserSettings(entity);
-    }
-
     Optional<Theme> findThemeForUsername(String username) {
         return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getTheme);
     }
@@ -130,6 +125,12 @@ class UserSettingsServiceImpl implements UserSettingsService {
             ));
         persons.forEach(person -> personLocale.computeIfAbsent(person, unused -> Locale.GERMAN));
         return personLocale;
+    }
+
+    @Override
+    public UserSettings getUserSettingsForPerson(Person person) {
+        final UserSettingsEntity entity = findForPersonOrGetDefault(person);
+        return toUserSettings(entity);
     }
 
     private static Locale getEffectiveLocale(UserSettingsEntity userSettingsEntity) {

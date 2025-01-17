@@ -331,6 +331,19 @@ class DepartmentCalendarServiceTest {
         verify(absenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15));
     }
 
+    @Test
+    void getCalendarsForPersonReturnsCalendarsForGivenPersonId() {
+        Long personId = 1L;
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+
+        when(departmentCalendarRepository.findByPersonId(personId)).thenReturn(List.of(departmentCalendar));
+
+        List<DepartmentCalendar> result = sut.getCalendarsForPerson(personId);
+
+        assertThat(result).hasSize(1).containsExactly(departmentCalendar);
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
