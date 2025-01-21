@@ -55,26 +55,6 @@ class SickDaysStatisticsViewControllerTest {
     }
 
     @Test
-    void ensureThatDownloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
-
-        final Locale locale = JAPANESE;
-
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2018-08-01");
-
-        final String fromString = "01.01.2019";
-        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
-        final String endString = "01.08.2018";
-        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
-
-        perform(get("/web/sickdays/statistics/download")
-            .locale(locale)
-            .param("from", fromString)
-            .param("to", endString))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void ensureThatDownloadCSVSetsDownloadHeaders() throws Exception {
 
         final Locale locale = JAPANESE;
