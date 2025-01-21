@@ -253,6 +253,9 @@
 
       <turbo-frame id="frame-statistics">
         <th:block th:if="${turboFrameRequested}">
+          <turbo-stream target="statistics-csv-download-link-all" action="replace">
+            <template th:insert="~{::#statistics-csv-download-link-all}"></template>
+          </turbo-stream>
           <turbo-stream target="statistics-csv-download-link" action="replace">
             <template th:insert="~{::#statistics-csv-download-link}"></template>
           </turbo-stream>

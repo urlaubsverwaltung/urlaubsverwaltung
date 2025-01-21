@@ -47,10 +47,13 @@ class SickDaysStatisticsViewController {
     private final Clock clock;
 
     @Autowired
-    SickDaysStatisticsViewController(SickDaysStatisticsService sickDaysStatisticsService,
-                                     SickDaysDetailedStatisticsCsvExportService sickDaysDetailedStatisticsCsvExportService,
-                                     PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
-
+    SickDaysStatisticsViewController(
+        SickDaysStatisticsService sickDaysStatisticsService,
+        SickDaysDetailedStatisticsCsvExportService sickDaysDetailedStatisticsCsvExportService,
+        PersonService personService,
+        DateFormatAware dateFormatAware,
+        Clock clock
+    ) {
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.sickDaysDetailedStatisticsCsvExportService = sickDaysDetailedStatisticsCsvExportService;
         this.personService = personService;
@@ -60,20 +63,16 @@ class SickDaysStatisticsViewController {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping("/download")
-    public ResponseEntity<ByteArrayResource> downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
-                                                         @RequestParam(value = "to", defaultValue = "") String to,
-                                                         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
-                                                         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                                                         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
-                                                         Locale locale) {
+    public ResponseEntity<ByteArrayResource> downloadCSV(
+        @RequestParam(value = "from", defaultValue = "") String from,
+        @RequestParam(value = "to", defaultValue = "") String to,
+        @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+        Locale locale
+    ) {
 
         final FilterPeriod period = toFilterPeriod(from, to, locale);
-
-        // NOTE: Not supported at the moment
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
-            return ResponseEntity.badRequest().build();
-        }
-
         final Person signedInUser = personService.getSignedInUser();
 
         final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
