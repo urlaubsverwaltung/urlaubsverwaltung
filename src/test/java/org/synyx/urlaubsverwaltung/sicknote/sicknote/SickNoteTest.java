@@ -23,6 +23,8 @@ import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 class SickNoteTest {
@@ -33,7 +35,7 @@ class SickNoteTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, JUNE, 1),
             LocalDate.of(2022, JUNE, 30),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
@@ -56,7 +58,7 @@ class SickNoteTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, JUNE, 1),
             LocalDate.of(2022, JUNE, 30),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
@@ -69,6 +71,29 @@ class SickNoteTest {
 
         final BigDecimal actual = sickNote.getWorkDays(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30));
 
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
+    void ensureWorkingTimeForHalfDaySickNoteAtHalfPublicHoliday(DayLength givenDayLength) {
+
+        final LocalDate christmas = LocalDate.of(2022, DECEMBER, 24);
+        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+            christmas,
+            christmas,
+            date -> new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY)
+        );
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(givenDayLength)
+            .startDate(christmas)
+            .endDate(christmas)
+            .workingTimeCalendar(workingTimeCalendar)
+            .build();
+
+        final BigDecimal actual = sickNote.getWorkDays(christmas, christmas);
         assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
     }
 
@@ -104,7 +129,7 @@ class SickNoteTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, JUNE, 1),
             LocalDate.of(2022, JUNE, 30),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
@@ -129,7 +154,7 @@ class SickNoteTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, JUNE, 1),
             LocalDate.of(2022, JUNE, 30),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
@@ -279,7 +304,7 @@ class SickNoteTest {
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
             LocalDate.of(2022, JANUARY, 1),
             LocalDate.of(2022, DECEMBER, 31),
-            (date) -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
         );
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
