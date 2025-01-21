@@ -4,6 +4,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
 
+import static org.apache.commons.lang3.StringUtils.normalizeSpace;
+
 public class PageableSearchQuery {
 
     private final Pageable pageable;
@@ -23,7 +25,7 @@ public class PageableSearchQuery {
     }
 
     public String getQuery() {
-        return query;
+        return normalizeSpace(query);
     }
 
     @Override
