@@ -70,18 +70,20 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
     expect(document.body.innerHTML).not.toContain("most awesome content");
   });
 
-  it("fetches info for firstYear and also for secondYear", async function () {
+  it("fetches info for all years, async function", async function () {
     fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31&length=FULL", {
       workDays: "1.0",
     });
-
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-01-07&length=FULL", {
+    fetchMock.mock("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-12-31&length=FULL", {
       workDays: "2.0",
+    });
+    fetchMock.mock("/url-prefix/persons/1/workdays?from=2023-01-01&to=2023-01-07&length=FULL", {
+      workDays: "3.0",
     });
 
     const urlPrefix = "/url-prefix";
     const startDate = new Date("2021-12-20");
-    const toDate = new Date("2022-01-07");
+    const toDate = new Date("2023-01-07");
     const dayLength = "FULL";
     const personId = "1";
     const elementSelector = "#awesome-element";
@@ -90,7 +92,7 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
 
     await sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(document.querySelector("#awesome-element").innerHTML).toEqual("<br>(1 in 2021 und 2 in 2022)");
+    expect(document.querySelector("#awesome-element").innerHTML).toEqual("<br>(1 in 2021, 2 in 2022 und 3 in 2023)");
   });
 
   it("does not add 'length' to requested url when dayLength is unknown", async function () {
