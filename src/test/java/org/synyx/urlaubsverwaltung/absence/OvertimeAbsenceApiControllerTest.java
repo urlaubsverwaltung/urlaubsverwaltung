@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
