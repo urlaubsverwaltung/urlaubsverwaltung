@@ -375,24 +375,11 @@ public class Application {
     }
 
     public Map<Integer, Duration> getHoursByYear() {
-        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
-            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + getVacationType());
-        }
-        return this.splitByYear().stream().collect(Collectors.toMap(
-            dateRangeForYear -> dateRangeForYear.startDate().getYear(),
-            dateRange -> {
-                final DateRange overtimeDateRange = new DateRange(startDate, endDate);
-                final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
-
-                final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(ZERO);
-                final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-                final BigDecimal secondsProRata = toFormattedDecimal(overtimeReductionHours)
-                    .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-                    .multiply(toFormattedDecimal(durationOfOverlap))
-                    .setScale(0, HALF_EVEN);
-
-                return DecimalConverter.toDuration(secondsProRata);
-            }));
+        return this.splitByYear().stream()
+            .collect(toMap(
+                dateRangeForYear -> dateRangeForYear.startDate().getYear(),
+                this::getOvertimeReductionShareFor
+            ));
     }
 
     public void setHours(Duration hours) {
