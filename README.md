@@ -29,7 +29,7 @@ Dann steige über unsere [Landingpage] direkt in das [Demo-System] ein.
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe].  
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es eine [Hilfe].  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
 [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
@@ -319,7 +319,7 @@ und die Anwendung mit dem Profil `demodata` zu starten:
 java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.jar
 ```
 
-Auf diese Weise wird die Anwendung mit einer PostgreSQL-Datenbankmanagementsystem gestartet und Demodaten generiert.
+Auf diese Weise wird die Anwendung mit einem PostgreSQL-Datenbankmanagementsystem gestartet und Demodaten generiert.
 
 Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
@@ -431,7 +431,7 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 * `npm run build`
   * baut optimierte, minifizierte Assets
-  * Info: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
+  * Information: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
 * `npm run build:dev`
   * baut nicht minifizierte Assets
 * `npm run build:watch`
@@ -441,7 +441,7 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `assets-manifest.json` angelegt.
 Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
-in den Html-Seiten integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+in den Html-Seiten integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mithilfe der
 Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit automatisiert werden.
 
 ```html
@@ -461,9 +461,9 @@ spring:
         strategy:
           content:
             enabled: 'false'
-        cache:
-          cachecontrol:
-            max-age: '0'
+      cache:
+        cachecontrol:
+        max-age: '0'
 ```
 
 #### Icons
