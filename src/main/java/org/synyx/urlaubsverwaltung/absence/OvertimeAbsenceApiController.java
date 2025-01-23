@@ -82,10 +82,7 @@ public class OvertimeAbsenceApiController {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Absence is of category OVERTIME, but duration is not know.");
         }
 
-        final var partitionedDurations = applicationService.partitionOvertimeReduction(application);
-        final var durationShares = partitionedDurations.entrySet().stream()
-            .map(e -> new OvertimeAbsenceDto.DatedDurationShareDto(e.getKey(), e.getValue())).toList();
-        return new OvertimeAbsenceDto(applicationId, application.getHours(), durationShares);
+        return new OvertimeAbsenceDto(applicationId, application.getHours(), application.getOvertimeReductionShares());
     }
 
     private Application getApplicationOfPerson(Long personId, Long absenceId) {

@@ -17,11 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
@@ -316,18 +318,32 @@ public class Application {
         return hours;
     }
 
-    public Duration getOvertimeReductionShareFor(DateRange dateRange) {
-        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
-            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + getVacationType());
-        }
-        return getHoursForDateRange(dateRange);
+    /**
+     * Partition the overtime reduction duration of this application over all involved days.
+     * The sum of these mapped durations equals the duration of the application.
+     * This partitioning weights all days evenly  and doesn't account for half days, weekends etc.
+     *
+     * @return a mapping of durations to the days involved in this application, never {@code null}
+     */
+    public Map<LocalDate, Duration> getOvertimeReductionShares() {
+        return new DateRange(startDate, endDate).stream()
+            .collect(toMap(Function.identity(), this::getOvertimeReductionShareFor));
     }
 
-    private Duration getHoursForDateRange(DateRange dateRange) {
+    public Duration getOvertimeReductionShareFor(LocalDate date) {
+        return getOvertimeReductionShareFor(new DateRange(date, date));
+    }
+
+    public Duration getOvertimeReductionShareFor(DateRange dateRange) {
+
+        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
+            return Duration.ZERO;
+        }
+
         final DateRange overtimeDateRange = new DateRange(startDate, endDate);
         final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
 
-        final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(Duration.ZERO);
+        final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(ZERO);
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
         final BigDecimal secondsProRata = toFormattedDecimal(overtimeReductionHours)
             .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
@@ -364,7 +380,19 @@ public class Application {
         }
         return this.splitByYear().stream().collect(Collectors.toMap(
             dateRangeForYear -> dateRangeForYear.startDate().getYear(),
-            this::getHoursForDateRange));
+            dateRange -> {
+                final DateRange overtimeDateRange = new DateRange(startDate, endDate);
+                final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
+
+                final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(ZERO);
+                final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
+                final BigDecimal secondsProRata = toFormattedDecimal(overtimeReductionHours)
+                    .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+                    .multiply(toFormattedDecimal(durationOfOverlap))
+                    .setScale(0, HALF_EVEN);
+
+                return DecimalConverter.toDuration(secondsProRata);
+            }));
     }
 
     public void setHours(Duration hours) {
