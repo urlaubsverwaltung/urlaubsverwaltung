@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+IS_AMEND=$(ps -ocommand= -p $PPID | grep -e '--amend');
+
+if [ -n "$IS_AMEND" ]; then
+  exit 0;
+fi
+
+# Extract the current branch name
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# Identify the issue number from the branch name
+ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+')
+
+# Prepend the issue number to the commit message if found
+if [ -n "$ISSUE_NUMBER" ]; then
+    COMMIT_MSG=$(cat "$1")
+    echo -e "$COMMIT_MSG\n\ncloses #$ISSUE_NUMBER" > "$1"
+fi
