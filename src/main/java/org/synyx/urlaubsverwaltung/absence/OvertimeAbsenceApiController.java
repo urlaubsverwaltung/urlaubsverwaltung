@@ -84,7 +84,7 @@ public class OvertimeAbsenceApiController {
 
         final var partitionedDurations = applicationService.partitionOvertimeReduction(application);
         final var durationShares = partitionedDurations.entrySet().stream()
-            .map(e -> new DatedDurationShareDto(e.getKey(), e.getValue())).toList();
+            .map(e -> new OvertimeAbsenceDto.DatedDurationShareDto(e.getKey(), e.getValue())).toList();
         return new OvertimeAbsenceDto(applicationId, application.getHours(), durationShares);
     }
 
