@@ -1,7 +1,7 @@
 services:
 
   urlaubsverwaltung:
-    image: urlaubsverwaltung/urlaubsverwaltung:5.9.2
+    image: urlaubsverwaltung/urlaubsverwaltung:5.12.2
     network_mode: "host"
     restart: always
     environment:
@@ -61,7 +61,7 @@ services:
       - '8025:8025'
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.6
+    image: quay.io/keycloak/keycloak:26.1.0
     command: [ "start-dev", "--import-realm" ]
     environment:
       KEYCLOAK_ADMIN: admin
