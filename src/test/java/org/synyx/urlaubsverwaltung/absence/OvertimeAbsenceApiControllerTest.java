@@ -59,7 +59,6 @@ class OvertimeAbsenceApiControllerTest {
         application.setHours(duration);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
-        when(applicationService.partitionOvertimeReduction(application)).thenReturn(Map.of(date, duration));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())
@@ -95,7 +94,6 @@ class OvertimeAbsenceApiControllerTest {
         application.setHours(Duration.ofHours(8));
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
-        when(applicationService.partitionOvertimeReduction(application)).thenReturn(Map.of(startDate, Duration.ofHours(4), endDate, Duration.ofHours(4)));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())

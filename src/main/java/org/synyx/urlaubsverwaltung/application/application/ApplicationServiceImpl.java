@@ -129,11 +129,12 @@ class ApplicationServiceImpl implements ApplicationService {
         return getTotalOvertimeReductionOfPersonUntil(List.of(person), until).getOrDefault(person, Duration.ZERO);
     }
 
+    @Override
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
         final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until).stream()
             .map(applicationEntity -> {
-                Application application = toApplication(applicationEntity);
+                final Application application = toApplication(applicationEntity);
                 final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
                 final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod);
                 return Map.entry(application.getPerson(), overtimeReduction);
@@ -143,22 +144,6 @@ class ApplicationServiceImpl implements ApplicationService {
         return persons.stream()
             .map(person -> Map.entry(person, overtimeReductionByPerson.getOrDefault(person, Duration.ZERO)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private static Duration getOvertimeReductionShareFor(Application application, LocalDate date) {
-        return application.getOvertimeReductionShareFor(new DateRange(date, date));
-    }
-
-    public Map<LocalDate, Duration> partitionOvertimeReduction(Application application) {
-        if (application.getVacationType() == null || !OVERTIME.equals(application.getVacationType().getCategory())) {
-            throw new IllegalArgumentException("Vacation type must be " + OVERTIME + " but was " + application.getVacationType());
-        }
-        final Map<LocalDate, Duration> partitionedDuration = new HashMap<>();
-        final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-        for (LocalDate date : applicationDateRage.stream().toList()) {
-            partitionedDuration.put(date, getOvertimeReductionShareFor(application, date));
-        }
-        return partitionedDuration;
     }
 
     @Override
