@@ -15,4 +15,11 @@ class PageableSearchQueryTest {
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(mock(Pageable.class), query);
         assertThat(pageableSearchQuery.getQuery()).isEqualTo("Anne");
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Anne  Lore", " Anne        Lore     "})
+    void ensureToTrimDoubledWhitespacesForQueryString(final String query) {
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(mock(Pageable.class), query);
+        assertThat(pageableSearchQuery.getQuery()).isEqualTo("Anne Lore");
+    }
 }
