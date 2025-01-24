@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.util.Collections.max;
+import static java.util.Collections.min;
+import static java.util.List.of;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
@@ -48,18 +51,18 @@ public class SickDaysOverview {
 
     private BigDecimal getTotalDays(SickNote sickNote, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
 
-        final LocalDate start = maxDate(sickNote.getStartDate(), from);
-        final LocalDate end = minDate(sickNote.getEndDate(), to);
+        final LocalDate start = max(of((sickNote.getStartDate()), from));
+        final LocalDate end = min(of((sickNote.getEndDate()), to));
 
         return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), start, end, sickNote.getPerson());
     }
 
     private BigDecimal getDaysWithAUB(SickNote sickNote, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
 
-        final LocalDate start = maxDate(sickNote.getAubStartDate(), from);
-        final LocalDate end = minDate(sickNote.getAubEndDate(), to);
+        final LocalDate startAUB = max(of((sickNote.getAubStartDate()), from));
+        final LocalDate endAUB = min(of((sickNote.getAubEndDate()), to));
 
-        return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), start, end, sickNote.getPerson());
+        return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startAUB, endAUB, sickNote.getPerson());
     }
 
     public SickDays getSickDays() {
@@ -68,13 +71,5 @@ public class SickDaysOverview {
 
     public SickDays getChildSickDays() {
         return childSickDays;
-    }
-
-    private static LocalDate maxDate(LocalDate date, LocalDate date2) {
-        return date.isAfter(date2) ? date : date2;
-    }
-
-    private static LocalDate minDate(LocalDate date, LocalDate date2) {
-        return date.isBefore(date2) ? date : date2;
     }
 }

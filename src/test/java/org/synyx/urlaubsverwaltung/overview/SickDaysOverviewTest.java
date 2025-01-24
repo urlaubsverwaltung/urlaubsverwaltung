@@ -24,6 +24,49 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCE
 class SickDaysOverviewTest {
 
     @Test
+    void ensureGeneratesCorrectSickDaysOverviewWithSickNoteSpanningMultipleYears() {
+
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1L);
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("Krankmeldung");
+
+        final LocalDate startDate = LocalDate.of(2016, 1, 1);
+        final LocalDate endDate = LocalDate.of(2016, 12, 31);
+        final LocalDate aubStartDate = LocalDate.of(2016, 5, 5);
+        final LocalDate aubEndDate = LocalDate.of(2016, 6, 6);
+
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType)
+            .status(ACTIVE)
+            .startDate(startDate)
+            .endDate(endDate)
+            .aubStartDate(aubStartDate)
+            .aubEndDate(aubEndDate)
+            .build();
+
+        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
+
+        final BigDecimal workingDays = BigDecimal.valueOf(209);
+        when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(workingDays);
+
+        final BigDecimal workingDaysAub = BigDecimal.valueOf(100);
+        when(workDaysCountService.getWorkDaysCount(FULL, aubStartDate, aubEndDate, person)).thenReturn(workingDaysAub);
+
+        final LocalDate from = LocalDate.of(2015, 1, 1);
+        final LocalDate to = LocalDate.of(2017, 12, 31);
+        final SickDaysOverview sickDaysOverview = new SickDaysOverview(List.of(sickNote), workDaysCountService, from, to);
+        final SickDays sickDays = sickDaysOverview.getSickDays();
+        assertThat(sickDays.getDays())
+            .containsEntry("TOTAL", workingDays)
+            .containsEntry("WITH_AUB", workingDaysAub);
+    }
+
+    @Test
     void ensureGeneratesCorrectSickDaysOverview() {
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
