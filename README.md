@@ -41,8 +41,6 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
----
-  
 ## Betrieb
 
 ### Voraussetzungen
