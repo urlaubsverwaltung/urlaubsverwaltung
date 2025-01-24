@@ -19,7 +19,6 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
@@ -42,16 +41,25 @@ class UsedDaysOverviewTest {
     private WorkDaysCountService workDaysCountService;
 
     @Test
-    void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
+    void ensureGeneratesCorrectUsedDaysOverviewWithApplicationSpanningMultipleYears() {
 
-        final Application application = new Application();
-        application.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
-        application.setStartDate(LocalDate.of(2014, 10, 13));
-        application.setEndDate(LocalDate.of(2014, 10, 13));
-        application.setStatus(WAITING);
+        final Application holidayAllowed = anyApplication();
+        holidayAllowed.setVacationType(createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        holidayAllowed.setStartDate(LocalDate.of(2014, 3, 5));
+        holidayAllowed.setEndDate(LocalDate.of(2016, 12, 30));
+        holidayAllowed.setStatus(ALLOWED);
 
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new UsedDaysOverview(singletonList(application), 2015, workDaysCountService));
+        final BigDecimal workingDays = BigDecimal.valueOf(499);
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
+            any(LocalDate.class), any(Person.class)))
+            .thenReturn(workingDays);
+
+        final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(List.of(holidayAllowed), 2014, workDaysCountService);
+        final UsedDays holidayDays = usedDaysOverview.getHolidayDays();
+        assertThat(holidayDays.getDays())
+            .containsEntry("WAITING", ZERO)
+            .containsEntry("ALLOWED", workingDays)
+            .containsEntry("ALLOWED_CANCELLATION_REQUESTED", ZERO);
     }
 
     @Test
