@@ -43,7 +43,13 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
 ## Betrieb
 
+Wir bieten auf GitHub für das Open-Source-Projekt [urlaubsverwaltung](https://github.com/urlaubsverwaltung/urlaubsverwaltung) **keinen Support für den Betrieb** an.
+Für den Austausch mit anderen Personen steht jedoch der **Discussions-Bereich** unter
+[Operations](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/categories/operation) zur Verfügung.
+Dort können Erfahrungen geteilt und Fragen diskutiert werden.
 
+Falls ein **bezahlter Support** für die On-Premise-Installation oder den Betrieb gewünscht wird,
+kann man sich unter [urlaubsverwaltung.cloud/preis](https://urlaubsverwaltung.cloud/preis/) über die verfügbaren Support-Optionen informieren.
 
 ### Voraussetzungen
 
