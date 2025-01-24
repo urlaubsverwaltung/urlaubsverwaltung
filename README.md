@@ -8,10 +8,6 @@ zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krank
 
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
-**Version 4.x**  
-Diese Readme bezieht sich auf die 5er-Version der Urlaubsverwaltung. Wenn du Informationen zu der 4er-Version erhalten
-möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverwaltung/urlaubsverwaltung/tree/v4.x).
-
 * [Demo-System](#demo-system)
 * [FAQ](#faq)
 * [Berechtigungen](#berechtigungen)
@@ -20,31 +16,16 @@ möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverw
 * [Demodaten Modus](#demodaten-modus)
 * [Entwicklung](#entwicklung)
 
-
 ## Demo-System
 
 Möchtest du die Urlaubsverwaltung **ohne** eine langwierige **Registrierung** ausprobieren?  
 Dann steige über unsere [Landingpage] direkt in das [Demo-System] ein.
-
 
 ## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es eine [Hilfe].  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
 [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
-
-
-## 🎉 Version 5.x 
-
-Die Version 5.0.0 der Urlaubsverwaltung ist verfügbar!
-
-Wir haben größere Anpassungen an der Datenbank und den Security-Providern vorgenommen, sowie die Weichen für die weitere Entwicklung der 
-Urlaubsverwaltung stellen. Daher gibt es für den ein oder anderen nicht nur gute Nachrichten.
-
-* Keine Unterstützung für MariaDB und MySQL. Wir wechseln komplett auf [PostgreSQL]. Einen Migrationspfad ist bereits im [Migration-Guide-v5] vorhanden.
-* Wir haben die security provider LDAP und Active Directory entfernt und unterstützen dafür OIDC noch stärker.
-
-Alle Informationen zum Migrieren von 4.72.1 auf 5.0.0 findet ihr im [Migration-Guide-v5]
 
 ## Berechtigungen
 
