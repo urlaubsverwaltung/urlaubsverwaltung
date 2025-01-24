@@ -8,10 +8,6 @@ zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krank
 
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
-**Version 4.x**  
-Diese Readme bezieht sich auf die 5er-Version der Urlaubsverwaltung. Wenn du Informationen zu der 4er-Version erhalten
-möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverwaltung/urlaubsverwaltung/tree/v4.x).
-
 * [Demo-System](#demo-system)
 * [FAQ](#faq)
 * [Berechtigungen](#berechtigungen)
@@ -20,31 +16,16 @@ möchtest, dann findest du diese [im v4.x Branch](https://github.com/urlaubsverw
 * [Demodaten Modus](#demodaten-modus)
 * [Entwicklung](#entwicklung)
 
-
 ## Demo-System
 
 Möchtest du die Urlaubsverwaltung **ohne** eine langwierige **Registrierung** ausprobieren?  
 Dann steige über unsere [Landingpage] direkt in das [Demo-System] ein.
-
 
 ## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es eine [Hilfe].  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
 [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
-
-
-## 🎉 Version 5.x 
-
-Die Version 5.0.0 der Urlaubsverwaltung ist verfügbar!
-
-Wir haben größere Anpassungen an der Datenbank und den Security-Providern vorgenommen, sowie die Weichen für die weitere Entwicklung der 
-Urlaubsverwaltung stellen. Daher gibt es für den ein oder anderen nicht nur gute Nachrichten.
-
-* Keine Unterstützung für MariaDB und MySQL. Wir wechseln komplett auf [PostgreSQL]. Einen Migrationspfad ist bereits im [Migration-Guide-v5] vorhanden.
-* Wir haben die security provider LDAP und Active Directory entfernt und unterstützen dafür OIDC noch stärker.
-
-Alle Informationen zum Migrieren von 4.72.1 auf 5.0.0 findet ihr im [Migration-Guide-v5]
 
 ## Berechtigungen
 
@@ -60,9 +41,15 @@ beantragen/stornieren und Krankmeldungen pflegen
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
----
-  
 ## Betrieb
+
+Wir bieten auf GitHub für das Open-Source-Projekt [urlaubsverwaltung](https://github.com/urlaubsverwaltung/urlaubsverwaltung) **keinen Support für den Betrieb** an.
+Für den Austausch mit anderen Personen steht jedoch der **Discussions-Bereich** unter
+[Operations](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/categories/operation) zur Verfügung.
+Dort können Erfahrungen geteilt und Fragen diskutiert werden.
+
+Falls ein **bezahlter Support** für die On-Premise-Installation oder den Betrieb gewünscht wird,
+kann man sich unter [urlaubsverwaltung.cloud/preis](https://urlaubsverwaltung.cloud/preis/) über die verfügbaren Support-Optionen informieren.
 
 ### Voraussetzungen
 
@@ -70,23 +57,16 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 * [PostgreSQL Datenbank (v15.3)](https://www.postgresql.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
-### Download
-
-Die Anwendung steht als
-* [Java Archive (.jar)](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/latest)
-* [Docker Image](https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung)
-
-zur Verfügung.
-
-
 #### Installation .jar Variante
+
+Die Urlaubsverwaltung steht in den [Releases](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/latest) zur Verfügung.
 
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
 * Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .jar-Datei dorthin.
 * Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.yaml`, welche die Konfiguration für
-die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
- Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
+  die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
+  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
   
 Nach der [Konfiguration](#konfiguration) lässt sich die Urlaubsverwaltung starten.
 
@@ -97,11 +77,9 @@ java -jar urlaubsverwaltung.jar
 Falls es Probleme beim Starten der Anwendung gibt, ist es hilfreich das [Logging der Anwendung](#logging-konfigurieren)
 zu konfigurieren, damit erhält man mehr Informationen über den Fehlerzustand.
 
-
 #### Docker Variante
 
-Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example](.examples) zu finden.
-
+Alle Informationen zum Betrieb mit unserem [Docker Image](https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung) sind im Ordner [.example](.examples) zu finden.
 
 ### Konfiguration
 
@@ -214,11 +192,6 @@ spring:
 Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
 eingesehen werden.
 
-#### Benutzer-Synchronisation konfigurieren
-
-Personen werden nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
-sondern nur noch beim Login der jeweiligen Person in der Urlaubsverwaltung angelegt.
-
 #### Logging konfigurieren
 
 Sollten beim Starten der Anwendung Probleme auftreten, lässt sich in der Konfigurationsdatei eine
@@ -300,8 +273,6 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Windows Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-windows)
 
 
----
-  
 ## Demodaten-Modus
 
 ### Starten der Anwendung im Demodaten-Modus
@@ -339,7 +310,6 @@ Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, m
 in den [application-demodata.yaml](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.yaml)
 auf `false` gesetzt werden.
 
-
 ### Aufrufen der Anwendung
 
 Folgende Systeme sind erreichbar unter `localhost`
@@ -349,9 +319,8 @@ Folgende Systeme sind erreichbar unter `localhost`
 | [Urlaubsverwaltung](http://localhost:8080) | 8080 |
 | [Mailhog](http://localhost:8025)           | 8025 |
 | Mailhog SMTP                               | 1025 |
-  
----
-  
+
+
 ## Entwicklung
 
 Wenn du uns bei der **Entwicklung** der Urlaubsverwaltung **unterstützen** möchtest,
@@ -364,8 +333,7 @@ Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urla
 * [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-
-### Repository clonen
+### Repository
 
 Ohne GitHub Account
 
