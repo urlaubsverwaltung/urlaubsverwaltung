@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -148,8 +150,15 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
 
         final PageRequest pageRequest = PageRequest.of(0, 10);
         final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
-
         assertThat(actual.getContent()).containsExactly(peter, rosamund);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Peter mu", "Peter Muster"})
+    void ensureFindByPermissionsNotContainingAndByNiceNameContainingIgnoreCaseWithFirstAndLastName(final String query) {
+        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
+        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
+        assertThat(actual.getContent()).containsExactly(peter);
     }
 
     @Test
@@ -159,10 +168,16 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
         personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
         final Person mustafa = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
-
+        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "mu", PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(mustafa);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Peter mu", "Peter Muster"})
+    void ensureFindByPermissionsContainingAndNiceNameContainingIgnoreCaseWithFirstAndLastName(final String query) {
+        final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(INACTIVE));
+        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
+        assertThat(actual.getContent()).containsExactly(peter);
     }
 }
 

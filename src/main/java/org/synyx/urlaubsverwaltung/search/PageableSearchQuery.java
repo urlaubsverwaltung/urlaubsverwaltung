@@ -23,7 +23,7 @@ public class PageableSearchQuery {
     }
 
     public String getQuery() {
-        return query;
+        return query.strip().replaceAll("\\s+", " ");
     }
 
     @Override
