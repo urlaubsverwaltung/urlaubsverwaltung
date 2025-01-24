@@ -129,6 +129,7 @@ public interface ApplicationService {
      * @return list of all matching {@link Application}s
      */
     List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+
     /**
      * Get all {@link Application}s with specific states for the given date range
      *

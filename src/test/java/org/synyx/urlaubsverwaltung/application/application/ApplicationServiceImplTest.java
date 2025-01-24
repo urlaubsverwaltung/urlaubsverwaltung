@@ -577,10 +577,9 @@ class ApplicationServiceImplTest {
         batman.setId(1L);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setCategory(HOLIDAY);
+        vacationTypeEntity.setCategory(OVERTIME);
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
-        applicationEntity.setHours(Duration.ofHours(10));
         applicationEntity.setPerson(batman);
         applicationEntity.setStartDate(LocalDate.of(2022, 8, 10));
         applicationEntity.setEndDate(LocalDate.of(2022, 8, 12));
@@ -609,7 +608,7 @@ class ApplicationServiceImplTest {
         batman.setId(1L);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setCategory(HOLIDAY);
+        vacationTypeEntity.setCategory(OVERTIME);
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setPerson(batman);

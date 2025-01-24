@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
-import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -21,13 +20,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
-import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
-import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * Implementation of interface {@link ApplicationService}.
@@ -131,21 +128,15 @@ class ApplicationServiceImpl implements ApplicationService {
         return getTotalOvertimeReductionOfPersonUntil(List.of(person), until).getOrDefault(person, Duration.ZERO);
     }
 
+    @Override
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
         final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until).stream()
-            .map(application -> {
+            .map(applicationEntity -> {
+                final Application application = toApplication(applicationEntity);
                 final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
-                final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(applicationDateRage).map(DateRange::duration).orElse(Duration.ZERO);
-
-                final Duration overtimeReductionHours = Optional.ofNullable(application.getHours()).orElse(Duration.ZERO);
-
-                final BigDecimal overtimeReduction = toFormattedDecimal(overtimeReductionHours)
-                    .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
-                    .multiply(toFormattedDecimal(durationOfOverlap))
-                    .setScale(0, HALF_EVEN);
-                return Map.entry(application.getPerson(), DecimalConverter.toDuration(overtimeReduction));
+                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod);
+                return Map.entry(application.getPerson(), overtimeReduction);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
 
