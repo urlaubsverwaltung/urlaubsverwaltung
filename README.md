@@ -43,29 +43,24 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
 ## Betrieb
 
+
+
 ### Voraussetzungen
 
 * [JDK 21](https://adoptium.net)
 * [PostgreSQL Datenbank (v15.3)](https://www.postgresql.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
-### Download
-
-Die Anwendung steht als
-* [Java Archive (.jar)](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/latest)
-* [Docker Image](https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung)
-
-zur Verfügung.
-
-
 #### Installation .jar Variante
+
+Die Urlaubsverwaltung steht in den [Releases](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/latest) zur Verfügung.
 
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
 * Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .jar-Datei dorthin.
 * Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.yaml`, welche die Konfiguration für
-die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
- Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
+  die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
+  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
   
 Nach der [Konfiguration](#konfiguration) lässt sich die Urlaubsverwaltung starten.
 
@@ -76,11 +71,9 @@ java -jar urlaubsverwaltung.jar
 Falls es Probleme beim Starten der Anwendung gibt, ist es hilfreich das [Logging der Anwendung](#logging-konfigurieren)
 zu konfigurieren, damit erhält man mehr Informationen über den Fehlerzustand.
 
-
 #### Docker Variante
 
-Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example](.examples) zu finden.
-
+Alle Informationen zum Betrieb mit unserem [Docker Image](https://hub.docker.com/r/urlaubsverwaltung/urlaubsverwaltung) sind im Ordner [.example](.examples) zu finden.
 
 ### Konfiguration
 
@@ -193,11 +186,6 @@ spring:
 Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
 eingesehen werden.
 
-#### Benutzer-Synchronisation konfigurieren
-
-Personen werden nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
-sondern nur noch beim Login der jeweiligen Person in der Urlaubsverwaltung angelegt.
-
 #### Logging konfigurieren
 
 Sollten beim Starten der Anwendung Probleme auftreten, lässt sich in der Konfigurationsdatei eine
@@ -279,8 +267,6 @@ funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation ent
 * [Windows Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-windows)
 
 
----
-  
 ## Demodaten-Modus
 
 ### Starten der Anwendung im Demodaten-Modus
@@ -318,7 +304,6 @@ Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, m
 in den [application-demodata.yaml](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.yaml)
 auf `false` gesetzt werden.
 
-
 ### Aufrufen der Anwendung
 
 Folgende Systeme sind erreichbar unter `localhost`
@@ -328,9 +313,8 @@ Folgende Systeme sind erreichbar unter `localhost`
 | [Urlaubsverwaltung](http://localhost:8080) | 8080 |
 | [Mailhog](http://localhost:8025)           | 8025 |
 | Mailhog SMTP                               | 1025 |
-  
----
-  
+
+
 ## Entwicklung
 
 Wenn du uns bei der **Entwicklung** der Urlaubsverwaltung **unterstützen** möchtest,
@@ -343,8 +327,7 @@ Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urla
 * [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-
-### Repository clonen
+### Repository
 
 Ohne GitHub Account
 
