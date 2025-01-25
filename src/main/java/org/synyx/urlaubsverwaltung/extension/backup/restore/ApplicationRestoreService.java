@@ -71,7 +71,9 @@ class ApplicationRestoreService {
 
     private void importApplicationComments(List<ApplicationCommentDTO> applicationComments, ApplicationEntity createdApplicationEntity) {
         applicationComments.forEach(comment -> {
-            final Person author = getPerson(comment.externalId());
+            // it can happen that the comment autor was deleted in the past
+            // and so there will no person be found for the given externalId
+            final Person author = findOptionalPerson(comment.externalId());
             applicationCommentImportService.importApplicationComment(comment.toApplicationCommentEntity(author, createdApplicationEntity.getId()));
         });
     }
@@ -85,9 +87,11 @@ class ApplicationRestoreService {
             .toList();
 
         final Person person = getPerson(applicationDTO.personExternalId());
-        final Person applier = getPerson(applicationDTO.applierExternalId());
-        final Person boss = getPerson(applicationDTO.bossExternalId());
-        final Person canceller = getPerson(applicationDTO.cancellerExternalId());
+        // following persons can be null because
+        // in the past they were possibly deleted
+        final Person applier = findOptionalPerson(applicationDTO.applierExternalId());
+        final Person boss = findOptionalPerson(applicationDTO.bossExternalId());
+        final Person canceller = findOptionalPerson(applicationDTO.cancellerExternalId());
 
         final ApplicationEntity applicationEntity = applicationDTO.toApplicationEntity(createdVacationType, person, applier, boss, canceller, holidayReplacements);
 
@@ -101,7 +105,13 @@ class ApplicationRestoreService {
      * @return
      */
     private Person getPerson(String externalId) {
-        return externalId == null ? null : personService.getPersonByUsername(externalId).orElseThrow();
+        return personService.getPersonByUsername(externalId).orElseThrow();
+    }
+
+    private Person findOptionalPerson(String externalId) {
+        return Optional.ofNullable(externalId)
+            .flatMap(personService::getPersonByUsername)
+            .orElse(null);
     }
 
     private record VacationTypeTuple(Long idOfImport, VacationTypeEntity createdVacationType) {

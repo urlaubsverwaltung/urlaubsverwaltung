@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeImportServi
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @ConditionalOnBackupRestoreEnabled
@@ -66,13 +67,16 @@ class SickNoteRestoreService {
 
     public SickNoteEntity importSickNote(SickNoteDTO sickNoteDTO, SickNoteType sickNoteType) {
         final Person person = findPerson(sickNoteDTO.externalIdOfPerson());
-        final Person applier = findPerson(sickNoteDTO.externalIdOfApplier());
+        // is an optional field, so it can be null
+        final Person applier = findOptionalPerson(sickNoteDTO.externalIdOfApplier());
         return sickNoteImportService.importSickNote(sickNoteDTO.toSickNoteEntity(sickNoteType, person, applier));
     }
 
     private void importSickNoteComments(SickNoteDTO sickNoteDTO, SickNoteEntity importedSickNote) {
         sickNoteDTO.sickNoteComments().forEach(sickNoteCommentDTO -> {
-            final Person commentator = findPerson(sickNoteCommentDTO.externalIdOfSickNoteCommentAuthor());
+            // it can happen that the comment autor was deleted in the past
+            // and so there will no person be found for the given externalId
+            final Person commentator = findOptionalPerson(sickNoteCommentDTO.externalIdOfSickNoteCommentAuthor());
             sickNoteCommentImportService.importSickNoteComment(sickNoteCommentDTO.toSickNoteCommentEntity(commentator, importedSickNote.getId()));
         });
     }
@@ -87,8 +91,12 @@ class SickNoteRestoreService {
         return sickNoteTypeService.getSickNoteTypes().stream().filter(sickNoteType -> sickNoteType.getId().equals(idOfRestoredSickNoteType)).findFirst().orElseThrow();
     }
 
-    private Person findPerson(String sickNoteDTO) {
-        return personService.getPersonByUsername(sickNoteDTO).orElseThrow();
+    private Person findPerson(String externalId) {
+        return personService.getPersonByUsername(externalId).orElseThrow();
+    }
+
+    private Person findOptionalPerson(String externalId) {
+        return Optional.ofNullable(externalId).flatMap(personService::getPersonByUsername).orElse(null);
     }
 
 }

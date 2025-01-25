@@ -21,6 +21,8 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
+import static org.synyx.urlaubsverwaltung.extension.backup.backup.PersonHelper.optionalExternalUserId;
+
 @Service
 @ConditionalOnBackupCreateEnabled
 class SickNoteDataCollectionService {
@@ -56,13 +58,16 @@ class SickNoteDataCollectionService {
                             .map(history -> new SickNoteExtensionHistoryDTO(history.createdAt(), history.newEndDate(), history.isAub(), SickNoteExtensionStatusDTO.valueOf(history.status().name()))).toList();
 
                         final List<SickNoteCommentDTO> sickNoteCommentDTOs = sickNoteCommentService.getCommentsBySickNote(sickNote).stream()
-                            .map(sickNoteComment -> new SickNoteCommentDTO(sickNoteComment.getDate(), sickNoteComment.getText(), SickNoteCommentActionDTO.valueOf(sickNoteComment.getAction().name()), sickNoteComment.getPerson().getUsername()))
+                            .map(sickNoteComment -> new SickNoteCommentDTO(sickNoteComment.getDate(), sickNoteComment.getText(), SickNoteCommentActionDTO.valueOf(sickNoteComment.getAction().name()), optionalExternalUserId(sickNoteComment.getPerson())))
                             .toList();
+
+                        // is an optional field, so it can be null
+                        final String applierUsername = optionalExternalUserId(sickNote.getApplier());
 
                         return new SickNoteDTO(
                             sickNote.getId(),
                             sickNote.getPerson().getUsername(),
-                            sickNote.getApplier().getUsername(),
+                            applierUsername,
                             sickNote.getSickNoteType().getId(),
                             sickNote.getStartDate(),
                             sickNote.getEndDate(),

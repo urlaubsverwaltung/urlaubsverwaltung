@@ -62,7 +62,7 @@ class ApplicationDataCollectionService {
                             .toList();
 
                         final List<ApplicationCommentDTO> applicationComments = applicationCommentService.getCommentsByApplication(application).stream()
-                            .map(applicationComment -> new ApplicationCommentDTO(ApplicationCommentActionDTO.valueOf(applicationComment.action().name()), applicationComment.person().getUsername(), applicationComment.date(), applicationComment.text()))
+                            .map(applicationComment -> new ApplicationCommentDTO(ApplicationCommentActionDTO.valueOf(applicationComment.action().name()), optionalExternalUserId(applicationComment.person()), applicationComment.date(), applicationComment.text()))
                             .toList();
 
                         return createApplicationDTO(application, holidayReplacements, applicationComments);
@@ -102,12 +102,13 @@ class ApplicationDataCollectionService {
         List<ApplicationCommentDTO> applicationComments
     ) {
 
-        final String bossExternalId = application.getBoss() != null ? application.getBoss().getUsername() : null;
-        final String cancellerExternalId = application.getCanceller() != null ? application.getCanceller().getUsername() : null;
+        final String applierExternalId = optionalExternalUserId(application.getApplier());
+        final String bossExternalId = optionalExternalUserId(application.getBoss());
+        final String cancellerExternalId = optionalExternalUserId(application.getCanceller());
 
         return new ApplicationDTO(application.getId(),
             application.getPerson().getUsername(),
-            application.getApplier().getUsername(),
+            applierExternalId,
             bossExternalId,
             cancellerExternalId,
             application.isTwoStageApproval(),
@@ -147,5 +148,9 @@ class ApplicationDataCollectionService {
 
     private Map<Locale, String> toLabels(CustomVacationType customVacationType) {
         return customVacationType.labelsByLocale().values().stream().collect(toMap(VacationTypeLabel::locale, VacationTypeLabel::label));
+    }
+
+    private static String optionalExternalUserId(Person person) {
+        return person != null ? person.getUsername() : null;
     }
 }
