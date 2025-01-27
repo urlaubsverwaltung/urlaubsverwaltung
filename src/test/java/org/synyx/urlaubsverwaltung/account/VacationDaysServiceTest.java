@@ -39,7 +39,6 @@ import static java.time.Month.JUNE;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.Map.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
@@ -350,8 +349,8 @@ class VacationDaysServiceTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year.plusYears(1))).thenReturn(Map.of(person, new WorkingTimeCalendar(workingTimeByDate)));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear));
-        assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(new BigDecimal("12"));
-        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal("12"));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
     }
@@ -695,9 +694,10 @@ class VacationDaysServiceTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(
             Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY))
         );
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual =
-            sut.getVacationDaysLeft(List.of(account), Map.of(person, workingTimeCalendar), new DateRange(firstDayOfYear, lastDayOfYear));
+            sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
 
         final VacationDaysLeft expectedDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
