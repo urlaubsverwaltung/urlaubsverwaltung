@@ -174,7 +174,7 @@ public class VacationDaysService {
      * @param account to calculate used remaining vacation days of the year of the account
      * @return the used remaining vacation days
      */
-    public BigDecimal getUsedRemainingVacationDays(Account account) {
+    BigDecimal getUsedRemainingVacationDays(Account account) {
 
         if (account.getRemainingVacationDays().signum() > 0) {
 

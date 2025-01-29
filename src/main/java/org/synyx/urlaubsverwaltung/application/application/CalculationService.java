@@ -104,15 +104,12 @@ class CalculationService {
             return false;
         }
 
-        // we also need to look at the next year, because "remaining days" from this year may already have been booked then
-        // call accountService directly to avoid auto-creating a new account for next year
-        final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-        final BigDecimal vacationDaysAlreadyUsedNextYear = accountNextYear.map(vacationDaysService::getUsedRemainingVacationDays).orElse(ZERO);
-
         final Account account = maybeAccount.get();
+        final List<Account> holidayAccountsNextYear = accountService.getHolidaysAccount(year + 1, person).map(List::of).orElseGet(List::of);
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year), holidayAccountsNextYear);
 
-        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(year));
         final VacationDaysLeft vacationDaysLeft = accountHolidayAccountVacationDaysMap.get(account).vacationDaysYear();
+        final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysLeft.getVacationDaysUsedNextYear();
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
