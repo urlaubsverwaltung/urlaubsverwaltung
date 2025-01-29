@@ -12,11 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -24,18 +22,14 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -200,17 +194,5 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
     private String readPlainContent(Message message) throws MessagingException, IOException {
         return message.getContent().toString().replaceAll("\\r", "");
-    }
-
-    private static WorkingTimeCalendar.WorkingDayInformation fullWorkDay() {
-        return new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingTimeCalendar.WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }

@@ -5,12 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -18,10 +16,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -32,8 +28,6 @@ import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysReminderServiceTest {
@@ -362,17 +356,5 @@ class VacationDaysReminderServiceTest {
         person.setLastName("Muster");
         person.setId(42L);
         return person;
-    }
-
-    private static WorkingTimeCalendar.WorkingDayInformation fullWorkDay() {
-        return new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingTimeCalendar.WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }
