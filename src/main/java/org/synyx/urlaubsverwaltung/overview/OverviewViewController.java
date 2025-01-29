@@ -39,15 +39,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -153,7 +152,7 @@ public class OverviewViewController implements HasLaunchpad {
     private void prepareSickNoteList(Person person, int year, Model model) {
 
         final LocalDate from = Year.of(year).atDay(1);
-        final LocalDate to = getLastDayOfYear(year);
+        final LocalDate to = from.with(lastDayOfYear());
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, from, to);
 
@@ -169,8 +168,9 @@ public class OverviewViewController implements HasLaunchpad {
     private void prepareApplications(Person person, int year, Model model, Locale locale) {
 
         // get the person's applications for the given year
-        final List<Application> applications =
-            applicationService.getApplicationsForACertainPeriodAndPerson(Year.of(year).atDay(1), getLastDayOfYear(year), person);
+        final LocalDate startDate = Year.of(year).atDay(1);
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
         final List<OverviewApplicationDto> applicationsForLeave;
         final UsedDaysOverview usedDaysOverview;
@@ -183,7 +183,7 @@ public class OverviewViewController implements HasLaunchpad {
                 .map(application -> new ApplicationForLeave(application, workDaysCountService))
                 .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .map(applicationForLeave -> overviewApplicationDto(applicationForLeave, locale))
-                .collect(toList());
+                .toList();
             usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
         }
 

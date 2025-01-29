@@ -26,7 +26,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * This service calculates if a {@link Person} may apply for leave, i.e. if the person
@@ -81,8 +80,8 @@ class CalculationService {
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            final BigDecimal oldWorkDaysInOldYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), getLastDayOfYear(savedApplication.getStartDate().getYear()), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, getLastDayOfYear(yearOfStartDate), person).subtract(oldWorkDaysInOldYear);
+            final BigDecimal oldWorkDaysInOldYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getStartDate().with(lastDayOfYear()), savedApplication.getPerson())).orElse(ZERO);
+            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, startDate.with(lastDayOfYear()), person).subtract(oldWorkDaysInOldYear);
 
             // ensure that applying for leave for the period in the new year is possible
             final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), Year.of(savedApplication.getEndDate().getYear()).atDay(1), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);

@@ -52,7 +52,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
@@ -1000,16 +999,16 @@ class CalculationServiceTest {
 
         final Year year = Year.of(2022);
         final LocalDate validFrom2022 = year.atDay(1);
-        final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
+        final LocalDate validTo2022 = validFrom2022.with(lastDayOfYear());
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, validTo2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
-        final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
+        final LocalDate validTo2023 = validFrom2023.with(lastDayOfYear());
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, validTo2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
