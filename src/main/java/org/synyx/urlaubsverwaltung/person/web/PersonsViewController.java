@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -48,7 +49,6 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -146,7 +146,7 @@ public class PersonsViewController implements HasLaunchpad {
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
         final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
         model.addAttribute("personsPagination", personsPagination);
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList()));
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().toList());
 
         final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
         model.addAttribute("sortSelect", htmlSelectDto);
@@ -206,30 +206,41 @@ public class PersonsViewController implements HasLaunchpad {
         return Stream.of(relevantDepartments).flatMap(Set::stream)
             .distinct()
             .sorted(comparing(Department::getName))
-            .collect(toList());
+            .toList();
     }
 
     private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {
 
         final List<PersonDto> personDtos = new ArrayList<>(personPage.getContent().size());
+        final List<Person> persons = personPage.stream().toList();
+
+        final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
+        final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year+1, persons);
+
+        final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, Year.of(year), holidaysAccountsNextYear);
 
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
-            final Optional<Account> maybeHolidayAccount = accountService.getHolidaysAccount(year, person);
-            if (maybeHolidayAccount.isPresent()) {
-                final Account holidaysAccount = maybeHolidayAccount.get();
-                final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-                final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
+            final Optional<Account> maybeAccount = accountHolidayAccountVacationDaysMap.keySet().stream()
+                .filter(account -> account.getPerson().equals(person))
+                .findFirst();
 
-                final boolean doRemainingVacationDaysExpire = holidaysAccount.doRemainingVacationDaysExpire();
-                final LocalDate expiryDate = holidaysAccount.getExpiryDate();
+            if (maybeAccount.isPresent()) {
+
+                final Account account = maybeAccount.get();
+                final HolidayAccountVacationDays holidayAccountVacationDays = accountHolidayAccountVacationDaysMap.get(account);
+
+                final boolean doRemainingVacationDaysExpire = account.doRemainingVacationDaysExpire();
+                final LocalDate expiryDate = account.getExpiryDate();
+
+                final VacationDaysLeft vacationDaysLeft = holidayAccountVacationDays.vacationDaysYear();
                 final double remainingVacationDays = vacationDaysLeft.getRemainingVacationDaysLeft(now, doRemainingVacationDaysExpire, expiryDate).doubleValue();
 
                 personDtoBuilder
-                    .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
-                    .entitlementActual(holidaysAccount.getActualVacationDays().doubleValue())
-                    .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
+                    .entitlementYear(account.getAnnualVacationDays().doubleValue())
+                    .entitlementActual(account.getActualVacationDays().doubleValue())
+                    .entitlementRemaining(account.getRemainingVacationDays().doubleValue())
                     .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
                     .vacationDaysLeftRemaining(remainingVacationDays);
             }

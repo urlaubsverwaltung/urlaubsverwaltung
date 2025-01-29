@@ -3,10 +3,6 @@ package org.synyx.urlaubsverwaltung.util;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 public final class DateUtil {
 
@@ -45,15 +41,5 @@ public final class DateUtil {
      */
     public static boolean isNewYearsEve(LocalDate date) {
         return date.getDayOfMonth() == DAY_OF_NEW_YEARS_EVE && date.getMonth() == Month.DECEMBER;
-    }
-
-    /**
-     * Get the last day of the given year.
-     *
-     * @param year to get the last day of
-     * @return the last day of the given year
-     */
-    public static LocalDate getLastDayOfYear(int year) {
-        return ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
     }
 }

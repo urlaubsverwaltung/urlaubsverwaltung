@@ -6,8 +6,8 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,7 +17,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -26,7 +25,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -38,13 +36,13 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 @Service
 public class VacationDaysService {
 
-    private final WorkDaysCountService workDaysCountService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final ApplicationService applicationService;
     private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
-        this.workDaysCountService = workDaysCountService;
+    VacationDaysService(WorkingTimeCalendarService workingTimeCalendarService, ApplicationService applicationService, Clock clock) {
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.applicationService = applicationService;
         this.clock = clock;
     }
@@ -59,16 +57,22 @@ public class VacationDaysService {
      * @param account {@link Account}
      * @return total number of left vacation days
      */
-    BigDecimal calculateTotalLeftVacationDays(Account account) {
+    BigDecimal getTotalLeftVacationDays(Account account) {
         final LocalDate today = LocalDate.now(clock);
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return calculateTotalLeftVacationDays(firstDayOfYear, lastDayOfYear, today, account);
+        return getVacationDaysLeft(List.of(account), Year.of(account.getYear()))
+            .get(account)
+            .vacationDaysYear()
+            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
     }
 
-    private BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
-        return getVacationDaysLeft(start, end, account)
-            .getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate());
+    /**
+     * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param year            year to calculate left vacation days for.
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Year year) {
+        return getVacationDaysLeft(holidayAccounts, year, List.of());
     }
 
     /**
@@ -76,28 +80,42 @@ public class VacationDaysService {
      * so that it can adjust for vacation days carried over from this year to the next and then used there
      * (reducing the amount available in this year accordingly)
      *
-     * @param account  the account for the year to calculate the vacation days for
-     * @param nextYear the account for following year, if available
-     * @return information about the vacation days left for that year
-     * @deprecated in favor of {@link VacationDaysService#getVacationDaysLeft(List, Map, DateRange)} (less database calls)
-     */
-    @Deprecated(since = "4.53.0")
-    public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, nextYear);
-    }
-
-    /**
-     * @param holidayAccounts              {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param workingTimeCalendarsByPerson {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
-     * @param dateRange                    date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param year                    year to calculate left vacation days for.
+     * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
-                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson,
-                                                                        DateRange dateRange) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Year year, List<Account> holidayAccountsNextYear) {
+
+        final LocalDate startDate = year.atDay(1);
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+
+        return getVacationDaysLeft(holidayAccounts, new DateRange(startDate, endDate), holidayAccountsNextYear);
+    }
+
+    /**
+     * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param dateRange       date range to calculate left vacation days for. must be within a year.
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, DateRange dateRange) {
+        return getVacationDaysLeft(holidayAccounts, dateRange, List.of());
+    }
+
+    /**
+     * This version of the method also considers the account for next year,
+     * so that it can adjust for vacation days carried over from this year to the next and then used there
+     * (reducing the amount available in this year accordingly)
+     *
+     * @param holidayAccounts         {@link Account} to determine configured expiryDate of {@link Application}s
+     * @param dateRange               date range to calculate left vacation days for. must be within a year.
+     * @param holidayAccountsNextYear to calculate the vacation days that are already used next year
+     * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     * @throws IllegalArgumentException when dateRange is over one year.
+     */
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, DateRange dateRange, List<Account> holidayAccountsNextYear) {
 
         final LocalDate from = dateRange.startDate();
         final LocalDate to = dateRange.endDate();
@@ -106,36 +124,43 @@ public class VacationDaysService {
             throw new IllegalArgumentException(String.format("date range must be in the same year but was from=%s to=%s", from, to));
         }
 
-        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).collect(toList());
-        final Map<Account, UsedVacationDaysTuple> usedVacationDaysByAccount = getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson);
-
-        return usedVacationDaysByAccount.entrySet().stream()
+        final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
+        final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
+        return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {
                 final Account account = entry.getKey();
-                final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
-
                 final BigDecimal vacationDays = account.getActualVacationDays();
                 final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
                 final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-                final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.getUsedVacationDaysYear();
+                final UsedVacationDaysTuple usedVacationDaysTuple = entry.getValue();
+                final UsedVacationDaysYear usedVacationDaysYear = usedVacationDaysTuple.usedVacationDaysYear();
+
+                final BigDecimal vacationDaysUsedNextYear = holidayAccountsNextYear.stream()
+                    .filter(holidayAccountNextYear -> holidayAccountNextYear.getPerson().equals(account.getPerson()))
+                    .filter(holidayAccountNextYear -> holidayAccountNextYear.getYear() == from.getYear() + 1)
+                    .findFirst()
+                    .map(this::getUsedRemainingVacationDays)
+                    .orElse(ZERO);
+
                 final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
                     .withRemainingVacation(remainingVacationDays)
                     .notExpiring(remainingVacationDaysNotExpiring)
-                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysYear.getUsedVacationDaysBeforeExpiryDate())
-                    .forUsedVacationDaysAfterExpiry(usedVacationDaysYear.getUsedVacationDaysAfterExpiryDate())
-                    .withVacationDaysUsedNextYear(ZERO)
+                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysYear.usedVacationDaysBeforeExpiryDate())
+                    .forUsedVacationDaysAfterExpiry(usedVacationDaysYear.usedVacationDaysAfterExpiryDate())
+                    .withVacationDaysUsedNextYear(vacationDaysUsedNextYear)
                     .build();
 
-                final UsedVacationDaysDateRange usedVacationDaysDateRange = usedVacationDaysTuple.getUsedVacationDaysDateRange();
+                final UsedVacationDaysDateRange usedVacationDaysDateRange = usedVacationDaysTuple.usedVacationDaysDateRange();
                 final VacationDaysLeft vacationDaysLeftDateRange = VacationDaysLeft.builder()
                     .withAnnualVacation(vacationDays)
                     .withRemainingVacation(remainingVacationDays)
                     .notExpiring(remainingVacationDaysNotExpiring)
-                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysDateRange.getUsedVacationDaysBeforeExpiryDate())
-                    .forUsedVacationDaysAfterExpiry(usedVacationDaysDateRange.getUsedVacationDaysAfterExpiryDate())
-                    .withVacationDaysUsedNextYear(ZERO)
+                    .forUsedVacationDaysBeforeExpiry(usedVacationDaysDateRange.usedVacationDaysBeforeExpiryDate())
+                    .forUsedVacationDaysAfterExpiry(usedVacationDaysDateRange.usedVacationDaysAfterExpiryDate())
+                    .withVacationDaysUsedNextYear(vacationDaysUsedNextYear)
                     .build();
 
                 return new HolidayAccountVacationDays(account, vacationDaysLeftYear, vacationDaysLeftDateRange);
@@ -143,15 +168,34 @@ public class VacationDaysService {
             .collect(toMap(HolidayAccountVacationDays::account, identity()));
     }
 
-    BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
+    /**
+     * Calculates the used remaining vacation days based on the given account information
+     *
+     * @param account to calculate used remaining vacation days of the year of the account
+     * @return the used remaining vacation days
+     */
+    BigDecimal getUsedRemainingVacationDays(Account account) {
 
-        if (firstMilestone.isAfter(lastMilestone)) {
-            return ZERO;
+        if (account.getRemainingVacationDays().signum() > 0) {
+
+            final Year year = Year.of(account.getYear());
+            final VacationDaysLeft left = getVacationDaysLeft(List.of(account), year)
+                .get(account)
+                .vacationDaysYear();
+
+            final BigDecimal usedVacationDays = account.getActualVacationDays()
+                .add(account.getRemainingVacationDays())
+                .subtract(left.getVacationDays())
+                .subtract(left.getRemainingVacationDays());
+
+            final BigDecimal notUsedVacationDays = usedVacationDays.subtract(account.getActualVacationDays());
+
+            if (notUsedVacationDays.signum() > 0) {
+                return notUsedVacationDays;
+            }
         }
 
-        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, activeStatuses(), HOLIDAY).stream()
-            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone))
-            .reduce(ZERO, BigDecimal::add);
+        return ZERO;
     }
 
     private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
@@ -159,7 +203,7 @@ public class VacationDaysService {
         final LocalDate firstDayOfYear = dateRange.startDate().with(firstDayOfYear());
         final LocalDate lastDayOfYear = dateRange.endDate().with(lastDayOfYear());
 
-        final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().collect(toList());
+        final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().toList();
         final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(activeStatuses(), persons, firstDayOfYear, lastDayOfYear);
 
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
@@ -258,10 +302,6 @@ public class VacationDaysService {
         return new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays);
     }
 
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account) {
-        return getVacationDaysLeft(start, end, account, Optional.empty());
-    }
-
     private BigDecimal divideBy2(BigDecimal value) {
         return value.divide(BigDecimal.valueOf(2), 2, RoundingMode.CEILING);
     }
@@ -278,22 +318,8 @@ public class VacationDaysService {
         T add(T toAdd);
     }
 
-    private static class UsedVacationDaysTuple implements Addable<UsedVacationDaysTuple> {
-        private final UsedVacationDaysDateRange usedVacationDaysDateRange;
-        private final UsedVacationDaysYear usedVacationDaysYear;
-
-        UsedVacationDaysTuple(UsedVacationDaysDateRange usedVacationDaysDateRange, UsedVacationDaysYear usedVacationDaysYear) {
-            this.usedVacationDaysDateRange = usedVacationDaysDateRange;
-            this.usedVacationDaysYear = usedVacationDaysYear;
-        }
-
-        UsedVacationDaysDateRange getUsedVacationDaysDateRange() {
-            return usedVacationDaysDateRange;
-        }
-
-        UsedVacationDaysYear getUsedVacationDaysYear() {
-            return usedVacationDaysYear;
-        }
+    private record UsedVacationDaysTuple(UsedVacationDaysDateRange usedVacationDaysDateRange,
+                                         UsedVacationDaysYear usedVacationDaysYear) implements Addable<UsedVacationDaysTuple> {
 
         @Override
         public UsedVacationDaysTuple add(UsedVacationDaysTuple toAdd) {
@@ -308,23 +334,8 @@ public class VacationDaysService {
         }
     }
 
-    private static class UsedVacationDaysYear implements Addable<UsedVacationDaysYear> {
-
-        private final BigDecimal usedVacationDaysBeforeExpiryDate;
-        private final BigDecimal usedVacationDaysAfterExpiryDate;
-
-        UsedVacationDaysYear(BigDecimal usedVacationDaysBeforeExpiryDate, BigDecimal usedVacationDaysAfterExpiryDate) {
-            this.usedVacationDaysBeforeExpiryDate = usedVacationDaysBeforeExpiryDate;
-            this.usedVacationDaysAfterExpiryDate = usedVacationDaysAfterExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysBeforeExpiryDate() {
-            return usedVacationDaysBeforeExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysAfterExpiryDate() {
-            return usedVacationDaysAfterExpiryDate;
-        }
+    private record UsedVacationDaysYear(BigDecimal usedVacationDaysBeforeExpiryDate,
+                                        BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysYear> {
 
         @Override
         public UsedVacationDaysYear add(UsedVacationDaysYear toAdd) {
@@ -335,23 +346,8 @@ public class VacationDaysService {
         }
     }
 
-    private static class UsedVacationDaysDateRange implements Addable<UsedVacationDaysDateRange> {
-
-        private final BigDecimal usedVacationDaysBeforeExpiryDate;
-        private final BigDecimal usedVacationDaysAfterExpiryDate;
-
-        UsedVacationDaysDateRange(BigDecimal usedVacationDaysBeforeExpiryDate, BigDecimal usedVacationDaysAfterExpiryDate) {
-            this.usedVacationDaysBeforeExpiryDate = usedVacationDaysBeforeExpiryDate;
-            this.usedVacationDaysAfterExpiryDate = usedVacationDaysAfterExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysBeforeExpiryDate() {
-            return usedVacationDaysBeforeExpiryDate;
-        }
-
-        BigDecimal getUsedVacationDaysAfterExpiryDate() {
-            return usedVacationDaysAfterExpiryDate;
-        }
+    private record UsedVacationDaysDateRange(BigDecimal usedVacationDaysBeforeExpiryDate,
+                                             BigDecimal usedVacationDaysAfterExpiryDate) implements Addable<UsedVacationDaysDateRange> {
 
         @Override
         public UsedVacationDaysDateRange add(UsedVacationDaysDateRange toAdd) {
@@ -360,79 +356,5 @@ public class VacationDaysService {
                 usedVacationDaysAfterExpiryDate.add(toAdd.usedVacationDaysAfterExpiryDate)
             );
         }
-    }
-
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, Optional<Account> nextYear) {
-
-        final BigDecimal vacationDays = account.getActualVacationDays();
-        final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
-        final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
-
-        final BigDecimal usedVacationDaysBeforeExpiryDate;
-        final BigDecimal usedVacationDaysAfterExpiryDate;
-
-        if (account.doRemainingVacationDaysExpire()) {
-            final LocalDate lastDayBeforeExpiryDate = account.getExpiryDate().minusDays(1);
-            final LocalDate endBeforeExpiryDate = end.isAfter(lastDayBeforeExpiryDate) ? lastDayBeforeExpiryDate : end;
-
-            final LocalDate expiryDate = account.getExpiryDate();
-            final LocalDate startAfterExpiryDate = start.isBefore(expiryDate) ? expiryDate : start;
-
-            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
-            usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
-        } else {
-            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, end);
-            usedVacationDaysAfterExpiryDate = ZERO;
-        }
-
-        final BigDecimal usedVacationDaysNextYear = nextYear
-            .map(this::getUsedRemainingVacationDays)
-            .orElse(ZERO);
-
-        return VacationDaysLeft.builder()
-            .withAnnualVacation(vacationDays)
-            .withRemainingVacation(remainingVacationDays)
-            .notExpiring(remainingVacationDaysNotExpiring)
-            .forUsedVacationDaysBeforeExpiry(usedVacationDaysBeforeExpiryDate)
-            .forUsedVacationDaysAfterExpiry(usedVacationDaysAfterExpiryDate)
-            .withVacationDaysUsedNextYear(usedVacationDaysNextYear)
-            .build();
-    }
-
-    public BigDecimal getUsedRemainingVacationDays(Account account) {
-        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account);
-    }
-
-    private BigDecimal getUsedRemainingVacationDays(LocalDate start, LocalDate end, Account account) {
-
-        if (start.isAfter(end)) {
-            return ZERO;
-        }
-
-        if (account.getRemainingVacationDays().signum() > 0) {
-
-            final VacationDaysLeft left = getVacationDaysLeft(start, end, account);
-
-            final BigDecimal totalUsed = account.getActualVacationDays()
-                .add(account.getRemainingVacationDays())
-                .subtract(left.getVacationDays())
-                .subtract(left.getRemainingVacationDays());
-
-            final BigDecimal remainingUsed = totalUsed.subtract(account.getActualVacationDays());
-
-            if (remainingUsed.signum() > 0) {
-                return remainingUsed;
-            }
-        }
-
-        return ZERO;
-    }
-
-    private BigDecimal getUsedVacationDays(Application application, Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
-        final LocalDate startDate = application.getStartDate().isBefore(firstMilestone) ? firstMilestone : application.getStartDate();
-        final LocalDate endDate = application.getEndDate().isAfter(lastMilestone) ? lastMilestone : application.getEndDate();
-        return workDaysCountService.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
     }
 }

@@ -128,7 +128,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -188,7 +188,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -256,7 +256,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -322,7 +322,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -436,7 +436,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, VacationDaysLeft.builder().build());
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
@@ -487,7 +487,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 

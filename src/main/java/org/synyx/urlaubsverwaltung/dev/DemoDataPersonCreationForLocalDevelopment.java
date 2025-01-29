@@ -61,8 +61,8 @@ public class DemoDataPersonCreationForLocalDevelopment {
         personDataProvider.createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("heinz", "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud");
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud"));
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud"));
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active-" + i + "@urlaubsverwaltung.cloud"));
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst" , "Inaktiv", "hdieter-inactive-" + i + "@urlaubsverwaltung.cloud"));
         LOG.info("Created demo persons for local development");
     }
 }

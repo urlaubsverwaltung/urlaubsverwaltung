@@ -35,16 +35,6 @@ class DateUtilTest {
     }
 
     @Test
-    void ensureReturnsCorrectLastDayOfYear() {
-
-        int year = 2014;
-
-        LocalDate lastDayOfYear = LocalDate.of(year, 12, 31);
-
-        assertThat(DateUtil.getLastDayOfYear(year)).isEqualTo(lastDayOfYear);
-    }
-
-    @Test
     void ensureReturnsTrueForChristmasEve() {
 
         LocalDate date = LocalDate.of(2011, 12, 24);
