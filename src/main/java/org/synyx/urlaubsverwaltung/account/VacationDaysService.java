@@ -86,8 +86,8 @@ public class VacationDaysService {
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
-                                                                        Year year, List<Account> holidayAccountsNextYear) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Year year, List<Account> holidayAccountsNextYear) {
+
         final LocalDate startDate = year.atDay(1);
         final LocalDate endDate = startDate.with(lastDayOfYear());
 
