@@ -3,14 +3,10 @@ package org.synyx.urlaubsverwaltung.extension.vacationtype;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdatedEvent;
-import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -18,8 +14,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 @ConditionalOnProperty(value = "uv.extensions.vacationtype.republish.enabled", havingValue = "true")
 @ConditionalOnBean(VacationTypeEventHandlerExtension.class)
-@ConditionalOnSingleTenantMode
-class VacationTypeEventRepublisher {
+public class VacationTypeEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -32,12 +27,8 @@ class VacationTypeEventRepublisher {
         this.vacationTypeEventHandlerExtension = vacationTypeEventHandlerExtension;
     }
 
-    @Async
-    @EventListener(ApplicationStartedEvent.class)
-    void republishEvents() {
-
+    public void republishEvents() {
         LOG.info("Republishing all events with type=VacationTypeUpdatedEvent");
-
         vacationTypeService.getAllVacationTypes()
             .stream()
             .map(VacationTypeUpdatedEvent::of)
@@ -47,7 +38,6 @@ class VacationTypeEventRepublisher {
                     event.id(), updatedVacationType.getId(), updatedVacationType.getCategory(), updatedVacationType.isActive(), updatedVacationType.isRequiresApprovalToApply());
                 vacationTypeEventHandlerExtension.onVacationTypeUpdated(event);
             });
-
         LOG.info("Republished all events with type=VacationTypeUpdatedEvent");
     }
 }
