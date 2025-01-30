@@ -15,5 +15,6 @@
   <include relativeToChangelogFile="true" file="changelog-5.10.0-singletenant.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.10.0-sick-note-type-seq.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.11.0-adjust-unique-constraints.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.15.0-add-missing-indices.xml"/>
 
 </databaseChangeLog>
