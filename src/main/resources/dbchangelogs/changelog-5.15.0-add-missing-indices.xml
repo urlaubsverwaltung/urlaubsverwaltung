@@ -1,0 +1,265 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="add-missing-indices-for-sick-note">
+    <preConditions>
+      <not>
+        <indexExists tableName="sick_note" indexName="sick_note_status"/>
+        <indexExists tableName="sick_note" indexName="sick_note_end"/>
+        <indexExists tableName="sick_note" indexName="sick_note_person"/>
+        <indexExists tableName="sick_note" indexName="sick_note_sick_note_type"/>
+        <indexExists tableName="sick_note" indexName="sick_note_applier"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="sick_note" indexName="sick_note_status">
+      <column name="status"/>
+    </createIndex>
+    <createIndex tableName="sick_note" indexName="sick_note_end">
+      <column name="end_date"/>
+    </createIndex>
+    <createIndex tableName="sick_note" indexName="sick_note_person">
+      <column name="person_id"/>
+    </createIndex>
+    <createIndex tableName="sick_note" indexName="sick_note_sick_note_type">
+      <column name="sick_note_type_id"/>
+    </createIndex>
+    <createIndex tableName="sick_note" indexName="sick_note_applier">
+      <column name="applier_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-application">
+    <preConditions>
+      <not>
+        <indexExists tableName="application" indexName="application_status"/>
+        <indexExists tableName="application" indexName="application_end"/>
+        <indexExists tableName="application" indexName="application_vacation_type"/>
+        <indexExists tableName="application" indexName="application_boss"/>
+        <indexExists tableName="application" indexName="application_person"/>
+        <indexExists tableName="application" indexName="application_canceller"/>
+        <indexExists tableName="application" indexName="application_applier"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="application" indexName="application_status">
+      <column name="status"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_end">
+      <column name="end_date"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_vacation_type">
+      <column name="vacation_type_id"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_boss">
+      <column name="boss_id"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_person">
+      <column name="person_id"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_canceller">
+      <column name="canceller_id"/>
+    </createIndex>
+    <createIndex tableName="application" indexName="application_applier">
+      <column name="applier_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-account">
+    <preConditions>
+      <not>
+        <indexExists tableName="account" indexName="account_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="account" indexName="account_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-application_comment">
+    <preConditions>
+      <not>
+        <indexExists tableName="application_comment" indexName="application_comment_application"/>
+        <indexExists tableName="application_comment" indexName="application_comment_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="application_comment" indexName="application_comment_application">
+      <column name="application_id"/>
+    </createIndex>
+    <createIndex tableName="application_comment" indexName="application_comment_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-department_calendar">
+    <preConditions>
+      <not>
+        <indexExists tableName="department_calendar" indexName="department_calendar_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="department_calendar" indexName="department_calendar_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-department_department_head">
+    <preConditions>
+      <not>
+        <indexExists tableName="department_department_head" indexName="department_department_head_department_heads"/>
+        <indexExists tableName="department_department_head" indexName="department_department_head_department"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="department_department_head" indexName="department_department_head_department_heads">
+      <column name="department_heads_id"/>
+    </createIndex>
+    <createIndex tableName="department_department_head" indexName="department_department_head_department">
+      <column name="department_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-department_member">
+    <preConditions>
+      <not>
+        <indexExists tableName="department_member" indexName="department_member_department"/>
+        <indexExists tableName="department_member" indexName="department_member_members"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="department_member" indexName="department_member_department">
+      <column name="department_id"/>
+    </createIndex>
+    <createIndex tableName="department_member" indexName="department_member_members">
+      <column name="members_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-department_second_stage_authority">
+    <preConditions>
+      <not>
+        <indexExists tableName="department_second_stage_authority"
+                     indexName="department_second_stage_authority_department"/>
+        <indexExists tableName="department_second_stage_authority"
+                     indexName="department_second_stage_authority_second_stage_authorities"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="department_second_stage_authority" indexName="department_second_stage_authority_department">
+      <column name="department_id"/>
+    </createIndex>
+    <createIndex tableName="department_second_stage_authority"
+                 indexName="department_second_stage_authority_second_stage_authorities">
+      <column name="second_stage_authorities_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-holiday_replacements">
+    <preConditions>
+      <not>
+        <indexExists tableName="holiday_replacements" indexName="holiday_replacements_application"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="holiday_replacements" indexName="holiday_replacements_application">
+      <column name="application_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-overtime">
+    <preConditions>
+      <not>
+        <indexExists tableName="overtime" indexName="overtime_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="overtime" indexName="overtime_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-overtime_comment">
+    <preConditions>
+      <not>
+        <indexExists tableName="overtime_comment" indexName="overtime_comment_person"/>
+        <indexExists tableName="overtime_comment" indexName="overtime_comment_overtime"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="overtime_comment" indexName="overtime_comment_person">
+      <column name="person_id"/>
+    </createIndex>
+    <createIndex tableName="overtime_comment" indexName="overtime_comment_overtime">
+      <column name="overtime_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-person_notifications">
+    <preConditions>
+      <not>
+        <indexExists tableName="person_notifications" indexName="person_notifications_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="person_notifications" indexName="person_notifications_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-person_permissions">
+    <preConditions>
+      <not>
+        <indexExists tableName="person_permissions" indexName="person_permissions_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="person_permissions" indexName="person_permissions_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-sick_note_comment">
+    <preConditions>
+      <not>
+        <indexExists tableName="sick_note_comment" indexName="sick_note_comment_person"/>
+        <indexExists tableName="sick_note_comment" indexName="sick_note_comment_sick_note"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="sick_note_comment" indexName="sick_note_comment_person">
+      <column name="person_id"/>
+    </createIndex>
+    <createIndex tableName="sick_note_comment" indexName="sick_note_comment_sick_note">
+      <column name="sick_note_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-sick_note_extension">
+    <preConditions>
+      <not>
+        <indexExists tableName="sick_note_extension" indexName="sick_note_extension_sick_note"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="sick_note_extension" indexName="sick_note_extension_sick_note">
+      <column name="sick_note_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-missing-indices-for-working_time">
+    <preConditions>
+      <not>
+        <indexExists tableName="working_time" indexName="working_time_person"/>
+      </not>
+    </preConditions>
+
+    <createIndex tableName="working_time" indexName="working_time_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
