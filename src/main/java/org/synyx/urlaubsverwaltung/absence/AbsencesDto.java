@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung.absence;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.List;
 
-public class AbsencesDto {
+public class AbsencesDto extends RepresentationModel<AbsencesDto> {
 
     private final List<AbsenceDto> absences;
 

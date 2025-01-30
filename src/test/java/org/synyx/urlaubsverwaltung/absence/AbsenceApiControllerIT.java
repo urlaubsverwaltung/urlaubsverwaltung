@@ -107,8 +107,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         }
                     ]
                 }
@@ -149,8 +148,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         }
                     ]
                 }
@@ -191,8 +189,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         }
                     ]
                 }
@@ -235,12 +232,11 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "category": "OVERTIME",
                           "typeId": 1,
                           "status": "WAITING",
-                          "links": [
-                              {
-                                "rel": "overtime",
+                          "_links": {
+                             "overtime": {
                                 "href": "http://localhost/api/persons/23/absences/42/overtime"
                               }
-                          ]
+                          }
                         }
                     ]
                 }
@@ -283,8 +279,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -325,8 +320,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -367,8 +361,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -411,8 +404,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         },
                         {
                           "date": "2016-01-02",
@@ -422,8 +414,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -465,8 +456,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         },
                         {
                           "date": "2016-01-02",
@@ -476,8 +466,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         }
                     ]
                 }
@@ -520,8 +509,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         },
                         {
                           "date": "2016-12-24",
@@ -531,8 +519,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "PUBLIC_HOLIDAY",
                           "category": null,
                           "typeId": null,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -576,8 +563,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         }
                     ]
                 }
@@ -619,8 +605,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -671,8 +656,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "PUBLIC_HOLIDAY",
                           "category": null,
                           "typeId": null,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         },
                         {
                           "date": "2016-01-07",
@@ -682,8 +666,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "NO_WORKDAY",
                           "category": null,
                           "typeId": null,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -724,8 +707,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         },
                         {
                           "date": "2016-02-12",
@@ -735,8 +717,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "SICK_NOTE",
                           "category": "SICK_NOTE",
                           "typeId": 1,
-                          "status": "ACTIVE",
-                          "links": []
+                          "status": "ACTIVE"
                         }
                     ]
                 }
@@ -778,8 +759,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "category": "HOLIDAY",
                           "typeId": 1,
-                          "status": "WAITING",
-                          "links": []
+                          "status": "WAITING"
                         },
                         {
                           "date": "2016-01-01",
@@ -789,8 +769,7 @@ class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
                           "absenceType": "VACATION",
                           "status": "WAITING",
                           "category": "HOLIDAY",
-                          "typeId": 1,
-                          "links": []
+                          "typeId": 1
                         }
                     ]
                 }
