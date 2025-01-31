@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -26,8 +25,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceDto.AbsenceType.NO_WORKDAY;
@@ -161,16 +158,7 @@ public class AbsenceApiController {
     }
 
     private AbsenceDto toAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
-        final AbsenceDto.AbsenceType type = toAbsenceTypes(recordInfo.getAbsenceType());
-        final String status = recordInfo.getStatus().name();
-        final String category = recordInfo.getCategory().orElse(null);
-        AbsenceDto absenceDto = new AbsenceDto(date, type, recordInfo.getId().orElse(null), status, dayLength, category, recordInfo.getTypeId().orElse(null));
-
-        Optional<Long> absenceId = recordInfo.getId();
-        if (VacationCategory.OVERTIME.name().equals(category) && absenceId.isPresent()) {
-            absenceDto.add(linkTo(methodOn(OvertimeAbsenceApiController.class).overtimeAbsence(recordInfo.getPerson().getId(), absenceId.get())).withRel("overtime"));
-        }
-        return absenceDto;
+        return new AbsenceDto(date, dayLength, recordInfo);
     }
 
     private List<AbsenceDto.AbsenceType> toAbsenceTypes(List<String> dayAbsenceTypes) {
@@ -186,14 +174,5 @@ public class AbsenceApiController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
-    }
-
-    private AbsenceDto.AbsenceType toAbsenceTypes(AbsencePeriod.AbsenceType genericAbsenceType) {
-        return switch (genericAbsenceType) {
-            case VACATION -> VACATION;
-            case SICK -> SICK_NOTE;
-            case NO_WORKDAY -> NO_WORKDAY;
-            case PUBLIC_HOLIDAY -> PUBLIC_HOLIDAY;
-        };
     }
 }

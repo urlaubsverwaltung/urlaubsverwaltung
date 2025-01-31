@@ -1,14 +1,17 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
+import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -21,6 +24,8 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,19 +34,16 @@ import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.AC
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
 
 @ExtendWith(MockitoExtension.class)
-class AbsenceApiControllerTest {
+@SpringBootTest
+class AbsenceApiControllerIT extends SingleTenantTestContainersBase {
 
-    private AbsenceApiController sut;
+    @Autowired
+    private WebApplicationContext context;
 
-    @Mock
+    @MockitoBean
     private PersonService personService;
-    @Mock
+    @MockitoBean
     private AbsenceService absenceService;
-
-    @BeforeEach
-    void setUp() {
-        sut = new AbsenceApiController(personService, absenceService);
-    }
 
     @Test
     void ensureEmptyAbsences() throws Exception {
@@ -56,16 +58,17 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-01-07")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-              "absences": []
-            }
-            """, STRICT));
+                {
+                  "absences": []
+                }
+                """, STRICT));
     }
 
     // VACATION --------------------------------------------------------------------------------------------------------
@@ -87,28 +90,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "FULL",
-                      "absentNumeric": 1,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "FULL",
+                          "absentNumeric": 1,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -128,28 +131,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -169,28 +172,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -211,33 +214,33 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "OVERTIME",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": [
-                          {
-                            "rel": "overtime",
-                            "href": "http://localhost/api/persons/23/absences/42/overtime"
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "OVERTIME",
+                          "typeId": 1,
+                          "status": "WAITING",
+                          "_links": {
+                             "overtime": {
+                                "href": "http://localhost/api/persons/23/absences/42/overtime"
+                              }
                           }
-                      ]
-                    }
-                ]
-            }
-            """, STRICT));
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     // SICK ------------------------------------------------------------------------------------------------------------
@@ -259,28 +262,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "FULL",
-                      "absentNumeric": 1,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "FULL",
+                          "absentNumeric": 1,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -300,28 +303,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -341,28 +344,28 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     // VACATION / SICK - COMBINATION -----------------------------------------------------------------------------------
@@ -384,39 +387,38 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 1337,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 1337,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        },
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -437,39 +439,38 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-02",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-01-02",
-                      "id": 1337,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-02",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        },
+                        {
+                          "date": "2016-01-02",
+                          "id": 1337,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     // VACATION / PUBLIC-HOLIDAY - COMBINATION -------------------------------------------------------------------------
@@ -491,39 +492,38 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-12-24",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-12-24",
-                      "id": null,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "PUBLIC_HOLIDAY",
-                      "category": null,
-                      "typeId": null,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-12-24",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        },
+                        {
+                          "date": "2016-12-24",
+                          "id": null,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "PUBLIC_HOLIDAY",
+                          "category": null,
+                          "typeId": null,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
 
@@ -545,6 +545,7 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
                 .param("absence-types", "VACATION")
@@ -552,22 +553,21 @@ class AbsenceApiControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-12",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-12",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -587,6 +587,7 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
                 .param("absence-types", "SICK_NOTE")
@@ -594,22 +595,21 @@ class AbsenceApiControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-02-12",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-02-12",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -638,6 +638,7 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
                 .param("absence-types", "PUBLIC_HOLIDAY", "NO_WORKDAY")
@@ -645,33 +646,31 @@ class AbsenceApiControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-06",
-                      "id": null,
-                      "absent": "FULL",
-                      "absentNumeric": 1,
-                      "absenceType": "PUBLIC_HOLIDAY",
-                      "category": null,
-                      "typeId": null,
-                      "status": "ACTIVE",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-01-07",
-                      "id": null,
-                      "absent": "FULL",
-                      "absentNumeric": 1,
-                      "absenceType": "NO_WORKDAY",
-                      "category": null,
-                      "typeId": null,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-06",
+                          "id": null,
+                          "absent": "FULL",
+                          "absentNumeric": 1,
+                          "absenceType": "PUBLIC_HOLIDAY",
+                          "category": null,
+                          "typeId": null,
+                          "status": "ACTIVE"
+                        },
+                        {
+                          "date": "2016-01-07",
+                          "id": null,
+                          "absent": "FULL",
+                          "absentNumeric": 1,
+                          "absenceType": "NO_WORKDAY",
+                          "category": null,
+                          "typeId": null,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -691,39 +690,38 @@ class AbsenceApiControllerTest {
 
         perform(
             get("/api/persons/23/absences")
+                .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
                 .param("from", "2016-01-01")
                 .param("to", "2016-12-31")
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-12",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-02-12",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "SICK_NOTE",
-                      "category": "SICK_NOTE",
-                      "typeId": 1,
-                      "status": "ACTIVE",
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-12",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        },
+                        {
+                          "date": "2016-02-12",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "SICK_NOTE",
+                          "category": "SICK_NOTE",
+                          "typeId": 1,
+                          "status": "ACTIVE"
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
@@ -744,44 +742,44 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, date, date)).thenReturn(List.of(absencePeriodMorning, absencePeriodNoon));
 
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01-01")
             .param("noWorkdaysInclusive", "true"))
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(content().json("""
-            {
-                "absences": [
-                    {
-                      "date": "2016-01-01",
-                      "id": 42,
-                      "absent": "MORNING",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "status": "WAITING",
-                      "links": []
-                    },
-                    {
-                      "date": "2016-01-01",
-                      "id": 43,
-                      "absent": "NOON",
-                      "absentNumeric": 0.5,
-                      "absenceType": "VACATION",
-                      "status": "WAITING",
-                      "category": "HOLIDAY",
-                      "typeId": 1,
-                      "links": []
-                    }
-                ]
-            }
-            """, STRICT));
+                {
+                    "absences": [
+                        {
+                          "date": "2016-01-01",
+                          "id": 42,
+                          "absent": "MORNING",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "category": "HOLIDAY",
+                          "typeId": 1,
+                          "status": "WAITING"
+                        },
+                        {
+                          "date": "2016-01-01",
+                          "id": 43,
+                          "absent": "NOON",
+                          "absentNumeric": 0.5,
+                          "absenceType": "VACATION",
+                          "status": "WAITING",
+                          "category": "HOLIDAY",
+                          "typeId": 1
+                        }
+                    ]
+                }
+                """, STRICT));
     }
 
     @Test
     void ensureBadRequestForInvalidFromParameter() throws Exception {
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01")
             .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
@@ -790,6 +788,7 @@ class AbsenceApiControllerTest {
     @Test
     void ensureBadRequestForInvalidToParameter() throws Exception {
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01"))
             .andExpect(status().isBadRequest());
@@ -798,6 +797,7 @@ class AbsenceApiControllerTest {
     @Test
     void ensureBadRequestForInvalidPersonParameter() throws Exception {
         perform(get("/api/persons/foo/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
@@ -806,6 +806,7 @@ class AbsenceApiControllerTest {
     @Test
     void ensureBadRequestForMissingFromParameter() throws Exception {
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("to", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
@@ -814,6 +815,7 @@ class AbsenceApiControllerTest {
     void ensureBadRequestForMissingToParameter() throws Exception {
 
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-31"))
             .andExpect(status().isBadRequest());
     }
@@ -821,19 +823,21 @@ class AbsenceApiControllerTest {
     @Test
     void ensureBadRequestForMissingPersonParameter() throws Exception {
         perform(get("/api/persons//absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
-        ).andExpect(status().isNotFound());
+        ).andExpect(status().isBadRequest());
     }
 
     @Test
-    void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
+    void ensureForbiddenIfThereIsNoPersonForGivenID() throws Exception {
         when(personService.getPersonByID(anyLong())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01-31"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isForbidden());
     }
 
     @Test
@@ -842,6 +846,7 @@ class AbsenceApiControllerTest {
             .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2016-01-31")
             .param("absence-types", "FOO"))
@@ -850,7 +855,11 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidPeriod() throws Exception {
+        when(personService.getPersonByID(anyLong()))
+            .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
+
         perform(get("/api/persons/23/absences")
+            .with(oidcLogin().idToken(builder -> builder.subject("muster")).authorities(new SimpleGrantedAuthority("USER")))
             .param("from", "2016-01-01")
             .param("to", "2015-01-01"))
             .andExpect(status().isBadRequest());
@@ -867,6 +876,6 @@ class AbsenceApiControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.standaloneSetup(sut).setControllerAdvice(new RestControllerAdviceExceptionHandler()).build().perform(builder);
+        return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }
 }
