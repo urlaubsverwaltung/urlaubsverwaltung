@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0" data-turbo="true">
+    <main th:fragment="main" class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0" data-turbo="true">
       <div class="feedback">
         <p
           th:if="${personDeletionSuccess}"
@@ -26,25 +26,25 @@
           th:fragment="persons-overview-heading-body"
           th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
         >
-          <div class="dropdown tw-inline-block">
+          <div class="dropdown tw:inline-block">
             <button
               id="active-state"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              class="tw-bg-transparent tw-text-current tw-m-0 tw-p-0"
+              class="tw:bg-transparent tw:text-current tw:m-0 tw:p-0"
             >
               <th:block th:text="${visiblePersonsDropdownText}"></th:block>
-              <svg th:replace="~{icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
+              <svg th:replace="~{icon/chevron-down::svg(className='tw:ml-0.5 tw:opacity-70 tw:w-4 tw:h-4')}"></svg>
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
               <li>
                 <a
                   th:href="@{/web/person (active=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
-                  class="tw-flex tw-items-center"
+                  class="tw:flex tw:items-center"
                 >
-                  <span class="tw-w-5 tw-flex tw-items-center">
-                    <svg th:replace="~{icon/user::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <span class="tw:w-5 tw:flex tw:items-center">
+                    <svg th:replace="~{icon/user::svg(className='tw:w-4 tw:h-4')}"></svg>
                   </span>
                   <th:block th:text="#{persons.active}"></th:block>
                 </a>
@@ -54,7 +54,7 @@
                   <a
                     th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id}, sort=${sortQuery}, query=${query})}"
                   >
-                    <span class="tw-w-5 tw-inline-block"></span>
+                    <span class="tw:w-5 tw:inline-block"></span>
                     <th:block th:text="${department.name}"></th:block>
                   </a>
                 </li>
@@ -63,10 +63,10 @@
               <li>
                 <a
                   th:href="@{/web/person (active=false, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
-                  class="tw-flex tw-items-center"
+                  class="tw:flex tw:items-center"
                 >
-                  <span class="tw-w-5 tw-flex tw-items-center">
-                    <svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <span class="tw:w-5 tw:flex tw:items-center">
+                    <svg th:replace="~{icon/user-x::svg(className='tw:w-4 tw:h-4')}"></svg>
                   </span>
                   <th:block th:text="#{persons.inactive}"></th:block>
                 </a>
@@ -86,7 +86,7 @@
         </th:block>
       </div>
 
-      <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
+      <div class="tw:flex tw:flex-col tw:md:flex-row tw:gap-4">
         <form
           action="#"
           th:action="@{/web/person}"
@@ -101,15 +101,15 @@
             <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
             <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
           </div>
-          <div class="tw-flex tw-flex-col md:tw-flex-row">
-            <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
-            <span class="tw-flex-1 tw-relative tw-border dark:tw-border-neutral-600 tw-rounded-md">
+          <div class="tw:flex tw:flex-col tw:md:flex-row">
+            <label for="search" th:text="#{action.search}" class="tw:sr-only"></label>
+            <span class="tw:flex-1 tw:relative tw:border tw:dark:border-neutral-600 tw:rounded-md">
               <input
                 type="text"
                 id="search"
                 name="query"
                 th:value="${query}"
-                class="form-control tw-pr-8 tw-border-none tw-w-full md:tw-w-auto"
+                class="form-control tw:pr-8 tw:border-none tw:w-full tw:md:w-auto"
                 th:placeholder="#{action.search}"
                 data-auto-submit="search-submit"
                 data-auto-submit-delay="100"
@@ -117,15 +117,15 @@
               <button
                 type="submit"
                 id="search-submit"
-                class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+                class="tw:absolute tw:bottom-0 tw:right-0 tw:dark:bg-zinc-800 tw:py-3 tw:px-2 tw:rounded-r-md tw:h-full tw:flex tw:items-center"
               >
-                <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
-                <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                <svg th:replace="~{icon/search::svg(className='tw:w-5 tw:h-5 tw:stroke-2')}"></svg>
+                <span class="tw:sr-only" th:text="#{action.search}">Suche</span>
               </button>
             </span>
           </div>
         </form>
-        <div class="md:tw-ml-auto">
+        <div class="tw:md:ml-auto">
           <form
             action="#"
             th:action="@{/web/person}"
@@ -140,8 +140,8 @@
               <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
               <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
             </div>
-            <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
-              <label for="sort-select" class="tw-m-0 tw-mr-2">
+            <div class="tw:flex tw:flex-col tw:md:flex-row tw:md:items-center">
+              <label for="sort-select" class="tw:m-0 tw:mr-2">
                 <th:block th:text="#{action.sort}">Sortieren</th:block>:
               </label>
               <select
@@ -166,7 +166,7 @@
               <button
                 type="submit"
                 id="sort-submit"
-                class="tw-ml-2 button-main"
+                class="tw:ml-2 button-main"
                 data-js-hidden
                 th:text="#{action.sort}"
               >
@@ -196,17 +196,17 @@
         <turbo-stream target="pagination-size-hint" action="replace">
           <template th:insert="~{::#pagination-size-hint}"></template>
         </turbo-stream>
-        <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
+        <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="tw:mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personsPagination.page.content)}">
           <p class="text-right visible-print">
             <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
               th:replace="~{fragments/date::date(${now})}"
             ></span>
           </p>
-          <div class="tw-mt-8 md:tw-mt-16">
-            <table id="person-table" class="list-table hoverable-table tw-text-sm">
-              <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-              <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+          <div class="tw:mt-8 tw:md:mt-16">
+            <table id="person-table" class="list-table hoverable-table tw:text-sm">
+              <caption class="tw:sr-only" th:text="#{persons.list.caption}"></caption>
+              <thead class="hidden-xs hidden-sm tw:print:table-header-group">
                 <tr>
                   <th scope="col"><!-- placeholder to ensure correct number of th --></th>
                   <th
@@ -231,7 +231,7 @@
               <tbody>
                 <tr th:each="person,loopStatus : ${personsPagination.page.content}">
                   <td class="is-centered">
-                    <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
+                    <div class="tw:print:hidden tw:text-blue-50 tw:dark:text-sky-800">
                       <img
                         th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})}"
                         alt=""
@@ -240,7 +240,7 @@
                   </td>
                   <td
                     th:if="${showPersonnelNumberColumn}"
-                    class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                    class="personnelNumber hidden-xs hidden-sm tw:text-ellipsis tw:overflow-hidden tw:max-w-xs tw:print:table-cell tw:text-center"
                     th:text="${person.personnelNumber}"
                   ></td>
                   <td class="firstname">
@@ -259,7 +259,7 @@
                       data-turbo="false"
                     ></a>
                   </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                  <td class="is-centered hidden-xs hidden-sm tw:print:table-cell">
                     <th:block th:if="${person.entitlementYear != null}">
                       <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
                     </th:block>
@@ -268,7 +268,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                  <td class="is-centered hidden-xs hidden-sm tw:print:table-cell">
                     <th:block th:if="${person.entitlementActual != null}">
                       <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
                     </th:block>
@@ -277,7 +277,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                  <td class="is-centered hidden-xs hidden-sm tw:print:table-cell">
                     <th:block th:if="${person.entitlementRemaining != null}">
                       <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
                     </th:block>
@@ -286,7 +286,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                  <td class="is-centered hidden-xs hidden-sm tw:print:table-cell">
                     <th:block th:if="${person.vacationDaysLeft != null}">
                       <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
                     </th:block>
@@ -295,7 +295,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                  <td class="is-centered hidden-xs hidden-sm tw:print:table-cell">
                     <th:block th:if="${person.vacationDaysLeftRemaining != null}">
                       <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
                     </th:block>
@@ -305,16 +305,16 @@
                     ></th:block>
                   </td>
                   <td class="hidden-xs">
-                    <div class="print:tw-hidden">
+                    <div class="tw:print:hidden">
                       <a
                         class="action-link"
                         data-turbo="false"
                         th:href="@{/web/person/{personId} (personId=${person.id})}"
                       >
-                        <svg th:replace="~{icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')}"></svg>
+                        <svg th:replace="~{icon/user-circle::svg(className='tw:w-5 tw:h-5 tw:mr-1')}"></svg>
                         <th:block th:text="#{action.account.title}"></th:block>
                         <span
-                          class="tw-sr-only"
+                          class="tw:sr-only"
                           th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
                         ></span>
                       </a>
@@ -323,7 +323,7 @@
                 </tr>
               </tbody>
             </table>
-            <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
+            <div class="tw:mt-8 tw:md:mt-16 tw:flex tw:flex-col tw:md:flex-row tw:md:items-center tw:gap-8">
               <div id="persons-pagination">
                 <nav
                   th:replace="~{fragments/pagination::pagination(${personsPagination}, #{persons.pagination.navigation.aria-label}, 'frame-persons')}"
@@ -332,7 +332,7 @@
               <form
                 action="#"
                 th:action="@{/web/person}"
-                class="md:tw-ml-auto tw-flex tw-items-center"
+                class="tw:md:ml-auto tw:flex tw:items-center"
                 data-turbo-frame="frame-persons"
                 data-turbo-action="advance"
               >
@@ -343,8 +343,8 @@
                   <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
                   <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
                 </div>
-                <div class="tw-flex tw-items-center tw-gap-2">
-                  <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+                <div class="tw:flex tw:items-center tw:gap-2">
+                  <label for="pagination-size-select" class="tw:m-0" th:text="#{pagination.page.size.label.text}">
                     Zeige
                   </label>
                   <span>
@@ -355,7 +355,7 @@
                     ></select>
                   </span>
                   <span
-                    class="tw-whitespace-nowrap"
+                    class="tw:whitespace-nowrap"
                     id="pagination-size-hint"
                     th:text="#{pagination.page.size.total.text(${personsPagination.page.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
                   >
@@ -365,7 +365,7 @@
                 <button
                   id="size-submit"
                   th:text="#{pagination.page.size.button.text}"
-                  class="tw-ml-2 button-main"
+                  class="tw:ml-2 button-main"
                   data-js-hidden
                 >
                   Aktualisieren

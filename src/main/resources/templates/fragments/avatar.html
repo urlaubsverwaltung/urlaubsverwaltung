@@ -10,7 +10,7 @@
         <a
           th:href="@{/web/person/__${personId}__/overview}"
           th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
-          class="tw-text-inherit print:no-link"
+          class="tw:text-inherit print:no-link"
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">
@@ -19,7 +19,7 @@
               src="#"
               th:src="${url}"
               alt=""
-              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              class="gravatar gravatar--medium tw:rounded-full tw:block"
               th:classappend="${className}"
               th:width="${width == null ? '32px' : width}"
               th:height="${height == null ? '32px' : height}"
@@ -32,7 +32,7 @@
               src="#"
               th:src="@{/web/avatar (name=${niceName})}"
               alt=""
-              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              class="gravatar gravatar--medium tw:rounded-full tw:block"
               th:classappend="${className}"
               th:width="${width == null ? '32px' : width}"
               th:height="${height == null ? '32px' : height}"
@@ -53,7 +53,7 @@
 
     <span
       th:fragment="avatar-bordered(url,niceName,width,height,personId)"
-      class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-flex"
+      class="tw:bg-linear-to-br tw:from-blue-50 tw:to-blue-200 tw:dark:from-sky-800 tw:dark:to-zinc-800 tw:rounded-full tw:p-1 tw:inline-flex"
     >
       <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${width},${height},${personId})}" />
     </span>

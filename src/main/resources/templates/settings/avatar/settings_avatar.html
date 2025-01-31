@@ -11,8 +11,8 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-        <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
+      <main class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
+        <h1 th:text="#{settings.header.title}" class="tw:sr-only"></h1>
 
         <form
           method="post"
@@ -28,8 +28,8 @@
 
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='avatar')}" />
 
-          <div id="avatar" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
+          <div id="avatar" class="tw:mt-6">
+            <div class="form-section tw:mb-8">
               <div th:replace="~{settings/avatar/avatar::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>

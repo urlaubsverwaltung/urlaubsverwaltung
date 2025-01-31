@@ -8,15 +8,15 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToDeclineCancellationRequest}"
-        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
-        onclick="document.querySelector('#reject')?.classList.add('tw-hidden');
-        document.querySelector('#allow')?.classList.add('tw-hidden');
-        document.querySelector('#refer')?.classList.add('tw-hidden');
-        document.querySelector('#cancel')?.classList.add('tw-hidden');
-        document.querySelector('#decline-cancellation-request')?.classList.remove('tw-hidden')"
+        class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0 tw:hover:text-red-500"
+        onclick="document.querySelector('#reject')?.classList.add('tw:hidden');
+        document.querySelector('#allow')?.classList.add('tw:hidden');
+        document.querySelector('#refer')?.classList.add('tw:hidden');
+        document.querySelector('#cancel')?.classList.add('tw:hidden');
+        document.querySelector('#decline-cancellation-request')?.classList.remove('tw:hidden')"
       >
-        <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5')}"></svg>
-        <span class="tw-sr-only" th:text="#{action.cancellationRequest}">Stornierung ablehnen</span>
+        <svg th:replace="~{icon/slash::svg(className='tw:w-5 tw:h-5')}"></svg>
+        <span class="tw:sr-only" th:text="#{action.cancellationRequest}">Stornierung ablehnen</span>
       </button>
     </th:block>
 
@@ -24,13 +24,13 @@
       <form
         id="decline-cancellation-request"
         class="form confirm alert alert-danger"
-        th:classappend="${action eq 'decline-cancellation-request' ? '' : 'tw-hidden'}"
+        th:classappend="${action eq 'decline-cancellation-request' ? '' : 'tw:hidden'}"
         method="post"
         th:action="@{/web/application/__${app.id}__/decline-cancellation-request}"
         th:object="${comment}"
       >
         <div class="form-group">
-          <strong class="tw-font-medium" th:text="#{action.cancellationRequest.confirm}"></strong>
+          <strong class="tw:font-medium" th:text="#{action.cancellationRequest.confirm}"></strong>
         </div>
 
         <div class="form-group">
@@ -48,13 +48,13 @@
           ></textarea>
         </div>
 
-        <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
-          <button th:text="#{action.cancellationRequest}" type="submit" class="button-danger tw-w-56"></button>
+        <div class="form-group tw:mb-0 tw:flex tw:justify-between tw:gap-4">
+          <button th:text="#{action.cancellationRequest}" type="submit" class="button-danger tw:w-56"></button>
           <button
             type="button"
             th:text="#{action.cancel}"
             class="button"
-            onclick="document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');"
+            onclick="document.querySelector('#decline-cancellation-request')?.classList.add('tw:hidden');"
           ></button>
         </div>
       </form>

@@ -9,11 +9,11 @@
       <a
         th:if="${isAllowedToEditApplication}"
         th:href="@{/web/application/__${app.id}__/edit}"
-        class="icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+        class="icon-link tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
         data-test-id="application-edit-button"
       >
-        <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>
-        <span class="tw-sr-only" th:text="#{action.edit}"></span>
+        <svg th:replace="~{icon/pencil::svg(className='tw:w-5 tw:h-5')}"></svg>
+        <span class="tw:sr-only" th:text="#{action.edit}"></span>
       </a>
     </th:block>
 

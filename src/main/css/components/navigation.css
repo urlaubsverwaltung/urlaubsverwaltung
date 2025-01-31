@@ -1,92 +1,366 @@
-@layer components {
-  .navigation {
-    @apply tw-sticky;
-    @apply tw-top-0;
-    @apply tw-w-full;
-    @apply tw-z-50;
-    @apply lg:tw-mb-8;
-  }
+@utility navigation {
+  @apply tw:sticky;
+  @apply tw:top-0;
+  @apply tw:w-full;
+  @apply tw:z-50;
+  @apply tw:lg:mb-8;
 
-  .navigation::before {
+  &::before {
     content: "";
-    @apply tw-absolute;
-    @apply tw-inset-0;
-    @apply tw-bg-zinc-100;
-    @apply dark:tw-bg-zinc-900;
-    @apply dark:tw-backdrop-blur;
-    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
-    @apply lg:dark:tw-border-b;
-    @apply lg:dark:tw-border-b-zinc-800;
+    @apply tw:absolute;
+    @apply tw:inset-0;
+    @apply tw:bg-zinc-100;
+    @apply tw:dark:bg-zinc-900;
+    @apply tw:dark:backdrop-blur;
+    @apply tw:supports-backdrop-blur:dark:bg-zinc-900/[0.85];
+    @apply tw:lg:dark:border-b;
+    @apply tw:lg:dark:border-b-zinc-800;
   }
+}
 
-  .navigation-inner {
-    @apply dark:tw-border-b;
-    @apply dark:tw-border-b-zinc-800;
+@utility navigation-inner {
+  @apply tw:dark:border-b;
+  @apply tw:dark:border-b-zinc-800;
+}
+
+@utility navigation-list {
+  @apply tw:grid;
+  @apply tw:gap-8;
+
+  @media (width >= theme(--breakpoint-lg)) {
+    @apply tw:grid-flow-col;
+    grid-template-columns: repeat(auto-fit, minmax(0, min-content));
+    max-width: 100%;
   }
+}
 
-  .navigation-list {
-    @apply tw-grid;
-    @apply tw-gap-8;
-  }
+@utility navigation-content-spacer {
+  @apply tw:bg-white;
+  @apply tw:dark:bg-zinc-900;
+}
 
-  .navigation-content-spacer {
-    @apply tw-bg-white;
-    @apply dark:tw-bg-zinc-900;
-  }
+@utility navigation-content-spacer--left {
+  position: relative;
+  @apply tw:dark:hidden;
 
-  .navigation-content-spacer--left,
-  .navigation-content-spacer--right {
-    position: relative;
-    @apply dark:tw-hidden;
-  }
-
-  .navigation-content-spacer--left::before,
-  .navigation-content-spacer--right::before,
-  .navigation-content-spacer--left::after,
-  .navigation-content-spacer--right::after {
+  &::before {
     content: "";
     position: absolute;
-    @apply tw-inset-0;
+    @apply tw:inset-0;
   }
 
-  .navigation-content-spacer--left::before,
-  .navigation-content-spacer--right::before {
-    @apply tw-bg-zinc-100;
-    @apply dark:tw-bg-zinc-800;
+  &::after {
+    content: "";
+    position: absolute;
+    @apply tw:inset-0;
   }
 
-  .navigation-content-spacer--left::after,
-  .navigation-content-spacer--right::after {
-    @apply tw-bg-white;
-    @apply dark:tw-bg-zinc-900;
+  &::before {
+    @apply tw:bg-zinc-100;
+    @apply tw:dark:bg-zinc-800;
   }
 
-  .navigation-content-spacer--left::after {
-    @apply tw-rounded-tl-full;
+  &::after {
+    @apply tw:bg-white;
+    @apply tw:dark:bg-zinc-900;
   }
 
-  .navigation-content-spacer--right::after {
-    @apply tw-rounded-tr-full;
+  &::after {
+    @apply tw:rounded-tl-full;
+  }
+}
+
+@utility navigation-content-spacer--right {
+  position: relative;
+  @apply tw:dark:hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    @apply tw:inset-0;
   }
 
-  #menu-toggle-checkbox ~ label ~ div .navigation-items {
+  &::after {
+    content: "";
+    position: absolute;
+    @apply tw:inset-0;
+  }
+
+  &::before {
+    @apply tw:bg-zinc-100;
+    @apply tw:dark:bg-zinc-800;
+  }
+
+  &::after {
+    @apply tw:bg-white;
+    @apply tw:dark:bg-zinc-900;
+  }
+
+  &::after {
+    @apply tw:rounded-tr-full;
+  }
+}
+
+@utility navigation-items {
+  #menu-toggle-checkbox ~ label ~ div & {
     position: fixed;
     top: 100%;
     bottom: 0;
     left: 0;
     right: 0;
     padding: 0 1.5rem;
-    @apply tw-transition-all;
-    @apply tw-duration-150;
-    @apply tw-bg-white;
-    @apply dark:tw-bg-zinc-900;
+    @apply tw:transition-all;
+    @apply tw:duration-150;
+    @apply tw:bg-white;
+    @apply tw:dark:bg-zinc-900;
   }
 
-  #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
-  #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
+  #menu-toggle-checkbox:checked ~ label ~ div & {
     top: var(--uv-header-height);
   }
 
+  #menu-toggle-checkbox ~ label ~ div &:focus-within {
+    top: var(--uv-header-height);
+  }
+
+  @media (width >= theme(--breakpoint-xs)) {
+    #menu-toggle-checkbox ~ label ~ div & {
+      @apply tw:bg-transparent;
+      @apply tw:dark:bg-transparent;
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 0;
+      transition: max-height 400ms ease-in;
+    }
+    #menu-toggle-checkbox:checked ~ label ~ div & {
+      max-height: 90vh !important;
+    }
+
+    #menu-toggle-checkbox ~ label ~ div &:focus-within {
+      max-height: 90vh !important;
+    }
+  }
+
+  @media (width >= theme(--breakpoint-lg)) {
+    #menu-toggle-checkbox ~ label ~ div & {
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 100%;
+    }
+  }
+}
+
+@utility nav-popup-menu {
+  position: fixed;
+  z-index: 1;
+  top: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  @apply tw:transition-all;
+  @apply tw:duration-150;
+  @apply tw:rounded-t-2xl;
+  @apply tw:bg-white;
+  @apply tw:dark:bg-zinc-900;
+
+  &.visible {
+    top: var(--uv-header-height);
+  }
+
+  body:has(&.visible) {
+    /* disable body scroll as long as nav-popup-menu is open */
+    overflow: hidden;
+  }
+
+  &.visible .nav-popup-menu-inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (width >= theme(--breakpoint-xs)) {
+    &::before {
+      content: "";
+      border-color: transparent;
+      border-width: 8px;
+      @apply tw:border-b-gray-200;
+      position: absolute;
+      top: -17px;
+      @apply tw:right-6;
+      @apply tw:dark:border-b-neutral-600;
+    }
+    @apply tw:transition-transform;
+    @apply tw:origin-top-right;
+    @apply tw:scale-0;
+    @apply tw:border;
+    @apply tw:border-gray-200;
+    @apply tw:shadow-xl;
+    @apply tw:mt-3;
+    @apply tw:z-50;
+    @apply tw:absolute;
+    @apply tw:left-auto;
+    @apply tw:right-0;
+    @apply tw:bottom-auto;
+    @apply tw:rounded-2xl;
+    @apply tw:dark:border-zinc-800;
+    @apply tw:dark:shadow-none;
+
+    &.visible {
+      @apply tw:top-full;
+    }
+
+    &.visible {
+      @apply tw:scale-100;
+    }
+
+    &:focus-within {
+      @apply tw:scale-100;
+    }
+  }
+}
+
+@utility visible {
+  &.nav-popup-menu {
+    top: var(--uv-header-height);
+  }
+
+  body:has(&.nav-popup-menu) {
+    /* disable body scroll as long as nav-popup-menu is open */
+    overflow: hidden;
+  }
+
+  &.nav-popup-menu .nav-popup-menu-inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (width >= theme(--breakpoint-xs)) {
+    &.nav-popup-menu {
+      @apply tw:top-full;
+    }
+
+    &.nav-popup-menu {
+      @apply tw:scale-100;
+    }
+  }
+}
+
+@utility nav-popup-menu-inner {
+  @apply tw:flex;
+  @apply tw:flex-col;
+  @apply tw:max-h-screen;
+
+  .nav-popup-menu.visible & {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (width >= theme(--breakpoint-xs)) {
+    max-height: 75vh;
+    @apply tw:w-auto;
+    @apply tw:h-auto;
+    @apply tw:rounded-2xl;
+
+    & ul li:first-of-type .nav-popup-menu_link {
+      @apply tw:rounded-t-2xl;
+    }
+
+    & ul li:last-of-type .nav-popup-menu_link {
+      @apply tw:rounded-b-2xl;
+    }
+
+    & ul li[role="separator"] {
+      @apply tw:border-t;
+      @apply tw:border-gray-200;
+      @apply tw:dark:border-zinc-700;
+    }
+  }
+}
+
+@utility nav-popup-menu-inner__header {
+  @apply tw:rounded-t-2xl;
+  @apply tw:bg-linear-to-br;
+  @apply tw:from-blue-50;
+  @apply tw:via-gray-100;
+  @apply tw:to-blue-100;
+  @apply tw:px-4;
+  @apply tw:py-2;
+  @apply tw:dark:from-sky-800;
+  @apply tw:dark:via-slate-800;
+  @apply tw:dark:to-sky-900;
+}
+
+@utility nav-popup-menu-inner__content {
+  @apply tw:p-2;
+  overflow-y: auto;
+}
+
+@utility nav-popup-menu-button {
+  @apply tw:text-zinc-700;
+  @apply tw:hover:text-zinc-700;
+  @apply tw:focus:text-zinc-700;
+  @apply tw:dark:text-neutral-100;
+  @apply tw:dark:hover:text-neutral-100;
+  @apply tw:dark:focus:text-neutral-100;
+
+  &:is(:hover, :focus) .nav-popup-menu-button_icon {
+    @apply tw:text-opacity-100;
+    @apply tw:text-zinc-800;
+    @apply tw:dark:text-zinc-100;
+  }
+}
+
+@utility nav-popup-menu-button_icon {
+  @apply tw:text-zinc-900;
+  @apply tw:text-opacity-75;
+  @apply tw:transition-colors;
+  @apply tw:dark:text-zinc-100;
+  @apply tw:dark:hover:text-opacity-100;
+
+  .nav-popup-menu-button:is(:hover, :focus) & {
+    @apply tw:text-opacity-100;
+    @apply tw:text-zinc-800;
+    @apply tw:dark:text-zinc-100;
+  }
+}
+
+@utility nav-popup-menu_link {
+  @apply tw:w-full;
+  @apply tw:flex;
+  @apply tw:items-center;
+  @apply tw:p-2;
+  @apply tw:pr-10;
+  @apply tw:no-underline;
+  @apply tw:hover:no-underline;
+  @apply tw:focus:no-underline;
+  @apply tw:text-2xl;
+  @apply tw:text-gray-700;
+  @apply tw:bg-transparent;
+  @apply tw:hover:text-black;
+  @apply tw:focus:text-black;
+  @apply tw:hover:bg-gray-50;
+  @apply tw:focus:bg-gray-50;
+  @apply tw:dark:text-zinc-50;
+  @apply tw:dark:hover:text-zinc-200;
+  @apply tw:dark:focus:text-zinc-200;
+  @apply tw:dark:hover:bg-slate-800;
+  @apply tw:dark:focus:bg-slate-800;
+
+  @media (width >= theme(--breakpoint-xs)) {
+    @apply tw:text-base;
+
+    .nav-popup-menu-inner ul li:first-of-type & {
+      @apply tw:rounded-t-2xl;
+    }
+
+    .nav-popup-menu-inner ul li:last-of-type & {
+      @apply tw:rounded-b-2xl;
+    }
+  }
+}
+
+@layer components {
   #menu-toggle-checkbox + label > span:first-child {
     width: 30px;
     height: 18px;
@@ -102,7 +376,7 @@
     transition: all 0.4s ease-in-out;
     position: absolute;
     background-color: #353535;
-    @apply dark:tw-bg-zinc-300;
+    @apply tw:dark:bg-zinc-300;
   }
 
   #menu-toggle-checkbox + label > span > span:nth-child(1) {
@@ -159,197 +433,5 @@
   #menu-toggle-checkbox:checked + label > span > span:nth-child(5) {
     bottom: 6.5px;
     background-color: transparent !important;
-  }
-
-  .nav-popup-menu {
-    position: fixed;
-    z-index: 1;
-    top: 100%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    @apply tw-transition-all;
-    @apply tw-duration-150;
-    @apply tw-rounded-t-2xl;
-    @apply tw-bg-white;
-    @apply dark:tw-bg-zinc-900;
-  }
-
-  .nav-popup-menu.visible {
-    top: var(--uv-header-height);
-  }
-
-  .nav-popup-menu-inner {
-    @apply tw-flex;
-    @apply tw-flex-col;
-    @apply tw-max-h-screen;
-  }
-
-  .nav-popup-menu-inner__header {
-    @apply tw-rounded-t-2xl;
-    @apply tw-bg-gradient-to-br;
-    @apply tw-from-blue-50;
-    @apply tw-via-gray-100;
-    @apply tw-to-blue-100;
-    @apply tw-px-4;
-    @apply tw-py-2;
-    @apply dark:tw-from-sky-800;
-    @apply dark:tw-via-slate-800;
-    @apply dark:tw-to-sky-900;
-  }
-
-  .nav-popup-menu-inner__content {
-    @apply tw-p-2;
-    overflow-y: auto;
-  }
-
-  body:has(.nav-popup-menu.visible) {
-    /* disable body scroll as long as nav-popup-menu is open */
-    overflow: hidden;
-  }
-
-  .nav-popup-menu.visible .nav-popup-menu-inner {
-    width: 100%;
-    height: 100%;
-  }
-
-  .nav-popup-menu-button {
-    @apply tw-text-zinc-700;
-    @apply hover:tw-text-zinc-700;
-    @apply focus:tw-text-zinc-700;
-    @apply dark:tw-text-neutral-100;
-    @apply dark:hover:tw-text-neutral-100;
-    @apply dark:focus:tw-text-neutral-100;
-  }
-
-  .nav-popup-menu-button_icon {
-    @apply tw-text-zinc-900;
-    @apply tw-text-opacity-75;
-    @apply tw-transition-colors;
-    @apply dark:tw-text-zinc-100;
-    @apply dark:hover:tw-text-opacity-100;
-  }
-
-  .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
-    @apply tw-text-opacity-100;
-    @apply tw-text-zinc-800;
-    @apply dark:tw-text-zinc-100;
-  }
-
-  .nav-popup-menu_link {
-    @apply tw-w-full;
-    @apply tw-flex;
-    @apply tw-items-center;
-    @apply tw-p-2;
-    @apply tw-pr-10;
-    @apply tw-no-underline;
-    @apply hover:tw-no-underline;
-    @apply focus:tw-no-underline;
-    @apply tw-text-2xl;
-    @apply tw-text-gray-700;
-    @apply tw-bg-transparent;
-    @apply hover:tw-text-black;
-    @apply focus:tw-text-black;
-    @apply hover:tw-bg-gray-50;
-    @apply focus:tw-bg-gray-50;
-    @apply dark:tw-text-zinc-50;
-    @apply dark:hover:tw-text-zinc-200;
-    @apply dark:focus:tw-text-zinc-200;
-    @apply dark:hover:tw-bg-slate-800;
-    @apply dark:focus:tw-bg-slate-800;
-  }
-
-  @screen xs {
-    #menu-toggle-checkbox ~ label ~ div .navigation-items {
-      @apply tw-bg-transparent;
-      @apply dark:tw-bg-transparent;
-      overflow: hidden;
-      position: static;
-      padding: 0;
-      max-height: 0;
-      transition: max-height 400ms ease-in;
-    }
-    #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
-    #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
-      max-height: 90vh !important;
-    }
-
-    .nav-popup-menu::before {
-      content: "";
-      border-color: transparent;
-      border-width: 8px;
-      @apply tw-border-b-gray-200;
-      position: absolute;
-      top: -17px;
-      @apply tw-right-6;
-      @apply dark:tw-border-b-neutral-600;
-    }
-
-    .nav-popup-menu {
-      @apply tw-transition-transform;
-      @apply tw-origin-top-right;
-      @apply tw-scale-0;
-      @apply tw-border;
-      @apply tw-border-gray-200;
-      @apply tw-shadow-xl;
-      @apply tw-mt-3;
-      @apply tw-z-50;
-      @apply tw-absolute;
-      @apply tw-left-auto;
-      @apply tw-right-0;
-      @apply tw-bottom-auto;
-      @apply tw-rounded-2xl;
-      @apply dark:tw-border-zinc-800;
-      @apply dark:tw-shadow-none;
-    }
-
-    .nav-popup-menu.visible {
-      @apply tw-top-full;
-    }
-
-    .nav-popup-menu_link {
-      @apply tw-text-base;
-    }
-
-    .nav-popup-menu-inner {
-      max-height: 75vh;
-      @apply tw-w-auto;
-      @apply tw-h-auto;
-      @apply tw-rounded-2xl;
-    }
-
-    .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
-      @apply tw-rounded-t-2xl;
-    }
-
-    .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
-      @apply tw-rounded-b-2xl;
-    }
-
-    .nav-popup-menu-inner ul li[role="separator"] {
-      @apply tw-border-t;
-      @apply tw-border-gray-200;
-      @apply dark:tw-border-zinc-700;
-    }
-
-    .nav-popup-menu.visible,
-    .nav-popup-menu:focus-within {
-      @apply tw-scale-100;
-    }
-  }
-
-  @screen lg {
-    #menu-toggle-checkbox ~ label ~ div .navigation-items {
-      overflow: hidden;
-      position: static;
-      padding: 0;
-      max-height: 100%;
-    }
-
-    .navigation-list {
-      @apply tw-grid-flow-col;
-      grid-template-columns: repeat(auto-fit, minmax(0, min-content));
-      max-width: 100%;
-    }
   }
 }

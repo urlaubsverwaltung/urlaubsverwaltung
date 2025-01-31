@@ -40,7 +40,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+    <main th:fragment="main" class="tw:max-w-2xl tw:lg:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
       <th:block th:if="${noHolidaysAccount == true}" th:text="#{application.applier.account.none}" />
 
       <th:block th:if="${noHolidaysAccount == null || noHolidaysAccount == false}">
@@ -57,7 +57,7 @@
 
           <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
 
-          <div class="form-section tw-mb-8">
+          <div class="form-section tw:mb-8">
             <div th:replace="~{fragments/section-heading::section-heading(~{::application-form-heading-body}, ~{})}">
               <th:block th:ref="application-form-heading-body">
                 <h2
@@ -152,7 +152,7 @@
                       th:data-iso-value="${applicationForLeaveForm.startDateIsoValue}"
                     />
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('startDate')}"
                       data-test-id="from-error"
                     >
@@ -169,7 +169,7 @@
                       autocomplete="off"
                     />
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('startTime')}"
                     >
                       <th:block th:errors="*{startTime}">startTime Error</th:block>
@@ -191,7 +191,7 @@
                       th:data-iso-value="${applicationForLeaveForm.endDateIsoValue}"
                     />
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('endDate')}"
                       data-test-id="to-error"
                     >
@@ -208,7 +208,7 @@
                       autocomplete="off"
                     />
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('endTime')}"
                     >
                       <th:block th:errors="*{endTime}">endTime Error</th:block>
@@ -218,7 +218,7 @@
 
                 <div id="days-count" class="form-group hidden">
                   <div class="col-md-9 col-md-offset-3">
-                    <span class="info days tw-text-sm"></span>
+                    <span class="info days tw:text-sm"></span>
                   </div>
                 </div>
               </div>
@@ -226,7 +226,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <div class="col-xs-9">
-                    <span id="departmentVacations" class="help-block info tw-text-sm"></span>
+                    <span id="departmentVacations" class="help-block info tw:text-sm"></span>
                   </div>
                 </div>
               </div>
@@ -258,7 +258,7 @@
                       <th:block th:text="#{NOON}" />
                     </label>
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('dayLength')}"
                     >
                       <th:block th:errors="*{dayLength}">dayLength Error</th:block>
@@ -308,7 +308,7 @@
                       data-test-id="reason"
                     ></textarea>
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('reason')}"
                       data-test-id="reason-error"
                     >
@@ -318,8 +318,8 @@
                 </div>
               </div>
               <div class="col-md-6 col-md-push-2">
-                <span class="help-block tw-text-sm">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <span class="help-block tw:text-sm">
+                  <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                   <th:block th:text="#{application.data.specialleave.description}"></th:block>
                   <ul>
                     <li
@@ -332,7 +332,7 @@
             </div>
           </div>
 
-          <div class="form-section tw-mb-16">
+          <div class="form-section tw:mb-16">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::application-further-information-heading-body}, ~{})}"
             >
@@ -356,7 +356,7 @@
                     </label>
                     <label class="thirds"></label>
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('teamInformed')}"
                     >
                       <th:block th:errors="*{teamInformed}">teamInformed Error</th:block>
@@ -373,7 +373,7 @@
                   >
                   </label>
                   <div class="col-md-9">
-                    <div class="tw-flex">
+                    <div class="tw:flex">
                       <select
                         th:replace="~{fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')}"
                         id="holiday-replacement-select"
@@ -390,7 +390,7 @@
                           <button
                             th:text="#{application.data.holidayReplacement.add-button.text}"
                             type="submit"
-                            class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
+                            class="button tw:rounded-l-none tw:border-l-0 tw:py-0"
                             name="add-holiday-replacement"
                             formmethod="post"
                             th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
@@ -402,12 +402,12 @@
                 </div>
 
                 <div id="replacement-section-container">
-                  <ul class="tw-list-none tw-m-0 tw-mb-12 tw-p-0">
+                  <ul class="tw:list-none tw:m-0 tw:mb-12 tw:p-0">
                     <li
                       th:if="${not #lists.isEmpty(applicationForLeaveForm.holidayReplacements)}"
                       th:each="index : ${#numbers.sequence(applicationForLeaveForm.holidayReplacements.size() - 1, 0, -1)}"
                       th:with="holidayReplacement=${applicationForLeaveForm.holidayReplacements[index]}"
-                      class="form-group tw-mb-6"
+                      class="form-group tw:mb-6"
                       data-test-id="holiday-replacement-row"
                     >
                       <input
@@ -417,15 +417,15 @@
                       />
                       <div class="col-md-push-3 col-md-9">
                         <div>
-                          <div class="tw-flex">
-                            <span class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-4 tw-mt-1">
+                          <div class="tw:flex">
+                            <span class="tw:text-blue-50 tw:dark:text-sky-800 tw:mr-4 tw:mt-1">
                               <img
                                 th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px',personId=${holidayReplacement.person.id})}"
                                 alt=""
                               />
                             </span>
                             <div>
-                              <div class="tw-flex tw-items-center tw-flex-wrap">
+                              <div class="tw:flex tw:items-center tw:flex-wrap">
                                 <a
                                   th:text="${holidayReplacement.person.niceName}"
                                   th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
@@ -434,28 +434,28 @@
                                 ></a>
                                 <ul
                                   th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
-                                  class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                                  class="tw:m-0 tw:mt-1.5 tw:p-0 tw:list-none tw:flex tw:flex-wrap tw:text-xs tw:gap-1"
                                 >
                                   <li
                                     th:each="department : ${holidayReplacement.departments}"
                                     th:text="${department}"
-                                    class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+                                    class="tw:px-1.5 tw:rounded-full tw:bg-emerald-100 tw:text-emerald-800 tw:dark:border tw:dark:border-green-600 tw:dark:text-green-600 tw:dark:bg-transparent"
                                   ></li>
                                 </ul>
                               </div>
-                              <div class="tw-flex tw-mt-2">
+                              <div class="tw:flex tw:mt-2">
                                 <button
                                   type="submit"
-                                  class="tw-p-0 tw-bg-transparent"
+                                  class="tw:p-0 tw:bg-transparent"
                                   name="remove-holiday-replacement"
                                   th:value="${holidayReplacement.person.id}"
                                   formmethod="post"
                                   th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
                                 >
                                   <span
-                                    class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
+                                    class="tw:flex tw:items-center tw:text-sm tw:text-black tw:text-opacity-50 tw:hover:text-opacity-100 tw:focus:text-opacity-100 tw:dark:text-zinc-200 tw:transition-colors"
                                   >
-                                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-0.5')}"></svg>
+                                    <svg th:replace="~{icon/trash-2::svg(className='tw:w-4 tw:h-4 tw:mr-0.5')}"></svg>
                                     <th:block
                                       th:text="#{application.data.holidayReplacement.remove-button.text}"
                                     ></th:block>
@@ -464,13 +464,13 @@
                               </div>
                             </div>
                           </div>
-                          <div class="tw-mt-2 md:tw-pl-14">
-                            <div class="tw-flex tw-justify-between tw-items-center">
+                          <div class="tw:mt-2 tw:md:pl-14">
+                            <div class="tw:flex tw:justify-between tw:items-center">
                               <label
                                 for="replacement-note"
                                 th:for="${'replacement-note-' + index}"
                                 th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
-                                class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
+                                class="tw:text-sm tw:text-black tw:text-opacity-50 tw:dark:text-zinc-200 tw:dark:text-opacity-100 tw:mb-0 tw:font-normal"
                               >
                               </label>
                             </div>
@@ -488,7 +488,7 @@
                           </div>
                         </div>
                         <p
-                          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                          class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                           th:if="${#fields.hasErrors('holidayReplacements[' + index + '].note')}"
                         >
                           <th:block th:errors="*{holidayReplacements[__${index}__].note}"
@@ -518,7 +518,7 @@
                       th:errorclass="error"
                     ></textarea>
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('address')}"
                     >
                       <th:block th:errors="*{address}">address Error</th:block>
@@ -544,7 +544,7 @@
                       th:errorclass="error"
                     ></textarea>
                     <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                       th:if="${#fields.hasErrors('comment')}"
                     >
                       <th:block th:errors="*{comment}">comment Error</th:block>
@@ -555,13 +555,13 @@
             </div>
           </div>
 
-          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+          <hr class="tw:w-full tw:m-0 tw:mt-6" />
 
-          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+          <div class="tw:mt-6 tw:flex tw:justify-between tw:gap-4">
             <button
               id="apply-application"
               type="submit"
-              class="button-main-green tw-w-56"
+              class="button-main-green tw:w-56"
               th:text="${applicationForLeaveForm.id == null} ? #{action.apply.vacation}: #{action.apply.vacation.edit}"
             >
               Neue Abwesenheit

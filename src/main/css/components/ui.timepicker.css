@@ -1,21 +1,21 @@
 .ui-timepicker-wrapper {
   box-shadow: none !important;
-  @apply dark:tw-border !important;
-  @apply dark:tw-border-zinc-700 !important;
-  @apply dark:tw-bg-zinc-900 !important;
-  @apply dark:tw-rounded !important;
-  @apply dark:tw-mt-2 !important;
-  @apply dark:tw-backdrop-filter !important;
-  @apply dark:tw-backdrop-blur-xl !important;
-  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70 !important;
+  @apply tw:dark:border!;
+  @apply tw:dark:border-zinc-700!;
+  @apply tw:dark:bg-zinc-900!;
+  @apply tw:dark:rounded!;
+  @apply tw:dark:mt-2!;
+  @apply tw:dark:backdrop-filter!;
+  @apply tw:dark:backdrop-blur-xl!;
+  @apply tw:supports-backdrop-blur:dark:bg-zinc-900/70!;
 }
 
 .ui-timepicker-am,
 .ui-timepicker-pm {
-  @apply tw-px-4 !important;
-  @apply dark:tw-text-zinc-200 !important;
-  @apply dark:hover:tw-bg-zinc-700 !important;
-  @apply dark:hover:tw-text-zinc-200 !important;
+  @apply tw:px-4!;
+  @apply tw:dark:text-zinc-200!;
+  @apply tw:dark:hover:bg-zinc-700!;
+  @apply tw:dark:hover:text-zinc-200!;
 }
 
 .ui-timepicker-am.ui-timepicker-selected,
@@ -24,5 +24,5 @@
 .ui-timepicker-pm.ui-timepicker-selected,
 .ui-timepicker-pm.ui-timepicker-selected:hover,
 .ui-timepicker-pm.ui-timepicker-selected:focus {
-  @apply dark:tw-bg-blue-600 !important;
+  @apply tw:dark:bg-blue-600!;
 }

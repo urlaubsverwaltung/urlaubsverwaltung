@@ -8,15 +8,15 @@
     <th:block th:fragment="buttons">
       <th:block th:if="${isAllowedToRejectApplication}">
         <button
-          class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
-          onclick="document.querySelector('#refer')?.classList.add('tw-hidden');
-          document.querySelector('#allow')?.classList.add('tw-hidden');
-          document.querySelector('#cancel')?.classList.add('tw-hidden');
-          document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
-          document.querySelector('#reject')?.classList.remove('tw-hidden');"
+          class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0 tw:hover:text-red-500"
+          onclick="document.querySelector('#refer')?.classList.add('tw:hidden');
+          document.querySelector('#allow')?.classList.add('tw:hidden');
+          document.querySelector('#cancel')?.classList.add('tw:hidden');
+          document.querySelector('#decline-cancellation-request')?.classList.add('tw:hidden');
+          document.querySelector('#reject')?.classList.remove('tw:hidden');"
         >
-          <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5')}"></svg>
-          <span class="tw-sr-only" th:text="#{action.reject}"></span>
+          <svg th:replace="~{icon/slash::svg(className='tw:w-5 tw:h-5')}"></svg>
+          <span class="tw:sr-only" th:text="#{action.reject}"></span>
         </button>
       </th:block>
     </th:block>
@@ -25,14 +25,14 @@
       <form
         id="reject"
         class="form confirm alert alert-danger"
-        th:classappend="${action eq 'reject' ? '' : 'tw-hidden'}"
+        th:classappend="${action eq 'reject' ? '' : 'tw:hidden'}"
         method="post"
         th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/reject?redirect=/web/application' : '/web/application/__${app.id}__/reject'}"
         th:action="@{__${actionUrl}__}"
         th:object="${comment}"
       >
         <div class="form-group">
-          <strong class="tw-font-medium" th:text="#{action.reject.confirm}"></strong>
+          <strong class="tw:font-medium" th:text="#{action.reject.confirm}"></strong>
         </div>
 
         <div class="form-group">
@@ -40,13 +40,13 @@
           <textarea id="text-reject" rows="2" name="text" class="form-control" th:errorclass="error"></textarea>
         </div>
 
-        <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
-          <button type="submit" class="button-danger tw-w-56" th:text="#{action.reject}"></button>
+        <div class="form-group tw:mb-0 tw:flex tw:justify-between tw:gap-4">
+          <button type="submit" class="button-danger tw:w-56" th:text="#{action.reject}"></button>
           <button
             type="button"
             class="button"
             th:text="#{action.cancel}"
-            onclick="document.querySelector('#reject')?.classList.add('tw-hidden');"
+            onclick="document.querySelector('#reject')?.classList.add('tw:hidden');"
           ></button>
         </div>
       </form>

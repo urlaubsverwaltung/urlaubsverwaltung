@@ -15,8 +15,8 @@
 
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <p class="help-block tw:text-sm">
+            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
             <th:block th:text="#{settings.overtime.description}" />
           </p>
         </aside>
@@ -130,7 +130,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('overtimeSettings.maximumOvertime')}"
               >
                 <th:block th:errors="*{overtimeSettings.maximumOvertime}">
@@ -157,7 +157,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('overtimeSettings.minimumOvertime')}"
               >
                 <th:block th:errors="*{overtimeSettings.minimumOvertime}">
@@ -184,7 +184,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('overtimeSettings.minimumOvertimeReduction')}"
               >
                 <th:block th:errors="*{overtimeSettings.minimumOvertimeReduction}">

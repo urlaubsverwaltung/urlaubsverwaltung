@@ -5,27 +5,27 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-grow tw-flex tw-flex-col tw-items-center tw-gap-8 sm:tw-gap-16">
-        <div class="tw-w-full tw-max-w-screen-xl">
-          <div class="tw-px-8 xs:tw-px-16">
+      <div class="tw:grow tw:flex tw:flex-col tw:items-center tw:gap-8 tw:sm:gap-16">
+        <div class="tw:w-full tw:max-w-(--breakpoint-xl)">
+          <div class="tw:px-8 tw:xs:px-16">
             <h1
-              class="tw-mt-4 tw-flex tw-flex-col tw-font-medium tw-text-3xl sm:tw-space-x-2 sm:tw-items-baseline sm:tw-text-4xl xs:tw-mt-8 lg:tw-mt-24 lg:tw-space-x-0 lg:tw-text-5xl"
+              class="tw:mt-4 tw:flex tw:flex-col tw:font-medium tw:text-3xl tw:sm:space-x-2 tw:sm:items-baseline tw:sm:text-4xl tw:xs:mt-8 tw:lg:mt-24 tw:lg:space-x-0 tw:lg:text-5xl"
             >
-              <span class="sm:tw-mt-2" th:text="#{error-page.common.title}"></span>
+              <span class="tw:sm:mt-2" th:text="#{error-page.common.title}"></span>
             </h1>
-            <p class="tw-mt-8 tw-text-xl tw-max-w-prose" th:text="#{error-page.common.paragraph}"></p>
+            <p class="tw:mt-8 tw:text-xl tw:max-w-prose" th:text="#{error-page.common.paragraph}"></p>
             <div
-              class="tw-mt-8 tw-text-lg tw-flex tw-flex-col tw-space-y-4 sm:tw-flex-row sm:tw-mt-8 sm:tw-space-y-0 sm:tw-space-x-2"
+              class="tw:mt-8 tw:text-lg tw:flex tw:flex-col tw:space-y-4 tw:sm:flex-row tw:sm:mt-8 tw:sm:space-y-0 tw:sm:space-x-2"
               th:with="previousPageLink=${header_referer}"
             >
               <a
                 th:if="${not #strings.isEmpty(previousPageLink)}"
                 href="#"
                 th:href="${previousPageLink}"
-                class="button tw-text-base tw-px-4 tw-py-2"
+                class="button tw:text-base tw:px-4 tw:py-2"
                 th:text="#{error-page.goto.previous}"
               ></a>
-              <a href="/" class="button tw-text-base tw-px-4 tw-py-2" th:text="#{error-page.goto.start}"></a>
+              <a href="/" class="button tw:text-base tw:px-4 tw:py-2" th:text="#{error-page.goto.start}"></a>
             </div>
           </div>
         </div>

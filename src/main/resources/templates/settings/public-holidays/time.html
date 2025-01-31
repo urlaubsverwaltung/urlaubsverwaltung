@@ -13,7 +13,7 @@
 
       <div class="row">
         <div class="col-md-4 col-md-push-8">
-          <span class="help-block tw-text-sm"> </span>
+          <span class="help-block tw:text-sm"> </span>
         </div>
         <div class="col-md-8 col-md-pull-4">
           <div class="form-group">
@@ -53,7 +53,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('timeSettings.workDayBeginHour')}"
               >
                 <th:block th:errors="*{timeSettings.workDayBeginHour}"> timeSettings.workDayBeginHour Error </th:block>
@@ -78,7 +78,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('timeSettings.workDayEndHour')}"
               >
                 <th:block th:errors="*{timeSettings.workDayEndHour}"> timeSettings.workDayEndHour Error </th:block>

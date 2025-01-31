@@ -18,10 +18,10 @@
       >
         <th:block th:ref="person-details-dangerzone-box-icon">
           <div
-            th:replace="~{fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-500 dark:tw-text-zinc-900')}"
+            th:replace="~{fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw:bg-red-500 tw:text-white tw:dark:bg-red-500 tw:dark:text-zinc-900')}"
           >
             <th:block th:ref="person-details-dangerzone-box-icon-rounded">
-              <svg th:replace="~{icon/trash-2::svg(className='tw-w-8 tw-h-8')}" />
+              <svg th:replace="~{icon/trash-2::svg(className='tw:w-8 tw:h-8')}" />
             </th:block>
           </div>
         </th:block>
@@ -49,26 +49,26 @@
               <p
                 th:if="${lastOfficeUserCannotBeDeleted != null and lastOfficeUserCannotBeDeleted}"
                 th:text="#{person.account.dangerzone.delete.confirmation.validation.error.office}"
-                class="tw-mt-4 error"
+                class="tw:mt-4 error"
               >
                 Letzter Office User kann nicht gelöscht werden.
               </p>
               <div th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}">
                 <p th:text="#{person.account.dangerzone.description.extension}"></p>
 
-                <label class="tw-w-full">
+                <label class="tw:w-full">
                   <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"></span>
-                  <input th:field="*{niceNameConfirmation}" class="form-control tw-mt-1" />
+                  <input th:field="*{niceNameConfirmation}" class="form-control tw:mt-1" />
                 </label>
 
                 <p
                   id="person-delete-form-error"
                   th:if="${personDeletionConfirmationValidationError}"
                   th:text="#{${personDeletionConfirmationValidationError}(${person.niceName})}"
-                  class="error tw-text-sm"
+                  class="error tw:text-sm"
                 ></p>
 
-                <div class="tw-flex tw-justify-between tw-mt-4">
+                <div class="tw:flex tw:justify-between tw:mt-4">
                   <button
                     th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
                     class="button-danger"
@@ -83,7 +83,7 @@
                     th:formaction="@{/web/person/__${person.id}__}"
                     formmethod="get"
                     th:text="#{action.cancel}"
-                    class="button tw-w-24"
+                    class="button tw:w-24"
                   ></button>
                 </div>
               </div>

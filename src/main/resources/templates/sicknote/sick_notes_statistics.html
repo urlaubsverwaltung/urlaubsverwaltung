@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+      <div class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-1.5">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
         >
@@ -26,14 +26,14 @@
           </th:block>
         </div>
 
-        <table class="list-table tw-text-sm">
-          <caption class="tw-sr-only" th:text="#{sicknotes.statistics.title}">
+        <table class="list-table tw:text-sm">
+          <caption class="tw:sr-only" th:text="#{sicknotes.statistics.title}">
             Statistik für das Jahr
           </caption>
 
           <thead>
             <tr>
-              <th scope="col" colspan="2" class="tw-text-right">
+              <th scope="col" colspan="2" class="tw:text-right">
                 <span th:text="#{filter.validity}"></span>
                 <span th:text="${{statistics.created}}"></span>
               </th>

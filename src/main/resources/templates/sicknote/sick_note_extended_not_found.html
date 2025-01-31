@@ -5,13 +5,13 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 md:tw-px-0 lg:tw-px-12 xl:tw-px-0">
+      <div class="tw:max-w-2xl tw:lg:max-w-6xl tw:mx-auto tw:px-4 tw:md:px-0 tw:lg:px-12 tw:xl:px-0">
         <h1 th:text="#{sicknote.extend.title}">Weiter Krank melden</h1>
-        <p class="tw-m-0 tw-mt-8" th:text="#{sicknote.extend.not-found.paragraph}">
+        <p class="tw:m-0 tw:mt-8" th:text="#{sicknote.extend.not-found.paragraph}">
           Es gibt keine laufende Krankmeldung die erweitert werden könnte.
         </p>
         <p
-          class="tw-m-0 tw-mt-1"
+          class="tw:m-0 tw:mt-1"
           th:with="href=@{/web/sicknote/new}, text=#{sicknote.extend.not-found.create-new.link.text}, link=${'<a href=' + href + '>' + text + '</a>'}"
           th:utext="#{sicknote.extend.not-found.create-new.paragraph(${link})}"
         >

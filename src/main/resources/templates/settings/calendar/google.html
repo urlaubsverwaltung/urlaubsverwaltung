@@ -11,26 +11,26 @@
         </div>
       </div>
       <div class="row">
-        <aside class="col-md-4 col-md-push-8 help-block tw-text-sm tw-break-words">
+        <aside class="col-md-4 col-md-push-8 help-block tw:text-sm tw:break-words">
           <p th:text="#{settings.calendar.google.description}"></p>
-          <dl class="tw-mt-4">
-            <dt class="tw-mb-0.5 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <dl class="tw:mt-4">
+            <dt class="tw:mb-0.5 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.oauth-client-id.title}"></th:block>
             </dt>
             <dd th:utext="#{settings.calendar.google.oauth-client-id.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.oauth-client-secret.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.oauth-client-secret.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.calendar-id.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.calendar-id.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.redirect-url.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.redirect-url.description}"></dd>
@@ -52,7 +52,7 @@
                 th:errorclass="error"
               />
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientId')}"
               >
                 <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientId}">
@@ -76,7 +76,7 @@
                 th:errorclass="error"
               />
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientSecret')}"
               >
                 <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientSecret}">
@@ -101,7 +101,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.calendarId')}"
               >
                 <th:block th:errors="*{calendarSettings.googleCalendarSettings.calendarId}">

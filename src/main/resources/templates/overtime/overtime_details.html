@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="feedback tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="feedback tw:max-w-2xl tw:lg:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
         <p
           th:if="${overtimeRecord != null}"
           th:text="#{'overtime.feedback.' + ${overtimeRecord}}"
@@ -20,7 +20,7 @@
       </div>
 
       <div
-        class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 lg:tw-grid lg:tw-grid-cols-2 lg:tw-gap-8"
+        class="tw:max-w-2xl tw:lg:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0 tw:lg:grid tw:lg:grid-cols-2 tw:lg:gap-8"
       >
         <div>
           <div
@@ -30,53 +30,53 @@
               <h2 th:text="#{overtime.title}"></h2>
             </th:block>
             <th:block th:fragment="overtime-details-heading-actions">
-              <div class="tw-flex tw-flex-col sm:tw-flex-row">
+              <div class="tw:flex tw:flex-col tw:sm:flex-row">
                 <a
                   th:if="${userIsAllowedToWriteOvertime}"
                   th:href="@{/web/overtime/__${record.id}__/edit}"
-                  class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
                 <a
                   th:href="@{/web/overtime?person=__${record.person.id}__}"
-                  class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+                  class="tw:ml-2 icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/clock::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                   <span th:text="#{action.overtime.list}"></span>
                 </a>
               </div>
             </th:block>
           </div>
 
-          <div class="box tw-mb-8 tw-p-5">
+          <div class="box tw:mb-8 tw:p-5">
             <div
               th:replace="~{fragments/box::box-with-icon(~{::overtime-details-box-icon}, ~{::overtime-details-box-body})}"
             >
               <th:block th:ref="overtime-details-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw:bg-emerald-500 tw:text-white tw:dark:bg-green-500 tw:dark:text-zinc-900')}"
                 >
                   <th:block th:ref="overtime-box-total-icon-rounded">
-                    <svg th:replace="~{icon/clock::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/clock::svg(className='tw:w-8 tw:h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="overtime-details-box-body">
-                <span class="tw-text-sm" data-test-id="overtime-person">
+                <span class="tw:text-sm" data-test-id="overtime-person">
                   <th:block th:text="${record.person.niceName}" />&nbsp;<th:block
                     th:text="#{overtime.details.hours.1}"
                   />
                 </span>
                 <span
                   th:text="${{record.duration}}"
-                  class="tw-my-1 tw-text-lg tw-font-medium"
+                  class="tw:my-1 tw:text-lg tw:font-medium"
                   data-test-id="overtime-duration"
                 >
                 </span>
-                <span class="tw-text-sm">
+                <span class="tw:text-sm">
                   <th:block
                     th:replace="~{fragments/date-range::date-range(${record.startDate}, ${record.endDate})}"
                   ></th:block>
@@ -87,7 +87,7 @@
 
           <table
             th:if="${#maps.size(record.getDurationByYear()) >= 2}"
-            class="list-table striped-table bordered-table tw-text-sm tw-table-fixed"
+            class="list-table striped-table bordered-table tw:text-sm tw:table-fixed"
           >
             <tr>
               <td th:text="#{overtime.period.duration.label}"></td>
@@ -112,14 +112,14 @@
               <h2 th:text="#{overtime.progress.title}"></h2>
             </th:block>
           </div>
-          <table class="list-table striped-table bordered-table tw-mb-8 tw-text-sm">
-            <caption class="tw-sr-only" th:text="#{overtime.progress.title}">
+          <table class="list-table striped-table bordered-table tw:mb-8 tw:text-sm">
+            <caption class="tw:sr-only" th:text="#{overtime.progress.title}">
               Verlauf
             </caption>
             <tbody>
               <tr th:each="comment : ${comments}">
                 <td>
-                  <span class="tw-text-blue-50 dark:tw-text-sky-800">
+                  <span class="tw:text-blue-50 tw:dark:text-sky-800">
                     <img
                       th:replace="~{fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarUrl + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})}"
                       alt=""
@@ -149,23 +149,23 @@
           </table>
         </div>
 
-        <div class="tw-mb-16">
+        <div class="tw:mb-16">
           <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-data-person-heading-body}, ~{})}">
             <th:block th:fragment="overtime-data-person-heading-body">
               <h2 th:text="#{overtime.data.person}"></h2>
             </th:block>
           </div>
-          <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
-            <div class="tw-w-full">
-              <div class="box tw-mb-5 tw-p-5">
+          <div class="tw:flex tw:flex-wrap tw:space-y-8 tw:lg:space-y-0">
+            <div class="tw:w-full">
+              <div class="box tw:mb-5 tw:p-5">
                 <div
                   th:replace="~{person/box::person-box(person=${record.person}, departments=${departmentsOfPerson})}"
                 ></div>
               </div>
-              <div class="box tw-mb-5 tw-p-5">
+              <div class="box tw:mb-5 tw:p-5">
                 <div th:replace="~{overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})}"></div>
               </div>
-              <div class="box tw-mb-5 tw-p-5">
+              <div class="box tw:mb-5 tw:p-5">
                 <div th:replace="~{overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})}"></div>
               </div>
             </div>

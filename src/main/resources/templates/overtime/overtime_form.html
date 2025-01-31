@@ -26,7 +26,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
         <form
           method="post"
           th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
@@ -51,13 +51,13 @@
                   ></h2>
                 </th:block>
                 <th:block th:ref="overtime-form-actions">
-                  <div class="tw-flex tw-flex-col sm:tw-flex-row">
+                  <div class="tw:flex tw:flex-col tw:sm:flex-row">
                     <a
                       th:href="@{/web/overtime?person=__${person.id}__}"
-                      class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                      class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
                       aria-hidden="true"
                     >
-                      <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                      <svg th:replace="~{icon/clock::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                       <span th:text="#{action.overtime.list}"></span>
                     </a>
                   </div>
@@ -65,8 +65,8 @@
               </div>
             </div>
             <div class="col-md-4 col-md-push-8">
-              <aside class="help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <aside class="help-block tw:text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <th:block th:text="#{overtime.data.description.general}"></th:block>
                 <th:block
                   th:if="${overtimeReductionPossible}"
@@ -124,7 +124,7 @@
                     data-test-id="overtime-start-date"
                   />
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('startDate')}"
                   >
                     <th:block th:errors="*{startDate}"> startDate Error</th:block>
@@ -146,7 +146,7 @@
                     data-test-id="overtime-end-date"
                   />
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('endDate')}"
                   >
                     <th:block th:errors="*{endDate}"> endDate Error</th:block>
@@ -158,16 +158,16 @@
                 <label th:text="|#{overtime.data.numberOfHours}:|" class="control-label col-md-3" for="hours"></label>
                 <div class="col-md-9">
                   <th:block th:replace="~{overtime/hour-and-minute-input::hour-and-minute-input}"></th:block>
-                  <div th:if="${overtimeReductionPossible}" class="tw-mt-2">
+                  <div th:if="${overtimeReductionPossible}" class="tw:mt-2">
                     <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
                     <label
                       th:text="#{overtime.data.reduceOvertime}"
                       for="overtime-reduce"
-                      class="tw-font-normal"
+                      class="tw:font-normal"
                     ></label>
                   </div>
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('reduce')}"
                   >
                     <th:block th:errors="*{reduce}">reduce Error</th:block>
@@ -180,7 +180,7 @@
                 <div class="col-md-9">
                   <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('comment')}"
                   >
                     <th:block th:errors="*{comment}"> comment Error</th:block>
@@ -190,12 +190,12 @@
             </div>
           </div>
 
-          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+          <hr class="tw:w-full tw:m-0 tw:mt-6" />
 
-          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+          <div class="tw:mt-6 tw:flex tw:justify-between tw:gap-4">
             <button
               type="submit"
-              class="button-main-green tw-w-56"
+              class="button-main-green tw:w-56"
               th:text="#{action.save}"
               data-test-id="overtime-submit-button"
             >

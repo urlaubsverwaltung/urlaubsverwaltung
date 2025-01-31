@@ -1,43 +1,76 @@
-@import "tailwindcss/base";
-@import "../base.css";
-
-@import "tailwindcss/components";
-@import "../components/absence-color.css";
-@import "../components/absence-type-box.css";
-@import "../components/alert.css";
-@import "../components/action-link.css";
-@import "../components/button.css";
-@import "../components/box.css";
-@import "../components/checkbox.css";
-@import "../components/checkbox-switch.css";
-@import "../components/color-picker.css";
-@import "../components/details-dropdown.css";
-@import "../components/dropdown-caret.css";
-@import "../components/dropdown-menu.css";
-@import "../components/loading.css";
-@import "../components/form.css";
-@import "../components/icon-link.css";
-@import "../components/info-banner.css";
-@import "../components/link.css";
-@import "../components/list.css";
+@import "tailwindcss" prefix(tw);
+@import "../base.css" layer(base);
+@import "../components/absence-color.css" layer(components);
+@import "../components/absence-type-box.css" layer(components);
+@import "../components/alert.css" layer(components);
+@import "../components/action-link.css" layer(components);
+@import "../components/button.css" layer(components);
+@import "../components/box.css" layer(components);
+@import "../components/checkbox.css" layer(components);
+@import "../components/checkbox-switch.css" layer(components);
+@import "../components/color-picker.css" layer(components);
+@import "../components/details-dropdown.css" layer(components);
+@import "../components/dropdown-caret.css" layer(components);
+@import "../components/dropdown-menu.css" layer(components);
+@import "../components/loading.css" layer(components);
+@import "../components/form.css" layer(components);
+@import "../components/icon-link.css" layer(components);
+@import "../components/info-banner.css" layer(components);
+@import "../components/link.css" layer(components);
+@import "../components/list.css" layer(components);
 @import "../components/navigation.css";
-@import "../components/multi-select.css";
-@import "../components/modal.css";
-@import "../components/nav-tabs.css";
-@import "../components/select.css";
-@import "../components/table.css";
-@import "../components/tabs.css";
-@import "../components/states.css";
-@import "../components/print.css";
-@import "../components/section-heading.css";
-@import "../components/text-bubble.css";
-@import "../components/tooltip.css";
-@import "../components/ui.timepicker.css";
+@import "../components/multi-select.css" layer(components);
+@import "../components/modal.css" layer(components);
+@import "../components/nav-tabs.css" layer(components);
+@import "../components/select.css" layer(components);
+@import "../components/table.css" layer(components);
+@import "../components/tabs.css" layer(components);
+@import "../components/states.css" layer(components);
+@import "../components/print.css" layer(components);
+@import "../components/section-heading.css" layer(components);
+@import "../components/text-bubble.css" layer(components);
+@import "../components/tooltip.css" layer(components);
+@import "../components/ui.timepicker.css" layer(components);
 
-@import "../components/settings-absence-types.css";
+@import "../components/settings-absence-types.css" layer(components);
+@import "../utility.css" layer(utilities);
 
-@import "tailwindcss/utilities";
-@import "../utility.css";
+@config '../../../../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility account-form-expire-description {
+  @apply tw:text-base;
+  @apply tw:dark:text-zinc-100;
+
+  & a {
+    @apply tw:underline;
+    @apply tw:text-current!;
+    @apply tw:hover:text-gray-900!;
+    @apply tw:dark:hover:text-zinc-100!;
+  }
+
+  & em {
+    @apply tw:not-italic;
+    @apply tw:font-bold;
+  }
+}
 
 @layer base {
   :root {
@@ -64,7 +97,7 @@
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
   }
 
-  @screen lg {
+  @media (width >= theme(--breakpoint-lg)) {
     :root {
       --uv-header-height: 3.25rem;
     }
@@ -72,24 +105,5 @@
     .tw-dark {
       --uv-header-height: 3.25rem;
     }
-  }
-}
-
-@layer components {
-  .account-form-expire-description {
-    @apply tw-text-base;
-    @apply dark:tw-text-zinc-100;
-  }
-
-  .account-form-expire-description a {
-    @apply tw-underline;
-    @apply tw-text-current !important;
-    @apply hover:tw-text-gray-900 !important;
-    @apply dark:hover:tw-text-zinc-100 !important;
-  }
-
-  .account-form-expire-description em {
-    @apply tw-not-italic;
-    @apply tw-font-bold;
   }
 }

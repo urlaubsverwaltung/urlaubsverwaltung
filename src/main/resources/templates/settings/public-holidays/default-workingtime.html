@@ -12,7 +12,7 @@
       </div>
 
       <div
-        class="tw-mb-8 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+        class="tw:mb-8 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
         th:if="${#fields.hasErrors('workingTimeSettings.workingDays')}"
       >
         <th:block th:errors="*{workingTimeSettings.workingDays}"> workingTimeSettings.workingDays Error </th:block>
@@ -20,14 +20,14 @@
 
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <p class="help-block tw:text-sm">
+            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
             <th:block th:text="#{settings.workingTime.description}" />
           </p>
         </aside>
         <div class="col-md-8 col-md-pull-4">
           <div class="form-group is-required">
-            <label th:text="|#{settings.workingTime.weekdays}:|" class="control-label col-md-4 tw-mb-4"> </label>
+            <label th:text="|#{settings.workingTime.weekdays}:|" class="control-label col-md-4 tw:mb-4"> </label>
             <div class="col-md-8">
               <div th:each="weekDay : ${weekDays}" class="checkbox">
                 <label th:for="${weekDay}">

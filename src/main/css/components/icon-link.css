@@ -1,16 +1,16 @@
 .icon-link {
-  @apply tw-flex !important;
+  @apply tw:flex!;
 }
 
 .icon-link,
 .text-link {
-  @apply tw-whitespace-nowrap;
-  @apply tw-text-zinc-700 !important;
-  @apply tw-no-underline !important;
-  @apply hover:tw-text-black !important;
-  @apply focus:tw-text-black !important;
-  @apply dark:tw-text-zinc-50 !important;
-  @apply dark:hover:tw-text-zinc-50 !important;
-  @apply dark:focus:tw-text-zinc-50 !important;
-  @apply dark:tw-text-opacity-75 !important;
+  @apply tw:whitespace-nowrap;
+  @apply tw:text-zinc-700!;
+  @apply tw:no-underline!;
+  @apply tw:hover:text-black!;
+  @apply tw:focus:text-black!;
+  @apply tw:dark:text-zinc-50!;
+  @apply tw:dark:hover:text-zinc-50!;
+  @apply tw:dark:focus:text-zinc-50!;
+  @apply tw:dark:text-opacity-75!;
 }
