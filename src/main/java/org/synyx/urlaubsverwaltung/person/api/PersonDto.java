@@ -22,13 +22,15 @@ public class PersonDto extends RepresentationModel<PersonDto> {
     private String firstName;
     private String lastName;
     private String niceName;
+    private boolean active;
 
-    PersonDto(Long id, String email, String firstName, String lastName, String niceName) {
+    PersonDto(Long id, String email, String firstName, String lastName, String niceName, boolean active) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+        this.active = active;
 
         this.add(linkTo(methodOn(PersonApiController.class).getPerson(id)).withSelfRel());
         this.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(id, null, null, List.of("vacation", "sick_note", "public_holiday", "no_workday"))).withRel(ABSENCES));
@@ -75,5 +77,13 @@ public class PersonDto extends RepresentationModel<PersonDto> {
 
     public void setNiceName(String niceName) {
         this.niceName = niceName;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

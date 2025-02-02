@@ -63,6 +63,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                           "firstName": "shane",
                           "lastName": "last",
                           "niceName": "shane last",
+                          "active": true,
                           "_links":{
                             "self":{
                               "href":"http://localhost/api/persons/1"
@@ -119,6 +120,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                           "firstName": "shane",
                           "lastName": "shane",
                           "niceName": "shane shane",
+                          "active": true,
                           "_links":{
                             "self":{
                               "href":"http://localhost/api/persons/1"
@@ -170,6 +172,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                                "firstName": "shane",
                                "lastName": "shane",
                                "niceName": "shane shane",
+                               "active": true,
                                "_links": {
                                  "self": {
                                    "href": "http://localhost/api/persons/1"
@@ -198,6 +201,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                                "firstName": "carl",
                                "lastName": "carl",
                                "niceName": "carl carl",
+                               "active": true,
                                "_links": {
                                  "self": {
                                    "href": "http://localhost/api/persons/2"
@@ -250,6 +254,7 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                           "firstName": "shane",
                           "lastName": "last",
                           "niceName": "shane last",
+                          "active": true,
                           "_links":{
                             "self":{
                               "href":"http://localhost/api/persons/1"
