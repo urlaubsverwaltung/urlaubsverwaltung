@@ -15,6 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 import java.util.Optional;
@@ -192,6 +193,57 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                                  }
                                }
                              },
+                             {
+                               "id": 2,
+                               "email": "carl@example.org",
+                               "firstName": "carl",
+                               "lastName": "carl",
+                               "niceName": "carl carl",
+                               "_links": {
+                                 "self": {
+                                   "href": "http://localhost/api/persons/2"
+                                 },
+                                 "absences": {
+                                   "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                                   "templated": true
+                                 },
+                                 "sicknotes": {
+                                   "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}",
+                                   "templated": true
+                                 },
+                                 "vacations": {
+                                   "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                                   "templated": true
+                                 },
+                                 "workdays": {
+                                   "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}",
+                                   "templated": true
+                                 }
+                               }
+                             }
+                           ]
+                         }
+                        """, STRICT));
+    }
+
+    @Test
+    void ensureReturnsInactivePersons() throws Exception {
+
+        final Person carl = new Person("carl@example.org", "carl", "carl", "carl@example.org");
+        carl.setPermissions(List.of(Role.INACTIVE));
+        carl.setId(2L);
+
+        when(personService.getInactivePersons()).thenReturn(List.of(carl));
+
+        perform(get("/api/persons").queryParam("active", "false")
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                        {
+                           "persons": [
                              {
                                "id": 2,
                                "email": "carl@example.org",
