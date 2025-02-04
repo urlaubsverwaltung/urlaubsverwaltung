@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
@@ -44,6 +45,7 @@ import static java.time.Month.NOVEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -140,6 +142,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendAllowedNotification(application, comment);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -302,6 +308,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
+
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inboxOffice).hasSize(1);
@@ -405,6 +415,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
+
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inboxOffice).hasSize(1);
@@ -502,6 +516,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRejectedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inbox.length).isOne();
@@ -576,6 +594,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipient.getEmail())).hasSize(1));
+
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
         assertThat(inbox.length).isOne();
@@ -632,6 +654,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // send mail to applicant?
         MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -714,6 +740,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancellationRequest(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
         // send mail to applicant?
         MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxPerson.length).isOne();
@@ -784,9 +814,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
         // Was email sent to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxApplicant.length).isOne();
+
         final Message msgApplicant = inboxApplicant[0];
         assertThat(msgApplicant.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgApplicant.getAllRecipients()[0]);
@@ -838,6 +873,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectly(application, comment);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // email sent to applicant
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -912,6 +951,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // email sent?
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
