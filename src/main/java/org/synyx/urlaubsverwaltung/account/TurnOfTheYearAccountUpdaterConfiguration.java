@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
@@ -15,10 +15,10 @@ public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfi
     private final AccountProperties accountProperties;
     private final TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService;
     private final ScheduleLocking scheduleLocking;
-    private final ThreadPoolTaskScheduler taskScheduler;
+    private final TaskScheduler taskScheduler;
 
     @Autowired
-    public TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService, ScheduleLocking scheduleLocking, ThreadPoolTaskScheduler taskScheduler) {
+    public TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
         this.scheduleLocking = scheduleLocking;

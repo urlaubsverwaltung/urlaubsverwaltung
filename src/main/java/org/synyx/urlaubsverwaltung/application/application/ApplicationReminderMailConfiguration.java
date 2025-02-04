@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.application.ApplicationProperties;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
@@ -16,10 +16,10 @@ class ApplicationReminderMailConfiguration implements SchedulingConfigurer {
     private final ApplicationProperties applicationProperties;
     private final ApplicationReminderMailService applicationReminderMailService;
     private final ScheduleLocking scheduleLocking;
-    private final ThreadPoolTaskScheduler taskScheduler;
+    private final TaskScheduler taskScheduler;
 
     @Autowired
-    ApplicationReminderMailConfiguration(ApplicationProperties applicationProperties, ApplicationReminderMailService applicationReminderMailService, ScheduleLocking scheduleLocking, ThreadPoolTaskScheduler taskScheduler) {
+    ApplicationReminderMailConfiguration(ApplicationProperties applicationProperties, ApplicationReminderMailService applicationReminderMailService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
         this.applicationProperties = applicationProperties;
         this.applicationReminderMailService = applicationReminderMailService;
         this.scheduleLocking = scheduleLocking;
