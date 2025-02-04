@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
@@ -44,6 +45,7 @@ import static java.time.Month.NOVEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -141,18 +143,19 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
-        // were both emails sent?
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
+
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
-
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
-
         final MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxBoss.length).isOne();
-
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
 
         // check email user attributes
         final MimeMessage msg = inboxUser[0];
@@ -302,12 +305,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
+
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
-
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
 
         // check email user attributes
         final MimeMessage msgUser = inboxUser[0];
@@ -405,12 +412,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAllowedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
+
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
-
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
 
         // check content of user email
         final MimeMessage msgUser = inboxUser[0];
@@ -502,9 +513,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRejectedNotification(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHead.getEmail())).hasSize(1);
+            });
+
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
 
         // check content of user email
         Message msg = inbox[0];
@@ -527,7 +545,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to boss
         MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxBoss.length).isOne();
         Message msgBoss = inboxBoss[0];
         assertThat(msgBoss.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(readPlainContent(msgBoss)).isEqualTo("""
@@ -545,7 +562,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to departmentHead
         MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
-        assertThat(inboxDepartmentHead.length).isOne();
         Message msgDepartmentHead = inboxDepartmentHead[0];
         assertThat(msgDepartmentHead.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(readPlainContent(msgDepartmentHead)).isEqualTo("""
@@ -576,9 +592,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
 
-        // was email sent?
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipient.getEmail())).hasSize(1));
+
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
-        assertThat(inbox.length).isOne();
 
         // check content of user email
         final Message msg = inbox[0];
@@ -633,10 +651,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
-        // send mail to applicant?
-        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
 
+        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
@@ -655,8 +678,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // send mail to office
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
-
         final Message msg = inboxOffice[0];
         assertThat(msg.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -675,8 +696,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to relevant person
         MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
-
         Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
@@ -714,10 +733,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancellationRequest(application, comment);
 
-        // send mail to applicant?
-        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
+        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).contains("Stornierung wurde beantragt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
@@ -739,8 +762,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // send mail to all relevant persons?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
-
         final Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
@@ -784,9 +805,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
-        // Was email sent to applicant
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
+
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
         final Message msgApplicant = inboxApplicant[0];
         assertThat(msgApplicant.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgApplicant.getAllRecipients()[0]);
@@ -802,7 +828,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // Was email sent to management
         final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxManagement.length).isOne();
         final Message msgManagement = inboxManagement[0];
         assertThat(msgManagement.getSubject()).contains("Die Krankmeldung von Lieschen Müller wurde in eine Abwesenheit umgewandelt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgManagement.getAllRecipients()[0]);
@@ -839,10 +864,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendConfirmationAllowedDirectly(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
+
         // email sent to applicant
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
-
         final Message contentUser = inboxUser[0];
         assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
@@ -870,8 +900,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // email sent to colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
-
         final Message contentColleague = inboxColleague[0];
         assertThat(contentColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(contentColleague.getAllRecipients()[0]);
@@ -913,11 +941,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 
-        // email sent?
-        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
 
-        // check content of user email
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message contentUser = inboxUser[0];
         assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
@@ -946,8 +977,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // email sent to colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
-
         final Message contentColleague = inboxColleague[0];
         assertThat(contentColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(contentColleague.getAllRecipients()[0]);
@@ -984,11 +1013,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendDirectlyAllowedNotificationToManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1));
+
         // email sent?
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxUser.length).isOne();
-
-        // check content of relevant person email
         final Message contentRelevantPerson = inboxUser[0];
         assertThat(contentRelevantPerson.getSubject()).isEqualTo("Neue Abwesenheit wurde von Lieschen Mueller erstellt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(contentRelevantPerson.getAllRecipients()[0]);
@@ -1035,10 +1065,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutDirectlyAllowedApplication(replacementEntity, application);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
+
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
-
         final MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Eine Vertretung für Lieschen Müller wurde eingetragen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1082,11 +1114,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementForApply(replacementEntity, application);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1123,10 +1157,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine Vertretung für Lieschen Müller wurde eingeplant");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1167,11 +1202,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        MimeMessage msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde zurückgezogen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1208,10 +1244,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
+
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
-
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1249,10 +1287,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
-        // was email sent?
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1283,13 +1322,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotification(application, comment);
 
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
-        Address[] from = msg.getFrom();
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
+        final Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
-        assertThat(from.length).isOne();
+        assertThat(from).hasSize(1);
         assertThat(from[0]).hasToString(String.format("%s <%s>", mailProperties.getFromDisplayName(), mailProperties.getFrom()));
     }
 
@@ -1309,11 +1350,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1361,11 +1403,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -1419,11 +1463,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -1470,11 +1516,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedByManagementNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1526,11 +1574,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setApplier(office);
         sut.sendAppliedByManagementNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -1587,11 +1637,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setApplier(office);
         sut.sendAppliedByManagementNotification(application, comment);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -1638,11 +1689,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRevokedNotifications(application, comment);
 
-        // was email sent to applicant
-        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
 
-        Message msg = inboxApplicant[0];
+        // was email sent to applicant
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1660,8 +1716,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to relevant person
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
-
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
@@ -1701,11 +1755,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRevokedNotifications(application, comment);
 
-        // was email sent to applicant
-        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        Message msg = inboxApplicant[0];
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1723,8 +1781,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to relevant person
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
-
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
@@ -1764,10 +1820,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipientOfInterest.getEmail())).hasSize(1));
+
         // was email sent to applicant?
         final MimeMessage[] inboxRecipientOfInterest = greenMail.getReceivedMessagesForDomain(recipientOfInterest.getEmail());
-        assertThat(inboxRecipientOfInterest.length).isOne();
-
         final Message msg = inboxRecipientOfInterest[0];
         assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit von Lieschen Müller wurde storniert");
         assertThat(new InternetAddress(recipientOfInterest.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1817,10 +1875,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
+
         // was email sent to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
-
         final MimeMessage msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1852,8 +1915,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // check email colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
-
         final MimeMessage msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
@@ -1900,10 +1961,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
+
         // was email sent to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
-
         final Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -1932,8 +1998,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // check email colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
-
         final MimeMessage msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
@@ -1982,14 +2046,18 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledConfirmationByManagement(application, comment);
 
-        // was email sent to applicant?
-        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxApplicant.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
+            });
 
-        MimeMessage msg = inboxApplicant[0];
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final MimeMessage msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -2008,13 +2076,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         assertThat(attachments.getFirst().getName()).contains("calendar.ics");
 
         // was email sent to relevant person?
-        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
-
-        MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
+        final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        final MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vom Office storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
-
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
             Hallo Relevant Person,
 
@@ -2033,10 +2098,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         assertThat(attachmentsRelevantPerson.getFirst().getName()).contains("calendar.ics");
 
         // was email sent to colleague?
-        MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague.length).isOne();
-
-        MimeMessage msgColleague = inboxColleague[0];
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        final MimeMessage msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
 
@@ -2085,10 +2148,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHead.getEmail())).hasSize(1);
+            });
+
         // was email sent to boss?
         final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxOfBoss.length).isOne();
-
         final Message msgBoss = inboxOfBoss[0];
         assertThat(msgBoss.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Lieschen Müller eingereicht");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
@@ -2122,7 +2190,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to department head?
         final MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
-        assertThat(inboxOfDepartmentHead.length).isOne();
         final Message msgDepartmentHead = inboxOfDepartmentHead[0];
         assertThat(readPlainContent(msgDepartmentHead)).isEqualTo("""
             Hallo Senior Kopf,
@@ -2182,11 +2249,16 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHead.getEmail())).hasSize(1);
+            });
+
         // was email sent to boss?
         final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxOfBoss.length).isOne();
         final Message msgBoss = inboxOfBoss[0];
-
         assertThat(msgBoss.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Kai Schmitt eingereicht");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
         assertThat(readPlainContent(msgBoss)).isEqualTo("""
@@ -2222,7 +2294,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msgDepartmentHead = inboxOfDepartmentHead[0];
         assertThat(msgDepartmentHead.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Kai Schmitt eingereicht");
         assertThat(new InternetAddress(departmentHead.getEmail())).isEqualTo(msgDepartmentHead.getAllRecipients()[0]);
-        assertThat(inboxOfDepartmentHead.length).isOne();
         assertThat(readPlainContent(msgDepartmentHead)).isEqualTo("""
             Hallo Senior Kopf,
 
@@ -2281,9 +2352,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+            });
+
         // was email sent to boss?
         final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxOfBoss.length).isOne();
         final Message msgBoss = inboxOfBoss[0];
         assertThat(readPlainContent(msgBoss)).isEqualTo("""
             Hallo Hugo Boss,
@@ -2315,7 +2392,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // was email sent to secondary stage?
         final MimeMessage[] inboxOfSecondaryStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxOfSecondaryStage.length).isOne();
         final Message msgSecondaryStage = inboxOfSecondaryStage[0];
         assertThat(readPlainContent(msgSecondaryStage)).isEqualTo("""
             Hallo Kai Schmitt,
@@ -2377,10 +2453,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
-        MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(messages.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
 
-        Message message = messages[0];
+        final MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final Message message = messages[0];
         assertThat(readPlainContent(message)).isEqualTo("""
             Hallo Hugo Boss,
 
@@ -2443,10 +2521,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
-        MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(messages.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
 
-        Message message = messages[0];
+        final MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final Message message = messages[0];
         assertThat(readPlainContent(message)).isEqualTo("""
             Hallo Hugo Boss,
 
@@ -2506,10 +2586,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
-        MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(messages.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
 
-        Message message = messages[0];
+        final MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final Message message = messages[0];
         assertThat(readPlainContent(message)).isEqualTo("""
             Hallo Hugo Boss,
 
@@ -2571,9 +2653,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
-        final MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(messages.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1));
 
+        final MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         final Message message = messages[0];
         assertThat(readPlainContent(message)).isEqualTo("""
             Hallo Hugo Boss,
@@ -2627,15 +2711,17 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        // were both emails sent?
-        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxSecondStage.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
 
-        // get email user
-        Message msg = inboxUser[0];
+        final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -2725,15 +2811,19 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        // were both emails sent?
-        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxSecondStage.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
+        // were both emails sent?
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
 
         // get email user
-        Message msg = inboxUser[0];
+        final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -2811,15 +2901,18 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        // were both emails sent?
-        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxSecondStage.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
 
         // get email user
-        Message msg = inboxUser[0];
+        final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -2889,19 +2982,19 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        // were both emails sent?
-        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxSecondStage.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
-
-        // get email user
-        Message msg = inboxUser[0];
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // get email office
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
@@ -2963,19 +3056,19 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        // were both emails sent?
-        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        assertThat(inboxSecondStage.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(secondStage.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxUser.length).isOne();
-
-        // get email user
-        Message msg = inboxUser[0];
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // get email office
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
@@ -3028,16 +3121,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindNotificationToManagement(application);
 
-        // was email sent to boss?
-        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(inboxOfBoss.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHead.getEmail())).hasSize(1);
+            });
 
-        // was email sent to department head?
-        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
-        assertThat(inboxOfDepartmentHead.length).isOne();
-
-        // has mail correct attributes?
-        Message msg = inboxOfBoss[0];
+        final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final Message msg = inboxOfBoss[0];
         assertThat(msg.getSubject()).isEqualTo("Erinnerung auf wartende zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -3104,15 +3196,18 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationAA, applicationA, applicationB, applicationC));
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(boss.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHeadA.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(departmentHeadB.getEmail())).hasSize(1);
+            });
+
         // were all emails sent?
         final MimeMessage[] bossInbox = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        assertThat(bossInbox.length).isOne();
-
         final MimeMessage[] departmentHeadAInbox = greenMail.getReceivedMessagesForDomain(departmentHeadA.getEmail());
-        assertThat(departmentHeadAInbox.length).isOne();
-
         final MimeMessage[] departmentHeadBInbox = greenMail.getReceivedMessagesForDomain(departmentHeadB.getEmail());
-        assertThat(departmentHeadBInbox.length).isOne();
 
         // get email boss
         final Message msgBoss = bossInbox[0];
@@ -3207,9 +3302,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEditedNotification(application, editor);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(editor.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
+
         // check editor email
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(editor.getEmail());
-        assertThat(inbox.length).isOne();
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -3227,7 +3328,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // check relevant person email
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
@@ -3264,9 +3364,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEditedNotification(application, office);
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(applicant.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
+            });
+
         // check editor email
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(applicant.getEmail());
-        assertThat(inbox.length).isOne();
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde von Marlene Muster bearbeitet");
         assertThat(new InternetAddress(applicant.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -3284,7 +3390,6 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // check relevant person email
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        assertThat(inboxRelevantPerson.length).isOne();
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
@@ -3320,11 +3425,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3369,15 +3475,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3417,15 +3522,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3459,15 +3563,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3497,16 +3600,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         application.setEndDate(LocalDate.now(clock).plusDays(1));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
-
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3537,15 +3638,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3576,15 +3676,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Lieschen Müller,
@@ -3621,11 +3720,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3671,11 +3772,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3726,11 +3829,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3780,11 +3884,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3830,11 +3936,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -3878,11 +3986,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -3917,11 +4027,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -3956,11 +4068,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -3995,11 +4108,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail())).hasSize(1));
 
-        Message msg = inbox[0];
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""

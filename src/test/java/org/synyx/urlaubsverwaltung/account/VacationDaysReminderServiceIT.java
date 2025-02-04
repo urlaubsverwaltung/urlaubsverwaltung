@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
@@ -29,6 +30,7 @@ import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
@@ -67,10 +69,12 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         sut.remindForCurrentlyLeftVacationDays();
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
-
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an offenen Urlaubsanspruch");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -119,10 +123,12 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         sut.remindForRemainingVacationDays();
 
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
-
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Erinnerung an offenen Resturlaub");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
@@ -172,10 +178,11 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         sut.notifyForExpiredRemainingVacationDays();
 
-        // was email sent?
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Verfall des Resturlaubs");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);

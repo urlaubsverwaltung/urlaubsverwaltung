@@ -20,10 +20,12 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
@@ -80,14 +82,14 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEndOfSickPayNotification();
 
-        // Where both mails sent?
-        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> {
+                assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1);
+                assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
+            });
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
-
-        // check email of user
         final Message msgUser = inbox[0];
         assertThat(msgUser.getSubject()).isEqualTo("Ende deiner Lohnfortzahlung");
         assertThat(readPlainContent(msgUser)).isEqualTo("""
@@ -110,6 +112,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.""");
 
         // check email of office
+        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
         final Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Ende der Lohnfortzahlung von Lieschen Müller");
 
@@ -159,10 +162,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCreatedToSickPerson(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für dich eingetragen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -204,10 +208,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendEditedToSickPerson(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich bearbeitet");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -246,10 +251,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCreatedOrAcceptedToColleagues(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
         final Message msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Müller");
         assertThat(readPlainContent(msgColleague)).isEqualTo("""
@@ -288,10 +294,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelledToSickPerson(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich storniert");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -330,10 +337,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendCancelToColleagues(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        assertThat(inboxColleague).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
         final Message msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(readPlainContent(msgColleague)).isEqualTo("""
@@ -378,10 +386,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteCreatedNotificationToOfficeAndResponsibleManagement(sickNote, comment);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office2.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für Marlene Muster eingetragen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -426,10 +435,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteSubmittedNotificationToSickPerson(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Du hast eine neue Krankmeldung eingereicht");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -473,10 +483,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteSubmittedNotificationToOfficeAndResponsibleManagement(sickNote);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde von Marlene Muster eingereicht");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -519,10 +530,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteAcceptedNotificationToSickPerson(sickNote, office);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Deine Krankmeldung wurde angenommen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
@@ -567,10 +579,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, office1);
 
-        // check email of colleague
-        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
-        assertThat(inboxPerson).hasSize(1);
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office2.getEmail())).hasSize(1));
 
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(office2.getEmail());
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde von Marlene Muster angenommen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""

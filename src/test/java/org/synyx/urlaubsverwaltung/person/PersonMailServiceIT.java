@@ -15,9 +15,11 @@ import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -39,26 +41,21 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureOfficeWithNotificationsGetMailNewPersonIsCreated() throws MessagingException, IOException {
 
-        final Person createdPerson = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
-        createdPerson.setId(1L);
-
         final Person office = personService.create(
             "office",
             "Marlene", "Muster",
             "office@example.org",
             List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL),
-            List.of(OFFICE)
+            List.of(USER, OFFICE)
         );
 
-        sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive()));
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
-        // was email sent to office?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
-
-        // check attributes
-        final Message msg = inboxOffice[1];
+        final Message msg = inboxOffice[0];
         assertThat(msg.getSubject()).contains("Ein neuer Benutzer wurde erstellt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -68,10 +65,10 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
 
             es wurde ein neuer Benutzer erstellt.
 
-                Lieschen Müller
+                Marlene Muster
 
             Du kannst unter folgender Adresse die Einstellungen des Benutzers einsehen und anpassen:
-            https://localhost:8080/web/person/1"""
+            https://localhost:8080/web/person/%s""".formatted(office.getId())
         );
     }
 
@@ -90,6 +87,10 @@ class PersonMailServiceIT extends SingleTenantTestContainersBase {
         final List<PersonPermissionsRoleDto> addedPermissions = List.of(SECOND_STAGE_AUTHORITY, DEPARTMENT_HEAD);
 
         sut.sendPersonGainedMorePermissionsNotification(person, addedPermissions);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // was email sent to person?
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());

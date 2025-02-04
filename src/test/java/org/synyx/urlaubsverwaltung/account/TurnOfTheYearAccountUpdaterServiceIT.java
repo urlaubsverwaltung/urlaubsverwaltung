@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.TWO;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -83,9 +85,11 @@ class TurnOfTheYearAccountUpdaterServiceIT extends SingleTenantTestContainersBas
 
         sut.updateAccountsForNextPeriod();
 
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inbox.length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Auswertung Resturlaubstage");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
