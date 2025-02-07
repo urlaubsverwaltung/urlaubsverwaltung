@@ -315,6 +315,19 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setPermissions(List.of(INACTIVE));
+
+        when(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(user));
+
+        final List<Person> activePersons = sut.getInactivePersons();
+        assertThat(activePersons)
+            .containsExactly(user);
+    }
+
+    @Test
     void ensureGetInactivePersonsPage() {
 
         final Page<Person> expected = Page.empty();

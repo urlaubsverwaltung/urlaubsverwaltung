@@ -93,7 +93,6 @@ public interface PersonService {
      */
     List<Person> getInactivePersons();
 
-
     /**
      * returns all persons ordered by id.
      *
