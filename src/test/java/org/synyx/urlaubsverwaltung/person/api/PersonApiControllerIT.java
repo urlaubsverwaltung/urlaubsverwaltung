@@ -51,43 +51,43 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(person));
 
         perform(
-                get("/api/persons/me")
-                        .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
-                        .accept(HAL_JSON_VALUE)
+            get("/api/persons/me")
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER")))
+                .accept(HAL_JSON_VALUE)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(HAL_JSON_VALUE))
-                .andExpect(content().json("""
-                        {
-                          "id": 1,
-                          "email": "shane@example.org",
-                          "firstName": "shane",
-                          "lastName": "last",
-                          "niceName": "shane last",
-                          "active": true,
-                          "_links":{
-                            "self":{
-                              "href":"http://localhost/api/persons/1"
-                            },
-                            "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                              "templated":true
-                              },
-                            "sicknotes":{
-                              "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
-                              "templated":true
-                            },
-                            "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                              "templated":true
-                            },
-                            "workdays":{
-                              "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
-                              "templated":true
-                            }
-                          }
-                        }
-                        """, STRICT));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                  "id": 1,
+                  "email": "shane@example.org",
+                  "firstName": "shane",
+                  "lastName": "last",
+                  "niceName": "shane last",
+                  "active": true,
+                  "_links":{
+                    "self":{
+                      "href":"http://localhost/api/persons/1"
+                    },
+                    "absences":{
+                      "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                      "templated":true
+                      },
+                    "sicknotes":{
+                      "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
+                      "templated":true
+                    },
+                    "vacations":{
+                      "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                      "templated":true
+                    },
+                    "workdays":{
+                      "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
+                      "templated":true
+                    }
+                  }
+                }
+                """, STRICT));
     }
 
     @Test
@@ -109,42 +109,42 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
 
         perform(get("/api/persons/1")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
-                .accept(HAL_JSON_VALUE)
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .accept(HAL_JSON_VALUE)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(HAL_JSON_VALUE))
-                .andExpect(content().json("""
-                        {
-                          "id": 1,
-                          "email": "shane@example.org",
-                          "firstName": "shane",
-                          "lastName": "shane",
-                          "niceName": "shane shane",
-                          "active": true,
-                          "_links":{
-                            "self":{
-                              "href":"http://localhost/api/persons/1"
-                            },
-                            "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                              "templated":true
-                              },
-                            "sicknotes":{
-                              "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
-                              "templated":true
-                            },
-                            "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                              "templated":true
-                            },
-                            "workdays":{
-                              "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
-                              "templated":true
-                            }
-                          }
-                        }
-                        """, STRICT));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                  "id": 1,
+                  "email": "shane@example.org",
+                  "firstName": "shane",
+                  "lastName": "shane",
+                  "niceName": "shane shane",
+                  "active": true,
+                  "_links":{
+                    "self":{
+                      "href":"http://localhost/api/persons/1"
+                    },
+                    "absences":{
+                      "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                      "templated":true
+                      },
+                    "sicknotes":{
+                      "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
+                      "templated":true
+                    },
+                    "vacations":{
+                      "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                      "templated":true
+                    },
+                    "workdays":{
+                      "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
+                      "templated":true
+                    }
+                  }
+                }
+                """, STRICT));
     }
 
 
@@ -159,75 +159,75 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
 
         perform(get("/api/persons")
-                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
-                .accept(HAL_JSON_VALUE)
+            .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .accept(HAL_JSON_VALUE)
         )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(HAL_JSON_VALUE))
-                .andExpect(content().json("""
-                        {
-                           "persons": [
-                             {
-                               "id": 1,
-                               "email": "shane@example.org",
-                               "firstName": "shane",
-                               "lastName": "shane",
-                               "niceName": "shane shane",
-                               "active": true,
-                               "_links": {
-                                 "self": {
-                                   "href": "http://localhost/api/persons/1"
-                                 },
-                                 "absences": {
-                                   "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                                   "templated": true
-                                 },
-                                 "sicknotes": {
-                                   "href": "http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
-                                   "templated": true
-                                 },
-                                 "vacations": {
-                                   "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                                   "templated": true
-                                 },
-                                 "workdays": {
-                                   "href": "http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
-                                   "templated": true
-                                 }
-                               }
-                             },
-                             {
-                               "id": 2,
-                               "email": "carl@example.org",
-                               "firstName": "carl",
-                               "lastName": "carl",
-                               "niceName": "carl carl",
-                               "active": true,
-                               "_links": {
-                                 "self": {
-                                   "href": "http://localhost/api/persons/2"
-                                 },
-                                 "absences": {
-                                   "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                                   "templated": true
-                                 },
-                                 "sicknotes": {
-                                   "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}",
-                                   "templated": true
-                                 },
-                                 "vacations": {
-                                   "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                                   "templated": true
-                                 },
-                                 "workdays": {
-                                   "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}",
-                                   "templated": true
-                                 }
-                               }
-                             }
-                           ]
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                   "persons": [
+                     {
+                       "id": 1,
+                       "email": "shane@example.org",
+                       "firstName": "shane",
+                       "lastName": "shane",
+                       "niceName": "shane shane",
+                       "active": true,
+                       "_links": {
+                         "self": {
+                           "href": "http://localhost/api/persons/1"
+                         },
+                         "absences": {
+                           "href": "http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                           "templated": true
+                         },
+                         "sicknotes": {
+                           "href": "http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
+                           "templated": true
+                         },
+                         "vacations": {
+                           "href": "http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                           "templated": true
+                         },
+                         "workdays": {
+                           "href": "http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
+                           "templated": true
                          }
-                        """, STRICT));
+                       }
+                     },
+                     {
+                       "id": 2,
+                       "email": "carl@example.org",
+                       "firstName": "carl",
+                       "lastName": "carl",
+                       "niceName": "carl carl",
+                       "active": true,
+                       "_links": {
+                         "self": {
+                           "href": "http://localhost/api/persons/2"
+                         },
+                         "absences": {
+                           "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                           "templated": true
+                         },
+                         "sicknotes": {
+                           "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}",
+                           "templated": true
+                         },
+                         "vacations": {
+                           "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                           "templated": true
+                         },
+                         "workdays": {
+                           "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}",
+                           "templated": true
+                         }
+                       }
+                     }
+                   ]
+                 }
+                """, STRICT));
     }
 
     @Test
@@ -246,39 +246,40 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
             .andExpect(status().isOk())
             .andExpect(content().contentType(HAL_JSON_VALUE))
             .andExpect(content().json("""
-                        {
-                           "persons": [
-                             {
-                               "id": 2,
-                               "email": "carl@example.org",
-                               "firstName": "carl",
-                               "lastName": "carl",
-                               "niceName": "carl carl",
-                               "_links": {
-                                 "self": {
-                                   "href": "http://localhost/api/persons/2"
-                                 },
-                                 "absences": {
-                                   "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                                   "templated": true
-                                 },
-                                 "sicknotes": {
-                                   "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}",
-                                   "templated": true
-                                 },
-                                 "vacations": {
-                                   "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                                   "templated": true
-                                 },
-                                 "workdays": {
-                                   "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}",
-                                   "templated": true
-                                 }
-                               }
-                             }
-                           ]
+                {
+                   "persons": [
+                     {
+                       "id": 2,
+                       "email": "carl@example.org",
+                       "firstName": "carl",
+                       "lastName": "carl",
+                       "niceName": "carl carl",
+                       "active": false,
+                       "_links": {
+                         "self": {
+                           "href": "http://localhost/api/persons/2"
+                         },
+                         "absences": {
+                           "href": "http://localhost/api/persons/2/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                           "templated": true
+                         },
+                         "sicknotes": {
+                           "href": "http://localhost/api/persons/2/sicknotes?from={from}&to={to}",
+                           "templated": true
+                         },
+                         "vacations": {
+                           "href": "http://localhost/api/persons/2/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                           "templated": true
+                         },
+                         "workdays": {
+                           "href": "http://localhost/api/persons/2/workdays?from={from}&to={to}{&length}",
+                           "templated": true
                          }
-                        """, STRICT));
+                       }
+                     }
+                   ]
+                 }
+                """, STRICT));
     }
 
     @Test
@@ -291,45 +292,45 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.create("shane@example.org", "shane", "last", "shane@example.org")).thenReturn(createdPerson);
 
         perform(
-                post("/api/persons")
-                        .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
-                        .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
-                        .contentType(APPLICATION_JSON)
-                        .accept(HAL_JSON_VALUE)
+            post("/api/persons")
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
+                .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+                .contentType(APPLICATION_JSON)
+                .accept(HAL_JSON_VALUE)
         )
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(HAL_JSON_VALUE))
-                .andExpect(content().json("""
-                        {
-                          "id": 1,
-                          "email": "shane@example.org",
-                          "firstName": "shane",
-                          "lastName": "last",
-                          "niceName": "shane last",
-                          "active": true,
-                          "_links":{
-                            "self":{
-                              "href":"http://localhost/api/persons/1"
-                            },
-                            "absences":{
-                              "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
-                              "templated":true
-                              },
-                            "sicknotes":{
-                              "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
-                              "templated":true
-                            },
-                            "vacations":{
-                              "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
-                              "templated":true
-                            },
-                            "workdays":{
-                              "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
-                              "templated":true
-                            }
-                          }
-                        }
-                        """, STRICT));
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                  "id": 1,
+                  "email": "shane@example.org",
+                  "firstName": "shane",
+                  "lastName": "last",
+                  "niceName": "shane last",
+                  "active": true,
+                  "_links":{
+                    "self":{
+                      "href":"http://localhost/api/persons/1"
+                    },
+                    "absences":{
+                      "href":"http://localhost/api/persons/1/absences?from={from}&to={to}&absence-types=vacation&absence-types=sick_note&absence-types=public_holiday&absence-types=no_workday",
+                      "templated":true
+                      },
+                    "sicknotes":{
+                      "href":"http://localhost/api/persons/1/sicknotes?from={from}&to={to}",
+                      "templated":true
+                    },
+                    "vacations":{
+                      "href":"http://localhost/api/persons/1/vacations?from={from}&to={to}&status=waiting&status=temporary_allowed&status=allowed&status=allowed_cancellation_requested",
+                      "templated":true
+                    },
+                    "workdays":{
+                      "href":"http://localhost/api/persons/1/workdays?from={from}&to={to}{&length}",
+                      "templated":true
+                    }
+                  }
+                }
+                """, STRICT));
     }
 
     @Test
@@ -338,13 +339,13 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
         when(personService.getPersonByUsername("shane@example.org")).thenReturn(Optional.of(new Person()));
 
         perform(
-                post("/api/persons")
-                        .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
-                        .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
-                        .contentType(APPLICATION_JSON)
-                        .accept(HAL_JSON_VALUE)
+            post("/api/persons")
+                .with(oidcLogin().idToken(builder -> builder.subject("shane@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("PERSON_ADD")))
+                .content(asJsonString(new PersonProvisionDto("shane", "last", "shane@example.org")))
+                .contentType(APPLICATION_JSON)
+                .accept(HAL_JSON_VALUE)
         )
-                .andExpect(status().isConflict());
+            .andExpect(status().isConflict());
     }
 
     public static String asJsonString(final Object obj) {
