@@ -171,6 +171,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public List<Person> getInactivePersons() {
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+    }
+
+    @Override
     public List<Person> getAllPersons() {
         return personRepository.findAllByOrderByIdAsc();
     }

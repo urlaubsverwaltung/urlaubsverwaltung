@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
@@ -96,9 +98,9 @@ public class PersonApiController {
     }
 
     @Operation(
-        summary = "Returns all active persons",
+        summary = "Returns all active or all inactive persons",
         description = """
-            Returns all active persons.
+            Returns all active persons (default) or all inactive persons.
 
             Needed basic authorities:
             * user
@@ -110,13 +112,19 @@ public class PersonApiController {
     )
     @GetMapping(produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
     @PreAuthorize(IS_BOSS_OR_OFFICE)
-    public ResponseEntity<PersonsDto> persons() {
+    public ResponseEntity<PersonsDto> persons(
+        @Parameter(description = "Whether to return all active persons (default) or all inactive persons")
+        @RequestParam(name = "active", defaultValue = "true")
+        boolean active
+    ) {
 
-        final List<PersonDto> persons = personService.getActivePersons().stream()
+        final List<Person> persons = active ? personService.getActivePersons() : personService.getInactivePersons();
+
+        final List<PersonDto> personDtoList = persons.stream()
             .map(PersonMapper::mapToDto)
             .toList();
 
-        return new ResponseEntity<>(new PersonsDto(persons), OK);
+        return new ResponseEntity<>(new PersonsDto(personDtoList), OK);
     }
 
 
