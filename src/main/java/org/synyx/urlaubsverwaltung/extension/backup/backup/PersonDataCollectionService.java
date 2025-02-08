@@ -48,7 +48,7 @@ class PersonDataCollectionService {
     List<PersonDTO> collectPersons(List<Person> persons) {
         return persons.stream().map(person -> {
 
-            final List<RoleDTO> permissions = person.isActive() ? person.getPermissions().stream().map(role -> RoleDTO.valueOf(role.name())).toList() : List.of();
+            final List<RoleDTO> permissions = person.getPermissions().stream().map(role -> RoleDTO.valueOf(role.name())).toList();
             final List<MailNotificationDTO> mailNotificationDTOS = person.getNotifications().stream().map(notification -> MailNotificationDTO.valueOf(notification.name())).toList();
             final PersonBaseDataDTO personBaseDataDTO = personBasedataService.getBasedataByPersonId(person.getId()).map(personBasedata -> new PersonBaseDataDTO(personBasedata.getPersonnelNumber(), personBasedata.getAdditionalInformation())).orElse(null);
 
