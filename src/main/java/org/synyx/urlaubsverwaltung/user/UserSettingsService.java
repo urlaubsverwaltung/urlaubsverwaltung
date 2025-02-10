@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface UserSettingsService {
 
+    void updateLocaleBrowserSpecific(Person person, Locale localeBrowserSpecific);
+
     /**
      * Returns the effective locale of a list of persons.
      * <p>

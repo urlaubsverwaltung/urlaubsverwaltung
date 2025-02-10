@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,29 +30,16 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     private final UserSettingsRepository userSettingsRepository;
     private final LocaleResolver localeResolver;
-    private final PersonService personService;
 
     UserSettingsServiceImpl(UserSettingsRepository userSettingsRepository,
-                            LocaleResolver localeResolver, PersonService personService) {
+                            LocaleResolver localeResolver) {
         this.userSettingsRepository = userSettingsRepository;
         this.localeResolver = localeResolver;
-        this.personService = personService;
     }
 
     @EventListener
     void delete(PersonDeletedEvent event) {
         userSettingsRepository.deleteByPerson(event.person());
-    }
-
-    @EventListener
-    void handleAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        final String userName = event.getAuthentication().getName();
-        final Optional<Person> maybePerson = personService.getPersonByUsername(userName);
-
-        getRequest()
-            .map(ServletRequest::getLocale)
-            .ifPresent(locale -> maybePerson.ifPresent(person -> updateLocaleBrowserSpecific(person, locale)));
-        maybePerson.flatMap(this::getLocale).ifPresent(this::setLocale);
     }
 
     Optional<Theme> findThemeForUsername(String username) {
@@ -101,7 +86,8 @@ class UserSettingsServiceImpl implements UserSettingsService {
      * @param person                to save the browser specific locale
      * @param localeBrowserSpecific
      */
-    void updateLocaleBrowserSpecific(Person person, Locale localeBrowserSpecific) {
+    @Override
+    public void updateLocaleBrowserSpecific(Person person, Locale localeBrowserSpecific) {
         userSettingsRepository.findByPerson(person)
             .ifPresentOrElse(userSettingsEntity -> {
                 if (userSettingsEntity.getLocale() == null) {
