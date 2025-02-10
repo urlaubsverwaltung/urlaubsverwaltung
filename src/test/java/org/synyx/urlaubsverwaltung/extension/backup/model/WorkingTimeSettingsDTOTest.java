@@ -32,7 +32,7 @@ class WorkingTimeSettingsDTOTest {
 
     @Test
     void happyPathDTOToWorkingTimeSettings() {
-        WorkingTimeSettingsDTO dto = new WorkingTimeSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, DayLengthDTO.MORNING, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
+        WorkingTimeSettingsDTO dto = new WorkingTimeSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, DayLengthDTO.MORNING, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeSettings workingTimeSettings = dto.toWorkingTimeSettings();
 
@@ -45,6 +45,6 @@ class WorkingTimeSettingsDTOTest {
         assertThat(workingTimeSettings.getSunday()).isEqualTo(DayLength.ZERO);
         assertThat(workingTimeSettings.getWorkingDurationForChristmasEve()).isEqualTo(DayLength.MORNING);
         assertThat(workingTimeSettings.getWorkingDurationForNewYearsEve()).isEqualTo(DayLength.MORNING);
-        assertThat(workingTimeSettings.getFederalState()).isEqualTo(FederalState.GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(workingTimeSettings.getFederalState()).isEqualTo(FederalState.GERMANY_RHEINLAND_PFALZ);
     }
 }

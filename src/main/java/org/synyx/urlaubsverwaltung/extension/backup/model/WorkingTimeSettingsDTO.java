@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 public record WorkingTimeSettingsDTO(
@@ -42,6 +43,7 @@ public record WorkingTimeSettingsDTO(
         workingTimeSettings.setSunday(DayLength.valueOf(sunday().name()));
         workingTimeSettings.setWorkingDurationForChristmasEve(DayLength.valueOf(workingDurationForChristmasEve().name()));
         workingTimeSettings.setWorkingDurationForNewYearsEve(DayLength.valueOf(workingDurationForNewYearsEve().name()));
+        workingTimeSettings.setFederalState(FederalState.valueOf(federalState().name()));
         return workingTimeSettings;
     }
 }
