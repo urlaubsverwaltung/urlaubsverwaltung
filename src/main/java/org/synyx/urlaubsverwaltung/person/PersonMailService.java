@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -24,7 +23,6 @@ public class PersonMailService {
         this.personService = personService;
     }
 
-    @Async
     @EventListener
     public void sendPersonCreationNotification(PersonCreatedEvent event) {
 
