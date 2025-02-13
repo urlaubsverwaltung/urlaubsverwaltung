@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -45,7 +44,6 @@ public class VacationDaysReminderService {
     /**
      * Reminds for vacation days left for <b>current year</b>.
      */
-    @Async
     public void remindForCurrentlyLeftVacationDays() {
         final Year year = Year.now(clock);
         final List<Person> persons = personService.getActivePersons();
@@ -65,7 +63,6 @@ public class VacationDaysReminderService {
      * Remind for remaining vacation days of last year
      * Should be called after turn of the year logic which calculates the new account for the new year
      */
-    @Async
     public void remindForRemainingVacationDays() {
 
         final Year year = Year.now(clock);
@@ -99,7 +96,6 @@ public class VacationDaysReminderService {
     /**
      * Notify about expired remaining vacation days
      */
-    @Async
     public void notifyForExpiredRemainingVacationDays() {
         final Year currentYear = Year.now(clock);
         final LocalDate currentDate = LocalDate.now(clock);

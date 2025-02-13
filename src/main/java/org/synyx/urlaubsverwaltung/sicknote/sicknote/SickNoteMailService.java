@@ -59,7 +59,6 @@ public class SickNoteMailService {
     /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
-    @Async
     public void sendEndOfSickPayNotification() {
 
         final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
