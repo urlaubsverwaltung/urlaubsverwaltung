@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSin
 
 @Configuration
 @ConditionalOnSingleTenantMode
-public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
+class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
 
     private final AccountProperties accountProperties;
     private final TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService;
@@ -18,7 +18,7 @@ public class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfi
     private final TaskScheduler taskScheduler;
 
     @Autowired
-    public TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
+    TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
         this.scheduleLocking = scheduleLocking;

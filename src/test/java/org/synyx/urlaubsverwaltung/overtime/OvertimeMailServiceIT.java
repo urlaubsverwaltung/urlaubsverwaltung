@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
@@ -59,8 +60,9 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendOvertimeNotificationToManagement(overtime, overtimeComment);
 
-        // was email sent to office?
-        assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail()).length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail())).hasSize(1));
 
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];
@@ -103,8 +105,9 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
 
-        // was email sent to office?
-        assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail()).length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(person.getEmail())[0];
@@ -142,8 +145,9 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         sut.sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
 
-        // was email sent to office?
-        assertThat(greenMail.getReceivedMessagesForDomain(author.getEmail()).length).isOne();
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(author.getEmail())).hasSize(1));
 
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(author.getEmail())[0];
