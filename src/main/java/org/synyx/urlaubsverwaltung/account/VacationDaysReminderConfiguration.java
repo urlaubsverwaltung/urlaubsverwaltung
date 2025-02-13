@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSin
 
 @Configuration
 @ConditionalOnSingleTenantMode
-public class VacationDaysReminderConfiguration implements SchedulingConfigurer {
+class VacationDaysReminderConfiguration implements SchedulingConfigurer {
 
     private final AccountProperties accountProperties;
     private final VacationDaysReminderService vacationDaysReminderService;
