@@ -19,10 +19,7 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * Implementation of interface {@link MailService}.
- */
-@Service("mailService")
+@Service
 @EnableConfigurationProperties(MailProperties.class)
 class MailServiceImpl implements MailService {
 
