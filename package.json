@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.26.8",
-    "@babel/eslint-parser": "7.26.5",
+    "@babel/eslint-parser": "7.26.8",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.26.8",
     "@eslint/js": "9.20.0",
