@@ -457,12 +457,8 @@ Details siehe [Playwright for Java Getting Started](https://playwright.dev/java/
 #### Headless Browser
 
 Die Tests laufen standardmäßig ohne sichtbaren Browser (headless).
-Das kann im [PageParameterResolver](src/test/java/org/synyx/urlaubsverwaltung/ui/extension/PageParameterResolver.java)
-mit `BrowserType.LaunchOptions` entsprechend konfiguriert werden.  
-
-```java
-final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-```
+Das kann in der [UiTest](src/test/java/org/synyx/urlaubsverwaltung/ui/extension/UiTest.java) Annotation
+mit `Options#setHeadless` entsprechend konfiguriert werden.
 
 #### Debugging
 
@@ -487,7 +483,7 @@ Hierzu das `zip` entweder auf https://trace.playwright.dev hochladen oder die lo
 bei sich selbst starten mit z. B. maven:
 
 ```bash
-./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="show-trace target/FAILED-test.zip"
+./mvnw exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.classpathScope="test" -D exec.args="show-trace target/ui-test/<browser>/FAILED-test.zip"
 ```
 
 ### Release
