@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -32,13 +29,13 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     private final UserSettingsRepository userSettingsRepository;
     private final LocaleResolver localeResolver;
-    private final PersonService personService;
 
-    UserSettingsServiceImpl(UserSettingsRepository userSettingsRepository,
-                            LocaleResolver localeResolver, PersonService personService) {
+    UserSettingsServiceImpl(
+        UserSettingsRepository userSettingsRepository,
+        LocaleResolver localeResolver
+    ) {
         this.userSettingsRepository = userSettingsRepository;
         this.localeResolver = localeResolver;
-        this.personService = personService;
     }
 
     @EventListener
@@ -46,23 +43,46 @@ class UserSettingsServiceImpl implements UserSettingsService {
         userSettingsRepository.deleteByPerson(event.person());
     }
 
-    @EventListener
-    void handleAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        final String userName = event.getAuthentication().getName();
-        final Optional<Person> maybePerson = personService.getPersonByUsername(userName);
-
-        getRequest()
-            .map(ServletRequest::getLocale)
-            .ifPresent(locale -> maybePerson.ifPresent(person -> updateLocaleBrowserSpecific(person, locale)));
-        maybePerson.flatMap(this::getLocale).ifPresent(this::setLocale);
-    }
-
     Optional<Theme> findThemeForUsername(String username) {
         return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getTheme);
     }
 
-    Optional<Locale> getLocale(Person person) {
+    @Override
+    public Optional<Locale> getLocale(Person person) {
         return userSettingsRepository.findByPerson(person).map(UserSettingsEntity::getLocale);
+    }
+
+    @Override
+    public void updateLocaleBrowserSpecific(Person person, Locale localeBrowserSpecific) {
+        userSettingsRepository.findByPerson(person)
+            .ifPresentOrElse(userSettingsEntity -> {
+                if (userSettingsEntity.getLocale() == null) {
+                    userSettingsEntity.setLocaleBrowserSpecific(localeBrowserSpecific);
+                    userSettingsRepository.save(userSettingsEntity);
+                }
+            }, () -> {
+                final UserSettingsEntity defaultUserSettingsEntity = defaultUserSettingsEntity(person);
+                defaultUserSettingsEntity.setLocaleBrowserSpecific(localeBrowserSpecific);
+                userSettingsRepository.save(defaultUserSettingsEntity);
+            });
+    }
+
+    @Override
+    public Map<Person, Locale> getEffectiveLocale(List<Person> persons) {
+        final List<Long> personIds = persons.stream().map(Person::getId).toList();
+        final Map<Person, Locale> personLocale = userSettingsRepository.findByPersonIdIn(personIds).stream()
+            .collect(toMap(
+                UserSettingsEntity::getPerson,
+                UserSettingsServiceImpl::getEffectiveLocale
+            ));
+        persons.forEach(person -> personLocale.computeIfAbsent(person, unused -> Locale.GERMAN));
+        return personLocale;
+    }
+
+    @Override
+    public UserSettings getUserSettingsForPerson(Person person) {
+        final UserSettingsEntity entity = findForPersonOrGetDefault(person);
+        return toUserSettings(entity);
     }
 
     /**
@@ -89,48 +109,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
         setLocale(persistedEntity.getLocale());
 
         return toUserSettings(persistedEntity);
-    }
-
-    /**
-     * Sets the browser specific locale from the request.
-     * <p>
-     * Only saves the browser specific locale if the saved 'locale' is null.
-     * If the saved 'locale' is null, that means, that the localization is based on the browser,
-     * and therefore we save it to use it in e-mail templates e.g.
-     *
-     * @param person                to save the browser specific locale
-     * @param localeBrowserSpecific
-     */
-    void updateLocaleBrowserSpecific(Person person, Locale localeBrowserSpecific) {
-        userSettingsRepository.findByPerson(person)
-            .ifPresentOrElse(userSettingsEntity -> {
-                if (userSettingsEntity.getLocale() == null) {
-                    userSettingsEntity.setLocaleBrowserSpecific(localeBrowserSpecific);
-                    userSettingsRepository.save(userSettingsEntity);
-                }
-            }, () -> {
-                final UserSettingsEntity defaultUserSettingsEntity = defaultUserSettingsEntity(person);
-                defaultUserSettingsEntity.setLocaleBrowserSpecific(localeBrowserSpecific);
-                userSettingsRepository.save(defaultUserSettingsEntity);
-            });
-    }
-
-    @Override
-    public Map<Person, Locale> getEffectiveLocale(List<Person> persons) {
-        final List<Long> personIds = persons.stream().map(Person::getId).collect(toList());
-        final Map<Person, Locale> personLocale = userSettingsRepository.findByPersonIdIn(personIds).stream()
-            .collect(toMap(
-                UserSettingsEntity::getPerson,
-                UserSettingsServiceImpl::getEffectiveLocale
-            ));
-        persons.forEach(person -> personLocale.computeIfAbsent(person, unused -> Locale.GERMAN));
-        return personLocale;
-    }
-
-    @Override
-    public UserSettings getUserSettingsForPerson(Person person) {
-        final UserSettingsEntity entity = findForPersonOrGetDefault(person);
-        return toUserSettings(entity);
     }
 
     private static Locale getEffectiveLocale(UserSettingsEntity userSettingsEntity) {
