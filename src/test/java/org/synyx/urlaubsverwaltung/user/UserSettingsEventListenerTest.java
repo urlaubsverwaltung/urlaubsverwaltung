@@ -31,13 +31,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.user.Theme.LIGHT;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationSuccessEventListenerTest {
+class UserSettingsEventListenerTest {
 
     @InjectMocks
-    private AuthenticationSuccessEventListener sut;
+    private UserSettingsEventListener sut;
 
     @Mock
     private UserSettingsService userSettingsService;
@@ -56,7 +55,7 @@ class AuthenticationSuccessEventListenerTest {
     void ensuresBrowserLocalePresentWillDelegateToUpdateLocaleBrowserSpecific() {
 
         final Locale locale = GERMAN;
-        final Authentication authentication = authToken( "username");
+        final Authentication authentication = authToken("username");
 
         final Person person = new Person();
         person.setId(1L);
@@ -69,12 +68,12 @@ class AuthenticationSuccessEventListenerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         // already configured locale will be set in the locale resolver
-        when(userSettingsService.getUserSettingsForPerson(any())).thenReturn(new UserSettings(LIGHT, locale, null));
+        when(userSettingsService.getLocale(any())).thenReturn(Optional.of(locale));
 
         final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(authentication);
         sut.handleAuthenticationSuccess(authenticationSuccessEvent);
 
-        verify(userSettingsService).getUserSettingsForPerson(person);
+        verify(userSettingsService).getLocale(person);
 
         verify(userSettingsService).updateLocaleBrowserSpecific(person, locale);
 
@@ -86,7 +85,7 @@ class AuthenticationSuccessEventListenerTest {
     void ensureWithoutBrowserLocaleNoInteractionWithUpdateLocaleBrowserSpecific() {
 
         final Locale locale = GERMAN;
-        final Authentication authentication = authToken( "username");
+        final Authentication authentication = authToken("username");
 
         final Person person = new Person();
         person.setId(1L);
@@ -98,12 +97,12 @@ class AuthenticationSuccessEventListenerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         // already configured locale will be set in the locale resolver
-        when(userSettingsService.getUserSettingsForPerson(any())).thenReturn(new UserSettings(LIGHT, locale, null));
+        when(userSettingsService.getLocale(any())).thenReturn(Optional.of(locale));
 
         final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(authentication);
         sut.handleAuthenticationSuccess(authenticationSuccessEvent);
 
-        verify(userSettingsService).getUserSettingsForPerson(person);
+        verify(userSettingsService).getLocale(person);
 
         verify(userSettingsService, never()).updateLocaleBrowserSpecific(person, locale);
 

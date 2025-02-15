@@ -23,13 +23,17 @@ import java.util.Optional;
  */
 @Service
 @ConditionalOnSingleTenantMode
-class AuthenticationSuccessEventListener {
+class UserSettingsEventListener {
 
     private final LocaleResolver localeResolver;
     private final PersonService personService;
     private final UserSettingsService userSettingsService;
 
-    AuthenticationSuccessEventListener(LocaleResolver localeResolver, PersonService personService, UserSettingsService userSettingsService) {
+    UserSettingsEventListener(
+        LocaleResolver localeResolver,
+        PersonService personService,
+        UserSettingsService userSettingsService
+    ) {
         this.localeResolver = localeResolver;
         this.personService = personService;
         this.userSettingsService = userSettingsService;
@@ -41,7 +45,7 @@ class AuthenticationSuccessEventListener {
 
         personService.getPersonByUsername(userName).ifPresent(person -> {
             updateUserSettingsWithLocaleBrowserSpecific(person);
-            this.getLocale(person).ifPresent(this::setLocale);
+            userSettingsService.getLocale(person).ifPresent(this::setLocale);
         });
     }
 
@@ -49,10 +53,6 @@ class AuthenticationSuccessEventListener {
         getRequest()
             .map(ServletRequest::getLocale)
             .ifPresent(locale -> userSettingsService.updateLocaleBrowserSpecific(person, locale));
-    }
-
-    Optional<Locale> getLocale(Person person) {
-        return this.userSettingsService.getUserSettingsForPerson(person).locale();
     }
 
     private void setLocale(Locale locale) {
