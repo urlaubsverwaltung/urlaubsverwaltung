@@ -52,7 +52,7 @@
     "less-plugin-clean-css": "1.6.0",
     "lint-staged": "15.4.3",
     "rimraf": "6.0.1",
-    "rollup": "4.34.6",
+    "rollup": "4.34.7",
     "rollup-plugin-esbuild": "6.2.0",
     "rollup-plugin-postcss": "4.0.2",
     "timepicker": "1.14.1",
