@@ -44,10 +44,10 @@ class PersonPropertyEditorTest {
     @Test
     void ensureGetAsTextReturnsIdOfPerson() {
 
-        final int personId = 10;
+        final long personId = 10;
         sut.setValue(personWithId(personId));
 
-        assertThat(sut.getAsText()).isEqualTo(Integer.toString(personId));
+        assertThat(sut.getAsText()).isEqualTo(Long.toString(personId));
     }
 
     @ParameterizedTest
