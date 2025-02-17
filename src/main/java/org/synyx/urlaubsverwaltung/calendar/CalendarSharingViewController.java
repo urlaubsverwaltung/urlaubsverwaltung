@@ -67,7 +67,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @GetMapping("/persons/{personId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String index(@PathVariable int personId, Model model) {
+    public String index(@PathVariable long personId, Model model) {
 
         final PersonCalendarDto dto = getPersonCalendarDto(personId);
         model.addAttribute("privateCalendarShare", dto);
@@ -123,7 +123,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/me", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String unlinkPrivateCalendar(@PathVariable int personId) {
+    public String unlinkPrivateCalendar(@PathVariable long personId) {
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
 
@@ -132,7 +132,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/departments/{departmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId,
+    public String linkDepartmentCalendar(@PathVariable long personId, @PathVariable int departmentId,
                                          @Valid @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
 
         final Period calendarPeriod = departmentCalendarDto.getCalendarPeriod().getPeriod();
@@ -143,7 +143,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "persons/{personId}/departments/{departmentId}", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String unlinkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId) {
+    public String unlinkDepartmentCalendar(@PathVariable long personId, @PathVariable int departmentId) {
 
         departmentCalendarService.deleteCalendarForDepartmentAndPerson(departmentId, personId);
 
@@ -152,7 +152,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/company")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkCompanyCalendar(@PathVariable int personId, @Valid @ModelAttribute CompanyCalendarDto companyCalendarDto) {
+    public String linkCompanyCalendar(@PathVariable long personId, @Valid @ModelAttribute CompanyCalendarDto companyCalendarDto) {
 
         final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
         companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
@@ -162,7 +162,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/company", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String unlinkCompanyCalendar(@PathVariable int personId) {
+    public String unlinkCompanyCalendar(@PathVariable long personId) {
 
         companyCalendarService.deleteCalendarForPerson(personId);
 
@@ -171,7 +171,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/company/accessible")
     @PreAuthorize(IS_BOSS_OR_OFFICE)
-    public String editCompanyCalendarAccessible(@PathVariable int personId, CompanyCalendarAccessibleDto companyCalendarAccessibleDto) {
+    public String editCompanyCalendarAccessible(@PathVariable long personId, CompanyCalendarAccessibleDto companyCalendarAccessibleDto) {
 
         if (companyCalendarAccessibleDto.isAccessible()) {
             calendarAccessibleService.enableCompanyCalendar();
@@ -219,7 +219,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return dto;
     }
 
-    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId) {
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(long personId) {
         return getDepartmentCalendarDtos(personId, null);
     }
 
