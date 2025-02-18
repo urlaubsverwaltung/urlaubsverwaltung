@@ -40,13 +40,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    SickNoteInteractionServiceImpl(SickNoteService sickNoteService,
-                                   SickNoteExtensionService sicknoteExtensionService,
-                                   SickNoteCommentService commentService,
-                                   ApplicationInteractionService applicationInteractionService,
-                                   SickNoteMailService sickNoteMailService,
-                                   ApplicationEventPublisher applicationEventPublisher) {
-
+    SickNoteInteractionServiceImpl(
+        SickNoteService sickNoteService,
+        SickNoteExtensionService sicknoteExtensionService,
+        SickNoteCommentService commentService,
+        ApplicationInteractionService applicationInteractionService,
+        SickNoteMailService sickNoteMailService,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.sickNoteService = sickNoteService;
         this.sicknoteExtensionService = sicknoteExtensionService;
         this.commentService = commentService;
@@ -79,7 +80,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
         sickNoteMailService.sendCreatedOrAcceptedToColleagues(acceptedSickNote);
 
-        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(acceptedSickNote));
+        applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(acceptedSickNote));
 
         return acceptedSickNote;
     }
