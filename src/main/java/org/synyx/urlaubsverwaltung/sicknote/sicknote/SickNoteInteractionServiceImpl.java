@@ -80,7 +80,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         sickNoteMailService.sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(acceptedSickNote, maintainer);
         sickNoteMailService.sendCreatedOrAcceptedToColleagues(acceptedSickNote);
 
-        applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(acceptedSickNote));
+        applicationEventPublisher.publishEvent(SickNoteAcceptedEvent.of(acceptedSickNote));
 
         return acceptedSickNote;
     }

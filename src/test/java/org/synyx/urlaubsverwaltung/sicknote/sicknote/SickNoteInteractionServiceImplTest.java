@@ -427,9 +427,9 @@ class SickNoteInteractionServiceImplTest {
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToSickPerson(sickNote, maintainer);
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer);
 
-        final ArgumentCaptor<SickNoteCreatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteCreatedEvent.class);
+        final ArgumentCaptor<SickNoteAcceptedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteAcceptedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
-        final SickNoteCreatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
+        final SickNoteAcceptedEvent sickNoteCreatedEvent = eventCaptor.getValue();
         assertThat(sickNoteCreatedEvent.sickNote()).isEqualTo(acceptedSickNote);
         assertThat(sickNoteCreatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteCreatedEvent.id()).isNotNull();
