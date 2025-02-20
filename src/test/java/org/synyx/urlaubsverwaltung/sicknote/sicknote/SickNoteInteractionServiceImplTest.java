@@ -50,7 +50,6 @@ class SickNoteInteractionServiceImplTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
-
     @Test
     void ensureCreatedSickNoteIsPersisted() {
 
@@ -166,12 +165,12 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-                .id(42L)
-                .startDate(LocalDate.now(UTC))
-                .endDate(LocalDate.now(UTC))
-                .dayLength(DayLength.FULL)
-                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-                .build();
+            .id(42L)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .build();
 
         sut.update(sickNote, creator, comment);
 
@@ -197,13 +196,13 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-                .id(42L)
-                .startDate(LocalDate.now(UTC))
-                .endDate(LocalDate.now(UTC))
-                .dayLength(DayLength.FULL)
-                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-                .status(SickNoteStatus.SUBMITTED)
-                .build();
+            .id(42L)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .status(SickNoteStatus.SUBMITTED)
+            .build();
 
         sut.update(sickNote, creator, comment);
 
@@ -376,12 +375,12 @@ class SickNoteInteractionServiceImplTest {
         when(sickNoteService.save(any(SickNote.class))).then(returnsFirstArg());
 
         final SickNote sickNote = SickNote.builder()
-                .id(42L)
-                .startDate(LocalDate.now(UTC))
-                .endDate(LocalDate.now(UTC))
-                .dayLength(DayLength.FULL)
-                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-                .build();
+            .id(42L)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .build();
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
         final String comment = "comment";
@@ -405,13 +404,13 @@ class SickNoteInteractionServiceImplTest {
         when(sickNoteService.save(any(SickNote.class))).then(returnsFirstArg());
 
         final SickNote sickNote = SickNote.builder()
-                .id(42L)
-                .startDate(LocalDate.now(UTC))
-                .endDate(LocalDate.now(UTC))
-                .dayLength(DayLength.FULL)
-                .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-                .status(SickNoteStatus.ACTIVE)
-                .build();
+            .id(42L)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .status(SickNoteStatus.ACTIVE)
+            .build();
 
         final Person maintainer = new Person("maintainer", "Senior", "Maintainer", "maintainer@example.org");
 
@@ -428,9 +427,9 @@ class SickNoteInteractionServiceImplTest {
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToSickPerson(sickNote, maintainer);
         verify(sickNoteMailService).sendSickNoteAcceptedNotificationToOfficeAndResponsibleManagement(sickNote, maintainer);
 
-        final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
+        final ArgumentCaptor<SickNoteAcceptedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteAcceptedEvent.class);
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
-        final SickNoteUpdatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
+        final SickNoteAcceptedEvent sickNoteCreatedEvent = eventCaptor.getValue();
         assertThat(sickNoteCreatedEvent.sickNote()).isEqualTo(acceptedSickNote);
         assertThat(sickNoteCreatedEvent.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteCreatedEvent.id()).isNotNull();

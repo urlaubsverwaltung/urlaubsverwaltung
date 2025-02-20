@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.sicknote;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.DayLength;
+import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteAcceptedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteCancelledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteConvertedToApplicationEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteCreatedEventDTO;
@@ -17,6 +18,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteAcceptedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCreatedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteToApplicationConvertedEvent;
@@ -169,6 +171,30 @@ public class SickNoteEventHandlerExtension {
 
         };
     }
+    private static Function<AbsencePeriod, SickNoteAcceptedEventDTO> toSickNoteAcceptedEventDTO(String tenantId, SickNoteAcceptedEvent event) {
+        return absencePeriod -> {
+            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
+            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+            final SickNotePeriodDTO period = toPeriod(event.sickNote());
+            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
+            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+
+            return SickNoteAcceptedEventDTO.builder()
+                .id(event.id())
+                .sourceId(event.sickNote().getId())
+                .createdAt(event.createdAt())
+                .tenantId(tenantId)
+                .person(person)
+                .applier(applier)
+                .type(toSickNoteType(event.sickNote()))
+                .status(toStatus(event.sickNote()))
+                .period(period)
+                .medicalCertificatePeriod(medicalCertificatePeriod)
+                .absentWorkingDays(absentWorkingDays)
+                .build();
+
+        };
+    }
 
     private static Function<AbsencePeriod, SickNoteConvertedToApplicationEventDTO> toSickNoteConvertedEventDTO(String tenantId, SickNoteToApplicationConvertedEvent event) {
         return absencePeriod -> {
@@ -215,6 +241,14 @@ public class SickNoteEventHandlerExtension {
     void on(SickNoteUpdatedEvent event) {
         getAbsencePeriods(event.sickNote())
             .map(toSickNoteUpdatedEventDTO(tenantSupplier.get(), event))
+            .ifPresent(applicationEventPublisher::publishEvent);
+    }
+
+    @EventListener
+    @Async
+    void on(SickNoteAcceptedEvent event) {
+        getAbsencePeriods(event.sickNote())
+            .map(toSickNoteAcceptedEventDTO(tenantSupplier.get(), event))
             .ifPresent(applicationEventPublisher::publishEvent);
     }
 
