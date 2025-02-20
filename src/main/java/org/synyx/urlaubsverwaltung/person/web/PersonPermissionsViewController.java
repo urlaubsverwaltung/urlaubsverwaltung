@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
@@ -102,7 +101,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         return updatedPerson.getPermissions().stream()
             .filter(not(oldRoles::contains))
             .filter(role(INACTIVE).and(role(USER)))
-            .collect(toList());
+            .toList();
     }
 
     private static Predicate<Role> role(final Role role) {

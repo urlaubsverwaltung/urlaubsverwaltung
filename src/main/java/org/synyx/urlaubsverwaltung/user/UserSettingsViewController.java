@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -130,7 +129,7 @@ class UserSettingsViewController implements HasLaunchpad {
         return supportedLocaleService.getSupportedLocales().stream()
             .map(this::toLocaleDto)
             .sorted(comparing(LocaleDto::getDisplayName))
-            .collect(toList());
+            .toList();
     }
 
     private String i18n(Locale locale, String messageKey) {

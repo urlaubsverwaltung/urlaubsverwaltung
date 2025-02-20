@@ -5,8 +5,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 final class DepartmentDepartmentOverviewDtoMapper {
 
     private DepartmentDepartmentOverviewDtoMapper() {
@@ -14,8 +12,7 @@ final class DepartmentDepartmentOverviewDtoMapper {
     }
 
     static List<DepartmentOverviewDto> mapToDepartmentOverviewDtos(List<Department> departments) {
-
-        return departments.stream().map(DepartmentDepartmentOverviewDtoMapper::mapToDepartmentOverviewDto).collect(toList());
+        return departments.stream().map(DepartmentDepartmentOverviewDtoMapper::mapToDepartmentOverviewDto).toList();
     }
 
     static DepartmentOverviewDto mapToDepartmentOverviewDto(Department department) {

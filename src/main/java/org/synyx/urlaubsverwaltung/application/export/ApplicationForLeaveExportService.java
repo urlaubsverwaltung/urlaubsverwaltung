@@ -28,7 +28,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -74,7 +73,7 @@ class ApplicationForLeaveExportService {
 
         final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
-        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
 
         if (relevantPersonIds.isEmpty()) {
             return Page.empty();
@@ -105,7 +104,7 @@ class ApplicationForLeaveExportService {
 
         final List<ApplicationForLeaveExport> content = exportsStream
             .sorted(new SortComparator<>(ApplicationForLeaveExport.class, pageable.getSort()))
-            .collect(toList());
+            .toList();
 
         return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
     }
@@ -117,7 +116,7 @@ class ApplicationForLeaveExportService {
             final PersonId personId = new PersonId(person.getId());
             final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).getPersonnelNumber();
             final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
-            final List<ApplicationForLeave> applicationForLeaves = personListEntry.getValue().stream().map(app -> new ApplicationForLeave(app, workDaysCountService)).collect(toList());
+            final List<ApplicationForLeave> applicationForLeaves = personListEntry.getValue().stream().map(app -> new ApplicationForLeave(app, workDaysCountService)).toList();
             return new ApplicationForLeaveExport(personnelNumber, person.getFirstName(), person.getLastName(), applicationForLeaves, departments);
         };
     }

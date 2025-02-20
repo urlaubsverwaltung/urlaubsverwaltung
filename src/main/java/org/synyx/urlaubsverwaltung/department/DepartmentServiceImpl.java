@@ -91,7 +91,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
             .filter(Person::isActive)
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -138,7 +138,7 @@ class DepartmentServiceImpl implements DepartmentService {
         final List<Person> content = managedMembers.stream()
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
             .limit(pageable.getPageSize())
-            .collect(toList());
+            .toList();
 
         return new PageImpl<>(content, pageable, managedMembers.size());
     }
@@ -167,12 +167,14 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final Instant now = Instant.now(clock);
 
-        final List<DepartmentMemberEmbeddable> departmentMembers = department.getMembers().stream().map(person -> {
-            final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
-            memberEmbeddable.setPerson(person);
-            memberEmbeddable.setAccessionDate(now);
-            return memberEmbeddable;
-        }).collect(toList());
+        final List<DepartmentMemberEmbeddable> departmentMembers = department.getMembers().stream()
+            .map(person -> {
+                final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+                memberEmbeddable.setPerson(person);
+                memberEmbeddable.setAccessionDate(now);
+                return memberEmbeddable;
+            })
+            .collect(toList());
 
         departmentEntity.setMembers(departmentMembers);
 
@@ -214,13 +216,16 @@ class DepartmentServiceImpl implements DepartmentService {
      */
     @EventListener
     void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
+        getAssignedDepartmentsOfMember(event.person())
+            .forEach(department -> {
+                department.setMembers(
+                    department.getMembers().stream()
+                        .filter(not(isEqual(event.person())))
+                        .collect(toList())
+                );
 
-        getAssignedDepartmentsOfMember(event.person()).forEach(department -> {
-            department.setMembers(department.getMembers().stream()
-                .filter(not(isEqual(event.person())))
-                .collect(toList()));
-            update(department);
-        });
+                update(department);
+            });
     }
 
     /**
@@ -230,13 +235,16 @@ class DepartmentServiceImpl implements DepartmentService {
      */
     @EventListener
     void deleteDepartmentHead(PersonDeletedEvent event) {
+        getManagedDepartmentsOfDepartmentHead(event.person())
+            .forEach(department -> {
+                department.setDepartmentHeads(
+                    department.getDepartmentHeads().stream()
+                        .filter(not(isEqual(event.person())))
+                        .collect(toList())
+                );
 
-        getManagedDepartmentsOfDepartmentHead(event.person()).forEach(department -> {
-            department.setDepartmentHeads(department.getDepartmentHeads().stream()
-                .filter(person -> !person.equals(event.person()))
-                .collect(toList()));
-            update(department);
-        });
+                update(department);
+            });
     }
 
 
@@ -247,13 +255,16 @@ class DepartmentServiceImpl implements DepartmentService {
      */
     @EventListener
     void deleteSecondStageAuthority(PersonDeletedEvent event) {
+        getManagedDepartmentsOfSecondStageAuthority(event.person())
+            .forEach(department -> {
+                department.setSecondStageAuthorities(
+                    department.getSecondStageAuthorities().stream()
+                        .filter(not(isEqual(event.person())))
+                        .collect(toList())
+                );
 
-        getManagedDepartmentsOfSecondStageAuthority(event.person()).forEach(department -> {
-            department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
-                .filter(person -> !person.equals(event.person()))
-                .collect(toList()));
-            update(department);
-        });
+                update(department);
+            });
     }
 
     @Override
@@ -271,7 +282,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.findAll().stream()
             .map(this::mapToDepartment)
             .sorted(departmentComparator())
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -279,7 +290,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.findByMembersPerson(member).stream()
             .map(this::mapToDepartment)
             .sorted(departmentComparator())
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -287,7 +298,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.findByDepartmentHeads(departmentHead).stream()
             .map(this::mapToDepartment)
             .sorted(departmentComparator())
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -295,7 +306,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
             .map(this::mapToDepartment)
             .sorted(departmentComparator())
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -319,7 +330,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return departments.stream()
             .distinct()
             .sorted(departmentComparator())
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -349,7 +360,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -358,7 +369,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -376,7 +387,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .stream()
             .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -394,7 +405,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .stream()
             .flatMap(department -> department.getMembers().stream())
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -468,7 +479,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
-        return Stream.concat(bucket.stream(), departmentNames.stream()).collect(toList());
+        return Stream.concat(bucket.stream(), departmentNames.stream()).toList();
     }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
@@ -489,7 +500,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final List<Person> members = departmentEntity.getMembers().stream()
             .map(DepartmentMemberEmbeddable::getPerson)
-            .collect(toList());
+            .toList();
 
         department.setMembers(members);
 
@@ -552,7 +563,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
             .limit(pageable.getPageSize())
-            .collect(toList());
+            .toList();
 
         return new PageImpl<>(content, pageable, departmentMembers.size());
     }

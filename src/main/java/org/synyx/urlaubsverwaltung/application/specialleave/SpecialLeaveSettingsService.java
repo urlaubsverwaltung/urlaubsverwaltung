@@ -9,7 +9,6 @@ import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -31,7 +30,7 @@ public class SpecialLeaveSettingsService {
 
         final List<SpecialLeaveSettingsEntity> entities = specialLeaveSettingsRepository.findAllById(itemsById.keySet()).stream()
             .map(entity -> mergeUpdates(itemsById, entity))
-            .collect(toList());
+            .toList();
 
         specialLeaveSettingsRepository.saveAll(entities);
     }
@@ -39,7 +38,7 @@ public class SpecialLeaveSettingsService {
     public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
         return specialLeaveSettingsRepository.findAll(Sort.by("id")).stream()
             .map(this::toSpecialLeaveSettingsItem)
-            .collect(toList());
+            .toList();
     }
 
     private SpecialLeaveSettingsEntity mergeUpdates(Map<Long, SpecialLeaveSettingsItem> itemsById, SpecialLeaveSettingsEntity entity) {

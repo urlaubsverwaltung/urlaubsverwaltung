@@ -53,7 +53,6 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -161,7 +160,7 @@ class SickNoteViewController implements HasLaunchpad {
                     },
                     () ->
                         model.addAttribute("extensionRequested", false)
-                    );
+                );
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
@@ -306,8 +305,8 @@ class SickNoteViewController implements HasLaunchpad {
         final Person sickNotePerson = sickNote.getPerson();
 
         if (!signedInUser.hasRole(OFFICE)
-                && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-                && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
+            && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
+            && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit the sick note of user '%s'",
                 signedInUser.getId(), sickNotePerson.getId()));
@@ -339,11 +338,11 @@ class SickNoteViewController implements HasLaunchpad {
         final Person sickNotePerson = persistedSickNote.getPerson();
 
         if (!signedInUser.hasRole(OFFICE)
-                && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
-                && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
+            && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
+            && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
             throw new AccessDeniedException(format(
-                    "User '%s' has not the correct permissions to edit the sick note of user '%s'",
-                    signedInUser.getId(), sickNotePerson.getId()));
+                "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+                signedInUser.getId(), sickNotePerson.getId()));
         }
 
         final SickNote editedSickNote = merge(persistedSickNote, sickNoteFormDto);
@@ -537,7 +536,7 @@ class SickNoteViewController implements HasLaunchpad {
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+            .toList();
     }
 
     private List<VacationType<?>> getActiveVacationTypes() {

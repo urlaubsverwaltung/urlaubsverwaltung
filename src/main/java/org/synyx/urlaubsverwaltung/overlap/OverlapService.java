@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -58,7 +57,7 @@ public class OverlapService {
         if (application.getId() != null) {
             applications = applications.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(application.getId()))
-                .collect(toList());
+                .toList();
         }
 
         final List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
@@ -84,7 +83,7 @@ public class OverlapService {
         if (sickNote.getId() != null) {
             sickNotes = sickNotes.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(sickNote.getId()))
-                .collect(toList());
+                .toList();
         }
 
         return getOverlapCase(startDate, endDate, applications, sickNotes);
@@ -112,7 +111,7 @@ public class OverlapService {
             .map(dateRange -> dateRange.overlap(periodDateRange))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(toList());
+            .toList();
     }
 
     /**
@@ -136,7 +135,7 @@ public class OverlapService {
         final List<DateRange> listOfOverlaps = getListOfOverlaps(startDate, endDate, applications, sickNotes);
         final List<DateRange> listOfGaps = getListOfGaps(startDate, endDate, listOfOverlaps);
 
-        // gaps between the intervals mean that you can apply vacation for this periods
+        // gaps between the intervals mean that you can apply vacation for these periods
         // this is case (3)
         if (!listOfGaps.isEmpty()) {
             /* (3) The period of the new application is part
@@ -174,7 +173,7 @@ public class OverlapService {
         // remove the non-relevant ones
         return applicationsForLeave.stream()
             .filter(withConflictingStatus().and(withOverlappingDayLength(dayLength)))
-            .collect(toList());
+            .toList();
     }
 
     private Predicate<Application> withOverlappingDayLength(DayLength dayLength) {
@@ -201,7 +200,7 @@ public class OverlapService {
         return sickNoteService.getByPersonAndPeriod(person, startDate, endDate)
             .stream()
             .filter(SickNote::isActive)
-            .collect(toList());
+            .toList();
     }
 
     /**

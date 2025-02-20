@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Service
@@ -31,7 +30,7 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
     @Override
     public Map<PersonId, UserNotificationSettings> findNotificationSettings(Collection<PersonId> personIds) {
 
-        final List<Long> personIdValues = personIds.stream().map(PersonId::value).collect(toList());
+        final List<Long> personIdValues = personIds.stream().map(PersonId::value).toList();
 
         final Map<PersonId, UserNotificationSettings> notificationsByPerson = repository.findAllById(personIdValues).stream()
             .map(UserNotificationSettingsServiceImpl::toNotification)

@@ -47,7 +47,6 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
@@ -115,7 +114,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
-            .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
+            .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).toList();
 
         final boolean showPersonnelNumberColumn = statisticsDtos.stream()
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
@@ -124,7 +123,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix);
 
         model.addAttribute("statisticsPagination", statisticsPagination);
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().collect(toList()));
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());

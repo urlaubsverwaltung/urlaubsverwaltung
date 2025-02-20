@@ -49,7 +49,6 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
@@ -484,7 +483,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             .stream()
             .filter(not(isEqual(signedInUser)))
             .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || (person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING)))
-            .collect(toList());
+            .toList();
     }
 
     private ApplicationForLeaveDetailDto applicationForLeaveDetailDto(ApplicationForLeave applicationForLeave, Locale locale) {
