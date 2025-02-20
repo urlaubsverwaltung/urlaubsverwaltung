@@ -8,8 +8,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.stream.Collectors.toList;
-
 public class AbsenceTypeSettingsDtoMapper {
 
     private AbsenceTypeSettingsDtoMapper() {
@@ -20,7 +18,7 @@ public class AbsenceTypeSettingsDtoMapper {
         final List<AbsenceTypeSettingsItemDto> absenceTypeDtos = allVacationTypes
             .stream()
             .map(vacationType -> vacationTypeToDto(vacationType, locale))
-            .collect(toList());
+            .toList();
 
         final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
         absenceTypeSettingsDto.setItems(absenceTypeDtos);

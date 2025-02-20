@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -72,6 +71,6 @@ public class SickNoteStatisticsService {
         final List<Person> membersSSA = person.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(person) : List.of();
         return Stream.concat(membersDH.stream(), membersSSA.stream())
             .distinct()
-            .collect(toList());
+            .toList();
     }
 }

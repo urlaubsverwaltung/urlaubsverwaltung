@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +24,6 @@ import java.util.List;
 
 import static java.lang.Boolean.TRUE;
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.security.SessionServiceImpl.RELOAD_AUTHORITIES;
 
@@ -71,7 +69,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         try {
             tenantContextHolder.setTenantId(new TenantId(tenantId));
             final Person signedInUser = personService.getSignedInUser();
-            final List<GrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
+            final List<SimpleGrantedAuthority> updatedAuthorities = getUpdatedAuthorities(signedInUser);
             final Authentication updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
 
             context.setAuthentication(updatedAuthentication);
@@ -84,9 +82,9 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private List<GrantedAuthority> getUpdatedAuthorities(Person signedInUser) {
+    private List<SimpleGrantedAuthority> getUpdatedAuthorities(Person signedInUser) {
         return signedInUser.getPermissions().stream()
             .map(role -> new SimpleGrantedAuthority(role.name()))
-            .collect(toList());
+            .toList();
     }
 }

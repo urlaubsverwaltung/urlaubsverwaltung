@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
-
 final class PersonPermissionsMapper {
 
     private PersonPermissionsMapper() {
@@ -76,6 +74,6 @@ final class PersonPermissionsMapper {
             }
         });
 
-        return new ArrayList<>(mappedToRolesDto).stream().sorted().collect(toList());
+        return new ArrayList<>(mappedToRolesDto).stream().sorted().toList();
     }
 }

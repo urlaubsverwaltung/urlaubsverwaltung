@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -60,7 +59,7 @@ class ApplicationForLeaveStatisticsService {
         final Pageable pageable = pageableSearchQuery.getPageable();
         final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
-        final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
+        final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).toList();
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
         final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
@@ -82,7 +81,7 @@ class ApplicationForLeaveStatisticsService {
 
         final List<ApplicationForLeaveStatistics> content = statisticsStream
             .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
-            .collect(toList());
+            .toList();
 
         return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }

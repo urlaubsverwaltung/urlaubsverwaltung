@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -135,7 +134,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
         for (final WorkingTime workingTime : workingTimes) {
             final boolean isValid = workingTime.equals(currentWorkingTime);
             final FederalState federalState = workingTime.getFederalState();
-            final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
+            final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).toList();
             workingTimeHistoryDtos.add(new WorkingTimeHistoryDto(workingTime.getValidFrom(), lastValidTo, workDays, federalState.getCountry(), federalState.toString(), isValid));
             lastValidTo = workingTime.getValidFrom().minusDays(1);
         }

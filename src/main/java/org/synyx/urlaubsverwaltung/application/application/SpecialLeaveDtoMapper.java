@@ -4,8 +4,6 @@ import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettings
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 class SpecialLeaveDtoMapper {
 
     private SpecialLeaveDtoMapper() {
@@ -15,7 +13,7 @@ class SpecialLeaveDtoMapper {
     static SpecialLeaveDto mapToSpecialLeaveSettingsDto(List<SpecialLeaveSettingsItem> specialLeaveItems) {
         final List<SpecialLeaveItemDto> specialLeaveItemDtos = specialLeaveItems.stream()
             .map(SpecialLeaveDtoMapper::toSpecialLeaveItemDto)
-            .collect(toList());
+            .toList();
         final SpecialLeaveDto specialLeaveDto = new SpecialLeaveDto();
         specialLeaveDto.setSpecialLeaveItems(specialLeaveItemDtos);
         return specialLeaveDto;

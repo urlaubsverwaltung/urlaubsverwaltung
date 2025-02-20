@@ -23,7 +23,6 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
@@ -485,16 +484,17 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
                 .stream()
                 .filter(oldReplacements::contains)
                 .toList();
-            for (HolidayReplacementEntity replacement : stillExistingReplacements) {
+
+            for (final HolidayReplacementEntity replacement : stillExistingReplacements) {
                 applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication);
             }
         }
 
-        for (HolidayReplacementEntity replacement : addedReplacements) {
+        for (final HolidayReplacementEntity replacement : addedReplacements) {
             applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication);
         }
 
-        for (HolidayReplacementEntity replacement : deletedReplacements) {
+        for (final HolidayReplacementEntity replacement : deletedReplacements) {
             applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication);
         }
 
@@ -528,7 +528,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         return savedEditedApplication.getHolidayReplacements()
             .stream()
             .filter(not(oldReplacements::contains))
-            .collect(toList());
+            .toList();
     }
 
     private List<HolidayReplacementEntity> replacementDeleted(Application oldApplication, Application savedEditedApplication) {
@@ -536,7 +536,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         return oldApplication.getHolidayReplacements()
             .stream()
             .filter(not(newReplacements::contains))
-            .collect(toList());
+            .toList();
     }
 
     private boolean relevantEntriesChanged(Application oldApplication, Application savedEditedApplication) {

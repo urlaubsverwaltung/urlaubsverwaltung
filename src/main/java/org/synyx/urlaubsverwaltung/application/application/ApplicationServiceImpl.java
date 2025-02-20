@@ -179,17 +179,17 @@ class ApplicationServiceImpl implements ApplicationService {
     void deleteHolidayReplacements(PersonDeletedEvent event) {
         final List<ApplicationEntity> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.person()).stream()
             .map(deleteHolidayReplacement(event.person()))
-            .collect(toList());
+            .toList();
         applicationRepository.saveAll(applicationsWithReplacedApplicationReplacements);
     }
 
     private Function<ApplicationEntity, ApplicationEntity> deleteHolidayReplacement(Person deletedPerson) {
         return applicationEntity -> {
-            applicationEntity.setHolidayReplacements(applicationEntity.getHolidayReplacements().stream()
-                .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
-                .collect(toList())
+            applicationEntity.setHolidayReplacements(
+                applicationEntity.getHolidayReplacements().stream()
+                    .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
+                    .collect(toList())
             );
-
             return applicationEntity;
         };
     }

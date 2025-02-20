@@ -50,7 +50,6 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -122,7 +121,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
                     .filter(member -> !member.hasRole(INACTIVE))
                     .distinct()
                     .sorted(comparing(Person::getFirstName))
-                    .collect(toList());
+                    .toList();
             }
         } else {
             overviewPersons = personService.getActivePersons();
@@ -187,7 +186,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     }
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
-        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
+        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).toList();
         return preparedSelectedDepartments.isEmpty() ? List.of(departments.getFirst().getName()) : preparedSelectedDepartments;
     }
 
@@ -237,7 +236,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
                     .stream()
                     .filter(workingTime -> workingTime.getPerson().equals(person))
                     .sorted(comparing(WorkingTime::getValidFrom).reversed())
-                    .collect(toList());
+                    .toList();
 
                 final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
                     .stream()
@@ -271,7 +270,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             .entrySet().stream()
             .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))
             .flatMap(List::stream)
-            .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(),publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
+            .collect(toMap(PublicHoliday::date, Function.identity(), (publicHoliday, publicHoliday2) -> new PublicHoliday(publicHoliday.date(), publicHoliday.dayLength(), publicHoliday.description().concat("/").concat(publicHoliday2.description()))));
 
     }
 
@@ -279,7 +278,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final List<AbsenceOverviewMonthPersonDto> monthViewPersons = personList.stream()
             .map(AbsenceOverviewViewController::initializeAbsenceOverviewMonthPersonDto)
-            .collect(toList());
+            .toList();
 
         return new AbsenceOverviewMonthDto(getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
     }
@@ -615,7 +614,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         return relevantPersons.stream()
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     private static VacationTypeColorDto toVacationTypeColorsDto(VacationType<?> vacationType, Locale locale) {

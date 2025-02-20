@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
@@ -117,14 +116,14 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
             .map(application -> new Absence(application.getPerson(), application.getPeriod(), config))
-            .collect(toList());
+            .toList();
     }
 
     private List<Absence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
             .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config))
-            .collect(toList());
+            .toList();
     }
 
     private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {

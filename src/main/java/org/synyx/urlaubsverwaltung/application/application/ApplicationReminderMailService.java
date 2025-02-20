@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -45,7 +44,7 @@ public class ApplicationReminderMailService {
         if (isRemindForWaitingApplicationsActive) {
             final List<Application> longWaitingApplications = applicationService.getForStates(List.of(WAITING)).stream()
                 .filter(isLongWaitingApplications())
-                .collect(toList());
+                .toList();
 
             if (!longWaitingApplications.isEmpty()) {
                 LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());

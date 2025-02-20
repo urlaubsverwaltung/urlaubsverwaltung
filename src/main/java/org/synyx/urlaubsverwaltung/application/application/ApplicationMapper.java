@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import java.time.Duration;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 
@@ -67,7 +66,7 @@ final class ApplicationMapper {
 
         final List<HolidayReplacementEntity> holidayReplacementEntities = applicationForLeaveForm.getHolidayReplacements().stream()
             .map(HolidayReplacementEntity::from)
-            .collect(toList());
+            .toList();
         newApplication.setHolidayReplacements(holidayReplacementEntities);
 
         return newApplication;

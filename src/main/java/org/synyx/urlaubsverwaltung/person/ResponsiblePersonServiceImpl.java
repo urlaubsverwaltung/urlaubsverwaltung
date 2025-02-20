@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -35,7 +34,7 @@ class ResponsiblePersonServiceImpl implements ResponsiblePersonService {
         final List<Person> bosses = personService.getActivePersonsByRole(BOSS);
         return Stream.concat(managementDepartmentPersons.stream(), bosses.stream())
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -44,7 +43,7 @@ class ResponsiblePersonServiceImpl implements ResponsiblePersonService {
             .stream()
             .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
             .filter(without(personOfInterest))
-            .collect(toList());
+            .toList();
     }
 
     @Override
@@ -53,7 +52,7 @@ class ResponsiblePersonServiceImpl implements ResponsiblePersonService {
             .stream()
             .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
             .filter(without(personOfInterest))
-            .collect(toList());
+            .toList();
     }
 
     private boolean departmentsAvailable() {

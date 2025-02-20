@@ -57,7 +57,6 @@ import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
@@ -213,7 +212,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
             final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
             replacementDto.setPerson(replacementPersonToAdd);
-            replacementDto.setDepartments(departments.stream().map(Department::getName).collect(toList()));
+            replacementDto.setDepartments(departments.stream().map(Department::getName).toList());
 
             model.addAttribute("holidayReplacement", replacementDto);
         }
@@ -247,7 +246,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             final List<HolidayReplacementDto> newList = applicationForLeaveForm.getHolidayReplacements()
                 .stream()
                 .filter(holidayReplacementDto -> !holidayReplacementDto.getPerson().getId().equals(personIdToRemove))
-                .collect(toList());
+                .toList();
             applicationForLeaveForm.setHolidayReplacements(newList);
             prepareApplicationForLeaveForm(signedInUser, person, applicationForLeaveForm, model, locale);
 
@@ -427,7 +426,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
             .filter(SpecialLeaveSettingsItem::isActive)
-            .collect(toList());
+            .toList();
         model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);
@@ -490,7 +489,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return ofNullable(applicationForLeaveForm.getHolidayReplacements())
             .orElse(emptyList()).stream()
             .map(HolidayReplacementDto::getPerson)
-            .collect(toList());
+            .toList();
     }
 
     private void appendDepartmentsToReplacements(ApplicationForLeaveForm appForm) {
@@ -507,7 +506,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
             .map(holidayReplacementEntity -> toDto(holidayReplacementEntity, departments))
-            .collect(toList());
+            .toList();
 
         return new ApplicationForLeaveForm.Builder()
             .id(application.getId())
@@ -538,7 +537,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return departments.stream()
             .filter(d -> d.getMembers().contains(person))
             .map(Department::getName)
-            .collect(toList());
+            .toList();
     }
 
     private HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity, List<Department> departments) {
@@ -582,6 +581,6 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+            .toList();
     }
 }

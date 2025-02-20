@@ -33,7 +33,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
@@ -246,16 +245,16 @@ public class DepartmentViewController implements HasLaunchpad {
         final List<Person> sortedDepartmentMembers = departmentMembers
             .stream()
             .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
-            .collect(toList());
+            .toList();
 
         // sort department members to the top of the list shown in ui.
         return Stream.of(sortedDepartmentMembers, personService.getActivePersons())
             .flatMap(Collection::stream)
             .distinct()
-            .collect(toList());
+            .toList();
     }
 
     private static <T> List<T> filter(Collection<T> collection, Predicate<T> predicate) {
-        return collection.stream().filter(predicate).collect(toList());
+        return collection.stream().filter(predicate).toList();
     }
 }

@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class VacationTypeViewModelService {
 
@@ -18,7 +16,7 @@ public class VacationTypeViewModelService {
     public List<VacationTypeDto> getVacationTypeColors() {
         return vacationTypeService.getAllVacationTypes().stream()
             .map(VacationTypeViewModelService::toVacationTypeDto)
-            .collect(toList());
+            .toList();
     }
 
     private static VacationTypeDto toVacationTypeDto(VacationType<?> vacationType) {

@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -162,6 +161,6 @@ public class SickNoteApiController {
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
             .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+            .toList();
     }
 }
