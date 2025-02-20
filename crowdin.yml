@@ -1,3 +1,0 @@
-files:
-  - source: /src/main/resources/messages.properties
-    translation: /src/main/resources/messages_%two_letters_code%.properties
