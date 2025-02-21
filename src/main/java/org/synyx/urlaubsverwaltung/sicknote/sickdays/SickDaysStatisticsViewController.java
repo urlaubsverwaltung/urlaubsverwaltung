@@ -80,7 +80,7 @@ class SickDaysStatisticsViewController {
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
 
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
-            sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), pageableSearchQuery);
+            sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), pageableSearchQuery);
 
         final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, locale, sickDaysStatisticsPage.getContent());
 

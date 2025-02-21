@@ -79,10 +79,10 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
-            sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
+            sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), new PageableSearchQuery(pageable, query));
 
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
-            .map(statistic -> toSickDaysOverviewDto(statistic, period.getStartDate(), period.getEndDate()))
+            .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
             .toList();
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
@@ -100,8 +100,8 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("query", query);
 
         model.addAttribute("today", LocalDate.now(clock));
-        model.addAttribute("from", period.getStartDate());
-        model.addAttribute("to", period.getEndDate());
+        model.addAttribute("from", period.startDate());
+        model.addAttribute("to", period.endDate());
         model.addAttribute("period", period);
 
         final boolean turboFrameRequested = hasText(turboFrame);

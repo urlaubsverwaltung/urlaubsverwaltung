@@ -119,7 +119,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         sickNoteTypeSickChild.setCategory(SICK_NOTE_CHILD);
         sickNoteTypeSickChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(period.getStartDate(), period.getEndDate());
+        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(period.startDate(), period.endDate());
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
 
         final SickNote sickNote = SickNote.builder()

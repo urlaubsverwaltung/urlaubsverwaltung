@@ -39,8 +39,8 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
             getTranslation(locale, "applications.statistics").replace(" ", "-"),
-            period.getStartDate().format(dateTimeFormatter).replace("/", "-"),
-            period.getEndDate().format(dateTimeFormatter).replace("/", "-"),
+            period.startDate().format(dateTimeFormatter).replace("/", "-"),
+            period.endDate().format(dateTimeFormatter).replace("/", "-"),
             locale.getLanguage());
     }
 
@@ -56,7 +56,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             getTranslation(locale, "applications.statistics.waiting"),
             getTranslation(locale, "applications.statistics.left"),
             "",
-            getTranslation(locale, "applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
+            getTranslation(locale, "applications.statistics.left") + " (" + period.startDate().getYear() + ")",
             "",
             getTranslation(locale, "person.account.basedata.additionalInformation")
         };
