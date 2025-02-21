@@ -11,15 +11,15 @@ class SettingsDTOTest {
 
     @Test
     void happyPathToSettings() {
-        ApplicationSettingsDTO applicationSettings = new ApplicationSettingsDTO(1, 2, true, true, 3, true, 4, true, 5);
-        AccountSettingsDTO accountSettings = new AccountSettingsDTO(25, 30, 31, Month.DECEMBER, true);
-        WorkingTimeSettingsDTO workingTimeSettings = new WorkingTimeSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, DayLengthDTO.MORNING, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
-        OverTimeSettingsDTO overTimeSettings = new OverTimeSettingsDTO(true, true, true, 100, 10, 5);
-        TimeSettingsDTO timeSettings = new TimeSettingsDTO("UTC", 9, 17);
-        SickNoteSettingsDTO sickNoteSettings = new SickNoteSettingsDTO(30, 5, true);
-        AvatarSettingsDTO avatarSettings = new AvatarSettingsDTO(false);
+        final ApplicationSettingsDTO applicationSettings = new ApplicationSettingsDTO(1, 2, true, true, 3, true, 4, true, 5);
+        final AccountSettingsDTO accountSettings = new AccountSettingsDTO(25, 30, 31, Month.DECEMBER, true);
+        final WorkingTimeSettingsDTO workingTimeSettings = new WorkingTimeSettingsDTO(DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.FULL, DayLengthDTO.ZERO, DayLengthDTO.ZERO, DayLengthDTO.MORNING, DayLengthDTO.MORNING, FederalStateDTO.GERMANY_BADEN_WUERTTEMBERG);
+        final OverTimeSettingsDTO overTimeSettings = new OverTimeSettingsDTO(true, true, true, 100, 10, 5);
+        final TimeSettingsDTO timeSettings = new TimeSettingsDTO("UTC", 9, 17);
+        final SickNoteSettingsDTO sickNoteSettings = new SickNoteSettingsDTO(30, 5, true);
+        final AvatarSettingsDTO avatarSettings = new AvatarSettingsDTO(false);
 
-        SettingsDTO dto = new SettingsDTO(1L, applicationSettings, accountSettings, workingTimeSettings, overTimeSettings, timeSettings, sickNoteSettings, avatarSettings);
+        final SettingsDTO dto = new SettingsDTO(1L, applicationSettings, accountSettings, workingTimeSettings, overTimeSettings, timeSettings, sickNoteSettings, avatarSettings);
 
         final Settings settings = dto.toSettings();
 

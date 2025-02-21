@@ -2,9 +2,10 @@ package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
-public record TimeSettingsDTO(String timeZoneId,
-                              Integer workDayBeginHour,
-                              Integer workDayEndHour
+public record TimeSettingsDTO(
+    String timeZoneId,
+    Integer workDayBeginHour,
+    Integer workDayEndHour
 ) {
 
     public static TimeSettingsDTO of(TimeSettings timeSettings) {

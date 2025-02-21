@@ -38,6 +38,7 @@ public class ApplicationCommentEntity extends AbstractTenantAwareEntity {
 
     @Column(nullable = false)
     private final Instant date;
+
     private String text;
 
     protected ApplicationCommentEntity() {

@@ -101,7 +101,7 @@ public class ICalService {
             }
             event.add(new XProperty("X-MICROSOFT-CDO-ALLDAYEVENT", "TRUE"));
         } else {
-            event = new VEvent(startDateTime.toOffsetDateTime(), endDateTime.toOffsetDateTime(), absence.getEventSubject());
+            event = new VEvent(startDateTime.toInstant(), endDateTime.toInstant(), absence.getEventSubject());
         }
 
         event.add(new Uid(generateUid(absence)));

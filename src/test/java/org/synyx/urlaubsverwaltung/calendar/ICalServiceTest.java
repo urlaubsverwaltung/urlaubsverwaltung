@@ -78,7 +78,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190326
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:F5C924EEB91550EBDD74CDA428649C8B
+                UID:E9C70D57B7F38AE3FDBB87019A1857B5
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -107,10 +107,10 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190426T080000Z
-                DTEND:20190426T120000Z
+                DTSTART:20190426T060000Z
+                DTEND:20190426T100000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:45BCD3F64AD76CEF9040DF93047C41B3
+                UID:A4CAE46FDBA672FE9DCE5086F311A91E
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -144,7 +144,7 @@ class ICalServiceTest {
                 DTEND;VALUE=DATE:20190402
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D4C6D48B54BAED09F894FBDE0151381F
+                UID:62841D8AD53F00626AE52D7835FBEB8D
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -173,10 +173,10 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART:20190526T100000Z
+                DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:203BCCB25ADDA1D45DAD353089374E99
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -208,10 +208,10 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART:20190526T100000Z
+                DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:203BCCB25ADDA1D45DAD353089374E99
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -243,10 +243,10 @@ class ICalServiceTest {
                 METHOD:CANCEL
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART:20190526T100000Z
+                DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:203BCCB25ADDA1D45DAD353089374E99
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 SEQUENCE:1
@@ -277,10 +277,10 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T120000Z
-                DTEND:20190526T160000Z
+                DTSTART:20190526T100000Z
+                DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:203BCCB25ADDA1D45DAD353089374E99
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -317,7 +317,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:22D8DC26F4271C049ED5601345B58D9C
+                UID:A8295F3ACFE8F939F49882443ECBC9A3
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
@@ -355,7 +355,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:22D8DC26F4271C049ED5601345B58D9C
+                UID:A8295F3ACFE8F939F49882443ECBC9A3
                 TRANSP:TRANSPARENT
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
@@ -387,7 +387,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Vertretung für Marlene Muster
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D2A4772AEB3FD20D5F6997FCD8F28719
+                UID:39450CE1C2D4AA939E8F5D486CE90FCD
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
@@ -407,7 +407,9 @@ class ICalServiceTest {
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
         final TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setTimeZoneId("Etc/UTC");
+        timeSettings.setTimeZoneId("Europe/Berlin");
+        timeSettings.setWorkDayBeginHour(8);
+        timeSettings.setWorkDayEndHour(16);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
 
         final Period period = new Period(start, end, length);

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 /**
  * Unit test for {@link AbsenceTimeConfiguration}.
  */
@@ -16,7 +15,6 @@ class AbsenceTimeConfigurationTest {
     @BeforeEach
     void setUp() {
         timeSettings = new TimeSettings();
-        timeSettings.setTimeZoneId("Etc/UTC");
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
     }
