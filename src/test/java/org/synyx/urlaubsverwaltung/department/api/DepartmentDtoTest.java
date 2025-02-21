@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DepartmentDtoTest {
 
-    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
     void ensureDepartmentResponseCreatedCorrectly() {
