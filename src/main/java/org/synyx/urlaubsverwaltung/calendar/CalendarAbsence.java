@@ -29,10 +29,10 @@ public class CalendarAbsence {
         this.person = person;
         this.absenceType = absenceType;
 
-        final ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
-        final ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
 
-        switch (period.getDayLength()) {
+        switch (period.dayLength()) {
             case FULL -> {
                 this.startDate = periodStartDate;
                 this.endDate = periodEndDate.plusDays(1);
