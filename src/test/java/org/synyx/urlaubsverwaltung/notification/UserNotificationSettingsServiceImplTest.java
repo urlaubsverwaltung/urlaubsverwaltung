@@ -41,8 +41,8 @@ class UserNotificationSettingsServiceImplTest {
         when(repository.findById(1L)).thenReturn(Optional.of(entity));
 
         final UserNotificationSettings actual = sut.findNotificationSettings(new PersonId(1L));
-        assertThat(actual.getPersonId()).isEqualTo(new PersonId(1L));
-        assertThat(actual.isRestrictToDepartments()).isTrue();
+        assertThat(actual.personId()).isEqualTo(new PersonId(1L));
+        assertThat(actual.restrictToDepartments()).isTrue();
     }
 
     @Test
@@ -51,8 +51,8 @@ class UserNotificationSettingsServiceImplTest {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         final UserNotificationSettings actual = sut.findNotificationSettings(new PersonId(1L));
-        assertThat(actual.getPersonId()).isEqualTo(new PersonId(1L));
-        assertThat(actual.isRestrictToDepartments()).isFalse();
+        assertThat(actual.personId()).isEqualTo(new PersonId(1L));
+        assertThat(actual.restrictToDepartments()).isFalse();
     }
 
     @Test
@@ -62,8 +62,8 @@ class UserNotificationSettingsServiceImplTest {
 
         final UserNotificationSettings actual = sut.updateNotificationSettings(new PersonId(1L), true);
 
-        assertThat(actual.getPersonId()).isEqualTo(new PersonId(1L));
-        assertThat(actual.isRestrictToDepartments()).isTrue();
+        assertThat(actual.personId()).isEqualTo(new PersonId(1L));
+        assertThat(actual.restrictToDepartments()).isTrue();
 
         final ArgumentCaptor<UserNotificationSettingsEntity> captor = ArgumentCaptor.forClass(UserNotificationSettingsEntity.class);
         verify(repository).save(captor.capture());
@@ -83,7 +83,7 @@ class UserNotificationSettingsServiceImplTest {
         when(repository.findAllById(List.of(1L, 1L))).thenReturn(List.of(entity, entity));
 
         final Map<PersonId, UserNotificationSettings> notificationSettings = sut.findNotificationSettings(List.of(new PersonId(1L), new PersonId(1L)));
-        assertThat(notificationSettings.get(new PersonId(1L)).getPersonId()).isEqualTo(new PersonId(1L));
-        assertThat(notificationSettings.get(new PersonId(1L)).isRestrictToDepartments()).isTrue();
+        assertThat(notificationSettings.get(new PersonId(1L)).personId()).isEqualTo(new PersonId(1L));
+        assertThat(notificationSettings.get(new PersonId(1L)).restrictToDepartments()).isTrue();
     }
 }
