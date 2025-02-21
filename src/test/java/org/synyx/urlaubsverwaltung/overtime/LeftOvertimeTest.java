@@ -13,7 +13,7 @@ class LeftOvertimeTest {
 
         final LeftOvertime identity = LeftOvertime.identity();
 
-        assertThat(identity.getLeftOvertimeOverall()).isEqualTo(Duration.ZERO);
-        assertThat(identity.getLeftOvertimeDateRange()).isEqualTo(Duration.ZERO);
+        assertThat(identity.leftOvertimeOverall()).isEqualTo(Duration.ZERO);
+        assertThat(identity.leftOvertimeDateRange()).isEqualTo(Duration.ZERO);
     }
 }
