@@ -216,7 +216,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
         final Overtime overtime = overtimeForm.generateOvertime();
         final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeForm.getComment());
-        final Overtime recordedOvertime = overtimeService.record(overtime, overtimeFormComment, signedInUser);
+        final Overtime recordedOvertime = overtimeService.save(overtime, overtimeFormComment, signedInUser);
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
@@ -262,7 +262,7 @@ public class OvertimeViewController implements HasLaunchpad {
         }
 
         overtimeForm.updateOvertime(overtime);
-        overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()), signedInUser);
+        overtimeService.save(overtime, Optional.ofNullable(overtimeForm.getComment()), signedInUser);
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
