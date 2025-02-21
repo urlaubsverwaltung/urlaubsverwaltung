@@ -9,9 +9,12 @@ import java.time.ZoneId;
 
 import static java.util.Objects.requireNonNullElse;
 
-public record SickNoteCommentDTO(Instant date, String text, SickNoteCommentActionDTO sickNoteCommentAction,
-                                 String externalIdOfSickNoteCommentAuthor) {
-
+public record SickNoteCommentDTO(
+    Instant date,
+    String text,
+    SickNoteCommentActionDTO sickNoteCommentAction,
+    String externalIdOfSickNoteCommentAuthor
+) {
     public SickNoteCommentEntity toSickNoteCommentEntity(Person commentator, Long sickNoteId) {
         final SickNoteCommentEntity entity = new SickNoteCommentEntity(Clock.fixed(this.date, ZoneId.systemDefault()));
         entity.setSickNoteId(sickNoteId);
