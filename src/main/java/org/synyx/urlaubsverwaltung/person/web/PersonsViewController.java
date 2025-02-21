@@ -257,7 +257,7 @@ public class PersonsViewController implements HasLaunchpad {
                 .lastName(lastName);
 
             personBasedataService.getBasedataByPersonId(person.getId())
-                .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
+                .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.personnelNumber()));
 
             final PersonDto personDto = personDtoBuilder.build();
 

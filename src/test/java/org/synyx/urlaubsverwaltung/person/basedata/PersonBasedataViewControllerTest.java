@@ -103,9 +103,9 @@ class PersonBasedataViewControllerTest {
         verify(personBasedataService).update(captor.capture());
 
         final PersonBasedata personBasedata = captor.getValue();
-        assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1L));
-        assertThat(personBasedata.getPersonnelNumber()).isEqualTo("1337");
-        assertThat(personBasedata.getAdditionalInformation()).isEqualTo("Additional Information");
+        assertThat(personBasedata.personId()).isEqualTo(new PersonId(1L));
+        assertThat(personBasedata.personnelNumber()).isEqualTo("1337");
+        assertThat(personBasedata.additionalInformation()).isEqualTo("Additional Information");
     }
 
     @Test

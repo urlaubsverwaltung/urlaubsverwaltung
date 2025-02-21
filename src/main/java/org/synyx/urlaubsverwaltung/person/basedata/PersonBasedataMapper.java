@@ -18,9 +18,9 @@ class PersonBasedataMapper {
 
     public static PersonBasedataEntity mapToEntity(PersonBasedata personBasedata) {
         final PersonBasedataEntity personBasedataEntity = new PersonBasedataEntity();
-        personBasedataEntity.setPersonId(personBasedata.getPersonId().value());
-        personBasedataEntity.setPersonnelNumber(personBasedata.getPersonnelNumber());
-        personBasedataEntity.setAdditionalInformation(personBasedata.getAdditionalInformation());
+        personBasedataEntity.setPersonId(personBasedata.personId().value());
+        personBasedataEntity.setPersonnelNumber(personBasedata.personnelNumber());
+        personBasedataEntity.setAdditionalInformation(personBasedata.additionalInformation());
         return personBasedataEntity;
     }
 }
