@@ -2,93 +2,21 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import java.math.BigDecimal;
 
-public class SickDaysOverviewDto {
-
-    private final long personId;
-    private final String personAvatarUrl;
-    private final String personnelNumber;
-    private final String personFirstName;
-    private final String personLastName;
-    private final String personNiceName;
-    private final BigDecimal amountSickDays;
-    private final BigDecimal amountSickDaysWithAUB;
-    private final BigDecimal amountChildSickDays;
-    private final BigDecimal amountChildSickDaysWithAUB;
-
-    private SickDaysOverviewDto(long personId, String personAvatarUrl, String personnelNumber, String personFirstName,
-                                String personLastName, String personNiceName, BigDecimal amountSickDays,
-                                BigDecimal amountSickDaysWithAUB, BigDecimal amountChildSickDays, BigDecimal amountChildSickDaysWithAUB) {
-
-        this.personId = personId;
-        this.personAvatarUrl = personAvatarUrl;
-        this.personnelNumber = personnelNumber;
-        this.personFirstName = personFirstName;
-        this.personLastName = personLastName;
-        this.personNiceName = personNiceName;
-        this.amountSickDays = amountSickDays;
-        this.amountSickDaysWithAUB = amountSickDaysWithAUB;
-        this.amountChildSickDays = amountChildSickDays;
-        this.amountChildSickDaysWithAUB = amountChildSickDaysWithAUB;
-    }
-
-    public long getPersonId() {
-        return personId;
-    }
-
-    public String getPersonAvatarUrl() {
-        return personAvatarUrl;
-    }
-
-    public String getPersonnelNumber() {
-        return personnelNumber;
-    }
-
-    public String getPersonFirstName() {
-        return personFirstName;
-    }
-
-    public String getPersonLastName() {
-        return personLastName;
-    }
-
-    public String getPersonNiceName() {
-        return personNiceName;
-    }
-
-    public BigDecimal getAmountSickDays() {
-        return amountSickDays;
-    }
-
-    public BigDecimal getAmountSickDaysWithAUB() {
-        return amountSickDaysWithAUB;
-    }
-
-    public BigDecimal getAmountChildSickDays() {
-        return amountChildSickDays;
-    }
-
-    public BigDecimal getAmountChildSickDaysWithAUB() {
-        return amountChildSickDaysWithAUB;
-    }
+public record SickDaysOverviewDto(
+    long personId,
+    String personAvatarUrl,
+    String personnelNumber,
+    String personFirstName,
+    String personLastName,
+    String personNiceName,
+    BigDecimal amountSickDays,
+    BigDecimal amountSickDaysWithAUB,
+    BigDecimal amountChildSickDays,
+    BigDecimal amountChildSickDaysWithAUB
+) {
 
     public static SickDaysOverviewDto.Builder builder() {
         return new Builder();
-    }
-
-    @Override
-    public String toString() {
-        return "SickDaysOverviewDto{" +
-            "personId=" + personId +
-            ", personAvatarUrl='" + personAvatarUrl + '\'' +
-            ", personnelNumber='" + personnelNumber + '\'' +
-            ", personFirstName='" + personFirstName + '\'' +
-            ", personLastName='" + personLastName + '\'' +
-            ", personNiceName='" + personNiceName + '\'' +
-            ", amountSickDays=" + amountSickDays +
-            ", amountSickDaysWithAUB=" + amountSickDaysWithAUB +
-            ", amountChildSickDays=" + amountChildSickDays +
-            ", amountChildSickDaysWithAUB=" + amountChildSickDaysWithAUB +
-            '}';
     }
 
     static class Builder {

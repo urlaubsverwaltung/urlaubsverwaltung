@@ -53,9 +53,12 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public SickDaysOverviewViewController(SickDaysStatisticsService sickDaysStatisticsService,
-                                          PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
-
+    public SickDaysOverviewViewController(
+        SickDaysStatisticsService sickDaysStatisticsService,
+        PersonService personService,
+        DateFormatAware dateFormatAware,
+        Clock clock
+    ) {
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
@@ -64,13 +67,14 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping("/sickdays")
-    public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
-                                   @RequestParam(value = "to", defaultValue = "") String to,
-                                   @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                                   @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
-                                   @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
-                                   Model model, Locale locale) {
-
+    public String periodsSickNotes(
+        @RequestParam(value = "from", defaultValue = "") String from,
+        @RequestParam(value = "to", defaultValue = "") String to,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+        @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
+        Model model, Locale locale
+    ) {
         final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
         final LocalDate startDate = dateFormatAware.parse(from, locale).orElse(firstDayOfYear);
         final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));

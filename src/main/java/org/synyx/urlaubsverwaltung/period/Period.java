@@ -22,6 +22,5 @@ public record Period(
         if (dayLength.isHalfDay() && !startDate.isEqual(endDate)) {
             throw new IllegalArgumentException("Start and end date must be same for half day length");
         }
-
     }
 }
