@@ -21,9 +21,9 @@ class SpecialLeaveDtoMapper {
 
     private static SpecialLeaveItemDto toSpecialLeaveItemDto(SpecialLeaveSettingsItem item) {
         final SpecialLeaveItemDto specialLeaveItemDto = new SpecialLeaveItemDto();
-        specialLeaveItemDto.setActive(item.isActive());
-        specialLeaveItemDto.setMessageKey(item.getMessageKey());
-        specialLeaveItemDto.setDays(item.getDays());
+        specialLeaveItemDto.setActive(item.active());
+        specialLeaveItemDto.setMessageKey(item.messageKey());
+        specialLeaveItemDto.setDays(item.days());
         return specialLeaveItemDto;
     }
 }

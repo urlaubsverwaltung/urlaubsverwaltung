@@ -429,7 +429,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         }
 
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
-            .filter(SpecialLeaveSettingsItem::isActive)
+            .filter(SpecialLeaveSettingsItem::active)
             .toList();
         model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
