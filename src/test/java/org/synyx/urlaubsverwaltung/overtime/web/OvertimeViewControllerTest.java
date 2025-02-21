@@ -598,7 +598,7 @@ class OvertimeViewControllerTest {
 
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -626,7 +626,7 @@ class OvertimeViewControllerTest {
 
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -775,7 +775,7 @@ class OvertimeViewControllerTest {
 
         final Overtime overtime = new Overtime(signedInPerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -804,7 +804,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -941,7 +941,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(

@@ -31,6 +31,6 @@ class OvertimeRecordDataProvider {
 
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
         final Overtime overtime = new Overtime(person, startDate, endDate, duration);
-        overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
+        overtimeService.save(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }
 }

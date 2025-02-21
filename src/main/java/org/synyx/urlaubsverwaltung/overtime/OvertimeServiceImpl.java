@@ -52,9 +52,14 @@ class OvertimeServiceImpl implements OvertimeService {
     private final Clock clock;
 
     @Autowired
-    public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
-                               ApplicationService applicationService, OvertimeMailService overtimeMailService,
-                               SettingsService settingsService, Clock clock) {
+    public OvertimeServiceImpl(
+        OvertimeRepository overtimeRepository,
+        OvertimeCommentRepository overtimeCommentRepository,
+        ApplicationService applicationService,
+        OvertimeMailService overtimeMailService,
+        SettingsService settingsService,
+        Clock clock
+    ) {
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
@@ -71,7 +76,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Overtime record(Overtime overtime, Optional<String> comment, Person author) {
+    public Overtime save(Overtime overtime, Optional<String> comment, Person author) {
 
         final boolean isNewOvertime = overtime.getId() == null;
 

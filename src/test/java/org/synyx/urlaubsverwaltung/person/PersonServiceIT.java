@@ -111,7 +111,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
 
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 
-        final Overtime overtimeRecord = overtimeService.record(new Overtime(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
+        final Overtime overtimeRecord = overtimeService.save(new Overtime(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
 
         final Department department = new Department();
         department.setName("department");

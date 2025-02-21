@@ -76,7 +76,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         final Person author = new Person();
 
-        sut.record(overtime, Optional.of("Foo Bar"), author);
+        sut.save(overtime, Optional.of("Foo Bar"), author);
 
         verify(overtimeRepository).save(overtime);
         verify(overtimeCommentRepository).save(any(OvertimeComment.class));
@@ -89,7 +89,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        final Overtime savedOvertime = sut.record(overtime, Optional.empty(), author);
+        final Overtime savedOvertime = sut.save(overtime, Optional.empty(), author);
         assertThat(savedOvertime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
     }
 
@@ -105,7 +105,7 @@ class OvertimeServiceImplTest {
         final OvertimeComment overtimeComment = new OvertimeComment();
         when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
-        sut.record(overtime, Optional.of("Foo Bar"), author);
+        sut.save(overtime, Optional.of("Foo Bar"), author);
 
         verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
         verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
@@ -128,7 +128,7 @@ class OvertimeServiceImplTest {
         final OvertimeComment overtimeComment = new OvertimeComment();
         when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
-        sut.record(overtime, Optional.of("Foo Bar"), author);
+        sut.save(overtime, Optional.of("Foo Bar"), author);
 
         verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
         verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
@@ -141,7 +141,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         final Person author = new Person();
 
-        sut.record(overtime, Optional.empty(), author);
+        sut.save(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
@@ -158,7 +158,7 @@ class OvertimeServiceImplTest {
         overtime.setId(1L);
         final Person author = new Person();
 
-        sut.record(overtime, Optional.empty(), author);
+        sut.save(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
@@ -175,7 +175,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        sut.record(overtime, Optional.empty(), author);
+        sut.save(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
@@ -194,7 +194,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        sut.record(overtime, Optional.of("Foo"), author);
+        sut.save(overtime, Optional.of("Foo"), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());

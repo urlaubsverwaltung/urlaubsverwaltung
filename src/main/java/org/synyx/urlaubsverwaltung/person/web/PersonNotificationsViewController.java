@@ -92,7 +92,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person, userIsAllowedToSubmitSickNotes);
-        personNotificationsDto.setRestrictToDepartments(new PersonNotificationDto(person.hasAnyRole(OFFICE, BOSS), notificationSettings.isRestrictToDepartments()));
+        personNotificationsDto.setRestrictToDepartments(new PersonNotificationDto(person.hasAnyRole(OFFICE, BOSS), notificationSettings.restrictToDepartments()));
 
         model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
         model.addAttribute("personNiceName", person.getNiceName());

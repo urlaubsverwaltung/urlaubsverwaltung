@@ -33,7 +33,7 @@ public interface OvertimeService {
      * @param author   identifies the person that recorded the overtime
      * @return the created overtime record
      */
-    Overtime record(Overtime overtime, Optional<String> comment, Person author);
+    Overtime save(Overtime overtime, Optional<String> comment, Person author);
 
 
     /**

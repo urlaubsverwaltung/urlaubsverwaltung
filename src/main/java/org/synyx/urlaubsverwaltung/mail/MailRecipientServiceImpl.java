@@ -112,8 +112,8 @@ class MailRecipientServiceImpl implements MailRecipientService {
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
         final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
-            .filter(UserNotificationSettings::isRestrictToDepartments)
-            .map(UserNotificationSettings::getPersonId)
+            .filter(UserNotificationSettings::restrictToDepartments)
+            .map(UserNotificationSettings::personId)
             .filter(not(departmentMatch))
             .toList();
 
