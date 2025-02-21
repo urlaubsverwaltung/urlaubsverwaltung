@@ -115,7 +115,6 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("smith@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
 

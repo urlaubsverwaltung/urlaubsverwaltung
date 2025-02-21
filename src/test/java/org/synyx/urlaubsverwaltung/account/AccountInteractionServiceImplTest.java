@@ -256,7 +256,6 @@ class AccountInteractionServiceImplTest {
 
         final LocalDate startDate = LocalDate.of(year, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
-        final LocalDate expiryDate = LocalDate.of(year, APRIL, 1);
         final BigDecimal leftDays = BigDecimal.ONE;
 
         final Account referenceHolidaysAccount = new Account(person, startDate, endDate, null,
