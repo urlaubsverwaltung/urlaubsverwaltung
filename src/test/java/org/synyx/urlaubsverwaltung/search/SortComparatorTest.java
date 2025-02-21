@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SortComparatorTest {
@@ -24,7 +23,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "AAA"),
@@ -46,7 +45,7 @@ class SortComparatorTest {
             new StringBox("Anne Schmidt")
         );
 
-        final List<StringBox> actual = list.stream().sorted(sut).collect(toList());
+        final List<StringBox> actual = list.stream().sorted(sut).toList();
 
         assertThat(actual).containsExactly(
             new StringBox("ANne Roth"),
@@ -68,7 +67,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "AAA"),
@@ -90,7 +89,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa", new InnerClass(BigDecimal.valueOf(3)))
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "AAA", new InnerClass(BigDecimal.valueOf(1))),
@@ -112,7 +111,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa", new InnerClass(BigDecimal.valueOf(3)))
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(3, "aaa", new InnerClass(BigDecimal.valueOf(3))),
@@ -132,7 +131,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "AAA")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
@@ -151,7 +150,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "AAA")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
             new SomeClassToSort(1, "bbb"),
@@ -169,7 +168,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "BBB")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).toList();
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "bbb"),
             new SomeClassToSort(3, "BBB"),

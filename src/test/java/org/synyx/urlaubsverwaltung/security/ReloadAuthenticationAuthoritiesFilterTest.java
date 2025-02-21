@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.tenancy.tenant.TenantContextHolder;
 import java.io.IOException;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,7 +68,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
 
         final List<String> updatedAuthorities = context.getAuthentication().getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
-            .collect(toList());
+            .toList();
         assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
 
         verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());

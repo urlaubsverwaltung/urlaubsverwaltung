@@ -35,7 +35,6 @@ import static java.time.Month.DECEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -2434,14 +2433,14 @@ class DepartmentServiceImplTest {
 
     private static List<Person> anyPersons(int size, int firstPersonId) {
         final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().toList();
-        return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).collect(toList());
+        return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).toList();
     }
 
     private static List<DepartmentMemberEmbeddable> anyDepartmentMembers(int size, int firstPersonId, Consumer<Person> personMutator) {
         return anyPersons(size, firstPersonId).stream()
             .map(DepartmentServiceImplTest::departmentMemberForPerson)
             .peek(departmentMemberEmbeddable -> personMutator.accept(departmentMemberEmbeddable.getPerson()))
-            .collect(toList());
+            .toList();
     }
 
     private static DepartmentMemberEmbeddable departmentMemberForPerson(Person person) {

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -64,6 +63,6 @@ class SickNoteCommentEntityRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     private List<SickNoteCommentEntity> getAllComments() {
-        return StreamSupport.stream(sut.findAll().spliterator(), false).collect(toList());
+        return StreamSupport.stream(sut.findAll().spliterator(), false).toList();
     }
 }
