@@ -315,7 +315,6 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
