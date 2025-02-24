@@ -6,8 +6,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
 
 public class GoogleAuthorizationCodeFlowFactory {
@@ -20,7 +18,7 @@ public class GoogleAuthorizationCodeFlowFactory {
         this.netHttpTransport = netHttpTransport;
     }
 
-    public GoogleAuthorizationCodeFlow create(String clientId, String clientSecret) throws GeneralSecurityException, IOException {
+    public GoogleAuthorizationCodeFlow create(String clientId, String clientSecret) {
 
         final GoogleClientSecrets.Details web = new GoogleClientSecrets.Details();
         web.setClientId(clientId);
