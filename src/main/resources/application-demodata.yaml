@@ -11,6 +11,10 @@ uv:
       create: true
       # Should demo data persons created for local development
       local-development: true
+  info-banner:
+    enabled: true
+    text:
+      de: "Development"
 
 spring:
   security:
