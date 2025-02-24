@@ -28,27 +28,29 @@ class SvgServiceTest {
     @Test
     void ensuresToProcessSvgTemplate() {
         final String svg = sut.createSvg("svg/avatar", Locale.GERMAN, Map.of("initials", "TB"));
-        assertThat(svg).isEqualTo("<svg\n" +
-            "  class=\"tw-tracking-widest\"\n" +
-            "  width=\"42\"\n" +
-            "  height=\"42\"\n" +
-            "  viewBox=\"0 0 64 64\"\n" +
-            "  xmlns=\"http://www.w3.org/2000/svg\"\n" +
-            "  role=\"img\"\n" +
-            "  focusable=\"false\"\n" +
-            "  preserveAspectRatio=\"xMidYMid meet\"\n" +
-            ">\n" +
-            "  <circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#eff6ff\" class=\"tw-fill-current\" />\n" +
-            "  <text\n" +
-            "    x=\"32\"\n" +
-            "    y=\"32\"\n" +
-            "    text-anchor=\"middle\"\n" +
-            "    dominant-baseline=\"central\"\n" +
-            "    font-size=\"1.625rem\"\n" +
-            "    stroke=\"#27272a\"\n" +
-            "    fill=\"#27272a\"\n" +
-            "    class=\"tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100\"\n" +
-            "  >TB</text>\n" +
-            "</svg>\n");
+        assertThat(svg).isEqualTo("""
+            <svg
+              class="tw-tracking-widest"
+              width="42"
+              height="42"
+              viewBox="0 0 64 64"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              focusable="false"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current" />
+              <text
+                x="32"
+                y="32"
+                text-anchor="middle"
+                dominant-baseline="central"
+                font-size="1.625rem"
+                stroke="#27272a"
+                fill="#27272a"
+                class="tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100"
+              >TB</text>
+            </svg>
+            """);
     }
 }

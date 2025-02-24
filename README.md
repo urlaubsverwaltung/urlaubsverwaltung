@@ -325,7 +325,7 @@ Folgende Systeme sind erreichbar unter `localhost`
 ## Entwicklung
 
 Wenn du uns bei der **Entwicklung** der Urlaubsverwaltung **unterstützen** möchtest,
-dann schau dir die [Contributing to Urlaubsverwaltung](./CONTRIBUTING.md) Referenz und die folgenden
+dann schau dir die [Contributing to Urlaubsverwaltung](CONTRIBUTING.md) Referenz und die folgenden
 Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
 ### Voraussetzungen
@@ -357,7 +357,7 @@ an. Diese kannst du mit folgendem Befehl installieren:
 git config core.hooksPath '.githooks'
 ```
 
-Die Git-Hooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
+Die Git-Hooks sind im [.githooks](.githooks/) Verzeichnis zu finden.
 
 ### Anwendung starten
 

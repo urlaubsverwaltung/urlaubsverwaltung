@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 public final class PersonMapper {
 

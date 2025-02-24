@@ -10,14 +10,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -155,15 +147,5 @@ class ICalViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
-    }
-
-    private File generateFile(String... content) throws IOException {
-        final Path file = Paths.get("calendar.ics");
-        Files.write(file, asList(content.clone()), UTF_8);
-
-        final File iCal = file.toFile();
-        iCal.deleteOnExit();
-
-        return iCal;
     }
 }

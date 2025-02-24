@@ -20,24 +20,26 @@ import org.synyx.urlaubsverwaltung.user.pagination.UserPaginationSettingsSupplie
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SpringDataWebProperties.class)
-public class PageableConfiguration extends SpringDataWebConfiguration {
+class PageableConfiguration extends SpringDataWebConfiguration {
 
     private final SpringDataWebProperties properties;
 
-    public PageableConfiguration(ApplicationContext context,
-                                 @Qualifier("mvcConversionService") ObjectFactory<ConversionService> conversionService,
-                                 SpringDataWebProperties properties) {
-
+    public PageableConfiguration(
+        ApplicationContext context,
+        @Qualifier("mvcConversionService") ObjectFactory<ConversionService> conversionService,
+        SpringDataWebProperties properties
+    ) {
         super(context, conversionService);
         this.properties = properties;
     }
 
     @Bean
-    public PageableUserAwareArgumentResolver pageableResolver(SortHandlerMethodArgumentResolver sortResolver,
-                                                              UserPaginationSettingsSupplier userPaginationSettingsSupplier,
-                                                              PersonService personService,
-                                                              ApplicationEventPublisher applicationEventPublisher) {
-
+    PageableUserAwareArgumentResolver pageableResolver(
+        SortHandlerMethodArgumentResolver sortResolver,
+        UserPaginationSettingsSupplier userPaginationSettingsSupplier,
+        PersonService personService,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         final PageableUserAwareArgumentResolver pageableResolver =
             new PageableUserAwareArgumentResolver(sortResolver, userPaginationSettingsSupplier, personService, applicationEventPublisher);
 
@@ -47,7 +49,7 @@ public class PageableConfiguration extends SpringDataWebConfiguration {
     }
 
     @Bean
-    public PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
+    PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
         return resolver -> {
             final Pageable pageable = this.properties.getPageable();
             resolver.setPageParameterName(pageable.getPageParameter());
@@ -61,7 +63,7 @@ public class PageableConfiguration extends SpringDataWebConfiguration {
     }
 
     @Bean
-    public SortHandlerMethodArgumentResolverCustomizer sortCustomizer() {
+    SortHandlerMethodArgumentResolverCustomizer sortCustomizer() {
         return resolver -> resolver.setSortParameter(this.properties.getSort().getSortParameter());
     }
 }
