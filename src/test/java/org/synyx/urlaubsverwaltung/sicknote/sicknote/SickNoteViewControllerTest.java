@@ -1747,10 +1747,6 @@ class SickNoteViewControllerTest {
         return person;
     }
 
-    private static SickNote anySickNote() {
-        return SickNote.builder().id(1L).build();
-    }
-
     private SickNoteType someSickNoteType() {
         return new SickNoteType();
     }
