@@ -38,10 +38,8 @@ public class DemoDataPersonCreationForLocalDevelopment {
     // AvailabilityChangeEvent is after ApplicationStartedEvent which creates sick note type definitions in database which are needed for demo data creations
     @EventListener(AvailabilityChangeEvent.class)
     public void onAvailabilityChange(AvailabilityChangeEvent<? extends AvailabilityState> event) {
-        if (event.getState() instanceof LivenessState livenessState) {
-            if (CORRECT.equals(livenessState)) {
-                createDemoPersons();
-            }
+        if (event.getState() instanceof LivenessState livenessState && CORRECT.equals(livenessState)) {
+            createDemoPersons();
         }
     }
 
@@ -62,7 +60,7 @@ public class DemoDataPersonCreationForLocalDevelopment {
         personDataProvider.createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("heinz", "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud");
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active-" + i + "@urlaubsverwaltung.cloud"));
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst" , "Inaktiv", "hdieter-inactive-" + i + "@urlaubsverwaltung.cloud"));
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive-" + i + "@urlaubsverwaltung.cloud"));
         LOG.info("Created demo persons for local development");
     }
 }
