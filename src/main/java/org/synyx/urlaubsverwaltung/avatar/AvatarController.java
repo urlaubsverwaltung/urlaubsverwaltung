@@ -4,16 +4,15 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Controller
+@RestController
 public class AvatarController {
 
     private static final String UNKNOWN_PERSON = "?";
@@ -25,7 +24,6 @@ public class AvatarController {
 
     @Hidden
     @GetMapping(value = "/web/avatar", produces = "image/svg+xml")
-    @ResponseBody
     public ResponseEntity<String> avatar(@RequestParam(value = "name", defaultValue = UNKNOWN_PERSON) String name, Locale locale) {
 
         final Map<String, Object> model = Map.of("initials", getInitials(name.trim()));
