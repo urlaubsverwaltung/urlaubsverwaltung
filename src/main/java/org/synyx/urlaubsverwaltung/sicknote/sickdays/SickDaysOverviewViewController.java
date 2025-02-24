@@ -85,15 +85,13 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
             sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), new PageableSearchQuery(pageable, query));
 
+        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
+
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
             .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
             .toList();
-
-        model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
-        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
-
-        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), Map.of("from", from, "to", to, "query", query));
         final PageImpl<SickDaysOverviewDto> statisticsPage = new PageImpl<>(sickDaysOverviewDtos, pageable, sickDaysStatisticsPage.getTotalElements());
+        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), Map.of("from", from, "to", to, "query", query));
 
         model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix));
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
