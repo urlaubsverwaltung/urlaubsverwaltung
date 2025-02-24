@@ -95,13 +95,15 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     private final ApplicationMapper applicationMapper;
 
     @Autowired
-    ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
-                                          VacationTypeService vacationTypeService,
-                                          VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
-                                          ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
-                                          SettingsService settingsService, DateFormatAware dateFormatAware,
-                                          Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService,
-                                          ApplicationMapper applicationMapper) {
+    ApplicationForLeaveFormViewController(
+        PersonService personService, DepartmentService departmentService, AccountService accountService,
+        VacationTypeService vacationTypeService,
+        VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
+        ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
+        SettingsService settingsService, DateFormatAware dateFormatAware,
+        Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService,
+        ApplicationMapper applicationMapper
+    ) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.accountService = accountService;
@@ -124,10 +126,12 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @GetMapping("/application/new")
-    public String newApplicationForm(@RequestParam(value = "personId", required = false) Long personId,
-                                     @RequestParam(value = "from", required = false) String startDateString,
-                                     @RequestParam(value = "to", required = false) String endDateString,
-                                     Model model, Locale locale) {
+    public String newApplicationForm(
+        @RequestParam(value = "personId", required = false) Long personId,
+        @RequestParam(value = "from", required = false) String startDateString,
+        @RequestParam(value = "to", required = false) String endDateString,
+        Model model, Locale locale
+    ) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = getPersonByRequestParam(personId).orElse(signedInUser);

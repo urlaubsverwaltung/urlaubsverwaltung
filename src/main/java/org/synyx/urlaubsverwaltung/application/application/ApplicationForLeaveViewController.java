@@ -62,9 +62,11 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private final Clock clock;
     private final MessageSource messageSource;
 
-    ApplicationForLeaveViewController(ApplicationService applicationService, SubmittedSickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
-                                      DepartmentService departmentService, PersonService personService, SettingsService settingsService, Clock clock,
-                                      MessageSource messageSource) {
+    ApplicationForLeaveViewController(
+        ApplicationService applicationService, SubmittedSickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
+        DepartmentService departmentService, PersonService personService, SettingsService settingsService, Clock clock,
+        MessageSource messageSource
+    ) {
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.workDaysCountService = workDaysCountService;

@@ -95,13 +95,15 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
-                                             ResponsiblePersonService responsiblePersonService,
-                                             AccountService accountService, ApplicationService applicationService,
-                                             ApplicationInteractionService applicationInteractionService,
-                                             ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
-                                             ApplicationCommentValidator commentValidator,
-                                             DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
+    ApplicationForLeaveDetailsViewController(
+        VacationDaysService vacationDaysService, PersonService personService,
+        ResponsiblePersonService responsiblePersonService,
+        AccountService accountService, ApplicationService applicationService,
+        ApplicationInteractionService applicationInteractionService,
+        ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
+        ApplicationCommentValidator commentValidator,
+        DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock
+    ) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
         this.responsiblePersonService = responsiblePersonService;

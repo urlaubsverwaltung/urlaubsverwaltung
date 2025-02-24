@@ -53,9 +53,10 @@ class PersonServiceImpl implements PersonService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    PersonServiceImpl(PersonRepository personRepository, AccountInteractionService accountInteractionService,
-                      WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher) {
-
+    PersonServiceImpl(
+        PersonRepository personRepository, AccountInteractionService accountInteractionService,
+        WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
         this.workingTimeWriteService = workingTimeWriteService;
