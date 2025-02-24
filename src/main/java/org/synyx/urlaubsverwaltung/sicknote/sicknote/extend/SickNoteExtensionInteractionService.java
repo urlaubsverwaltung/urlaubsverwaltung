@@ -16,7 +16,7 @@ public interface SickNoteExtensionInteractionService {
      * {@linkplain SickNoteExtension}.
      *
      * <p>
-     * This sick note extension has to be {@linkplain SickNoteExtensionInteractionService#acceptSubmittedExtension(Person, Long) accepted}
+     * This sick note extension has to be {@linkplain SickNoteExtensionInteractionService.acceptSubmittedExtension(Person, Long, String) accepted}
      * by a privileged person afterward.
      *
      * @param submitter {@linkplain Person} who submits the sick note extension
