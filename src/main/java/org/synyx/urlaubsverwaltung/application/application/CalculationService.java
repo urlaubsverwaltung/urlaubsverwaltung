@@ -167,11 +167,7 @@ class CalculationService {
         final LocalDate start = beforeExpiryDate.getFirst().startDate();
         final LocalDate end = beforeExpiryDate.getFirst().endDate();
 
-        return workDaysCountService.getWorkDaysCount(
-            application.getDayLength(),
-            LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth()),
-            LocalDate.of(end.getYear(), end.getMonth(), end.getDayOfMonth()),
-            application.getPerson());
+        return workDaysCountService.getWorkDaysCount(application.getDayLength(), start, end, application.getPerson());
     }
 
     private Optional<Account> getHolidaysAccount(int year, Person person) {
