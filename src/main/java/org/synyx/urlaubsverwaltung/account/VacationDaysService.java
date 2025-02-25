@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
@@ -239,27 +241,29 @@ public class VacationDaysService {
         ));
     }
 
-    private UsedVacationDaysTuple usedVacationDaysForApplication(Account holidayAccount,
-                                                                 Application application,
-                                                                 DateRange dateRange,
-                                                                 WorkingTimeCalendar workingTimeCalendar) {
+    private UsedVacationDaysTuple usedVacationDaysForApplication(
+        Account holidayAccount,
+        Application application,
+        DateRange dateRange,
+        WorkingTimeCalendar workingTimeCalendar
+    ) {
 
         final LocalDate holidayAccountValidFrom = holidayAccount.getValidFrom();
         final LocalDate holidayAccountExpiryDate = holidayAccount.getExpiryDate();
         final LocalDate lastDayBeforeExpiryDate = holidayAccountExpiryDate.minusDays(1);
 
-        final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), holidayAccountValidFrom.with(firstDayOfYear()));
-        final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), holidayAccountValidFrom.with(lastDayOfYear()));
+        final LocalDate applicationStartOrFirstDayOfYear = max(List.of(application.getStartDate(), holidayAccountValidFrom.with(firstDayOfYear())));
+        final LocalDate applicationEndOrLastDayOfYear = min(List.of(application.getEndDate(), holidayAccountValidFrom.with(lastDayOfYear())));
 
-        final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(applicationStartOrFirstDayOfYear, dateRange.startDate());
-        final LocalDate applicationEndOrLastDayOfYearOrTo = min(applicationEndOrLastDayOfYear, dateRange.endDate());
+        final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(List.of(applicationStartOrFirstDayOfYear, dateRange.startDate()));
+        final LocalDate applicationEndOrLastDayOfYearOrTo = min(List.of(applicationEndOrLastDayOfYear, dateRange.endDate()));
 
         // use vacation days scoped to from/to date range
         final BigDecimal dateRangeWorkDaysCountBeforeExpiryDate;
         final BigDecimal dateRangeWorkDaysCountAfterExpiryDate;
         if (applicationStartOrFirstDayOfYearOrFrom.isBefore(holidayAccountExpiryDate)) {
-            final LocalDate dateRangeStartAfterExpiryDate = max(applicationStartOrFirstDayOfYearOrFrom, holidayAccountExpiryDate);
-            final LocalDate dateRangeEndBeforeExpiryDate = min(applicationEndOrLastDayOfYearOrTo, lastDayBeforeExpiryDate);
+            final LocalDate dateRangeStartAfterExpiryDate = max(List.of(applicationStartOrFirstDayOfYearOrFrom, holidayAccountExpiryDate));
+            final LocalDate dateRangeEndBeforeExpiryDate = min(List.of(applicationEndOrLastDayOfYearOrTo, lastDayBeforeExpiryDate));
 
             dateRangeWorkDaysCountBeforeExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYearOrFrom, dateRangeEndBeforeExpiryDate);
             dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(dateRangeStartAfterExpiryDate, applicationEndOrLastDayOfYearOrTo);
@@ -283,8 +287,8 @@ public class VacationDaysService {
         final BigDecimal yearWorkDaysCountBeforeExpiry;
         final BigDecimal yearWorkDaysCountAfterExpiry;
         if (applicationStartOrFirstDayOfYear.isBefore(holidayAccountExpiryDate)) {
-            yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, min(application.getEndDate(), lastDayBeforeExpiryDate));
-            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(max(application.getStartDate(), holidayAccountExpiryDate), applicationEndOrLastDayOfYear);
+            yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, min(List.of(application.getEndDate(), lastDayBeforeExpiryDate)));
+            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(max(List.of(application.getStartDate(), holidayAccountExpiryDate)), applicationEndOrLastDayOfYear);
         } else {
             yearWorkDaysCountBeforeExpiry = ZERO;
             yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
@@ -304,14 +308,6 @@ public class VacationDaysService {
 
     private BigDecimal divideBy2(BigDecimal value) {
         return value.divide(BigDecimal.valueOf(2), 2, RoundingMode.CEILING);
-    }
-
-    private static LocalDate max(LocalDate localDate, LocalDate localDate2) {
-        return localDate.isBefore(localDate2) ? localDate2 : localDate;
-    }
-
-    private static LocalDate min(LocalDate localDate, LocalDate localDate2) {
-        return localDate.isBefore(localDate2) ? localDate : localDate2;
     }
 
     private interface Addable<T> {
