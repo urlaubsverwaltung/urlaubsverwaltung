@@ -16,6 +16,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -77,7 +78,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190326
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:E9C70D57B7F38AE3FDBB87019A1857B5
+                UID:F5C924EEB91550EBDD74CDA428649C8B
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -106,10 +107,10 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190426T060000Z
-                DTEND:20190426T100000Z
+                DTSTART:20190426T080000Z
+                DTEND:20190426T120000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:A4CAE46FDBA672FE9DCE5086F311A91E
+                UID:45BCD3F64AD76CEF9040DF93047C41B3
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -143,7 +144,7 @@ class ICalServiceTest {
                 DTEND;VALUE=DATE:20190402
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:62841D8AD53F00626AE52D7835FBEB8D
+                UID:D4C6D48B54BAED09F894FBDE0151381F
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -159,6 +160,38 @@ class ICalServiceTest {
         person.setId(1L);
 
         final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
+        assertThat(convertCalendar(calendar))
+            .isEqualToIgnoringNewLines("""
+                BEGIN:VCALENDAR
+                VERSION:2.0
+                PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE
+                CALSCALE:GREGORIAN
+                X-MICROSOFT-CALSCALE:GREGORIAN
+                X-WR-CALNAME:Abwesenheitskalender
+                REFRESH-INTERVAL:P1D
+                BEGIN:VEVENT
+                DTSTAMP:<removedByConversionMethod>
+                DTSTART:20190526T120000Z
+                DTEND:20190526T160000Z
+                SUMMARY:Marlene Muster abwesend
+                UID:BB2267885BD8DF263E88D3062853E8A7
+                ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
+                \s
+                ORGANIZER:mailto:no-reply@example.org
+                END:VEVENT
+                END:VCALENDAR
+                """);
+    }
+
+    @Test
+    void getCalendarForPersonForHalfDayNoonWithEuropeBerlinTimezone() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON, DEFAULT, "Europe/Berlin");
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
         assertThat(convertCalendar(calendar))
@@ -207,10 +240,10 @@ class ICalServiceTest {
                 REFRESH-INTERVAL:P1D
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T100000Z
-                DTEND:20190526T140000Z
+                DTSTART:20190526T120000Z
+                DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:203BCCB25ADDA1D45DAD353089374E99
+                UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -242,10 +275,10 @@ class ICalServiceTest {
                 METHOD:CANCEL
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T100000Z
-                DTEND:20190526T140000Z
+                DTSTART:20190526T120000Z
+                DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:203BCCB25ADDA1D45DAD353089374E99
+                UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 SEQUENCE:1
@@ -276,10 +309,10 @@ class ICalServiceTest {
                 X-MICROSOFT-CALSCALE:GREGORIAN
                 BEGIN:VEVENT
                 DTSTAMP:<removedByConversionMethod>
-                DTSTART:20190526T100000Z
-                DTEND:20190526T140000Z
+                DTSTART:20190526T120000Z
+                DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:203BCCB25ADDA1D45DAD353089374E99
+                UID:BB2267885BD8DF263E88D3062853E8A7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -316,7 +349,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:A8295F3ACFE8F939F49882443ECBC9A3
+                UID:22D8DC26F4271C049ED5601345B58D9C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
@@ -354,7 +387,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:A8295F3ACFE8F939F49882443ECBC9A3
+                UID:22D8DC26F4271C049ED5601345B58D9C
                 TRANSP:TRANSPARENT
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
@@ -386,7 +419,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Vertretung für Marlene Muster
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:39450CE1C2D4AA939E8F5D486CE90FCD
+                UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
@@ -397,7 +430,7 @@ class ICalServiceTest {
     }
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
-        return absence(person, start, end, length, AbsenceType.DEFAULT);
+        return absence(person, start, end, length, DEFAULT);
     }
 
     private CalendarAbsence holidayReplacement(Person person, LocalDate start, LocalDate end, DayLength length) {
@@ -405,8 +438,12 @@ class ICalServiceTest {
     }
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
+        return absence(person, start, end, length, absenceType, "Etc/UTC");
+    }
+
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType, String timeZoneId) {
         final TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setTimeZoneId("Europe/Berlin");
+        timeSettings.setTimeZoneId(timeZoneId);
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
