@@ -16,9 +16,10 @@
           <th:block th:ref="avatar-images">
             <img
               th:if="${gravatarEnabled == true}"
-              src="#"
+              src=""
               th:src="${url}"
               alt=""
+              th:alt="${niceName}"
               class="gravatar gravatar--medium tw-rounded-full tw-block"
               th:classappend="${className}"
               th:width="${width == null ? '32px' : width}"
@@ -29,13 +30,16 @@
             />
             <img
               th:if="${gravatarEnabled == false}"
-              src="#"
-              th:src="@{/web/avatar (name=${niceName})}"
+              src=""
+              th:src="@{/web/invalid-avatar-url}"
               alt=""
+              th:alt="${niceName}"
               class="gravatar gravatar--medium tw-rounded-full tw-block"
               th:classappend="${className}"
               th:width="${width == null ? '32px' : width}"
               th:height="${height == null ? '32px' : height}"
+              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
+              th:data-fallback="${fallbackAvatarUrl}"
               is="uv-avatar"
             />
           </th:block>
