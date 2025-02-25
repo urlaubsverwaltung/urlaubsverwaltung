@@ -6,11 +6,13 @@ public class OvertimeCommentPersonDto {
 
     private final Long id;
     private final String niceName;
+    private final String initials;
     private final String gravatarUrl;
 
-    OvertimeCommentPersonDto(Long id, String niceName, String gravatarUrl) {
+    OvertimeCommentPersonDto(Long id, String niceName, String initials, String gravatarUrl) {
         this.id = id;
         this.niceName = niceName;
+        this.initials = initials;
         this.gravatarUrl = gravatarUrl;
     }
 
@@ -20,6 +22,10 @@ public class OvertimeCommentPersonDto {
 
     public String getNiceName() {
         return niceName;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String getGravatarUrl() {

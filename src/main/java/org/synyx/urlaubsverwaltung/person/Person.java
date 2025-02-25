@@ -178,6 +178,18 @@ public class Person extends AbstractTenantAwareEntity {
         return "";
     }
 
+    public String getInitials() {
+
+        final String niceName = getNiceName();
+
+        final int idxLastWhitespace = niceName.lastIndexOf(' ');
+        if (idxLastWhitespace == -1) {
+            return niceName.substring(0, 1).toUpperCase();
+        }
+
+        return (niceName.charAt(0) + niceName.substring(idxLastWhitespace + 1, idxLastWhitespace + 2)).toUpperCase();
+    }
+
     @Override
     public String toString() {
         return "Person{id='" + getId() + "'}";

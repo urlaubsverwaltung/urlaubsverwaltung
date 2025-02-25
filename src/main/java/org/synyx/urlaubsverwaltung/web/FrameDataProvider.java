@@ -57,6 +57,7 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("header_referer", request.getHeader("Referer"));
 
             modelAndView.addObject("userFirstName", user.getFirstName());
+            modelAndView.addObject("userInitials", user.getInitials());
             modelAndView.addObject("userLastName", user.getLastName());
             modelAndView.addObject("userId", user.getId());
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
