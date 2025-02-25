@@ -1,5 +1,4 @@
 import "../lib/bootstrap";
-import "../components/avatar";
 import "../components/navigation";
 import "../components/textarea";
 import "../components/feedback";
