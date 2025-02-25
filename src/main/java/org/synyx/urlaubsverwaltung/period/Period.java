@@ -7,13 +7,12 @@ import java.time.LocalDate;
 /**
  * Represents a period of time.
  */
-public class Period {
-
-    private final LocalDate startDate;
-    private final LocalDate endDate;
-    private final DayLength dayLength;
-
-    public Period(LocalDate startDate, LocalDate endDate, DayLength dayLength) {
+public record Period(
+    LocalDate startDate,
+    LocalDate endDate,
+    DayLength dayLength
+) {
+    public Period {
         Assert.isTrue(!dayLength.equals(DayLength.ZERO), "Day length may not be zero");
 
         if (dayLength.isFull() && startDate.isAfter(endDate)) {
@@ -23,21 +22,5 @@ public class Period {
         if (dayLength.isHalfDay() && !startDate.isEqual(endDate)) {
             throw new IllegalArgumentException("Start and end date must be same for half day length");
         }
-
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.dayLength = dayLength;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public DayLength getDayLength() {
-        return dayLength;
     }
 }

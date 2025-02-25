@@ -39,8 +39,8 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
             getTranslation(locale, "applications.statistics").replace(" ", "-"),
-            period.getStartDate().format(dateTimeFormatter).replace("/", "-"),
-            period.getEndDate().format(dateTimeFormatter).replace("/", "-"),
+            period.startDate().format(dateTimeFormatter).replace("/", "-"),
+            period.endDate().format(dateTimeFormatter).replace("/", "-"),
             locale.getLanguage());
     }
 
@@ -56,7 +56,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             getTranslation(locale, "applications.statistics.waiting"),
             getTranslation(locale, "applications.statistics.left"),
             "",
-            getTranslation(locale, "applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
+            getTranslation(locale, "applications.statistics.left") + " (" + period.startDate().getYear() + ")",
             "",
             getTranslation(locale, "person.account.basedata.additionalInformation")
         };
@@ -84,7 +84,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
             final String[] csvRow = new String[csvHeader.length];
-            csvRow[0] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse("");
+            csvRow[0] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::personnelNumber).orElse("");
             csvRow[1] = applicationForLeaveStatistics.getPerson().getFirstName();
             csvRow[2] = applicationForLeaveStatistics.getPerson().getLastName();
             csvRow[3] = translatedTextTotal;
@@ -97,7 +97,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             csvRow[8] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForYear());
             csvRow[9] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForYear().toMinutes() / 60));
 
-            csvRow[10] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
+            csvRow[10] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::additionalInformation).orElse("");
             csvWriter.writeNext(csvRow);
 
             for (final VacationType<?> type : allVacationTypes) {

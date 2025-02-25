@@ -275,9 +275,9 @@ class SickNoteTest {
 
         final Period period = sickNote.getPeriod();
         assertThat(period).isNotNull();
-        assertThat(period.getStartDate()).isEqualTo(startDate);
-        assertThat(period.getEndDate()).isEqualTo(endDate);
-        assertThat(period.getDayLength()).isEqualTo(FULL);
+        assertThat(period.startDate()).isEqualTo(startDate);
+        assertThat(period.endDate()).isEqualTo(endDate);
+        assertThat(period.dayLength()).isEqualTo(FULL);
     }
 
     @Test

@@ -51,7 +51,7 @@ public class ApplicationEventHandlerExtension {
     }
 
     private static Set<LocalDate> toAbsentWorkingDays(AbsencePeriod absencePeriod) {
-        return absencePeriod.getAbsenceRecords()
+        return absencePeriod.absenceRecords()
             .stream()
             .map(AbsencePeriod.Record::getDate)
             .collect(Collectors.toSet());
@@ -227,11 +227,11 @@ public class ApplicationEventHandlerExtension {
     }
 
     private static Predicate<AbsencePeriod> isMorning(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isMorning() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
+        return absencePeriod -> dayLength.isMorning() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
     }
 
     private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isNoon() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
+        return absencePeriod -> dayLength.isNoon() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
     }
 
     private static String getTranslationKey(VacationType<?> vacationType) {

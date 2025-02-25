@@ -114,7 +114,7 @@ class ApplicationForLeaveExportService {
         {
             final Person person = personListEntry.getKey();
             final PersonId personId = new PersonId(person.getId());
-            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).getPersonnelNumber();
+            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).personnelNumber();
             final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
             final List<ApplicationForLeave> applicationForLeaves = personListEntry.getValue().stream().map(app -> new ApplicationForLeave(app, workDaysCountService)).toList();
             return new ApplicationForLeaveExport(personnelNumber, person.getFirstName(), person.getLastName(), applicationForLeaves, departments);

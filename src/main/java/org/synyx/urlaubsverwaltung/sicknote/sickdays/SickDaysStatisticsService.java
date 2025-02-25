@@ -99,7 +99,7 @@ public class SickDaysStatisticsService {
         {
             final Person person = personListEntry.getKey();
             final PersonId personId = new PersonId(person.getId());
-            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).getPersonnelNumber();
+            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).personnelNumber();
             final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
             return new SickDaysDetailedStatistics(personnelNumber, person, personListEntry.getValue(), departments);
         };

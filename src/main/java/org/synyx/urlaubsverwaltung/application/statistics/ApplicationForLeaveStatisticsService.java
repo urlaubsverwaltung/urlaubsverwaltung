@@ -63,7 +63,7 @@ class ApplicationForLeaveStatisticsService {
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
         final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
-            .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes).values();
+            .build(relevantPersonsPage.getContent(), period.startDate(), period.endDate(), activeVacationTypes).values();
 
         statisticsCollection.forEach(statistics -> {
             final PersonId personId = new PersonId(statistics.getPerson().getId());

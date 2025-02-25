@@ -94,8 +94,8 @@ class ApplicationForLeaveStatisticsBuilder {
 
                 if (leftOvertimeForPersons.containsKey(accountPerson)) {
                     final LeftOvertime leftOvertime = leftOvertimeForPersons.get(accountPerson);
-                    statistics.setLeftOvertimeForYear(leftOvertime.getLeftOvertimeOverall());
-                    statistics.setLeftOvertimeForPeriod(leftOvertime.getLeftOvertimeDateRange());
+                    statistics.setLeftOvertimeForYear(leftOvertime.leftOvertimeOverall());
+                    statistics.setLeftOvertimeForPeriod(leftOvertime.leftOvertimeDateRange());
                 } else {
                     statistics.setLeftOvertimeForYear(ZERO);
                     statistics.setLeftOvertimeForPeriod(ZERO);

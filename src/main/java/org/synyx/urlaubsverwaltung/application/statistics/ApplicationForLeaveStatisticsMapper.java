@@ -24,7 +24,7 @@ final class ApplicationForLeaveStatisticsMapper {
             statistics.getPerson().getLastName(),
             statistics.getPerson().getNiceName(),
             statistics.getPerson().getGravatarURL(),
-            statistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse(""),
+            statistics.getPersonBasedata().map(PersonBasedata::personnelNumber).orElse(""),
             statistics.getTotalAllowedVacationDays(),
             toVacationDaysDtoMap(statistics.getAllowedVacationDays(), locale),
             statistics.getTotalWaitingVacationDays(),

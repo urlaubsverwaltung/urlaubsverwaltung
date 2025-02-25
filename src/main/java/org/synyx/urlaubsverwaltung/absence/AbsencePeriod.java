@@ -19,7 +19,9 @@ import java.util.Optional;
  *     <li>26.August 2021 to 27.August 2021 (sick full day)</li>
  * </ul>
  */
-public class AbsencePeriod {
+public record AbsencePeriod(
+    List<Record> absenceRecords
+) {
 
     public enum AbsenceType {
         VACATION,
@@ -43,34 +45,9 @@ public class AbsencePeriod {
         CANCELLED
     }
 
-    private final List<AbsencePeriod.Record> absenceRecords;
-
-    public AbsencePeriod(List<Record> absenceRecords) {
-        this.absenceRecords = absenceRecords;
-    }
-
-    public List<AbsencePeriod.Record> getAbsenceRecords() {
+    @Override
+    public List<Record> absenceRecords() {
         return Collections.unmodifiableList(absenceRecords);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AbsencePeriod that = (AbsencePeriod) o;
-        return Objects.equals(absenceRecords, that.absenceRecords);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(absenceRecords);
-    }
-
-    @Override
-    public String toString() {
-        return "AbsencePeriod{" +
-            "absenceRecords=" + absenceRecords +
-            '}';
     }
 
     /**

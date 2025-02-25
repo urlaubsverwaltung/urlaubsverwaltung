@@ -95,7 +95,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -132,7 +132,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -169,7 +169,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -207,7 +207,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -243,7 +243,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -279,7 +279,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -315,7 +315,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).containsExactly(
+                assertThat(dto.elements()).containsExactly(
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
@@ -379,7 +379,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).contains(
+                assertThat(dto.elements()).contains(
                     new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock")
                 );
             });
@@ -407,7 +407,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements())
+                assertThat(dto.elements())
                     .isNotEmpty()
                     .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });
@@ -496,7 +496,7 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements())
+                assertThat(dto.elements())
                     .isNotEmpty()
                     .contains(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });

@@ -470,12 +470,12 @@ class OvertimeServiceImplTest {
             .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
-        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(2));
-        assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
+        assertThat(leftOvertime.leftOvertimeOverall()).isEqualTo(Duration.ofHours(2));
+        assertThat(leftOvertime.leftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
 
         final LeftOvertime leftOvertime2 = actual.get(person2);
-        assertThat(leftOvertime2.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(20));
-        assertThat(leftOvertime2.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(10));
+        assertThat(leftOvertime2.leftOvertimeOverall()).isEqualTo(Duration.ofHours(20));
+        assertThat(leftOvertime2.leftOvertimeDateRange()).isEqualTo(Duration.ofHours(10));
     }
 
     @Test
@@ -544,12 +544,12 @@ class OvertimeServiceImplTest {
             .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
-        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
-        assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
+        assertThat(leftOvertime.leftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
+        assertThat(leftOvertime.leftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
 
         final LeftOvertime leftOvertime2 = actual.get(person2);
-        assertThat(leftOvertime2.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(20));
-        assertThat(leftOvertime2.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(10));
+        assertThat(leftOvertime2.leftOvertimeOverall()).isEqualTo(Duration.ofHours(20));
+        assertThat(leftOvertime2.leftOvertimeDateRange()).isEqualTo(Duration.ofHours(10));
     }
 
     @Test
@@ -574,8 +574,8 @@ class OvertimeServiceImplTest {
 
         final LeftOvertime leftOvertime = actual.get(personWithoutOvertime);
         assertThat(leftOvertime).isNotNull();
-        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ZERO);
-        assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ZERO);
+        assertThat(leftOvertime.leftOvertimeOverall()).isEqualTo(Duration.ZERO);
+        assertThat(leftOvertime.leftOvertimeDateRange()).isEqualTo(Duration.ZERO);
     }
 
     @Test

@@ -17,6 +17,6 @@ class PageableDefaultSizeChangedEventConsumer {
     @Async
     @EventListener
     public void onPageableDefaultSizeChanged(PageableDefaultSizeChangedEvent event) {
-        userPaginationSettingsService.updatePageableDefaultSize(event.getPersonId(), event.getNewPageableDefaultSize());
+        userPaginationSettingsService.updatePageableDefaultSize(event.personId(), event.newPageableDefaultSize());
     }
 }

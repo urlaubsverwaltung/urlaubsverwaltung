@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +14,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -22,6 +23,7 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
+import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 
@@ -41,18 +43,11 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasProperty;
+import static org.assertj.core.api.Assertions.as;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -93,7 +88,7 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) throws Exception {
+    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
         final int year = clockYear();
@@ -101,21 +96,24 @@ class SickDaysOverviewViewControllerTest {
         when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
         when(dateFormatAware.parse(givenDateString, locale)).thenReturn(Optional.of(givenDate));
 
-        perform(
-            get("/web/sickdays")
-                .locale(locale)
-                .param("from", givenDateString)
-        )
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("today", LocalDate.now(clock)))
-            .andExpect(model().attribute("from", givenDate))
-            .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
-            .andExpect(view().name("sicknote/sick_days"));
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("from", givenDateString)
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", givenDate)
+            .containsEntry("to", LocalDate.of(year, 12, 31));
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) throws Exception {
+    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
 
@@ -127,35 +125,43 @@ class SickDaysOverviewViewControllerTest {
         when(dateFormatAware.parse(any(), eq(locale))).thenReturn(Optional.of(fromDate));
         when(dateFormatAware.parse(givenDateString, locale)).thenReturn(Optional.of(givenDate));
 
-        perform(
-            get("/web/sickdays")
-                .locale(locale)
-                .param("to", givenDateString)
-        )
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("today", LocalDate.now(clock)))
-            .andExpect(model().attribute("from", fromDate))
-            .andExpect(model().attribute("to", givenDate))
-            .andExpect(view().name("sicknote/sick_days"));
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("to", givenDateString)
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", fromDate)
+            .containsEntry("to", givenDate);
     }
 
     @Test
-    void filterSickNotesWithNullDates() throws Exception {
+    void filterSickNotesWithNullDates() {
 
         final int year = Year.now(clock).getValue();
 
         when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        perform(get("/web/sickdays"))
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("today", LocalDate.now(clock)))
-            .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
-            .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
-            .andExpect(view().name("sicknote/sick_days"));
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", LocalDate.of(year, 1, 1))
+            .containsEntry("to", LocalDate.of(year, 12, 31));
     }
 
     @Test
-    void periodsSickNotesWithDateRangeWithRole() throws Exception {
+    void periodsSickNotesWithDateRangeWithRole() {
 
         final Locale locale = Locale.GERMAN;
 
@@ -235,62 +241,34 @@ class SickDaysOverviewViewControllerTest {
         when(dateFormatAware.parse(requestStartDate.toString(), locale)).thenReturn(Optional.of(requestStartDate));
         when(dateFormatAware.parse(requestEndDate.toString(), locale)).thenReturn(Optional.of(requestEndDate));
 
-        perform(get("/web/sickdays")
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
             .locale(locale)
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString())
             .param("page", "2")
             .param("size", "50")
-        )
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("sickDaysStatistics", contains(
-                allOf(
-                    hasProperty("personId", is(1L)),
-                    hasProperty("personAvatarUrl", is("")),
-                    hasProperty("personnelNumber", is("0000001337")),
-                    hasProperty("personFirstName", is("FirstName one")),
-                    hasProperty("personLastName", is("LastName one")),
-                    hasProperty("personNiceName", is("FirstName one LastName one")),
-                    hasProperty("amountSickDays", is(BigDecimal.valueOf(15))),
-                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(6))),
-                    hasProperty("amountChildSickDays", is(ZERO)),
-                    hasProperty("amountChildSickDaysWithAUB", is(ZERO))
-                ),
-                allOf(
-                    hasProperty("personId", is(2L)),
-                    hasProperty("personAvatarUrl", is("")),
-                    hasProperty("personnelNumber", is("0000000042")),
-                    hasProperty("personFirstName", is("FirstName two")),
-                    hasProperty("personLastName", is("LastName two")),
-                    hasProperty("personNiceName", is("FirstName two LastName two")),
-                    hasProperty("amountSickDays", is(ZERO)),
-                    hasProperty("amountSickDaysWithAUB", is(ZERO)),
-                    hasProperty("amountChildSickDays", is(BigDecimal.valueOf(19))),
-                    hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
-                ),
-                allOf(
-                    hasProperty("personId", is(3L)),
-                    hasProperty("personAvatarUrl", is("")),
-                    hasProperty("personnelNumber", is("0000000021")),
-                    hasProperty("personFirstName", is("FirstName three")),
-                    hasProperty("personLastName", is("LastName three")),
-                    hasProperty("personNiceName", is("FirstName three LastName three")),
-                    hasProperty("amountSickDays", is(ZERO)),
-                    hasProperty("amountSickDaysWithAUB", is(ZERO)),
-                    hasProperty("amountChildSickDays", is(ZERO)),
-                    hasProperty("amountChildSickDaysWithAUB", is(ZERO))
-                )
-            )))
-            .andExpect(model().attribute("showPersonnelNumberColumn", true))
-            .andExpect(model().attribute("from", requestStartDate))
-            .andExpect(model().attribute("to", requestEndDate))
-            .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
-            .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("sicknote/sick_days"));
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("showPersonnelNumberColumn", true)
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", requestStartDate)
+            .containsEntry("to", requestEndDate)
+            .containsEntry("period", new FilterPeriod(requestStartDate, requestEndDate))
+            .extractingByKey("statisticsPagination")
+            .extracting("page")
+            .extracting("content", as(InstanceOfAssertFactories.LIST))
+            .contains(new SickDaysOverviewDto(1L, "", "0000001337", "FirstName one", "LastName one", "FirstName one LastName one", BigDecimal.valueOf(15), BigDecimal.valueOf(6), ZERO, ZERO))
+            .contains(new SickDaysOverviewDto(2L, "", "0000000042", "FirstName two", "LastName two", "FirstName two LastName two", ZERO, ZERO, BigDecimal.valueOf(19), BigDecimal.valueOf(5)))
+            .contains(new SickDaysOverviewDto(3L, "", "0000000021", "FirstName three", "LastName three", "FirstName three LastName three", ZERO, ZERO, ZERO, ZERO));
     }
 
     @Test
-    void periodsSickNotesWithDateWithoutRange() throws Exception {
+    void periodsSickNotesWithDateWithoutRange() {
 
         final Person office = new Person();
         office.setId(1L);
@@ -307,24 +285,26 @@ class SickDaysOverviewViewControllerTest {
         when(sickDaysStatisticsService.getAll(office, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final ResultActions resultActions = perform(get("/web/sickdays")
+
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
             .param("from", "01.01." + year)
             .param("to", "31.12." + year)
             .param("page", "1")
             .param("size", "50")
-        );
+            .exchange();
 
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("from", startDate))
-            .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("period", hasProperty("startDate", is(startDate))))
-            .andExpect(model().attribute("period", hasProperty("endDate", is(endDate))))
-            .andExpect(view().name("sicknote/sick_days"));
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("from", startDate)
+            .containsEntry("to", endDate)
+            .containsEntry("period", new FilterPeriod(startDate, endDate));
     }
 
     @Test
-    void sickNotesWithoutPersonnelNumberColumn() throws Exception {
+    void sickNotesWithoutPersonnelNumberColumn() {
 
         final Locale locale = Locale.GERMAN;
 
@@ -346,16 +326,20 @@ class SickDaysOverviewViewControllerTest {
         when(dateFormatAware.parse(requestStartDate.toString(), locale)).thenReturn(Optional.of(requestStartDate));
         when(dateFormatAware.parse(requestEndDate.toString(), locale)).thenReturn(Optional.of(requestEndDate));
 
-        perform(
-            get("/web/sickdays")
-                .locale(locale)
-                .param("from", requestStartDate.toString())
-                .param("to", requestEndDate.toString())
-                .param("page", "2")
-                .param("size", "50")
-        )
-            .andExpect(model().attribute("showPersonnelNumberColumn", false))
-            .andExpect(view().name("sicknote/sick_days"));
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString())
+            .param("page", "2")
+            .param("size", "50")
+            .exchange();
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("showPersonnelNumberColumn", false);
     }
 
     private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
@@ -370,10 +354,11 @@ class SickDaysOverviewViewControllerTest {
         return Year.now(clock).getValue();
     }
 
-    private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut)
-            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-            .build()
-            .perform(builder);
+    private MockMvcTester mockmvc() {
+        return MockMvcTester.of(List.of(sut),
+            mockMvcBuilder ->
+                mockMvcBuilder.setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                    .build()
+        );
     }
 }

@@ -82,9 +82,9 @@ class ApplicationTest {
 
         Period period = application.getPeriod();
 
-        assertThat(period.getStartDate()).isEqualTo(startDate);
-        assertThat(period.getEndDate()).isEqualTo(endDate);
-        assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
+        assertThat(period.startDate()).isEqualTo(startDate);
+        assertThat(period.endDate()).isEqualTo(endDate);
+        assertThat(period.dayLength()).isEqualTo(DayLength.FULL);
     }
 
     // Start and end time ----------------------------------------------------------------------------------------------

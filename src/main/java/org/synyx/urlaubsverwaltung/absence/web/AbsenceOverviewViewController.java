@@ -203,7 +203,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
         final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
-            .map(AbsencePeriod::getAbsenceRecords)
+            .map(AbsencePeriod::absenceRecords)
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 

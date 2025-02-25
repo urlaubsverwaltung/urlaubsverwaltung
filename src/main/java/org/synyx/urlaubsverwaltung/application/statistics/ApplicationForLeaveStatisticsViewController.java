@@ -101,7 +101,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         model.addAttribute("sortSelect", sortSelectDto);
         model.addAttribute("query", query);
 
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+        if (period.startDate().getYear() != period.endDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
             model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix));
@@ -126,8 +126,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
         model.addAttribute("period", period);
-        model.addAttribute("from", period.getStartDate());
-        model.addAttribute("to", period.getEndDate());
+        model.addAttribute("from", period.startDate());
+        model.addAttribute("to", period.endDate());
         model.addAttribute("statistics", statisticsDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeDtos(locale));
@@ -161,7 +161,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
         // NOTE: Not supported at the moment
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+        if (period.startDate().getYear() != period.endDate().getYear()) {
             return ResponseEntity.badRequest().build();
         }
 

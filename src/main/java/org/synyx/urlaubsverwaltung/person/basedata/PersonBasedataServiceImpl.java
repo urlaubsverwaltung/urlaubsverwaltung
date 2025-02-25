@@ -32,7 +32,7 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
     public Map<PersonId, PersonBasedata> getBasedataByPersonId(List<Long> personIds) {
         return personBasedataRepository.findAllByPersonIdIsIn(personIds).stream()
             .map(PersonBasedataMapper::mapFromEntity)
-            .collect(toMap(PersonBasedata::getPersonId, identity()));
+            .collect(toMap(PersonBasedata::personId, identity()));
     }
 
     @Override

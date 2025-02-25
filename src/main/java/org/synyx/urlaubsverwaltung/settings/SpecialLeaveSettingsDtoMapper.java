@@ -20,10 +20,10 @@ public class SpecialLeaveSettingsDtoMapper {
         final List<SpecialLeaveSettingsItemDto> specialLeaveSettingsItemDtos = specialLeaveSettingsItems.stream()
             .map(item -> {
                 final SpecialLeaveSettingsItemDto specialLeaveSettingsItemDto = new SpecialLeaveSettingsItemDto();
-                specialLeaveSettingsItemDto.setId(item.getId());
-                specialLeaveSettingsItemDto.setActive(item.isActive());
-                specialLeaveSettingsItemDto.setMessageKey(item.getMessageKey());
-                specialLeaveSettingsItemDto.setDays(item.getDays());
+                specialLeaveSettingsItemDto.setId(item.id());
+                specialLeaveSettingsItemDto.setActive(item.active());
+                specialLeaveSettingsItemDto.setMessageKey(item.messageKey());
+                specialLeaveSettingsItemDto.setDays(item.days());
                 return specialLeaveSettingsItemDto;
             })
             .toList();

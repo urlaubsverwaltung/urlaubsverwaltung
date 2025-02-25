@@ -127,7 +127,7 @@ public class AbsenceApiController {
     }
 
     private Stream<AbsenceDto> toAbsenceDto(AbsencePeriod absence) {
-        return absence.getAbsenceRecords().stream()
+        return absence.absenceRecords().stream()
             .map(this::toAbsenceDto)
             .flatMap(List::stream);
     }

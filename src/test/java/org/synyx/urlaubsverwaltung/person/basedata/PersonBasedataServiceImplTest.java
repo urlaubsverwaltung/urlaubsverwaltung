@@ -44,9 +44,9 @@ class PersonBasedataServiceImplTest {
 
         final Optional<PersonBasedata> basedata = sut.getBasedataByPersonId(1);
         assertThat(basedata).hasValueSatisfying(personBasedata -> {
-            assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1L));
-            assertThat(personBasedata.getPersonnelNumber()).isEqualTo("1337");
-            assertThat(personBasedata.getAdditionalInformation()).isEqualTo("Some additional Information");
+            assertThat(personBasedata.personId()).isEqualTo(new PersonId(1L));
+            assertThat(personBasedata.personnelNumber()).isEqualTo("1337");
+            assertThat(personBasedata.additionalInformation()).isEqualTo("Some additional Information");
         });
     }
 
@@ -84,15 +84,15 @@ class PersonBasedataServiceImplTest {
             .containsKeys(new PersonId(1L), new PersonId(2L));
 
         assertThat(actual.get(new PersonId(1L))).satisfies(basedata -> {
-            assertThat(basedata.getPersonId()).isEqualTo(new PersonId(1L));
-            assertThat(basedata.getPersonnelNumber()).isEqualTo("1337");
-            assertThat(basedata.getAdditionalInformation()).isEqualTo("Some additional Information");
+            assertThat(basedata.personId()).isEqualTo(new PersonId(1L));
+            assertThat(basedata.personnelNumber()).isEqualTo("1337");
+            assertThat(basedata.additionalInformation()).isEqualTo("Some additional Information");
         });
 
         assertThat(actual.get(new PersonId(2L))).satisfies(basedata -> {
-            assertThat(basedata.getPersonId()).isEqualTo(new PersonId(2L));
-            assertThat(basedata.getPersonnelNumber()).isEqualTo("1887");
-            assertThat(basedata.getAdditionalInformation()).isNull();
+            assertThat(basedata.personId()).isEqualTo(new PersonId(2L));
+            assertThat(basedata.personnelNumber()).isEqualTo("1887");
+            assertThat(basedata.additionalInformation()).isNull();
         });
     }
 

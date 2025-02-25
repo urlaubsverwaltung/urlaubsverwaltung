@@ -72,7 +72,7 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
         // NOTE: Not supported at the moment
-        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+        if (period.startDate().getYear() != period.endDate().getYear()) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -82,7 +82,7 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         final String adaptedQuery = allElements ? "" : query;
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
 
-        final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), pageableSearchQuery);
+        final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.startDate(), period.endDate(), pageableSearchQuery);
         final List<ApplicationForLeaveExport> export = exportPage.getContent();
         final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, locale, export);
 

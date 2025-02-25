@@ -16,8 +16,8 @@ class FilterPeriodTest {
         final LocalDate endDate = LocalDate.of(2199, MAY, 19);
 
         final FilterPeriod filterPeriod = new FilterPeriod(null, endDate);
-        assertThat(filterPeriod.getStartDate()).isNull();
-        assertThat(filterPeriod.getEndDate()).isEqualTo(endDate);
+        assertThat(filterPeriod.startDate()).isNull();
+        assertThat(filterPeriod.endDate()).isEqualTo(endDate);
     }
 
     @Test
@@ -26,8 +26,8 @@ class FilterPeriodTest {
         final LocalDate startDate = LocalDate.of(2015, MAY, 19);
 
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, null);
-        assertThat(filterPeriod.getStartDate()).isEqualTo(startDate);
-        assertThat(filterPeriod.getEndDate()).isNull();
+        assertThat(filterPeriod.startDate()).isEqualTo(startDate);
+        assertThat(filterPeriod.endDate()).isNull();
     }
 
     @Test
@@ -37,8 +37,8 @@ class FilterPeriodTest {
         final LocalDate endDate = LocalDate.of(2015, DECEMBER, 21);
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        assertThat(period.getStartDate()).isEqualTo(startDate);
-        assertThat(period.getEndDate()).isEqualTo(endDate);
+        assertThat(period.startDate()).isEqualTo(startDate);
+        assertThat(period.endDate()).isEqualTo(endDate);
     }
 
     @Test

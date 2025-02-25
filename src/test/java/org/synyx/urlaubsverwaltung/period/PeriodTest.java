@@ -45,9 +45,9 @@ class PeriodTest {
 
         Period period = new Period(startDate, endDate, DayLength.FULL);
 
-        assertThat(period.getStartDate()).isEqualTo(startDate);
-        assertThat(period.getEndDate()).isEqualTo(endDate);
-        assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
+        assertThat(period.startDate()).isEqualTo(startDate);
+        assertThat(period.endDate()).isEqualTo(endDate);
+        assertThat(period.dayLength()).isEqualTo(DayLength.FULL);
     }
 
     @Test
@@ -57,8 +57,8 @@ class PeriodTest {
 
         Period period = new Period(date, date, DayLength.MORNING);
 
-        assertThat(period.getStartDate()).isEqualTo(date);
-        assertThat(period.getEndDate()).isEqualTo(date);
-        assertThat(period.getDayLength()).isEqualTo(DayLength.MORNING);
+        assertThat(period.startDate()).isEqualTo(date);
+        assertThat(period.endDate()).isEqualTo(date);
+        assertThat(period.dayLength()).isEqualTo(DayLength.MORNING);
     }
 }
