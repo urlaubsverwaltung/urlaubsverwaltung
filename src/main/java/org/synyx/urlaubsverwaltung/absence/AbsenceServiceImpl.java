@@ -23,6 +23,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
@@ -160,8 +162,8 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
-        final LocalDate start = maxDate(application.getStartDate(), askedDateRange.startDate());
-        final LocalDate end = minDate(application.getEndDate(), askedDateRange.endDate());
+        final LocalDate start = max(List.of(application.getStartDate(), askedDateRange.startDate()));
+        final LocalDate end = min(List.of(application.getEndDate(), askedDateRange.endDate()));
 
         final Person person = application.getPerson();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);
@@ -231,8 +233,8 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
-        final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.startDate());
-        final LocalDate end = minDate(sickNote.getEndDate(), askedDateRange.endDate());
+        final LocalDate start = max(List.of(sickNote.getStartDate(), askedDateRange.startDate()));
+        final LocalDate end = min(List.of(sickNote.getEndDate(), askedDateRange.endDate()));
 
         final Person person = sickNote.getPerson();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);
@@ -278,13 +280,5 @@ public class AbsenceServiceImpl implements AbsenceService {
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);
-    }
-
-    private static LocalDate maxDate(LocalDate date, LocalDate date2) {
-        return date.isAfter(date2) ? date : date2;
-    }
-
-    private static LocalDate minDate(LocalDate date, LocalDate date2) {
-        return date.isBefore(date2) ? date : date2;
     }
 }

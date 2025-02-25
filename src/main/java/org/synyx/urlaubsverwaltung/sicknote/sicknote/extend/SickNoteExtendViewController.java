@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.FormatStyle;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -183,7 +184,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
 
         // extended dateRange has a larger end date to have a buffer for calculation of next-working-day
         // possibility of a still non-existent working day is handled by `workingTimeCalendarService.getNextWorkingDayFollowingTo` later
-        final LocalDate extendedEnd = max(sickNote.getEndDate(), requireNonNullElse(individualExtendToDate, endOfWeek));
+        final LocalDate extendedEnd = Collections.max(List.of(sickNote.getEndDate(), requireNonNullElse(individualExtendToDate, endOfWeek)));
         final DateRange extendedDateRange = new DateRange(sickNote.getStartDate().with(previousOrSame(MONDAY)), extendedEnd.with(nextOrSame(SUNDAY)).with(next(SUNDAY)));
 
         return getWorkingTimeCalendar(person, extendedDateRange);
@@ -279,13 +280,6 @@ class SickNoteExtendViewController implements HasLaunchpad {
             sickNoteExtendDto.setEndDate(sickNotePreviewNext.endDate());
             model.addAttribute("sickNoteExtension", sickNoteExtendDto);
         }
-    }
-
-    private LocalDate max(LocalDate date1, LocalDate date2) {
-        if (date1.isAfter(date2)) {
-            return date1;
-        }
-        return date2;
     }
 
     private LocalDate endOfWeek() {
