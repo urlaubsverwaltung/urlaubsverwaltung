@@ -269,7 +269,7 @@ class DepartmentCalendarServiceTest {
     void getCalendarForDepartmentAndCreatedAtIsAfterChosenPeriodSinceDate() {
 
         final Clock clock = Clock.fixed(Instant.parse("2019-04-15T10:00:00.00Z"), ZoneId.of("UTC"));
-        final DepartmentCalendarService sut = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
+        final DepartmentCalendarService departmentCalendarService = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, clock);
 
         final Department department = createDepartment("DepartmentName");
@@ -293,7 +293,7 @@ class DepartmentCalendarServiceTest {
         final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
         when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), createdAt)).thenReturn(fullDayAbsences);
 
-        sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
+        departmentCalendarService.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
         verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), createdAt);
     }
 
@@ -301,7 +301,7 @@ class DepartmentCalendarServiceTest {
     void getCalendarForDepartmentAndCreatedAtIsBeforeChosenPeriodSinceDate() {
 
         final Clock clock = Clock.fixed(Instant.parse("2019-06-15T10:00:00.00Z"), ZoneId.of("UTC"));
-        final DepartmentCalendarService sut = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
+        final DepartmentCalendarService departmentCalendarService = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, clock);
 
         final Department department = createDepartment("DepartmentName");
@@ -325,7 +325,7 @@ class DepartmentCalendarServiceTest {
         final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
         when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15))).thenReturn(fullDayAbsences);
 
-        sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
+        departmentCalendarService.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
         verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15));
     }
 
