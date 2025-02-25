@@ -6,11 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAppliedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRejectedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -67,7 +67,7 @@ class CalendarSyncServiceTest {
 
         final GoogleCalendarSyncProvider googleCalendarSyncProvider = mock(GoogleCalendarSyncProvider.class);
         when(calendarProviderService.getCalendarProvider()).thenReturn(Optional.of(googleCalendarSyncProvider));
-        when(googleCalendarSyncProvider.add(any(Absence.class), any(CalendarSettings.class))).thenReturn(Optional.of("eventId"));
+        when(googleCalendarSyncProvider.add(any(CalendarAbsence.class), any(CalendarSettings.class))).thenReturn(Optional.of("eventId"));
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
 
@@ -108,9 +108,9 @@ class CalendarSyncServiceTest {
 
         sut.consumeApplicationUpdatedEvent(event);
 
-        final ArgumentCaptor<Absence> absenceArgumentCaptor = forClass(Absence.class);
+        final ArgumentCaptor<CalendarAbsence> absenceArgumentCaptor = forClass(CalendarAbsence.class);
         verify(googleCalendarSyncProvider).update(absenceArgumentCaptor.capture(), eq("eventId"), eq(calendarSettings));
-        final Absence absence = absenceArgumentCaptor.getValue();
+        final CalendarAbsence absence = absenceArgumentCaptor.getValue();
         assertThat(absence.getPerson()).isEqualTo(person);
         assertThat(absence.getEventSubject()).isEqualTo("first last abwesend");
         assertThat(absence.getStartDate()).isEqualTo(ZonedDateTime.of(2022, 12, 10, 0, 0, 0, 0, ZoneId.of("Europe/Berlin")));

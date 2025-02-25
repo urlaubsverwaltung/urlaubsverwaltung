@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
@@ -15,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationDeletedEve
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRejectedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRevokedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
@@ -130,13 +130,13 @@ class CalendarSyncService {
 
     private void addCalendarEntry(Application application) {
         calendarProviderService.getCalendarProvider()
-            .flatMap(calendarProvider -> calendarProvider.add(new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
+            .flatMap(calendarProvider -> calendarProvider.add(new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(application.getId(), VACATION, eventId));
     }
 
     private void addCalendarEntry(SickNote sickNote) {
         calendarProviderService.getCalendarProvider()
-            .flatMap(calendarProvider -> calendarProvider.add(new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
+            .flatMap(calendarProvider -> calendarProvider.add(new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
             .ifPresent(eventId -> createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId));
     }
 
@@ -145,7 +145,7 @@ class CalendarSyncService {
             .ifPresent(absenceMapping ->
                 calendarProviderService.getCalendarProvider()
                     .ifPresent(calendarProvider -> {
-                        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+                        final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
                         calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
                     })
             );
@@ -155,7 +155,7 @@ class CalendarSyncService {
         getAbsenceByIdAndType(sickNote.getId(), VACATION)
             .ifPresent(absenceMapping -> calendarProviderService.getCalendarProvider()
                 .ifPresent(calendarProvider -> {
-                    final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
+                    final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
                     calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
                 })
             );

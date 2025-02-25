@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -44,7 +42,7 @@ class CompanyCalendarServiceTest {
     private CompanyCalendarService sut;
 
     @Mock
-    private AbsenceService absenceService;
+    private CalendarAbsenceService calendarAbsenceService;
     @Mock
     private CompanyCalendarRepository companyCalendarRepository;
     @Mock
@@ -61,14 +59,14 @@ class CompanyCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
+        sut = new CompanyCalendarService(calendarAbsenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
     void getCalendarForAllForOneFullDay() {
 
-        final List<Absence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
+        final List<CalendarAbsence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
 
         final Person person = new Person();
         person.setId(10L);
@@ -236,10 +234,10 @@ class CompanyCalendarServiceTest {
         assertThat(actualCalendarForPerson.getSecret()).isNotEqualTo(secretBeforeUpdate);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
 
-        return new Absence(person, period, timeConfig);
+        return new CalendarAbsence(person, period, timeConfig);
     }
 }

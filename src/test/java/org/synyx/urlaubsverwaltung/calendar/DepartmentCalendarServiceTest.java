@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -47,7 +45,7 @@ class DepartmentCalendarServiceTest {
     private DepartmentCalendarService sut;
 
     @Mock
-    private AbsenceService absenceService;
+    private CalendarAbsenceService calendarAbsenceService;
     @Mock
     private DepartmentService departmentService;
     @Mock
@@ -62,7 +60,7 @@ class DepartmentCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new DepartmentCalendarService(absenceService, departmentService, personService,
+        sut = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, Clock.systemUTC());
     }
 
@@ -112,8 +110,8 @@ class DepartmentCalendarServiceTest {
         departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
-        final List<Absence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));
-        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
+        final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar");
@@ -271,7 +269,7 @@ class DepartmentCalendarServiceTest {
     void getCalendarForDepartmentAndCreatedAtIsAfterChosenPeriodSinceDate() {
 
         final Clock clock = Clock.fixed(Instant.parse("2019-04-15T10:00:00.00Z"), ZoneId.of("UTC"));
-        final DepartmentCalendarService sut = new DepartmentCalendarService(absenceService, departmentService, personService,
+        final DepartmentCalendarService departmentCalendarService = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, clock);
 
         final Department department = createDepartment("DepartmentName");
@@ -292,18 +290,18 @@ class DepartmentCalendarServiceTest {
         departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
-        final List<Absence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
-        when(absenceService.getOpenAbsencesSince(List.of(person), createdAt)).thenReturn(fullDayAbsences);
+        final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), createdAt)).thenReturn(fullDayAbsences);
 
-        sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
-        verify(absenceService).getOpenAbsencesSince(List.of(person), createdAt);
+        departmentCalendarService.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
+        verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), createdAt);
     }
 
     @Test
     void getCalendarForDepartmentAndCreatedAtIsBeforeChosenPeriodSinceDate() {
 
         final Clock clock = Clock.fixed(Instant.parse("2019-06-15T10:00:00.00Z"), ZoneId.of("UTC"));
-        final DepartmentCalendarService sut = new DepartmentCalendarService(absenceService, departmentService, personService,
+        final DepartmentCalendarService departmentCalendarService = new DepartmentCalendarService(calendarAbsenceService, departmentService, personService,
             departmentCalendarRepository, iCalService, messageSource, clock);
 
         final Department department = createDepartment("DepartmentName");
@@ -324,11 +322,11 @@ class DepartmentCalendarServiceTest {
         departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
-        final List<Absence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
-        when(absenceService.getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15))).thenReturn(fullDayAbsences);
+        final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, parse("2018-03-26", ofPattern("yyyy-MM-dd")), parse("2018-03-26", ofPattern("yyyy-MM-dd")), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15))).thenReturn(fullDayAbsences);
 
-        sut.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
-        verify(absenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15));
+        departmentCalendarService.getCalendarForDepartment(1L, 10L, "secret", GERMAN);
+        verify(calendarAbsenceService).getOpenAbsencesSince(List.of(person), LocalDate.of(2018, 6, 15));
     }
 
     @Test
@@ -344,10 +342,10 @@ class DepartmentCalendarServiceTest {
         assertThat(result).hasSize(1).containsExactly(departmentCalendar);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
 
-        return new Absence(person, period, timeConfig);
+        return new CalendarAbsence(person, period, timeConfig);
     }
 }

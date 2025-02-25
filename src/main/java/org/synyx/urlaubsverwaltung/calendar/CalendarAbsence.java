@@ -1,5 +1,7 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendar;
 
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -10,13 +12,7 @@ import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
 
-/**
- * Represents a period of time where a person is not at work.
- *
- * @deprecated in favor of {@link AbsencePeriod} which supports morning/noon absence state.
- */
-@Deprecated(since = "4.20.0")
-public class Absence {
+public class CalendarAbsence {
 
     private final ZonedDateTime startDate;
     private final ZonedDateTime endDate;
@@ -24,11 +20,11 @@ public class Absence {
     private final boolean isAllDay;
     private final AbsenceType absenceType;
 
-    public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
         this(person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
+    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
 
         this.person = person;
         this.absenceType = absenceType;

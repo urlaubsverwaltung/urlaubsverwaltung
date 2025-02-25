@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -985,7 +985,7 @@ class ApplicationMailService {
     }
 
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType, Person recipient) {
-        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
+        final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType, recipient);
     }
 

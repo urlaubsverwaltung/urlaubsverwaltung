@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ interface CalendarProvider {
      * @param calendarSettings contains configuration for calendar provider
      * @return id of added absence event, may be empty if an error occurred during the calendar sync
      */
-    Optional<String> add(Absence absence, CalendarSettings calendarSettings);
+    Optional<String> add(CalendarAbsence absence, CalendarSettings calendarSettings);
 
 
     /**
@@ -27,7 +27,7 @@ interface CalendarProvider {
      * @param eventId          id of event to be updated
      * @param calendarSettings contains configuration for calendar provider
      */
-    void update(Absence absence, String eventId, CalendarSettings calendarSettings);
+    void update(CalendarAbsence absence, String eventId, CalendarSettings calendarSettings);
 
 
     /**

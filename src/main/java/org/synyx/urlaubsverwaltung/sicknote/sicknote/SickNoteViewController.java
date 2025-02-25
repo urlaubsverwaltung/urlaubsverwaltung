@@ -39,11 +39,9 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionInt
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.extend.SickNoteExtensionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -94,15 +92,23 @@ class SickNoteViewController implements HasLaunchpad {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
 
-    SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
-                           SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
-                           SickNoteExtensionService sickNoteExtensionService,
-                           SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
-                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService,
-                           PersonService personService, DepartmentService departmentService, SickNoteValidator sickNoteValidator,
-                           SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
-                           SettingsService settingsService, Clock clock) {
-
+    SickNoteViewController(
+        SickNoteService sickNoteService,
+        SickNoteInteractionService sickNoteInteractionService,
+        SickNoteCommentService sickNoteCommentService,
+        SickNoteTypeService sickNoteTypeService,
+        SickNoteExtensionService sickNoteExtensionService,
+        SickNoteExtensionInteractionService sickNoteExtensionInteractionService,
+        VacationTypeService vacationTypeService,
+        VacationTypeViewModelService vacationTypeViewModelService,
+        PersonService personService,
+        DepartmentService departmentService,
+        SickNoteValidator sickNoteValidator,
+        SickNoteCommentFormValidator sickNoteCommentFormValidator,
+        SickNoteConvertFormValidator sickNoteConvertFormValidator,
+        SettingsService settingsService,
+        Clock clock
+    ) {
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.sickNoteCommentService = sickNoteCommentService;
@@ -122,7 +128,6 @@ class SickNoteViewController implements HasLaunchpad {
 
     @InitBinder
     public void initBinder(DataBinder binder) {
-        binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, settingsService));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
