@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
@@ -61,7 +60,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        final CalendarAbsence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence), person);
         assertThat(convertCalendar(calendar))
@@ -93,7 +92,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final CalendarAbsence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence), person);
         assertThat(convertCalendar(calendar))
@@ -125,7 +124,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final CalendarAbsence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence), person);
 
@@ -159,7 +158,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
         assertThat(convertCalendar(calendar))
@@ -191,7 +190,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -226,7 +225,7 @@ class ICalServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -261,7 +260,7 @@ class ICalServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -298,7 +297,7 @@ class ICalServiceTest {
         final Person recipient = new Person();
         recipient.setId(2L);
 
-        final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -336,7 +335,7 @@ class ICalServiceTest {
         final Person recipient = new Person();
         recipient.setId(2L);
 
-        final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -368,7 +367,7 @@ class ICalServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Absence holidayReplacement = holidayReplacement(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        final CalendarAbsence holidayReplacement = holidayReplacement(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
@@ -397,15 +396,15 @@ class ICalServiceTest {
                 """);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         return absence(person, start, end, length, AbsenceType.DEFAULT);
     }
 
-    private Absence holidayReplacement(Person person, LocalDate start, LocalDate end, DayLength length) {
+    private CalendarAbsence holidayReplacement(Person person, LocalDate start, LocalDate end, DayLength length) {
         return absence(person, start, end, length, AbsenceType.HOLIDAY_REPLACEMENT);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
         final TimeSettings timeSettings = new TimeSettings();
         timeSettings.setTimeZoneId("Europe/Berlin");
         timeSettings.setWorkDayBeginHour(8);
@@ -413,7 +412,7 @@ class ICalServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
 
         final Period period = new Period(start, end, length);
-        return new Absence(person, period, timeConfig, absenceType);
+        return new CalendarAbsence(person, period, timeConfig, absenceType);
     }
 
     /**

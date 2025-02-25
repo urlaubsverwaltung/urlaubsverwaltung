@@ -17,7 +17,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.io.ByteArrayOutputStream;
@@ -46,28 +45,28 @@ public class ICalService {
         this.calendarProperties = calendarProperties;
     }
 
-    public ByteArrayResource getCalendar(String title, List<Absence> absences, Person recipient) {
+    public ByteArrayResource getCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
         final Calendar calendar = generateCalendar(title, absences, recipient);
         return writeCalenderIntoRessource(calendar);
     }
 
-    public ByteArrayResource getSingleAppointment(Absence absence, ICalType method, Person recipient) {
+    public ByteArrayResource getSingleAppointment(CalendarAbsence absence, ICalType method, Person recipient) {
         final Calendar calendar = generateForSingleAppointment(absence, method, recipient);
         return writeCalenderIntoRessource(calendar);
     }
 
-    private Calendar generateCalendar(String title, List<Absence> absences, Person recipient) {
+    private Calendar generateCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
         final Calendar calendar = prepareCalendar(absences, PUBLISHED, recipient);
         calendar.add(new XProperty("X-WR-CALNAME", title));
         calendar.add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
         return calendar;
     }
 
-    private Calendar generateForSingleAppointment(Absence absence, ICalType method, Person recipient) {
+    private Calendar generateForSingleAppointment(CalendarAbsence absence, ICalType method, Person recipient) {
         return prepareCalendar(List.of(absence), method, recipient);
     }
 
-    private Calendar prepareCalendar(List<Absence> absences, ICalType method, Person recipient) {
+    private Calendar prepareCalendar(List<CalendarAbsence> absences, ICalType method, Person recipient) {
         final Calendar calendar = new Calendar();
         calendar.add(VERSION_2_0);
         calendar.add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
@@ -87,7 +86,7 @@ public class ICalService {
         return calendar;
     }
 
-    private Optional<VEvent> toVEvent(Absence absence, ICalType method, boolean isOwn) {
+    private Optional<VEvent> toVEvent(CalendarAbsence absence, ICalType method, boolean isOwn) {
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
@@ -122,7 +121,7 @@ public class ICalService {
         return Optional.of(event);
     }
 
-    private Attendee generateAttendee(Absence absence) {
+    private Attendee generateAttendee(CalendarAbsence absence) {
         final Attendee attendee = new Attendee(URI.create("mailto:" + absence.getPerson().getEmail()));
         attendee.add(REQ_PARTICIPANT);
         attendee.add(new Cn(absence.getPerson().getNiceName()));
@@ -134,7 +133,7 @@ public class ICalService {
         return startDateTime.toLocalDate().isEqual(endDate.toLocalDate().minusDays(1));
     }
 
-    private String generateUid(Absence absence) {
+    private String generateUid(CalendarAbsence absence) {
         final String data = absence.getStartDate() + "" + absence.getEndDate() + absence.getPerson();
         return DigestUtils.md5Hex(data).toUpperCase();
     }

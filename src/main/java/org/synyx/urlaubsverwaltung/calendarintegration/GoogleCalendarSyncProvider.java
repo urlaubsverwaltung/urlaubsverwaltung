@@ -9,7 +9,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -36,7 +36,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     }
 
     @Override
-    public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
+    public Optional<String> add(CalendarAbsence absence, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
@@ -62,7 +62,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     }
 
     @Override
-    public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+    public void update(CalendarAbsence absence, String eventId, CalendarSettings calendarSettings) {
 
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
@@ -134,7 +134,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
      *
      * @return an authorized calendar client service
      */
-    private static void fillEvent(Absence absence, Event event) {
+    private static void fillEvent(CalendarAbsence absence, Event event) {
 
         event.setSummary(absence.getEventSubject());
 

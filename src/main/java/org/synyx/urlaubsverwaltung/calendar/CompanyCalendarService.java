@@ -7,8 +7,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -26,7 +24,7 @@ import java.util.Optional;
 @Service
 public class CompanyCalendarService {
 
-    private final AbsenceService absenceService;
+    private final CalendarAbsenceService calendarAbsenceService;
     private final CompanyCalendarRepository companyCalendarRepository;
     private final ICalService iCalService;
     private final PersonService personService;
@@ -34,8 +32,13 @@ public class CompanyCalendarService {
     private final Clock clock;
 
     @Autowired
-    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource, Clock clock) {
-        this.absenceService = absenceService;
+    CompanyCalendarService(
+        CalendarAbsenceService calendarAbsenceService,
+        CompanyCalendarRepository companyCalendarRepository,
+        ICalService iCalService, PersonService personService,
+        MessageSource messageSource, Clock clock
+    ) {
+        this.calendarAbsenceService = calendarAbsenceService;
         this.companyCalendarRepository = companyCalendarRepository;
         this.iCalService = iCalService;
         this.personService = personService;
@@ -79,7 +82,7 @@ public class CompanyCalendarService {
 
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
         final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getCalendarPeriod());
-        final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
+        final List<CalendarAbsence> absences = calendarAbsenceService.getOpenAbsencesSince(sinceDate);
 
         return iCalService.getCalendar(title, absences, person);
     }

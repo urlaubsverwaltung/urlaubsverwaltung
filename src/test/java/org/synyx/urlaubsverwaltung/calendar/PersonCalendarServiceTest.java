@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -42,7 +40,7 @@ class PersonCalendarServiceTest {
     private PersonCalendarService sut;
 
     @Mock
-    private AbsenceService absenceService;
+    private CalendarAbsenceService calendarAbsenceService;
     @Mock
     private PersonService personService;
     @Mock
@@ -59,7 +57,7 @@ class PersonCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new PersonCalendarService(absenceService, personService, personCalendarRepository, iCalService, messageSource, Clock.systemUTC());
+        sut = new PersonCalendarService(calendarAbsenceService, personService, personCalendarRepository, iCalService, messageSource, Clock.systemUTC());
     }
 
     @Test
@@ -74,8 +72,8 @@ class PersonCalendarServiceTest {
         personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
-        final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
+        final List<CalendarAbsence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
@@ -97,8 +95,8 @@ class PersonCalendarServiceTest {
         personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
-        final List<Absence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
-        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(morningAbsences);
+        final List<CalendarAbsence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
+        when(calendarAbsenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(morningAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
@@ -120,8 +118,8 @@ class PersonCalendarServiceTest {
         personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
-        final List<Absence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
-        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(manyFullDayAbsences);
+        final List<CalendarAbsence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
+        when(calendarAbsenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(manyFullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
@@ -143,8 +141,8 @@ class PersonCalendarServiceTest {
         personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
-        final List<Absence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
-        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(noonAbsences);
+        final List<CalendarAbsence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
+        when(calendarAbsenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(noonAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
@@ -310,10 +308,10 @@ class PersonCalendarServiceTest {
         verify(personCalendarRepository).deleteByPerson(person);
     }
 
-    private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
 
-        return new Absence(person, period, timeConfig);
+        return new CalendarAbsence(person, period, timeConfig);
     }
 }

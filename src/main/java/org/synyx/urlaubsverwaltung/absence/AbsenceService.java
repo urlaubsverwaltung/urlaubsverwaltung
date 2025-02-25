@@ -50,23 +50,4 @@ public interface AbsenceService {
      * @return list of all matching absences
      */
     List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end);
-
-    /**
-     * Get absences from a list of persons
-     *
-     * @param persons to get absences for
-     * @return list of absences for the given person
-     */
-    @Deprecated
-    List<Absence> getOpenAbsencesSince(List<Person> persons, LocalDate since);
-
-    /**
-     * Get all absences with one of the status:
-     * ALLOWED, WAITING, TEMPORARY_ALLOWED
-     *
-     * @param since
-     * @return list of all open absences
-     */
-    @Deprecated
-    List<Absence> getOpenAbsencesSince(LocalDate since);
 }
