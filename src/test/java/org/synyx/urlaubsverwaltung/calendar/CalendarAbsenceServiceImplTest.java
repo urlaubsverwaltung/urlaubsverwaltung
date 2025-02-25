@@ -31,7 +31,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMI
 @ExtendWith(MockitoExtension.class)
 class CalendarAbsenceServiceImplTest {
 
-    private CalendarAbsenceServiceImpl sut;
+    private CalendarAbsenceService sut;
 
     @Mock
     private ApplicationService applicationService;
@@ -42,7 +42,7 @@ class CalendarAbsenceServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new CalendarAbsenceServiceImpl(applicationService, sickNoteService, settingsService);
+        sut = new CalendarAbsenceService(applicationService, sickNoteService, settingsService);
     }
 
     @Test
