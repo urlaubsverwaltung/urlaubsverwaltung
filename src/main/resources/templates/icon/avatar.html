@@ -6,16 +6,17 @@
   </head>
   <body>
     <svg
-      class="tw-tracking-widest"
-      width="42"
-      height="42"
+      th:fragment="svg(avatarText, height, width)"
+      class="tw-tracking-widest tw-rounded-full tw-block"
+      th:height="${height == null ? '42' : height}"
+      th:width="${width == null ? '42' : width}"
       viewBox="0 0 64 64"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       focusable="false"
       preserveAspectRatio="xMidYMid meet"
     >
-      <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current" />
+      <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current"></circle>
       <text
         x="32"
         y="32"
@@ -25,8 +26,9 @@
         stroke="#27272a"
         fill="#27272a"
         class="tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100"
+        th:text="${avatarText}"
       >
-        ?
+        AB
       </text>
     </svg>
   </body>

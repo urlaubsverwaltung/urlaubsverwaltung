@@ -21,60 +21,12 @@
                 th:height="${height == null ? '42' : height}"
                 th:width="${width == null ? '42' : width}"
               >
-                <svg
-                  class="tw-tracking-widest"
-                  th:height="${height == null ? '42' : height}"
-                  th:width="${width == null ? '42' : width}"
-                  viewBox="0 0 64 64"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  focusable="false"
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current"></circle>
-                  <text
-                    x="32"
-                    y="32"
-                    text-anchor="middle"
-                    dominant-baseline="central"
-                    font-size="1.625rem"
-                    stroke="#27272a"
-                    fill="#27272a"
-                    class="tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100"
-                    th:text="${initials}"
-                  >
-                    AB
-                  </text>
-                </svg>
+                <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
               </object>
             </th:block>
 
             <th:block th:if="${gravatarEnabled == false}">
-              <svg
-                class="tw-tracking-widest tw-rounded-full tw-block"
-                th:height="${height == null ? '42' : height}"
-                th:width="${width == null ? '42' : width}"
-                viewBox="0 0 64 64"
-                xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                focusable="false"
-                preserveAspectRatio="xMidYMid meet"
-              >
-                <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current"></circle>
-                <text
-                  x="32"
-                  y="32"
-                  text-anchor="middle"
-                  dominant-baseline="central"
-                  font-size="1.625rem"
-                  stroke="#27272a"
-                  fill="#27272a"
-                  class="tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100"
-                  th:text="${initials}"
-                >
-                  AB
-                </text>
-              </svg>
+              <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
             </th:block>
           </th:block>
         </a>
@@ -82,6 +34,10 @@
 
       <th:block th:if="${url != null && personId == null}">
         <th:block th:replace="~{:: avatar-images}"></th:block>
+      </th:block>
+
+      <th:block th:if="${url == null}">
+        <svg th:replace="~{icon/avatar::svg(avatarText='?', height=${height}, width=${width})}"></svg>
       </th:block>
     </th:block>
 
