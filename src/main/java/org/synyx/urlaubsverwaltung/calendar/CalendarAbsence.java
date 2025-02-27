@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.HOLIDAY_REPLACEMENT;
 
@@ -73,15 +72,6 @@ public class CalendarAbsence {
 
     public String getCalendarAbsenceTypeMessageKey() {
         return calendarAbsenceType.getMessageKey();
-    }
-
-    @Deprecated
-    public String getEventSubject() {
-        if (isHolidayReplacement()) {
-            return format("Vertretung für %s", person.getNiceName());
-        }
-
-        return format("%s abwesend", person.getNiceName());
     }
 
     @Override
