@@ -1,16 +1,14 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static java.lang.String.format;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.HOLIDAY_REPLACEMENT;
 
 public class CalendarAbsence {
 
@@ -18,16 +16,16 @@ public class CalendarAbsence {
     private final ZonedDateTime endDate;
     private final Person person;
     private final boolean isAllDay;
-    private final AbsenceType absenceType;
+    private final CalendarAbsenceType calendarAbsenceType;
 
     public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
         this(person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
+    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
 
         this.person = person;
-        this.absenceType = absenceType;
+        this.calendarAbsenceType = calendarAbsenceType;
 
         final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
         final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
@@ -69,15 +67,11 @@ public class CalendarAbsence {
     }
 
     public boolean isHolidayReplacement() {
-        return absenceType == HOLIDAY_REPLACEMENT;
+        return calendarAbsenceType == HOLIDAY_REPLACEMENT;
     }
 
-    public String getEventSubject() {
-        if (isHolidayReplacement()) {
-            return format("Vertretung für %s", person.getNiceName());
-        }
-
-        return format("%s abwesend", person.getNiceName());
+    public String getCalendarAbsenceTypeMessageKey() {
+        return calendarAbsenceType.getMessageKey();
     }
 
     @Override
@@ -87,7 +81,7 @@ public class CalendarAbsence {
             ", endDate=" + endDate +
             ", person=" + person +
             ", isAllDay=" + isAllDay +
-            ", absenceType=" + absenceType +
+            ", absenceType=" + calendarAbsenceType +
             '}';
     }
 }

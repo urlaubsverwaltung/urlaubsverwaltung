@@ -112,7 +112,7 @@ class CalendarSyncServiceTest {
         verify(googleCalendarSyncProvider).update(absenceArgumentCaptor.capture(), eq("eventId"), eq(calendarSettings));
         final CalendarAbsence absence = absenceArgumentCaptor.getValue();
         assertThat(absence.getPerson()).isEqualTo(person);
-        assertThat(absence.getEventSubject()).isEqualTo("first last abwesend");
+        assertThat(absence.getCalendarAbsenceTypeMessageKey()).isEqualTo("calendar.absence.type.default");
         assertThat(absence.getStartDate()).isEqualTo(ZonedDateTime.of(2022, 12, 10, 0, 0, 0, 0, ZoneId.of("Europe/Berlin")));
         assertThat(absence.getEndDate()).isEqualTo(ZonedDateTime.of(2022, 12, 13, 0, 0, 0, 0, ZoneId.of("Europe/Berlin")));
     }

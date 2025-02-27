@@ -5,10 +5,10 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -33,7 +33,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
@@ -417,7 +417,7 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        final ByteArrayResource calendarFile = generateCalendar(application, CalendarAbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -470,7 +470,7 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        final ByteArrayResource calendarFile = generateCalendar(application, CalendarAbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -980,11 +980,11 @@ class ApplicationMailService {
         );
     }
 
-    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, Person recipient) {
+    private ByteArrayResource generateCalendar(Application application, CalendarAbsenceType absenceType, Person recipient) {
         return generateCalendar(application, absenceType, PUBLISHED, recipient);
     }
 
-    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType, Person recipient) {
+    private ByteArrayResource generateCalendar(Application application, CalendarAbsenceType absenceType, ICalType iCalType, Person recipient) {
         final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType, recipient);
     }

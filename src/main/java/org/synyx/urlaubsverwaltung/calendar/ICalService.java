@@ -15,15 +15,18 @@ import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
@@ -39,10 +42,18 @@ import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 public class ICalService {
 
     private final CalendarProperties calendarProperties;
+    private final MessageSource messageSource;
+    private final UserSettingsService userSettingsService;
 
     @Autowired
-    ICalService(CalendarProperties calendarProperties) {
+    ICalService(
+        CalendarProperties calendarProperties,
+        MessageSource messageSource,
+        UserSettingsService userSettingsService
+    ) {
         this.calendarProperties = calendarProperties;
+        this.messageSource = messageSource;
+        this.userSettingsService = userSettingsService;
     }
 
     public ByteArrayResource getCalendar(String title, List<CalendarAbsence> absences, Person recipient) {
@@ -67,6 +78,9 @@ public class ICalService {
     }
 
     private Calendar prepareCalendar(List<CalendarAbsence> absences, ICalType method, Person recipient) {
+
+        final Locale locale = userSettingsService.getEffectiveLocale(List.of(recipient)).get(recipient);
+
         final Calendar calendar = new Calendar();
         calendar.add(VERSION_2_0);
         calendar.add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
@@ -78,7 +92,7 @@ public class ICalService {
         }
 
         absences.stream()
-            .map(absence -> this.toVEvent(absence, method, absence.getPerson().equals(recipient)))
+            .map(absence -> this.toVEvent(absence, method, absence.getPerson().equals(recipient), locale))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .forEach(calendar::add);
@@ -86,21 +100,22 @@ public class ICalService {
         return calendar;
     }
 
-    private Optional<VEvent> toVEvent(CalendarAbsence absence, ICalType method, boolean isOwn) {
+    private Optional<VEvent> toVEvent(CalendarAbsence absence, ICalType method, boolean isOwn, Locale locale) {
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
+        final String summary = getTranslation(locale, absence.getCalendarAbsenceTypeMessageKey(), absence.getPerson().getNiceName());
 
         final VEvent event;
         if (absence.isAllDay()) {
             if (isSameDay(startDateTime, endDateTime)) {
-                event = new VEvent(startDateTime.toLocalDate(), absence.getEventSubject());
+                event = new VEvent(startDateTime.toLocalDate(), summary);
             } else {
-                event = new VEvent(startDateTime.toLocalDate(), endDateTime.toLocalDate(), absence.getEventSubject());
+                event = new VEvent(startDateTime.toLocalDate(), endDateTime.toLocalDate(), summary);
             }
             event.add(new XProperty("X-MICROSOFT-CDO-ALLDAYEVENT", "TRUE"));
         } else {
-            event = new VEvent(startDateTime.toInstant(), endDateTime.toInstant(), absence.getEventSubject());
+            event = new VEvent(startDateTime.toInstant(), endDateTime.toInstant(), summary);
         }
 
         event.add(new Uid(generateUid(absence)));
@@ -151,5 +166,9 @@ public class ICalService {
             throw new CalendarException("iCal calendar could not be written to ByteArrayResource", e);
         }
         return byteArrayResource;
+    }
+
+    private String getTranslation(Locale locale, String key, Object... args) {
+        return messageSource.getMessage(key, args, locale);
     }
 }
