@@ -14,15 +14,19 @@
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">
-            <th:block th:if="${gravatarEnabled == true}">
-              <object
-                class="tw-rounded-full tw-block"
-                th:data="${url}"
+            <th:block th:if="${gravatarEnabled == true}" th:with="randomId=${#strings.randomAlphanumeric(25)}">
+              <img
+                src=""
+                th:src="${url}"
+                class="tw-rounded-full tw-hidden"
                 th:height="${height == null ? '42' : height}"
                 th:width="${width == null ? '42' : width}"
-              >
+                th:data-id="${randomId}"
+                onload="document.getElementById(this.dataset.id).classList.add('tw-hidden'); this.classList.remove('tw-hidden'); this.classList.add('tw-block');"
+              />
+              <div th:id="${randomId}">
                 <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
-              </object>
+              </div>
             </th:block>
 
             <th:block th:if="${gravatarEnabled == false}">
