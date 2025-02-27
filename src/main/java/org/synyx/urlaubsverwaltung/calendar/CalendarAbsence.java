@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -9,8 +8,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static java.lang.String.format;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.HOLIDAY_REPLACEMENT;
 
 public class CalendarAbsence {
 
@@ -18,13 +17,13 @@ public class CalendarAbsence {
     private final ZonedDateTime endDate;
     private final Person person;
     private final boolean isAllDay;
-    private final AbsenceType absenceType;
+    private final CalendarAbsenceType absenceType;
 
     public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
         this(person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
+    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, CalendarAbsenceType absenceType) {
 
         this.person = person;
         this.absenceType = absenceType;

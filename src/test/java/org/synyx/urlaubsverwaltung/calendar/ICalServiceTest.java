@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -16,7 +15,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -434,14 +433,14 @@ class ICalServiceTest {
     }
 
     private CalendarAbsence holidayReplacement(Person person, LocalDate start, LocalDate end, DayLength length) {
-        return absence(person, start, end, length, AbsenceType.HOLIDAY_REPLACEMENT);
+        return absence(person, start, end, length, CalendarAbsenceType.HOLIDAY_REPLACEMENT);
     }
 
-    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, CalendarAbsenceType absenceType) {
         return absence(person, start, end, length, absenceType, "Etc/UTC");
     }
 
-    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType, String timeZoneId) {
+    private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length, CalendarAbsenceType absenceType, String timeZoneId) {
         final TimeSettings timeSettings = new TimeSettings();
         timeSettings.setTimeZoneId(timeZoneId);
         timeSettings.setWorkDayBeginHour(8);
