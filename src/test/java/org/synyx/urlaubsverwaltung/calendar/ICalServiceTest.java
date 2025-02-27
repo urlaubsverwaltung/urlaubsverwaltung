@@ -249,9 +249,6 @@ class ICalServiceTest {
         final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
         when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
@@ -284,10 +281,6 @@ class ICalServiceTest {
 
         final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
         when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
-
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED, recipient);
         assertThat(convertCalendar(calendar))
@@ -322,10 +315,6 @@ class ICalServiceTest {
         final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
         when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
-
         final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
@@ -358,10 +347,6 @@ class ICalServiceTest {
 
         final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
         when(messageSource.getMessage(eq(absence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(person.getNiceName() + " abwesend");
-
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
@@ -396,10 +381,6 @@ class ICalServiceTest {
         final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
         when(messageSource.getMessage(eq(absence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(person.getNiceName() + " abwesend");
 
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
-
         final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
@@ -429,11 +410,6 @@ class ICalServiceTest {
 
         final CalendarAbsence holidayReplacement = holidayReplacement(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
         when(messageSource.getMessage(eq(holidayReplacement.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn("Vertretung für " + recipient.getNiceName());
-
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-
-        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
