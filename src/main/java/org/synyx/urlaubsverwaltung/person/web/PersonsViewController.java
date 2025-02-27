@@ -254,6 +254,7 @@ public class PersonsViewController implements HasLaunchpad {
                 .gravatarUrl(person.getGravatarURL())
                 .firstName(person.getFirstName())
                 .niceName(person.getNiceName())
+                .initials(person.getInitials())
                 .lastName(lastName);
 
             personBasedataService.getBasedataByPersonId(person.getId())

@@ -8,6 +8,7 @@ public class PersonPermissionsDto {
 
     private Long id;
     private String niceName;
+    private String initials;
     private String gravatarURL;
     private String email;
     private Boolean isInactive;
@@ -28,6 +29,15 @@ public class PersonPermissionsDto {
 
     public void setNiceName(String niceName) {
         this.niceName = niceName;
+    }
+
+    public String getInitials() {
+        return initials;
+    }
+
+    public PersonPermissionsDto setInitials(String initials) {
+        this.initials = initials;
+        return this;
     }
 
     public String getGravatarURL() {

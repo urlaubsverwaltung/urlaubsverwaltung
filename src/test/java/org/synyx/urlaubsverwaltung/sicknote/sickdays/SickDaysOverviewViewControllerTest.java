@@ -262,9 +262,9 @@ class SickDaysOverviewViewControllerTest {
             .extractingByKey("statisticsPagination")
             .extracting("page")
             .extracting("content", as(InstanceOfAssertFactories.LIST))
-            .contains(new SickDaysOverviewDto(1L, "", "0000001337", "FirstName one", "LastName one", "FirstName one LastName one", BigDecimal.valueOf(15), BigDecimal.valueOf(6), ZERO, ZERO))
-            .contains(new SickDaysOverviewDto(2L, "", "0000000042", "FirstName two", "LastName two", "FirstName two LastName two", ZERO, ZERO, BigDecimal.valueOf(19), BigDecimal.valueOf(5)))
-            .contains(new SickDaysOverviewDto(3L, "", "0000000021", "FirstName three", "LastName three", "FirstName three LastName three", ZERO, ZERO, ZERO, ZERO));
+            .contains(new SickDaysOverviewDto(1L, "", "0000001337", "FirstName one", "LastName one", "FirstName one LastName one", "FO", BigDecimal.valueOf(15), BigDecimal.valueOf(6), ZERO, ZERO))
+            .contains(new SickDaysOverviewDto(2L, "", "0000000042", "FirstName two", "LastName two", "FirstName two LastName two", "FT", ZERO, ZERO, BigDecimal.valueOf(19), BigDecimal.valueOf(5)))
+            .contains(new SickDaysOverviewDto(3L, "", "0000000021", "FirstName three", "LastName three", "FirstName three LastName three", "FT", ZERO, ZERO, ZERO, ZERO));
     }
 
     @Test

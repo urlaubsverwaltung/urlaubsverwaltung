@@ -9,6 +9,7 @@ public record SickDaysOverviewDto(
     String personFirstName,
     String personLastName,
     String personNiceName,
+    String personInitials,
     BigDecimal amountSickDays,
     BigDecimal amountSickDaysWithAUB,
     BigDecimal amountChildSickDays,
@@ -26,6 +27,7 @@ public record SickDaysOverviewDto(
         private String personFirstName;
         private String personLastName;
         private String personNiceName;
+        private String personInitials;
         private BigDecimal amountSickDays;
         private BigDecimal amountSickDaysWithAU;
         private BigDecimal amountChildSickDays;
@@ -61,6 +63,11 @@ public record SickDaysOverviewDto(
             return this;
         }
 
+        public Builder personInitials(String personInitials) {
+            this.personInitials = personInitials;
+            return this;
+        }
+
         public Builder amountSickDays(BigDecimal amountSickDays) {
             this.amountSickDays = amountSickDays;
             return this;
@@ -83,7 +90,7 @@ public record SickDaysOverviewDto(
 
         public SickDaysOverviewDto build() {
             return new SickDaysOverviewDto(personId, personAvatarUrl, personnelNumber, personFirstName, personLastName,
-                personNiceName, amountSickDays, amountSickDaysWithAU, amountChildSickDays,
+                personNiceName, personInitials, amountSickDays, amountSickDaysWithAU, amountChildSickDays,
                 amountChildSickDaysWithAU);
         }
     }

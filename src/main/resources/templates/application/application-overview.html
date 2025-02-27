@@ -1,11 +1,5 @@
 <!doctype html>
-<html
-  lang="en"
-  th:lang="${language}"
-  th:class="|tw-${theme}|"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:thL="http://www.w3.org/1999/html"
->
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="preload">
@@ -124,7 +118,7 @@
             <div class="tw-flex tw-space-x-5 lg:tw-space-x-6">
               <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px',personId=${signedInUser.id})}"
+                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},initials=${signedInUser.initials},width='52',height='52',personId=${signedInUser.id})}"
                   alt=""
                 />
               </span>
@@ -258,7 +252,7 @@
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
               <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px',personId=${signedInUser.id})}"
+                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},initials=${signedInUser.initials},width='52',height='52',personId=${signedInUser.id})}"
                   alt=""
                 />
               </span>
@@ -285,7 +279,7 @@
               <div class="tw-flex tw-flex-row-reverse tw-gap-4">
                 <div class="tw-self-center print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
-                    th:replace="~{fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=404&s=104'},niceName=${replacementInfo.person.name},width='52px',height='52px',personId=${replacementInfo.person.id})}"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=404&s=104'},niceName=${replacementInfo.person.name},initials=${replacementInfo.person.initials},width='52',height='52',personId=${replacementInfo.person.id})}"
                     alt=""
                   />
                 </div>
@@ -419,7 +413,7 @@
                     class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
                   >
                     <img
-                      th:replace="~{fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px',personId=${otherRequestForLeave.person.id})}"
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},initials=${otherRequestForLeave.person.initials},width='52',height='52',personId=${otherRequestForLeave.person.id})}"
                       alt=""
                     />
                   </span>
@@ -553,7 +547,7 @@
                   class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
                 >
                   <img
-                    th:replace="~{fragments/avatar::avatar-bordered(url=${otherSickNote.person.avatarUrl + '?d=404&s=104'},niceName=${otherSickNote.person.name},width='52px',height='52px',personId=${otherSickNote.person.id})}"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${otherSickNote.person.avatarUrl + '?d=404&s=104'},niceName=${otherSickNote.person.name},initials=${otherSickNote.person.initials},width='52',height='52',personId=${otherSickNote.person.id})}"
                     alt=""
                   />
                 </span>
@@ -685,7 +679,7 @@
                   class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
                 >
                   <img
-                    th:replace="~{fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=404&s=104'},niceName=${cancellationRequest.person.name},width='52px',height='52px',personId=${cancellationRequest.person.id})}"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=404&s=104'},niceName=${cancellationRequest.person.name},initials=${cancellationRequest.person.initials},width='52',height='52',personId=${cancellationRequest.person.id})}"
                     alt=""
                   />
                 </span>

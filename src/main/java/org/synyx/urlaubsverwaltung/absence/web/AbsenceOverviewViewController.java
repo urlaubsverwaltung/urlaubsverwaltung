@@ -74,11 +74,13 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     private final VacationTypeService vacationTypeService;
 
     @Autowired
-    public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
-                                         MessageSource messageSource, Clock clock,
-                                         PublicHolidaysService publicHolidaysService,
-                                         AbsenceService absenceService, WorkingTimeService workingTimeService,
-                                         VacationTypeService vacationTypeService) {
+    public AbsenceOverviewViewController(
+        PersonService personService, DepartmentService departmentService,
+        MessageSource messageSource, Clock clock,
+        PublicHolidaysService publicHolidaysService,
+        AbsenceService absenceService, WorkingTimeService workingTimeService,
+        VacationTypeService vacationTypeService
+    ) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.messageSource = messageSource;
@@ -288,9 +290,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final Long id = person.getId();
         final String firstName = person.getFirstName();
         final String lastName = person.getLastName();
+        final String initials = person.getInitials();
         final String gravatarUrl = person.getGravatarURL();
 
-        return new AbsenceOverviewMonthPersonDto(id, firstName, lastName, gravatarUrl, new ArrayList<>());
+        return new AbsenceOverviewMonthPersonDto(id, firstName, lastName, initials, gravatarUrl, new ArrayList<>());
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords,

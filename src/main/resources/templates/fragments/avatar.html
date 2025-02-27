@@ -5,7 +5,7 @@
     <title>avatar</title>
   </head>
   <body>
-    <th:block th:fragment="avatar(url,niceName,width,height,personId)">
+    <th:block th:fragment="avatar(url,niceName,initials,width,height,personId)">
       <th:block th:if="${personId != null}">
         <a
           th:href="@{/web/person/__${personId}__/overview}"
@@ -14,34 +14,24 @@
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">
-            <img
-              th:if="${gravatarEnabled == true}"
-              src=""
-              th:src="${url}"
-              alt=""
-              th:alt="${niceName}"
-              class="gravatar gravatar--medium tw-rounded-full tw-block"
-              th:classappend="${className}"
-              th:width="${width == null ? '32px' : width}"
-              th:height="${height == null ? '32px' : height}"
-              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-              th:data-fallback="${fallbackAvatarUrl}"
-              is="uv-avatar"
-            />
-            <img
-              th:if="${gravatarEnabled == false}"
-              src=""
-              th:src="@{/web/invalid-avatar-url}"
-              alt=""
-              th:alt="${niceName}"
-              class="gravatar gravatar--medium tw-rounded-full tw-block"
-              th:classappend="${className}"
-              th:width="${width == null ? '32px' : width}"
-              th:height="${height == null ? '32px' : height}"
-              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-              th:data-fallback="${fallbackAvatarUrl}"
-              is="uv-avatar"
-            />
+            <th:block th:if="${gravatarEnabled == true}" th:with="randomId=${#strings.randomAlphanumeric(25)}">
+              <img
+                src=""
+                th:src="${url}"
+                class="tw-rounded-full tw-hidden"
+                th:height="${height == null ? '42' : height}"
+                th:width="${width == null ? '42' : width}"
+                th:data-id="${randomId}"
+                onload="document.getElementById(this.dataset.id).classList.add('tw-hidden'); this.classList.remove('tw-hidden'); this.classList.add('tw-block');"
+              />
+              <div th:id="${randomId}">
+                <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
+              </div>
+            </th:block>
+
+            <th:block th:if="${gravatarEnabled == false}">
+              <svg th:replace="~{icon/avatar::svg(avatarText=${initials}, height=${height}, width=${width})}"></svg>
+            </th:block>
           </th:block>
         </a>
       </th:block>
@@ -51,15 +41,15 @@
       </th:block>
 
       <th:block th:if="${url == null}">
-        <svg th:replace="~{icon/avatar-unknown::svg}"></svg>
+        <svg th:replace="~{icon/avatar::svg(avatarText='?', height=${height}, width=${width})}"></svg>
       </th:block>
     </th:block>
 
     <span
-      th:fragment="avatar-bordered(url,niceName,width,height,personId)"
+      th:fragment="avatar-bordered(url,niceName,initials,width,height,personId)"
       class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-flex"
     >
-      <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${width},${height},${personId})}" />
+      <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${initials},${width},${height},${personId})}" />
     </span>
   </body>
 </html>

@@ -155,6 +155,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
             .personFirstName(person.getFirstName())
             .personLastName(person.getLastName())
             .personNiceName(person.getNiceName())
+            .personInitials(person.getInitials())
             .personAvatarUrl(person.getGravatarURL())
             .amountSickDays(sickDays.getDays().get(TOTAL.name()))
             .amountSickDaysWithAUB(sickDays.getDays().get(WITH_AUB.name()))

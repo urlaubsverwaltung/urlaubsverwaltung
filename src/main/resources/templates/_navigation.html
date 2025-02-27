@@ -148,7 +148,7 @@
                     >
                       <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
                         <img
-                          th:replace="~{fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px',personId=null)}"
+                          th:replace="~{fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404&s=40'},niceName=${userFirstName + ' ' + userLastName},initials=${userInitials},width='40',height='40',personId=null)}"
                           alt=""
                         />
                       </span>
@@ -165,7 +165,7 @@
                         >
                           <span class="tw-text-blue-200 dark:tw-text-sky-800">
                             <img
-                              th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px',personId=null)}"
+                              th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},initials=${userInitials},width='64',height='64',personId=null)}"
                               alt=""
                             />
                           </span>

@@ -8,6 +8,7 @@ public class PersonDto {
     private final String firstName;
     private final String lastName;
     private final String niceName;
+    private final String initials;
 
     private final String personnelNumber;
     private final String additionalInformation;
@@ -18,7 +19,7 @@ public class PersonDto {
     private final Double vacationDaysLeft;
     private final Double vacationDaysLeftRemaining;
 
-    private PersonDto(long id, String gravatarUrl, String firstName, String lastName, String niceName,
+    private PersonDto(long id, String gravatarUrl, String firstName, String lastName, String niceName, String initials,
                       String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
                       Double vacationDaysLeft, Double vacationDaysLeftRemaining) {
 
@@ -27,6 +28,7 @@ public class PersonDto {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+        this.initials = initials;
         this.personnelNumber = personnelNumber;
         this.additionalInformation = additionalInformation;
         this.entitlementYear = entitlementYear;
@@ -54,6 +56,10 @@ public class PersonDto {
 
     public String getNiceName() {
         return niceName;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String getPersonnelNumber() {
@@ -94,6 +100,7 @@ public class PersonDto {
         private String firstName;
         private String lastName;
         private String niceName;
+        private String initials;
         private String personnelNumber;
         private String additionalInformation;
         private Double entitlementYear;
@@ -124,6 +131,11 @@ public class PersonDto {
 
         public Builder niceName(String niceName) {
             this.niceName = niceName;
+            return this;
+        }
+
+        public Builder initials(String initials) {
+            this.initials = initials;
             return this;
         }
 
@@ -169,6 +181,7 @@ public class PersonDto {
                 firstName,
                 lastName,
                 niceName,
+                initials,
                 personnelNumber,
                 additionalInformation,
                 entitlementYear,

@@ -9,13 +9,15 @@ public class OvertimeDetailPersonDto {
     private final Long id;
     private final String email;
     private final String niceName;
+    private final String initials;
     private final String gravatarURL;
     private final Boolean isInactive;
 
-    OvertimeDetailPersonDto(Long id, @Nullable String email, String niceName, String gravatarURL, Boolean isInactive) {
+    OvertimeDetailPersonDto(Long id, @Nullable String email, String niceName, String initials, String gravatarURL, Boolean isInactive) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;
+        this.initials = initials;
         this.gravatarURL = gravatarURL;
         this.isInactive = isInactive;
     }
@@ -31,6 +33,10 @@ public class OvertimeDetailPersonDto {
 
     public String getNiceName() {
         return niceName;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String getGravatarURL() {

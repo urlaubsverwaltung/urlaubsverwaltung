@@ -184,7 +184,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return new SubmittedSickNoteDto(
             sickNote.getId().toString(),
             sickNote.getWorkDays(),
-            new SickNotePersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), sickNote.getId()),
+            new SickNotePersonDto(person.getNiceName(), person.getInitials(), person.getGravatarURL(), person.isInactive(), sickNote.getId()),
             sickNote.getSickNoteType().getMessageKey(),
             toDurationOfAbsenceDescription(submittedSickNote, messageSource, locale),
             submittedSickNote.extensionSubmitted(),
@@ -293,7 +293,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private static ApplicationPersonDto toViewPerson(Person person, boolean allowedToAccessPersonData) {
         final Long id = allowedToAccessPersonData ? person.getId() : null;
-        return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), person.isInactive(), id);
+        return new ApplicationPersonDto(person.getNiceName(), person.getInitials(), person.getGravatarURL(), person.isInactive(), id);
     }
 
     private static ApplicationForLeaveDto.VacationTypeDto toViewVacationType(VacationType<?> vacationType, Locale locale) {

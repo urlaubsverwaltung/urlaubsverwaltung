@@ -14,6 +14,7 @@ final class PersonBasedataDtoMapper {
         personBasedataDto.setPersonnelNumber(personBasedata.personnelNumber());
         personBasedataDto.setAdditionalInfo(personBasedata.additionalInformation());
         personBasedataDto.setNiceName(person.getNiceName());
+        personBasedataDto.setInitials(person.getInitials());
         personBasedataDto.setGravatarURL(person.getGravatarURL());
         personBasedataDto.setEmail(person.getEmail());
         personBasedataDto.setIsInactive(person.isInactive());
