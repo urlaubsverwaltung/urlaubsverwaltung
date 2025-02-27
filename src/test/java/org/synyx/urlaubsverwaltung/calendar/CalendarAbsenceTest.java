@@ -129,23 +129,23 @@ class CalendarAbsenceTest {
     }
 
     @Test
-    void ensureCorrectEventSubject() {
+    void ensureCorrectMessageKeyForDefaultAbsence() {
 
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.FULL);
 
         final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration());
-        assertThat(absence.getEventSubject()).isEqualTo("Marlene Muster abwesend");
+        assertThat(absence.getCalendarAbsenceTypeMessageKey()).isEqualTo("calendar.absence.type.default");
     }
 
     @Test
-    void ensureCorrectEventSubjectForHolidayReplacement() {
+    void ensureCorrectMessageKeyForHolidayReplacement() {
 
         final LocalDate today = LocalDate.now(clock);
         final Period period = new Period(today, today, DayLength.FULL);
 
         final CalendarAbsence absence = new CalendarAbsence(person, period, getAbsenceTimeConfiguration(), HOLIDAY_REPLACEMENT);
-        assertThat(absence.getEventSubject()).isEqualTo("Vertretung für Marlene Muster");
+        assertThat(absence.getCalendarAbsenceTypeMessageKey()).isEqualTo("calendar.absence.type.holidayReplacement");
     }
 
     @Test

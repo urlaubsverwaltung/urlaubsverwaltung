@@ -2,19 +2,29 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
@@ -22,9 +32,16 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
+@ExtendWith(MockitoExtension.class)
 class ICalServiceTest {
 
     private ICalService sut;
+
+    @Mock
+    private MessageSource messageSource;
+    @Mock
+    private UserSettingsService userSettingsService;
+
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -34,13 +51,15 @@ class ICalServiceTest {
     void setUp() {
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        sut = new ICalService(calendarProperties);
+        sut = new ICalService(calendarProperties, messageSource, userSettingsService);
     }
 
     @Test
     void ensureToGetCalendarForPersonAndNoAbsenceFound() {
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(), null);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -57,12 +76,13 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForOneFullDay() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        final CalendarAbsence fullDayAbsence = absence(recipient, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        when(messageSource.getMessage(eq(fullDayAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence), person);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -77,7 +97,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190326
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:F5C924EEB91550EBDD74CDA428649C8B
+                UID:806735982DE050F90FAEE972F010854E
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -89,12 +109,13 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayMorning() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final CalendarAbsence morningAbsence = absence(recipient, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        when(messageSource.getMessage(eq(morningAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence), person);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -109,7 +130,7 @@ class ICalServiceTest {
                 DTSTART:20190426T080000Z
                 DTEND:20190426T120000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:45BCD3F64AD76CEF9040DF93047C41B3
+                UID:4F2F28B08279622C1D317D8D5F11D44D
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -121,12 +142,13 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForMultipleFullDays() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final CalendarAbsence manyFullDayAbsence = absence(recipient, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        when(messageSource.getMessage(eq(manyFullDayAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence), person);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence), recipient);
 
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
@@ -143,7 +165,7 @@ class ICalServiceTest {
                 DTEND;VALUE=DATE:20190402
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:D4C6D48B54BAED09F894FBDE0151381F
+                UID:322D5F265624AA63A4C508E8C363B29A
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -155,12 +177,13 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayNoon() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -175,7 +198,7 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -187,12 +210,13 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayNoonWithEuropeBerlinTimezone() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON, DEFAULT, "Europe/Berlin");
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON, DEFAULT, "Europe/Berlin");
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -207,7 +231,7 @@ class ICalServiceTest {
                 DTSTART:20190526T100000Z
                 DTEND:20190526T140000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:203BCCB25ADDA1D45DAD353089374E99
+                UID:791CAD0EA0808D42C4D2BED7D0A7CAC7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -219,15 +243,16 @@ class ICalServiceTest {
     @Test
     void getCalendarPublishEvent() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -242,7 +267,7 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -254,16 +279,17 @@ class ICalServiceTest {
     @Test
     void cancelSingleAppointment() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED, person);
+        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED, recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -277,7 +303,7 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 SEQUENCE:1
@@ -290,15 +316,17 @@ class ICalServiceTest {
     @Test
     void singleAppointment() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
-        final CalendarAbsence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
+
+        final CalendarAbsence noonAbsence = absence(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        when(messageSource.getMessage(eq(noonAbsence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(recipient.getNiceName() + " abwesend");
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED, person);
+        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
@@ -311,7 +339,7 @@ class ICalServiceTest {
                 DTSTART:20190526T120000Z
                 DTEND:20190526T160000Z
                 SUMMARY:Marlene Muster abwesend
-                UID:BB2267885BD8DF263E88D3062853E8A7
+                UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 ORGANIZER:mailto:no-reply@example.org
@@ -324,16 +352,16 @@ class ICalServiceTest {
     void appointmentOfOtherPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1L);
 
         final Person recipient = new Person();
-        recipient.setId(2L);
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
         final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        when(messageSource.getMessage(eq(absence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(person.getNiceName() + " abwesend");
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
@@ -348,7 +376,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:22D8DC26F4271C049ED5601345B58D9C
+                UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
@@ -361,17 +389,16 @@ class ICalServiceTest {
     @Test
     void appointmentOfOtherPersonWithoutEMailAddress() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", null);
-        person.setId(1L);
-
         final Person recipient = new Person();
-        recipient.setId(2L);
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
+        final Person person = new Person("muster", "Muster", "Marlene", null);
         final CalendarAbsence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        when(messageSource.getMessage(eq(absence.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn(person.getNiceName() + " abwesend");
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
@@ -386,7 +413,7 @@ class ICalServiceTest {
                 DTSTART;VALUE=DATE:20190526
                 SUMMARY:Marlene Muster abwesend
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
-                UID:22D8DC26F4271C049ED5601345B58D9C
+                UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 TRANSP:TRANSPARENT
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
@@ -397,15 +424,18 @@ class ICalServiceTest {
     @Test
     void holidayReplacement() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(userSettingsService.getEffectiveLocale(List.of(recipient))).thenReturn(Map.of(recipient, GERMAN));
 
-        final CalendarAbsence holidayReplacement = holidayReplacement(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        final CalendarAbsence holidayReplacement = holidayReplacement(recipient, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+        when(messageSource.getMessage(eq(holidayReplacement.getCalendarAbsenceTypeMessageKey()), any(), eq(GERMAN))).thenReturn("Vertretung für " + recipient.getNiceName());
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED, person);
+        final ICalService sut = new ICalService(calendarProperties, messageSource, userSettingsService);
+
+        final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED, recipient);
         assertThat(convertCalendar(calendar))
             .isEqualToIgnoringNewLines("""
                 BEGIN:VCALENDAR
