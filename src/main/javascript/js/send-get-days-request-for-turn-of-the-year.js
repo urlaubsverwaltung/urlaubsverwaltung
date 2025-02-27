@@ -20,12 +20,14 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
   }
 
   const ranges = getYearlyDateRanges(startDate, toDate);
-  const promises = ranges.map(range => getWorkdaysForDateRange(urlPrefix, dayLength, personId, range.start, range.end));
+  const promises = ranges.map((range) =>
+    getWorkdaysForDateRange(urlPrefix, dayLength, personId, range.start, range.end),
+  );
   const results = await Promise.all(promises);
 
   const lastResult = results.pop();
-  const formattedResults = results.map(result => `${formatNumber(result.workDays)} in ${result.year}`);
-  element.innerHTML = `<br />(${formattedResults.join(', ')} und ${formatNumber(lastResult.workDays)} in ${lastResult.year})`;
+  const formattedResults = results.map((result) => `${formatNumber(result.workDays)} in ${result.year}`);
+  element.innerHTML = `<br />(${formattedResults.join(", ")} und ${formatNumber(lastResult.workDays)} in ${lastResult.year})`;
 }
 
 function getYearlyDateRanges(startDate, endDate) {
@@ -44,7 +46,7 @@ function getYearlyDateRanges(startDate, endDate) {
 
     yearlyRanges.push({
       start: currentStart,
-      end: currentEnd
+      end: currentEnd,
     });
 
     // Move to the next year
@@ -67,6 +69,6 @@ async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate,
 
   return {
     year: getYear(fromDate),
-    workDays: json.workDays
+    workDays: json.workDays,
   };
 }
