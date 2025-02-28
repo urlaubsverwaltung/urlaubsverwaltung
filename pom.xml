@@ -347,7 +347,7 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.15.1</version>
         <configuration>
-          <nodeVersion>v22.13.1</nodeVersion>
+          <nodeVersion>v22.14.0</nodeVersion>
           <npmVersion>10.9.2</npmVersion>
         </configuration>
         <executions>
