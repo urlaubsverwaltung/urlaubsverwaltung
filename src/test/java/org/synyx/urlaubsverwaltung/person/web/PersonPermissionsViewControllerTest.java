@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -12,22 +11,19 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonMailService;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,8 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY;
 
 @ExtendWith(MockitoExtension.class)
 class PersonPermissionsViewControllerTest {
@@ -53,15 +47,13 @@ class PersonPermissionsViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private PersonMailService personMailService;
-    @Mock
     private PersonPermissionsDtoValidator validator;
     @Mock
     private SessionService sessionService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonPermissionsViewController(personService, departmentService, personMailService, validator, sessionService);
+        sut = new PersonPermissionsViewController(personService, departmentService, validator, sessionService);
     }
 
     @Test
@@ -118,16 +110,14 @@ class PersonPermissionsViewControllerTest {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+
+        when(personService.updatePermissions(new PersonId(1L), List.of(USER, OFFICE))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
             .param("permissions[0]", "USER")
             .param("permissions[1]", "OFFICE")
         );
-
-        verify(personService).update(person);
     }
 
     @Test
@@ -135,8 +125,8 @@ class PersonPermissionsViewControllerTest {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+
+        when(personService.updatePermissions(new PersonId(1L), List.of(USER, OFFICE))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
             .param("id", "1")
@@ -144,58 +134,7 @@ class PersonPermissionsViewControllerTest {
             .param("permissions[1]", "OFFICE")
         );
 
-        verify(personService).update(person);
         verify(sessionService).markSessionToReloadAuthorities("username");
-    }
-
-    @Test
-    void ensureToSendNotificationOnGainedNewPermissions() throws Exception {
-
-        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
-        person.setId(1L);
-        person.setPermissions(List.of(USER, OFFICE));
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
-
-        perform(post("/web/person/1/permissions")
-            .param("id", "1")
-            .param("permissions[0]", "USER")
-            .param("permissions[1]", "OFFICE")
-            .param("permissions[2]", "DEPARTMENT_HEAD")
-            .param("permissions[3]", "SECOND_STAGE_AUTHORITY")
-        );
-
-        final ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
-        @SuppressWarnings("unchecked") final ArgumentCaptor<List<PersonPermissionsRoleDto>> permissionsCaptor = ArgumentCaptor.forClass(List.class);
-        verify(personMailService).sendPersonGainedMorePermissionsNotification(personCaptor.capture(), permissionsCaptor.capture());
-        final Person captorPerson = personCaptor.getValue();
-        assertThat(captorPerson).isEqualTo(person);
-
-        final List<PersonPermissionsRoleDto> captorPermissions = permissionsCaptor.getValue();
-        assertThat(captorPermissions).containsExactly(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-
-        verify(personService).update(person);
-    }
-
-    @Test
-    void ensureNotToSendNotificationOnRemovedPermissions() throws Exception {
-
-        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
-        person.setId(1L);
-        person.setPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
-
-        perform(post("/web/person/1/permissions")
-            .param("id", "1")
-            .param("permissions[0]", "USER")
-            .param("permissions[1]", "OFFICE")
-        );
-
-        verify(personMailService, never()).sendPersonGainedMorePermissionsNotification(any(), any());
-        verify(personService).update(person);
     }
 
     @Test
@@ -217,8 +156,8 @@ class PersonPermissionsViewControllerTest {
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+
+        when(personService.updatePermissions(new PersonId(1L), List.of())).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
             .andExpect(flash().attribute("updateSuccess", true));
@@ -230,22 +169,12 @@ class PersonPermissionsViewControllerTest {
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        when(personService.update(any(Person.class))).thenReturn(person);
+
+        when(personService.updatePermissions(new PersonId(1L), List.of())).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + 1));
-    }
-
-    @Test
-    void editPersonPermissionsThrowsUnknownPersonException() {
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() ->
-            perform(post("/web/person/1/permissions"))
-        ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
