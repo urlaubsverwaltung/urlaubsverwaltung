@@ -19,6 +19,7 @@
                 src=""
                 th:src="${url}"
                 class="tw-rounded-full tw-hidden"
+                th:classappend="${className}"
                 th:height="${height == null ? '42' : height}"
                 th:width="${width == null ? '42' : width}"
                 th:data-id="${randomId}"
