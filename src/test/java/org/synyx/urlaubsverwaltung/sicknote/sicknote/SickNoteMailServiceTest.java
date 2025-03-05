@@ -173,6 +173,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getReplyTo()).isEqualTo(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -228,12 +229,13 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendEditedToSickPerson(sickNote);
+        sut.sendEditedToSickPerson(sickNote, management);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getReplyTo()).isEqualTo(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.edited.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_edited_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -259,12 +261,13 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendCancelledToSickPerson(sickNote);
+        sut.sendCancelledToSickPerson(sickNote, management);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getReplyTo()).isEqualTo(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancelled_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -391,6 +394,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getReplyTo()).isEqualTo(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.accepted_by_management.to_applicant");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_accepted_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management, "sickNote", sickNote));
@@ -465,7 +469,6 @@ class SickNoteMailServiceTest {
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_accepted_by_management_to_management");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management1, "sickNote", sickNote));
     }
-
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();

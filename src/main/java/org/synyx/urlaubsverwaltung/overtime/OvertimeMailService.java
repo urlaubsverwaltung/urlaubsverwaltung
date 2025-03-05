@@ -56,6 +56,7 @@ class OvertimeMailService {
             .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT)
             .withSubject("subject.overtime.created.applicant_from_management")
             .withTemplate("overtime_to_applicant_from_management", modelSupplier)
+            .withReplyToFrom(author)
             .build();
         mailService.send(toPerson);
     }

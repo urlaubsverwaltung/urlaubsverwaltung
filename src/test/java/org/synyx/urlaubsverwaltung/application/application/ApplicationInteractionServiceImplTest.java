@@ -134,8 +134,8 @@ class ApplicationInteractionServiceImplTest {
 
         sut.apply(applicationForLeave, person, of("Foo"));
 
-        verify(applicationMailService).sendAppliedNotification(applicationForLeave, applicationComment);
-        verify(applicationMailService, never()).sendAppliedByManagementNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendAppliedNotificationByApplicant(applicationForLeave, applicationComment);
+        verify(applicationMailService, never()).sendAppliedByManagementNotificationByManagement(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendAppliedNotificationToManagement(applicationForLeave, applicationComment);
     }
 
@@ -156,8 +156,8 @@ class ApplicationInteractionServiceImplTest {
 
         sut.apply(applicationForLeave, applier, of("Foo"));
 
-        verify(applicationMailService, never()).sendAppliedNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendAppliedByManagementNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService, never()).sendAppliedNotificationByApplicant(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendAppliedByManagementNotificationByManagement(applicationForLeave, applicationComment);
         verify(applicationMailService).sendAppliedNotificationToManagement(applicationForLeave, applicationComment);
     }
 
@@ -200,7 +200,7 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
 
-        verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendConfirmationAllowedDirectlyByApplicant(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
@@ -236,7 +236,7 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
 
-        verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendConfirmationAllowedDirectlyByApplicant(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
@@ -267,7 +267,7 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office);
 
-        verify(applicationMailService, never()).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByApplicant(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
@@ -1127,7 +1127,7 @@ class ApplicationInteractionServiceImplTest {
         final Application application = sut.declineCancellationRequest(applicationForLeave, canceller, comment);
         assertThat(application.getStatus()).isEqualTo(ALLOWED);
 
-        verify(applicationMailService).sendDeclinedCancellationRequestApplicationNotification(application, applicationComment);
+        verify(applicationMailService).sendDeclinedCancellationRequestApplicationNotification(application, applicationComment, canceller);
 
         ArgumentCaptor<ApplicationDeclinedCancellationRequestEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationDeclinedCancellationRequestEvent.class);
         verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
@@ -1567,11 +1567,11 @@ class ApplicationInteractionServiceImplTest {
 
     private void assertAllowedNotificationIsSent(Application applicationForLeave) {
         verify(applicationMailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService, never()).sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendTemporaryAllowedNotificationByManagement(any(Application.class), any(ApplicationComment.class), any(Person.class));
     }
 
     private void assertTemporaryAllowedNotificationIsSent(Application applicationForLeave) {
-        verify(applicationMailService).sendTemporaryAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendTemporaryAllowedNotificationByManagement(eq(applicationForLeave), any(ApplicationComment.class), any(Person.class));
         verify(applicationMailService, never()).sendAllowedNotification(any(Application.class), any(ApplicationComment.class));
     }
 

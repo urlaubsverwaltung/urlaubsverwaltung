@@ -157,15 +157,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
 
-        // check email user attributes
-        final MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
         // check content of user email
         final MimeMessage msgUser = inboxUser[0];
         assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgUser.getReplyTo()[0]);
         assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
@@ -521,13 +517,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(departmentHead.getEmail())).hasSize(1);
             });
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-
         // check content of user email
-        Message msg = inbox[0];
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         // check content of email
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -544,8 +539,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
 
         // was email sent to boss
-        MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
-        Message msgBoss = inboxBoss[0];
+        final MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final Message msgBoss = inboxBoss[0];
         assertThat(msgBoss.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(readPlainContent(msgBoss)).isEqualTo("""
             Hallo Hugo Boss,
@@ -561,8 +556,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.""");
 
         // was email sent to departmentHead
-        MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
-        Message msgDepartmentHead = inboxDepartmentHead[0];
+        final MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        final Message msgDepartmentHead = inboxDepartmentHead[0];
         assertThat(msgDepartmentHead.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(readPlainContent(msgDepartmentHead)).isEqualTo("""
             Hallo Department Head,
@@ -585,10 +580,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         recipient.setId(1L);
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+
         final Application application = createApplication(recipient);
         application.setApplicationDate(LocalDate.of(2022, 5, 19));
         application.setStartDate(LocalDate.of(2022, 5, 20));
         application.setEndDate(LocalDate.of(2022, 5, 29));
+        application.setBoss(boss);
 
         sut.sendReferredToManagementNotification(application, recipient, sender);
 
@@ -596,12 +594,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             .atMost(Duration.ofSeconds(1))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(recipient.getEmail())).hasSize(1));
 
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
-
         // check content of user email
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Hilfe bei der Entscheidung über eine zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(sender.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         // check content of email
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -649,7 +647,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
-        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
+        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment, office);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -659,10 +657,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
             });
 
-        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        Message msgPerson = inboxPerson[0];
+        // send mail to person
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgPerson.getReplyTo()[0]);
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -695,8 +695,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office.getId()));
 
         // was email sent to relevant person
-        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
-        Message msgRelevantPerson = inboxRelevantPerson[0];
+        final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
@@ -812,10 +812,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail())).hasSize(1);
             });
 
+        // send mail to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgApplicant = inboxApplicant[0];
         assertThat(msgApplicant.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgApplicant.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgApplicant.getReplyTo()[0]);
         assertThat(readPlainContent(msgApplicant)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -862,7 +864,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
-        sut.sendConfirmationAllowedDirectly(application, comment);
+        sut.sendConfirmationAllowedDirectlyByApplicant(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -948,11 +950,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
             });
 
+        // send mail to person
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich erstellt");
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
-        assertThat(readPlainContent(contentUser)).isEqualTo("""
+        final Message msgUser = inboxUser[0];
+        assertThat(msgUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich erstellt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgUser.getReplyTo()[0]);
+        assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
             Marlene Muster hat eine Abwesenheit für dich erstellt.
@@ -1311,7 +1315,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureToSendAppliedNotificationWhereFromIsNotNull() throws MessagingException {
+    void ensureToSendAppliedNotificationByApplicantWhereFromIsNotNull() throws MessagingException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
@@ -1320,7 +1324,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
-        sut.sendAppliedNotification(application, comment);
+        sut.sendAppliedNotificationByApplicant(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1348,7 +1352,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
-        sut.sendAppliedNotification(application, comment);
+        sut.sendAppliedNotificationByApplicant(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1401,7 +1405,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
-        sut.sendAppliedNotification(application, comment);
+        sut.sendAppliedNotificationByApplicant(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1461,7 +1465,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final ApplicationComment comment = new ApplicationComment(
             1L, Instant.now(clock), application, ApplicationCommentAction.APPLIED, person, "Hätte gerne Urlaub");
 
-        sut.sendAppliedNotification(application, comment);
+        sut.sendAppliedNotificationByApplicant(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1514,17 +1518,18 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         office.setPermissions(List.of(OFFICE));
         application.setApplier(office);
 
-        sut.sendAppliedByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotificationByManagement(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
 
-        // was email sent?
+        // send mail to person
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -1572,7 +1577,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         office.setPermissions(List.of(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotificationByManagement(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1635,7 +1640,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         office.setPermissions(List.of(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotificationByManagement(application, comment);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -1762,10 +1767,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
+        // send mail to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -1973,6 +1980,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
@@ -2054,10 +2062,12 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1);
             });
 
+        // send mail to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final MimeMessage msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -2709,7 +2719,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -2718,16 +2728,13 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
-        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        // send mail to user
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-
         final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of user email
-        String contentUser = readPlainContent(msg);
-        assertThat(contentUser).isEqualTo("""
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msg.getReplyTo()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
             deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
@@ -2741,7 +2748,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
 
-        // get email office
+        // send email to second stage authority
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
@@ -2783,6 +2791,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -2809,7 +2818,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -2818,21 +2827,32 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
-        // were both emails sent?
-        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
-        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
 
-        // get email user
+        // send email to user
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msg.getReplyTo()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        // get email office
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
+            Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Kai Schmitt:
+            OK, spricht von meiner Seite aus nix dagegen
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
+
+        // send email to office
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
-
-        // check content of office email
         assertThat(readPlainContent(msgSecondStage)).isEqualTo("""
             Hallo Kai Schmitt,
 
@@ -2869,6 +2889,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -2899,7 +2920,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -2908,20 +2929,31 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
-        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        // send email to user
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-
-        // get email user
         final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msg.getReplyTo()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
+            Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Kai Schmitt:
+            OK, spricht von meiner Seite aus nix dagegen
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
 
         // get email office
+        final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
-
-        // check content of office email
         assertThat(readPlainContent(msgSecondStage)).isEqualTo("""
             Hallo Kai Schmitt,
 
@@ -2957,6 +2989,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutTemporaryAllowedApplicationWithMultipleOverlappingVacations() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
@@ -2980,7 +3013,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -2989,11 +3022,27 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
+        // send mail to user
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msg.getReplyTo()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
+            Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Kai Schmitt:
+            OK, spricht von meiner Seite aus nix dagegen
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
+
+        // send mail to second stage
         final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
@@ -3036,6 +3085,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     void ensureNotificationAboutTemporaryAllowedApplicationWithoutOverlappingVacations() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
@@ -3054,7 +3104,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         when(departmentService.getApplicationsFromColleaguesOf(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
         when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, secondStage);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -3063,17 +3113,30 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1);
             });
 
+        // send mail to user
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
 
+            deine am 12.04.2021 gestellte Abwesenheit vom 16.04.2021 ganztägig wurde vorläufig genehmigt.
+            Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
+
+                https://localhost:8080/web/application/1234
+
+            Kommentar von Kai Schmitt:
+            OK, spricht von meiner Seite aus nix dagegen
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
+
+        // send mail to second stage
         final MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         final Message msgSecondStage = inboxSecondStage[0];
         assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
-
-        // check content of office email
         assertThat(readPlainContent(msgSecondStage)).isEqualTo("""
             Hallo Kai Schmitt,
 
@@ -3376,6 +3439,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde von Marlene Muster bearbeitet");
         assertThat(new InternetAddress(applicant.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Max Muster,

@@ -46,8 +46,10 @@ public class SickNoteMailService {
     private final Clock clock;
 
     @Autowired
-    SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService,
-                        PersonService personService, MailRecipientService mailRecipientService, Clock clock) {
+    SickNoteMailService(
+        SettingsService settingsService, SickNoteService sickNoteService, MailService mailService,
+        PersonService personService, MailRecipientService mailRecipientService, Clock clock
+    ) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
@@ -110,6 +112,7 @@ public class SickNoteMailService {
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.created.to_applicant_by_management")
             .withTemplate("sick_note_created_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withReplyToFrom(sickNote.getApplier())
             .build();
         mailService.send(mailToApplicant);
     }
@@ -138,13 +141,15 @@ public class SickNoteMailService {
      * Sends information about an edited sick note to the applicant
      *
      * @param sickNote that has been created
+     * @param editor   the person who edited the sick note
      */
     @Async
-    void sendEditedToSickPerson(SickNote sickNote) {
+    void sendEditedToSickPerson(SickNote sickNote, Person editor) {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.edited.to_applicant_by_management")
             .withTemplate("sick_note_edited_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withReplyToFrom(editor)
             .build();
         mailService.send(mailToApplicant);
     }
@@ -152,14 +157,16 @@ public class SickNoteMailService {
     /**
      * Sends information about a cancelled sick note to the applicant
      *
-     * @param sickNote that has been created
+     * @param sickNote  that has been created
+     * @param canceller person who cancelled the sick note
      */
     @Async
-    void sendCancelledToSickPerson(SickNote sickNote) {
+    void sendCancelledToSickPerson(SickNote sickNote, Person canceller) {
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.cancelled.to_applicant_by_management")
             .withTemplate("sick_note_cancelled_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withReplyToFrom(canceller)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
@@ -200,6 +207,7 @@ public class SickNoteMailService {
             .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
             .withSubject("subject.sicknote.accepted_by_management.to_applicant")
             .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+            .withReplyToFrom(maintainer)
             .build();
         mailService.send(mailToApplicant);
     }

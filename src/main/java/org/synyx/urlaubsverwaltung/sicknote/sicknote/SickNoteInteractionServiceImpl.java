@@ -115,7 +115,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
 
-        sickNoteMailService.sendEditedToSickPerson(updatedSickNote);
+        sickNoteMailService.sendEditedToSickPerson(updatedSickNote, editor);
 
         applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));
 
@@ -148,7 +148,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller, comment);
 
-        sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote);
+        sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote, canceller);
         sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
 
         applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(cancelledSickNote));

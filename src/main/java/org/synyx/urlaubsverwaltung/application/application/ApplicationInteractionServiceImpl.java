@@ -99,10 +99,10 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            applicationMailService.sendAppliedNotification(savedApplication, createdComment);
+            applicationMailService.sendAppliedNotificationByApplicant(savedApplication, createdComment);
         } else {
             // The person gets an email that someone else has applied for leave on behalf
-            applicationMailService.sendAppliedByManagementNotification(savedApplication, createdComment);
+            applicationMailService.sendAppliedByManagementNotificationByManagement(savedApplication, createdComment);
         }
 
         // relevant management person gets email that a new application for leave has been created
@@ -169,7 +169,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            applicationMailService.sendConfirmationAllowedDirectly(savedApplication, createdComment);
+            applicationMailService.sendConfirmationAllowedDirectlyByApplicant(savedApplication, createdComment);
         } else {
             // The person gets an email that someone else has applied for leave on behalf
             applicationMailService.sendConfirmationAllowedDirectlyByManagement(savedApplication, createdComment);
@@ -212,7 +212,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         final ApplicationComment createdComment = commentService.create(savedApplication,
             ApplicationCommentAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
-        applicationMailService.sendTemporaryAllowedNotification(savedApplication, createdComment);
+        applicationMailService.sendTemporaryAllowedNotificationByManagement(savedApplication, createdComment, privilegedUser);
 
         applicationEventPublisher.publishEvent(ApplicationAllowedTemporarilyEvent.of(savedApplication));
         return savedApplication;
@@ -384,7 +384,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     @Override
-    public Application declineCancellationRequest(Application applicationForLeave, Person person, Optional<String> comment) {
+    public Application declineCancellationRequest(Application applicationForLeave, Person canceller, Optional<String> comment) {
 
         if (applicationForLeave.getStatus().compareTo(ALLOWED_CANCELLATION_REQUESTED) != 0) {
             throw new DeclineCancellationRequestedApplicationForLeaveNotAllowedException(format("Cannot cancel the cancellation " +
@@ -396,9 +396,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         applicationForLeave.setEditedDate(LocalDate.now(clock));
         final Application savedApplication = applicationService.save(applicationForLeave);
 
-        final ApplicationComment applicationComment = commentService.create(savedApplication, CANCEL_REQUESTED_DECLINED, comment, person);
+        final ApplicationComment applicationComment = commentService.create(savedApplication, CANCEL_REQUESTED_DECLINED, comment, canceller);
 
-        applicationMailService.sendDeclinedCancellationRequestApplicationNotification(savedApplication, applicationComment);
+        applicationMailService.sendDeclinedCancellationRequestApplicationNotification(savedApplication, applicationComment, canceller);
 
         applicationEventPublisher.publishEvent(ApplicationDeclinedCancellationRequestEvent.of(savedApplication));
         return savedApplication;
