@@ -27,6 +27,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Service
@@ -38,9 +39,10 @@ class MailRecipientServiceImpl implements MailRecipientService {
     private final UserNotificationSettingsService userNotificationSettingsService;
 
     @Autowired
-    MailRecipientServiceImpl(ResponsiblePersonService responsiblePersonService, PersonService personService,
-                             DepartmentService departmentService, UserNotificationSettingsService userNotificationSettingsService) {
-
+    MailRecipientServiceImpl(
+        ResponsiblePersonService responsiblePersonService, PersonService personService,
+        DepartmentService departmentService, UserNotificationSettingsService userNotificationSettingsService
+    ) {
         this.responsiblePersonService = responsiblePersonService;
         this.personService = personService;
         this.departmentService = departmentService;
@@ -59,16 +61,16 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
             officeAndBosses.addAll(getOfficeWith(mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
             officeAndBosses.addAll(getBossWith(mailNotification));
         }
         final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
         final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotification));
         }
-        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD))) {
+        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED, SICK_NOTE_ADD, SICK_NOTE_EDIT))) {
             recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotification));
         }
 

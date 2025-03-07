@@ -37,6 +37,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -272,6 +273,62 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
+    }
+
+    @Test
+    void sendSickNoteEditedNotificationToOfficeAndResponsibleManagement() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
+
+        final Person editor = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .applier(editor)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        final Person management = personService.create("management", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT), List.of(USER, OFFICE));
+        when(mailRecipientService.getRecipientsOfInterest(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT))
+            .thenReturn(List.of(management));
+
+        final String comment = "Comment";
+        sut.sendSickNoteEditedNotificationToOfficeAndResponsibleManagement(sickNote, comment, editor);
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(management.getEmail())).hasSize(1));
+
+        final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(management.getEmail());
+        final Message msgManagement = inboxManagement[0];
+        assertThat(msgManagement.getSubject()).isEqualTo("Eine Krankmeldung wurde von Lieschen Müller bearbeitet");
+        assertThat(msgManagement.getReplyTo()[0]).isEqualTo(new InternetAddress(editor.getEmail()));
+        assertThat(readPlainContent(msgManagement)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat eine Krankmeldung von Marlene Muster bearbeitet:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Art der Krankmeldung: Kind-Krankmeldung
+
+            Kommentar(e) zur Krankmeldung:
+
+                Comment
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(management.getId()));
     }
 
     @Test

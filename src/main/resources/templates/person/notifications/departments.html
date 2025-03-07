@@ -168,7 +168,8 @@
             th:if="${
                 personNotificationsDto.sickNoteCreatedByManagementForManagement.visible ||
                 personNotificationsDto.sickNoteSubmittedByUserForManagement.visible ||
-                personNotificationsDto.sickNoteAcceptedByManagementForManagement.visible
+                personNotificationsDto.sickNoteAcceptedByManagementForManagement.visible ||
+                personNotificationsDto.sickNoteEditedByManagementForManagement.visible
               }"
           >
             <h2
@@ -187,6 +188,9 @@
               ></li>
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteAcceptedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteAcceptedByManagementForManagement.active},name='sickNoteAcceptedByManagementForManagement.active',label='person.notifications.section.sicknote.accepted.management.label',info='person.notifications.section.sicknote.accepted.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteEditedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteEditedByManagementForManagement.active},name='sickNoteEditedByManagementForManagement.active',label='person.notifications.section.sicknote.edited.management.label',info='person.notifications.section.sicknote.edited.management.info')}"
               ></li>
             </ul>
           </section>
