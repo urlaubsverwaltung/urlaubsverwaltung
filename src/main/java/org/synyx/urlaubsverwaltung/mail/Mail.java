@@ -42,8 +42,8 @@ public class Mail {
         this.mailAttachments = mailAttachments;
     }
 
-    public Person getReplyTo() {
-        return replyTo;
+    public Optional<Person> getReplyTo() {
+        return Optional.ofNullable(replyTo);
     }
 
     public Optional<List<Person>> getMailAddressRecipients() {

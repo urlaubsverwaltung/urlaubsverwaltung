@@ -184,6 +184,30 @@ class MailServiceImplTest {
         verifyNoMoreInteractions(mailSenderService);
     }
 
+    @Test
+    void sendMailWithReplyTo() {
+        setupMockServletRequest();
+
+        final Person hans = new Person("hans", "Dampf", "Hans", "hans@example.org");
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
+
+        final Mail mail = Mail.builder()
+            .withRecipient(List.of(hans))
+            .withSubject(subjectMessageKey)
+            .withTemplate(templateName, locale -> new HashMap<>())
+            .withAttachment("fileName", iCal)
+            .withReplyToFrom(hans)
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <from@example.org>", "Hans Dampf <hans@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+    }
+
     private void setupMockServletRequest() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));

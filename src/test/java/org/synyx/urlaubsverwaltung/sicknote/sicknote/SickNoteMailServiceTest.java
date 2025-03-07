@@ -173,7 +173,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getReplyTo()).isEqualTo(management);
+        assertThat(mail.getReplyTo()).hasValue(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -235,7 +235,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getReplyTo()).isEqualTo(management);
+        assertThat(mail.getReplyTo()).hasValue(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.edited.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_edited_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -267,7 +267,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getReplyTo()).isEqualTo(management);
+        assertThat(mail.getReplyTo()).hasValue(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_applicant_by_management");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancelled_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
@@ -394,7 +394,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getReplyTo()).isEqualTo(management);
+        assertThat(mail.getReplyTo()).hasValue(management);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.accepted_by_management.to_applicant");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_accepted_by_management_to_applicant");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("maintainer", management, "sickNote", sickNote));

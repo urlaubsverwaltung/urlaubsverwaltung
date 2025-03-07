@@ -65,8 +65,8 @@ class MailServiceImpl implements MailService {
 
             final String from = generateMailAddressAndDisplayName(mailProperties.getFrom(), mailProperties.getFromDisplayName());
 
-            final String replyToMailAdress = mail.getReplyTo() == null ? mailProperties.getReplyTo() : mail.getReplyTo().getEmail();
-            final String replyToDisplayName = mail.getReplyTo() == null ? mailProperties.getReplyToDisplayName() : mail.getReplyTo().getNiceName();
+            final String replyToMailAdress = mail.getReplyTo().map(Person::getEmail).orElse(mailProperties.getReplyTo());
+            final String replyToDisplayName = mail.getReplyTo().map(Person::getNiceName).orElse(mailProperties.getReplyToDisplayName());
             final String replyTo = generateMailAddressAndDisplayName(replyToMailAdress, replyToDisplayName);
 
             final String email = recipient.getEmail();

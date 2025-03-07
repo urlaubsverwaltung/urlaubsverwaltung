@@ -97,7 +97,7 @@ class OvertimeMailServiceTest {
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created.applicant_from_management");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_to_applicant_from_management");
         assertThat(mails.getTemplateModel(GERMAN)).isEqualTo(model);
-        assertThat(mails.getReplyTo()).isEqualTo(author);
+        assertThat(mails.getReplyTo()).hasValue(author);
     }
 
     @Test
