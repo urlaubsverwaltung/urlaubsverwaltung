@@ -32,8 +32,13 @@ class MailServiceImpl implements MailService {
     private final UserSettingsService userSettingsService;
 
     @Autowired
-    MailServiceImpl(MessageSource emailMessageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
-                    MailProperties mailProperties, UserSettingsService userSettingsService) {
+    MailServiceImpl(
+        MessageSource emailMessageSource,
+        ITemplateEngine emailTemplateEngine,
+        MailSenderService mailSenderService,
+        MailProperties mailProperties,
+        UserSettingsService userSettingsService
+    ) {
         this.emailMessageSource = emailMessageSource;
         this.emailTemplateEngine = emailTemplateEngine;
         this.mailProperties = mailProperties;
@@ -43,7 +48,7 @@ class MailServiceImpl implements MailService {
 
     @Async
     @Override
-    public void send(Mail mail) {
+    public void send(final Mail mail) {
 
         final List<Person> recipients = getRecipients(mail);
         final Map<Person, Locale> effectiveLocales = userSettingsService.getEffectiveLocale(recipients);
@@ -59,7 +64,10 @@ class MailServiceImpl implements MailService {
             context.setVariable("recipient", recipient);
 
             final String from = generateMailAddressAndDisplayName(mailProperties.getFrom(), mailProperties.getFromDisplayName());
-            final String replyTo = generateMailAddressAndDisplayName(mailProperties.getReplyTo(), mailProperties.getReplyToDisplayName());
+
+            final String replyToMailAdress = mail.getReplyTo().map(Person::getEmail).orElse(mailProperties.getReplyTo());
+            final String replyToDisplayName = mail.getReplyTo().map(Person::getNiceName).orElse(mailProperties.getReplyToDisplayName());
+            final String replyTo = generateMailAddressAndDisplayName(replyToMailAdress, replyToDisplayName);
 
             final String email = recipient.getEmail();
             final String subject = getTranslation(effectiveLocale, mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());

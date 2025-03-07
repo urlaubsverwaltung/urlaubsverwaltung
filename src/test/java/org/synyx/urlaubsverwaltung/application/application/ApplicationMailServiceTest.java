@@ -105,7 +105,7 @@ class ApplicationMailServiceTest {
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
-        final Person person = new Person();
+        final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
         person.setId(0L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
@@ -115,10 +115,13 @@ class ApplicationMailServiceTest {
             .messageKey("application.data.vacationType.holiday")
             .build();
 
+        final Person applier = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
+        application.setBoss(applier);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
@@ -152,6 +155,7 @@ class ApplicationMailServiceTest {
         verify(mailService, times(3)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(applier);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
@@ -187,10 +191,13 @@ class ApplicationMailServiceTest {
             .messageKey("application.data.vacationType.holiday")
             .build();
 
+        final Person rejector = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
+        application.setBoss(rejector);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
@@ -211,6 +218,7 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(rejector);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.rejected");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_rejected_information_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
@@ -255,6 +263,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
+        assertThat(mail.getReplyTo()).hasValue(sender);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.refer");
         assertThat(mail.getTemplateName()).isEqualTo("application_referred_to_management");
         assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
@@ -301,7 +310,7 @@ class ApplicationMailServiceTest {
     @Test
     void ensureToSendEditedApplicationNotificationIfOfficeIsEditor() {
 
-        final Person office = new Person("marlene", "Muster", "Marlene", "marlene@example.org");
+        final Person editor = new Person("marlene", "Muster", "Marlene", "marlene@example.org");
 
         final Person applicant = new Person();
         applicant.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
@@ -323,19 +332,20 @@ class ApplicationMailServiceTest {
         relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
-        sut.sendEditedNotification(application, office);
+        sut.sendEditedNotification(application, editor);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mail = argument.getAllValues();
         assertThat(mail.get(0).getMailAddressRecipients()).hasValue(List.of(applicant));
+        assertThat(mail.get(0).getReplyTo()).hasValue(editor);
         assertThat(mail.get(0).getSubjectMessageKey()).isEqualTo("subject.application.edited.to_applicant_by_management");
         assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_management_to_applicant");
-        assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", office));
+        assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
         assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
-        assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", office));
+        assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
     }
 
     @Test
@@ -360,12 +370,16 @@ class ApplicationMailServiceTest {
         relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
-        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
+        final Person canceller = new Person();
+        canceller.setId(4L);
+
+        sut.sendDeclinedCancellationRequestApplicationNotification(application, comment, canceller);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(canceller);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.declined.applicant");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancellation_request_declined_to_applicant");
         assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
@@ -411,11 +425,15 @@ class ApplicationMailServiceTest {
 
     @Test
     void sendSickNoteConvertedToVacationNotification() {
+
+        final Person applier = new Person();
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Application application = new Application();
         application.setPerson(person);
+        application.setApplier(applier);
 
         final Person relevantPerson = new Person();
         relevantPerson.setId(2L);
@@ -427,6 +445,7 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(applier);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_converted");
         assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.<String, Object>of("application", application));
@@ -665,7 +684,7 @@ class ApplicationMailServiceTest {
         model.put("vacationTypeLabel", "vacation type label");
         model.put("comment", comment);
 
-        sut.sendAppliedNotification(application, comment);
+        sut.sendAppliedNotificationByApplicant(application, comment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -710,7 +729,7 @@ class ApplicationMailServiceTest {
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
-        sut.sendConfirmationAllowedDirectly(application, comment);
+        sut.sendConfirmationAllowedDirectlyByApplicant(application, comment);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -749,9 +768,12 @@ class ApplicationMailServiceTest {
             .messageKey("application.data.vacationType.holiday")
             .build();
 
+        final Person office = new Person();
+
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setPerson(person);
+        application.setApplier(office);
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
@@ -778,6 +800,7 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(office);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.management");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_directly_by_management_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
@@ -884,6 +907,8 @@ class ApplicationMailServiceTest {
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
 
+        final Person office = new Person();
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
@@ -896,6 +921,7 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setPerson(person);
+        application.setApplier(office);
         application.setDayLength(FULL);
 
         final ApplicationComment comment = new ApplicationComment(
@@ -906,12 +932,13 @@ class ApplicationMailServiceTest {
         model.put("vacationTypeLabel", "vacation type label");
         model.put("comment", comment);
 
-        sut.sendAppliedByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotificationByManagement(application, comment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getReplyTo()).hasValue(office);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.management");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_by_management_to_applicant");
         assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
@@ -1032,6 +1059,8 @@ class ApplicationMailServiceTest {
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
 
+        final Person canceller = new Person();
+
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
@@ -1044,6 +1073,7 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setPerson(person);
+        application.setCanceller(canceller);
         application.setDayLength(FULL);
 
         final ApplicationComment comment = new ApplicationComment(
@@ -1068,6 +1098,7 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(canceller);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.management");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_management_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
@@ -1090,10 +1121,11 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = new Person();
+        final Person canceller = new Person();
 
         final Application application = new Application();
         application.setPerson(person);
+        application.setCanceller(canceller);
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 10, 2));
         application.setEndDate(LocalDate.of(2020, 10, 3));
@@ -1106,7 +1138,7 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
-            .thenReturn(List.of(person, office));
+            .thenReturn(List.of(person, canceller));
 
         final Person colleague = new Person();
         colleague.setId(3L);
@@ -1119,12 +1151,13 @@ class ApplicationMailServiceTest {
         verify(mailService, times(3)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(canceller);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_by_management_to_applicant");
         assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person, office));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person, canceller));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancelled_by_management_to_management");
         assertThat(mails.get(1).getTemplateModel(GERMAN)).isEqualTo(model);
@@ -1192,7 +1225,7 @@ class ApplicationMailServiceTest {
     }
 
     @Test
-    void sendTemporaryAllowedNotification() {
+    void sendTemporaryAllowedNotificationByManagement() {
 
         final Locale locale = JAPANESE;
         final MessageSource messageSource = mock(MessageSource.class);
@@ -1201,6 +1234,8 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
         final List<Person> recipients = singletonList(person);
+
+        final Person temporaryApprover = new Person();
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
             .id(1L)
@@ -1234,12 +1269,13 @@ class ApplicationMailServiceTest {
         modelSecondStage.put("comment", comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
-        sut.sendTemporaryAllowedNotification(application, comment);
+        sut.sendTemporaryAllowedNotificationByManagement(application, comment, temporaryApprover);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getReplyTo()).hasValue(temporaryApprover);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_temporary_allowed_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);

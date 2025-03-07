@@ -4,6 +4,7 @@ import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -168,6 +169,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(management.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für dich eingetragen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
@@ -206,7 +208,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendEditedToSickPerson(sickNote);
+        sut.sendEditedToSickPerson(sickNote, management);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -214,6 +216,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(management.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich bearbeitet");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
@@ -292,7 +295,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendCancelledToSickPerson(sickNote);
+        sut.sendCancelledToSickPerson(sickNote, management);
 
         await()
             .atMost(Duration.ofSeconds(1))
@@ -300,6 +303,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(management.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich storniert");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,
@@ -536,6 +540,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getReplyTo()[0]).isEqualTo(new InternetAddress(office.getEmail()));
         assertThat(msgPerson.getSubject()).isEqualTo("Deine Krankmeldung wurde angenommen");
         assertThat(readPlainContent(msgPerson)).isEqualTo("""
             Hallo Marlene Muster,

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public class Mail {
 
+    private final Person replyTo;
     private final List<Person> mailAddressRecipients;
 
     private final String templateName;
@@ -24,6 +25,7 @@ public class Mail {
     private final List<MailAttachment> mailAttachments;
 
     Mail(
+        Person replyTo,
         List<Person> mailAddressRecipients,
         String templateName,
         MailTemplateModelSupplier templateModelSupplier,
@@ -31,12 +33,17 @@ public class Mail {
         Object[] subjectMessageArguments,
         List<MailAttachment> mailAttachments
     ) {
+        this.replyTo = replyTo;
         this.mailAddressRecipients = mailAddressRecipients;
         this.templateName = templateName;
         this.templateModelSupplier = templateModelSupplier;
         this.subjectMessageKey = subjectMessageKey;
         this.subjectMessageArguments = subjectMessageArguments;
         this.mailAttachments = mailAttachments;
+    }
+
+    public Optional<Person> getReplyTo() {
+        return Optional.ofNullable(replyTo);
     }
 
     public Optional<List<Person>> getMailAddressRecipients() {
@@ -72,6 +79,8 @@ public class Mail {
      */
     public static class Builder {
 
+        private Person replyTo;
+
         private final List<Person> mailAddressRecipients = new ArrayList<>();
 
         private String templateName;
@@ -81,6 +90,11 @@ public class Mail {
         private Object[] subjectMessageArguments;
 
         private List<MailAttachment> mailAttachments;
+
+        public Mail.Builder withReplyToFrom(final Person replyTo) {
+            this.replyTo = replyTo;
+            return this;
+        }
 
         public Mail.Builder withRecipient(final Person recipient) {
             withRecipient(List.of(recipient));
@@ -126,6 +140,7 @@ public class Mail {
 
         public Mail build() {
             return new Mail(
+                replyTo,
                 mailAddressRecipients,
                 templateName,
                 templateModelSupplier,

@@ -78,9 +78,14 @@ class ApplicationMailService {
     private final Clock clock;
 
     @Autowired
-    ApplicationMailService(MailService mailService, DepartmentService departmentService,
-                           MailRecipientService mailRecipientService, ICalService iCalService,
-                           SettingsService settingsService, Clock clock) {
+    ApplicationMailService(
+        MailService mailService,
+        DepartmentService departmentService,
+        MailRecipientService mailRecipientService,
+        ICalService iCalService,
+        SettingsService settingsService,
+        Clock clock
+    ) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.mailRecipientService = mailRecipientService;
@@ -106,6 +111,7 @@ class ApplicationMailService {
             .withSubject("subject.application.allowed.user")
             .withTemplate("application_allowed_to_applicant", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withReplyToFrom(application.getBoss())
             .build();
         mailService.send(mailToApplicant);
 
@@ -151,6 +157,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_REJECTED)
             .withSubject("subject.application.rejected")
             .withTemplate("application_rejected_information_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getBoss())
             .build();
         mailService.send(mailToApplicant);
 
@@ -185,6 +192,7 @@ class ApplicationMailService {
             .withRecipient(recipient)
             .withSubject("subject.application.refer")
             .withTemplate("application_referred_to_management", modelSupplier)
+            .withReplyToFrom(sender)
             .build();
 
         mailService.send(mailToApplicant);
@@ -212,6 +220,7 @@ class ApplicationMailService {
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
                 .withSubject("subject.application.edited.to_applicant_by_management", editor.getNiceName())
                 .withTemplate("application_edited_by_management_to_applicant", locale -> Map.of(APPLICATION, application, "editor", editor))
+                .withReplyToFrom(editor)
                 .build();
         }
         mailService.send(mailToApplicant);
@@ -231,7 +240,7 @@ class ApplicationMailService {
      * @param application cancellation requested application
      */
     @Async
-    void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment) {
+    void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment, Person canceller) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -243,6 +252,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CANCELLATION)
             .withSubject("subject.application.cancellationRequest.declined.applicant", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_request_declined_to_applicant", modelSupplier)
+            .withReplyToFrom(canceller)
             .build();
         mailService.send(mailToApplicant);
 
@@ -279,7 +289,7 @@ class ApplicationMailService {
             .build();
         mailService.send(mailToApplicant);
 
-        // send reject information to the office or boss, dh or ssa with APPLICATION_CANCELLATION_REQUESTED
+        // send cancellation request to the office or boss, dh or ssa with APPLICATION_CANCELLATION_REQUESTED
         final List<Person> recipientsOfInterest = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
         final Mail mailToManagement = Mail.builder()
             .withRecipient(recipientsOfInterest)
@@ -301,6 +311,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CONVERTED)
             .withSubject("subject.sicknote.converted")
             .withTemplate("sicknote_converted", locale -> Map.of(APPLICATION, application))
+            .withReplyToFrom(application.getApplier())
             .build();
         mailService.send(mailToApplicant);
 
@@ -321,7 +332,7 @@ class ApplicationMailService {
      * @param comment     additional comment for the confirming application
      */
     @Async
-    void sendConfirmationAllowedDirectly(Application application, ApplicationComment comment) {
+    void sendConfirmationAllowedDirectlyByApplicant(Application application, ApplicationComment comment) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -365,6 +376,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
             .withSubject("subject.application.allowedDirectly.management")
             .withTemplate("application_allowed_directly_by_management_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getApplier())
             .build();
         mailService.send(mailToApplicant);
 
@@ -550,7 +562,7 @@ class ApplicationMailService {
      * @param comment     additional comment for the confirming application
      */
     @Async
-    void sendAppliedNotification(Application application, ApplicationComment comment) {
+    void sendAppliedNotificationByApplicant(Application application, ApplicationComment comment) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -575,7 +587,7 @@ class ApplicationMailService {
      * @param comment     additional comment for the application
      */
     @Async
-    void sendAppliedByManagementNotification(Application application, ApplicationComment comment) {
+    void sendAppliedByManagementNotificationByManagement(Application application, ApplicationComment comment) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -587,6 +599,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_APPLIED)
             .withSubject("subject.application.applied.management")
             .withTemplate("application_applied_by_management_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getApplier())
             .build();
 
         mailService.send(mailToApplicant);
@@ -618,6 +631,7 @@ class ApplicationMailService {
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_REVOKED)
                 .withSubject("subject.application.revoked.notApplicant")
                 .withTemplate("application_revoked_by_management_to_applicant", modelSupplier)
+                .withReplyToFrom(application.getCanceller())
                 .build();
             mailService.send(mailToNotApplicant);
         }
@@ -676,8 +690,7 @@ class ApplicationMailService {
             VACATION_TYPE, application.getVacationType().getLabel(locale),
             COMMENT, comment
         );
-
-        // send cancelled by office information to the applicant
+        // send cancelled information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient, NOTIFICATION_EMAIL_APPLICATION_CANCELLATION)
             .withSubject("subject.application.cancelledDirectly.user")
@@ -717,6 +730,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CANCELLATION)
             .withSubject("subject.application.cancelledDirectly.management")
             .withTemplate("application_cancelled_directly_confirmation_by_management_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getCanceller())
             .build();
         mailService.send(mailToApplicant);
 
@@ -753,6 +767,7 @@ class ApplicationMailService {
             .withSubject("subject.application.cancelled.user")
             .withTemplate("application_cancelled_by_management_to_applicant", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withReplyToFrom(application.getCanceller())
             .build();
         mailService.send(mailToApplicant);
 
@@ -817,18 +832,18 @@ class ApplicationMailService {
      * @param comment     contains reason why application for leave has been allowed temporary
      */
     @Async
-    void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
+    void sendTemporaryAllowedNotificationByManagement(Application application, ApplicationComment comment, Person temporaryApprover) {
 
         // Inform user that the application for leave has been allowed temporary
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             COMMENT, comment
         );
-
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED)
             .withSubject("subject.application.temporaryAllowed.user")
             .withTemplate("application_temporary_allowed_to_applicant", modelSupplier)
+            .withReplyToFrom(temporaryApprover)
             .build();
         mailService.send(mailToApplicant);
 
@@ -842,7 +857,6 @@ class ApplicationMailService {
             COMMENT, comment,
             "departmentVacations", applicationsForLeave
         );
-
         final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
         final Mail mailToTemporaryAllow = Mail.builder()
             .withRecipient(recipients)

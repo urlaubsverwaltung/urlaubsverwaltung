@@ -112,6 +112,7 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(person.getEmail())[0];
         assertThat(msg.getSubject()).contains("Es wurden Überstunden für dich eingetragen");
+        assertThat(msg.getReplyTo()[0]).isEqualTo(new InternetAddress(author.getEmail()));
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
