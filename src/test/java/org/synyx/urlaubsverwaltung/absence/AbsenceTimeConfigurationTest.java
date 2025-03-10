@@ -46,28 +46,4 @@ class AbsenceTimeConfigurationTest {
         final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
         assertThat(timeConfiguration.getNoonEndTime()).isEqualTo(LocalTime.of(16,30));
     }
-
-    @Test
-    void ensureCorrectMorningStart() {
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-        assertThat(timeConfiguration.getMorningStartHour()).isEqualTo(8);
-    }
-
-    @Test
-    void ensureCorrectMorningEnd() {
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-        assertThat(timeConfiguration.getMorningEndHour()).isEqualTo(12);
-    }
-
-    @Test
-    void ensureCorrectNoonStart() {
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-        assertThat(timeConfiguration.getNoonStartHour()).isEqualTo(12);
-    }
-
-    @Test
-    void ensureCorrectNoonEnd() {
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-        assertThat(timeConfiguration.getNoonEndHour()).isEqualTo(16);
-    }
 }

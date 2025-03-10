@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Time configuration for half day absences (start and end time for morning resp. noon).
@@ -34,44 +33,7 @@ public class AbsenceTimeConfiguration {
         return LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
     }
 
-    public Integer getMorningStartHour() {
-        return timeSettings.getWorkDayBeginHour();
-    }
-
-    public Integer getMorningEndHour() {
-        int halfWorkDay = (timeSettings.getWorkDayEndHour() - timeSettings.getWorkDayBeginHour()) / 2;
-        return timeSettings.getWorkDayBeginHour() + halfWorkDay;
-    }
-
-    public Integer getNoonStartHour() {
-        return getMorningEndHour();
-    }
-
-    public Integer getNoonEndHour() {
-        return timeSettings.getWorkDayEndHour();
-    }
-
-    public long getMorningStartAsMillis() {
-        return TimeUnit.HOURS.toMillis(getMorningStartHour());
-    }
-
-    public long getMorningEndAsMillis() {
-        return TimeUnit.HOURS.toMillis(getMorningEndHour());
-    }
-
-    public long getNoonStartAsMillis() {
-        return TimeUnit.HOURS.toMillis(getNoonStartHour());
-    }
-
-    public long getNoonEndAsMillis() {
-        return TimeUnit.HOURS.toMillis(getNoonEndHour());
-    }
-
     public String getTimeZoneId() {
         return timeSettings.getTimeZoneId();
-    }
-
-    public void setTimeZoneId(String timeZoneId) {
-        timeSettings.setTimeZoneId(timeZoneId);
     }
 }
