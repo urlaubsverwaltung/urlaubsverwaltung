@@ -1,4 +1,6 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendar;
+
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -14,26 +16,26 @@ public class AbsenceTimeConfiguration {
         this.timeSettings = timeSettings;
     }
 
-    public LocalTime getMorningStartTime() {
+    LocalTime getMorningStartTime() {
         return LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
     }
 
-    public LocalTime getMorningEndTime() {
+    LocalTime getMorningEndTime() {
         return getNoonStartTime();
     }
 
-    public LocalTime getNoonStartTime() {
+    LocalTime getNoonStartTime() {
         final LocalTime startTime = LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
         final LocalTime endTime = LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
         final Duration duration = Duration.between(startTime, endTime).dividedBy(2);
         return startTime.plus(duration);
     }
 
-    public LocalTime getNoonEndTime() {
+    LocalTime getNoonEndTime() {
         return LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
     }
 
-    public String getTimeZoneId() {
+    String getTimeZoneId() {
         return timeSettings.getTimeZoneId();
     }
 }

@@ -1,7 +1,8 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.LocalTime;
 

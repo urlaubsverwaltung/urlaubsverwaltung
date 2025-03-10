@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
