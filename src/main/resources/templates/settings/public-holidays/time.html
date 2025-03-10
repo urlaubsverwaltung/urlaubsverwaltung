@@ -43,21 +43,9 @@
             >
             </label>
             <div class="col-md-8">
-              <input
-                id="timeSettings.workDayBeginHour"
-                th:field="*{timeSettings.workDayBeginHour}"
-                class="form-control"
-                th:errorclass="error"
-                type="number"
-                step="1"
-              />
-
-              <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('timeSettings.workDayBeginHour')}"
-              >
-                <th:block th:errors="*{timeSettings.workDayBeginHour}"> timeSettings.workDayBeginHour Error </th:block>
-              </div>
+              <th:block
+                th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayBeginHour', 'settings-time-hours', 'timeSettings.workDayBeginMinute', 'settings-time-minutes')}"
+              ></th:block>
             </div>
           </div>
           <div class="form-group is-required">
@@ -68,21 +56,9 @@
             >
             </label>
             <div class="col-md-8">
-              <input
-                id="timeSettings.workDayEndHour"
-                th:field="*{timeSettings.workDayEndHour}"
-                class="form-control"
-                th:errorclass="error"
-                type="number"
-                step="1"
-              />
-
-              <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('timeSettings.workDayEndHour')}"
-              >
-                <th:block th:errors="*{timeSettings.workDayEndHour}"> timeSettings.workDayEndHour Error </th:block>
-              </div>
+              <th:block
+                th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayEndHour', 'settings-time-hours', 'timeSettings.workDayEndMinute', 'settings-time-minutes')}"
+              ></th:block>
             </div>
           </div>
         </div>

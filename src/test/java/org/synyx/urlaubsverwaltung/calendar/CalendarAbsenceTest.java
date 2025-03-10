@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -160,15 +158,15 @@ class CalendarAbsenceTest {
             .isEqualTo("Absence{startDate=2015-10-23T00:00Z[Etc/UTC], endDate=2015-10-26T00:00Z[Etc/UTC], person=Person{id='10'}, isAllDay=true, absenceType=DEFAULT}");
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
         return getAbsenceTimeConfiguration("Etc/UTC");
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration(String timeZoneId) {
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration(String timeZoneId) {
         final TimeSettings timeSettings = new TimeSettings();
         timeSettings.setTimeZoneId(timeZoneId);
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
-        return new AbsenceTimeConfiguration(timeSettings);
+        return new CalendarAbsenceConfiguration(timeSettings);
     }
 }

@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -236,7 +234,7 @@ class CompanyCalendarServiceTest {
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
+        final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(new TimeSettings());
 
         return new CalendarAbsence(person, period, timeConfig);
     }

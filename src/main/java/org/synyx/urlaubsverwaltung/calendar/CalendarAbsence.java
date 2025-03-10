@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -18,17 +17,17 @@ public class CalendarAbsence {
     private final boolean isAllDay;
     private final CalendarAbsenceType calendarAbsenceType;
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration) {
         this(person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
+    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
 
         this.person = person;
         this.calendarAbsenceType = calendarAbsenceType;
 
-        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
-        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
+        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
 
         switch (period.dayLength()) {
             case FULL -> {
@@ -37,13 +36,13 @@ public class CalendarAbsence {
                 this.isAllDay = true;
             }
             case MORNING -> {
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getMorningStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getMorningEnd());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.morningStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.morningEndTime());
                 this.isAllDay = false;
             }
             case NOON -> {
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getNoonStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getNoonEnd());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.noonStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.noonEndTime());
                 this.isAllDay = false;
             }
             default -> throw new IllegalArgumentException("Invalid day length!");
