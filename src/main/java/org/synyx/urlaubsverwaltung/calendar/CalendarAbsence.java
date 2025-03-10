@@ -37,13 +37,13 @@ public class CalendarAbsence {
                 this.isAllDay = true;
             }
             case MORNING -> {
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getMorningStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getMorningEnd());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.getMorningStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.getMorningEndTime());
                 this.isAllDay = false;
             }
             case NOON -> {
-                this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getNoonStart());
-                this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getNoonEnd());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.getNoonStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.getNoonEndTime());
                 this.isAllDay = false;
             }
             default -> throw new IllegalArgumentException("Invalid day length!");

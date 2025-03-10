@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,37 +15,56 @@ public class AbsenceTimeConfiguration {
         this.timeSettings = timeSettings;
     }
 
-    public Integer getMorningStart() {
+    public LocalTime getMorningStartTime() {
+        return LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
+    }
+
+    public LocalTime getMorningEndTime() {
+        return getNoonStartTime();
+    }
+
+    public LocalTime getNoonStartTime() {
+        final LocalTime startTime = LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
+        final LocalTime endTime = LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
+        final Duration duration = Duration.between(startTime, endTime).dividedBy(2);
+        return startTime.plus(duration);
+    }
+
+    public LocalTime getNoonEndTime() {
+        return LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
+    }
+
+    public Integer getMorningStartHour() {
         return timeSettings.getWorkDayBeginHour();
     }
 
-    public Integer getMorningEnd() {
+    public Integer getMorningEndHour() {
         int halfWorkDay = (timeSettings.getWorkDayEndHour() - timeSettings.getWorkDayBeginHour()) / 2;
         return timeSettings.getWorkDayBeginHour() + halfWorkDay;
     }
 
-    public Integer getNoonStart() {
-        return getMorningEnd();
+    public Integer getNoonStartHour() {
+        return getMorningEndHour();
     }
 
-    public Integer getNoonEnd() {
+    public Integer getNoonEndHour() {
         return timeSettings.getWorkDayEndHour();
     }
 
     public long getMorningStartAsMillis() {
-        return TimeUnit.HOURS.toMillis(getMorningStart());
+        return TimeUnit.HOURS.toMillis(getMorningStartHour());
     }
 
     public long getMorningEndAsMillis() {
-        return TimeUnit.HOURS.toMillis(getMorningEnd());
+        return TimeUnit.HOURS.toMillis(getMorningEndHour());
     }
 
     public long getNoonStartAsMillis() {
-        return TimeUnit.HOURS.toMillis(getNoonStart());
+        return TimeUnit.HOURS.toMillis(getNoonStartHour());
     }
 
     public long getNoonEndAsMillis() {
-        return TimeUnit.HOURS.toMillis(getNoonEnd());
+        return TimeUnit.HOURS.toMillis(getNoonEndHour());
     }
 
     public String getTimeZoneId() {
