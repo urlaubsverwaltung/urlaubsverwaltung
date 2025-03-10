@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-
 import java.time.Duration;
 import java.time.LocalTime;
 

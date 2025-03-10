@@ -8,7 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendar.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.period.Period;

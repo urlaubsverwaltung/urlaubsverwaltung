@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 
 public record TimeSettingsDTO(
     String timeZoneId,

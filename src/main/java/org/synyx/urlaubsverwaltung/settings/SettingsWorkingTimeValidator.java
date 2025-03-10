@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
+import static org.synyx.urlaubsverwaltung.calendar.TimeSettingsValidator.validateTimeSettings;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
 

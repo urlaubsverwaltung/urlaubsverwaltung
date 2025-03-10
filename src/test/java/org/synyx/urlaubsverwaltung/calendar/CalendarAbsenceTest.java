@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;

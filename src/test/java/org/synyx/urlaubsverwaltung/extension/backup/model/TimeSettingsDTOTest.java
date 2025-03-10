@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

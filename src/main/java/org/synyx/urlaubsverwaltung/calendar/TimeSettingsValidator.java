@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendar;
 
 import org.springframework.validation.Errors;
 

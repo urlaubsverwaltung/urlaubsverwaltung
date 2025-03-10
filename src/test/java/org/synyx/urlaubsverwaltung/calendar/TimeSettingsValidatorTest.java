@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +9,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
+import static org.synyx.urlaubsverwaltung.calendar.TimeSettingsValidator.validateTimeSettings;
 
 class TimeSettingsValidatorTest {
 

@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
