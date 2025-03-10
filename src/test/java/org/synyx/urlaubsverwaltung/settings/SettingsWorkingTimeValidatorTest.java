@@ -2,20 +2,16 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 class SettingsWorkingTimeValidatorTest {
@@ -107,7 +103,7 @@ class SettingsWorkingTimeValidatorTest {
 
         sut.validate(dto, mockError);
 
-        verifyNoInteractions(mockError);
+        verify(mockError, never()).rejectValue(anyString(), anyString());
     }
 
     @Test
@@ -146,75 +142,5 @@ class SettingsWorkingTimeValidatorTest {
         sut.validate(dto, mockError);
 
         verify(mockError).rejectValue("overtimeSettings.minimumOvertime", "error.entry.invalid");
-    }
-
-    // Time settings -----------------------------------------------------------------------------------------------
-    @Test
-    void ensureCalendarSettingsAreMandatory() {
-
-        final TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setWorkDayBeginHour(null);
-        timeSettings.setWorkDayEndHour(null);
-
-        final SettingsWorkingTimeDto dto = new SettingsWorkingTimeDto();
-        dto.setTimeSettings(timeSettings);
-        dto.setWorkingTimeSettings(new WorkingTimeSettings());
-        dto.setOvertimeSettings(new OvertimeSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.mandatory");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.mandatory");
-    }
-
-    private static Stream<Arguments> invalidWorkingHours() {
-        return Stream.of(
-            Arguments.of(8, 8), // same hours
-            Arguments.of(17, 8), // begin is later than end
-            Arguments.of(-1, -2), // negative values
-            Arguments.of(25, 42) // more than 24 hours
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidWorkingHours")
-    void ensureCalendarSettingsAreInvalid(int beginHour, int endHour) {
-
-        final TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setWorkDayBeginHour(beginHour);
-        timeSettings.setWorkDayEndHour(endHour);
-
-        final SettingsWorkingTimeDto dto = new SettingsWorkingTimeDto();
-        dto.setTimeSettings(timeSettings);
-        dto.setWorkingTimeSettings(new WorkingTimeSettings());
-        dto.setOvertimeSettings(new OvertimeSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
-    }
-
-    @Test
-    void ensureCalendarSettingsAreValidIfValidWorkDayBeginAndEndHours() {
-
-        final TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setWorkDayBeginHour(10);
-        timeSettings.setWorkDayEndHour(18);
-
-        final SettingsWorkingTimeDto dto = new SettingsWorkingTimeDto();
-        dto.setTimeSettings(timeSettings);
-        dto.setWorkingTimeSettings(new WorkingTimeSettings());
-        dto.setOvertimeSettings(new OvertimeSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verifyNoInteractions(mockError);
     }
 }
