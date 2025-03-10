@@ -6,34 +6,28 @@ import java.time.LocalTime;
 /**
  * Time configuration for half day absences (start and end time for morning resp. noon).
  */
-public class CalendarAbsenceConfiguration {
+public record CalendarAbsenceConfiguration(TimeSettings timeSettings) {
 
-    private final TimeSettings timeSettings;
-
-    public CalendarAbsenceConfiguration(TimeSettings timeSettings) {
-        this.timeSettings = timeSettings;
-    }
-
-    LocalTime getMorningStartTime() {
+    LocalTime morningStartTime() {
         return LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
     }
 
-    LocalTime getMorningEndTime() {
-        return getNoonStartTime();
+    LocalTime morningEndTime() {
+        return noonStartTime();
     }
 
-    LocalTime getNoonStartTime() {
+    LocalTime noonStartTime() {
         final LocalTime startTime = LocalTime.of(timeSettings.getWorkDayBeginHour(), timeSettings.getWorkDayBeginMinute());
         final LocalTime endTime = LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
         final Duration duration = Duration.between(startTime, endTime).dividedBy(2);
         return startTime.plus(duration);
     }
 
-    LocalTime getNoonEndTime() {
+    LocalTime noonEndTime() {
         return LocalTime.of(timeSettings.getWorkDayEndHour(), timeSettings.getWorkDayEndMinute());
     }
 
-    String getTimeZoneId() {
+    String timeZoneId() {
         return timeSettings.getTimeZoneId();
     }
 }

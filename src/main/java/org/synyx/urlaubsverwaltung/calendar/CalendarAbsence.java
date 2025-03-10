@@ -26,8 +26,8 @@ public class CalendarAbsence {
         this.person = person;
         this.calendarAbsenceType = calendarAbsenceType;
 
-        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
-        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodStartDate = period.startDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
+        final ZonedDateTime periodEndDate = period.endDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.timeZoneId()));
 
         switch (period.dayLength()) {
             case FULL -> {
@@ -36,13 +36,13 @@ public class CalendarAbsence {
                 this.isAllDay = true;
             }
             case MORNING -> {
-                this.startDate = periodStartDate.with(absenceTimeConfiguration.getMorningStartTime());
-                this.endDate = periodEndDate.with(absenceTimeConfiguration.getMorningEndTime());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.morningStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.morningEndTime());
                 this.isAllDay = false;
             }
             case NOON -> {
-                this.startDate = periodStartDate.with(absenceTimeConfiguration.getNoonStartTime());
-                this.endDate = periodEndDate.with(absenceTimeConfiguration.getNoonEndTime());
+                this.startDate = periodStartDate.with(absenceTimeConfiguration.noonStartTime());
+                this.endDate = periodEndDate.with(absenceTimeConfiguration.noonEndTime());
                 this.isAllDay = false;
             }
             default -> throw new IllegalArgumentException("Invalid day length!");

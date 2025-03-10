@@ -26,24 +26,24 @@ class AbsenceTimeConfigurationTest {
     @Test
     void ensureCorrectMorningStartTime() {
         final CalendarAbsenceConfiguration timeConfiguration = new CalendarAbsenceConfiguration(timeSettings);
-        assertThat(timeConfiguration.getMorningStartTime()).isEqualTo(LocalTime.of(8,15));
+        assertThat(timeConfiguration.morningStartTime()).isEqualTo(LocalTime.of(8,15));
     }
 
     @Test
     void ensureCorrectMorningEndTime() {
         final CalendarAbsenceConfiguration timeConfiguration = new CalendarAbsenceConfiguration(timeSettings);
-        assertThat(timeConfiguration.getMorningEndTime()).isEqualTo(LocalTime.of(12,22, 30));
+        assertThat(timeConfiguration.morningEndTime()).isEqualTo(LocalTime.of(12,22, 30));
     }
 
     @Test
     void ensureCorrectNoonStartTime() {
         final CalendarAbsenceConfiguration timeConfiguration = new CalendarAbsenceConfiguration(timeSettings);
-        assertThat(timeConfiguration.getNoonStartTime()).isEqualTo(LocalTime.of(12,22, 30));
+        assertThat(timeConfiguration.noonStartTime()).isEqualTo(LocalTime.of(12,22, 30));
     }
 
     @Test
     void ensureCorrectNoonEndTime() {
         final CalendarAbsenceConfiguration timeConfiguration = new CalendarAbsenceConfiguration(timeSettings);
-        assertThat(timeConfiguration.getNoonEndTime()).isEqualTo(LocalTime.of(16,30));
+        assertThat(timeConfiguration.noonEndTime()).isEqualTo(LocalTime.of(16,30));
     }
 }
