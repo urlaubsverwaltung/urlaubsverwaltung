@@ -17,11 +17,11 @@ public class CalendarAbsence {
     private final boolean isAllDay;
     private final CalendarAbsenceType calendarAbsenceType;
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration) {
         this(person, period, absenceTimeConfiguration, DEFAULT);
     }
 
-    public CalendarAbsence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
+    public CalendarAbsence(Person person, Period period, CalendarAbsenceConfiguration absenceTimeConfiguration, CalendarAbsenceType calendarAbsenceType) {
 
         this.person = person;
         this.calendarAbsenceType = calendarAbsenceType;

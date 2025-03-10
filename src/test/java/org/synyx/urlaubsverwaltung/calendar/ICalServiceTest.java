@@ -416,7 +416,7 @@ class ICalServiceTest {
         timeSettings.setTimeZoneId(timeZoneId);
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
+        final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(timeSettings);
 
         final Period period = new Period(start, end, length);
         return new CalendarAbsence(person, period, timeConfig, absenceType);

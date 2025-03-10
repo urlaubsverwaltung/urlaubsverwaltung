@@ -13,8 +13,8 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationDeletedEve
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRejectedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRevokedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
-import org.synyx.urlaubsverwaltung.calendar.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
@@ -192,7 +192,7 @@ class CalendarSyncService {
         return calendarSettingsService.getCalendarSettings();
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        return new AbsenceTimeConfiguration(settingsService.getSettings().getTimeSettings());
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
+        return new CalendarAbsenceConfiguration(settingsService.getSettings().getTimeSettings());
     }
 }

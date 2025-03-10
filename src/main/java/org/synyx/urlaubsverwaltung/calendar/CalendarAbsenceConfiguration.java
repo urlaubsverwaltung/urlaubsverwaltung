@@ -6,11 +6,11 @@ import java.time.LocalTime;
 /**
  * Time configuration for half day absences (start and end time for morning resp. noon).
  */
-public class AbsenceTimeConfiguration {
+public class CalendarAbsenceConfiguration {
 
     private final TimeSettings timeSettings;
 
-    public AbsenceTimeConfiguration(TimeSettings timeSettings) {
+    public CalendarAbsenceConfiguration(TimeSettings timeSettings) {
         this.timeSettings = timeSettings;
     }
 

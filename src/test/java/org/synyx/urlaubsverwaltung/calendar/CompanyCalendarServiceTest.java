@@ -234,7 +234,7 @@ class CompanyCalendarServiceTest {
 
     private CalendarAbsence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
+        final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(new TimeSettings());
 
         return new CalendarAbsence(person, period, timeConfig);
     }

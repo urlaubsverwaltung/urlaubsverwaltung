@@ -8,9 +8,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
-import org.synyx.urlaubsverwaltung.calendar.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -44,7 +44,7 @@ class GoogleCalendarSyncProviderServiceTest {
         final Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         final Period period = new Period(LocalDate.parse("2022-08-25"), LocalDate.parse("2022-08-26"), FULL);
 
-        final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(new TimeSettings());
+        final CalendarAbsenceConfiguration config = new CalendarAbsenceConfiguration(new TimeSettings());
         final CalendarAbsence absence = new CalendarAbsence(person, period, config);
 
         final Calendar calendarClient = mock(Calendar.class);
@@ -75,7 +75,7 @@ class GoogleCalendarSyncProviderServiceTest {
         final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(googleCalendarClientProvider);
 
         final Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
-        final AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(new TimeSettings());
+        final CalendarAbsenceConfiguration config = new CalendarAbsenceConfiguration(new TimeSettings());
 
         final Calendar calendarClient = mock(Calendar.class);
         when(googleCalendarClientProvider.getCalendarClient(calendarSettings.getGoogleCalendarSettings())).thenReturn(Optional.of(calendarClient));
