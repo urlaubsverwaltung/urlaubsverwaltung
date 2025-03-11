@@ -334,6 +334,8 @@ class ApplicationMailService {
     @Async
     void sendConfirmationAllowedDirectlyByApplicant(Application application, ApplicationComment comment) {
 
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, application.getPerson());
+
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
             VACATION_TYPE, application.getVacationType().getLabel(locale),
@@ -343,6 +345,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
             .withSubject("subject.application.allowedDirectly.user")
             .withTemplate("application_allowed_directly_to_applicant", modelSupplier)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToApplicant);
 
@@ -353,6 +356,7 @@ class ApplicationMailService {
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_allowed_to_colleagues", modelColleaguesSupplier)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantColleagues);
     }

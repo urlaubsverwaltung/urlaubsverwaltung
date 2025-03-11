@@ -875,10 +875,10 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         // email sent to applicant
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
-        assertThat(readPlainContent(contentUser)).isEqualTo("""
+        final MimeMessage msgUser = inboxUser[0];
+        assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgUser)).isEqualTo("""
             Hallo Lieschen Mueller,
 
             dein Abwesenheitsantrag wurde erfolgreich erstellt.
@@ -898,11 +898,15 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
                 Erstellungsdatum:    12.04.2021
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.
+            """);
+
+        final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
+        assertThat(attachmentsUser.getFirst().getName()).contains("calendar.ics");
 
         // email sent to colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        final Message contentColleague = inboxColleague[0];
+        final MimeMessage contentColleague = inboxColleague[0];
         assertThat(contentColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(contentColleague.getAllRecipients()[0]);
         assertThat(readPlainContent(contentColleague)).isEqualTo("""
@@ -915,7 +919,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.""");
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.
+            """);
+
+        final List<AttachmentResource> attachmentColleague = getAttachments(contentColleague);
+        assertThat(attachmentColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
