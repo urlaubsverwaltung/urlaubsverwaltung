@@ -3,8 +3,6 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -56,21 +54,21 @@ class CalendarAbsenceService {
     }
 
     private List<CalendarAbsence> generateAbsencesFromApplication(List<Application> applications) {
-        final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
+        final CalendarAbsenceConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
                 .map(application -> new CalendarAbsence(application.getPerson(), application.getPeriod(), config))
                 .toList();
     }
 
     private List<CalendarAbsence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
-        final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
+        final CalendarAbsenceConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
                 .map(sickNote -> new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), config))
                 .toList();
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
         final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
-        return new AbsenceTimeConfiguration(timeSettings);
+        return new CalendarAbsenceConfiguration(timeSettings);
     }
 }

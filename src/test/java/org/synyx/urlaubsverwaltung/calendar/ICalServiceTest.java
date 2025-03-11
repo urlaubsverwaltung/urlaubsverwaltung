@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -418,7 +416,7 @@ class ICalServiceTest {
         timeSettings.setTimeZoneId(timeZoneId);
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
+        final CalendarAbsenceConfiguration timeConfig = new CalendarAbsenceConfiguration(timeSettings);
 
         final Period period = new Period(start, end, length);
         return new CalendarAbsence(person, period, timeConfig, absenceType);

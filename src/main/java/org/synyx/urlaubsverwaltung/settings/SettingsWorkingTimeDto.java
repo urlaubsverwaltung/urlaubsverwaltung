@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 

@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.calendar.ICalType;
@@ -1007,9 +1006,8 @@ class ApplicationMailService {
         return iCalService.getSingleAppointment(absence, iCalType, recipient);
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
-        return new AbsenceTimeConfiguration(timeSettings);
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
+        return new CalendarAbsenceConfiguration(settingsService.getSettings().getTimeSettings());
     }
 
     private static <T, R> Function<T, R> cachedByKey(Function<T, R> function) {

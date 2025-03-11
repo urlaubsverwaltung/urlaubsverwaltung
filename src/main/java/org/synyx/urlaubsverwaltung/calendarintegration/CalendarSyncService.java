@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedTemporarilyEvent;
@@ -15,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationRejectedEv
 import org.synyx.urlaubsverwaltung.application.application.ApplicationRevokedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
@@ -192,7 +192,7 @@ class CalendarSyncService {
         return calendarSettingsService.getCalendarSettings();
     }
 
-    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        return new AbsenceTimeConfiguration(settingsService.getSettings().getTimeSettings());
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
+        return new CalendarAbsenceConfiguration(settingsService.getSettings().getTimeSettings());
     }
 }
