@@ -11,6 +11,7 @@ public final class ApplicationForLeaveStatisticsDto {
     private final String firstName;
     private final String lastName;
     private final String niceName;
+    private final String initials;
     private final String gravatarURL;
 
     private final String personnelNumber;
@@ -30,15 +31,18 @@ public final class ApplicationForLeaveStatisticsDto {
 
     private final String leftOvertimeForPeriod;
 
-    ApplicationForLeaveStatisticsDto(Long id, String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
-                                     BigDecimal totalAllowedVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> allowedVacationDays,
-                                     BigDecimal totalWaitingVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> waitingVacationDays,
-                                     BigDecimal leftVacationDaysForPeriod, BigDecimal remainingLeftVacationDaysForPeriod, BigDecimal leftVacationDays,
-                                     BigDecimal remainingLeftVacationDays, String leftOvertime, String leftOvertimeForPeriod) {
+    ApplicationForLeaveStatisticsDto(
+        Long id, String firstName, String lastName, String niceName, String initials, String gravatarURL, String personnelNumber,
+        BigDecimal totalAllowedVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> allowedVacationDays,
+        BigDecimal totalWaitingVacationDays, Map<ApplicationForLeaveStatisticsVacationTypeDto, BigDecimal> waitingVacationDays,
+        BigDecimal leftVacationDaysForPeriod, BigDecimal remainingLeftVacationDaysForPeriod, BigDecimal leftVacationDays,
+        BigDecimal remainingLeftVacationDays, String leftOvertime, String leftOvertimeForPeriod
+    ) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+        this.initials = initials;
         this.gravatarURL = gravatarURL;
         this.personnelNumber = personnelNumber;
         this.totalAllowedVacationDays = totalAllowedVacationDays;
@@ -67,6 +71,10 @@ public final class ApplicationForLeaveStatisticsDto {
 
     public String getNiceName() {
         return niceName;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String getGravatarURL() {
