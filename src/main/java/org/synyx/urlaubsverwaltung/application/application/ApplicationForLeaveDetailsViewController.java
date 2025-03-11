@@ -123,7 +123,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         @PathVariable("applicationId") Long applicationId,
         @RequestParam(value = "year", required = false) Integer requestedYear,
         @RequestParam(value = "action", required = false) String action,
-        @RequestParam(value = "shortcut", required = false) boolean shortcut,
+        @RequestParam(value = "shortcut", required = false, defaultValue = "false") boolean shortcut,
         Model model, Locale locale
     ) throws UnknownApplicationForLeaveException {
 
