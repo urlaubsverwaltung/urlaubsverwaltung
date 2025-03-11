@@ -37,8 +37,10 @@ class ApplicationForLeaveStatisticsService {
     private final VacationTypeService vacationTypeService;
 
     @Autowired
-    ApplicationForLeaveStatisticsService(PersonService personService, PersonBasedataService personBasedataService, DepartmentService departmentService,
-                                         ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder, VacationTypeService vacationTypeService) {
+    ApplicationForLeaveStatisticsService(
+        PersonService personService, PersonBasedataService personBasedataService, DepartmentService departmentService,
+        ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder, VacationTypeService vacationTypeService
+    ) {
         this.personService = personService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
@@ -98,8 +100,12 @@ class ApplicationForLeaveStatisticsService {
             return personService.getActivePersons(query);
         }
 
-        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
-        return departmentService.getManagedMembersOfPerson(person, query);
+        if (person.isDepartmentPrivileged()) {
+            final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
+            return departmentService.getManagedMembersOfPerson(person, query);
+        }
+
+        return new PageImpl<>(List.of(person), pageable, 1);
     }
 
     private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
