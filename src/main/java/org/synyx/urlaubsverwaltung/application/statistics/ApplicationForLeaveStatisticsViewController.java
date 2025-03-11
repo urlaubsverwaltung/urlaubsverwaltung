@@ -15,7 +15,6 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +49,6 @@ import static java.util.stream.Collectors.joining;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 /**
@@ -73,8 +71,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource,
-        Clock clock) {
-
+        Clock clock
+    ) {
         this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
         this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
@@ -84,7 +82,6 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         this.clock = clock;
     }
 
-    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(
         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
@@ -148,7 +145,6 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             .toList();
     }
 
-    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(
         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
