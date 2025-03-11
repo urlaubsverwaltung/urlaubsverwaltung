@@ -249,7 +249,7 @@ public class OvertimeViewController implements HasLaunchpad {
     @PostMapping("/overtime/{id}")
     public String updateOvertime(
         @PathVariable("id") Long id,
-        @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
+        @Valid @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
         Model model, RedirectAttributes redirectAttributes
     ) throws UnknownOvertimeException {
 
