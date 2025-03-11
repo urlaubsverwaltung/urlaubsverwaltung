@@ -352,7 +352,7 @@
                 <td class="tw-text-center">
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="~{fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px',personId=${statistic.id})}"
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},initials=${statistic.initials},width='60',height='60',personId=${statistic.id})}"
                       alt=""
                       src=""
                     />

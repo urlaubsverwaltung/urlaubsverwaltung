@@ -23,6 +23,7 @@ final class ApplicationForLeaveStatisticsMapper {
             statistics.getPerson().getFirstName(),
             statistics.getPerson().getLastName(),
             statistics.getPerson().getNiceName(),
+            statistics.getPerson().getInitials(),
             statistics.getPerson().getGravatarURL(),
             statistics.getPersonBasedata().map(PersonBasedata::personnelNumber).orElse(""),
             statistics.getTotalAllowedVacationDays(),
