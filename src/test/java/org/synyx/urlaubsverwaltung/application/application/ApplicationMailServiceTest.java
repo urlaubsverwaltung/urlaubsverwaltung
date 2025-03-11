@@ -698,6 +698,13 @@ class ApplicationMailServiceTest {
     @Test
     void sendConfirmationAllowedDirectly() {
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
+
         final Locale locale = JAPANESE;
         final MessageSource messageSource = mock(MessageSource.class);
         when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, locale)).thenReturn("vacation type label");
@@ -745,10 +752,14 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_allowed_directly_to_applicant");
         assertThat(mails.get(0).getTemplateModel(locale)).isEqualTo(model);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_colleagues");
         assertThat(mails.get(1).getTemplateModel(locale)).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
     @Test
