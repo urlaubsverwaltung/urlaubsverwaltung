@@ -2757,7 +2757,9 @@
     "timeSettings": {
       "timeZoneId": "Europe/Berlin",
       "workDayBeginHour": 8,
-      "workDayEndHour": 16
+      "workDayBeginMinute": 0,
+      "workDayEndHour": 16,
+      "workDayEndMinute": 0
     },
     "sickNoteSettings": {
       "maximumSickPayDays": 42,
