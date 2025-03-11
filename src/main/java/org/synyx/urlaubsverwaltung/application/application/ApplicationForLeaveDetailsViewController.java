@@ -119,12 +119,13 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     }
 
     @GetMapping("/{applicationId}")
-    public String showApplicationDetail(@PathVariable("applicationId") Long applicationId,
-                                        @RequestParam(value = "year", required = false) Integer requestedYear,
-                                        @RequestParam(value = "action", required = false) String action,
-                                        @RequestParam(value = "shortcut", required = false) boolean shortcut,
-                                        Model model, Locale locale)
-        throws UnknownApplicationForLeaveException {
+    public String showApplicationDetail(
+        @PathVariable("applicationId") Long applicationId,
+        @RequestParam(value = "year", required = false) Integer requestedYear,
+        @RequestParam(value = "action", required = false) String action,
+        @RequestParam(value = "shortcut", required = false) boolean shortcut,
+        Model model, Locale locale
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -148,10 +149,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      */
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/allow")
-    public String allowApplication(@PathVariable("applicationId") Long applicationId,
-                                   @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-                                   @RequestParam(value = "redirect", required = false) String redirectUrl,
-                                   RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+    public String allowApplication(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -203,9 +206,11 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      */
     @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping("/{applicationId}/refer")
-    public String referApplication(@PathVariable("applicationId") Long applicationId,
-                                   @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
-        throws UnknownApplicationForLeaveException, UnknownPersonException {
+    public String referApplication(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("referredPerson") ReferredPerson referredPerson,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException, UnknownPersonException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -233,10 +238,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")
-    public String rejectApplication(@PathVariable("applicationId") Long applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-                                    @RequestParam(value = "redirect", required = false) String redirectUrl,
-                                    RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+    public String rejectApplication(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        @RequestParam(value = "redirect", required = false) String redirectUrl,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -281,10 +288,11 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      * Cancelling an application for leave on behalf for someone is allowed only for Office.
      */
     @PostMapping("/{applicationId}/cancel")
-    public String cancelApplication(@PathVariable("applicationId") Long applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-                                    RedirectAttributes redirectAttributes)
-        throws UnknownApplicationForLeaveException {
+    public String cancelApplication(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -328,10 +336,11 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      * Cancel the cancellation request of an application for leave.
      */
     @PostMapping("/{applicationId}/decline-cancellation-request")
-    public String declineCancellationRequestApplication(@PathVariable("applicationId") Long applicationId,
-                                                        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-                                                        RedirectAttributes redirectAttributes)
-        throws UnknownApplicationForLeaveException {
+    public String declineCancellationRequestApplication(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
@@ -363,8 +372,10 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
      * Remind the bosses about the decision of an application for leave.
      */
     @PostMapping("/{applicationId}/remind")
-    public String remindBoss(@PathVariable("applicationId") Long applicationId,
-                             RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+    public String remindBoss(
+        @PathVariable("applicationId") Long applicationId,
+        RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
