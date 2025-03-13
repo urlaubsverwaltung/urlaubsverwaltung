@@ -18,7 +18,10 @@ class VacationDaysReminderConfiguration implements SchedulingConfigurer {
     private final TaskScheduler taskScheduler;
 
     @Autowired
-    VacationDaysReminderConfiguration(AccountProperties accountProperties, VacationDaysReminderService vacationDaysReminderService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
+    VacationDaysReminderConfiguration(
+        AccountProperties accountProperties, VacationDaysReminderService vacationDaysReminderService,
+        ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
+    ) {
         this.accountProperties = accountProperties;
         this.vacationDaysReminderService = vacationDaysReminderService;
         this.scheduleLocking = scheduleLocking;

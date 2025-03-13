@@ -32,8 +32,10 @@ public class VacationDaysReminderService {
     private final Clock clock;
 
     @Autowired
-    VacationDaysReminderService(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
-                                MailService mailService, Clock clock) {
+    VacationDaysReminderService(
+        PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
+        MailService mailService, Clock clock
+    ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
