@@ -138,7 +138,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
-            Du hast noch 10 Tage Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen.
+            Du hast noch 10 Tage Resturlaub aus dem Vorjahr. Bitte plane deinen Resturlaub rechtzeitig, da dieser bis zum 31.03.2022 genommen werden muss und am 01.04.2022 verfällt.
 
             Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }

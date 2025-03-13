@@ -201,12 +201,14 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.remindForRemainingVacationDays");
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_remind_remaining_vacation_days");
-        assertThat(capturedMail.getTemplateModel(GERMAN)).contains(
-            entry("recipientNiceName", "Marlene Muster"),
-            entry("personId", 42L),
-            entry("remainingVacationDays", TEN),
-            entry("dayBeforeExpiryDate", LocalDate.of(2022, 3, 31))
-        );
+        assertThat(capturedMail.getTemplateModel(GERMAN))
+            .containsOnly(
+                entry("recipientNiceName", "Marlene Muster"),
+                entry("personId", 42L),
+                entry("remainingVacationDays", TEN),
+                entry("dayBeforeExpiryDate", LocalDate.of(2022, 3, 31)),
+                entry("expiryDate", LocalDate.of(2022, 4, 1))
+            );
     }
 
     @Test
