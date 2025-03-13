@@ -15,6 +15,7 @@ import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
@@ -45,6 +46,7 @@ public class VacationDaysReminderService {
 
     /**
      * Reminds for vacation days left for <b>current year</b>.
+     * This mail will be sent by default in october
      */
     public void remindForCurrentlyLeftVacationDays() {
         final Year year = Year.now(clock);
@@ -52,11 +54,14 @@ public class VacationDaysReminderService {
 
         accountService.getHolidaysAccount(year.getValue(), persons).stream()
             .filter(Account::doRemainingVacationDaysExpire)
-            .forEach(account -> {
-                final BigDecimal vacationDaysLeft = vacationDaysService.getTotalLeftVacationDays(account);
+            .forEach(holidayAccountThisYear -> {
+                final BigDecimal vacationDaysLeft = vacationDaysService.getTotalLeftVacationDays(holidayAccountThisYear);
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    sendReminderForCurrentlyLeftVacationDays(account.getPerson(), vacationDaysLeft, year.plusYears(1));
-                    LOG.info("Reminded person with id {} for {} currently left vacation days", account.getPerson().getId(), vacationDaysLeft);
+                    final Year nextYear = year.plusYears(1);
+                    final Optional<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(nextYear.getValue(), holidayAccountThisYear.getPerson());
+                    final LocalDate expiryDate = holidaysAccountsNextYear.orElse(holidayAccountThisYear).getExpiryDate().withYear(nextYear.getValue());
+                    sendReminderForCurrentlyLeftVacationDays(holidayAccountThisYear.getPerson(), vacationDaysLeft, expiryDate);
+                    LOG.info("Reminded person with id {} for {} currently left vacation days", holidayAccountThisYear.getPerson().getId(), vacationDaysLeft);
                 }
             });
     }
@@ -136,10 +141,10 @@ public class VacationDaysReminderService {
         }
     }
 
-    private void sendReminderForCurrentlyLeftVacationDays(Person person, BigDecimal vacationDaysLeft, Year nextYear) {
+    private void sendReminderForCurrentlyLeftVacationDays(Person person, BigDecimal vacationDaysLeft, LocalDate expiryDateNextYear) {
         final Map<String, Object> model = new HashMap<>();
         model.put("vacationDaysLeft", vacationDaysLeft);
-        model.put("nextYear", nextYear.getValue());
+        model.put("expiryDateNextYear", expiryDateNextYear);
 
         sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "account_cron_currently_left_vacation_days", model);
     }
