@@ -70,9 +70,9 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
 
         final Account accountNextYear = new Account();
         accountNextYear.setPerson(person);
-        accountNextYear.setExpiryDateLocally(LocalDate.of(2023, 4, 1));
+        accountNextYear.setExpiryDateLocally(LocalDate.of(2023, 4, 10));
         accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
-        when(accountService.getHolidaysAccount(2023, accountNextYear.getPerson())).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(accountNextYear));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -91,13 +91,13 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
-            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 01.04.2023 verfällt.
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 10.04.2023 verfällt.
 
             Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }
 
     @Test
-    void ensureReminderForLeftVacationDaysWithoutHolidayAccountForNextYearAvailable() throws MessagingException, IOException {
+    void ensureReminderForLeftVacationDaysWithoutHolidayAccountForNextYearAvailableSoTakeTheExpireDayFromThisYearAccountWithNextYear() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
@@ -112,7 +112,8 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
-        when(accountService.getHolidaysAccount(2023, account.getPerson())).thenReturn(Optional.empty());
+
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.empty());
 
         sut.remindForCurrentlyLeftVacationDays();
 

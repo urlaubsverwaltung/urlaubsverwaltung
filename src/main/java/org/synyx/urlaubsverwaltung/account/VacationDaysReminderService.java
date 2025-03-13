@@ -50,18 +50,21 @@ public class VacationDaysReminderService {
      */
     public void remindForCurrentlyLeftVacationDays() {
         final Year year = Year.now(clock);
+        final Year nextYear = year.plusYears(1);
         final List<Person> persons = personService.getActivePersons();
 
-        accountService.getHolidaysAccount(year.getValue(), persons).stream()
-            .filter(Account::doRemainingVacationDaysExpire)
+        accountService.getHolidaysAccount(year.getValue(), persons)
             .forEach(holidayAccountThisYear -> {
                 final BigDecimal vacationDaysLeft = vacationDaysService.getTotalLeftVacationDays(holidayAccountThisYear);
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    final Year nextYear = year.plusYears(1);
+
                     final Optional<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(nextYear.getValue(), holidayAccountThisYear.getPerson());
-                    final LocalDate expiryDate = holidaysAccountsNextYear.orElse(holidayAccountThisYear).getExpiryDate().withYear(nextYear.getValue());
-                    sendReminderForCurrentlyLeftVacationDays(holidayAccountThisYear.getPerson(), vacationDaysLeft, expiryDate);
-                    LOG.info("Reminded person with id {} for {} currently left vacation days", holidayAccountThisYear.getPerson().getId(), vacationDaysLeft);
+                    final Account holidayAccountNextWithFallbackThisYear = holidaysAccountsNextYear.orElse(holidayAccountThisYear);
+                    if (holidayAccountNextWithFallbackThisYear.doRemainingVacationDaysExpire()) {
+                        final LocalDate expiryDate = holidayAccountNextWithFallbackThisYear.getExpiryDate().withYear(nextYear.getValue());
+                        sendReminderForCurrentlyLeftVacationDays(holidayAccountNextWithFallbackThisYear.getPerson(), vacationDaysLeft, expiryDate);
+                        LOG.info("Reminded person with id {} for {} currently left vacation days", holidayAccountNextWithFallbackThisYear.getPerson().getId(), vacationDaysLeft);
+                    }
                 }
             });
     }
