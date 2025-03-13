@@ -69,9 +69,11 @@ public class PersonsViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public PersonsViewController(PersonService personService, AccountService accountService,
-                                 VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                 PersonBasedataService personBasedataService, Clock clock) {
+    public PersonsViewController(
+        PersonService personService, AccountService accountService,
+        VacationDaysService vacationDaysService, DepartmentService departmentService,
+        PersonBasedataService personBasedataService, Clock clock
+    ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -82,12 +84,14 @@ public class PersonsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping("/person")
-    public String showPerson(@RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
-                             @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
-                             @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
-                             @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                             @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
-                             Model model) throws UnknownDepartmentException {
+    public String showPerson(
+        @RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
+        @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
+        @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+        Model model
+    ) throws UnknownDepartmentException {
 
         final int currentYear = Year.now(clock).getValue();
         final Integer selectedYear = requestedYear.orElse(currentYear);
@@ -112,10 +116,14 @@ public class PersonsViewController implements HasLaunchpad {
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
         Page<Person> personPage = null;
 
-        if (requestedDepartmentId.isPresent()) {
+        final boolean departmentPresent = requestedDepartmentId.isPresent();
+        Department department = null;
+        if (departmentPresent) {
             final Long departmentId = requestedDepartmentId.get();
-            final Department department = departmentService.getDepartmentById(departmentId)
+            department = departmentService.getDepartmentById(departmentId)
                 .orElseThrow(() -> new UnknownDepartmentException(departmentId));
+
+            model.addAttribute("isDepartmentPresent", departmentPresent);
 
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
@@ -131,7 +139,7 @@ public class PersonsViewController implements HasLaunchpad {
                 : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
-        final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now);
+        final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now, departmentPresent, department);
         final boolean showPersonnelNumberColumn = personDtoPage.getContent().stream()
             .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
 
@@ -209,13 +217,13 @@ public class PersonsViewController implements HasLaunchpad {
             .toList();
     }
 
-    private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {
+    private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now, boolean departmentSelected, Department department) {
 
         final List<PersonDto> personDtos = new ArrayList<>(personPage.getContent().size());
         final List<Person> persons = personPage.stream().toList();
 
         final List<Account> holidaysAccounts = accountService.getHolidaysAccount(year, persons);
-        final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year+1, persons);
+        final List<Account> holidaysAccountsNextYear = accountService.getHolidaysAccount(year + 1, persons);
 
         final Map<Account, HolidayAccountVacationDays> accountHolidayAccountVacationDaysMap = vacationDaysService.getVacationDaysLeft(holidaysAccounts, Year.of(year), holidaysAccountsNextYear);
 
@@ -259,6 +267,11 @@ public class PersonsViewController implements HasLaunchpad {
 
             personBasedataService.getBasedataByPersonId(person.getId())
                 .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.personnelNumber()));
+
+            if (departmentSelected) {
+                personDtoBuilder.isDepartmentHead(department.getDepartmentHeads().contains(person));
+                personDtoBuilder.isSecondStageAuthority(department.getSecondStageAuthorities().contains(person));
+            }
 
             final PersonDto personDto = personDtoBuilder.build();
 
