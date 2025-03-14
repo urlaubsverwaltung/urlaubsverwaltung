@@ -12,7 +12,6 @@ import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -24,7 +23,6 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEve
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -210,7 +208,6 @@ public class ApplicationEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(ApplicationAllowedEvent event) {
         getAbsencePeriods(event.application())
             .ifPresent(absencePeriod -> {
@@ -220,7 +217,6 @@ public class ApplicationEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(ApplicationUpdatedEvent event) {
         getAbsencePeriods(event.application())
             .ifPresent(absencePeriod -> {
@@ -230,7 +226,6 @@ public class ApplicationEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(ApplicationCancelledEvent event) {
         getClosedAbsencePeriods(event.application())
             .ifPresent(absencePeriod -> {
@@ -240,7 +235,6 @@ public class ApplicationEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(ApplicationCreatedFromSickNoteEvent event) {
         getAbsencePeriods(event.application())
             .ifPresent(absencePeriod -> {

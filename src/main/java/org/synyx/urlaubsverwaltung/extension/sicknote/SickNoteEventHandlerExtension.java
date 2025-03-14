@@ -12,7 +12,6 @@ import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
@@ -221,7 +220,6 @@ public class SickNoteEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(SickNoteCancelledEvent event) {
         getClosedAbsencePeriods(event.sickNote())
             .map(toSickNoteCancelledEventDTO(tenantSupplier.get(), event))
@@ -229,7 +227,6 @@ public class SickNoteEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(SickNoteCreatedEvent event) {
         getAbsencePeriods(event.sickNote())
             .map(toSickNoteCreatedEventDTO(tenantSupplier.get(), event))
@@ -237,7 +234,6 @@ public class SickNoteEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(SickNoteUpdatedEvent event) {
         getAbsencePeriods(event.sickNote())
             .map(toSickNoteUpdatedEventDTO(tenantSupplier.get(), event))
@@ -245,7 +241,6 @@ public class SickNoteEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(SickNoteAcceptedEvent event) {
         getAbsencePeriods(event.sickNote())
             .map(toSickNoteAcceptedEventDTO(tenantSupplier.get(), event))
@@ -253,7 +248,6 @@ public class SickNoteEventHandlerExtension {
     }
 
     @EventListener
-    @Async
     void on(SickNoteToApplicationConvertedEvent event) {
         getAbsencePeriods(event.sickNote())
             .map(toSickNoteConvertedEventDTO(tenantSupplier.get(), event))
