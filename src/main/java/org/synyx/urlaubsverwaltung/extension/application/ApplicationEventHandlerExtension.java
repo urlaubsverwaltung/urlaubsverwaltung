@@ -5,6 +5,7 @@ import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCan
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCreatedFromSickNoteEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPersonDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationUpdatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.VacationTypeDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
@@ -19,9 +20,11 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCreatedFromSickNoteEvent;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -135,6 +138,36 @@ public class ApplicationEventHandlerExtension {
         };
     }
 
+    private static Function<AbsencePeriod, ApplicationUpdatedEventDTO> toApplicationUpdatedEventDTO(String tenantId, ApplicationUpdatedEvent event) {
+        return absencePeriod -> {
+            final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+            final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+            final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+            final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
+            final ApplicationPeriodDTO period = toPeriod(event.application());
+            final String status = toStatus(event.application());
+            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+
+            return ApplicationUpdatedEventDTO.builder()
+                .id(event.id())
+                .sourceId(event.application().getId())
+                .createdAt(event.createdAt())
+                .tenantId(tenantId)
+                .person(person)
+                .appliedBy(appliedBy)
+                .updatedBy(allowedBy)
+                .twoStageApproval(event.application().isTwoStageApproval())
+                .period(period)
+                .vacationType(vacationType)
+                .reason(event.application().getReason())
+                .status(status)
+                .teamInformed(event.application().isTeamInformed())
+                .absentWorkingDays(absentWorkingDays)
+                .build();
+        };
+    }
+
+
     private static Function<AbsencePeriod, ApplicationCancelledEventDTO> toApplicationCancelledEventDTO(String tenantId, ApplicationCancelledEvent event) {
         return absencePeriod -> {
             final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
@@ -182,6 +215,16 @@ public class ApplicationEventHandlerExtension {
         getAbsencePeriods(event.application())
             .ifPresent(absencePeriod -> {
                 final ApplicationAllowedEventDTO dto = toApplicationAllowedEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
+                applicationEventPublisher.publishEvent(dto);
+            });
+    }
+
+    @EventListener
+    @Async
+    void on(ApplicationUpdatedEvent event) {
+        getAbsencePeriods(event.application())
+            .ifPresent(absencePeriod -> {
+                final ApplicationUpdatedEventDTO dto = toApplicationUpdatedEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
                 applicationEventPublisher.publishEvent(dto);
             });
     }
