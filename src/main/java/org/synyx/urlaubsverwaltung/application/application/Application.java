@@ -465,7 +465,8 @@ public class Application {
     @Override
     public String toString() {
         return "Application{" +
-            "person=" + person +
+            "id=" + id +
+            ", person=" + person +
             ", applier=" + applier +
             ", boss=" + boss +
             ", canceller=" + canceller +

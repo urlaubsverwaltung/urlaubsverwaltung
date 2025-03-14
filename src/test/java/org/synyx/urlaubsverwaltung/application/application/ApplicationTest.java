@@ -219,7 +219,7 @@ class ApplicationTest {
         application.setTeamInformed(true);
 
         final String toString = application.toString();
-        assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
+        assertThat(toString).isEqualTo("Application{id=1, person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
             "canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, startTime=12:15, endDate=+999999999-12-31, " +
             "endTime=11:15, vacationType=ProvidedVacationType{messageKey='null', id=1, active=false, category=HOLIDAY, " +
             "requiresApprovalToApply=false, requiresApprovalToCancel=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
