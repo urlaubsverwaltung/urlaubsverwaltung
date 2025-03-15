@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
@@ -250,8 +252,9 @@ class OvertimeFormValidatorTest {
         verifyNoInteractions(errors);
     }
 
-    @Test
-    void ensureOvertimeReductionIsAllowedWhenFeatureIsEnabled() {
+    @ParameterizedTest
+    @CsvSource({"1, 30, true", "-1, -30, false", "0, -30, false", "-1, 0, false"})
+    void ensureOvertimeReductionIsAllowedWhenFeatureIsEnabled(long hour, int minutes, boolean isReduce) {
 
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(true);
@@ -261,17 +264,18 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any())).thenReturn(Duration.ofHours(42));
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(BigDecimal.TEN);
-        overtimeForm.setMinutes(30);
-        overtimeForm.setReduce(true);
+        overtimeForm.setHours(BigDecimal.valueOf(hour));
+        overtimeForm.setMinutes(minutes);
+        overtimeForm.setReduce(isReduce);
 
         sut.validate(overtimeForm, errors);
 
         verifyNoInteractions(errors);
     }
 
-    @Test
-    void ensureOvertimeReductionIsNotAllowedWhenFeatureIsDisabled() {
+    @ParameterizedTest
+    @CsvSource({"1, 30, true", "-1, -30, false", "0, -30, false", "-1, 0, false"})
+    void ensureOvertimeReductionIsNotAllowedWhenFeatureIsDisabled(long hour, int minutes, boolean isReduce) {
 
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(true);
@@ -279,9 +283,9 @@ class OvertimeFormValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(BigDecimal.TEN);
-        overtimeForm.setMinutes(30);
-        overtimeForm.setReduce(true);
+        overtimeForm.setHours(BigDecimal.valueOf(hour));
+        overtimeForm.setMinutes(minutes);
+        overtimeForm.setReduce(isReduce);
 
         sut.validate(overtimeForm, errors);
 
