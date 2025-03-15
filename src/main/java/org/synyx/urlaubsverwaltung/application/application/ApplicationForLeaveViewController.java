@@ -102,7 +102,6 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        model.addAttribute("canAccessApplicationStatistics", isAllowedToAccessApplicationStatistics(signedInUser));
         model.addAttribute("canAccessCancellationRequests", isAllowedToAccessCancellationRequest(signedInUser));
         model.addAttribute("canAccessOtherApplications", isAllowedToAccessOtherApplications(signedInUser));
         model.addAttribute("canAccessSickNoteSubmissions", sickNoteSettings.getUserIsAllowedToSubmitSickNotes() && isAllowedToAccessSickNoteSubmissions(signedInUser));
@@ -152,10 +151,6 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         if (!cancellationDtoList.isEmpty()) {
             model.addAttribute("applications_cancellation_request", cancellationDtoList);
         }
-    }
-
-    private static boolean isAllowedToAccessApplicationStatistics(Person signedInUser) {
-        return signedInUser.hasAnyRole(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
     }
 
     private static boolean isAllowedToAccessCancellationRequest(Person signedInUser) {

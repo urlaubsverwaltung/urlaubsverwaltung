@@ -20,6 +20,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.departmentRoles;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
 /**
@@ -132,6 +133,11 @@ public class Person extends AbstractTenantAwareEntity {
     public boolean isPrivileged() {
         return getPermissions().stream()
             .anyMatch(role -> privilegedRoles().contains(role));
+    }
+
+    public boolean isDepartmentPrivileged() {
+        return getPermissions().stream()
+            .anyMatch(role -> departmentRoles().contains(role));
     }
 
     public Collection<MailNotification> getNotifications() {
