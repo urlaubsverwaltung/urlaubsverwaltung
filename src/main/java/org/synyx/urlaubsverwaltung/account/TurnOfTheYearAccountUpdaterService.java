@@ -21,7 +21,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-
 /**
  * Is to be scheduled every turn of the year: calculates the remaining vacation days for the new year.
  */
@@ -38,8 +37,12 @@ public class TurnOfTheYearAccountUpdaterService {
     private final Clock clock;
 
     @Autowired
-    TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                       AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
+    TurnOfTheYearAccountUpdaterService(
+        PersonService personService, AccountService accountService,
+        AccountInteractionService accountInteractionService,
+        VacationDaysReminderService vacationDaysReminderService,
+        MailService mailService, Clock clock
+    ) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;

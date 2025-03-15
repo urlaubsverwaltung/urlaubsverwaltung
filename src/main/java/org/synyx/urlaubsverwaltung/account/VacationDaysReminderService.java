@@ -32,8 +32,10 @@ public class VacationDaysReminderService {
     private final Clock clock;
 
     @Autowired
-    VacationDaysReminderService(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
-                                MailService mailService, Clock clock) {
+    VacationDaysReminderService(
+        PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
+        MailService mailService, Clock clock
+    ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -86,7 +88,7 @@ public class VacationDaysReminderService {
                         .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
                     if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
-                        sendReminderForRemainingVacationDaysNotification(account.getPerson(), remainingVacationDaysLeft, account.getExpiryDate().minusDays(1));
+                        sendReminderForRemainingVacationDaysNotification(account.getPerson(), remainingVacationDaysLeft, account.getExpiryDate().minusDays(1), account.getExpiryDate());
                         LOG.info("Reminded person with id {} for {} remaining vacation days in year {}.", account.getPerson().getId(), remainingVacationDaysLeft, year);
                     }
                 });
@@ -142,10 +144,11 @@ public class VacationDaysReminderService {
         sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "account_cron_currently_left_vacation_days", model);
     }
 
-    private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, LocalDate dayBeforeExpiryDate) {
+    private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, LocalDate dayBeforeExpiryDate, LocalDate expiryDate) {
         final Map<String, Object> model = new HashMap<>();
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("dayBeforeExpiryDate", dayBeforeExpiryDate);
+        model.put("expiryDate", expiryDate);
 
         sendMail(person, "subject.account.remindForRemainingVacationDays", "account_cron_remind_remaining_vacation_days", model);
     }

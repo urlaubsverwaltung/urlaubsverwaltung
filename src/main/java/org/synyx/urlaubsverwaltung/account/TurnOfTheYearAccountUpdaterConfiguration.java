@@ -18,7 +18,10 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
     private final TaskScheduler taskScheduler;
 
     @Autowired
-    TurnOfTheYearAccountUpdaterConfiguration(AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler) {
+    TurnOfTheYearAccountUpdaterConfiguration(
+        AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService,
+        ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
+    ) {
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
         this.scheduleLocking = scheduleLocking;
