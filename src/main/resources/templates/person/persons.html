@@ -216,6 +216,8 @@
                   ></th>
                   <th scope="col" th:text="#{person.data.firstName}"></th>
                   <th scope="col" th:text="#{person.data.lastName}"></th>
+                  <th th:if="${isDepartmentPresent}" scope="col"></th>
+                  <!-- department roles-->
                   <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
                   <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
                   <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.remaining}"></th>
@@ -258,6 +260,22 @@
                       class="icon-link print:no-link"
                       data-turbo="false"
                     ></a>
+                  </td>
+                  <td th:if="${isDepartmentPresent}" class="is-centered">
+                    <div
+                      th:if="${person.isDepartmentHead}"
+                      th:text="DepartmentHead"
+                      class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                    >
+                      DepartmentHead
+                    </div>
+                    <div
+                      th:if="${person.isSecondStageAuthority}"
+                      th:text="SecondStageAuthority"
+                      class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                    >
+                      SecondStageAuthority
+                    </div>
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementYear != null}">
