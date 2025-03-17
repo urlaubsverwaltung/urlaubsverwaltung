@@ -258,8 +258,11 @@
             <tr>
               <td th:text="#{absence.period.duration}"></td>
               <td>
-                <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
-                <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
+                <div>
+                  <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
+                  <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
+                </div>
+                <span th:text="#{sicknote.data.calendar.days(${sickNote.calendarDays})}"></span>
               </td>
             </tr>
             <tr>
