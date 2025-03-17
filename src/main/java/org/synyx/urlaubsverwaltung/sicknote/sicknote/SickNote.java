@@ -29,11 +29,12 @@ public class SickNote {
     private final SickNoteStatus status;
     private final WorkingTimeCalendar workingTimeCalendar;
 
-    private SickNote(Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
-                     LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
-                     LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
-                     WorkingTimeCalendar workingTimeCalendar) {
-
+    private SickNote(
+        Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
+        LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
+        LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
+        WorkingTimeCalendar workingTimeCalendar
+    ) {
         this.id = id;
         this.person = person;
         this.applier = applier;
