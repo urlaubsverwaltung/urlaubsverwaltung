@@ -285,6 +285,14 @@
                 </th:block>
               </td>
             </tr>
+            <tr th:if="${doesSickPayDaysEnd}">
+              <td th:text="#{sicknote.data.sick_pay_days.short}"></td>
+              <td>
+                <span
+                  th:text="#{sicknote.data.sick_pay_days(${numberSickPayDaysSinceEnd}, ${#temporals.format(sickPayDaysEndDate, 'E, dd.MM.yyyy')})}"
+                ></span>
+              </td>
+            </tr>
           </tbody>
         </table>
         <div th:if="${sickNotePreviewCurrent != null}" class="tw-mt-8">

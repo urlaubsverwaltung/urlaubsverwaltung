@@ -37,6 +37,8 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.time.Clock;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -734,18 +736,27 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForSickNoteOwner() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person somePerson = new Person();
         when(personService.getSignedInUser()).thenReturn(somePerson);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(somePerson).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(somePerson).build()));
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
 
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleOffice() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person officePerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(officePerson);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20))
+            .person(new Person()).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
@@ -765,6 +776,8 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleBossAndSickNoteView() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person boss = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         boss.setId(1L);
@@ -773,13 +786,17 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
     }
 
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHeadAndSickNoteView() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
@@ -789,7 +806,9 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -797,6 +816,8 @@ class SickNoteViewControllerTest {
 
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHead() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
@@ -806,7 +827,9 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2L);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -831,12 +854,16 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthority() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
         secondStageAuthority.setId(1L);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
         person.setId(2L);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -845,12 +872,16 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthorityAndSickNoteView() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW);
         secondStageAuthority.setId(1L);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
         person.setId(2L);
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/15")).andExpect(status().isOk());
@@ -875,11 +906,9 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsNotAccessibleForOtherPersonIfNotRoleOffice() {
 
-        final int somePersonId = 1;
         when(personService.getSignedInUser()).thenReturn(personWithId(1));
 
-        final int anotherPersonId = 2;
-        Person somePerson = personWithId(2);
+        final Person somePerson = personWithId(2);
         when(sickNoteService.getById(15L))
             .thenReturn(Optional.of(SickNote.builder().person(somePerson).build()));
 
@@ -889,12 +918,52 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsProvidesCorrectModelAttributesAndView() throws Exception {
+    void ensureGetSickNoteDetailsProvidesCorrectModelAttributesForSickPay() throws Exception {
+
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMaximumSickPayDays(42);
+
+        final Settings settings = new Settings();
+        settings.setSickNoteSettings(sickNoteSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final Person person = new Person();
         final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 1, 1))
+            .endDate(LocalDate.of(2019, 2, 24))
+            .person(person)
+            .status(ACTIVE)
+            .build();
+
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+
+        final Department department = new Department();
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+
+        final LocalDate sickPayDaysEndDate = sickNote.getStartDate().plusDays(sickNoteSettings.getMaximumSickPayDays()).minusDays(1);
+
+        perform(get("/web/sicknote/15"))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
+            .andExpect(model().attribute("sickPayDaysEndDate", LocalDate.of(2019, 2, 11)))
+            .andExpect(model().attribute("doesSickPayDaysEnd", true))
+            .andExpect(model().attribute("numberSickPayDaysSinceEnd", ChronoUnit.DAYS.between(sickPayDaysEndDate, LocalDate.now()) + 1))
+            .andExpect(view().name("sicknote/sick_note_detail"));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsProvidesCorrectModelAttributesAndView() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final Person person = new Person();
+        final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20))
             .person(person)
             .status(ACTIVE)
             .build();
@@ -918,8 +987,12 @@ class SickNoteViewControllerTest {
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
     void ensureGetSickNoteDetailsCanEditSickNotesWithRole(Role role) throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         when(personService.getSignedInUser()).thenReturn(personWithRole(role, SICK_NOTE_VIEW, SICK_NOTE_EDIT));
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))
@@ -930,11 +1003,16 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanEditSickNotesDepartmentHead() throws Exception {
 
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person departmentHead = personWithRole(DEPARTMENT_HEAD, SICK_NOTE_VIEW, SICK_NOTE_EDIT);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final Person person = new Person();
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
@@ -963,11 +1041,15 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanEditSickNotesSecondStageAuthority() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW, SICK_NOTE_EDIT);
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final Person person = new Person();
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
@@ -996,8 +1078,11 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanConvertSickNotes() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))
@@ -1008,8 +1093,12 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanDeleteSickNotes() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))
@@ -1020,8 +1109,11 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanCommentSickNotes() throws Exception {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder()
+            .startDate(LocalDate.of(2025,2, 10))
+            .endDate(LocalDate.of(2025,2, 20)).person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/15"))

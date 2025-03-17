@@ -43,6 +43,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -153,6 +154,12 @@ class SickNoteViewController implements HasLaunchpad {
 
             model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
+
+            final Integer maximumSickPayDays = settingsService.getSettings().getSickNoteSettings().getMaximumSickPayDays();
+            final LocalDate sickPayDaysEndDate = sickNote.getStartDate().plusDays(maximumSickPayDays).minusDays(1);
+            model.addAttribute("sickPayDaysEndDate", sickPayDaysEndDate);
+            model.addAttribute("doesSickPayDaysEnd", !sickNote.getEndDate().isBefore(sickNote.getStartDate().plusDays(maximumSickPayDays)));
+            model.addAttribute("numberSickPayDaysSinceEnd", ChronoUnit.DAYS.between(sickPayDaysEndDate, LocalDate.now(clock)) + 1);
 
             sickNoteExtensionService.findSubmittedExtensionOfSickNote(sickNote)
                 .ifPresentOrElse(
