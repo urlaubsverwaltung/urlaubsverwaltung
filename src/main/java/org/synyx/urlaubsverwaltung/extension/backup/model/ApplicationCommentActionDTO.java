@@ -13,6 +13,7 @@ public enum ApplicationCommentActionDTO {
     CANCELLED_DIRECTLY,
     CANCEL_REQUESTED,
     CANCEL_REQUESTED_DECLINED,
+    COMMENTED,
     REVOKED,
     REFERRED,
     EDITED;
