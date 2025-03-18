@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
@@ -54,6 +55,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCommentApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToDeclineCancellationRequest;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToReferApplication;
@@ -402,6 +404,39 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'APPLICATION_ADD')")
+    @PostMapping("/{applicationId}/comment")
+    public String addComment(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
+
+        final Application application = applicationService.getApplicationById(applicationId)
+            .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
+
+        final Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
+
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        final boolean allowedToCommentApplication = isAllowedToCommentApplication(signedInUser, isDepartmentHead, isSecondStageAuthority);
+        if (!allowedToCommentApplication) {
+            throw new AccessDeniedException(format(
+                "User '%s' has not the correct permissions to comment the application for leave of user '%s'",
+                signedInUser.getId(), application.getPerson().getId()));
+        }
+
+        commentValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
+            return "redirect:/web/application/" + application.getId();
+        }
+
+        commentService.create(application, ApplicationCommentAction.COMMENTED, Optional.ofNullable(comment.getText()), signedInUser);
+
+        return "redirect:/web/application/" + application.getId();
+    }
+
     private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Locale locale, Person signedInUser) {
 
         // signed in user
@@ -477,6 +512,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             model.addAttribute("availablePersonsToRefer", getPossibleManagersToRefer(application.getPerson(), signedInUser, application));
             model.addAttribute("referredPerson", new ReferredPerson());
         }
+        model.addAttribute("isAllowedToCommentApplication", isAllowedToCommentApplication(signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 
         model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
         model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
