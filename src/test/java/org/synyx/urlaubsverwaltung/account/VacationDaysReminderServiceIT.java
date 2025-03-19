@@ -91,7 +91,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
-            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 10.04.2023 verfällt.
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommene Resturlaub im kommenden Jahr am 10.04.2023 verfällt.
 
             Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }
@@ -132,7 +132,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
-            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 01.04.2023 verfällt.
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommene Resturlaub im kommenden Jahr am 01.04.2023 verfällt.
 
             Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }
