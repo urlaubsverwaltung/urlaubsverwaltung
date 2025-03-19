@@ -25,6 +25,7 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP_IMAP;
 import static java.math.BigDecimal.TEN;
@@ -51,7 +52,7 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
     private MailService mailService;
 
     @Test
-    void ensureReminderForLeftVacationDays() throws MessagingException, IOException {
+    void ensureReminderForLeftVacationDaysWithNextYearHolidayAccountAvailable() throws MessagingException, IOException {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
@@ -66,6 +67,12 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
         when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+
+        final Account accountNextYear = new Account();
+        accountNextYear.setPerson(person);
+        accountNextYear.setExpiryDateLocally(LocalDate.of(2023, 4, 10));
+        accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(accountNextYear));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -84,7 +91,48 @@ class VacationDaysReminderServiceIT extends SingleTenantTestContainersBase {
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
-            Du hast noch 10 Tage Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen.
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 10.04.2023 verfällt.
+
+            Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
+    }
+
+    @Test
+    void ensureReminderForLeftVacationDaysWithoutHolidayAccountForNextYearAvailableSoTakeTheExpireDayFromThisYearAccountWithNextYear() throws MessagingException, IOException {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(42L);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+        when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
+        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.empty());
+
+        sut.remindForCurrentlyLeftVacationDays();
+
+        await()
+            .atMost(Duration.ofSeconds(1))
+            .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(person.getEmail())).hasSize(1));
+
+        // was email sent?
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Erinnerung an offenen Urlaubsanspruch");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        final String content = readPlainContent(msg);
+        assertThat(content).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen. Bitte denke daran, deinen Urlaub rechtzeitig zu planen, da der nicht genommenen Resturlaub im kommenden Jahr am 01.04.2023 verfällt.
 
             Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }

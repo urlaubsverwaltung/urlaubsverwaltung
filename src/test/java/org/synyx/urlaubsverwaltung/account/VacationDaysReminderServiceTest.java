@@ -18,6 +18,7 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -55,6 +56,7 @@ class VacationDaysReminderServiceTest {
         final Account account = new Account();
         account.setExpiryDateLocally(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
+        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(ZERO);
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -62,7 +64,7 @@ class VacationDaysReminderServiceTest {
     }
 
     @Test
-    void ensureNoReminderIfRemainingVacationDaysToNotExpire() {
+    void ensureNoReminderIfRemainingVacationDaysDoNotExpire() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
@@ -71,9 +73,14 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account = new Account();
-        account.setDoRemainingVacationDaysExpireGlobally(true);
+        account.setPerson(person);
         when(accountService.getHolidaysAccount(2022, List.of(person))).thenReturn(List.of(account));
-        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(ZERO);
+        when(vacationDaysService.getTotalLeftVacationDays(account)).thenReturn(TEN);
+
+        final Account accountNextYear = new Account();
+        accountNextYear.setPerson(person);
+        accountNextYear.setDoRemainingVacationDaysExpireGlobally(false);
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(accountNextYear));
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -124,7 +131,7 @@ class VacationDaysReminderServiceTest {
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42L),
             entry("vacationDaysLeft", TEN),
-            entry("nextYear", 2023)
+            entry("expiryDateNextYear", LocalDate.of(2023, 4, 1))
         );
     }
 
