@@ -56,18 +56,24 @@ public class SpecialLeaveSettingsService {
     }
 
     public void insertDefaultSpecialLeaveSettings() {
-        final long count = specialLeaveSettingsRepository.count();
-        if (count == 0) {
-            final SpecialLeaveSettingsEntity ownWedding = createSpecialLeaveEntity(1, true, "application.data.specialleave.own_wedding");
-            final SpecialLeaveSettingsEntity birthOfChild = createSpecialLeaveEntity(1, true, "application.data.specialleave.birth_of_child");
-            final SpecialLeaveSettingsEntity deathOfChild = createSpecialLeaveEntity(2, true, "application.data.specialleave.death_of_child");
-            final SpecialLeaveSettingsEntity deathOfParent = createSpecialLeaveEntity(1, true, "application.data.specialleave.death_of_parent");
-            final SpecialLeaveSettingsEntity seriousIllnessFamilyMember = createSpecialLeaveEntity(1, true, "application.data.specialleave.serious_illness_familiy_member");
-            final SpecialLeaveSettingsEntity relocationForBusinessReason = createSpecialLeaveEntity(1, true, "application.data.specialleave.relocation_for_business_reason");
 
-            final List<SpecialLeaveSettingsEntity> vacationTypes = List.of(ownWedding, birthOfChild, deathOfChild, deathOfParent, seriousIllnessFamilyMember, relocationForBusinessReason);
-            final List<SpecialLeaveSettingsEntity> savesVacationTypes = specialLeaveSettingsRepository.saveAll(vacationTypes);
-            LOG.info("Saved initial special leave {}", savesVacationTypes);
+        final List<SpecialLeaveSettingsEntity> vacationTypes = List.of(
+            createSpecialLeaveEntity(1, true, "application.data.specialleave.own_wedding"),
+            createSpecialLeaveEntity(1, true, "application.data.specialleave.birth_of_child"),
+            createSpecialLeaveEntity(2, true, "application.data.specialleave.death_of_child"),
+            createSpecialLeaveEntity(1, true, "application.data.specialleave.death_of_parent"),
+            createSpecialLeaveEntity(1, true, "application.data.specialleave.serious_illness_familiy_member"),
+            createSpecialLeaveEntity(1, true, "application.data.specialleave.relocation_for_business_reason"),
+            createSpecialLeaveEntity(1, false, "application.data.specialleave.company_anniversaries")
+        );
+
+        final List<SpecialLeaveSettingsEntity> missingVacationTypes = vacationTypes.stream()
+            .filter(specialLeaveSettingsEntity -> specialLeaveSettingsRepository.findAllByMessageKey(specialLeaveSettingsEntity.getMessageKey()).isEmpty())
+            .toList();
+
+        if (!missingVacationTypes.isEmpty()) {
+            final List<SpecialLeaveSettingsEntity> savesVacationTypes = specialLeaveSettingsRepository.saveAll(missingVacationTypes);
+            LOG.info("Saved new special leave {}", savesVacationTypes);
         }
     }
 

@@ -60,4 +60,14 @@ public class SpecialLeaveSettingsEntity extends AbstractTenantAwareEntity {
     public void setDays(Integer days) {
         this.days = days;
     }
+
+    @Override
+    public String toString() {
+        return "SpecialLeaveSettingsEntity{" +
+            "id=" + id +
+            ", active=" + active +
+            ", messageKey='" + messageKey + '\'' +
+            ", days=" + days +
+            '}';
+    }
 }
