@@ -258,8 +258,11 @@
             <tr>
               <td th:text="#{absence.period.duration}"></td>
               <td>
-                <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
-                <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
+                <div>
+                  <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
+                  <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
+                </div>
+                <span th:text="#{sicknote.data.calendar.days(${sickNote.calendarDays})}"></span>
               </td>
             </tr>
             <tr>
@@ -280,6 +283,14 @@
                     &nbsp;<th:block th:text="#{sicknote.data.aub.notPresent}"></th:block>
                   </div>
                 </th:block>
+              </td>
+            </tr>
+            <tr th:if="${doesSickPayDaysEnd}">
+              <td th:text="#{sicknote.data.sick_pay_days.short}"></td>
+              <td>
+                <span
+                  th:text="#{sicknote.data.sick_pay_days(${numberSickPayDaysSinceEnd}, ${#temporals.format(sickPayDaysEndDate, 'E, dd.MM.yyyy')})}"
+                ></span>
               </td>
             </tr>
           </tbody>

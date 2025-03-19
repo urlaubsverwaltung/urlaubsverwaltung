@@ -30,6 +30,18 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.Workin
 class SickNoteTest {
 
     @Test
+    void ensureGetCalendarDays() {
+
+        final SickNote sickNote = SickNote.builder()
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2022, JUNE, 13))
+            .endDate(LocalDate.of(2022, JUNE, 24))
+            .build();
+
+        assertThat(sickNote.getCalendarDays()).isEqualTo(12L);
+    }
+
+    @Test
     void ensureGetWorkDays() {
 
         final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
@@ -286,7 +298,7 @@ class SickNoteTest {
         assertThat(sickNote).hasToString("SickNote{id=null, person=null, applier=null, " +
             "sickNoteType=null, startDate=null," +
             " endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null," +
-            " endOfSickPayNotificationSend=null, status=null, workDays=0, workDaysWithAub=0}");
+            " endOfSickPayNotificationSend=null, status=null, workDays=0, workDaysWithAub=0, calendarDays=0}");
     }
 
     @Test
@@ -327,7 +339,7 @@ class SickNoteTest {
         assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "applier=Person{id='2'}, sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=2022-01-01, " +
             "endDate=2022-01-31, dayLength=FULL, aubStartDate=2022-01-17, aubEndDate=2022-01-21," +
-            " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE, workDays=31, workDaysWithAub=5}");
+            " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE, workDays=31, workDaysWithAub=5, calendarDays=31}");
     }
 
     private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {

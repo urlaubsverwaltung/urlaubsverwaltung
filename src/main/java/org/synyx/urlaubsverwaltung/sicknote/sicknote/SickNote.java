@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class SickNote {
@@ -29,11 +30,12 @@ public class SickNote {
     private final SickNoteStatus status;
     private final WorkingTimeCalendar workingTimeCalendar;
 
-    private SickNote(Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
-                     LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
-                     LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
-                     WorkingTimeCalendar workingTimeCalendar) {
-
+    private SickNote(
+        Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
+        LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
+        LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
+        WorkingTimeCalendar workingTimeCalendar
+    ) {
         this.id = id;
         this.person = person;
         this.applier = applier;
@@ -99,6 +101,14 @@ public class SickNote {
 
     public BigDecimal getWorkDays() {
         return workingTime(workingTimeCalendar, new DateRange(getStartDate(), getEndDate()), getDayLength());
+    }
+
+    public long getCalendarDays() {
+        if (startDate == null || endDate == null) {
+            return 0;
+        }
+
+        return ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }
 
     public BigDecimal getWorkDays(LocalDate from, LocalDate to) {
@@ -190,6 +200,7 @@ public class SickNote {
             ", status=" + status +
             ", workDays=" + getWorkDays() +
             ", workDaysWithAub=" + getWorkDaysWithAub() +
+            ", calendarDays=" + getCalendarDays() +
             '}';
     }
 
