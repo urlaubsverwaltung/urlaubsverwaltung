@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -31,10 +30,7 @@ public class OvertimeForm {
     private String comment;
     private boolean reduce;
 
-    @Min(0)
     private BigDecimal hours;
-
-    @Min(0)
     private Integer minutes;
 
     OvertimeForm() {

@@ -92,11 +92,10 @@ public class OvertimeFormValidator implements Validator {
         if (hours == null && minutes == null) {
             errors.rejectValue("hours", "overtime.error.hoursOrMinutesRequired");
             errors.rejectValue("minutes", "overtime.error.hoursOrMinutesRequired");
-        } else if (!overtimeReductionEnabled && overtimeForm.isReduce()) {
+        } else if (!overtimeReductionEnabled && (overtimeForm.isReduce() || (hours != null && hours.signum() < 0) || (minutes != null && minutes < 0))) {
             errors.rejectValue("reduce", "overtime.error.overtimeReductionNotAllowed");
         }
     }
-
 
     private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
