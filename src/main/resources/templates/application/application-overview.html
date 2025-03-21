@@ -44,7 +44,6 @@
               href="#"
               th:href="@{/web/application/statistics}"
               class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-              th:if="${canAccessApplicationStatistics}"
             >
               <svg th:replace="~{icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.statistics}"></span>
