@@ -19,18 +19,22 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
@@ -42,13 +46,14 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
     private PersonOnSuccessfullyOidcLoginEventHandler sut;
+    final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();
 
     @Mock
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService);
+        sut = new PersonOnSuccessfullyOidcLoginEventHandler(personService, properties);
     }
 
     @Nested
@@ -89,6 +94,41 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             assertThat(created.getLastName()).isEqualTo(familyName);
             assertThat(created.getFirstName()).isEqualTo(givenName);
             assertThat(created.getEmail()).isEqualTo(email);
+        }
+
+
+        @Test
+        void createNewPersonNotOfficeWhenOIDCRoleMapperEnabled() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(
+                List.of(new SimpleGrantedAuthority("USER")),
+                Map.of(
+                    SUB, uniqueID,
+                    GIVEN_NAME, givenName,
+                    FAMILY_NAME, familyName,
+                    EMAIL, email
+                ));
+
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+            when(personService.getPersonByMailAddress(email)).thenReturn(Optional.empty());
+            when(personService.create(uniqueID, givenName, familyName, email, emptyList(), Arrays.asList(USER))).thenReturn(new Person(uniqueID, familyName, givenName, email));
+
+            properties.getResourceAccessClaim().setEnabled(true);
+            sut.handle(event);
+            properties.getResourceAccessClaim().setEnabled(false);
+
+            verify(personService).getPersonByUsername(uniqueID);
+            verify(personService).getPersonByMailAddress(email);
+
+            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+            verify(personService).create(uniqueID, givenName, familyName, email, emptyList(), Arrays.asList(USER));
+
+            // especially no call of appointAsOfficeUserIfNoOfficeUserPresent()
+            verifyNoMoreInteractions(personService);
         }
     }
 
@@ -341,6 +381,85 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
         }
     }
 
+    @Nested
+    class ExtractRoles {
+        @Test
+        void ensureRolesUnchangedWhenNotConfigured() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(
+                List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")),
+                Map.of(
+                    SUB, uniqueID,
+                    FAMILY_NAME, familyName,
+                    GIVEN_NAME, givenName
+                ),
+                Map.of(
+                    EMAIL, email
+                )
+            );
+            final Person person = new Person(uniqueID, familyName, givenName, email);
+            person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(person));
+
+            sut.handle(event);
+
+            verify(personService, never()).getPersonByMailAddress(email);
+
+            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+            verify(personService).update(personArgumentCaptor.capture());
+
+            Person update = personArgumentCaptor.getValue();
+            assertThat(update.getUsername()).isEqualTo(uniqueID);
+            assertThat(update.getLastName()).isEqualTo(familyName);
+            assertThat(update.getFirstName()).isEqualTo(givenName);
+            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(update.getPermissions()).containsExactlyInAnyOrder(Role.USER, Role.BOSS);
+        }
+
+        @Test
+        void ensureRolesReplacedWhenConfigured() {
+            final String uniqueID = "uniqueID";
+            final String givenName = "given name";
+            final String familyName = "family name";
+            final String email = "test.me@example.com";
+
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(
+                List.of(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")),
+                Map.of(
+                    SUB, uniqueID,
+                    FAMILY_NAME, familyName,
+                    GIVEN_NAME, givenName
+                ),
+                Map.of(
+                    EMAIL, email
+                )
+            );
+            final Person person = new Person(uniqueID, familyName, givenName, email);
+            person.setPermissions(Arrays.asList(Role.USER, Role.BOSS));
+            when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.of(person));
+
+            properties.getResourceAccessClaim().setEnabled(true);
+            sut.handle(event);
+            properties.getResourceAccessClaim().setEnabled(false);
+
+            verify(personService, never()).getPersonByMailAddress(email);
+
+            final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+            verify(personService).update(personArgumentCaptor.capture());
+
+            Person update = personArgumentCaptor.getValue();
+            assertThat(update.getUsername()).isEqualTo(uniqueID);
+            assertThat(update.getLastName()).isEqualTo(familyName);
+            assertThat(update.getFirstName()).isEqualTo(givenName);
+            assertThat(update.getEmail()).isEqualTo(email);
+            assertThat(update.getPermissions()).containsExactlyInAnyOrder(Role.USER, Role.OFFICE);
+        }
+    }
+
     @Test
     void ensureToDoNothingWithJwtAsPrinciple() {
 
@@ -369,6 +488,12 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
         final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
         final OidcUserInfo userInfo = new OidcUserInfo(userInfoClaims);
         return createEvent(new DefaultOidcUser(null, idToken, userInfo));
+    }
+
+    private AuthenticationSuccessEvent getOidcUserAuthority(List<GrantedAuthority> authorities, Map<String, Object> idTokenClaims, Map<String, Object> userInfoClaims) {
+        final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
+        final OidcUserInfo userInfo = new OidcUserInfo(userInfoClaims);
+        return createEvent(new DefaultOidcUser(authorities, idToken, userInfo));
     }
 
     private AuthenticationSuccessEvent createEvent(DefaultOidcUser defaultOidcUser) {
