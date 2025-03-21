@@ -48,6 +48,17 @@ public interface PersonService {
     Person update(Person person);
 
     /**
+     * Update the permissions of the given person and propagate the application event.
+     * (e. g. send e-mail to inform the person about new permissions, so e-mail notifications can be adjusted for instance.)
+     *
+     * @param personId id of the {@linkplain Person} to update
+     * @param permissions next {@linkplain Role} permissions
+     * @return the updated {@linkplain Person}
+     * @throws UnknownPersonException when the personId is unknown / does not exist
+     */
+    Person updatePermissions(PersonId personId, List<Role> permissions) throws UnknownPersonException;
+
+    /**
      * Deletes a {@link Person} in the database by its primary key.
      *
      * @param person       the person to be deleted
