@@ -39,17 +39,6 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     @Override
-    public boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        if (isChristmasEve(date) || isNewYearsEve(date)) {
-            return true;
-        }
-
-        return getHolidayManager(federalState)
-            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
-            .orElse(false);
-    }
-
-    @Override
     public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
         return getPublicHolidays(date, date, federalState, workingTimeSettings).stream().findFirst();
     }
@@ -85,6 +74,16 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         }
 
         return workingTime.getInverse();
+    }
+
+    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+        if (isChristmasEve(date) || isNewYearsEve(date)) {
+            return true;
+        }
+
+        return getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
+            .orElse(false);
     }
 
     private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
