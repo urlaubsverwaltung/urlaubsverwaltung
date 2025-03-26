@@ -41,12 +41,12 @@ class DurationChecker {
      * Check if the period between the given start and end date is greater than zero days, the custom working time of
      * the given person is concerned.
      *
+     * @param person to use the working time for calculation
      * @param start  of the period
      * @param end    of the period
-     * @param person to use the working time for calculation
      * @return {@code true} if the period duration is greater than zero, else {@code false}
      */
-    boolean durationIsGreaterThanZero(LocalDate start, LocalDate end, Person person) {
+    boolean doesPersonWork(Person person, LocalDate start, LocalDate end) {
         final BigDecimal workDays = workDaysCountService.getWorkDaysCount(DayLength.FULL, start, end, person);
         return isPositive(workDays);
     }

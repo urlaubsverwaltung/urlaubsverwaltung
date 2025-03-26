@@ -33,4 +33,8 @@ class OvertimeRecordDataProvider {
         final Overtime overtime = new Overtime(person, startDate, endDate, duration);
         overtimeService.save(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }
+
+    boolean personHasNoOvertimes(Person person) {
+        return overtimeService.getAllOvertimesByPersonId(person.getId()).isEmpty();
+    }
 }

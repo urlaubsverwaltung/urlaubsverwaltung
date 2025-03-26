@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -13,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
@@ -37,8 +39,8 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    SickNoteDataProvider sickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
-        return new SickNoteDataProvider(sickNoteInteractionService, durationChecker, sickNoteTypeService);
+    SickNoteDataProvider sickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, SickNoteService sickNoteService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
+        return new SickNoteDataProvider(sickNoteInteractionService, sickNoteService, durationChecker, sickNoteTypeService);
     }
 
     @Bean
@@ -62,7 +64,7 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    ApplicationForLeaveDataProvider applicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService, DurationChecker durationChecker, VacationTypeService vacationTypeService) {
-        return new ApplicationForLeaveDataProvider(applicationInteractionService, durationChecker, vacationTypeService);
+    ApplicationForLeaveDataProvider applicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService, ApplicationService applicationService, DurationChecker durationChecker, VacationTypeService vacationTypeService) {
+        return new ApplicationForLeaveDataProvider(applicationInteractionService, applicationService, durationChecker, vacationTypeService);
     }
 }

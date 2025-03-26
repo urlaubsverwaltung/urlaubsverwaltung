@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.security.SecureRandom;
 import java.time.Clock;
@@ -51,6 +50,11 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
@@ -118,9 +122,11 @@ public class DemoDataCreationService {
 
     private final SecureRandom random = new SecureRandom();
 
-    DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
-                            SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                            DepartmentDataProvider departmentDataProvider, Clock clock) {
+    DemoDataCreationService(
+        PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
+        SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
+        DepartmentDataProvider departmentDataProvider, Clock clock
+    ) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
@@ -139,24 +145,24 @@ public class DemoDataCreationService {
 
         switch (email) {
             case EMAIL_USER:
-                final Person person = personDataProvider.updateTestPerson(1, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person person = personDataProvider.updateTestPerson(1, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, person);
                 createDemoApplicationsAndSickNotes(EMAIL_USER);
                 break;
             case EMAIL_DEPARTMENT_HEAD:
-                final Person departmentHead = personDataProvider.updateTestPerson(2, email, List.of(Role.USER, Role.DEPARTMENT_HEAD), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                final Person departmentHead = personDataProvider.updateTestPerson(2, email, List.of(USER, DEPARTMENT_HEAD), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, departmentHead);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, departmentHead);
                 departmentDataProvider.addDepartmentHead(DEPARTMENT_ADMINS, departmentHead);
                 break;
             case EMAIL_SECOND_STAGE_AUTHORITY:
-                final Person secondStageAuthority = personDataProvider.updateTestPerson(3, email, List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                final Person secondStageAuthority = personDataProvider.updateTestPerson(3, email, List.of(USER, SECOND_STAGE_AUTHORITY), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, secondStageAuthority);
                 departmentDataProvider.addDepartmentSecondStageAuthority(DEPARTMENT_ADMINS, secondStageAuthority);
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
                 break;
             case EMAIL_BOSS:
-                final Person boss = personDataProvider.updateTestPerson(4, email, List.of(Role.USER, Role.BOSS), PERSON_NOTIFICATIONS);
+                final Person boss = personDataProvider.updateTestPerson(4, email, List.of(USER, BOSS), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, boss);
                 createDemoApplicationsAndSickNotes(EMAIL_USER);
                 createDemoApplicationsAndSickNotes(EMAIL_BOSS);
@@ -166,7 +172,7 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
                 break;
             case EMAIL_OFFICE:
-                final Person office = personDataProvider.updateTestPerson(5, email, List.of(Role.USER, Role.OFFICE), PERSON_NOTIFICATIONS);
+                final Person office = personDataProvider.updateTestPerson(5, email, List.of(USER, OFFICE), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, office);
                 createDemoApplicationsAndSickNotes(EMAIL_USER);
                 createDemoApplicationsAndSickNotes(EMAIL_BOSS);
@@ -176,35 +182,35 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
                 break;
             case "admin@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(5, email, List.of(Role.USER), List.of());
+                personDataProvider.updateTestPerson(5, email, List.of(USER), List.of());
                 break;
             case EMAIL_DAMPF:
-                final Person dampf = personDataProvider.updateTestPerson(6, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person dampf = personDataProvider.updateTestPerson(6, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, dampf);
                 createDemoApplicationsAndSickNotes(EMAIL_DAMPF);
                 break;
             case "baier@urlaubsverwaltung.cloud":
-                final Person baier = personDataProvider.updateTestPerson(7, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person baier = personDataProvider.updateTestPerson(7, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, baier);
                 break;
             case "schneider@urlaubsverwaltung.cloud":
-                final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, schneider);
                 break;
             case "haendel@urlaubsverwaltung.cloud":
-                final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, haendel);
                 break;
             case EMAIL_SCHMIDT:
-                final Person schmidt = personDataProvider.updateTestPerson(10, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person schmidt = personDataProvider.updateTestPerson(10, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, schmidt);
                 createDemoApplicationsAndSickNotes(EMAIL_SCHMIDT);
                 break;
             case "hdieter@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(11, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(11, email, List.of(USER), PERSON_NOTIFICATIONS);
                 break;
             default:
-                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(USER), PERSON_NOTIFICATIONS);
                 break;
         }
     }
@@ -213,12 +219,11 @@ public class DemoDataCreationService {
         return random.nextInt(1000 - 11 + 1) + 11;
     }
 
-
     private void createDemoApplicationsAndSickNotes(String personEmail) {
 
-        Optional<Person> person = personDataProvider.getPersonByMailAddress(personEmail);
-        Optional<Person> boss = personDataProvider.getPersonByMailAddress(EMAIL_BOSS);
-        Optional<Person> office = personDataProvider.getPersonByMailAddress(EMAIL_OFFICE);
+        final Optional<Person> person = personDataProvider.getPersonByMailAddress(personEmail);
+        final Optional<Person> boss = personDataProvider.getPersonByMailAddress(EMAIL_BOSS);
+        final Optional<Person> office = personDataProvider.getPersonByMailAddress(EMAIL_OFFICE);
 
         if (person.isPresent() && boss.isPresent() && office.isPresent()) {
             createApplicationsForLeave(person.get(), boss.get(), office.get());
@@ -229,49 +234,58 @@ public class DemoDataCreationService {
 
     private void createApplicationsForLeave(Person person, Person boss, Person office) {
 
-        final LocalDate now = LocalDate.now(clock);
+        if (applicationForLeaveDataProvider.personHasNoApplications(person)) {
 
-        // FUTURE APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
-        applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plusDays(1), now.plusDays(1));
-        applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plusDays(4), now.plusDays(6));
+            final LocalDate now = LocalDate.now(clock);
 
-        // PAST APPLICATIONS FOR LEAVE
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minusDays(20), now.minusDays(13));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(5), now.minusDays(5));
-        applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minusDays(9), now.minusDays(9));
+            // FUTURE APPLICATIONS FOR LEAVE
+            applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
+            applicationForLeaveDataProvider.createWaitingApplication(person, OVERTIME, FULL, now.plusDays(1), now.plusDays(1));
+            applicationForLeaveDataProvider.createWaitingApplication(person, SPECIALLEAVE, FULL, now.plusDays(4), now.plusDays(6));
 
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
-        applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
+            // PAST APPLICATIONS FOR LEAVE
+            applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, FULL, now.minusDays(20), now.minusDays(13));
+            applicationForLeaveDataProvider.createAllowedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(5), now.minusDays(5));
+            applicationForLeaveDataProvider.createAllowedApplication(person, boss, SPECIALLEAVE, MORNING, now.minusDays(9), now.minusDays(9));
 
-        applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, FULL, now.minusDays(22), now.minusDays(21));
-        applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
+            applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, FULL, now.minusDays(33), now.minusDays(30));
+            applicationForLeaveDataProvider.createRejectedApplication(person, boss, HOLIDAY, MORNING, now.minusDays(32), now.minusDays(32));
+
+            applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, FULL, now.minusDays(22), now.minusDays(21));
+            applicationForLeaveDataProvider.createCancelledApplication(person, boss, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
+        }
     }
 
     private void createSickNotes(Person person, Person office) {
 
-        final LocalDate now = LocalDate.now(clock);
+        if (sickNoteDataProvider.personHasNoSickNotes(person)) {
 
-        // SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
+            final LocalDate now = LocalDate.now(clock);
 
-        // CHILD SICK NOTES
-        sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
+            // SICK NOTES
+            sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
+            sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(2), now.minusDays(2), SICK_NOTE, false);
+            sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(30), now.minusDays(25), SICK_NOTE, true);
+
+            // CHILD SICK NOTES
+            sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
+        }
     }
 
     private void createOvertimeRecords(Person person) {
 
-        final LocalDate now = LocalDate.now(clock);
+        if (overtimeRecordDataProvider.personHasNoOvertimes(person)) {
 
-        final LocalDate lastWeek = now.minusWeeks(1);
-        final LocalDate weekBeforeLast = now.minusWeeks(2);
-        final LocalDate lastYear = now.minusYears(1);
+            final LocalDate now = LocalDate.now(clock);
 
-        overtimeRecordDataProvider.activateOvertime();
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), Duration.ofMinutes(150L));
-        overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), Duration.ofHours(3L));
-        overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY), lastYear.with(FRIDAY), Duration.ofHours(4L));
+            final LocalDate lastWeek = now.minusWeeks(1);
+            final LocalDate weekBeforeLast = now.minusWeeks(2);
+            final LocalDate lastYear = now.minusYears(1);
+
+            overtimeRecordDataProvider.activateOvertime();
+            overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), Duration.ofMinutes(150L));
+            overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), Duration.ofHours(3L));
+            overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY), lastYear.with(FRIDAY), Duration.ofHours(4L));
+        }
     }
 }

@@ -43,8 +43,12 @@ class PersonDataProvider {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
-                       AccountInteractionService accountInteractionService, Clock clock) {
+    PersonDataProvider(
+        PersonService personService, PersonBasedataService personBasedataService,
+        WorkingTimeWriteService workingTimeWriteService,
+        AccountInteractionService accountInteractionService,
+        Clock clock
+    ) {
         this.personService = personService;
         this.personBasedataService = personBasedataService;
         this.workingTimeWriteService = workingTimeWriteService;
@@ -58,10 +62,10 @@ class PersonDataProvider {
 
     Person updateTestPerson(int personnelNumber, String email, List<Role> permissions, List<MailNotification> notifications) {
 
-        final Optional<Person> personByUsername = personService.getPersonByMailAddress(email);
-        if (personByUsername.isPresent()) {
+        final Optional<Person> maybePerson = personService.getPersonByMailAddress(email);
+        if (maybePerson.isPresent()) {
 
-            Person person = personByUsername.get();
+            final Person person = maybePerson.get();
             person.setPermissions(permissions);
             person.setNotifications(notifications);
 
@@ -91,6 +95,7 @@ class PersonDataProvider {
 
             return savedPerson;
         }
+
         return null;
     }
 

@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.application.NotPrivilegedToApproveException;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -28,75 +30,74 @@ class ApplicationForLeaveDataProvider {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationInteractionService applicationInteractionService;
+    private final ApplicationService applicationService;
     private final DurationChecker durationChecker;
     private final VacationTypeService vacationTypeService;
 
-    ApplicationForLeaveDataProvider(ApplicationInteractionService applicationInteractionService,
-                                    DurationChecker durationChecker, VacationTypeService vacationTypeService) {
+    ApplicationForLeaveDataProvider(
+        ApplicationInteractionService applicationInteractionService, ApplicationService applicationService,
+        DurationChecker durationChecker, VacationTypeService vacationTypeService
+    ) {
         this.applicationInteractionService = applicationInteractionService;
+        this.applicationService = applicationService;
         this.durationChecker = durationChecker;
         this.vacationTypeService = vacationTypeService;
     }
 
-    Application createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength,
-                                         LocalDate startDate, LocalDate endDate) {
+    Optional<Application> createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        Application application = null;
-
-        if (durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate)
-            && durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
-
-            application = new Application();
-            application.setPerson(person);
-            application.setApplicationDate(startDate.minusDays(5L));
-            application.setStartDate(startDate);
-            application.setEndDate(endDate);
-            application.setVacationType(getVacationType(vacationCategory));
-            application.setDayLength(dayLength);
-            application.setReason("Lorem ipsum dolor sit amet, consetetur sadipscing elitr");
-
-            if (vacationCategory.equals(OVERTIME)) {
-                if (dayLength == FULL) {
-                    application.setHours(Duration.ofHours(8));
-                } else {
-                    application.setHours(Duration.ofHours(4));
-                }
-            }
-
-            applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
+        if (!durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate) || !durationChecker.doesPersonWork(person, startDate, endDate)) {
+            return Optional.empty();
         }
 
-        return application;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setApplicationDate(startDate.minusDays(5L));
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setVacationType(getVacationType(vacationCategory));
+        application.setDayLength(dayLength);
+        application.setReason("Lorem ipsum dolor sit amet, consetetur sadipscing elitr");
+
+        if (vacationCategory.equals(OVERTIME)) {
+            if (dayLength == FULL) {
+                application.setHours(Duration.ofHours(8));
+            } else {
+                application.setHours(Duration.ofHours(4));
+            }
+        }
+
+        final Application savedApplication = applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
+        return Optional.of(savedApplication);
     }
 
-    Application createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    Optional<Application> createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
-        if (application != null) {
+        final Optional<Application> maybeApplication = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
+        if (maybeApplication.isPresent()) {
             try {
-                applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
+                final Application application = applicationInteractionService.allow(maybeApplication.get(), boss, Optional.of("Ist in Ordnung"));
+                return Optional.of(application);
             } catch (NotPrivilegedToApproveException e) {
                 LOG.info("Application cannot be allowed by user {}", boss);
             }
         }
 
-        return application;
+        return maybeApplication;
     }
 
     void createRejectedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
-
-        final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
-        if (application != null) {
-            applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich"));
-        }
+        final Optional<Application> maybeApplication = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
+        maybeApplication.ifPresent(application -> applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich")));
     }
 
     void createCancelledApplication(Person person, Person boss, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+        final Optional<Application> maybeApplication = createAllowedApplication(person, boss, vacationCategory, dayLength, startDate, endDate);
+        maybeApplication.ifPresent(application -> applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert")));
+    }
 
-        final Application application = createAllowedApplication(person, boss, vacationCategory, dayLength, startDate, endDate);
-        if (application != null) {
-            applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert"));
-        }
+    boolean personHasNoApplications(Person person) {
+        return applicationService.getForStatesAndPerson(List.of(ApplicationStatus.values()), List.of(person)).isEmpty();
     }
 
     private VacationType<?> getVacationType(VacationCategory vacationCategory) {
