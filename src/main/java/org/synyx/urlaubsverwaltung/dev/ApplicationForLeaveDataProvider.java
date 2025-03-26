@@ -67,33 +67,33 @@ class ApplicationForLeaveDataProvider {
             }
         }
 
-        applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
-
-        return Optional.of(application);
+        final Application savedApplication = applicationInteractionService.apply(application, person, Optional.of("Ich hätte gerne Urlaub"));
+        return Optional.of(savedApplication);
     }
 
     Optional<Application> createAllowedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Optional<Application> application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
-        if (application.isPresent()) {
+        final Optional<Application> maybeApplication = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
+        if (maybeApplication.isPresent()) {
             try {
-                applicationInteractionService.allow(application.get(), boss, Optional.of("Ist in Ordnung"));
+                final Application application = applicationInteractionService.allow(maybeApplication.get(), boss, Optional.of("Ist in Ordnung"));
+                return Optional.of(application);
             } catch (NotPrivilegedToApproveException e) {
                 LOG.info("Application cannot be allowed by user {}", boss);
             }
         }
 
-        return application;
+        return maybeApplication;
     }
 
     void createRejectedApplication(Person person, Person boss, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
-        final Optional<Application> application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
-        application.ifPresent(value -> applicationInteractionService.reject(value, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich")));
+        final Optional<Application> maybeApplication = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
+        maybeApplication.ifPresent(application -> applicationInteractionService.reject(application, boss, Optional.of("Aus organisatorischen Gründen leider nicht möglich")));
     }
 
     void createCancelledApplication(Person person, Person boss, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
-        final Optional<Application> application = createAllowedApplication(person, boss, vacationCategory, dayLength, startDate, endDate);
-        application.ifPresent(value -> applicationInteractionService.cancel(value, office, Optional.of("Urlaub wurde nicht genommen, daher storniert")));
+        final Optional<Application> maybeApplication = createAllowedApplication(person, boss, vacationCategory, dayLength, startDate, endDate);
+        maybeApplication.ifPresent(application -> applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert")));
     }
 
     boolean personHasNoApplications(Person person) {
