@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.synyx.urlaubsverwaltung.person.PersonCreatedEvent;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -18,7 +17,6 @@ class PersonCreatedEventListener {
         this.demoDataCreationService = demoDataCreationService;
     }
 
-    @Async
     @EventListener
     void on(PersonCreatedEvent event) {
         final String email = event.getEmail();

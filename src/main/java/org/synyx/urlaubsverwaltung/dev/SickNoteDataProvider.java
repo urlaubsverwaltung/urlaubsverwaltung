@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
@@ -19,11 +21,17 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 class SickNoteDataProvider {
 
     private final SickNoteInteractionService sickNoteInteractionService;
+    private final SickNoteService sickNoteService;
     private final DurationChecker durationChecker;
     private final SickNoteTypeService sickNoteTypeService;
 
-    SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
+    SickNoteDataProvider(
+        SickNoteInteractionService sickNoteInteractionService, SickNoteService sickNoteService,
+        DurationChecker durationChecker,
+        SickNoteTypeService sickNoteTypeService
+    ) {
         this.sickNoteInteractionService = sickNoteInteractionService;
+        this.sickNoteService = sickNoteService;
         this.durationChecker = durationChecker;
         this.sickNoteTypeService = sickNoteTypeService;
     }
@@ -48,6 +56,10 @@ class SickNoteDataProvider {
 
             sickNoteInteractionService.create(builder.build(), office);
         }
+    }
+
+    boolean personHasNoSickNotes(Person person) {
+        return sickNoteService.getForStatesAndPerson(List.of(SickNoteStatus.values()), List.of(person)).isEmpty();
     }
 
     private SickNoteType getSickNoteType(SickNoteCategory sickNoteCategory) {
