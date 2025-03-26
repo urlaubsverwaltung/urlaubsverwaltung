@@ -118,9 +118,11 @@ public class DemoDataCreationService {
 
     private final SecureRandom random = new SecureRandom();
 
-    DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
-                            SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                            DepartmentDataProvider departmentDataProvider, Clock clock) {
+    DemoDataCreationService(
+        PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
+        SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
+        DepartmentDataProvider departmentDataProvider, Clock clock
+    ) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;

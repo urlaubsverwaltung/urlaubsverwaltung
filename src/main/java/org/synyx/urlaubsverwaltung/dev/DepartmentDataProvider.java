@@ -9,8 +9,10 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -52,8 +54,9 @@ class DepartmentDataProvider {
         }
 
         final Department department = optionalDepartment.get();
-        if (isNotInList(person, department.getMembers())) {
-            department.getMembers().add(person);
+        final List<Person> members = department.getMembers();
+        if (isNotInList(person, members)) {
+            department.setMembers(addPersonToList(person, members));
             departmentService.update(department);
         } else {
             LOG.info("person.id={} already member of department with name={} - nothing todo!", person.getId(), departmentName);
@@ -68,8 +71,9 @@ class DepartmentDataProvider {
         }
 
         final Department department = optionalDepartment.get();
-        if (isNotInList(person, department.getDepartmentHeads())) {
-            department.getDepartmentHeads().add(person);
+        final List<Person> departmentHeads = department.getDepartmentHeads();
+        if (isNotInList(person, departmentHeads)) {
+            department.setDepartmentHeads(addPersonToList(person, departmentHeads));
             departmentService.update(department);
         } else {
             LOG.info("person.id={} already departmentHeads of department with name={} - nothing todo!", person.getId(), departmentName);
@@ -84,8 +88,9 @@ class DepartmentDataProvider {
         }
 
         final Department department = optionalDepartment.get();
-        if (isNotInList(person, department.getSecondStageAuthorities())) {
-            department.getSecondStageAuthorities().add(person);
+        final List<Person> secondStageAuthorities = department.getSecondStageAuthorities();
+        if (isNotInList(person, secondStageAuthorities)) {
+            department.setDepartmentHeads(addPersonToList(person, secondStageAuthorities));
             department.setTwoStageApproval(true);
             departmentService.update(department);
         } else {
@@ -104,5 +109,9 @@ class DepartmentDataProvider {
 
     private static boolean isNotInList(Person person, List<Person> department) {
         return department.stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()));
+    }
+
+    private static List<Person> addPersonToList(Person person, List<Person> members) {
+        return concat(members.stream(), Stream.of(person)).toList();
     }
 }
