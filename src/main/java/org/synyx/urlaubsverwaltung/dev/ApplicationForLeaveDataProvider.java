@@ -46,7 +46,7 @@ class ApplicationForLeaveDataProvider {
 
     Optional<Application> createWaitingApplication(Person person, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        if (!durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate) || !durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+        if (!durationChecker.startAndEndDatesAreInCurrentYear(startDate, endDate) || !durationChecker.doesPersonWork(person, startDate, endDate)) {
             return Optional.empty();
         }
 

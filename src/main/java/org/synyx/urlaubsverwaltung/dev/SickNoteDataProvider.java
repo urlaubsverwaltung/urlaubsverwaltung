@@ -37,7 +37,7 @@ class SickNoteDataProvider {
     }
 
     void createSickNote(Person person, Person office, DayLength dayLength, LocalDate startDate, LocalDate endDate, SickNoteCategory sickNoteCategory, boolean withAUB) {
-        if (durationChecker.durationIsGreaterThanZero(startDate, endDate, person)) {
+        if (durationChecker.doesPersonWork(person, startDate, endDate)) {
 
             final SickNoteType type = getSickNoteType(sickNoteCategory);
 
