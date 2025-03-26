@@ -128,6 +128,8 @@ public class VacationDaysService {
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();
         final List<Person> persons = holidayAccountsForYear.stream().map(Account::getPerson).toList();
+
+        // TODO company vacation
         final Map<Person, WorkingTimeCalendar> workingTimeCalendars = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
         return getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendars).entrySet().stream()
             .map(entry -> {

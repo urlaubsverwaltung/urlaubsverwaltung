@@ -104,6 +104,8 @@ class ApplicationForLeaveStatisticsBuilder {
                 return statistics;
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
+        // TODO company vacation
+
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
         final Map<Person, List<Application>> applicationsByPerson =
             applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())
