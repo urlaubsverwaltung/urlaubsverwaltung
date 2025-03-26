@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -45,16 +46,13 @@ class DepartmentDataProvider {
 
     void addDepartmentMember(String departmentName, Person person) {
 
-        final Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
-
-
-        if (optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists!", departmentName);
+        final Optional<Department> optionalDepartment = retrieveDepartmentByName(departmentName);
+        if (optionalDepartment.isEmpty()){
             return;
         }
 
-        Department department = optionalDepartment.get();
-        if (department.getMembers().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        final Department department = optionalDepartment.get();
+        if (isNotInList(person, department.getMembers())) {
             department.getMembers().add(person);
             departmentService.update(department);
         } else {
@@ -64,15 +62,13 @@ class DepartmentDataProvider {
 
     void addDepartmentHead(String departmentName, Person person) {
 
-        final Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
-
-        if (optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists!", departmentName);
+        final Optional<Department> optionalDepartment = retrieveDepartmentByName(departmentName);
+        if (optionalDepartment.isEmpty()){
             return;
         }
 
-        Department department = optionalDepartment.get();
-        if (department.getDepartmentHeads().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        final Department department = optionalDepartment.get();
+        if (isNotInList(person, department.getDepartmentHeads())) {
             department.getDepartmentHeads().add(person);
             departmentService.update(department);
         } else {
@@ -82,20 +78,31 @@ class DepartmentDataProvider {
 
     void addDepartmentSecondStageAuthority(String departmentName, Person person) {
 
-        Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
-
-        if (optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists!", departmentName);
+        final Optional<Department> optionalDepartment = retrieveDepartmentByName(departmentName);
+        if (optionalDepartment.isEmpty()){
             return;
         }
 
-        Department department = optionalDepartment.get();
-        if (department.getSecondStageAuthorities().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        final Department department = optionalDepartment.get();
+        if (isNotInList(person, department.getSecondStageAuthorities())) {
             department.getSecondStageAuthorities().add(person);
             department.setTwoStageApproval(true);
             departmentService.update(department);
         } else {
             LOG.info("person.id={} already secondStageAuthority of department with name={} - nothing todo!", person.getId(), departmentName);
         }
+    }
+
+    private Optional<Department> retrieveDepartmentByName(String departmentName) {
+        final Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
+        if (optionalDepartment.isEmpty()) {
+            LOG.info("department with name={} doesn't exists!", departmentName);
+            return Optional.empty();
+        }
+        return optionalDepartment;
+    }
+
+    private static boolean isNotInList(Person person, List<Person> department) {
+        return department.stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()));
     }
 }
