@@ -1,0 +1,39 @@
+name: build-docker-compose-example
+
+on:
+  schedule:
+    - cron: "15 3 * * *"
+  push:
+    paths:
+      - ".examples/**"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - ".examples/**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: test docker compose example
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run docker compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./.examples/with-docker-compose/docker-compose.yaml"
+
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+
+      - name: Check URL with curl
+        run: |
+          STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8080/actuator/health)
+          echo "HTTP Status Code: $STATUS_CODE"
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "Request failed with status code $STATUS_CODE"
+            exit 1
+          fi

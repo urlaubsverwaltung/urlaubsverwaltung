@@ -35,7 +35,7 @@ services:
       UV_SECURITY_OIDC_CLAIM-MAPPERS_GROUP-CLAIM_CLAIM-NAME: groups
     depends_on:
       keycloak:
-        condition: service_started
+        condition: service_healthy
       postgres:
         condition: service_healthy
       mailhog:
@@ -77,3 +77,8 @@ services:
       - '8090:8090'
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
+    healthcheck:
+      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9000/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 30
