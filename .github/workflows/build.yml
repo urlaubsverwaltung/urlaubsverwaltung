@@ -4,11 +4,23 @@ on:
   schedule:
     - cron: "15 0 * * *"
   push:
+    paths-ignore:
+      - "docs/**"
+      - ".examples/**"
+      - ".githooks/**"
+      - "charts/**"
+      - "docker/**"
     branches:
       - main
       - v3.x
       - v4.x
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - ".examples/**"
+      - ".githooks/**"
+      - "charts/**"
+      - "docker/**"
   workflow_dispatch:
 
 env:
