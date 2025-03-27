@@ -25,6 +25,5 @@ updates:
       - "github_actions"
 
   - package-ecosystem: "docker-compose"
-    directory: "/"
     schedule:
       interval: "weekly"
