@@ -29,9 +29,6 @@
     -->
     <commons-compress.version>1.27.1</commons-compress.version>
 
-    <!-- Upgrade logback to 1.5.14, because of cve - will be cleared with Spring Boot 3.4.2 -->
-    <logback.version>1.5.14</logback.version>
-
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
     <docker-publish-registry-username>username</docker-publish-registry-username>
