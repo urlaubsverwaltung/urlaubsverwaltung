@@ -4,12 +4,15 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -25,9 +28,12 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
+    private final RolesFromClaimMappersProperties properties;
 
-    PersonOnSuccessfullyOidcLoginEventHandler(PersonService personService) {
+    PersonOnSuccessfullyOidcLoginEventHandler(PersonService personService,
+                                              RolesFromClaimMappersProperties properties) {
         this.personService = personService;
+        this.properties = properties;
     }
 
     @EventListener
@@ -43,6 +49,8 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
         final String firstName = extractGivenName(oidcUser);
         final String lastName = extractFamilyName(oidcUser);
         final String emailAddress = extractMailAddress(oidcUser);
+
+        final boolean permissonsFromOidc = properties.getGroupClaim().isEnabled() || properties.getResourceAccessClaim().isEnabled();
 
         Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
@@ -63,12 +71,28 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             existentPerson.setFirstName(firstName);
             existentPerson.setLastName(lastName);
             existentPerson.setEmail(emailAddress);
+            if (permissonsFromOidc) {
+                existentPerson.setPermissions(getRoles(oidcUser));
+            }
             personService.update(existentPerson);
 
         } else {
-            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
-            personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            if (permissonsFromOidc) {
+                personService.create(userUniqueID, firstName, lastName, emailAddress, List.of(), getRoles(oidcUser));
+            } else {
+                final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
+                personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            }
         }
+    }
+
+    private List<Role> getRoles(OidcUser oidcUser) {
+        return oidcUser.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .filter(Role::validRole)
+            .map(Role::valueOf)
+            .toList();
     }
 
     private String extractIdentifier(OidcUser oidcUser) {

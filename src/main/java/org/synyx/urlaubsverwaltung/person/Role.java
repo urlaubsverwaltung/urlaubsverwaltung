@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,5 +26,12 @@ public enum Role {
 
     public static List<Role> privilegedRoles() {
         return List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY, BOSS, OFFICE);
+    }
+
+    public static boolean validRole(String rolename) {
+        return Arrays.stream(values())
+            .filter(role -> role.name().equalsIgnoreCase(rolename))
+            .findAny()
+            .isPresent();
     }
 }
