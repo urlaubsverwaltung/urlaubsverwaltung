@@ -35,7 +35,6 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final WorkingTimeCalendarService workingTimeCalendarService;
@@ -73,6 +72,8 @@ public class AbsenceServiceImpl implements AbsenceService {
     private List<AbsencePeriod> getAbsences(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> byApplicationStatus, List<SickNoteStatus> bySickNoteStatus) {
 
         final DateRange askedDateRange = new DateRange(start, end);
+
+        // TODO company vacation
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
 

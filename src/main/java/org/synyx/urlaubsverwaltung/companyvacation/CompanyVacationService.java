@@ -1,12 +1,10 @@
-package org.synyx.urlaubsverwaltung.publicholiday;
-
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+package org.synyx.urlaubsverwaltung.companyvacation;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface PublicHolidaysService {
+public interface CompanyVacationService {
 
     /**
      * Returns the public holiday information for a date and the federal state.
@@ -17,7 +15,7 @@ public interface PublicHolidaysService {
      * @param federalState the federal state to consider holiday settings for
      * @return the public holiday if there is one at the given date, otherwise empty optional
      */
-    Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState);
+    Optional<CompanyVacation> getCompanyVacation(LocalDate date);
 
     /**
      * Returns a list of public holiday information for the given date range (inclusive from and to) and the federal state.
@@ -32,5 +30,5 @@ public interface PublicHolidaysService {
      * @param federalState the federal state to consider holiday settings for
      * @return a list of public holiday if there are any for the given date range, otherwise empty list
      */
-    List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState);
+    List<CompanyVacation> getCompanyVacations(LocalDate from, LocalDate to);
 }
