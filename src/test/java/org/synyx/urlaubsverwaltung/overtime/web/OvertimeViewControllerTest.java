@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.Duration.ofHours;
+import static java.time.Duration.ofMinutes;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -696,51 +697,51 @@ class OvertimeViewControllerTest {
     }
 
     @Test
-    void ensureOvertimeHoursMustBeGreaterZero() throws Exception {
+    void ensureOvertimeHoursCanBeLessThanZero() throws Exception {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        mockSettings();
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofHours(-10));
+        overtime.setId(2L);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
-        final ResultActions resultActions = perform(
+        perform(
             post("/web/overtime")
                 .param("person.id", "4")
                 .param("startDate", "18.12.2020")
                 .param("endDate", "18.12.2020")
                 .param("hours", "-8")
-        );
-
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attributeHasFieldErrors("overtime", "hours"))
-            .andExpect(view().name("overtime/overtime_form"));
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
-    void ensureOvertimeMinutesMustBeGreaterZero() throws Exception {
+    void ensureOvertimeMinutesCanBeLessThanZero() throws Exception {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        mockSettings();
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofMinutes(-30));
+        overtime.setId(2L);
+        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
-        final ResultActions resultActions = perform(
+        perform(
             post("/web/overtime")
                 .param("person.id", "4")
                 .param("startDate", "18.12.2020")
                 .param("endDate", "18.12.2020")
                 .param("minutes", "-30")
-        );
-
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attributeHasFieldErrors("overtime", "minutes"))
-            .andExpect(view().name("overtime/overtime_form"));
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
