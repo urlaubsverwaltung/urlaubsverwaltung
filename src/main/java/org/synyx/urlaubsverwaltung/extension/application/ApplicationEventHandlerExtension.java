@@ -13,8 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
@@ -27,11 +25,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
@@ -40,22 +33,42 @@ public class ApplicationEventHandlerExtension {
     private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 
     private final TenantSupplier tenantSupplier;
-    private final AbsenceService absenceService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ApplicationEventHandlerExtension(TenantSupplier tenantSupplier,
-                                            AbsenceService absenceService,
-                                            ApplicationEventPublisher applicationEventPublisher) {
+    public ApplicationEventHandlerExtension(
+        TenantSupplier tenantSupplier,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.tenantSupplier = tenantSupplier;
-        this.absenceService = absenceService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    private static Set<LocalDate> toAbsentWorkingDays(AbsencePeriod absencePeriod) {
-        return absencePeriod.absenceRecords()
-            .stream()
-            .map(AbsencePeriod.Record::getDate)
-            .collect(Collectors.toSet());
+    @EventListener
+    void on(ApplicationAllowedEvent event) {
+        applicationEventPublisher.publishEvent(toApplicationAllowedEventDTO(tenantSupplier.get(), event));
+
+    }
+
+    @EventListener
+    void on(ApplicationUpdatedEvent event) {
+        applicationEventPublisher.publishEvent(toApplicationUpdatedEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(ApplicationCancelledEvent event) {
+        applicationEventPublisher.publishEvent(toApplicationCancelledEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(ApplicationCreatedFromSickNoteEvent event) {
+        applicationEventPublisher.publishEvent(toApplicationCreatedFromSickNoteEventDTO(tenantSupplier.get(), event));
+    }
+
+    private static String getTranslationKey(VacationType<?> vacationType) {
+        if (vacationType instanceof ProvidedVacationType providedVacationType) {
+            return providedVacationType.getMessageKey();
+        }
+        return null;
     }
 
     private static ApplicationPeriodDTO toPeriod(Application application) {
@@ -81,118 +94,102 @@ public class ApplicationEventHandlerExtension {
         return application.getStatus().name();
     }
 
-    private static Function<AbsencePeriod, ApplicationCreatedFromSickNoteEventDTO> toApplicationCreatedFromSickNoteEventDTO(String tenantId, ApplicationCreatedFromSickNoteEvent event) {
-        return absencePeriod -> {
-            final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
-            final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
-            final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
-            final ApplicationPeriodDTO period = toPeriod(event.application());
-            final String status = toStatus(event.application());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static ApplicationCreatedFromSickNoteEventDTO toApplicationCreatedFromSickNoteEventDTO(String tenantId, ApplicationCreatedFromSickNoteEvent event) {
+        final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+        final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+        final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+        final ApplicationPeriodDTO period = toPeriod(event.application());
+        final String status = toStatus(event.application());
 
-            return ApplicationCreatedFromSickNoteEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.application().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .appliedBy(appliedBy)
-                .period(period)
-                .vacationType(vacationType)
-                .reason(event.application().getReason())
-                .status(status)
-                .teamInformed(event.application().isTeamInformed())
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
+        return ApplicationCreatedFromSickNoteEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.application().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .appliedBy(appliedBy)
+            .period(period)
+            .vacationType(vacationType)
+            .reason(event.application().getReason())
+            .status(status)
+            .teamInformed(event.application().isTeamInformed())
+            .build();
     }
 
-    private static Function<AbsencePeriod, ApplicationAllowedEventDTO> toApplicationAllowedEventDTO(String tenantId, ApplicationAllowedEvent event) {
-        return absencePeriod -> {
-            final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
-            final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
-            final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
-            final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
-            final ApplicationPeriodDTO period = toPeriod(event.application());
-            final String status = toStatus(event.application());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static ApplicationAllowedEventDTO toApplicationAllowedEventDTO(String tenantId, ApplicationAllowedEvent event) {
+        final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+        final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+        final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+        final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
+        final ApplicationPeriodDTO period = toPeriod(event.application());
+        final String status = toStatus(event.application());
 
-            return ApplicationAllowedEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.application().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .appliedBy(appliedBy)
-                .allowedBy(allowedBy)
-                .twoStageApproval(event.application().isTwoStageApproval())
-                .period(period)
-                .vacationType(vacationType)
-                .reason(event.application().getReason())
-                .status(status)
-                .teamInformed(event.application().isTeamInformed())
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
+        return ApplicationAllowedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.application().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .appliedBy(appliedBy)
+            .allowedBy(allowedBy)
+            .twoStageApproval(event.application().isTwoStageApproval())
+            .period(period)
+            .vacationType(vacationType)
+            .reason(event.application().getReason())
+            .status(status)
+            .teamInformed(event.application().isTeamInformed())
+            .build();
     }
 
-    private static Function<AbsencePeriod, ApplicationUpdatedEventDTO> toApplicationUpdatedEventDTO(String tenantId, ApplicationUpdatedEvent event) {
-        return absencePeriod -> {
-            final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
-            final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
-            final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
-            final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
-            final ApplicationPeriodDTO period = toPeriod(event.application());
-            final String status = toStatus(event.application());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static ApplicationUpdatedEventDTO toApplicationUpdatedEventDTO(String tenantId, ApplicationUpdatedEvent event) {
+        final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+        final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+        final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+        final ApplicationPersonDTO allowedBy = event.application().getBoss() != null ? toApplicationPersonDTO(event.application().getBoss()) : null;
+        final ApplicationPeriodDTO period = toPeriod(event.application());
+        final String status = toStatus(event.application());
 
-            return ApplicationUpdatedEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.application().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .appliedBy(appliedBy)
-                .updatedBy(allowedBy)
-                .twoStageApproval(event.application().isTwoStageApproval())
-                .period(period)
-                .vacationType(vacationType)
-                .reason(event.application().getReason())
-                .status(status)
-                .teamInformed(event.application().isTeamInformed())
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
+        return ApplicationUpdatedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.application().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .appliedBy(appliedBy)
+            .updatedBy(allowedBy)
+            .twoStageApproval(event.application().isTwoStageApproval())
+            .period(period)
+            .vacationType(vacationType)
+            .reason(event.application().getReason())
+            .status(status)
+            .teamInformed(event.application().isTeamInformed())
+            .build();
     }
 
 
-    private static Function<AbsencePeriod, ApplicationCancelledEventDTO> toApplicationCancelledEventDTO(String tenantId, ApplicationCancelledEvent event) {
-        return absencePeriod -> {
-            final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
-            final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
-            final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
-            final ApplicationPersonDTO cancelledBy = event.application().getCanceller() != null ? toApplicationPersonDTO(event.application().getCanceller()) : null;
-            final ApplicationPeriodDTO period = toPeriod(event.application());
-            final String status = toStatus(event.application());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static ApplicationCancelledEventDTO toApplicationCancelledEventDTO(String tenantId, ApplicationCancelledEvent event) {
+        final VacationTypeDTO vacationType = toVacationType(event.application().getVacationType());
+        final ApplicationPersonDTO person = toApplicationPersonDTO(event.application().getPerson());
+        final ApplicationPersonDTO appliedBy = event.application().getApplier() != null ? toApplicationPersonDTO(event.application().getApplier()) : null;
+        final ApplicationPersonDTO cancelledBy = event.application().getCanceller() != null ? toApplicationPersonDTO(event.application().getCanceller()) : null;
+        final ApplicationPeriodDTO period = toPeriod(event.application());
+        final String status = toStatus(event.application());
 
-            return ApplicationCancelledEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.application().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .appliedBy(appliedBy)
-                .cancelledBy(cancelledBy)
-                .twoStageApproval(event.application().isTwoStageApproval())
-                .period(period)
-                .vacationType(vacationType)
-                .reason(event.application().getReason())
-                .status(status)
-                .teamInformed(event.application().isTeamInformed())
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
+        return ApplicationCancelledEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.application().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .appliedBy(appliedBy)
+            .cancelledBy(cancelledBy)
+            .twoStageApproval(event.application().isTwoStageApproval())
+            .period(period)
+            .vacationType(vacationType)
+            .reason(event.application().getReason())
+            .status(status)
+            .teamInformed(event.application().isTeamInformed())
+            .build();
     }
 
     private static VacationTypeDTO toVacationType(VacationType<?> vacationType) {
@@ -205,76 +202,5 @@ public class ApplicationEventHandlerExtension {
             .visibleToEveryone(vacationType.isVisibleToEveryone())
             .translationKey(getTranslationKey(vacationType))
             .build();
-    }
-
-    @EventListener
-    void on(ApplicationAllowedEvent event) {
-        getAbsencePeriods(event.application())
-            .ifPresent(absencePeriod -> {
-                final ApplicationAllowedEventDTO dto = toApplicationAllowedEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
-                applicationEventPublisher.publishEvent(dto);
-            });
-    }
-
-    @EventListener
-    void on(ApplicationUpdatedEvent event) {
-        getAbsencePeriods(event.application())
-            .ifPresent(absencePeriod -> {
-                final ApplicationUpdatedEventDTO dto = toApplicationUpdatedEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
-                applicationEventPublisher.publishEvent(dto);
-            });
-    }
-
-    @EventListener
-    void on(ApplicationCancelledEvent event) {
-        getClosedAbsencePeriods(event.application())
-            .ifPresent(absencePeriod -> {
-                final ApplicationCancelledEventDTO dto = toApplicationCancelledEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
-                applicationEventPublisher.publishEvent(dto);
-            });
-    }
-
-    @EventListener
-    void on(ApplicationCreatedFromSickNoteEvent event) {
-        getAbsencePeriods(event.application())
-            .ifPresent(absencePeriod -> {
-                final ApplicationCreatedFromSickNoteEventDTO dto = toApplicationCreatedFromSickNoteEventDTO(tenantSupplier.get(), event).apply(absencePeriod);
-                applicationEventPublisher.publishEvent(dto);
-            });
-    }
-
-    private Optional<AbsencePeriod> getAbsencePeriods(Application application) {
-        return absenceService.getOpenAbsences(application.getPerson(), application.getStartDate(), application.getEndDate()).stream()
-            .filter(isFullOrSameDayLength(application.getDayLength()))
-            .findFirst();
-    }
-
-    private Optional<AbsencePeriod> getClosedAbsencePeriods(Application application) {
-        return absenceService.getClosedAbsences(application.getPerson(), application.getStartDate(), application.getEndDate()).stream()
-            .filter(isFullOrSameDayLength(application.getDayLength()))
-            .findFirst();
-    }
-
-    private static Predicate<AbsencePeriod> isFullOrSameDayLength(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return isFullDay(dayLength).or(isMorning(dayLength)).or(isNoon(dayLength));
-    }
-
-    private static Predicate<AbsencePeriod> isFullDay(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isFull();
-    }
-
-    private static Predicate<AbsencePeriod> isMorning(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isMorning() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
-    }
-
-    private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isNoon() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
-    }
-
-    private static String getTranslationKey(VacationType<?> vacationType) {
-        if (vacationType instanceof ProvidedVacationType providedVacationType) {
-            return providedVacationType.getMessageKey();
-        }
-        return null;
     }
 }
