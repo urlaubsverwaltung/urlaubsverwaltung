@@ -13,8 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteAcceptedEvent;
@@ -26,12 +24,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 
 @Component
 @ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
@@ -40,22 +32,39 @@ public class SickNoteEventHandlerExtension {
     private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 
     private final TenantSupplier tenantSupplier;
-    private final AbsenceService absenceService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public SickNoteEventHandlerExtension(TenantSupplier tenantSupplier,
-                                         AbsenceService absenceService,
-                                         ApplicationEventPublisher applicationEventPublisher) {
+    public SickNoteEventHandlerExtension(
+        TenantSupplier tenantSupplier,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.tenantSupplier = tenantSupplier;
-        this.absenceService = absenceService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    private static Set<LocalDate> toAbsentWorkingDays(AbsencePeriod absencePeriod) {
-        return absencePeriod.absenceRecords()
-            .stream()
-            .map(AbsencePeriod.Record::getDate)
-            .collect(Collectors.toSet());
+    @EventListener
+    void on(SickNoteCancelledEvent event) {
+        applicationEventPublisher.publishEvent(toSickNoteCancelledEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(SickNoteCreatedEvent event) {
+        applicationEventPublisher.publishEvent(toSickNoteCreatedEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(SickNoteUpdatedEvent event) {
+        applicationEventPublisher.publishEvent(toSickNoteUpdatedEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(SickNoteAcceptedEvent event) {
+        applicationEventPublisher.publishEvent(toSickNoteAcceptedEventDTO(tenantSupplier.get(), event));
+    }
+
+    @EventListener
+    void on(SickNoteToApplicationConvertedEvent event) {
+        applicationEventPublisher.publishEvent(toSickNoteConvertedEventDTO(tenantSupplier.get(), event));
     }
 
     private static SickNotePeriodDTO toPeriod(SickNote sickNote) {
@@ -96,189 +105,103 @@ public class SickNoteEventHandlerExtension {
         return sickNote.getSickNoteType().getCategory().name();
     }
 
-    private static Function<AbsencePeriod, SickNoteCancelledEventDTO> toSickNoteCancelledEventDTO(String tenantId, SickNoteCancelledEvent event) {
-        return absencePeriod -> {
-            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
-            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
-            final SickNotePeriodDTO period = toPeriod(event.sickNote());
-            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static SickNoteCancelledEventDTO toSickNoteCancelledEventDTO(String tenantId, SickNoteCancelledEvent event) {
+        final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
+        final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+        final SickNotePeriodDTO period = toPeriod(event.sickNote());
+        final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
 
-            return SickNoteCancelledEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.sickNote().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .applier(applier)
-                .type(toSickNoteType(event.sickNote()))
-                .status(toStatus(event.sickNote()))
-                .period(period)
-                .medicalCertificatePeriod(medicalCertificatePeriod)
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-
-        };
+        return SickNoteCancelledEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.sickNote().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .applier(applier)
+            .type(toSickNoteType(event.sickNote()))
+            .status(toStatus(event.sickNote()))
+            .period(period)
+            .medicalCertificatePeriod(medicalCertificatePeriod)
+            .build();
     }
 
-    private static Function<AbsencePeriod, SickNoteCreatedEventDTO> toSickNoteCreatedEventDTO(String tenantId, SickNoteCreatedEvent event) {
-        return absencePeriod -> {
-            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
-            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
-            final SickNotePeriodDTO period = toPeriod(event.sickNote());
-            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static SickNoteCreatedEventDTO toSickNoteCreatedEventDTO(String tenantId, SickNoteCreatedEvent event) {
+        final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
+        final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+        final SickNotePeriodDTO period = toPeriod(event.sickNote());
+        final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
 
-            return SickNoteCreatedEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.sickNote().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .applier(applier)
-                .type(toSickNoteType(event.sickNote()))
-                .status(toStatus(event.sickNote()))
-                .period(period)
-                .medicalCertificatePeriod(medicalCertificatePeriod)
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-
-        };
+        return SickNoteCreatedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.sickNote().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .applier(applier)
+            .type(toSickNoteType(event.sickNote()))
+            .status(toStatus(event.sickNote()))
+            .period(period)
+            .medicalCertificatePeriod(medicalCertificatePeriod)
+            .build();
     }
 
-    private static Function<AbsencePeriod, SickNoteUpdatedEventDTO> toSickNoteUpdatedEventDTO(String tenantId, SickNoteUpdatedEvent event) {
-        return absencePeriod -> {
-            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
-            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
-            final SickNotePeriodDTO period = toPeriod(event.sickNote());
-            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static SickNoteUpdatedEventDTO toSickNoteUpdatedEventDTO(String tenantId, SickNoteUpdatedEvent event) {
+        final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
+        final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+        final SickNotePeriodDTO period = toPeriod(event.sickNote());
+        final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
 
-            return SickNoteUpdatedEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.sickNote().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .applier(applier)
-                .type(toSickNoteType(event.sickNote()))
-                .status(toStatus(event.sickNote()))
-                .period(period)
-                .medicalCertificatePeriod(medicalCertificatePeriod)
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-
-        };
-    }
-    private static Function<AbsencePeriod, SickNoteAcceptedEventDTO> toSickNoteAcceptedEventDTO(String tenantId, SickNoteAcceptedEvent event) {
-        return absencePeriod -> {
-            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
-            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
-            final SickNotePeriodDTO period = toPeriod(event.sickNote());
-            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
-
-            return SickNoteAcceptedEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.sickNote().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .applier(applier)
-                .type(toSickNoteType(event.sickNote()))
-                .status(toStatus(event.sickNote()))
-                .period(period)
-                .medicalCertificatePeriod(medicalCertificatePeriod)
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-
-        };
+        return SickNoteUpdatedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.sickNote().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .applier(applier)
+            .type(toSickNoteType(event.sickNote()))
+            .status(toStatus(event.sickNote()))
+            .period(period)
+            .medicalCertificatePeriod(medicalCertificatePeriod)
+            .build();
     }
 
-    private static Function<AbsencePeriod, SickNoteConvertedToApplicationEventDTO> toSickNoteConvertedEventDTO(String tenantId, SickNoteToApplicationConvertedEvent event) {
-        return absencePeriod -> {
-            final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
-            final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
-            final SickNotePeriodDTO period = toPeriod(event.sickNote());
-            final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
+    private static SickNoteAcceptedEventDTO toSickNoteAcceptedEventDTO(String tenantId, SickNoteAcceptedEvent event) {
+        final SickNotePersonDTO person = toSickNotePersonDTO(event.sickNote().getPerson());
+        final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+        final SickNotePeriodDTO period = toPeriod(event.sickNote());
+        final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
 
-            return SickNoteConvertedToApplicationEventDTO.builder()
-                .id(event.id())
-                .sourceId(event.sickNote().getId())
-                .createdAt(event.createdAt())
-                .tenantId(tenantId)
-                .person(person)
-                .applier(applier)
-                .type(toSickNoteType(event.sickNote()))
-                .status(toStatus(event.sickNote()))
-                .period(period)
-                .medicalCertificatePeriod(medicalCertificatePeriod)
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
+        return SickNoteAcceptedEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.sickNote().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .applier(applier)
+            .type(toSickNoteType(event.sickNote()))
+            .status(toStatus(event.sickNote()))
+            .period(period)
+            .medicalCertificatePeriod(medicalCertificatePeriod)
+            .build();
     }
 
-    @EventListener
-    void on(SickNoteCancelledEvent event) {
-        getClosedAbsencePeriods(event.sickNote())
-            .map(toSickNoteCancelledEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
+    private static SickNoteConvertedToApplicationEventDTO toSickNoteConvertedEventDTO(String tenantId, SickNoteToApplicationConvertedEvent event) {
+        final SickNotePersonDTO person = SickNoteEventHandlerExtension.toSickNotePersonDTO(event.sickNote().getPerson());
+        final SickNotePersonDTO applier = event.sickNote().getApplier() != null ? toSickNotePersonDTO(event.sickNote().getApplier()) : null;
+        final SickNotePeriodDTO period = toPeriod(event.sickNote());
+        final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.sickNote());
 
-    @EventListener
-    void on(SickNoteCreatedEvent event) {
-        getAbsencePeriods(event.sickNote())
-            .map(toSickNoteCreatedEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
-
-    @EventListener
-    void on(SickNoteUpdatedEvent event) {
-        getAbsencePeriods(event.sickNote())
-            .map(toSickNoteUpdatedEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
-
-    @EventListener
-    void on(SickNoteAcceptedEvent event) {
-        getAbsencePeriods(event.sickNote())
-            .map(toSickNoteAcceptedEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
-
-    @EventListener
-    void on(SickNoteToApplicationConvertedEvent event) {
-        getAbsencePeriods(event.sickNote())
-            .map(toSickNoteConvertedEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
-
-    private Optional<AbsencePeriod> getAbsencePeriods(SickNote sickNote) {
-        return absenceService.getOpenAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate()).stream()
-            .filter(isFullOrSameDayLength(sickNote.getDayLength()))
-            .findFirst();
-    }
-
-    private Optional<AbsencePeriod> getClosedAbsencePeriods(SickNote sickNote) {
-        return absenceService.getClosedAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate()).stream()
-            .filter(isFullOrSameDayLength(sickNote.getDayLength()))
-            .findFirst();
-    }
-
-    private static Predicate<AbsencePeriod> isFullOrSameDayLength(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return isFullDay(dayLength).or(isMorning(dayLength)).or(isNoon(dayLength));
-    }
-
-    private static Predicate<AbsencePeriod> isFullDay(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isFull();
-    }
-
-    private static Predicate<AbsencePeriod> isMorning(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isMorning() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
-    }
-
-    private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
-        return absencePeriod -> dayLength.isNoon() && absencePeriod.absenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
+        return SickNoteConvertedToApplicationEventDTO.builder()
+            .id(event.id())
+            .sourceId(event.sickNote().getId())
+            .createdAt(event.createdAt())
+            .tenantId(tenantId)
+            .person(person)
+            .applier(applier)
+            .type(toSickNoteType(event.sickNote()))
+            .status(toStatus(event.sickNote()))
+            .period(period)
+            .medicalCertificatePeriod(medicalCertificatePeriod)
+            .build();
     }
 }
