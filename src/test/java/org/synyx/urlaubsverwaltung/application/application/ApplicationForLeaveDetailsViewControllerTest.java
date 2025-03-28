@@ -1283,6 +1283,105 @@ class ApplicationForLeaveDetailsViewControllerTest {
         verify(applicationInteractionService).declineCancellationRequest(eq(cancellationRequestedApplication), eq(signedInPerson), any());
     }
 
+
+    @Test
+    void addCommentWithUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+        ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+    }
+
+    @Test
+    void addCommentThrowsAccessDeniedIfPersonHasNotEnoughPermissions() {
+
+        final Person signedInPerson = personWithRole(BOSS);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void addCommentThrowsAccessDeniedForDepartmentHeadOfPerson() {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void addCommentThrowsAccessDeniedForSecondStageAuthorityOfPerson() {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/comment"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void addCommentAddsFlashAttributesIfErrorsOccur() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application application = applicationOfPerson(person);
+        application.setId(APPLICATION_ID);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.rejectValue("text", "errors");
+            return null;
+        }).when(commentValidator).validate(any(), any());
+
+        perform(
+            post("/web/application/" + APPLICATION_ID + "/comment")
+        )
+            .andExpect(status().isFound())
+            .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+    }
+
+    @Test
+    void addCommentCreatesAnComment() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application application = applicationOfPerson(person);
+        application.setId(APPLICATION_ID);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        perform(
+            post("/web/application/" + APPLICATION_ID + "/comment")
+                .param("text", "comment")
+        )
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(commentService).create(application, ApplicationCommentAction.COMMENTED, Optional.of("comment"), signedInPerson);
+    }
+
     @Test
     void remindBossWithUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
 

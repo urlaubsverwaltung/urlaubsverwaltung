@@ -24,6 +24,7 @@ public enum ApplicationCommentAction {
     CANCELLED_DIRECTLY,
     CANCEL_REQUESTED,
     CANCEL_REQUESTED_DECLINED,
+    COMMENTED,
     REVOKED,
     REFERRED,
     EDITED
