@@ -78,7 +78,6 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType<?>> activeVacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
@@ -136,8 +135,9 @@ class ApplicationForLeaveStatisticsServiceTest {
         assertThat(applicationForLeaveStatisticsOfPerson.getPersonBasedata()).hasValue(personBasedata);
     }
 
-    @Test
-    void getStatisticsForNotBossOrOffice() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void getStatisticsForPersonWithDepartmentPrivileges(Role role) {
 
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
@@ -145,7 +145,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         final Person departmentHead = new Person();
         departmentHead.setId(1L);
-        departmentHead.setPermissions(List.of(USER));
+        departmentHead.setPermissions(List.of(USER, role));
 
         final Person departmentMember = new Person();
         departmentMember.setId(2L);
@@ -157,7 +157,6 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(departmentHead, personSearchQuery)).thenReturn(new PageImpl<>(List.of(departmentMember)));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -194,7 +193,6 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(personService.getActivePersons(activePersonsPageableSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -210,15 +208,17 @@ class ApplicationForLeaveStatisticsServiceTest {
         assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(anyPerson);
     }
 
-    @Test
-    void ensureAllActivePersonsAreRequestedWhenSortedByStatisticsAttributeByNotBossOrOffice() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensureAllActivePersonsAreRequestedWhenSortedByStatisticsAttributeByDepartmentPrivileged(final Role role) {
 
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final Person notBossOrOfficePerson = new Person();
-        notBossOrOfficePerson.setId(1L);
+        final Person departmentManagement = new Person();
+        departmentManagement.setId(1L);
+        departmentManagement.setPermissions(List.of(USER, role));
 
         final Person departmentMember = new Person();
         departmentMember.setId(2L);
@@ -230,11 +230,10 @@ class ApplicationForLeaveStatisticsServiceTest {
         departmentMemberTwo.setPermissions(List.of(USER));
         departmentMemberTwo.setFirstName("Bernd");
 
-        when(departmentService.getManagedMembersOfPerson(notBossOrOfficePerson, new PageableSearchQuery(Pageable.unpaged(), "")))
+        when(departmentService.getManagedMembersOfPerson(departmentManagement, new PageableSearchQuery(Pageable.unpaged(), "")))
             .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
-//        final VacationType<?> vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType<?>> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -247,10 +246,36 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName", "leftVacationDaysForYear");
         final PageableSearchQuery statisticsPageableSearchQuery = new PageableSearchQuery(pageRequest, "");
 
-        final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(notBossOrOfficePerson, filterPeriod, statisticsPageableSearchQuery);
+        final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(departmentManagement, filterPeriod, statisticsPageableSearchQuery);
 
         assertThat(statisticsPage.getContent()).hasSize(2);
         assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(departmentMember);
         assertThat(statisticsPage.getContent().get(1).getPerson()).isEqualTo(departmentMemberTwo);
+    }
+
+    @Test
+    void getStatisticsForUser() {
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final Person user = new Person();
+        user.setId(1L);
+        user.setPermissions(List.of(USER));
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+        final List<VacationType<?>> vacationTypes = List.of(vacationType);
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+        when(applicationForLeaveStatisticsBuilder.build(List.of(user), startDate, endDate, vacationTypes))
+            .thenReturn(Map.of(user, new ApplicationForLeaveStatistics(user, vacationTypes)));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
+        final PageableSearchQuery statisticsPageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(user, filterPeriod, statisticsPageableSearchQuery);
+        assertThat(statisticsPage.getContent()).hasSize(1);
+        assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(user);
     }
 }

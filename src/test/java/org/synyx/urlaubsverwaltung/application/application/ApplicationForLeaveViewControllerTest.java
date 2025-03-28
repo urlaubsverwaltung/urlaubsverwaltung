@@ -126,7 +126,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(userPerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(false)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("canAccessOtherApplications", is(false)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -206,7 +205,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -310,7 +308,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -411,7 +408,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -512,7 +508,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -611,7 +606,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -704,7 +698,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))
@@ -814,7 +807,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
-            .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("canAccessOtherApplications", is(true)))
             .andExpect(model().attribute("canAccessSickNoteSubmissions", is(false)))

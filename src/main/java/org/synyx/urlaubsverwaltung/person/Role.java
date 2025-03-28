@@ -26,4 +26,8 @@ public enum Role {
     public static List<Role> privilegedRoles() {
         return List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY, BOSS, OFFICE);
     }
+
+    public static List<Role> departmentRoles() {
+        return List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+    }
 }
