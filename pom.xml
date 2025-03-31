@@ -139,7 +139,7 @@
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-provider-jdbc-template</artifactId>
-      <version>6.3.0</version>
+      <version>6.3.1</version>
     </dependency>
 
     <!-- MAIL -->
