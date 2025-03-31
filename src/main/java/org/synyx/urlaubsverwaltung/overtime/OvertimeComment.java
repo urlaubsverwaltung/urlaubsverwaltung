@@ -7,14 +7,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.SEQUENCE;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Optional.ofNullable;
 
 /**
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.
@@ -22,7 +25,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  * @since 2.11.0
  */
 @Entity
-public class OvertimeComment extends AbstractComment {
+public class OvertimeComment extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -37,17 +40,27 @@ public class OvertimeComment extends AbstractComment {
     @Enumerated(STRING)
     private OvertimeCommentAction action;
 
+    @ManyToOne
+    private Person person;
+
+    @Column(nullable = false)
+    private Instant date;
+
+    private String text;
+
     protected OvertimeComment() {
-        super();
+        // needed for hibernate
     }
 
     public OvertimeComment(Clock clock) {
-        super(clock);
+        final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
+        this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
     public OvertimeComment(Person author, Overtime overtime, OvertimeCommentAction action, Clock clock) {
-        super(clock);
-        super.setPerson(author);
+        final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
+        this.date = Instant.now(c).truncatedTo(DAYS);
+        setPerson(author);
 
         this.overtime = overtime;
         this.action = action;
@@ -75,6 +88,26 @@ public class OvertimeComment extends AbstractComment {
 
     public void setAction(OvertimeCommentAction action) {
         this.action = action;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public Instant getDate() {
+        return date;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
