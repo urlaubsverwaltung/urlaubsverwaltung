@@ -8,13 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -48,12 +43,10 @@ class SettingsAbsencesViewControllerTest {
     @Test
     void ensureViewModel() throws Exception {
 
-        final AccountSettings accountSettings = new AccountSettings();
         final ApplicationSettings applicationSettings = new ApplicationSettings();
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
 
         final Settings settings = new Settings();
-        settings.setAccountSettings(accountSettings);
         settings.setApplicationSettings(applicationSettings);
         settings.setSickNoteSettings(sickNoteSettings);
 
@@ -61,7 +54,6 @@ class SettingsAbsencesViewControllerTest {
 
         perform(get("/web/settings/absences"))
             .andExpect(model().attribute("settings", allOf(
-                hasProperty("accountSettings", sameInstance(accountSettings)),
                 hasProperty("applicationSettings", sameInstance(applicationSettings)),
                 hasProperty("sickNoteSettings", sameInstance(sickNoteSettings))
             )));
@@ -70,18 +62,7 @@ class SettingsAbsencesViewControllerTest {
     @Test
     void ensureSettingsSaved() throws Exception {
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        final TimeSettings timeSettings = new TimeSettings();
-        final AvatarSettings avatarSettings = new AvatarSettings();
-
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-        settings.setOvertimeSettings(overtimeSettings);
-        settings.setTimeSettings(timeSettings);
-        settings.setAvatarSettings(avatarSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
             post("/web/settings/absences")
@@ -95,8 +76,6 @@ class SettingsAbsencesViewControllerTest {
                 .param("applicationSettings.allowHalfDays", "true")
                 .param("applicationSettings.remindForUpcomingApplications", "true")
                 .param("applicationSettings.remindForUpcomingHolidayReplacement", "true")
-                .param("accountSettings.maximumAnnualVacationDays", "6")
-                .param("accountSettings.doRemainingVacationDaysExpireGlobally", "true")
                 .param("sickNoteSettings.maximumSickPayDays", "7")
                 .param("sickNoteSettings.daysBeforeEndOfSickPayNotification", "8")
         )
@@ -120,18 +99,10 @@ class SettingsAbsencesViewControllerTest {
             assertThat(applicationSettings.isRemindForUpcomingApplications()).isTrue();
             assertThat(applicationSettings.isRemindForUpcomingHolidayReplacement()).isTrue();
         });
-        assertThat(actualSettings.getAccountSettings()).satisfies(accountSettings -> {
-            assertThat(accountSettings.getMaximumAnnualVacationDays()).isEqualTo(6);
-            assertThat(accountSettings.isDoRemainingVacationDaysExpireGlobally()).isTrue();
-        });
         assertThat(actualSettings.getSickNoteSettings()).satisfies(sickNoteSettings -> {
             assertThat(sickNoteSettings.getMaximumSickPayDays()).isEqualTo(7);
             assertThat(sickNoteSettings.getDaysBeforeEndOfSickPayNotification()).isEqualTo(8);
         });
-        assertThat(actualSettings.getWorkingTimeSettings()).isSameAs(workingTimeSettings);
-        assertThat(actualSettings.getOvertimeSettings()).isSameAs(overtimeSettings);
-        assertThat(actualSettings.getTimeSettings()).isSameAs(timeSettings);
-        assertThat(actualSettings.getAvatarSettings()).isSameAs(avatarSettings);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

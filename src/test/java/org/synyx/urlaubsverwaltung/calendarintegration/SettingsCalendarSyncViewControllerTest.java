@@ -136,7 +136,7 @@ class SettingsCalendarSyncViewControllerTest {
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
         when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
         perform(get("/web/settings/calendar-sync"))
-            .andExpect(view().name("settings/calendar/settings_calendar_sync"));
+            .andExpect(view().name("settings/calendar-sync/settings_calendar_sync"));
     }
 
     @Test
@@ -156,7 +156,7 @@ class SettingsCalendarSyncViewControllerTest {
                 .param("calendarSettings.googleCalendarSettings.calendarId", "")
                 .param("calendarSettings.googleCalendarSettings.authorizedRedirectUrl", "http://localhost:8080/web/google-api-handshake")
         )
-            .andExpect(view().name("settings/calendar/settings_calendar_sync"));
+            .andExpect(view().name("settings/calendar-sync/settings_calendar_sync"));
     }
 
     @Test
