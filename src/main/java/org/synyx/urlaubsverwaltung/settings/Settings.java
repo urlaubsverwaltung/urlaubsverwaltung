@@ -1,13 +1,14 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -31,14 +32,26 @@ public class Settings extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "settings_generator", sequenceName = "settings_id_seq", allocationSize = 1)
     private Long id;
 
+    @Embedded
     private ApplicationSettings applicationSettings = new ApplicationSettings();
-    private AccountSettings accountSettings = new AccountSettings();
-    private WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-    private OvertimeSettings overtimeSettings = new OvertimeSettings();
-    private TimeSettings timeSettings = new TimeSettings();
-    private SickNoteSettings sickNoteSettings = new SickNoteSettings();
-    private AvatarSettings avatarSettings = new AvatarSettings();
 
+    @Embedded
+    private AccountSettings accountSettings = new AccountSettings();
+
+    @Embedded
+    private WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+
+    @Embedded
+    private OvertimeSettings overtimeSettings = new OvertimeSettings();
+
+    @Embedded
+    private TimeSettings timeSettings = new TimeSettings();
+
+    @Embedded
+    private SickNoteSettings sickNoteSettings = new SickNoteSettings();
+
+    @Embedded
+    private AvatarSettings avatarSettings = new AvatarSettings();
 
     public Long getId() {
         return id;
