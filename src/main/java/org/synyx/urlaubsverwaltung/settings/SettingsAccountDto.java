@@ -1,13 +1,15 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.util.Objects;
 
-public class SettingsOnboardingDto {
+public class SettingsAccountDto {
 
     private Long id;
     private WorkingTimeSettings workingTimeSettings;
+    private AccountSettings accountSettings;
 
     public Long getId() {
         return id;
@@ -25,17 +27,26 @@ public class SettingsOnboardingDto {
         this.workingTimeSettings = workingTimeSettings;
     }
 
+    public AccountSettings getAccountSettings() {
+        return accountSettings;
+    }
+
+    public void setAccountSettings(AccountSettings accountSettings) {
+        this.accountSettings = accountSettings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SettingsOnboardingDto that = (SettingsOnboardingDto) o;
+        SettingsAccountDto that = (SettingsAccountDto) o;
         return Objects.equals(id, that.id)
-            && Objects.equals(workingTimeSettings, that.workingTimeSettings);
+            && Objects.equals(workingTimeSettings, that.workingTimeSettings)
+            && Objects.equals(accountSettings, that.accountSettings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workingTimeSettings);
+        return Objects.hash(id, workingTimeSettings, accountSettings);
     }
 }
