@@ -110,7 +110,7 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.disableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
@@ -146,7 +146,7 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
@@ -276,7 +276,7 @@ class ApplicationForLeaveUIIT {
 
         // ensure overtime feature is enabled
         navigationPage.clickSettings();
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 

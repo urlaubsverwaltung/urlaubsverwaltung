@@ -135,7 +135,7 @@ class SettingsAbsencesValidatorTest {
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
     }
 
-        // SickNote settings ------------------------------------------------------------------------------------------------
+    // SickNote settings ------------------------------------------------------------------------------------------------
     @Test
     void ensureSickNoteSettingsCanNotBeNull() {
 

@@ -2741,7 +2741,9 @@
       "thursday": "FULL",
       "friday": "FULL",
       "saturday": "ZERO",
-      "sunday": "ZERO",
+      "sunday": "ZERO"
+    },
+    "publicHolidaysSettings": {
       "workingDurationForChristmasEve": "MORNING",
       "workingDurationForNewYearsEve": "MORNING",
       "federalState": "GERMANY_BADEN_WUERTTEMBERG"

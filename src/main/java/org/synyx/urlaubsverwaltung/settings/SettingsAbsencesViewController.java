@@ -42,8 +42,10 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsAbsencesDto settingsDto, Errors errors,
-                                Model model, RedirectAttributes redirectAttributes) {
+    public String settingsSaved(
+        @Valid @ModelAttribute("settings") SettingsAbsencesDto settingsDto, Errors errors,
+        Model model, RedirectAttributes redirectAttributes
+    ) {
 
         validator.validate(settingsDto, errors);
 

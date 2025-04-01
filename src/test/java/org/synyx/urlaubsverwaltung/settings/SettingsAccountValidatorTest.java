@@ -4,12 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class SettingsOnboardingValidatorTest {
+class SettingsAccountValidatorTest {
 
     private SettingsAccountValidator sut;
 
@@ -37,6 +38,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -53,6 +55,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -69,6 +72,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -85,6 +89,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -101,6 +106,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -118,6 +124,7 @@ class SettingsOnboardingValidatorTest {
 
         final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setAccountSettings(accountSettings);
+        dto.setWorkingTimeSettings(new WorkingTimeSettings());
 
         final Errors mockError = mock(Errors.class);
 
