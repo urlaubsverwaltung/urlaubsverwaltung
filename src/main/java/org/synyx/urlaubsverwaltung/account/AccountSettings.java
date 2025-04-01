@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
 import org.slf4j.Logger;
 
+import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,7 +20,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class AccountSettings {
+public class AccountSettings implements Serializable {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 

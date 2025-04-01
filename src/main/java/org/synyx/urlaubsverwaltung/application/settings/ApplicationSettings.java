@@ -2,11 +2,13 @@ package org.synyx.urlaubsverwaltung.application.settings;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class ApplicationSettings {
+public class ApplicationSettings implements Serializable {
 
     /**
      * Specifies how many months in advance a person can apply for leave.

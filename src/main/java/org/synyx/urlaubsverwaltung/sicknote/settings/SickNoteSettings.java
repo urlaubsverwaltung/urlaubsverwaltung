@@ -2,11 +2,13 @@ package org.synyx.urlaubsverwaltung.sicknote.settings;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class SickNoteSettings {
+public class SickNoteSettings implements Serializable {
 
     /**
      * Specifies the maximal period of sick pay in days.

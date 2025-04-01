@@ -4,6 +4,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
  * Settings concerning working time of persons, like settings for public holidays.
  */
 @Embeddable
-public class WorkingTimeSettings {
+public class WorkingTimeSettings implements Serializable {
 
     @Enumerated(STRING)
     private DayLength monday = FULL;
