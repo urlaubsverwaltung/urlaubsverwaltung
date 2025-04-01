@@ -18,16 +18,16 @@ import java.time.DayOfWeek;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
-@RequestMapping("/web/settings/onboarding")
-public class SettingsOnboardingViewController implements HasLaunchpad {
+@RequestMapping("/web/settings/account")
+public class SettingsAccountViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;
-    private final SettingsOnboardingValidator settingsValidator;
+    private final SettingsAccountValidator settingsValidator;
 
     @Autowired
-    public SettingsOnboardingViewController(
+    public SettingsAccountViewController(
         SettingsService settingsService,
-        SettingsOnboardingValidator settingsValidator
+        SettingsAccountValidator settingsValidator
     ) {
         this.settingsService = settingsService;
         this.settingsValidator = settingsValidator;
@@ -38,17 +38,17 @@ public class SettingsOnboardingViewController implements HasLaunchpad {
     public String settingsDetails(Model model) {
 
         final Settings settings = settingsService.getSettings();
-        final SettingsOnboardingDto settingsDto = settingsToDto(settings);
+        final SettingsAccountDto settingsDto = settingsToDto(settings);
 
         fillModel(model, settingsDto);
 
-        return "settings/onboarding/settings_onboarding";
+        return "settings/account/settings_onboarding";
     }
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String settingsSaved(
-        @Valid @ModelAttribute("settings") SettingsOnboardingDto settingsDto, Errors errors,
+        @Valid @ModelAttribute("settings") SettingsAccountDto settingsDto, Errors errors,
         Model model, RedirectAttributes redirectAttributes
     ) {
 
@@ -57,7 +57,7 @@ public class SettingsOnboardingViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             fillModel(model, settingsDto);
             model.addAttribute("errors", errors);
-            return "settings/onboarding/settings_onboarding";
+            return "settings/account/settings_onboarding";
         }
 
         final Settings settings = settingsDtoToSettings(settingsDto);
@@ -65,25 +65,27 @@ public class SettingsOnboardingViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        return "redirect:/web/settings/onboarding";
+        return "redirect:/web/settings/account";
     }
 
-    private void fillModel(Model model, SettingsOnboardingDto settingsDto) {
+    private void fillModel(Model model, SettingsAccountDto settingsDto) {
         model.addAttribute("settings", settingsDto);
         model.addAttribute("weekDays", DayOfWeek.values());
     }
 
-    private SettingsOnboardingDto settingsToDto(Settings settings) {
-        final SettingsOnboardingDto dto = new SettingsOnboardingDto();
+    private SettingsAccountDto settingsToDto(Settings settings) {
+        final SettingsAccountDto dto = new SettingsAccountDto();
         dto.setId(settings.getId());
         dto.setWorkingTimeSettings(settings.getWorkingTimeSettings());
+        dto.setAccountSettings(settings.getAccountSettings());
         return dto;
     }
 
-    private Settings settingsDtoToSettings(SettingsOnboardingDto settingsDto) {
+    private Settings settingsDtoToSettings(SettingsAccountDto settingsDto) {
         final Settings settings = settingsService.getSettings();
         settings.setId(settingsDto.getId());
         settings.setWorkingTimeSettings(settingsDto.getWorkingTimeSettings());
+        settings.setAccountSettings(settingsDto.getAccountSettings());
         return settings;
     }
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
 import static org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsValidator.validateApplicationSettings;
 import static org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsValidator.validateSickNoteSettings;
 
@@ -21,7 +20,6 @@ public class SettingsAbsencesValidator implements Validator {
     public void validate(Object o, @NonNull Errors errors) {
         final SettingsAbsencesDto settings = (SettingsAbsencesDto) o;
         validateApplicationSettings(settings.getApplicationSettings(), errors);
-        validateAccountSettings(settings.getAccountSettings(), errors);
         validateSickNoteSettings(settings.getSickNoteSettings(), errors);
     }
 }

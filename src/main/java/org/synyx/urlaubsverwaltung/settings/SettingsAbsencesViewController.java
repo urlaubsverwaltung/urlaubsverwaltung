@@ -66,7 +66,6 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setId(settings.getId());
         dto.setApplicationSettings(settings.getApplicationSettings());
-        dto.setAccountSettings(settings.getAccountSettings());
         dto.setSickNoteSettings(settings.getSickNoteSettings());
         return dto;
     }
@@ -75,7 +74,6 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
         final Settings settings = settingsService.getSettings();
         settings.setId(dto.getId());
         settings.setApplicationSettings(dto.getApplicationSettings());
-        settings.setAccountSettings(dto.getAccountSettings());
         settings.setSickNoteSettings(dto.getSickNoteSettings());
         return settings;
     }
