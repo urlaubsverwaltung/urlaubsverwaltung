@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 
 import java.util.Objects;
 
 public class SettingsPublicHolidayDto {
 
     private Long id;
-    private WorkingTimeSettings workingTimeSettings;
+    private PublicHolidaysSettings publicHolidaysSettings;
 
     public Long getId() {
         return id;
@@ -17,12 +17,12 @@ public class SettingsPublicHolidayDto {
         this.id = id;
     }
 
-    public WorkingTimeSettings getWorkingTimeSettings() {
-        return workingTimeSettings;
+    public PublicHolidaysSettings getPublicHolidaysSettings() {
+        return publicHolidaysSettings;
     }
 
-    public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
-        this.workingTimeSettings = workingTimeSettings;
+    public void setPublicHolidaysSettings(PublicHolidaysSettings publicHolidaysSettings) {
+        this.publicHolidaysSettings = publicHolidaysSettings;
     }
 
     @Override
@@ -31,11 +31,11 @@ public class SettingsPublicHolidayDto {
         if (o == null || getClass() != o.getClass()) return false;
         SettingsPublicHolidayDto that = (SettingsPublicHolidayDto) o;
         return Objects.equals(id, that.id)
-            && Objects.equals(workingTimeSettings, that.workingTimeSettings);
+            && Objects.equals(publicHolidaysSettings, that.publicHolidaysSettings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, workingTimeSettings);
+        return Objects.hash(id, publicHolidaysSettings);
     }
 }

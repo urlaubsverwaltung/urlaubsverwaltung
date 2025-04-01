@@ -146,7 +146,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public FederalState getSystemDefaultFederalState() {
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        return settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
     }
 
     @Override

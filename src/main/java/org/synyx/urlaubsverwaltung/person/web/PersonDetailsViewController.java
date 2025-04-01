@@ -96,7 +96,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
         final Optional<WorkingTime> maybeWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock));
         model.addAttribute("workingTime", maybeWorkingTime.orElse(null));
         model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
-            .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState()));
+            .orElseGet(() -> settingsService.getSettings().getPublicHolidaysSettings().getFederalState()));
 
         model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));

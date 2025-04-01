@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -79,8 +78,8 @@ public class PublicHolidayApiController {
 
         checkValidPeriod(startDate, endDate);
 
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-        final FederalState federalState = workingTimeSettings.getFederalState();
+        final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
+        final FederalState federalState = publicHolidaysSettings.getFederalState();
 
         final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
         return new PublicHolidaysDto(publicHolidays);

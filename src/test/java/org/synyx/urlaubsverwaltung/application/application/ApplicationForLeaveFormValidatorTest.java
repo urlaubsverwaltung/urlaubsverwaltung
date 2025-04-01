@@ -96,13 +96,13 @@ class ApplicationForLeaveFormValidatorTest {
 
     private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
         final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(absence.getInverse());
+        settings.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(absence.getInverse());
         return settings;
     }
 
     private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
         final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
+        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
         return settings;
     }
 
