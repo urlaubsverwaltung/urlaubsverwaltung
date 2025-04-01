@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
@@ -46,7 +45,6 @@ class SettingsAbsencesValidatorTest {
 
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setApplicationSettings(applicationSettings);
-        dto.setAccountSettings(new AccountSettings());
         dto.setSickNoteSettings(new SickNoteSettings());
 
         final Errors mockError = mock(Errors.class);
@@ -73,7 +71,6 @@ class SettingsAbsencesValidatorTest {
 
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setApplicationSettings(applicationSettings);
-        dto.setAccountSettings(new AccountSettings());
         dto.setSickNoteSettings(new SickNoteSettings());
 
         final Errors mockError = mock(Errors.class);
@@ -100,7 +97,6 @@ class SettingsAbsencesValidatorTest {
 
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setApplicationSettings(applicationSettings);
-        dto.setAccountSettings(new AccountSettings());
         dto.setSickNoteSettings(new SickNoteSettings());
 
         final Errors mockError = mock(Errors.class);
@@ -126,7 +122,6 @@ class SettingsAbsencesValidatorTest {
 
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setApplicationSettings(applicationSettings);
-        dto.setAccountSettings(new AccountSettings());
         dto.setSickNoteSettings(new SickNoteSettings());
 
         final Errors mockError = mock(Errors.class);
@@ -140,117 +135,7 @@ class SettingsAbsencesValidatorTest {
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
     }
 
-    // Account settings ------------------------------------------------------------------------------------------------
-    @Test
-    void ensureMaximumAnnualVacationDaysAccountSettingsCanNotBeNull() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setMaximumAnnualVacationDays(null);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.mandatory");
-    }
-
-    @Test
-    void ensureMaximumAnnualVacationDaysAccountSettingsCanNotBeNegative() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setMaximumAnnualVacationDays(-1);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
-    }
-
-    @Test
-    void ensureDefaultVacationDaysAccountSettingsCanNotBeNull() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setDefaultVacationDays(null);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.mandatory");
-    }
-
-    @Test
-    void ensureDefaultVacationDaysAccountSettingsCanNotBeNegative() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setDefaultVacationDays(-1);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
-    }
-
-    @Test
-    void ensureDefaultVacationDaysSmallerThanAYearWithLeapYearForExample() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setDefaultVacationDays(367);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
-    }
-
-    @Test
-    void ensureDefaultVacationDaysSmallerMaxDays() {
-
-        final AccountSettings accountSettings = new AccountSettings();
-        accountSettings.setMaximumAnnualVacationDays(19);
-        accountSettings.setDefaultVacationDays(20);
-
-        final SettingsAbsencesDto dto = new SettingsAbsencesDto();
-        dto.setAccountSettings(accountSettings);
-        dto.setApplicationSettings(new ApplicationSettings());
-        dto.setSickNoteSettings(new SickNoteSettings());
-
-        final Errors mockError = mock(Errors.class);
-
-        sut.validate(dto, mockError);
-
-        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "settings.account.error.defaultMustBeSmallerOrEqualThanMax");
-    }
-
-    // SickNote settings ------------------------------------------------------------------------------------------------
+        // SickNote settings ------------------------------------------------------------------------------------------------
     @Test
     void ensureSickNoteSettingsCanNotBeNull() {
 
@@ -261,7 +146,6 @@ class SettingsAbsencesValidatorTest {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setSickNoteSettings(sickNoteSettings);
         dto.setApplicationSettings(new ApplicationSettings());
-        dto.setAccountSettings(new AccountSettings());
 
         final Errors mockError = mock(Errors.class);
 
@@ -280,7 +164,6 @@ class SettingsAbsencesValidatorTest {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setSickNoteSettings(sickNoteSettings);
         dto.setApplicationSettings(new ApplicationSettings());
-        dto.setAccountSettings(new AccountSettings());
 
         Errors mockError = mock(Errors.class);
 
@@ -298,7 +181,6 @@ class SettingsAbsencesValidatorTest {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setSickNoteSettings(sickNoteSettings);
         dto.setApplicationSettings(new ApplicationSettings());
-        dto.setAccountSettings(new AccountSettings());
 
         Errors mockError = mock(Errors.class);
 
@@ -317,7 +199,6 @@ class SettingsAbsencesValidatorTest {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setSickNoteSettings(sickNoteSettings);
         dto.setApplicationSettings(new ApplicationSettings());
-        dto.setAccountSettings(new AccountSettings());
 
         final Errors mockError = mock(Errors.class);
 

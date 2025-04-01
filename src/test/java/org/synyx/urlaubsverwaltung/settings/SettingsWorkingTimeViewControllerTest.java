@@ -40,16 +40,16 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 @ExtendWith(MockitoExtension.class)
 class SettingsWorkingTimeViewControllerTest {
 
-    private SettingsOnboardingViewController sut;
+    private SettingsAccountViewController sut;
 
     @Mock
     private SettingsService settingsService;
     @Mock
-    private SettingsOnboardingValidator settingsValidator;
+    private SettingsAccountValidator settingsValidator;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsOnboardingViewController(settingsService, settingsValidator);
+        sut = new SettingsAccountViewController(settingsService, settingsValidator);
     }
 
     @Test
