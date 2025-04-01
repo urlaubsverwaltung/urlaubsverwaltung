@@ -67,7 +67,7 @@ class BackupCreateServiceIT {
         // and the created backup file are the same
         resetAllSequences();
 
-        // restore the existing backup file, so we have some data to backup
+        // restore the existing backup file, so we have some data to back up
         backupRestoreService.restoreBackup();
 
         // create a fresh backup

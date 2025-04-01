@@ -9,18 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
-import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
-import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.DayOfWeek;
-import java.util.List;
-import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -38,7 +29,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 
 @ExtendWith(MockitoExtension.class)
-class SettingsWorkingTimeViewControllerTest {
+class SettingsAccountViewControllerTest {
 
     private SettingsAccountViewController sut;
 
@@ -55,47 +46,30 @@ class SettingsWorkingTimeViewControllerTest {
     @Test
     void ensureGetSettings() throws Exception {
 
+        final AccountSettings accountSettings = new AccountSettings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        final TimeSettings timeSettings = new TimeSettings();
 
         final Settings settings = new Settings();
+        settings.setAccountSettings(accountSettings);
         settings.setWorkingTimeSettings(workingTimeSettings);
-        settings.setOvertimeSettings(overtimeSettings);
-        settings.setTimeSettings(timeSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        perform(get("/web/settings/working-time"))
+        perform(get("/web/settings/account"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("settings", allOf(
-                hasProperty("workingTimeSettings", sameInstance(workingTimeSettings)),
-                hasProperty("overtimeSettings", sameInstance(overtimeSettings)),
-                hasProperty("timeSettings", sameInstance(timeSettings))
+                hasProperty("accountSettings", sameInstance(accountSettings)),
+                hasProperty("workingTimeSettings", sameInstance(workingTimeSettings))
             )))
-            .andExpect(model().attribute("availableTimezones", List.of(TimeZone.getAvailableIDs())))
-            .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))
-            .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
             .andExpect(model().attribute("weekDays", DayOfWeek.values()));
     }
 
     @Test
     void ensureSaveSettings() throws Exception {
 
-        final ApplicationSettings applicationSettings = new ApplicationSettings();
-        final AccountSettings accountSettings = new AccountSettings();
-        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
-        final AvatarSettings avatarSettings = new AvatarSettings();
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Settings settings = new Settings();
-        settings.setApplicationSettings(applicationSettings);
-        settings.setAccountSettings(accountSettings);
-        settings.setSickNoteSettings(sickNoteSettings);
-        settings.setAvatarSettings(avatarSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        perform(post("/web/settings/working-time")
+        perform(post("/web/settings/account")
             .param("id", "42")
             .param("workingTimeSettings.monday", "MORNING")
             .param("workingTimeSettings.tuesday", "MORNING")
@@ -104,18 +78,11 @@ class SettingsWorkingTimeViewControllerTest {
             .param("workingTimeSettings.friday", "MORNING")
             .param("workingTimeSettings.saturday", "MORNING")
             .param("workingTimeSettings.sunday", "MORNING")
-            .param("timeSettings.timeZoneId", "Europe/Berlin")
-            .param("timeSettings.workDayBeginHour", "6")
-            .param("timeSettings.workDayEndHour", "18")
-            .param("overtimeSettings.overtimeActive", "true")
-            .param("overtimeSettings.overtimeReductionWithoutApplicationActive", "true")
-            .param("overtimeSettings.maximumOvertime", "1")
-            .param("overtimeSettings.minimumOvertime", "2")
-            .param("overtimeSettings.minimumOvertimeReduction", "3")
-            .param("overtimeSettings.overtimeWritePrivilegedOnly", "true")
+            .param("accountSettings.maximumAnnualVacationDays", "6")
+            .param("accountSettings.doRemainingVacationDaysExpireGlobally", "true")
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/web/settings/working-time"))
+            .andExpect(redirectedUrl("/web/settings/account"))
             .andExpect(flash().attribute("success", true));
 
 
@@ -132,23 +99,10 @@ class SettingsWorkingTimeViewControllerTest {
             assertThat(persistedWorkingTimeSettings.getSaturday()).isEqualTo(MORNING);
             assertThat(persistedWorkingTimeSettings.getSunday()).isEqualTo(MORNING);
         });
-        assertThat(actualSettings.getTimeSettings()).satisfies(persistedTimeSettings -> {
-            assertThat(persistedTimeSettings.getTimeZoneId()).isEqualTo("Europe/Berlin");
-            assertThat(persistedTimeSettings.getWorkDayBeginHour()).isEqualTo(6);
-            assertThat(persistedTimeSettings.getWorkDayEndHour()).isEqualTo(18);
+        assertThat(actualSettings.getAccountSettings()).satisfies(persistedAccountSettings -> {
+            assertThat(persistedAccountSettings.getMaximumAnnualVacationDays()).isEqualTo(6);
+            assertThat(persistedAccountSettings.isDoRemainingVacationDaysExpireGlobally()).isTrue();
         });
-        assertThat(actualSettings.getOvertimeSettings()).satisfies(persistedOvertimeSettings -> {
-            assertThat(persistedOvertimeSettings.isOvertimeActive()).isTrue();
-            assertThat(persistedOvertimeSettings.isOvertimeReductionWithoutApplicationActive()).isTrue();
-            assertThat(persistedOvertimeSettings.getMaximumOvertime()).isEqualTo(1);
-            assertThat(persistedOvertimeSettings.getMinimumOvertime()).isEqualTo(2);
-            assertThat(persistedOvertimeSettings.getMinimumOvertimeReduction()).isEqualTo(3);
-            assertThat(persistedOvertimeSettings.isOvertimeWritePrivilegedOnly()).isTrue();
-        });
-        assertThat(actualSettings.getApplicationSettings()).isSameAs(applicationSettings);
-        assertThat(actualSettings.getAccountSettings()).isSameAs(accountSettings);
-        assertThat(actualSettings.getSickNoteSettings()).isSameAs(sickNoteSettings);
-        assertThat(actualSettings.getAvatarSettings()).isSameAs(avatarSettings);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
