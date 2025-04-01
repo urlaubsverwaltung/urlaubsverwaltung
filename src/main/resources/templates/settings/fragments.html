@@ -39,16 +39,44 @@
           </a>
         </li>
         <li
-          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
-          th:class="${activeElement == 'working-time' ? 'active' : ''}"
+          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*')}"
+          th:class="${activeElement == 'onboarding' ? 'active' : ''}"
         >
           <a
             href="#"
-            th:href="@{/web/settings/working-time}"
+            th:href="@{/web/settings/onboarding}"
             th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-            data-test-id="settings-tab-working-time"
+            data-test-id="settings-tab-onboarding"
           >
-            <th:block th:text="#{settings.tabs.workingTime}" />
+            <th:block th:text="#{settings.tabs.onboarding}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li
+          th:with="hasErrors=${#fields.hasErrors('overtimeSettings.*')}"
+          th:class="${activeElement == 'overtime' ? 'active' : ''}"
+        >
+          <a
+            href="#"
+            th:href="@{/web/settings/overtime}"
+            th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            data-test-id="settings-tab-overtime"
+          >
+            <th:block th:text="#{settings.tabs.overtime}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li
+          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*')}"
+          th:class="${activeElement == 'public-holidays' ? 'active' : ''}"
+        >
+          <a
+            href="#"
+            th:href="@{/web/settings/public-holidays}"
+            th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            data-test-id="settings-tab-onboarding"
+          >
+            <th:block th:text="#{settings.tabs.publicHolidays}" />
             <th:block th:if="${hasErrors}">*</th:block>
           </a>
         </li>
@@ -58,11 +86,20 @@
           </a>
         </li>
         <li
+          th:with="hasErrors=${#fields.hasErrors('timeSettings.*')}"
+          th:class="${activeElement == 'calendar' ? 'active' : ''}"
+        >
+          <a href="#" th:href="@{/web/settings/calendar}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
+            <th:block th:text="#{settings.tabs.calendar}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li
           th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}"
           th:class="${activeElement == 'calendar-sync' ? 'active' : ''}"
         >
           <a href="#" th:href="@{/web/settings/calendar-sync}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
-            <th:block th:text="#{settings.tabs.calendar}" />
+            <th:block th:text="#{settings.tabs.calendarSync}" />
             <th:block th:if="${hasErrors}">*</th:block>
           </a>
         </li>

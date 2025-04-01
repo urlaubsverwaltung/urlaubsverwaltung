@@ -29,15 +29,16 @@
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='calendar-sync')}" />
 
           <div id="calendar" class="tw-mt-6">
-            <div class="form-section">
-              <div th:replace="~{settings/calendar/integration::section}"></div>
-            </div>
-            <div class="form-section" id="google-calendar">
-              <div th:replace="~{settings/calendar/google::section}"></div>
+            <div class="form-section tw-mb-8">
+              <div class="form-section">
+                <div th:replace="~{settings/calendar-sync/integration::section}"></div>
+              </div>
+              <div class="form-section" id="google-calendar">
+                <div th:replace="~{settings/calendar-sync/google::section}"></div>
+              </div>
+              <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>
-
-          <th:block th:replace="~{settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>
