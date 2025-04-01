@@ -16,7 +16,7 @@
 
         <form
           method="post"
-          th:action="@{/web/settings/absences}"
+          th:action="@{/web/settings/onboarding}"
           th:object="${settings}"
           class="form-horizontal"
           role="form"
@@ -26,27 +26,11 @@
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
 
-          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absences')}" />
+          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='onboarding')}" />
 
-          <div id="absence" class="tw-mt-6">
+          <div id="onboarding" class="tw-mt-6">
             <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/vacation::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/sick-days::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section">
-              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
+              <div th:replace="~{settings/onboarding/default-workingtime::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>
