@@ -5,6 +5,8 @@ import jakarta.persistence.Enumerated;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
+import java.io.Serializable;
+
 import static jakarta.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -13,7 +15,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN
  * Settings concerning working time of persons, like settings for public holidays.
  */
 @Embeddable
-public class PublicHolidaysSettings {
+public class PublicHolidaysSettings implements Serializable {
 
     /**
      * Defines the working duration for Christmas Eve and New Years Eve.
