@@ -39,20 +39,6 @@
           </a>
         </li>
         <li
-          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*')}"
-          th:class="${activeElement == 'onboarding' ? 'active' : ''}"
-        >
-          <a
-            href="#"
-            th:href="@{/web/settings/onboarding}"
-            th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-            data-test-id="settings-tab-onboarding"
-          >
-            <th:block th:text="#{settings.tabs.onboarding}" />
-            <th:block th:if="${hasErrors}">*</th:block>
-          </a>
-        </li>
-        <li
           th:with="hasErrors=${#fields.hasErrors('overtimeSettings.*')}"
           th:class="${activeElement == 'overtime' ? 'active' : ''}"
         >
@@ -67,7 +53,7 @@
           </a>
         </li>
         <li
-          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*')}"
+          th:with="hasErrors=${#fields.hasErrors('publicHolidaysSettings.*')}"
           th:class="${activeElement == 'public-holidays' ? 'active' : ''}"
         >
           <a
@@ -77,6 +63,20 @@
             data-test-id="settings-tab-onboarding"
           >
             <th:block th:text="#{settings.tabs.publicHolidays}" />
+            <th:block th:if="${hasErrors}">*</th:block>
+          </a>
+        </li>
+        <li
+          th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*')}"
+          th:class="${activeElement == 'onboarding' ? 'active' : ''}"
+        >
+          <a
+            href="#"
+            th:href="@{/web/settings/onboarding}"
+            th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            data-test-id="settings-tab-onboarding"
+          >
+            <th:block th:text="#{settings.tabs.onboarding}" />
             <th:block th:if="${hasErrors}">*</th:block>
           </a>
         </li>

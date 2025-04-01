@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.AccountSettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.ApplicationSettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.AvatarSettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OverTimeSettingsDTO;
+import org.synyx.urlaubsverwaltung.extension.backup.model.PublicHolidaysSettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.SettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.SickNoteSettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.TimeSettingsDTO;
@@ -32,7 +33,8 @@ class SettingsDataCollectionService {
             OverTimeSettingsDTO.of(settings.getOvertimeSettings()),
             TimeSettingsDTO.of(settings.getTimeSettings()),
             SickNoteSettingsDTO.of(settings.getSickNoteSettings()),
-            AvatarSettingsDTO.of(settings.getAvatarSettings())
+            AvatarSettingsDTO.of(settings.getAvatarSettings()),
+            PublicHolidaysSettingsDTO.of(settings.getPublicHolidaysSettings())
         );
     }
 }

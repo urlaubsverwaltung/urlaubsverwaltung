@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -50,8 +49,8 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     @Override
-    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
-        return getPublicHolidays(date, date, federalState, workingTimeSettings).stream().findFirst();
+    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, PublicHolidaysSettings publicHolidaysSettings) {
+        return getPublicHolidays(date, date, federalState, publicHolidaysSettings).stream().findFirst();
     }
 
     @Override
@@ -61,24 +60,24 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
     @Override
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
-        return getPublicHolidays(from, to, federalState, getWorkingTimeSettings());
+        return getPublicHolidays(from, to, federalState, getPublicHolidaysSettings());
     }
 
-    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
+    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, PublicHolidaysSettings publicHolidaysSettings) {
         final Locale locale = LocaleContextHolder.getLocale();
 
         return getHolidays(from, to, federalState).stream()
-            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState), holiday.getDescription(locale)))
+            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(publicHolidaysSettings, holiday.getDate(), federalState), holiday.getDescription(locale)))
             .toList();
     }
 
-    private DayLength getHolidayDayLength(WorkingTimeSettings workingTimeSettings, LocalDate date, FederalState federalState) {
+    private DayLength getHolidayDayLength(PublicHolidaysSettings publicHolidaysSettings, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {
-                workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
+                workingTime = publicHolidaysSettings.getWorkingDurationForChristmasEve();
             } else if (isNewYearsEve(date)) {
-                workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
+                workingTime = publicHolidaysSettings.getWorkingDurationForNewYearsEve();
             } else {
                 workingTime = ZERO;
             }
@@ -115,7 +114,7 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         return Optional.ofNullable(holidayManagers.get(federalState.getCountry()));
     }
 
-    private WorkingTimeSettings getWorkingTimeSettings() {
-        return settingsService.getSettings().getWorkingTimeSettings();
+    private PublicHolidaysSettings getPublicHolidaysSettings() {
+        return settingsService.getSettings().getPublicHolidaysSettings();
     }
 }
