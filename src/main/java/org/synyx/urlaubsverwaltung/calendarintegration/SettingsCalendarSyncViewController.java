@@ -44,8 +44,10 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
     @GetMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsDetails(@RequestParam(value = "oautherrors", required = false) String googleOAuthError,
-                                  HttpServletRequest request, Model model) {
+    public String settingsDetails(
+        @RequestParam(value = "oautherrors", required = false) String googleOAuthError,
+        HttpServletRequest request, Model model
+    ) {
 
         final String requestURL = request.getRequestURL().toString();
         final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
@@ -59,14 +61,16 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
             model.addAttribute("oautherrors", googleOAuthError);
         }
 
-        return "settings/calendar/settings_calendar_sync";
+        return "settings/calendar-sync/settings_calendar_sync";
     }
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsCalendarSyncDto calendarSettingsDto, Errors errors,
-                                @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
-                                Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String settingsSaved(
+        @Valid @ModelAttribute("settings") SettingsCalendarSyncDto calendarSettingsDto, Errors errors,
+        @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
+        Model model, RedirectAttributes redirectAttributes, HttpServletRequest request
+    ) {
 
         calendarSyncValidator.validate(calendarSettingsDto, errors);
 
@@ -78,7 +82,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
             model.addAttribute("errors", errors);
 
-            return "settings/calendar/settings_calendar_sync";
+            return "settings/calendar-sync/settings_calendar_sync";
         }
 
         final CalendarSettings calendarSettings = settingsDtoToSettings(calendarSettingsDto);

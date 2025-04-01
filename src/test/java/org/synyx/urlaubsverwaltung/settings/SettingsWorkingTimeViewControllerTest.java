@@ -8,9 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
@@ -42,16 +42,16 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYER
 @ExtendWith(MockitoExtension.class)
 class SettingsWorkingTimeViewControllerTest {
 
-    private SettingsWorkingTimeViewController sut;
+    private SettingsOnboardingViewController sut;
 
     @Mock
     private SettingsService settingsService;
     @Mock
-    private SettingsWorkingTimeValidator settingsValidator;
+    private SettingsOnboardingValidator settingsValidator;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsWorkingTimeViewController(settingsService, settingsValidator);
+        sut = new SettingsOnboardingViewController(settingsService, settingsValidator);
     }
 
     @Test
