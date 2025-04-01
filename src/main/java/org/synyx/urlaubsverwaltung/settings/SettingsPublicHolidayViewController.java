@@ -77,14 +77,14 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad {
     private SettingsPublicHolidayDto settingsToDto(Settings settings) {
         final SettingsPublicHolidayDto dto = new SettingsPublicHolidayDto();
         dto.setId(settings.getId());
-        dto.setWorkingTimeSettings(settings.getWorkingTimeSettings());
+        dto.setPublicHolidaysSettings(settings.getPublicHolidaysSettings());
         return dto;
     }
 
     private Settings settingsDtoToSettings(SettingsPublicHolidayDto settingsDto) {
         final Settings settings = settingsService.getSettings();
         settings.setId(settingsDto.getId());
-        settings.setWorkingTimeSettings(settingsDto.getWorkingTimeSettings());
+        settings.setPublicHolidaysSettings(settingsDto.getPublicHolidaysSettings());
         return settings;
     }
 }

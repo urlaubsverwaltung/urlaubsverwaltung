@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType;
@@ -97,7 +98,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
             } else {
                 try {
                     return getSameOrNextWorkingDay(date.plusDays(1), workingTimeSupplier);
-                } catch(StackOverflowError e) {
+                } catch (StackOverflowError e) {
                     LOG.warn("could not get same or next workingDay due to workingTime without working days.");
                     return Optional.empty();
                 }
@@ -113,7 +114,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
+        final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -144,7 +145,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, workingTimeSettings));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, publicHolidaysSettings));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -158,7 +159,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, PublicHolidaysSettings publicHolidaysSettings) {
         final FederalState federalState = workingTime.getFederalState();
 
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
@@ -170,7 +171,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
 
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, publicHolidaysSettings);
 
             if (maybePublicHoliday.isPresent()) {
 
@@ -270,6 +271,6 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
     }
 
     private FederalState getSystemDefaultFederalState() {
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        return settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
     }
 }

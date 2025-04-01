@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,12 +22,12 @@ public interface PublicHolidaysService {
      * If there is no public holiday at the given date the return value is an empty optional, otherwise
      * the public holiday will be returned.
      *
-     * @param date                to get public holiday for
-     * @param federalState        the federal state to consider holiday settings for
-     * @param workingTimeSettings the global workingTimeSettings
+     * @param date                   to get public holiday for
+     * @param federalState           the federal state to consider holiday settings for
+     * @param publicHolidaysSettings the global publicHolidaysSettings
      * @return the public holiday if there is one at the given date, otherwise empty optional
      */
-    Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, WorkingTimeSettings workingTimeSettings);
+    Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, PublicHolidaysSettings publicHolidaysSettings);
 
     /**
      * Returns the public holiday information for a date and the federal state.

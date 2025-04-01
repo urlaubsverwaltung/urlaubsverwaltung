@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -52,6 +53,9 @@ public class Settings extends AbstractTenantAwareEntity {
 
     @Embedded
     private AvatarSettings avatarSettings = new AvatarSettings();
+
+    @Embedded
+    private PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
 
     public Long getId() {
         return id;
@@ -115,6 +119,14 @@ public class Settings extends AbstractTenantAwareEntity {
 
     public void setAvatarSettings(AvatarSettings avatarSettings) {
         this.avatarSettings = avatarSettings;
+    }
+
+    public PublicHolidaysSettings getPublicHolidaysSettings() {
+        return publicHolidaysSettings;
+    }
+
+    public void setPublicHolidaysSettings(PublicHolidaysSettings publicHolidaysSettings) {
+        this.publicHolidaysSettings = publicHolidaysSettings;
     }
 
     @Override

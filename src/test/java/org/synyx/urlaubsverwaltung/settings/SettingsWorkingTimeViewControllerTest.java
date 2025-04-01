@@ -36,8 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
 
 @ExtendWith(MockitoExtension.class)
 class SettingsWorkingTimeViewControllerTest {
@@ -106,9 +104,6 @@ class SettingsWorkingTimeViewControllerTest {
             .param("workingTimeSettings.friday", "MORNING")
             .param("workingTimeSettings.saturday", "MORNING")
             .param("workingTimeSettings.sunday", "MORNING")
-            .param("workingTimeSettings.workingDurationForChristmasEve", "ZERO")
-            .param("workingTimeSettings.workingDurationForNewYearsEve", "ZERO")
-            .param("workingTimeSettings.federalState", "GERMANY_BAYERN")
             .param("timeSettings.timeZoneId", "Europe/Berlin")
             .param("timeSettings.workDayBeginHour", "6")
             .param("timeSettings.workDayEndHour", "18")
@@ -136,9 +131,6 @@ class SettingsWorkingTimeViewControllerTest {
             assertThat(persistedWorkingTimeSettings.getFriday()).isEqualTo(MORNING);
             assertThat(persistedWorkingTimeSettings.getSaturday()).isEqualTo(MORNING);
             assertThat(persistedWorkingTimeSettings.getSunday()).isEqualTo(MORNING);
-            assertThat(persistedWorkingTimeSettings.getWorkingDurationForChristmasEve()).isEqualTo(ZERO);
-            assertThat(persistedWorkingTimeSettings.getWorkingDurationForNewYearsEve()).isEqualTo(ZERO);
-            assertThat(persistedWorkingTimeSettings.getFederalState()).isEqualTo(GERMANY_BAYERN);
         });
         assertThat(actualSettings.getTimeSettings()).satisfies(persistedTimeSettings -> {
             assertThat(persistedTimeSettings.getTimeZoneId()).isEqualTo("Europe/Berlin");
