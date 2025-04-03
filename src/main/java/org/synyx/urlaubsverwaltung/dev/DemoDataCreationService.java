@@ -16,6 +16,18 @@ import static java.time.DayOfWeek.MONDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_ADMIN;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_BAIER;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_BOSS;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_DAMPF;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_HAENDEL;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_HDIETER;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_OFFICE;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_SCHMIDT;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_SCHNEIDER;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.dev.DemoDataPersonCreationForLocalDevelopment.EMAIL_USER;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -104,15 +116,6 @@ public class DemoDataCreationService {
     private static final String DEPARTMENT_MARKETING = "Marketing";
     private static final String DEPARTMENT_BOSS = "Geschäftsführung";
 
-    // email addresses
-    private static final String EMAIL_USER = "user@urlaubsverwaltung.cloud";
-    private static final String EMAIL_DEPARTMENT_HEAD = "departmentHead@urlaubsverwaltung.cloud";
-    private static final String EMAIL_SECOND_STAGE_AUTHORITY = "secondStageAuthority@urlaubsverwaltung.cloud";
-    private static final String EMAIL_BOSS = "boss@urlaubsverwaltung.cloud";
-    private static final String EMAIL_OFFICE = "office@urlaubsverwaltung.cloud";
-    private static final String EMAIL_DAMPF = "dampf@urlaubsverwaltung.cloud";
-    private static final String EMAIL_SCHMIDT = "schmidt@urlaubsverwaltung.cloud";
-
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
     private final SickNoteDataProvider sickNoteDataProvider;
@@ -181,7 +184,7 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes(EMAIL_SCHMIDT);
                 createDemoApplicationsAndSickNotes(EMAIL_SECOND_STAGE_AUTHORITY);
                 break;
-            case "admin@urlaubsverwaltung.cloud":
+            case EMAIL_ADMIN:
                 personDataProvider.updateTestPerson(5, email, List.of(USER), List.of());
                 break;
             case EMAIL_DAMPF:
@@ -189,15 +192,15 @@ public class DemoDataCreationService {
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, dampf);
                 createDemoApplicationsAndSickNotes(EMAIL_DAMPF);
                 break;
-            case "baier@urlaubsverwaltung.cloud":
+            case EMAIL_BAIER:
                 final Person baier = personDataProvider.updateTestPerson(7, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, baier);
                 break;
-            case "schneider@urlaubsverwaltung.cloud":
+            case EMAIL_SCHNEIDER:
                 final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, schneider);
                 break;
-            case "haendel@urlaubsverwaltung.cloud":
+            case EMAIL_HAENDEL:
                 final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, haendel);
                 break;
@@ -206,7 +209,7 @@ public class DemoDataCreationService {
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, schmidt);
                 createDemoApplicationsAndSickNotes(EMAIL_SCHMIDT);
                 break;
-            case "hdieter@urlaubsverwaltung.cloud":
+            case EMAIL_HDIETER:
                 personDataProvider.updateTestPerson(11, email, List.of(USER), PERSON_NOTIFICATIONS);
                 break;
             default:

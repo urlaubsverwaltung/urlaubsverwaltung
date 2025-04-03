@@ -90,7 +90,7 @@ class DepartmentDataProvider {
         final Department department = optionalDepartment.get();
         final List<Person> secondStageAuthorities = department.getSecondStageAuthorities();
         if (isNotInList(person, secondStageAuthorities)) {
-            department.setDepartmentHeads(addPersonToList(person, secondStageAuthorities));
+            department.setSecondStageAuthorities(addPersonToList(person, secondStageAuthorities));
             department.setTwoStageApproval(true);
             departmentService.update(department);
         } else {
