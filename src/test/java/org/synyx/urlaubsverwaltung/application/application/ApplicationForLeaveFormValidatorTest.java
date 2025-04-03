@@ -882,7 +882,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         sut.validate(appForm, errors);
 
-        verify(errors).rejectValue("overtimeReduction", "overtime.error.minimumReductionRequired", new Object[]{4}, null);
+        verify(errors).rejectValue("hours", "overtime.error.minimumReductionRequired", new Object[]{4}, null);
         verify(errors).hasErrors();
         verifyNoMoreInteractions(errors);
     }
