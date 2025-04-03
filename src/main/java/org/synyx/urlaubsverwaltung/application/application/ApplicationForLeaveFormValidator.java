@@ -332,7 +332,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         final Duration minimumDuration = Duration.ofHours(minimumOvertimeReduction);
         final Duration overtimeReduction = applicationForLeave.getOvertimeReduction();
         if (overtimeReduction != null && overtimeReduction.compareTo(minimumDuration) < 0) {
-            errors.rejectValue("overtimeReduction", "overtime.error.minimumReductionRequired", new Object[]{minimumOvertimeReduction}, null);
+            errors.rejectValue(ATTRIBUTE_HOURS, "overtime.error.minimumReductionRequired", new Object[]{minimumOvertimeReduction}, null);
         }
     }
 
