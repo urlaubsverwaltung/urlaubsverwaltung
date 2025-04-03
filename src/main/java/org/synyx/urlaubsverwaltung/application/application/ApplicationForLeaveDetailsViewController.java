@@ -504,7 +504,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("isAllowedToDeclineCancellationRequest", isAllowedToDeclineCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 
-        model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser));
+        model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
         model.addAttribute("isAllowedToRemindApplication", isAllowedToRemindApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 
         final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);

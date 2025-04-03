@@ -32,8 +32,9 @@ class PersonPermissionsMapperTest {
                 Role.SICK_NOTE_CANCEL,
                 Role.SICK_NOTE_COMMENT
             )),
-            arguments(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL, List.of(
+            arguments(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL_EDIT, List.of(
                 Role.APPLICATION_ADD,
+                Role.APPLICATION_EDIT,
                 Role.APPLICATION_CANCEL,
                 Role.APPLICATION_CANCELLATION_REQUESTED
             ))
@@ -68,10 +69,11 @@ class PersonPermissionsMapperTest {
             arguments(Role.SICK_NOTE_EDIT, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
             arguments(Role.SICK_NOTE_CANCEL, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
             arguments(Role.SICK_NOTE_COMMENT, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
-            arguments(Role.APPLICATION_ADD, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL)),
-            arguments(Role.APPLICATION_CANCEL, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL)),
-            arguments(Role.APPLICATION_CANCELLATION_REQUESTED, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL))
-        );
+            arguments(Role.APPLICATION_ADD, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL_EDIT)),
+            arguments(Role.APPLICATION_EDIT, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL_EDIT)),
+            arguments(Role.APPLICATION_CANCEL, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL_EDIT)),
+            arguments(Role.APPLICATION_CANCELLATION_REQUESTED, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL_EDIT))
+            );
     }
 
     @ParameterizedTest

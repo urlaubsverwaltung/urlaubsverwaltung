@@ -1,0 +1,24 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="schneider" id="role-application-edit">
+    <preConditions>
+      <tableExists tableName="person_permissions"/>
+    </preConditions>
+
+    <sql>
+      INSERT INTO person_permissions (person_id, permissions)
+      SELECT person_id, 'APPLICATION_EDIT'
+      FROM person_permissions
+      WHERE permissions = 'APPLICATION_ADD'
+        AND NOT EXISTS (
+        SELECT 1
+        FROM person_permissions pp
+        WHERE pp.person_id = person_permissions.person_id
+          AND pp.permissions = 'APPLICATION_EDIT'
+      );
+    </sql>
+  </changeSet>
+</databaseChangeLog>

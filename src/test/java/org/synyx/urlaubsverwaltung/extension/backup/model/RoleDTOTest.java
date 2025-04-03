@@ -11,14 +11,14 @@ class RoleDTOTest {
     @ParameterizedTest
     @EnumSource(Role.class)
     void happyPathRoleToDTO(Role role) {
-        RoleDTO roleDTO = RoleDTO.valueOf(role.name());
+        final RoleDTO roleDTO = RoleDTO.valueOf(role.name());
         assertThat(roleDTO).isNotNull();
     }
 
     @ParameterizedTest
     @EnumSource(RoleDTO.class)
     void happyPathDTOToRole(RoleDTO roleDTO) {
-        Role role = roleDTO.toRole();
+        final Role role = roleDTO.toRole();
         assertThat(role).isNotNull();
     }
 }

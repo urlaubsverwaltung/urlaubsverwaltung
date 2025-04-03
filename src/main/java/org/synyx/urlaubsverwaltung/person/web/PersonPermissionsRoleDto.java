@@ -8,6 +8,6 @@ public enum PersonPermissionsRoleDto {
     BOSS,
     OFFICE,
     INACTIVE,
-    APPLICATION_ADD_CANCEL,
+    APPLICATION_ADD_CANCEL_EDIT,
     SICK_NOTE_VIEW_ADD_EDIT
 }

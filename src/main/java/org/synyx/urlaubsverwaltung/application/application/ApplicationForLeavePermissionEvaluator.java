@@ -9,6 +9,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -62,8 +63,10 @@ class ApplicationForLeavePermissionEvaluator {
             && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)));
     }
 
-    static boolean isAllowedToEditApplication(Application application, Person signedInUser) {
-        return (application.hasStatus(WAITING) && application.getPerson().equals(signedInUser)) || signedInUser.hasRole(OFFICE);
+    static boolean isAllowedToEditApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+        return (application.hasStatus(WAITING) && application.getPerson().equals(signedInUser))
+            || signedInUser.hasRole(OFFICE)
+            || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_EDIT));
     }
 
     static boolean isAllowedToRemindApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
