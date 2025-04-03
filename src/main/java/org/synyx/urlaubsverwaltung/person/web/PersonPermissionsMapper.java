@@ -51,6 +51,7 @@ final class PersonPermissionsMapper {
                     mappedToRoles.add(Role.APPLICATION_ADD);
                     mappedToRoles.add(Role.APPLICATION_CANCEL);
                     mappedToRoles.add(Role.APPLICATION_CANCELLATION_REQUESTED);
+                    mappedToRoles.add(Role.APPLICATION_EDIT);
                 }
             }
         });
@@ -70,7 +71,7 @@ final class PersonPermissionsMapper {
                 case INACTIVE -> mappedToRolesDto.add(PersonPermissionsRoleDto.INACTIVE);
                 case SICK_NOTE_VIEW, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT);
-                case APPLICATION_ADD, APPLICATION_CANCEL, APPLICATION_CANCELLATION_REQUESTED ->
+                case APPLICATION_ADD, APPLICATION_CANCEL, APPLICATION_CANCELLATION_REQUESTED, APPLICATION_EDIT ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL);
             }
         });
