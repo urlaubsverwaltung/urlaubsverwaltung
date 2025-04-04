@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.overtime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 @Embeddable
-public class OvertimeSettings {
+public class OvertimeSettings implements Serializable {
 
     /**
      * Activates or deactivates overtime settings.

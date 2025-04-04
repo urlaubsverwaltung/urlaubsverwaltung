@@ -1,15 +1,17 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
-import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -31,14 +33,29 @@ public class Settings extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "settings_generator", sequenceName = "settings_id_seq", allocationSize = 1)
     private Long id;
 
+    @Embedded
     private ApplicationSettings applicationSettings = new ApplicationSettings();
+
+    @Embedded
     private AccountSettings accountSettings = new AccountSettings();
+
+    @Embedded
     private WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+
+    @Embedded
     private OvertimeSettings overtimeSettings = new OvertimeSettings();
+
+    @Embedded
     private TimeSettings timeSettings = new TimeSettings();
+
+    @Embedded
     private SickNoteSettings sickNoteSettings = new SickNoteSettings();
+
+    @Embedded
     private AvatarSettings avatarSettings = new AvatarSettings();
 
+    @Embedded
+    private PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
 
     public Long getId() {
         return id;
@@ -102,6 +119,14 @@ public class Settings extends AbstractTenantAwareEntity {
 
     public void setAvatarSettings(AvatarSettings avatarSettings) {
         this.avatarSettings = avatarSettings;
+    }
+
+    public PublicHolidaysSettings getPublicHolidaysSettings() {
+        return publicHolidaysSettings;
+    }
+
+    public void setPublicHolidaysSettings(PublicHolidaysSettings publicHolidaysSettings) {
+        this.publicHolidaysSettings = publicHolidaysSettings;
     }
 
     @Override

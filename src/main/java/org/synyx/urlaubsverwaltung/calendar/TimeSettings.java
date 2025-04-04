@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.calendar;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+
 @Embeddable
-public class TimeSettings {
+public class TimeSettings implements Serializable {
 
     @Column(name = "timezoneid")
     private String timeZoneId = "Europe/Berlin";

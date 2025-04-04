@@ -6,7 +6,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 class WorkingTimeSettingsTest {
@@ -15,8 +14,6 @@ class WorkingTimeSettingsTest {
     void ensureDefaultValues() {
 
         final WorkingTimeSettings settings = new WorkingTimeSettings();
-        assertThat(settings.getWorkingDurationForChristmasEve()).isEqualTo(MORNING);
-        assertThat(settings.getWorkingDurationForNewYearsEve()).isEqualTo(MORNING);
         assertThat(settings.getMonday()).isEqualTo(FULL);
         assertThat(settings.getTuesday()).isEqualTo(FULL);
         assertThat(settings.getWednesday()).isEqualTo(FULL);

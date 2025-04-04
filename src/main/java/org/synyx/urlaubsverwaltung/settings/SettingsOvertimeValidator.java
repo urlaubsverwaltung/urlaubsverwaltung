@@ -5,23 +5,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import static org.synyx.urlaubsverwaltung.calendar.TimeSettingsValidator.validateTimeSettings;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
 
 @Component
-public class SettingsWorkingTimeValidator implements Validator {
+public class SettingsOvertimeValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.equals(SettingsWorkingTimeDto.class);
+        return clazz.equals(SettingsOvertimeDto.class);
     }
 
     @Override
     public void validate(Object o, @NonNull Errors errors) {
-        final SettingsWorkingTimeDto settings = (SettingsWorkingTimeDto) o;
-        validateWorkingTimeSettings(settings.getWorkingTimeSettings(), errors);
+        final SettingsOvertimeDto settings = (SettingsOvertimeDto) o;
         validateOvertimeSettings(settings.getOvertimeSettings(), errors);
-        validateTimeSettings(settings.getTimeSettings(), errors);
     }
 }
