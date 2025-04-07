@@ -27,7 +27,7 @@ public class MenuProperties {
 
         @URL
         @NotEmpty
-        private String url = "https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation";
+        private String url = "https://urlaubsverwaltung.cloud/hilfe/?utm_source=urlaubsverwaltung-open-source#dokumentation-urlaubsverwaltung";
 
         public String getUrl() {
             return url;
