@@ -29,20 +29,20 @@ class MenuPropertiesTest {
     @Test
     void helpUrlDefault() {
         final MenuProperties menuProperties = new MenuProperties();
-        assertThat(menuProperties.getHelp().getUrl()).isEqualTo("https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation");
+        assertThat(menuProperties.getHelp().getUrl()).isEqualTo("https://urlaubsverwaltung.cloud/hilfe/?utm_source=urlaubsverwaltung-open-source#dokumentation-urlaubsverwaltung");
     }
 
     @Test
     void helpUrlIsGiven() {
         final MenuProperties menuProperties = new MenuProperties();
-        menuProperties.getHelp().setUrl("https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation");
+        menuProperties.getHelp().setUrl("https://urlaubsverwaltung.cloud/hilfe/?utm_source=urlaubsverwaltung-open-source#dokumentation-urlaubsverwaltung");
         final Set<ConstraintViolation<MenuProperties>> violations = validator.validate(menuProperties);
 
         assertThat(violations).isEmpty();
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "NotAnEmail"})
+    @ValueSource(strings = {"", " ", "NotAnUrl"})
     @NullSource
     void helpUrlIsWrong(String input) {
         final MenuProperties menuProperties = new MenuProperties();
