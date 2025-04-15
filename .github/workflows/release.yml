@@ -20,7 +20,7 @@ jobs:
           cache: 'maven'
 
       - name: Build jar with Maven
-        run: ./mvnw clean package
+        run: ./mvnw package
 
       - name: Extract release version
         id: vars
