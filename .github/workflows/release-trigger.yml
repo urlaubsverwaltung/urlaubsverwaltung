@@ -3,10 +3,10 @@ name: Release Trigger
 on:
   workflow_dispatch:
     inputs:
-      milestoneId:
-        description: 'Milestone ID'
+      milestoneName:
+        description: 'Milestone Name'
         required: true
-        default: '1'
+        default: 'Name of the Milestone'
       releaseVersion:
         description: 'Release version'
         required: true
@@ -86,11 +86,12 @@ jobs:
         uses: fregante/setup-git-user@v2
 
       - name: Create Release Notes
-        uses: docker://decathlon/release-notes-generator-action:3.1.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUT_FOLDER: .chglog/
-          FILENAME: ${{ github.event.inputs.releaseVersion }}
+        uses: spring-io/github-changelog-generator@v0.0.12
+        with:
+          milestone: ${{ github.event.inputs.milestoneName }}
+          changelog-file: ${{format('{0}{1}{2}', '.chglog/', github.event.inputs.releaseVersion, '.md')}}
+          config-file: '.github/release-notes.yml'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit Release Notes
         run: |
