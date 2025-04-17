@@ -60,6 +60,8 @@ public class WorkDaysCountService {
 
             final WorkingTime workingTime = workingTimesByDate.get(day);
 
+            // TODO company vacation - nothing to do because company vacations are the same like sick notes and vacations?
+
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(day, workingTime.getFederalState());
             final BigDecimal duration = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getWorkingDuration() : BigDecimal.ONE;

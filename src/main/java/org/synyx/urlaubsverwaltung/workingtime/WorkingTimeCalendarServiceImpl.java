@@ -110,10 +110,11 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         return getWorkingTimesByPersons(persons, new DateRange(year.atDay(1), year.atDay(1).with(lastDayOfYear())));
     }
 
+    // TODO company vacation - we need to check where getWorkingTimesByPersons is used and think about company vacation
+
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
@@ -144,7 +145,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime, workingTimeSettings));
+                    dayLengthByDate.put(date, getWorkDayLengthForWeekDay(date, workingTime));
                 }
 
                 if (workingTimeDateRange.startDate().equals(start)) {
@@ -158,7 +159,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime, WorkingTimeSettings workingTimeSettings) {
+    private WorkingDayInformation getWorkDayLengthForWeekDay(LocalDate date, WorkingTime workingTime) {
         final FederalState federalState = workingTime.getFederalState();
 
         final DayLength configuredWorkingTimeForDayOfWeek = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
@@ -169,8 +170,10 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
         DayLength noon = configuredWorkingTimeForDayOfWeek.isFull() || configuredWorkingTimeForDayOfWeek.isNoon() ? DayLength.NOON : ZERO;
         WorkingTimeCalendarEntryType noonType = noon.isNoon() ? WORKDAY : NO_WORKDAY;
 
+        // TODO company vacation
+
         if (configuredWorkingTimeForDayOfWeek.getDuration().signum() > 0) {
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState);
 
             if (maybePublicHoliday.isPresent()) {
 
