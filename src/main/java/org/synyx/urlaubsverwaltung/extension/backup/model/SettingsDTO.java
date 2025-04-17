@@ -2,13 +2,15 @@ package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.synyx.urlaubsverwaltung.settings.Settings;
 
-public record SettingsDTO(Long id, ApplicationSettingsDTO applicationSettings, AccountSettingsDTO accountSettings,
-                          WorkingTimeSettingsDTO workingTimeSettings, OverTimeSettingsDTO overTimeSettings,
-                          TimeSettingsDTO timeSettings, SickNoteSettingsDTO sickNoteSettings,
-                          AvatarSettingsDTO avatarSettings) {
+public record SettingsDTO(
+    Long id, ApplicationSettingsDTO applicationSettings, AccountSettingsDTO accountSettings,
+    WorkingTimeSettingsDTO workingTimeSettings, OverTimeSettingsDTO overTimeSettings,
+    TimeSettingsDTO timeSettings, SickNoteSettingsDTO sickNoteSettings,
+    AvatarSettingsDTO avatarSettings, PublicHolidaysSettingsDTO publicHolidaysSettings
+) {
 
     public Settings toSettings() {
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.setApplicationSettings(applicationSettings().toApplicationSettings());
         settings.setAccountSettings(accountSettings().toAccountSettings());
         settings.setWorkingTimeSettings(workingTimeSettings().toWorkingTimeSettings());
@@ -16,6 +18,7 @@ public record SettingsDTO(Long id, ApplicationSettingsDTO applicationSettings, A
         settings.setTimeSettings(timeSettings().toTimeSettings());
         settings.setSickNoteSettings(sickNoteSettings().toSickNoteSettings());
         settings.setAvatarSettings(avatarSettings().toAvatarSettings());
+        settings.setPublicHolidaysSettings(publicHolidaysSettings().toPublicHolidaysSettings());
         return settings;
     }
 }

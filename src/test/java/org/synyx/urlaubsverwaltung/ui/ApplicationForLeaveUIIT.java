@@ -110,7 +110,7 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.disableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
@@ -146,7 +146,7 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
@@ -276,7 +276,7 @@ class ApplicationForLeaveUIIT {
 
         // ensure overtime feature is enabled
         navigationPage.clickSettings();
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
@@ -397,7 +397,7 @@ class ApplicationForLeaveUIIT {
 
     private LocalDate getNextWorkday() {
 
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState federalState = settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
 
         LocalDate nextWorkDay = now();
         while (publicHolidaysService.getPublicHoliday(nextWorkDay, federalState).isPresent()) {

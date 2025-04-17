@@ -92,7 +92,7 @@ class OvertimeUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToWorkingTime();
+        settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 

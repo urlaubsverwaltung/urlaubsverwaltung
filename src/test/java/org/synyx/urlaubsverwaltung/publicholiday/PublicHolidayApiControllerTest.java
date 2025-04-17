@@ -58,7 +58,7 @@ class PublicHolidayApiControllerTest {
         final WorkingTimeSettings workingTimeSettings = anyWorkingTimeSettings();
 
         final Settings settings = settingsWithWorkingTimeSettings(workingTimeSettings);
-        settings.getWorkingTimeSettings().setFederalState(GERMANY_BADEN_WUERTTEMBERG);
+        settings.getPublicHolidaysSettings().setFederalState(GERMANY_BADEN_WUERTTEMBERG);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
