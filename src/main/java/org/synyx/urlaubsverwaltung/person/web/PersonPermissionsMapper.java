@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-final class PersonPermissionsMapper {
+public final class PersonPermissionsMapper {
 
     private PersonPermissionsMapper() {
     }
@@ -23,11 +23,6 @@ final class PersonPermissionsMapper {
         personPermissionsDto.setIsInactive(person.isInactive());
         personPermissionsDto.setPermissions(mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
         return personPermissionsDto;
-    }
-
-    static Person merge(Person person, PersonPermissionsDto personPermissionsDto) {
-        person.setPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions()));
-        return person;
     }
 
     static List<Role> mapPermissionsDtoToRole(List<PersonPermissionsRoleDto> permissionsRoleDto) {
@@ -58,7 +53,7 @@ final class PersonPermissionsMapper {
         return mappedToRoles;
     }
 
-    static List<PersonPermissionsRoleDto> mapRoleToPermissionsDto(List<Role> roles) {
+    public static List<PersonPermissionsRoleDto> mapRoleToPermissionsDto(List<Role> roles) {
         final Set<PersonPermissionsRoleDto> mappedToRolesDto = new HashSet<>();
         roles.forEach(role -> {
             switch (role) {
