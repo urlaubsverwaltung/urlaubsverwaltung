@@ -1,6 +1,6 @@
 import "../js/common";
 import * as Turbo from "@hotwired/turbo";
-import { Idiomorph } from "idiomorph/dist/idiomorph.esm";
+import { Idiomorph } from "idiomorph/dist/idiomorph.esm.js";
 import { createDatepicker } from "../components/datepicker";
 import { initAutosubmit } from "../components/form";
 
