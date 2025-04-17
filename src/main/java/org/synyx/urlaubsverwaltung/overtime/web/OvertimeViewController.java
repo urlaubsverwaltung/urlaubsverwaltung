@@ -44,6 +44,7 @@ import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.COMMENTED;
 import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -160,11 +161,11 @@ public class OvertimeViewController implements HasLaunchpad {
         final int currentYear = Year.now(clock).getValue();
         model.addAttribute("currentYear", currentYear);
 
-
         model.addAttribute("record", overtimeDetailsDto.getRecord());
         model.addAttribute("comments", overtimeDetailsDto.getComments());
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
+        model.addAttribute("comment", new OvertimeCommentFormDto());
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
@@ -274,6 +275,27 @@ public class OvertimeViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
+    }
+
+    @PostMapping("/overtime/{id}/comment")
+    public String addComment(
+        @PathVariable("id") Long overtimeId,
+        @ModelAttribute("comment") OvertimeCommentFormDto comment
+    ) throws UnknownOvertimeException {
+
+        final Overtime overtime = overtimeService.getOvertimeById(overtimeId).orElseThrow(() -> new UnknownOvertimeException(overtimeId));
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = overtime.getPerson();
+
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+            throw new AccessDeniedException(format(
+                "User '%s' has not the correct permissions to add overtime comment of user '%s'",
+                signedInUser.getId(), person.getId()));
+        }
+
+        overtimeService.saveComment(overtime, COMMENTED, comment.getText(), signedInUser);
+
+        return "redirect:/web/overtime/" + overtime.getId();
     }
 
     private void prepareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {

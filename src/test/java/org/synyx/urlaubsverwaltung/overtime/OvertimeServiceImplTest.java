@@ -589,6 +589,33 @@ class OvertimeServiceImplTest {
         inOrder.verify(overtimeRepository).deleteByPerson(person);
     }
 
+    @Test
+    void ensuresToSaveComment() {
+
+        final LocalDate from = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(firstDayOfMonth());
+        final LocalDate to = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(lastDayOfMonth());
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Overtime overtime = new Overtime();
+        overtime.setPerson(person);
+        overtime.setStartDate(from);
+        overtime.setEndDate(to);
+        overtime.setDuration(Duration.ofHours(1));
+
+        sut.saveComment(overtime, OvertimeCommentAction.COMMENTED, "Foo Bar", person);
+
+        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        verify(overtimeCommentRepository).save(commentCaptor.capture());
+
+        final OvertimeComment comment = commentCaptor.getValue();
+        assertThat(comment.getText()).isEqualTo("Foo Bar");
+        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.COMMENTED);
+        assertThat(comment.getPerson()).isEqualTo(person);
+        assertThat(comment.getOvertime()).isEqualTo(overtime);
+    }
+
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
 
         final Settings settings = new Settings();

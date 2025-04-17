@@ -35,6 +35,16 @@ public interface OvertimeService {
      */
     Overtime save(Overtime overtime, Optional<String> comment, Person author);
 
+    /**
+     * Saves a comment for a certain overtime record.
+     *
+     * @param overtime to save the comment for
+     * @param action type of the comment
+     * @param comment comment to save
+     * @param author the author of the comment
+     * @return the saved comment
+     */
+    OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author);
 
     /**
      * Fetch the overtime record for a certain ID.
