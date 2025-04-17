@@ -103,6 +103,15 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
+    public OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author) {
+
+        final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
+        overtimeComment.setText(comment);
+
+        return overtimeCommentRepository.save(overtimeComment);
+    }
+
+    @Override
     public Optional<Overtime> getOvertimeById(Long id) {
         return overtimeRepository.findById(id);
     }
