@@ -1,6 +1,4 @@
 changelog:
-  repository: urlaubsverwaltung/urlaubsverwaltung
-  milestone-reference: id
   sections:
     - title: "⚠️ Security Issues"
       labels: ["type: security"]
