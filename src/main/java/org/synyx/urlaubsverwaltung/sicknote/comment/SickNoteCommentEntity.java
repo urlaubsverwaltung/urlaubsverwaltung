@@ -5,23 +5,28 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
-import org.synyx.urlaubsverwaltung.comment.AbstractComment;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.SEQUENCE;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Optional.ofNullable;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
  */
 @Entity(name = "sick_note_comment")
-public class SickNoteCommentEntity extends AbstractComment {
+public class SickNoteCommentEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -37,12 +42,21 @@ public class SickNoteCommentEntity extends AbstractComment {
     @Enumerated(STRING)
     private SickNoteCommentAction action;
 
+    @ManyToOne
+    private Person person;
+
+    @Column(nullable = false)
+    private Instant date;
+
+    private String text;
+
     protected SickNoteCommentEntity() {
-        super();
+        // needed for hibernate
     }
 
     public SickNoteCommentEntity(Clock clock) {
-        super(clock);
+        final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
+        this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
     public Long getId() {
@@ -67,6 +81,26 @@ public class SickNoteCommentEntity extends AbstractComment {
 
     public void setAction(SickNoteCommentAction action) {
         this.action = action;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public Instant getDate() {
+        return date;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override
