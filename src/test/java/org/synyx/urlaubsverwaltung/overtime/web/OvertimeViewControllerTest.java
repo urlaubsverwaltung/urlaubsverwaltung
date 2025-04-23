@@ -53,6 +53,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -60,6 +61,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.COMMENTED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -985,6 +987,63 @@ class OvertimeViewControllerTest {
                 .param("hours", "8")
                 .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '4'"));
+    }
+
+    @Test
+    void addCommentWithUnknownOvertimeIdThrowsUnknownOvertimeForLeaveException() {
+
+        assertThatThrownBy(() ->
+            perform(post("/web/overtime/12345/comment"))
+        ).hasCauseInstanceOf(UnknownOvertimeException.class);
+    }
+
+    @Test
+    void addCommentThrowsAccessDeniedIfPersonHasNotEnoughPermissions() {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4L);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        overtime.setId(2L);
+        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+
+        when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/overtime/2/comment"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void addCommentCreatesAnComment() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4L);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        overtime.setId(2L);
+        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+
+        when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
+
+        perform(
+            post("/web/overtime/2/comment")
+                .param("text", "comment")
+        )
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/overtime/2"));
+
+        verify(overtimeService).saveComment(overtime, COMMENTED, "comment", signedInPerson);
     }
 
     private void mockSettings() {
