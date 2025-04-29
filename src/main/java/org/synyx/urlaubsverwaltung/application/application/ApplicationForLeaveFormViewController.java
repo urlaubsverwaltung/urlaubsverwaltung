@@ -390,7 +390,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
-                    .and(not(isEqual(signedInUser))))
+                    .and(not(isEqual(person))))
             );
 
             LOG.debug("edit application ({}) has errors: {}", appForm, errors);
