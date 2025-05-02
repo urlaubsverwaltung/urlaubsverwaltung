@@ -13,13 +13,13 @@ import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -159,9 +159,9 @@ class ApplicationForLeaveFormValidator implements Validator {
 
         if (endDate == null || startDate.isEqual(endDate)) {
             if (isChristmasEve(startDate)) {
-                validateChristmasEve(dayLength, settings.getWorkingTimeSettings(), errors);
+                validateChristmasEve(dayLength, settings.getPublicHolidaysSettings(), errors);
             } else if (isNewYearsEve(startDate)) {
-                validateNewYearsEve(dayLength, settings.getWorkingTimeSettings(), errors);
+                validateNewYearsEve(dayLength, settings.getPublicHolidaysSettings(), errors);
             }
         }
 
@@ -170,8 +170,8 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
-        final DayLength workingDurationForChristmasEve = workingTimeSettings.getWorkingDurationForChristmasEve();
+    private static void validateChristmasEve(DayLength applicationDayLength, PublicHolidaysSettings publicHolidaysSettings, Errors errors) {
+        final DayLength workingDurationForChristmasEve = publicHolidaysSettings.getWorkingDurationForChristmasEve();
         switch (workingDurationForChristmasEve) {
             case ZERO -> {
                 if (applicationDayLength != DayLength.ZERO) {
@@ -194,8 +194,8 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
-        final DayLength workingDurationForNewYearsEve = workingTimeSettings.getWorkingDurationForNewYearsEve();
+    private static void validateNewYearsEve(DayLength applicationDayLength, PublicHolidaysSettings publicHolidaysSettings, Errors errors) {
+        final DayLength workingDurationForNewYearsEve = publicHolidaysSettings.getWorkingDurationForNewYearsEve();
         switch (workingDurationForNewYearsEve) {
             case ZERO -> {
                 if (applicationDayLength != DayLength.ZERO) {

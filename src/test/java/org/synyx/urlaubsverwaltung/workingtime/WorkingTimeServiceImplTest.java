@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -116,10 +117,10 @@ class WorkingTimeServiceImplTest {
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(GERMANY_BREMEN);
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setPublicHolidaysSettings(publicHolidaysSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -133,10 +134,10 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(), any())).thenReturn(null);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(GERMANY_BREMEN);
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setPublicHolidaysSettings(publicHolidaysSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -226,10 +227,10 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityOne, workingTimeEntityTwo));
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(GERMANY_BREMEN);
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setPublicHolidaysSettings(publicHolidaysSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -280,10 +281,10 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(GERMANY_BREMEN);
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setPublicHolidaysSettings(publicHolidaysSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -308,10 +309,10 @@ class WorkingTimeServiceImplTest {
     @Test
     void ensureGetSystemDefaultFederalState() {
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(GERMANY_BREMEN);
+        final PublicHolidaysSettings publicHolidaysSettings = new PublicHolidaysSettings();
+        publicHolidaysSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setPublicHolidaysSettings(publicHolidaysSettings);
 
         when(settingsService.getSettings()).thenReturn(settings);
 

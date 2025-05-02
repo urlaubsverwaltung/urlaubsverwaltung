@@ -2,10 +2,11 @@ package org.synyx.urlaubsverwaltung.person.settings;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class AvatarSettings {
+public class AvatarSettings implements Serializable {
 
     /**
      * Is gravatar used for avatar images

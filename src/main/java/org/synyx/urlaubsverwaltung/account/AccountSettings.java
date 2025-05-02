@@ -5,10 +5,12 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
 import org.slf4j.Logger;
 
+import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -19,7 +21,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class AccountSettings {
+public class AccountSettings implements Serializable {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -118,5 +120,22 @@ public class AccountSettings {
 
     public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
         this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountSettings that = (AccountSettings) o;
+        return expiryDateDayOfMonth == that.expiryDateDayOfMonth
+            && doRemainingVacationDaysExpireGlobally == that.doRemainingVacationDaysExpireGlobally
+            && Objects.equals(defaultVacationDays, that.defaultVacationDays)
+            && Objects.equals(maximumAnnualVacationDays, that.maximumAnnualVacationDays)
+            && expiryDateMonth == that.expiryDateMonth;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(defaultVacationDays, maximumAnnualVacationDays, expiryDateDayOfMonth, expiryDateMonth,
+            doRemainingVacationDaysExpireGlobally);
     }
 }

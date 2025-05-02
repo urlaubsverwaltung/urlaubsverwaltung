@@ -4,21 +4,21 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 /**
  * Settings concerning working time of persons, like settings for public holidays.
  */
 @Embeddable
-public class WorkingTimeSettings {
+public class WorkingTimeSettings implements Serializable {
 
     @Enumerated(STRING)
     private DayLength monday = FULL;
@@ -41,24 +41,6 @@ public class WorkingTimeSettings {
     @Enumerated(STRING)
     private DayLength sunday = ZERO;
 
-    /**
-     * Defines the working duration for Christmas Eve and New Years Eve.
-     *
-     * <p>Options: {@link DayLength#FULL} means that the day is fully counted as work day, {@link DayLength#MORNING} and
-     * {@link DayLength#NOON} means that only half of the day is counted as work day, {@link DayLength#ZERO} means that
-     * the day is fully counted as public holiday</p>
-     */
-    @Enumerated(STRING)
-    private DayLength workingDurationForChristmasEve = MORNING;
-
-    @Enumerated(STRING)
-    private DayLength workingDurationForNewYearsEve = MORNING;
-
-    /**
-     * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
-     */
-    @Enumerated(STRING)
-    private FederalState federalState = GERMANY_BADEN_WUERTTEMBERG;
 
     public DayLength getMonday() {
         return monday;
@@ -116,30 +98,6 @@ public class WorkingTimeSettings {
         this.sunday = sunday;
     }
 
-    public DayLength getWorkingDurationForChristmasEve() {
-        return workingDurationForChristmasEve;
-    }
-
-    public void setWorkingDurationForChristmasEve(DayLength workingDurationForChristmasEve) {
-        this.workingDurationForChristmasEve = workingDurationForChristmasEve;
-    }
-
-    public DayLength getWorkingDurationForNewYearsEve() {
-        return workingDurationForNewYearsEve;
-    }
-
-    public void setWorkingDurationForNewYearsEve(DayLength workingDurationForNewYearsEve) {
-        this.workingDurationForNewYearsEve = workingDurationForNewYearsEve;
-    }
-
-    public FederalState getFederalState() {
-        return federalState;
-    }
-
-    public void setFederalState(FederalState federalState) {
-        this.federalState = federalState;
-    }
-
     public void setWorkingDays(List<Integer> workingDays) {
 
         setAllDayLengthsToZero();
@@ -195,5 +153,23 @@ public class WorkingTimeSettings {
         this.friday = ZERO;
         this.saturday = ZERO;
         this.sunday = ZERO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkingTimeSettings that = (WorkingTimeSettings) o;
+        return monday == that.monday
+            && tuesday == that.tuesday
+            && wednesday == that.wednesday
+            && thursday == that.thursday
+            && friday == that.friday
+            && saturday == that.saturday
+            && sunday == that.sunday;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
     }
 }

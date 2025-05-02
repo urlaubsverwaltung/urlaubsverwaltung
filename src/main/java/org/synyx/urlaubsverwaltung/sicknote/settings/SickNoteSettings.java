@@ -2,11 +2,14 @@ package org.synyx.urlaubsverwaltung.sicknote.settings;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class SickNoteSettings {
+public class SickNoteSettings implements Serializable {
 
     /**
      * Specifies the maximal period of sick pay in days.
@@ -46,5 +49,19 @@ public class SickNoteSettings {
 
     public void setUserIsAllowedToSubmitSickNotes(boolean userIsAllowedToSubmitSickNotes) {
         this.userIsAllowedToSubmitSickNotes = userIsAllowedToSubmitSickNotes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SickNoteSettings that = (SickNoteSettings) o;
+        return userIsAllowedToSubmitSickNotes == that.userIsAllowedToSubmitSickNotes
+            && Objects.equals(maximumSickPayDays, that.maximumSickPayDays)
+            && Objects.equals(daysBeforeEndOfSickPayNotification, that.daysBeforeEndOfSickPayNotification);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(maximumSickPayDays, daysBeforeEndOfSickPayNotification, userIsAllowedToSubmitSickNotes);
     }
 }

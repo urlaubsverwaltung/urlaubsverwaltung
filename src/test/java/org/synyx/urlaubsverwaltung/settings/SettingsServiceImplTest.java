@@ -36,12 +36,9 @@ class SettingsServiceImplTest {
 
     @Test
     void ensureGetSettingsRequiresInitializationFirst() {
-
         when(settingsRepository.findAll()).thenReturn(List.of());
-
         assertThatThrownBy(() -> sut.getSettings())
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("No settings found in database!");
-
     }
 }

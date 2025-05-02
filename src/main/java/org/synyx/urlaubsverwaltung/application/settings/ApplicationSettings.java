@@ -2,11 +2,14 @@ package org.synyx.urlaubsverwaltung.application.settings;
 
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class ApplicationSettings {
+public class ApplicationSettings implements Serializable {
 
     /**
      * Specifies how many months in advance a person can apply for leave.
@@ -124,5 +127,28 @@ public class ApplicationSettings {
 
     public void setDaysBeforeRemindForUpcomingHolidayReplacement(Integer daysBeforeRemindForUpcomingHolidayReplacement) {
         this.daysBeforeRemindForUpcomingHolidayReplacement = daysBeforeRemindForUpcomingHolidayReplacement;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ApplicationSettings that = (ApplicationSettings) o;
+        return remindForWaitingApplications == that.remindForWaitingApplications
+            && allowHalfDays == that.allowHalfDays
+            && remindForUpcomingApplications == that.remindForUpcomingApplications
+            && remindForUpcomingHolidayReplacement == that.remindForUpcomingHolidayReplacement
+            && Objects.equals(maximumMonthsToApplyForLeaveInAdvance, that.maximumMonthsToApplyForLeaveInAdvance)
+            && Objects.equals(maximumMonthsToApplyForLeaveAfterwards, that.maximumMonthsToApplyForLeaveAfterwards)
+            && Objects.equals(daysBeforeRemindForWaitingApplications, that.daysBeforeRemindForWaitingApplications)
+            && Objects.equals(daysBeforeRemindForUpcomingApplications, that.daysBeforeRemindForUpcomingApplications)
+            && Objects.equals(daysBeforeRemindForUpcomingHolidayReplacement, that.daysBeforeRemindForUpcomingHolidayReplacement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(maximumMonthsToApplyForLeaveInAdvance, maximumMonthsToApplyForLeaveAfterwards,
+            remindForWaitingApplications, allowHalfDays, daysBeforeRemindForWaitingApplications,
+            remindForUpcomingApplications, daysBeforeRemindForUpcomingApplications, remindForUpcomingHolidayReplacement,
+            daysBeforeRemindForUpcomingHolidayReplacement);
     }
 }

@@ -23,19 +23,19 @@
             <label
               th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
               class="control-label col-md-4"
-              for="workingTimeSettings.workingDurationForChristmasEve"
+              for="publicHolidaysSettings.workingDurationForChristmasEve"
             >
             </label>
             <div class="col-md-8">
               <select
-                th:replace="~{fragments/select::one(id='workingTimeSettings.workingDurationForChristmasEve', name='workingTimeSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve})}"
+                th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForChristmasEve', name='publicHolidaysSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve})}"
               >
                 <th:block th:fragment="settings-workingtimes-workingDurationForChristmasEve">
                   <option
                     th:each="dayLengthType : ${dayLengthTypes}"
                     th:text="#{__${dayLengthType}__}"
                     th:value="${dayLengthType}"
-                    th:selected="${settings.workingTimeSettings.workingDurationForChristmasEve == dayLengthType}"
+                    th:selected="${settings.publicHolidaysSettings.workingDurationForChristmasEve == dayLengthType}"
                   ></option>
                 </th:block>
               </select>
@@ -45,19 +45,19 @@
             <label
               th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
               class="control-label col-md-4"
-              for="workingTimeSettings.workingDurationForNewYearsEve"
+              for="publicHolidaysSettings.workingDurationForNewYearsEve"
             >
             </label>
             <div class="col-md-8">
               <select
-                th:replace="~{fragments/select::one(id='workingTimeSettings.workingDurationForNewYearsEve', name='workingTimeSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve})}"
+                th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForNewYearsEve', name='publicHolidaysSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve})}"
               >
                 <th:block th:fragment="settings-workingtimes-workingDurationForNewYearsEve">
                   <option
                     th:each="dayLengthType : ${dayLengthTypes}"
                     th:text="#{__${dayLengthType}__}"
                     th:value="${dayLengthType}"
-                    th:selected="${settings.workingTimeSettings.workingDurationForNewYearsEve == dayLengthType}"
+                    th:selected="${settings.publicHolidaysSettings.workingDurationForNewYearsEve == dayLengthType}"
                   ></option>
                 </th:block>
               </select>
@@ -72,14 +72,14 @@
             </label>
             <div class="col-md-8">
               <select
-                th:replace="~{fragments/select::one(id='federalStateType', name='workingTimeSettings.federalState', options=~{::settings-workingtimes-federalStateType})}"
+                th:replace="~{fragments/select::one(id='federalStateType', name='publicHolidaysSettings.federalState', options=~{::settings-workingtimes-federalStateType})}"
               >
                 <th:block th:fragment="settings-workingtimes-federalStateType">
                   <optgroup th:label="#{country.general}">
                     <option
                       th:text="#{federalState.NONE}"
                       value="NONE"
-                      th:selected="${settings.workingTimeSettings.federalState == 'NONE'}"
+                      th:selected="${settings.publicHolidaysSettings.federalState == 'NONE'}"
                     ></option>
                   </optgroup>
                   <optgroup
@@ -90,7 +90,7 @@
                       th:each="federalStateType : ${federalStatesByCountry.value}"
                       th:text="#{federalState.__${federalStateType}__}"
                       th:value="${federalStateType}"
-                      th:selected="${settings.workingTimeSettings.federalState == federalStateType}"
+                      th:selected="${settings.publicHolidaysSettings.federalState == federalStateType}"
                     ></option>
                   </optgroup>
                 </th:block>

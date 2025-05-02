@@ -12,7 +12,7 @@ import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
  */
 public class SettingsSubNavigation {
 
-    private static final String WORKING_TIME_TAB_SELECTOR = "[data-test-id=settings-tab-working-time]";
+    private static final String OVERTIME_TAB_SELECTOR = "[data-test-id=settings-tab-overtime]";
     private static final String ABSENCE_TYPES_TAB_SELECTOR = "[data-test-id=settings-tab-absence-types]";
 
     private final Page page;
@@ -21,8 +21,8 @@ public class SettingsSubNavigation {
         this.page = page;
     }
 
-    public void goToWorkingTime() {
-        page.waitForResponse(Response::ok, () -> page.locator(WORKING_TIME_TAB_SELECTOR).click());
+    public void goToOvertime() {
+        page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_TAB_SELECTOR).click());
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

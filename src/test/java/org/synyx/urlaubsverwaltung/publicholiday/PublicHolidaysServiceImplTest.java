@@ -72,7 +72,7 @@ class PublicHolidaysServiceImplTest {
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOf(String dayLength, double workingDuration) {
 
         final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.valueOf(dayLength));
+        settings.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(DayLength.valueOf(dayLength));
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
@@ -84,7 +84,7 @@ class PublicHolidaysServiceImplTest {
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOf(String dayLength, double workingDuration) {
 
         final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
+        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);

@@ -42,8 +42,10 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsAbsencesDto settingsDto, Errors errors,
-                                Model model, RedirectAttributes redirectAttributes) {
+    public String settingsSaved(
+        @Valid @ModelAttribute("settings") SettingsAbsencesDto settingsDto, Errors errors,
+        Model model, RedirectAttributes redirectAttributes
+    ) {
 
         validator.validate(settingsDto, errors);
 
@@ -66,7 +68,6 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
         final SettingsAbsencesDto dto = new SettingsAbsencesDto();
         dto.setId(settings.getId());
         dto.setApplicationSettings(settings.getApplicationSettings());
-        dto.setAccountSettings(settings.getAccountSettings());
         dto.setSickNoteSettings(settings.getSickNoteSettings());
         return dto;
     }
@@ -75,7 +76,6 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
         final Settings settings = settingsService.getSettings();
         settings.setId(dto.getId());
         settings.setApplicationSettings(dto.getApplicationSettings());
-        settings.setAccountSettings(dto.getAccountSettings());
         settings.setSickNoteSettings(dto.getSickNoteSettings());
         return settings;
     }

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.settings.Settings}.
  */
@@ -13,10 +12,15 @@ class SettingsTest {
     @Test
     void ensureDefaultValues() {
 
-        Settings settings = new Settings();
-
+        final Settings settings = new Settings();
         assertThat(settings.getApplicationSettings()).isNotNull();
+        assertThat(settings.getAccountSettings()).isNotNull();
         assertThat(settings.getWorkingTimeSettings()).isNotNull();
+        assertThat(settings.getOvertimeSettings()).isNotNull();
+        assertThat(settings.getTimeSettings()).isNotNull();
+        assertThat(settings.getSickNoteSettings()).isNotNull();
+        assertThat(settings.getAvatarSettings()).isNotNull();
+        assertThat(settings.getPublicHolidaysSettings()).isNotNull();
     }
 
     @Test

@@ -34,6 +34,10 @@
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/sick-days::section}"></div>
+              <th:block th:replace="~{settings/fragments::save-button}" />
+            </div>
+            <div class="form-section tw-mb-8">
               <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
@@ -41,12 +45,8 @@
               <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
             <div class="form-section">
-              <div th:replace="~{settings/absences/sick-days::section}"></div>
+              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>
           </div>

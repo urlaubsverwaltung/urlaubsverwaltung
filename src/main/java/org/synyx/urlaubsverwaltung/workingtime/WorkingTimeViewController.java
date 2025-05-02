@@ -116,7 +116,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
 
         final List<WorkingTime> workingTimeHistories = workingTimeService.getByPerson(person);
         final WorkingTime currentWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock)).orElse(null);
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState defaultFederalState = settingsService.getSettings().getPublicHolidaysSettings().getFederalState();
 
         model.addAttribute("workingTimeHistories", toWorkingTimeHistoryDtos(currentWorkingTime, workingTimeHistories));
         model.addAttribute("weekDays", DayOfWeek.values());
