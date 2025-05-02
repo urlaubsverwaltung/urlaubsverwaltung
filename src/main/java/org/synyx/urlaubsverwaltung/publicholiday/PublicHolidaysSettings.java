@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -58,5 +59,19 @@ public class PublicHolidaysSettings implements Serializable {
 
     public void setFederalState(FederalState federalState) {
         this.federalState = federalState;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        PublicHolidaysSettings that = (PublicHolidaysSettings) o;
+        return workingDurationForChristmasEve == that.workingDurationForChristmasEve
+            && workingDurationForNewYearsEve == that.workingDurationForNewYearsEve
+            && federalState == that.federalState;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(workingDurationForChristmasEve, workingDurationForNewYearsEve, federalState);
     }
 }
