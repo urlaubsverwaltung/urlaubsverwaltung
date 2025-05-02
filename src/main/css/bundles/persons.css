@@ -1,0 +1,18 @@
+/*
+don't know why there is a horizontal scrolling...
+table container is a block element with max-width 100% and overflow-x auto.
+therefore: disable horizontal scrolling globally :shrug:
+*/
+body:has(.person-table) {
+  overflow-x: hidden;
+}
+
+.person-table {
+  th {
+    @apply tw-p-2;
+  }
+
+  td {
+    @apply tw-p-2;
+  }
+}

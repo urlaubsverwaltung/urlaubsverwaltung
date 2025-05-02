@@ -10,6 +10,9 @@ public class PersonDto {
     private final String niceName;
     private final String initials;
 
+    private final boolean isDepartmentHead;
+    private final boolean isSecondStageAuthority;
+
     private final String personnelNumber;
     private final String additionalInformation;
 
@@ -19,16 +22,19 @@ public class PersonDto {
     private final Double vacationDaysLeft;
     private final Double vacationDaysLeftRemaining;
 
-    private PersonDto(long id, String gravatarUrl, String firstName, String lastName, String niceName, String initials,
-                      String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
-                      Double vacationDaysLeft, Double vacationDaysLeftRemaining) {
-
+    private PersonDto(
+        long id, String gravatarUrl, String firstName, String lastName, String niceName, String initials, boolean isDepartmentHead, boolean isSecondStageAuthority,
+        String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
+        Double vacationDaysLeft, Double vacationDaysLeftRemaining
+    ) {
         this.id = id;
         this.gravatarUrl = gravatarUrl;
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
         this.initials = initials;
+        this.isDepartmentHead = isDepartmentHead;
+        this.isSecondStageAuthority = isSecondStageAuthority;
         this.personnelNumber = personnelNumber;
         this.additionalInformation = additionalInformation;
         this.entitlementYear = entitlementYear;
@@ -60,6 +66,14 @@ public class PersonDto {
 
     public String getInitials() {
         return initials;
+    }
+
+    public boolean isDepartmentHead() {
+        return isDepartmentHead;
+    }
+
+    public boolean isSecondStageAuthority() {
+        return isSecondStageAuthority;
     }
 
     public String getPersonnelNumber() {
@@ -101,6 +115,8 @@ public class PersonDto {
         private String lastName;
         private String niceName;
         private String initials;
+        private boolean isDepartmentHead;
+        private boolean isSecondStageAuthority;
         private String personnelNumber;
         private String additionalInformation;
         private Double entitlementYear;
@@ -136,6 +152,16 @@ public class PersonDto {
 
         public Builder initials(String initials) {
             this.initials = initials;
+            return this;
+        }
+
+        public Builder isDepartmentHead(boolean isDepartmentHead) {
+            this.isDepartmentHead = isDepartmentHead;
+            return this;
+        }
+
+        public Builder isSecondStageAuthority(boolean isSecondStageAuthority) {
+            this.isSecondStageAuthority = isSecondStageAuthority;
             return this;
         }
 
@@ -182,14 +208,15 @@ public class PersonDto {
                 lastName,
                 niceName,
                 initials,
+                isDepartmentHead,
+                isSecondStageAuthority,
                 personnelNumber,
                 additionalInformation,
                 entitlementYear,
                 entitlementActual,
                 entitlementRemaining,
                 vacationDaysLeft,
-                vacationDaysLeftRemaining
-            );
+                vacationDaysLeftRemaining);
         }
     }
 }
