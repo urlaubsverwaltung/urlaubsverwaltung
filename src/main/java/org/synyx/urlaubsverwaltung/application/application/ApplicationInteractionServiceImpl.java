@@ -58,13 +58,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    ApplicationInteractionServiceImpl(ApplicationService applicationService,
-                                      ApplicationCommentService commentService,
-                                      AccountInteractionService accountInteractionService,
-                                      ApplicationMailService applicationMailService,
-                                      DepartmentService departmentService, Clock clock,
-                                      ApplicationEventPublisher applicationEventPublisher) {
-
+    ApplicationInteractionServiceImpl(
+        ApplicationService applicationService,
+        ApplicationCommentService commentService,
+        AccountInteractionService accountInteractionService,
+        ApplicationMailService applicationMailService,
+        DepartmentService departmentService, Clock clock,
+        ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
@@ -459,9 +460,11 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application edit(Application oldApplication, Application editedApplication, Person editor, Optional<String> comment) {
 
-        if (!isAllowedToEditApplication(oldApplication, editor)) {
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(editor, editedApplication.getPerson());
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(editor, editedApplication.getPerson());
+        if (!isAllowedToEditApplication(oldApplication, editor, isDepartmentHead, isSecondStageAuthority)) {
             throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
-                "with id %d because the status is %s and not waiting.", oldApplication.getId(), oldApplication.getStatus()));
+                "with id %d because editor %s has not enough permissions", oldApplication.getId(), editor.getId()));
         }
 
         if (!oldApplication.getPerson().equals(editedApplication.getPerson())) {

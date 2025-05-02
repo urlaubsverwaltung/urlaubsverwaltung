@@ -87,6 +87,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -1284,9 +1285,12 @@ class ApplicationForLeaveFormViewControllerTest {
             .messageKey("message-key")
             .build();
 
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
         final Person person = new Person();
-        person.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
+        person.setPermissions(List.of(USER));
         when(personService.getActivePersons()).thenReturn(List.of(person));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
@@ -1316,6 +1320,175 @@ class ApplicationForLeaveFormViewControllerTest {
         )
             .andExpect(status().isOk())
             .andExpect(view().name("application/application_form"));
+    }
+
+    @Test
+    void editApplicationFormForOtherWithDepartmentHeadAndApplicationEditPermission() throws Exception {
+
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("message-key")
+            .build();
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationType);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(locale)
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application_form"));
+    }
+
+    @Test
+    void editApplicationFormForOtherWithDepartmentHeadAndMissingPermission() throws Exception {
+
+        final Locale locale = GERMAN;
+        final VacationType<?> vacationType = ProvidedVacationType.builder(mock(MessageSource.class))
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("message-key")
+            .build();
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationType);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(locale)
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application-not-editable"));
+    }
+
+    @Test
+    void editApplicationFormForOtherWithSecondStageAuthorityAndApplicationEditPermission() throws Exception {
+
+        final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key", "label", locale);
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("message-key")
+            .build();
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_EDIT));
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationType);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(locale)
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application_form"));
+    }
+
+    @Test
+    void editApplicationFormForOtherWithSecondStageAuthorityAndMissingPermission() throws Exception {
+
+        final VacationType<?> vacationType = ProvidedVacationType.builder(mock(MessageSource.class))
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("message-key")
+            .build();
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationType);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(
+            get("/web/application/1/edit")
+                .locale(GERMAN)
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/application-not-editable"));
     }
 
     @Test
@@ -1652,6 +1825,176 @@ class ApplicationForLeaveFormViewControllerTest {
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/application/1"));
+    }
+
+    @Test
+    void ensureIsAllowedToEditApplicationForOffice() throws Exception {
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
+        final Person person = new Person();
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+        application.setPerson(person);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(office), eq(Optional.of("comment")))).thenReturn(editedApplication);
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
+        perform(post("/web/application/1/edit")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.id", "1")
+            .param("dayLength", "FULL")
+            .param("comment", "comment")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"));
+    }
+
+    @Test
+    void ensureIsAllowedToEditApplicationForDepartmentHeadWithApplicationEditPermission() throws Exception {
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+        application.setPerson(person);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(departmentHead), eq(Optional.of("comment")))).thenReturn(editedApplication);
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
+        perform(post("/web/application/1/edit")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.id", "1")
+            .param("dayLength", "FULL")
+            .param("comment", "comment")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"));
+    }
+
+    @Test
+    void ensureIsNotAllowedToEditApplicationForDepartmentHeadWithoutApplicationEditPermission() throws Exception {
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+        application.setPerson(person);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+
+        perform(post("/web/application/1/edit")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.id", "1")
+            .param("dayLength", "FULL")
+            .param("comment", "comment")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"))
+            .andExpect(flash().attribute("editError", true));
+    }
+
+    @Test
+    void ensureIsAllowedToEditApplicationForSecondStageAuthorityWithApplicationEditPermission() throws Exception {
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_EDIT));
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Person person = new Person();
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+        application.setPerson(person);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(secondStageAuthority), eq(Optional.of("comment")))).thenReturn(editedApplication);
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
+        perform(post("/web/application/1/edit")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.id", "1")
+            .param("dayLength", "FULL")
+            .param("comment", "comment")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"));
+    }
+
+    @Test
+    void ensureIsNotAllowedToEditApplicationForSecondStageAuthorityWithoutApplicationEditPermission() throws Exception {
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Person person = new Person();
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        final Long applicationId = 1L;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+        application.setPerson(person);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(post("/web/application/1/edit")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.id", "1")
+            .param("dayLength", "FULL")
+            .param("comment", "comment")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"))
+            .andExpect(flash().attribute("editError", true));
     }
 
     @ParameterizedTest

@@ -155,7 +155,9 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}/edit"}, params = "add-holiday-replacement")
-    public String addHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm, Model model, Locale locale) {
+    public String addHolidayReplacement(
+        ApplicationForLeaveForm applicationForLeaveForm, Model model, Locale locale
+    ) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeaveForm.getPerson())
@@ -201,8 +203,9 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping(value = {"/application/new/replacements", "/application/{applicationId}/replacements"}, headers = {"X-Requested-With=ajax"})
-    public String ajaxAddHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeave, Model model) {
-
+    public String ajaxAddHolidayReplacement(
+        @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeave, Model model
+    ) {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
@@ -234,10 +237,11 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}/edit"}, params = "remove-holiday-replacement")
-    public String removeHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
-                                           @RequestParam(name = "remove-holiday-replacement") Long personIdToRemove,
-                                           Model model, Locale locale) {
-
+    public String removeHolidayReplacement(
+        @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
+        @RequestParam(name = "remove-holiday-replacement") Long personIdToRemove,
+        Model model, Locale locale
+    ) {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeaveForm.getPerson()).orElse(signedInUser);
 
@@ -268,8 +272,10 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping("/application")
-    public String newApplication(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
-                                 Model model, Locale locale, RedirectAttributes redirectAttributes) {
+    public String newApplication(
+        @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
+        Model model, Locale locale, RedirectAttributes redirectAttributes
+    ) {
         LOG.info("POST new application received: {}", appForm);
 
         final Person applier = personService.getSignedInUser();
@@ -314,8 +320,9 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @GetMapping("/application/{applicationId}/edit")
-    public String editApplicationForm(@PathVariable("applicationId") Long applicationId, Model model, Locale locale) {
-
+    public String editApplicationForm(
+        @PathVariable("applicationId") Long applicationId, Model model, Locale locale
+    ) {
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
             return "application/application-not-editable";
@@ -323,18 +330,22 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         final Application application = maybeApplication.get();
-        if (!isAllowedToEditApplication(application, signedInUser)) {
+        final Person person = application.getPerson();
+
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        if (!isAllowedToEditApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority)) {
             return "application/application-not-editable";
         }
 
         final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application, locale);
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInUser);
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(signedInUser, signedInUser, applicationForLeaveForm, model, locale);
+            prepareApplicationForLeaveForm(signedInUser, person, applicationForLeaveForm, model, locale);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                    .and(not(isEqual(signedInUser)))
+                    .and(not(isEqual(person)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
@@ -346,18 +357,24 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping("/application/{applicationId}/edit")
-    public String sendEditApplicationForm(@PathVariable("applicationId") Long applicationId,
-                                          @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
-                                          Model model, Locale locale, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+    public String sendEditApplicationForm(
+        @PathVariable("applicationId") Long applicationId,
+        @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
+        Model model, Locale locale, RedirectAttributes redirectAttributes
+    ) throws UnknownApplicationForLeaveException {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
             throw new UnknownApplicationForLeaveException(applicationId);
         }
 
-        final Application application = maybeApplication.get();
         final Person signedInUser = personService.getSignedInUser();
-        if (!isAllowedToEditApplication(application, signedInUser)) {
+        final Application application = maybeApplication.get();
+        final Person person = application.getPerson();
+
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        if (!isAllowedToEditApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority)) {
             redirectAttributes.addFlashAttribute("editError", true);
             return "redirect:/web/application/" + applicationId;
         }
@@ -373,7 +390,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
-                    .and(not(isEqual(signedInUser))))
+                    .and(not(isEqual(person))))
             );
 
             LOG.debug("edit application ({}) has errors: {}", appForm, errors);

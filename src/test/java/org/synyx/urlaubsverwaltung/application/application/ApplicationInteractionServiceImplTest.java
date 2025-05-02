@@ -59,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -1340,6 +1341,110 @@ class ApplicationInteractionServiceImplTest {
         assertThat(event.application()).isEqualTo(editedApplication);
         assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(event.id()).isNotNull();
+    }
+
+    @Test
+    void ensureToEditApplicationForLeaveForAnotherUserWithApplicationEditPermissionAsDH() {
+
+        final Long applicationId = 1L;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        application.setStatus(ALLOWED);
+        application.setId(applicationId);
+        when(applicationService.save(application)).thenReturn(application);
+
+        final Optional<String> comment = of("Comment");
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_EDIT));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, application.getPerson())).thenReturn(true);
+
+        final Application editedApplication = sut.edit(application, application, departmentHead, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(ALLOWED);
+
+        verify(commentService).create(editedApplication, EDITED, comment, departmentHead);
+        verify(applicationMailService).sendEditedNotification(editedApplication, departmentHead);
+        verifyNoMoreInteractions(applicationMailService);
+
+        ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationUpdatedEvent event = argumentCaptor.getValue();
+        assertThat(event.application()).isEqualTo(editedApplication);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
+    }
+
+    @Test
+    void ensureToNotEditApplicationForLeaveForAnotherUserWithoutApplicationEditPermissionAsDH() {
+
+        final Long applicationId = 1L;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        application.setStatus(ALLOWED);
+        application.setId(applicationId);
+
+        final Optional<String> comment = of("Comment");
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, application.getPerson())).thenReturn(true);
+
+        assertThatThrownBy(() -> sut.edit(application, application, departmentHead, comment))
+            .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
+    }
+
+    @Test
+    void ensureToEditApplicationForLeaveForAnotherUserWithApplicationEditPermissionAsSSA() {
+
+        final Long applicationId = 1L;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        application.setStatus(ALLOWED);
+        application.setId(applicationId);
+        when(applicationService.save(application)).thenReturn(application);
+
+        final Optional<String> comment = of("Comment");
+
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, APPLICATION_EDIT));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, application.getPerson())).thenReturn(true);
+
+        final Application editedApplication = sut.edit(application, application, secondStageAuthority, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(ALLOWED);
+
+        verify(commentService).create(editedApplication, EDITED, comment, secondStageAuthority);
+        verify(applicationMailService).sendEditedNotification(editedApplication, secondStageAuthority);
+        verifyNoMoreInteractions(applicationMailService);
+
+        ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationUpdatedEvent event = argumentCaptor.getValue();
+        assertThat(event.application()).isEqualTo(editedApplication);
+        assertThat(event.createdAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.id()).isNotNull();
+    }
+
+    @Test
+    void ensureToNotEditApplicationForLeaveForAnotherUserWithoutApplicationEditPermissionAsSSA() {
+
+        final Long applicationId = 1L;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(1L, HOLIDAY, new StaticMessageSource()));
+        application.setStatus(ALLOWED);
+        application.setId(applicationId);
+
+        final Optional<String> comment = of("Comment");
+
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, application.getPerson())).thenReturn(true);
+
+        assertThatThrownBy(() -> sut.edit(application, application, secondStageAuthority, comment))
+            .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
     }
 
     @Test

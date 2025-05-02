@@ -17,5 +17,6 @@
   <include relativeToChangelogFile="true" file="changelog-5.11.0-adjust-unique-constraints.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.15.0-add-missing-indices.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.20.0-time-start-end-minute.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.25.0-role-application-edit.xml"/>
 
 </databaseChangeLog>
