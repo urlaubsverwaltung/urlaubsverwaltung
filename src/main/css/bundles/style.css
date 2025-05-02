@@ -62,6 +62,10 @@
     --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
+
+    * {
+      color-scheme: dark;
+    }
   }
 
   @screen lg {
