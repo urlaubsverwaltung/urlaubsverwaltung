@@ -10,6 +10,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -119,5 +120,22 @@ public class AccountSettings implements Serializable {
 
     public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
         this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountSettings that = (AccountSettings) o;
+        return expiryDateDayOfMonth == that.expiryDateDayOfMonth
+            && doRemainingVacationDaysExpireGlobally == that.doRemainingVacationDaysExpireGlobally
+            && Objects.equals(defaultVacationDays, that.defaultVacationDays)
+            && Objects.equals(maximumAnnualVacationDays, that.maximumAnnualVacationDays)
+            && expiryDateMonth == that.expiryDateMonth;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(defaultVacationDays, maximumAnnualVacationDays, expiryDateDayOfMonth, expiryDateMonth,
+            doRemainingVacationDaysExpireGlobally);
     }
 }

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -152,5 +153,23 @@ public class WorkingTimeSettings implements Serializable {
         this.friday = ZERO;
         this.saturday = ZERO;
         this.sunday = ZERO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkingTimeSettings that = (WorkingTimeSettings) o;
+        return monday == that.monday
+            && tuesday == that.tuesday
+            && wednesday == that.wednesday
+            && thursday == that.thursday
+            && friday == that.friday
+            && saturday == that.saturday
+            && sunday == that.sunday;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
     }
 }

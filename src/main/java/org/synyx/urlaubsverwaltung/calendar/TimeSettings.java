@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class TimeSettings implements Serializable {
@@ -61,5 +62,21 @@ public class TimeSettings implements Serializable {
 
     public void setWorkDayEndMinute(Integer workDayEndMinute) {
         this.workDayEndMinute = workDayEndMinute;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeSettings that = (TimeSettings) o;
+        return Objects.equals(timeZoneId, that.timeZoneId)
+            && Objects.equals(workDayBeginHour, that.workDayBeginHour)
+            && Objects.equals(workDayBeginMinute, that.workDayBeginMinute)
+            && Objects.equals(workDayEndHour, that.workDayEndHour)
+            && Objects.equals(workDayEndMinute, that.workDayEndMinute);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeZoneId, workDayBeginHour, workDayBeginMinute, workDayEndHour, workDayEndMinute);
     }
 }
