@@ -12,7 +12,7 @@ public class WorkingTimeSettingsValidator {
 
     public static void validateWorkingTimeSettings(WorkingTimeSettings workingTimeSettings, Errors errors) {
 
-        if (workingTimeSettings.getWorkingDays() == null || workingTimeSettings.getWorkingDays().isEmpty()) {
+        if (workingTimeSettings.getWorkingDays().isEmpty()) {
             errors.rejectValue("workingTimeSettings.workingDays", ERROR_WORKING_TIME_MANDATORY);
         }
     }
