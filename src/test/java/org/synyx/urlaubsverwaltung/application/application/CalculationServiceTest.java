@@ -75,7 +75,7 @@ class CalculationServiceTest {
     @BeforeEach
     void setUp() {
 
-        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
+        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(Map.of("de", getHolidayManager()));
         final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,

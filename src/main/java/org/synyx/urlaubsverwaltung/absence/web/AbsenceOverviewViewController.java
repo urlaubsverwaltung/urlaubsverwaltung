@@ -165,7 +165,10 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return "absences/absences-overview";
     }
 
-    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType<?>> vacationTypes, Locale locale) {
+    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(
+        boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview,
+        List<VacationType<?>> vacationTypes, Locale locale
+    ) {
 
         List<VacationTypeColorDto> vacationTypeColorDtos;
 
@@ -192,11 +195,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         return preparedSelectedDepartments.isEmpty() ? List.of(departments.getFirst().getName()) : preparedSelectedDepartments;
     }
 
-    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange,
-                                                                        List<Person> personList,
-                                                                        Locale locale,
-                                                                        Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
-                                                                        Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(
+        DateRange dateRange, List<Person> personList, Locale locale,
+        Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType,
+        Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor
+    ) {
 
         final LocalDate today = LocalDate.now(clock);
         final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
@@ -208,6 +211,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             .map(AbsencePeriod::absenceRecords)
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
+
+        // TODO company vacation
 
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
@@ -268,6 +273,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
+        // TODO company vacation
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
             .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().startDate(), entry.getKey().endDate(), entry.getValue()))

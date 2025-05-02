@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 @RestControllerAdviceMarker
 @RestController
 @RequestMapping("/api")
-public class PublicHolidayApiController {
+class PublicHolidayApiController {
 
     private final PublicHolidaysService publicHolidaysService;
     private final PersonService personService;
@@ -48,8 +48,10 @@ public class PublicHolidayApiController {
     private final SettingsService settingsService;
 
     @Autowired
-    public PublicHolidayApiController(PublicHolidaysService publicHolidaysService, PersonService personService,
-                                      WorkingTimeService workingTimeService, SettingsService settingsService) {
+    PublicHolidayApiController(
+        PublicHolidaysService publicHolidaysService, PersonService personService,
+        WorkingTimeService workingTimeService, SettingsService settingsService
+    ) {
         this.publicHolidaysService = publicHolidaysService;
         this.personService = personService;
         this.workingTimeService = workingTimeService;
