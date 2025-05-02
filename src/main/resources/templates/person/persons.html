@@ -209,147 +209,153 @@
             ></span>
           </p>
           <div class="tw-mt-8 md:tw-mt-16">
-            <table id="person-table" class="list-table person-table hoverable-table tw-text-sm">
-              <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-              <thead class="hidden-xs hidden-sm print:tw-table-header-group">
-                <tr>
-                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                  <th
-                    th:if="${showPersonnelNumberColumn}"
-                    scope="col"
-                    th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                  ></th>
-                  <th scope="col" th:text="#{person.data.firstName}"></th>
-                  <th scope="col" th:text="#{person.data.lastName}"></th>
-                  <th scope="col" th:if="${isDepartmentPresent}" th:text="#{department.members.list.role}"></th>
-                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
-                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
-                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.remaining}"></th>
-                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
-                  <th
-                    scope="col"
-                    class="is-centered"
-                    th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
-                  ></th>
-                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="person,loopStatus : ${personsPagination.page.content}">
-                  <td class="is-centered">
-                    <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
-                      <img
-                        th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
-                        alt=""
-                      />
-                    </div>
-                  </td>
-                  <td
-                    th:if="${showPersonnelNumberColumn}"
-                    class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
-                    th:text="${person.personnelNumber}"
-                  ></td>
-                  <td class="firstname">
-                    <a
-                      th:text="${person.firstName}"
-                      th:href="@{/web/person/__${person.id}__/overview}"
-                      class="icon-link print:no-link"
-                      data-turbo="false"
-                    ></a>
-                  </td>
-                  <td class="lastname">
-                    <a
-                      th:text="${person.lastName}"
-                      th:href="@{/web/person/__${person.id}__/overview}"
-                      class="icon-link print:no-link"
-                      data-turbo="false"
-                    ></a>
-                  </td>
-                  <td th:if="${isDepartmentPresent}" class="hidden-xs hidden-sm">
-                    <ul
-                      th:if="${person.isDepartmentHead or person.isSecondStageAuthority}"
-                      class="tw-list-none tw-m-0 tw-p-0"
-                    >
-                      <li
-                        th:if="${person.isDepartmentHead}"
-                        th:text="#{department.members.list.departmentHead}"
-                        class="tw-text-nowrap"
-                      >
-                        DepartmentHead
-                      </li>
-                      <li
-                        th:if="${person.isSecondStageAuthority}"
-                        th:text="#{department.members.list.secondStageAuthority}"
-                        class="tw-text-nowrap"
-                      >
-                        SecondStageAuthority
-                      </li>
-                    </ul>
-                  </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
-                    <th:block th:if="${person.entitlementYear != null}">
-                      <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
-                    </th:block>
-                    <th:block
-                      th:if="${person.entitlementYear == null}"
-                      th:text="#{person.account.vacation.noInformation}"
-                    ></th:block>
-                  </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
-                    <th:block th:if="${person.entitlementActual != null}">
-                      <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
-                    </th:block>
-                    <th:block
-                      th:if="${person.entitlementActual == null}"
-                      th:text="#{person.account.vacation.noInformation}"
-                    ></th:block>
-                  </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
-                    <th:block th:if="${person.entitlementRemaining != null}">
-                      <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
-                    </th:block>
-                    <th:block
-                      th:if="${person.entitlementRemaining == null}"
-                      th:text="#{person.account.vacation.noInformation}"
-                    ></th:block>
-                  </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
-                    <th:block th:if="${person.vacationDaysLeft != null}">
-                      <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
-                    </th:block>
-                    <th:block
-                      th:if="${person.vacationDaysLeft == null}"
-                      th:text="#{person.account.vacation.noInformation}"
-                    ></th:block>
-                  </td>
-                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
-                    <th:block th:if="${person.vacationDaysLeftRemaining != null}">
-                      <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
-                    </th:block>
-                    <th:block
-                      th:if="${person.vacationDaysLeftRemaining == null}"
-                      th:text="#{person.account.vacation.noInformation}"
-                    ></th:block>
-                  </td>
-                  <td class="hidden-xs">
-                    <div class="print:tw-hidden">
+            <div class="tw-max-w-full tw-overflow-x-auto">
+              <table id="person-table" class="list-table person-table hoverable-table tw-text-sm">
+                <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
+                <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+                  <tr>
+                    <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                    <th
+                      th:if="${showPersonnelNumberColumn}"
+                      scope="col"
+                      th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                    ></th>
+                    <th scope="col" th:text="#{person.data.firstName}"></th>
+                    <th scope="col" th:text="#{person.data.lastName}"></th>
+                    <th scope="col" th:if="${isDepartmentPresent}" th:text="#{department.members.list.role}"></th>
+                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
+                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
+                    <th
+                      scope="col"
+                      class="is-centered"
+                      th:text="#{persons.account.vacation.entitlement.remaining}"
+                    ></th>
+                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
+                    <th
+                      scope="col"
+                      class="is-centered"
+                      th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
+                    ></th>
+                    <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="person,loopStatus : ${personsPagination.page.content}">
+                    <td class="is-centered">
+                      <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
+                        <img
+                          th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
+                          alt=""
+                        />
+                      </div>
+                    </td>
+                    <td
+                      th:if="${showPersonnelNumberColumn}"
+                      class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                      th:text="${person.personnelNumber}"
+                    ></td>
+                    <td class="firstname">
                       <a
-                        class="action-link"
+                        th:text="${person.firstName}"
+                        th:href="@{/web/person/__${person.id}__/overview}"
+                        class="icon-link print:no-link"
                         data-turbo="false"
-                        th:href="@{/web/person/{personId} (personId=${person.id})}"
+                      ></a>
+                    </td>
+                    <td class="lastname">
+                      <a
+                        th:text="${person.lastName}"
+                        th:href="@{/web/person/__${person.id}__/overview}"
+                        class="icon-link print:no-link"
+                        data-turbo="false"
+                      ></a>
+                    </td>
+                    <td th:if="${isDepartmentPresent}" class="hidden-xs hidden-sm">
+                      <ul
+                        th:if="${person.isDepartmentHead or person.isSecondStageAuthority}"
+                        class="tw-list-none tw-m-0 tw-p-0"
                       >
-                        <svg th:replace="~{icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')}"></svg>
-                        <th:block th:text="#{action.account.title}"></th:block>
-                        <span
-                          class="tw-sr-only"
-                          th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
-                        ></span>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        <li
+                          th:if="${person.isDepartmentHead}"
+                          th:text="#{department.members.list.departmentHead}"
+                          class="tw-text-nowrap"
+                        >
+                          DepartmentHead
+                        </li>
+                        <li
+                          th:if="${person.isSecondStageAuthority}"
+                          th:text="#{department.members.list.secondStageAuthority}"
+                          class="tw-text-nowrap"
+                        >
+                          SecondStageAuthority
+                        </li>
+                      </ul>
+                    </td>
+                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                      <th:block th:if="${person.entitlementYear != null}">
+                        <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
+                      </th:block>
+                      <th:block
+                        th:if="${person.entitlementYear == null}"
+                        th:text="#{person.account.vacation.noInformation}"
+                      ></th:block>
+                    </td>
+                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                      <th:block th:if="${person.entitlementActual != null}">
+                        <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
+                      </th:block>
+                      <th:block
+                        th:if="${person.entitlementActual == null}"
+                        th:text="#{person.account.vacation.noInformation}"
+                      ></th:block>
+                    </td>
+                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                      <th:block th:if="${person.entitlementRemaining != null}">
+                        <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
+                      </th:block>
+                      <th:block
+                        th:if="${person.entitlementRemaining == null}"
+                        th:text="#{person.account.vacation.noInformation}"
+                      ></th:block>
+                    </td>
+                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                      <th:block th:if="${person.vacationDaysLeft != null}">
+                        <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
+                      </th:block>
+                      <th:block
+                        th:if="${person.vacationDaysLeft == null}"
+                        th:text="#{person.account.vacation.noInformation}"
+                      ></th:block>
+                    </td>
+                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                      <th:block th:if="${person.vacationDaysLeftRemaining != null}">
+                        <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
+                      </th:block>
+                      <th:block
+                        th:if="${person.vacationDaysLeftRemaining == null}"
+                        th:text="#{person.account.vacation.noInformation}"
+                      ></th:block>
+                    </td>
+                    <td class="hidden-xs">
+                      <div class="print:tw-hidden">
+                        <a
+                          class="action-link"
+                          data-turbo="false"
+                          th:href="@{/web/person/{personId} (personId=${person.id})}"
+                        >
+                          <svg th:replace="~{icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')}"></svg>
+                          <th:block th:text="#{action.account.title}"></th:block>
+                          <span
+                            class="tw-sr-only"
+                            th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
+                          ></span>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
               <div id="persons-pagination">
                 <nav
