@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class OvertimeSettings implements Serializable {
@@ -101,5 +102,23 @@ public class OvertimeSettings implements Serializable {
 
     public void setOvertimeWritePrivilegedOnly(boolean overtimeWritePrivilegedOnly) {
         this.overtimeWritePrivilegedOnly = overtimeWritePrivilegedOnly;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        OvertimeSettings that = (OvertimeSettings) o;
+        return overtimeActive == that.overtimeActive
+            && overtimeReductionWithoutApplicationActive == that.overtimeReductionWithoutApplicationActive
+            && overtimeWritePrivilegedOnly == that.overtimeWritePrivilegedOnly
+            && Objects.equals(maximumOvertime, that.maximumOvertime)
+            && Objects.equals(minimumOvertime, that.minimumOvertime)
+            && Objects.equals(minimumOvertimeReduction, that.minimumOvertimeReduction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(overtimeActive, overtimeReductionWithoutApplicationActive, overtimeWritePrivilegedOnly,
+            maximumOvertime, minimumOvertime, minimumOvertimeReduction);
     }
 }
