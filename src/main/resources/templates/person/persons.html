@@ -1,7 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="#{person.overview.header.title}"></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" type="text/css" th:href="@{/css/persons.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('persons.js')}" />
     </th:block>
@@ -204,7 +209,7 @@
             ></span>
           </p>
           <div class="tw-mt-8 md:tw-mt-16">
-            <table id="person-table" class="list-table hoverable-table tw-text-sm">
+            <table id="person-table" class="list-table person-table hoverable-table tw-text-sm">
               <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
               <thead class="hidden-xs hidden-sm print:tw-table-header-group">
                 <tr>
@@ -261,24 +266,25 @@
                     ></a>
                   </td>
                   <td th:if="${isDepartmentPresent}">
-                    <span
-                      th:if="${person.isDepartmentHead and person.isSecondStageAuthority}"
-                      th:text="#{department.members.list.departmentHead} + ', ' + #{department.members.list.secondStageAuthority}"
+                    <ul
+                      th:if="${person.isDepartmentHead or person.isSecondStageAuthority}"
+                      class="tw-list-none tw-m-0 tw-p-0"
                     >
-                      DepartmentHead / SecondStageAuthority
-                    </span>
-                    <span
-                      th:if="${person.isDepartmentHead and not person.isSecondStageAuthority}"
-                      th:text="#{department.members.list.departmentHead}"
-                    >
-                      DepartmentHead
-                    </span>
-                    <span
-                      th:if="${person.isSecondStageAuthority and not person.isDepartmentHead}"
-                      th:text="#{department.members.list.secondStageAuthority}"
-                    >
-                      SecondStageAuthority
-                    </span>
+                      <li
+                        th:if="${person.isDepartmentHead}"
+                        th:text="#{department.members.list.departmentHead}"
+                        class="tw-text-nowrap"
+                      >
+                        DepartmentHead
+                      </li>
+                      <li
+                        th:if="${person.isSecondStageAuthority}"
+                        th:text="#{department.members.list.secondStageAuthority}"
+                        class="tw-text-nowrap"
+                      >
+                        SecondStageAuthority
+                      </li>
+                    </ul>
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementYear != null}">

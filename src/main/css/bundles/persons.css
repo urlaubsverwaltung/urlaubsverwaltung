@@ -1,0 +1,9 @@
+.person-table {
+  th {
+    @apply tw-p-2;
+  }
+
+  td {
+    @apply tw-p-2;
+  }
+}
