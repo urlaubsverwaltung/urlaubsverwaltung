@@ -64,13 +64,13 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/google-api-handshake")
-    public String googleConnectionStatus(HttpServletRequest request) throws GeneralSecurityException, IOException {
+    public String googleConnectionStatus(HttpServletRequest request) {
         return "redirect:" + authorize(request.getRequestURL().toString());
     }
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping(value = "/google-api-handshake", params = "code")
-    public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) throws GeneralSecurityException, IOException {
+    public String oauth2Callback(@RequestParam(value = "code") String code, HttpServletRequest request) {
 
         final String redirectUrl = request.getRequestURL().toString();
 
@@ -84,11 +84,11 @@ public class GoogleCalendarOAuthHandshakeViewController {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-            CalendarSettings calendarSettings = calendarSettingsService.getCalendarSettings();
+            final CalendarSettings calendarSettings = calendarSettingsService.getCalendarSettings();
             final HttpResponse httpResponse = checkGoogleCalendar(client, calendarSettings);
 
             if (httpResponse.getStatusCode() == SC_OK) {
-                String refreshToken = credential.getRefreshToken();
+                final String refreshToken = credential.getRefreshToken();
                 if (refreshToken == null) {
                     LOG.warn("OAuth Handshake was successful, but refresh token is null!");
                 } else {
@@ -108,7 +108,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
         return "redirect:/web/settings/calendar-sync";
     }
 
-    private String authorize(String redirectUri) throws GeneralSecurityException, IOException {
+    private String authorize(String redirectUri) {
 
         final AuthorizationCodeRequestUrl authorizationUrl = createGoogleAuthorizationCodeFlow()
             .newAuthorizationUrl()
@@ -119,7 +119,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
         return authorizationUrl.build();
     }
 
-    private GoogleAuthorizationCodeFlow createGoogleAuthorizationCodeFlow() throws GeneralSecurityException, IOException {
+    private GoogleAuthorizationCodeFlow createGoogleAuthorizationCodeFlow() {
         final GoogleCalendarSettings googleCalendarSettings = calendarSettingsService.getCalendarSettings().getGoogleCalendarSettings();
         return googleAuthorizationCodeFlowFactory.create(googleCalendarSettings.getClientId(), googleCalendarSettings.getClientSecret());
     }

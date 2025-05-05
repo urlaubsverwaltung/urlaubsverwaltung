@@ -48,7 +48,9 @@
                   <h2
                     th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
                     th:text="#{__${overtimeHeadingSectionMessagekey}__}"
-                  ></h2>
+                  >
+                    Überstunden eintragen
+                  </h2>
                 </th:block>
                 <th:block th:ref="overtime-form-actions">
                   <div class="tw-flex tw-flex-col sm:tw-flex-row">

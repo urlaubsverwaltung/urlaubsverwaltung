@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-      <h1 class="tw-sr-only" th:text="#{applications.title}"></h1>
+      <h1 class="tw-sr-only" th:text="#{applications.title}">Abwesenheiten</h1>
 
       <div
         class="feedback"
@@ -104,7 +104,7 @@
         class="tw-mb-10"
         th:hidden="${activeContent != 'application' && activeContent != 'sicknote'}"
       >
-        <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}"></h2>
+        <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}">Meine offenen Abwesenheiten</h2>
         <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
         <div
           th:if="${not #lists.isEmpty(userApplications)}"
@@ -235,7 +235,7 @@
       </div>
 
       <div id="user-replacements-block" class="tw-mb-10" th:hidden="${activeContent != 'replacement'}">
-        <h2 class="tw-sr-only" th:text="#{applications.holiday_replacement}"></h2>
+        <h2 class="tw-sr-only" th:text="#{applications.holiday_replacement}">Meine anstehenden Vertretungen</h2>
         <p
           th:if="${#lists.isEmpty(applications_holiday_replacements)}"
           th:text="#{applications.holiday_replacement.none}"
@@ -656,7 +656,9 @@
               id="cancellation-requests"
               class="tw-text-xl tw-font-medium"
               th:text="#{applications.cancellation_request}"
-            ></h2>
+            >
+              Offene Stornierungsanträge von Kolleg:innen
+            </h2>
           </th:block>
         </div>
 

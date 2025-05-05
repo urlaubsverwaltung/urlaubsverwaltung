@@ -27,7 +27,7 @@
             th:replace="~{fragments/section-heading::section-heading(~{::overtime-details-heading-body}, ~{::overtime-details-heading-actions})}"
           >
             <th:block th:fragment="overtime-details-heading-body">
-              <h2 th:text="#{overtime.title}"></h2>
+              <h2 th:text="#{overtime.title}">Überstunden</h2>
             </th:block>
             <th:block th:fragment="overtime-details-heading-actions">
               <div class="tw-flex tw-flex-col sm:tw-flex-row">
@@ -111,7 +111,7 @@
             th:replace="~{fragments/section-heading::section-heading(~{::overtime-progress-heading-body}, ~{::overtime-progress-heading-actions})}"
           >
             <th:block th:fragment="overtime-progress-heading-body">
-              <h2 th:text="#{overtime.progress.title}"></h2>
+              <h2 th:text="#{overtime.progress.title}">Verlauf</h2>
             </th:block>
             <th:block th:ref="overtime-progress-heading-actions">
               <th:block th:if="${userIsAllowedToWriteOvertime}">
@@ -189,7 +189,7 @@
         <div class="tw-mb-16">
           <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-data-person-heading-body}, ~{})}">
             <th:block th:fragment="overtime-data-person-heading-body">
-              <h2 th:text="#{overtime.data.person}"></h2>
+              <h2 th:text="#{overtime.data.person}">Mitarbeiter</h2>
             </th:block>
           </div>
           <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
