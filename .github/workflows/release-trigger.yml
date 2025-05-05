@@ -29,11 +29,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up JDK 21
+      - name: Set up JDK from .tool-versions
         uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '21'
+          java-version-file: ".tool-versions"
           cache: 'maven'
 
       - name: Build
@@ -51,11 +51,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK from .tool-versions
         uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: 21
+          java-version-file: ".tool-versions"
           cache: 'maven'
 
       - name: Install Playwright Browsers (UI tests)
