@@ -4,9 +4,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.services.calendar.CalendarScopes;
 
-import java.util.Collections;
+import static com.google.api.services.calendar.CalendarScopes.CALENDAR;
+import static java.util.Collections.singleton;
 
 public class GoogleAuthorizationCodeFlowFactory {
 
@@ -25,15 +25,11 @@ public class GoogleAuthorizationCodeFlowFactory {
         web.setClientSecret(clientSecret);
 
         final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
-
         clientSecrets.setWeb(web);
 
-        return new GoogleAuthorizationCodeFlow.Builder(netHttpTransport, jsonFactory, clientSecrets,
-            Collections.singleton(CalendarScopes.CALENDAR))
+        return new GoogleAuthorizationCodeFlow.Builder(netHttpTransport, jsonFactory, clientSecrets, singleton(CALENDAR))
             .setApprovalPrompt("force")
             .setAccessType("offline")
             .build();
-
-
     }
 }
