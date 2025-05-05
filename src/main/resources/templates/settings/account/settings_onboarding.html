@@ -14,13 +14,7 @@
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
 
-        <form
-          method="post"
-          th:action="@{/web/settings/account}"
-          th:object="${settings}"
-          class="form-horizontal"
-          role="form"
-        >
+        <form method="post" th:action="@{/web/settings/account}" th:object="${settings}" class="form-horizontal">
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
