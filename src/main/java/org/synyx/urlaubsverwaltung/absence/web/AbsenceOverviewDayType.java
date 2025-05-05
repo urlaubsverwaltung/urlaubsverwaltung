@@ -33,17 +33,20 @@ public class AbsenceOverviewDayType {
     private final boolean publicHolidayFull;
 
     private final AbsenceOverviewDayTypeColor color;
+    private final AbsenceOverviewDayTypeDescription description;
 
     @SuppressWarnings("java:S107")
     // Methods should not have too many parameters -> builder below must be used for construction
-    private AbsenceOverviewDayType(boolean waitingSickNoteMorning, boolean waitingSickNoteNoon, boolean waitingSickNoteFull,
-                                   boolean activeSickNoteMorning, boolean activeSickNoteNoon, boolean activeSickNoteFull, boolean absenceMorning,
-                                   boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
-                                   boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,
-                                   boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
-                                   boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
-                                   boolean publicHolidayMorning, boolean publicHolidayNoon,
-                                   boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
+    private AbsenceOverviewDayType(
+        boolean waitingSickNoteMorning, boolean waitingSickNoteNoon, boolean waitingSickNoteFull,
+        boolean activeSickNoteMorning, boolean activeSickNoteNoon, boolean activeSickNoteFull, boolean absenceMorning,
+        boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
+        boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,
+        boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
+        boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
+        boolean publicHolidayMorning, boolean publicHolidayNoon,
+        boolean publicHolidayFull, AbsenceOverviewDayTypeColor color, AbsenceOverviewDayTypeDescription description
+    ) {
         this.waitingSickNoteMorning = waitingSickNoteMorning;
         this.waitingSickNoteNoon = waitingSickNoteNoon;
         this.waitingSickNoteFull = waitingSickNoteFull;
@@ -66,6 +69,7 @@ public class AbsenceOverviewDayType {
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
         this.color = color;
+        this.description = description;
     }
 
     public static Builder builder() {
@@ -160,6 +164,10 @@ public class AbsenceOverviewDayType {
         return color;
     }
 
+    public AbsenceOverviewDayTypeDescription getDescription() {
+        return description;
+    }
+
     public static class Builder {
 
         private boolean waitingSickNoteMorning = false;
@@ -193,6 +201,10 @@ public class AbsenceOverviewDayType {
         private VacationTypeColor colorMorning;
         private VacationTypeColor colorNoon;
         private VacationTypeColor colorFull;
+
+        private String descriptionMorning;
+        private String descriptionNoon;
+        private String descriptionFull;
 
         public Builder waitingSickNoteMorning() {
             this.waitingSickNoteMorning = true;
@@ -314,6 +326,21 @@ public class AbsenceOverviewDayType {
             return this;
         }
 
+        public Builder descriptionMorning(String descriptionMorning) {
+            this.descriptionMorning = descriptionMorning;
+            return this;
+        }
+
+        public Builder descriptionNoon(String descriptionNoon) {
+            this.descriptionNoon = descriptionNoon;
+            return this;
+        }
+
+        public Builder descriptionFull(String descriptionFull) {
+            this.descriptionFull = descriptionFull;
+            return this;
+        }
+
         public AbsenceOverviewDayType build() {
             return new AbsenceOverviewDayType(
                 waitingSickNoteMorning,
@@ -337,7 +364,17 @@ public class AbsenceOverviewDayType {
                 publicHolidayMorning,
                 publicHolidayNoon,
                 publicHolidayFull,
-                new AbsenceOverviewDayTypeColor(colorMorning, colorNoon, colorFull));
+                new AbsenceOverviewDayTypeColor(
+                    colorMorning,
+                    colorNoon,
+                    colorFull
+                ),
+                new AbsenceOverviewDayTypeDescription(
+                    descriptionMorning,
+                    descriptionNoon,
+                    descriptionFull
+                )
+            );
         }
     }
 }
