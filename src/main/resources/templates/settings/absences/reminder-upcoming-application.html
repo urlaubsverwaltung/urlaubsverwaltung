@@ -9,7 +9,9 @@
         th:replace="~{fragments/section-heading::section-heading(~{::reminder-upcoming-application-heading-body}, ~{})}"
       >
         <th:block th:fragment="reminder-upcoming-application-heading-body">
-          <h2 th:text="#{settings.vacation.remindForUpcomingApplications.title}"></h2>
+          <h2 th:text="#{settings.vacation.remindForUpcomingApplications.title}">
+            Automatische Erinnerung für bevorstehende Abwesenheiten
+          </h2>
         </th:block>
       </div>
 

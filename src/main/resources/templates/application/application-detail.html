@@ -48,7 +48,7 @@
             </div>
           </th:block>
           <th:block th:ref="applications-details-heading-body">
-            <h1 th:text="#{application.data.title}"></h1>
+            <h1 th:text="#{application.data.title}">Abwesenheit</h1>
           </th:block>
         </div>
 
@@ -127,7 +127,7 @@
           th:replace="~{fragments/section-heading::section-heading(~{::applications-details-account-heading-body}, ~{})}"
         >
           <th:block th:ref="applications-details-account-heading-body">
-            <h2 th:text="#{person.account.vacation.title}"></h2>
+            <h2 th:text="#{person.account.vacation.title}">Urlaubsanspruch für</h2>
             <div
               th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/application/${app.id}?year=|, selectedYear=${selectedYear})}"
             ></div>
