@@ -71,7 +71,7 @@
     "cross-env": "7.0.3",
     "cssnano": "7.0.6",
     "date-fns": "3.6.0",
-    "eslint": "9.25.1",
+    "eslint": "9.26.0",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-prettier": "5.2.6",
     "eslint-plugin-unicorn": "59.0.0",
