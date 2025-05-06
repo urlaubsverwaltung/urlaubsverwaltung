@@ -98,7 +98,7 @@
               </th:block>
 
               <div class="form-group is-required">
-                <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType"> </label>
+                <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType">Typ</label>
 
                 <div class="col-md-9">
                   <select
@@ -118,7 +118,7 @@
               </div>
 
               <div class="form-group is-required">
-                <label th:text="|#{absence.period}:|" class="control-label col-md-3" for="dayLength"> </label>
+                <label th:text="|#{absence.period}:|" class="control-label col-md-3" for="dayLength">Zeitraum</label>
                 <div class="col-md-9">
                   <div class="radio">
                     <label class="thirds">
@@ -130,7 +130,7 @@
                         th:selected="true"
                         data-test-id="day-type-full"
                       />
-                      <th:block th:text="#{FULL}" />
+                      <th:block th:text="#{FULL}">ganztägig</th:block>
                     </label>
                     <label class="thirds">
                       <input
@@ -140,7 +140,7 @@
                         checked="checked"
                         data-test-id="day-type-morning"
                       />
-                      <th:block th:text="#{MORNING}" />
+                      <th:block th:text="#{MORNING}">vormittags</th:block>
                     </label>
                     <label class="thirds">
                       <input
@@ -150,7 +150,7 @@
                         checked="checked"
                         data-test-id="day-type-noon"
                       />
-                      <th:block th:text="#{NOON}" />
+                      <th:block th:text="#{NOON}">nachmittags</th:block>
                     </label>
                   </div>
                   <p
@@ -163,7 +163,7 @@
               </div>
 
               <div class="form-group is-required">
-                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="from"> </label>
+                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="from">Von</label>
                 <div class="col-md-9">
                   <input
                     id="from"
@@ -185,7 +185,7 @@
               </div>
 
               <div class="form-group is-required">
-                <label th:text="|#{absence.period.endDate}:|" class="control-label col-md-3" for="to"> </label>
+                <label th:text="|#{absence.period.endDate}:|" class="control-label col-md-3" for="to">Bis</label>
                 <div class="col-md-9">
                   <input
                     id="to"
@@ -225,7 +225,7 @@
             </div>
             <div class="col-md-8 col-md-pull-4">
               <div class="form-group AU">
-                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="aubFrom"> </label>
+                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="aubFrom">Von</label>
 
                 <div class="col-md-9">
                   <input
@@ -247,7 +247,7 @@
                 </div>
               </div>
               <div class="form-group AU">
-                <label th:text="|#{absence.period.endDate}|" class="control-label col-md-3" for="aubTo"> </label>
+                <label th:text="|#{absence.period.endDate}|" class="control-label col-md-3" for="aubTo">Bis</label>
 
                 <div class="col-md-9">
                   <input

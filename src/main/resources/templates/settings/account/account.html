@@ -132,7 +132,7 @@
                   for="accountSettings.expiryDateMonth"
                   th:text="#{settings.vacation.expiryDateMonth}"
                   class="tw-sr-only"
-                ></label>
+                >Monat</label>
                 <select
                   th:replace="~{fragments/select::one(id='accountSettings.expiryDateMonth', name='accountSettings.expiryDateMonth', options=~{::expiry-date-month-select-options}, className = 'tw-flex-1')}"
                 >
