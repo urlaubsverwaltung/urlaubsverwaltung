@@ -99,7 +99,7 @@
                 </div>
 
                 <div th:if="${overtime.id != null}" class="form-group">
-                  <label th:text="|#{overtime.data.person}:|" class="control-label col-md-3"></label>
+                  <label th:text="|#{overtime.data.person}:|" class="control-label col-md-3">Mitarbeiter</label>
                   <div class="col-md-9">
                     <p th:text="${overtime.person.niceName}" class="form-control-static"></p>
                     <input type="hidden" name="person" th:value="${person.id}" />
@@ -112,7 +112,9 @@
               </th:block>
 
               <div class="form-group is-required">
-                <label th:text="|#{overtime.data.startDate}:|" class="control-label col-md-3" for="startDate"></label>
+                <label th:text="|#{overtime.data.startDate}:|" class="control-label col-md-3" for="startDate"
+                  >Von</label
+                >
                 <div class="col-md-9">
                   <input
                     id="startDate"
@@ -134,7 +136,7 @@
                 </div>
               </div>
               <div class="form-group is-required">
-                <label th:text="|#{overtime.data.endDate}:|" class="control-label col-md-3" for="endDate"> </label>
+                <label th:text="|#{overtime.data.endDate}:|" class="control-label col-md-3" for="endDate">Bis</label>
                 <div class="col-md-9">
                   <input
                     id="endDate"
@@ -157,18 +159,18 @@
               </div>
 
               <div class="form-group is-required">
-                <label th:text="|#{overtime.data.numberOfHours}:|" class="control-label col-md-3" for="hours"></label>
+                <label th:text="|#{overtime.data.numberOfHours}:|" class="control-label col-md-3" for="hours"
+                  >Anzahl der Überstunden</label
+                >
                 <div class="col-md-9">
                   <th:block
                     th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
                   ></th:block>
                   <div th:if="${overtimeReductionPossible}" class="tw-mt-2">
                     <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
-                    <label
-                      th:text="#{overtime.data.reduceOvertime}"
-                      for="overtime-reduce"
-                      class="tw-font-normal"
-                    ></label>
+                    <label th:text="#{overtime.data.reduceOvertime}" for="overtime-reduce" class="tw-font-normal"
+                      >Überstunden abbauen statt hinzufügen</label
+                    >
                   </div>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"

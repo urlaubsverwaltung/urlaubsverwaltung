@@ -57,7 +57,9 @@
                 <p th:text="#{person.account.dangerzone.description.extension}"></p>
 
                 <label class="tw-w-full">
-                  <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"></span>
+                  <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"
+                    >Bitte gebe zur Bestätigung den Namen ein.</span
+                  >
                   <input th:field="*{niceNameConfirmation}" class="form-control tw-mt-1" />
                 </label>
 

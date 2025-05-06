@@ -208,7 +208,7 @@
                         th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
                         class="tw-m-0"
                       />
-                      <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}"></span>
+                      <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}">Jahres</span>
                     </label>
                   </div>
                 </div>
@@ -346,7 +346,7 @@
                     th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
                     class="tw-m-0"
                   />
-                  <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}"></span>
+                  <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}">Jahres</span>
                 </label>
               </div>
             </div>

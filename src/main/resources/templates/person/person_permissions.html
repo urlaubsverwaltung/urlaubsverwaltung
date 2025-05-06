@@ -52,7 +52,9 @@
                     <strong th:text="#{person.form.permissions.roles.INACTIVE}" class="tw-mb-2 tw-block"></strong>
                     <label class="tw-leading-snug">
                       <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
-                      <th:block th:text="#{person.form.permissions.roles.INACTIVE.description}" />
+                      <th:block th:text="#{person.form.permissions.roles.INACTIVE.description}">
+                        hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben bestehen)
+                      </th:block>
                     </label>
                   </div>
 
@@ -60,7 +62,9 @@
                     <strong th:text="#{person.form.permissions.roles.USER}" class="tw-mb-2 tw-block"></strong>
                     <label class="tw-leading-snug">
                       <input type="checkbox" th:field="*{permissions}" value="USER" />
-                      <th:block th:text="#{person.form.permissions.roles.USER.description}" />
+                      <th:block th:text="#{person.form.permissions.roles.USER.description}">
+                        hat Zugang zur Urlaubsverwaltung und darf Abwesenheiten für sich selbst beantragen
+                      </th:block>
                     </label>
                   </div>
 
