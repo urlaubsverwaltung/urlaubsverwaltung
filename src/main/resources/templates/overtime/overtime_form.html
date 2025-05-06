@@ -182,7 +182,9 @@
               </div>
 
               <div class="form-group tw-mb-16">
-                <label th:text="|#{overtime.data.comment}:|" class="control-label col-md-3" for="comment"></label>
+                <label th:text="|#{overtime.data.comment}:|" class="control-label col-md-3" for="comment">
+                  Mit Kommentar zum Verlauf hinzufügen
+                </label>
                 <div class="col-md-9">
                   <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
                   <p

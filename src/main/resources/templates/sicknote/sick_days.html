@@ -126,7 +126,7 @@
                   </th:block>
                   <th:block th:ref="period-dropdown-content">
                     <div class="tw-flex tw-flex-col">
-                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0">Von</label>
                       <input
                         id="from-date-input"
                         name="from"
@@ -135,7 +135,7 @@
                         th:placeholder="#{pattern.date}"
                         class="form-control tw-mt-0.5"
                       />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4" />
+                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4">Bis</label>
                       <input
                         id="to-date-input"
                         name="to"
