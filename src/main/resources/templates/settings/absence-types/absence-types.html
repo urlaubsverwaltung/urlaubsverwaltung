@@ -88,8 +88,8 @@
                       th:text="#{settings.absenceTypes.action.state.label}"
                       th:for="|absenceType-active-${index}|"
                       class="tw-m-0 tw-sr-only"
+                      >Aktiviert / Deaktiviert</label
                     >
-                    </label>
                   </span>
                 </div>
                 <div class="absence-type-card__label">
@@ -158,7 +158,7 @@
                                 width="16"
                                 height="16"
                               />
-                              <span th:text="${#messages.msg('locale.' + label.locale)}"></span>
+                              <span th:text="${#messages.msg('locale.' + label.locale)}">Deutsch</span>
                             </label>
                           </div>
                           <th:block th:if="${hasLocaleErrors}">
@@ -187,8 +187,8 @@
                     th:text="#{settings.absenceTypes.action.approveToApply.label}"
                     th:for="${'absenceType-approval-to-apply-' + index}"
                     class="absence-type-card-cell_title tw-m-0"
+                    >Genehmigungsprozess erforderlich</label
                   >
-                  </label>
                   <input
                     type="checkbox"
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToApply|"
@@ -202,8 +202,8 @@
                     th:text="#{settings.absenceTypes.action.approveToCancel.label}"
                     th:for="${'absenceType-approval-to-cancel-' + index}"
                     class="absence-type-card-cell_title tw-m-0"
+                    >Stornierungsprozess erforderlich</label
                   >
-                  </label>
                   <input
                     type="checkbox"
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToCancel|"
@@ -217,8 +217,8 @@
                     th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
                     th:for="|absenceType-visible-to-everyone-${index}|"
                     class="absence-type-card-cell_title tw-m-0"
+                    >Für alle sichtbar</label
                   >
-                  </label>
                   <input
                     type="checkbox"
                     th:name="|absenceTypeSettings.items[${index}].visibleToEveryone|"
@@ -232,8 +232,8 @@
                     th:text="#{settings.absenceTypes.action.color.label}"
                     th:for="|color-${index}|"
                     class="absence-type-card-cell_title tw-m-0"
+                    >Farbe</label
                   >
-                  </label>
                   <div is="uv-color-picker">
                     <label
                       th:id="|color-picker-label-${index}|"

@@ -28,7 +28,9 @@
               class="control-label col-md-4"
               for="applicationSettings.remindForUpcomingHolidayReplacement.activation.true"
             >
-              <th:block th:text="|#{settings.vacation.remindForUpcomingHolidayReplacement.activation}:|" />
+              <th:block th:text="|#{settings.vacation.remindForUpcomingHolidayReplacement.activation}:|">
+                Automatische Erinnerungsfunktion
+              </th:block>
             </label>
             <div class="col-md-8 radio">
               <label class="halves">
@@ -38,7 +40,9 @@
                   th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
                   value="true"
                 />
-                <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.true}" />
+                <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.true}"
+                  >aktivieren</th:block
+                >
               </label>
               <label class="halves">
                 <input
@@ -47,7 +51,9 @@
                   th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
                   value="false"
                 />
-                <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.false}" />
+                <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.false}"
+                  >deaktivieren</th:block
+                >
               </label>
             </div>
           </div>
@@ -57,7 +63,9 @@
               class="control-label col-md-4"
               for="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement"
             >
-              <th:block th:text="|#{settings.vacation.daysBeforeRemindForUpcomingHolidayReplacement}:|" />
+              <th:block th:text="|#{settings.vacation.daysBeforeRemindForUpcomingHolidayReplacement}:|">
+                Wie viele Tage im Voraus soll die Vertretung über eine bevorstehende Vertretung benachrichtigt werden
+              </th:block>
             </label>
             <div class="col-md-8">
               <input

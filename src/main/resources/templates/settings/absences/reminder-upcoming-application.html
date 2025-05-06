@@ -28,8 +28,8 @@
               th:text="|#{settings.vacation.remindForUpcomingApplications}:|"
               class="control-label col-md-4"
               for="applicationSettings.remindForUpcomingApplications.true"
+              >Automatische Erinnerungsfunktion</label
             >
-            </label>
             <div class="col-md-8 radio">
               <label class="halves">
                 <input
@@ -38,7 +38,7 @@
                   th:field="*{applicationSettings.remindForUpcomingApplications}"
                   value="true"
                 />
-                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.true}" />
+                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.true}">aktivieren</th:block>
               </label>
               <label class="halves">
                 <input
@@ -47,7 +47,7 @@
                   th:field="*{applicationSettings.remindForUpcomingApplications}"
                   value="false"
                 />
-                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.false}" />
+                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.false}">deaktivieren</th:block>
               </label>
             </div>
           </div>
@@ -57,8 +57,8 @@
               th:text="|#{settings.vacation.daysBeforeRemindForUpcomingApplications}:|"
               class="control-label col-md-4"
               for="applicationSettings.daysBeforeRemindForUpcomingApplications"
+              >Wie viele Tage im Voraus soll die Antragsteller:in benachrichtigt werden</label
             >
-            </label>
             <div class="col-md-8">
               <input
                 id="applicationSettings.daysBeforeRemindForUpcomingApplications"
