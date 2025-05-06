@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '21'
+          java-version-file: ".tool-versions"
           cache: 'maven'
 
       - name: Build jar with Maven
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '21'
+          java-version-file: ".tool-versions"
           cache: 'maven'
       - name: Publish docker image to GitHub Container Registry
         run: >
@@ -65,7 +65,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '21'
+          java-version-file: ".tool-versions"
           cache: 'maven'
       - name: Publish docker image to Docker Hub urlaubsverwaltung
         run: >
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'liberica'
-          java-version: '21'
+          java-version-file: ".tool-versions"
           cache: 'maven'
       - name: Publish docker image to Docker Hub synyx
         run: >
