@@ -71,7 +71,8 @@
                     th:text="|#{person.form.workingTime.federalState}:|"
                     class="control-label col-md-3"
                     th:for="federalStateType"
-                  ></label>
+                    >Feiertagsregelung</label
+                  >
 
                   <div class="col-md-9">
                     <select
@@ -115,7 +116,8 @@
                     for="validFrom"
                     th:text="|#{person.form.workingTime.valid-from}:|"
                     class="control-label col-md-3"
-                  ></label>
+                    >Gültig ab</label
+                  >
                   <div class="col-md-9">
                     <input
                       id="validFrom"
@@ -134,7 +136,9 @@
                 </div>
 
                 <div class="form-group is-required">
-                  <label th:text="|#{person.form.workingTime.weekDays}:|" class="control-label col-md-3"></label>
+                  <label th:text="|#{person.form.workingTime.weekDays}:|" class="control-label col-md-3"
+                    >Wochentage</label
+                  >
                   <div class="col-md-9">
                     <div th:each="weekDay : ${weekDays}" class="checkbox">
                       <label th:for="${weekDay}">
@@ -151,7 +155,7 @@
                 </div>
 
                 <div th:if="${not #lists.isEmpty(workingTimeHistories)}" class="form-group">
-                  <label th:text="|#{person.form.workingTime.existent}:|" class="col-md-3"></label>
+                  <label th:text="|#{person.form.workingTime.existent}:|" class="col-md-3">Arbeitszeiten</label>
 
                   <div class="col-md-9">
                     <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
