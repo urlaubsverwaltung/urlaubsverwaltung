@@ -42,7 +42,9 @@
             </div>
             <div class="col-md-8 col-md-pull-4">
               <div class="form-group is-required">
-                <label th:text="|#{department.data.name}:|" class="control-label col-md-3" for="name"></label>
+                <label th:text="|#{department.data.name}:|" class="control-label col-md-3" for="name">
+                  Abteilungsname
+                </label>
                 <div class="col-md-9">
                   <input id="name" type="text" th:field="*{name}" class="form-control" th:errorclass="error" />
                   <p
@@ -54,7 +56,9 @@
                 </div>
               </div>
               <div class="form-group">
-                <label th:text="|#{department.data.info}:|" class="control-label col-md-3" for="description"></label>
+                <label th:text="|#{department.data.info}:|" class="control-label col-md-3" for="description">
+                  Beschreibung
+                </label>
                 <div class="col-md-9">
                   <textarea
                     id="description"
@@ -89,8 +93,8 @@
                   th:text="|#{department.data.twoStageApproval}:|"
                   class="control-label col-md-3"
                   for="twoStageApproval"
+                  >Zweistufiger Genehmigungsprozess</label
                 >
-                </label>
                 <div class="col-md-9 checkbox">
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
@@ -100,7 +104,9 @@
                   </p>
                   <label>
                     <input id="twoStageApproval" type="checkbox" th:field="*{twoStageApproval}" th:errorclass="error" />
-                    <span th:text="#{department.data.twoStageApproval.activate}"></span>
+                    <span th:text="#{department.data.twoStageApproval.activate}">
+                      Zweistufigen Genehmigungsprozess aktivieren
+                    </span>
                   </label>
                 </div>
               </div>
@@ -247,7 +253,7 @@
                                 class="tw-m-0 tw-mr-2"
                               />
                               <input type="hidden" name="_departmentHeads" value="on" />
-                              <th:block th:text="#{department.members.departmentHead}"></th:block>
+                              <th:block th:text="#{department.members.departmentHead}"> ist Abteilungsleiter </th:block>
                             </label>
                           </div>
                           <div
@@ -263,7 +269,9 @@
                                 class="tw-m-0 tw-mr-2"
                               />
                               <input type="hidden" name="_secondStageAuthorities" value="on" />
-                              <th:block th:text="#{department.members.secondStageAuthority}"></th:block>
+                              <th:block th:text="#{department.members.secondStageAuthority}">
+                                ist verantwortlich für die Freigabe vorläufig genehmigter Anträge
+                              </th:block>
                             </label>
                           </div>
                         </div>
