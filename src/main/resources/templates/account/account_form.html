@@ -66,7 +66,8 @@
                     th:text="|#{person.form.annualVacation.period.start}:|"
                     for="holidaysAccountValidFrom"
                     class="control-label col-md-3 tw-leading-snug"
-                  ></label>
+                    >Von</label
+                  >
                   <div class="col-md-9">
                     <input
                       id="holidaysAccountValidFrom"
@@ -89,7 +90,8 @@
                     th:text="|#{person.form.annualVacation.period.end}:|"
                     for="holidaysAccountValidTo"
                     class="control-label col-md-3 tw-leading-snug"
-                  ></label>
+                    >Bis</label
+                  >
                   <div class="col-md-9">
                     <input
                       id="holidaysAccountValidTo"
@@ -114,7 +116,8 @@
                       th:text="|#{person.form.annualVacation.annualVacation}:|"
                       class="control-label col-md-3 tw-leading-snug"
                       for="annualVacationDays"
-                    ></label>
+                      >Jährlicher Urlaubsanspruch</label
+                    >
                     <div class="col-md-9">
                       <input
                         id="annualVacationDays"
@@ -135,7 +138,8 @@
                       th:text="|#{person.form.annualVacation.actualVacation}:|"
                       class="control-label col-md-3 tw-leading-snug"
                       for="actualVacationDays"
-                    ></label>
+                      >Anteiliger Urlaubsanspruch</label
+                    >
                     <div class="col-md-9">
                       <input
                         id="actualVacationDays"
@@ -160,7 +164,8 @@
                       th:text="|#{person.form.annualVacation.remainingVacation}:|"
                       class="control-label col-md-3 tw-leading-snug"
                       for="remainingVacationDays"
-                    ></label>
+                      >Resturlaub</label
+                    >
                     <div class="col-md-9">
                       <input
                         id="remainingVacationDays"
@@ -222,7 +227,9 @@
                               data-value="true"
                               th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
                             />
-                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}" />
+                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}">
+                              Resturlaub verfällt
+                            </th:block>
                           </label>
                           <label class="tw-font-normal tw-text-base tw-m-0">
                             <input
@@ -233,7 +240,9 @@
                               data-value="false"
                               th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
                             />
-                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}" />
+                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}">
+                              Resturlaub verfällt nicht
+                            </th:block>
                           </label>
                         </div>
                       </div>
@@ -303,7 +312,8 @@
                       th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
                       class="control-label col-md-3 tw-leading-snug"
                       for="remainingVacationDaysNotExpiring"
-                    ></label>
+                      >Anteil des Resturlaubs, welcher zum Verfallsdatum nicht verfällt</label
+                    >
                     <div class="col-md-9">
                       <input
                         id="remainingVacationDaysNotExpiring"

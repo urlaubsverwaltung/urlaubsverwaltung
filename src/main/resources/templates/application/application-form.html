@@ -69,9 +69,9 @@
                 th:for="${'replacement-note-' + index}"
                 class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
               >
-                <th:block
-                  th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
-                ></th:block>
+                <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
+                  >Notiz an Vertretung</th:block
+                >
               </label>
             </div>
             <div>

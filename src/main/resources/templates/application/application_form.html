@@ -108,12 +108,9 @@
             <div class="row">
               <div class="col-md-8">
                 <div class="form-group is-required">
-                  <label
-                    th:text="|#{application.data.vacationType}:|"
-                    class="control-label col-md-3"
-                    for="vacationType"
+                  <label th:text="|#{application.data.vacationType}:|" class="control-label col-md-3" for="vacationType"
+                    >Art der Abwesenheit</label
                   >
-                  </label>
                   <div class="col-md-9">
                     <select
                       th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
@@ -139,6 +136,7 @@
               <div class="col-md-8">
                 <div class="form-group is-required">
                   <label th:text="|#{absence.period.startDate}:|" class="control-label col-xs-12 col-md-3" for="from">
+                    Von
                   </label>
                   <div class="col-xs-8 col-md-5">
                     <input
@@ -178,6 +176,7 @@
 
                 <div class="form-group is-required">
                   <label th:text="|#{absence.period.endDate}:|" class="control-label col-xs-12 col-md-3" for="to">
+                    Bis
                   </label>
                   <div class="col-xs-8 col-md-5">
                     <input
@@ -235,7 +234,7 @@
             <div th:if="${showHalfDayOption}" class="row">
               <div class="col-md-8">
                 <div class="form-group is-required">
-                  <label th:text="|#{absence.period}:|" class="control-label col-md-3"> </label>
+                  <label th:text="|#{absence.period}:|" class="control-label col-md-3">Zeitraum</label>
                   <div class="col-md-9 radio">
                     <label class="thirds" data-test-id="day-length-full">
                       <input

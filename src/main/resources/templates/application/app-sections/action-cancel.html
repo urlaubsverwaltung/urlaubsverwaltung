@@ -57,7 +57,8 @@
             th:with="commentMandatory=${app.person.id != signedInUser.id || app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED' || app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}"
             th:text="|${commentMandatory == true ? #messages.msg('action.comment.mandatory') : #messages.msg('action.comment.optional')}:|"
             for="text-cancel"
-          ></label>
+            >Kommentar, optional</label
+          >
           <textarea id="text-cancel" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
         </div>
 
