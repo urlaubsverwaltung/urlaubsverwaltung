@@ -1370,6 +1370,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -1424,6 +1425,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
