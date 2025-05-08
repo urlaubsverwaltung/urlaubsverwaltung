@@ -86,7 +86,7 @@
                   th:field="*{applicationSettings.allowHalfDays}"
                   value="true"
                 />
-                <th:block th:text="#{settings.vacation.allowHalfDays.true}" />
+                <th:block th:text="#{settings.vacation.allowHalfDays.true}">aktivieren</th:block>
               </label>
               <label class="halves" data-test-id="vacation-half-day-disable">
                 <input
@@ -95,7 +95,7 @@
                   th:field="*{applicationSettings.allowHalfDays}"
                   value="false"
                 />
-                <th:block th:text="#{settings.vacation.allowHalfDays.false}" />
+                <th:block th:text="#{settings.vacation.allowHalfDays.false}">deaktivieren</th:block>
               </label>
             </div>
           </div>

@@ -53,6 +53,7 @@
               class="control-label col-md-4"
               for="accountSettings.maximumAnnualVacationDays"
             >
+              Maximale Anzahl der Urlaubstage pro Jahr
             </label>
             <div class="col-md-8">
               <input
@@ -90,7 +91,7 @@
                   th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
                   value="true"
                 />
-                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.true}" />
+                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.true}">aktivieren</th:block>
               </label>
               <label class="halves">
                 <input
@@ -99,7 +100,7 @@
                   th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
                   value="false"
                 />
-                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.false}" />
+                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.false}">deaktivieren</th:block>
               </label>
             </div>
           </div>
@@ -132,7 +133,8 @@
                   for="accountSettings.expiryDateMonth"
                   th:text="#{settings.vacation.expiryDateMonth}"
                   class="tw-sr-only"
-                >Monat</label>
+                  >Monat</label
+                >
                 <select
                   th:replace="~{fragments/select::one(id='accountSettings.expiryDateMonth', name='accountSettings.expiryDateMonth', options=~{::expiry-date-month-select-options}, className = 'tw-flex-1')}"
                 >
