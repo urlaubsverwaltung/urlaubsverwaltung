@@ -671,6 +671,7 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setPerson(person);
+        application.setApplier(person);
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
@@ -690,6 +691,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getReplyTo()).hasValue(person);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.user");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_by_applicant_to_applicant");
         assertThat(mail.getTemplateModel(locale)).isEqualTo(model);

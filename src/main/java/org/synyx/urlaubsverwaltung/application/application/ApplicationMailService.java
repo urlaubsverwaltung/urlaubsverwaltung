@@ -577,6 +577,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_APPLIED)
             .withSubject("subject.application.applied.user")
             .withTemplate("application_applied_by_applicant_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getApplier())
             .build();
 
         mailService.send(mailToApplicant);
