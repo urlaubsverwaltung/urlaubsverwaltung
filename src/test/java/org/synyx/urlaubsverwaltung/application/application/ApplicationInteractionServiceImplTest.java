@@ -1055,7 +1055,7 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendCancelledDirectlyConfirmationByApplicant(savedApplication, applicationComment);
         verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
 
-        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, person);
 
         verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
@@ -1099,7 +1099,7 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendCancelledDirectlyConfirmationByManagement(savedApplication, applicationComment);
         verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
 
-        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, office);
 
         verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
     }
@@ -1474,7 +1474,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementForApply(newReplacementEntity, newApplication);
+        verify(applicationMailService).notifyHolidayReplacementForApply(newReplacementEntity, newApplication, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1506,7 +1506,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(replacementEntity, newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(replacementEntity, newApplication, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1543,7 +1543,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1578,7 +1578,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
