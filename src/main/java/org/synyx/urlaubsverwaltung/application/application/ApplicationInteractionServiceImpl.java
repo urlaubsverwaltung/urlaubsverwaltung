@@ -111,7 +111,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
         // send email to replacement to inform beforehand the confirmation
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
-            applicationMailService.notifyHolidayReplacementForApply(holidayReplacement, savedApplication);
+            applicationMailService.notifyHolidayReplacementForApply(holidayReplacement, savedApplication, applier);
         }
 
         // update remaining vacation days (if there is already a holidays account for next year)
@@ -264,7 +264,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         applicationMailService.sendRejectedNotification(savedApplication, createdComment);
 
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, privilegedUser);
         }
 
         applicationEventPublisher.publishEvent(ApplicationRejectedEvent.of(savedApplication));
@@ -318,7 +318,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         applicationMailService.sendCancelledDirectlyToManagement(savedApplication, createdComment);
 
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, canceller);
         }
 
         // update remaining vacation days (if there is already a holidays account for next year
@@ -339,7 +339,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         applicationMailService.sendRevokedNotifications(application, savedComment);
 
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, canceller);
         }
         applicationEventPublisher.publishEvent(ApplicationRevokedEvent.of(savedApplication));
     }
@@ -363,7 +363,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.sendCancelledConfirmationByManagement(savedApplication, savedComment);
 
             for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
-                applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+                applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication, canceller);
             }
             applicationEventPublisher.publishEvent(ApplicationCancelledEvent.of(savedApplication));
         } else {
@@ -489,16 +489,16 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
                 .toList();
 
             for (final HolidayReplacementEntity replacement : stillExistingReplacements) {
-                applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication);
+                applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication, editor);
             }
         }
 
         for (final HolidayReplacementEntity replacement : addedReplacements) {
-            applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication);
+            applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication, editor);
         }
 
         for (final HolidayReplacementEntity replacement : deletedReplacements) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication);
+            applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication, editor);
         }
 
         applicationEventPublisher.publishEvent(ApplicationUpdatedEvent.of(savedEditedApplication));
