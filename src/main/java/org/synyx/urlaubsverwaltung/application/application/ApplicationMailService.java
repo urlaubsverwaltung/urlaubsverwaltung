@@ -213,6 +213,7 @@ class ApplicationMailService {
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
                 .withSubject("subject.application.edited.to_applicant_by_applicant")
                 .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
+                .withReplyToFrom(editor)
                 .build();
         } else {
             mailToApplicant = Mail.builder()
@@ -229,6 +230,7 @@ class ApplicationMailService {
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.edited.management", application.getPerson().getNiceName(), editor.getNiceName())
             .withTemplate("application_edited_by_applicant_to_management", locale -> Map.of(APPLICATION, application, "editor", editor))
+            .withReplyToFrom(editor)
             .build();
         mailService.send(mailToManagement);
     }

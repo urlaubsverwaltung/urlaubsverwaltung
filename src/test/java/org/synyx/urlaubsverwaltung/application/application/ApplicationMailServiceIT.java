@@ -3387,6 +3387,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Max Muster,
@@ -3404,6 +3405,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msgRelevantPerson.getReplyTo()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo(
             """
                 Hallo Person Relevant,
@@ -3467,6 +3469,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgRelevantPerson.getReplyTo()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo(
             """
                 Hallo Person Relevant,
