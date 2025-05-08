@@ -298,10 +298,12 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mail = argument.getAllValues();
         assertThat(mail.get(0).getMailAddressRecipients()).hasValue(List.of(editor));
+        assertThat(mail.get(0).getReplyTo()).hasValue(editor);
         assertThat(mail.get(0).getSubjectMessageKey()).isEqualTo("subject.application.edited.to_applicant_by_applicant");
         assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_applicant_to_applicant");
         assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.<String, Object>of("application", application));
         assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mail.get(1).getReplyTo()).hasValue(editor);
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
@@ -343,6 +345,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_management_to_applicant");
         assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
         assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mail.get(1).getReplyTo()).hasValue(editor);
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
