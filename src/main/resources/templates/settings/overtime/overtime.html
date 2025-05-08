@@ -56,7 +56,7 @@
             <label
               th:text="|#{settings.overtime.overtimeWritePrivilegedOnly}:|"
               class="control-label col-md-4"
-              for="overtimeSettings.overtimeActive.true"
+              for="overtimeSettings.overtimeWritePrivilegedOnly.true"
             >
             </label>
             <div class="col-md-8 radio">
@@ -86,7 +86,7 @@
             <label
               th:text="|#{settings.overtime.overtimeReductionWithoutApplicationActive}:|"
               class="control-label col-md-4"
-              for="overtimeSettings.overtimeActive.true"
+              for="overtimeSettings.overtimeReductionWithoutApplicationActive.true"
             >
               Überstundenabbau ohne Antrag aktivieren
             </label>
@@ -99,7 +99,9 @@
                   value="true"
                   data-test-id="setting-overtime-reduction-enabled"
                 />
-                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.true}">aktivieren</th:block>
+                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.true}"
+                  >aktivieren</th:block
+                >
               </label>
               <label class="halves">
                 <input
@@ -109,7 +111,9 @@
                   value="false"
                   data-test-id="setting-overtime-reduction-disabled"
                 />
-                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.false}">deaktivieren</th:block>
+                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.false}"
+                  >deaktivieren</th:block
+                >
               </label>
             </div>
           </div>
