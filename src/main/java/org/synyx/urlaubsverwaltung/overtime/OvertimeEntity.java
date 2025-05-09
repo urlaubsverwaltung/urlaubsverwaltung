@@ -33,8 +33,8 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  *
  * @since 2.11.0
  */
-@Entity
-public class Overtime extends AbstractTenantAwareEntity {
+@Entity(name = "overtime")
+public class OvertimeEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -56,25 +56,25 @@ public class Overtime extends AbstractTenantAwareEntity {
     private Duration duration;
 
     @Column(nullable = false)
-    private boolean external;
+    private boolean external = false;
 
     @Column(nullable = false)
     private LocalDate lastModificationDate;
 
-    protected Overtime() {
+    protected OvertimeEntity() {
         // OK
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
         this(person, startDate, endDate, duration, false, LocalDate.now(UTC));
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external) {
         this(person, startDate, endDate, duration, external, LocalDate.now(UTC));
     }
 
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external, LocalDate lastModificationDate) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external, LocalDate lastModificationDate) {
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -203,14 +203,14 @@ public class Overtime extends AbstractTenantAwareEntity {
 
     @Override
     public String toString() {
-        return "Overtime{" +
+        return "OvertimeEntity{" +
             "id=" + getId() +
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             ", duration=" + duration +
             ", external=" + external +
             ", person=" + person +
-            '}';
+            "}";
     }
 
     @Override
@@ -221,7 +221,7 @@ public class Overtime extends AbstractTenantAwareEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Overtime that = (Overtime) o;
+        final OvertimeEntity that = (OvertimeEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

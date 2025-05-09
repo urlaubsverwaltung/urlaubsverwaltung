@@ -34,7 +34,7 @@ public class OvertimeComment extends AbstractTenantAwareEntity {
     private Long id;
 
     @ManyToOne
-    private Overtime overtime;
+    private OvertimeEntity overtime;
 
     @Column(nullable = false)
     @Enumerated(STRING)
@@ -57,7 +57,7 @@ public class OvertimeComment extends AbstractTenantAwareEntity {
         this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
-    public OvertimeComment(Person author, Overtime overtime, OvertimeCommentAction action, Clock clock) {
+    public OvertimeComment(Person author, OvertimeEntity overtime, OvertimeCommentAction action, Clock clock) {
         final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
         setPerson(author);
@@ -74,11 +74,11 @@ public class OvertimeComment extends AbstractTenantAwareEntity {
         this.id = id;
     }
 
-    public Overtime getOvertime() {
+    public OvertimeEntity getOvertime() {
         return overtime;
     }
 
-    public void setOvertime(Overtime overtime) {
+    public void setOvertime(OvertimeEntity overtime) {
         this.overtime = overtime;
     }
 

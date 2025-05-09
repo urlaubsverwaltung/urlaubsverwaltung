@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -15,7 +15,7 @@ class OvertimeDTOTest {
 
     @Test
     void happyPathOvertimeToDTO() {
-        Overtime overtime = new Overtime(new Person(), LocalDate.now(), LocalDate.now().plusDays(1), Duration.ofHours(8), false, LocalDate.now());
+        OvertimeEntity overtime = new OvertimeEntity(new Person(), LocalDate.now(), LocalDate.now().plusDays(1), Duration.ofHours(8), false, LocalDate.now());
         String externalIdOfOwner = "ownerId";
         List<OvertimeCommentDTO> overtimeComments = List.of();
 
@@ -37,7 +37,7 @@ class OvertimeDTOTest {
         OvertimeDTO dto = new OvertimeDTO(1L, "ownerId", now, now.plusDays(1), Duration.ofHours(8), now, false, Collections.emptyList());
         Person person = new Person();
 
-        final Overtime overtime = dto.toOverTime(person);
+        final OvertimeEntity overtime = dto.toOverTime(person);
 
         assertThat(overtime.getId()).isNull();
         assertThat(overtime.getPerson()).isEqualTo(person);

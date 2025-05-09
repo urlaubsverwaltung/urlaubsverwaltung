@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -24,7 +24,7 @@ public record OvertimeCommentDTO(Instant date, String text, OvertimeCommentActio
         return new OvertimeCommentDTO(overtimeComment.getDate(), overtimeComment.getText(), OvertimeCommentActionDTO.valueOf(overtimeComment.getAction().name()), externalIdOfCommentAuthor);
     }
 
-    public OvertimeComment toOvertimeComment(Overtime overtime, Person commentAuthor) {
+    public OvertimeComment toOvertimeComment(OvertimeEntity overtime, Person commentAuthor) {
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.fixed(this.date(), ZoneId.systemDefault()));
         overtimeComment.setPerson(commentAuthor);
         overtimeComment.setOvertime(overtime);

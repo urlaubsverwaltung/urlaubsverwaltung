@@ -46,7 +46,7 @@ class OvertimeMailServiceTest {
         final Person submitter = new Person("submitter", "submitter", "submitter", "submitter@example.org");
         submitter.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED));
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(submitter);
         overtime.setDuration(Duration.parse("P1DT30H72M"));
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
@@ -76,7 +76,7 @@ class OvertimeMailServiceTest {
         final Person person = new Person("submitter", "submitter", "submitter", "submitter@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(person);
         overtime.setDuration(Duration.parse("P1DT30H72M"));
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
@@ -105,7 +105,7 @@ class OvertimeMailServiceTest {
 
         final Person submitter = new Person("submitter", "submitter", "submitter", "submitter@example.org");
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(submitter);
         overtime.setDuration(Duration.parse("P1DT30H72M"));
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());

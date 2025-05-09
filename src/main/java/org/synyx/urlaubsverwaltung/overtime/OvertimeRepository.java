@@ -16,37 +16,37 @@ import java.util.Optional;
  *
  * @since 2.11.0
  */
-interface OvertimeRepository extends CrudRepository<Overtime, Long> {
+interface OvertimeRepository extends CrudRepository<OvertimeEntity, Long> {
 
-    List<Overtime> findByPerson(Person person);
+    List<OvertimeEntity> findByPerson(Person person);
 
     @Query("""
         SELECT SUM(overtime.duration)
-        FROM Overtime overtime
+        FROM overtime overtime
         WHERE overtime.person = :person
         """)
     Optional<Double> calculateTotalHoursForPerson(@Param("person") Person person);
 
     @Query("""
         SELECT p as person, SUM(o.duration) as durationDouble
-        FROM Overtime o
+        FROM overtime o
         INNER JOIN Person p on p.id = o.person.id
         WHERE o.person IN :persons
         GROUP BY p.id
         """)
     List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") Collection<Person> persons);
 
-    List<Overtime> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
+    List<OvertimeEntity> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
 
-    List<Overtime> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);
+    List<OvertimeEntity> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);
 
-    List<Overtime> findByPersonIsInAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate until);
+    List<OvertimeEntity> findByPersonIsInAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate until);
 
-    List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
+    List<OvertimeEntity> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 
-    List<Overtime> findAllByPersonId(Long personId);
+    List<OvertimeEntity> findAllByPersonId(Long personId);
 
-    Optional<Overtime> findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(Long personId, LocalDate start, LocalDate end);
+    Optional<OvertimeEntity> findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(Long personId, LocalDate start, LocalDate end);
 
     @Modifying
     void deleteByPerson(Person personId);

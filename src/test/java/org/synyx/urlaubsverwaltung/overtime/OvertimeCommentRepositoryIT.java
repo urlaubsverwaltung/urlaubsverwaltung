@@ -36,8 +36,8 @@ class OvertimeCommentRepositoryIT extends SingleTenantTestContainersBase {
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
 
-        final Overtime overtime = new Overtime(person, now, now, Duration.ofHours(4));
-        final Overtime savedOvertime = overtimeService.save(overtime, Optional.empty(), person);
+        final OvertimeEntity overtime = new OvertimeEntity(person, now, now, Duration.ofHours(4));
+        final OvertimeEntity savedOvertime = overtimeService.save(overtime, Optional.empty(), person);
 
         final OvertimeComment first = overtimeService.getCommentsForOvertime(savedOvertime).getFirst();
         final OvertimeComment second = overtimeService.saveComment(savedOvertime, COMMENTED, "second", person);

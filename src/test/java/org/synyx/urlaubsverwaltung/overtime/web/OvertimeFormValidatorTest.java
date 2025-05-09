@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -401,7 +401,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setMinutes(0);
         overtimeForm.setId(42L);
 
-        Overtime originalOvertimeRecord = createOvertimeRecord();
+        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofHours(3));
 
         when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
@@ -428,7 +428,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setMinutes(0);
         overtimeForm.setId(42L);
 
-        Overtime originalOvertimeRecord = createOvertimeRecord();
+        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofMinutes(150));
 
         when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
@@ -455,7 +455,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setHours(new BigDecimal(3));
         overtimeForm.setId(42L);
 
-        Overtime originalOvertimeRecord = createOvertimeRecord();
+        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofMinutes(-150));
 
         when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));

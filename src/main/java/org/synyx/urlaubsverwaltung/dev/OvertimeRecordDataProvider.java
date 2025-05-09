@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -30,7 +30,7 @@ class OvertimeRecordDataProvider {
     }
 
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
-        final Overtime overtime = new Overtime(person, startDate, endDate, duration);
+        final OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, duration);
         overtimeService.save(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }
 

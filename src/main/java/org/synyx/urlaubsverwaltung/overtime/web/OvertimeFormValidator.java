@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -113,7 +113,7 @@ public class OvertimeFormValidator implements Validator {
 
             final Long overtimeRecordId = overtimeForm.getId();
             if (overtimeRecordId != null) {
-                final Optional<Overtime> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
+                final Optional<OvertimeEntity> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
                 if (overtimeRecordOptional.isPresent()) {
                     leftOvertime = leftOvertime.minus(overtimeRecordOptional.get().getDuration());
                 }
