@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -116,11 +113,11 @@ class OvertimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/overtime").param("person", "1337"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
             .andExpect(model().attribute("person", overtimePerson))
             .andExpect(view().name("overtime/overtime_form"));
 
-        verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
+        verify(validator).validate(any(OvertimeFormDto.class), any(Errors.class));
     }
 
     @Test
@@ -128,7 +125,7 @@ class OvertimeViewControllerTest {
 
         Person person = new Person();
         person.setId(1L);
-        final Overtime overtime = new Overtime(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
@@ -146,7 +143,7 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         perform(post("/web/overtime/5").param("person.id", "1"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
             .andExpect(view().name("overtime/overtime_form"));
     }
 
@@ -214,7 +211,7 @@ class OvertimeViewControllerTest {
 
         final LocalDate today = LocalDate.now(clock);
         final int year = today.getYear();
-        final Overtime overtime = new Overtime(person, today, today, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(person, today, today, ofHours(10));
         overtime.setId(1L);
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(List.of(overtime));
@@ -262,7 +259,7 @@ class OvertimeViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, person)).thenReturn(true);
 
-        final Overtime overtime = new Overtime(person, LocalDate.of(2012, 2, 5), LocalDate.of(2012, 2, 5), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2012, 2, 5), LocalDate.of(2012, 2, 5), ofHours(10));
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(List.of(overtime));
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(ofHours(1));
@@ -310,7 +307,7 @@ class OvertimeViewControllerTest {
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -352,7 +349,7 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(5L);
 
         final long overtimeId = 2;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -383,7 +380,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
@@ -416,7 +413,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))));
     }
 
     @Test
@@ -457,7 +454,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
 
@@ -484,7 +481,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
 
@@ -495,7 +492,7 @@ class OvertimeViewControllerTest {
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
@@ -508,7 +505,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("person", is(overtimePerson)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
@@ -522,7 +519,7 @@ class OvertimeViewControllerTest {
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
@@ -540,7 +537,7 @@ class OvertimeViewControllerTest {
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -559,7 +556,7 @@ class OvertimeViewControllerTest {
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -599,9 +596,9 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4L);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -627,9 +624,9 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4L);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -706,9 +703,9 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofHours(-10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofHours(-10));
         overtime.setId(2L);
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         perform(
             post("/web/overtime")
@@ -730,9 +727,9 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofMinutes(-30));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofMinutes(-30));
         overtime.setId(2L);
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         perform(
             post("/web/overtime")
@@ -776,9 +773,9 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final Overtime overtime = new Overtime(signedInPerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(signedInPerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -804,10 +801,10 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4L);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -835,7 +832,7 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
 
-        final Overtime overtime = new Overtime(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(8));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(8));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 
@@ -855,7 +852,7 @@ class OvertimeViewControllerTest {
         person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final Overtime overtime = new Overtime(person, LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2), ofHours(8));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2), ofHours(8));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
@@ -892,7 +889,7 @@ class OvertimeViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(false);
@@ -917,7 +914,7 @@ class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 
@@ -941,10 +938,10 @@ class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.save(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -973,7 +970,7 @@ class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 
@@ -1008,7 +1005,7 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 
@@ -1030,7 +1027,7 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 

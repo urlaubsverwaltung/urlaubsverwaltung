@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -15,8 +14,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListRecordDto.OvertimeListRecordType.ABSENCE;
-import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListRecordDto.OvertimeListRecordType.OVERTIME;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeListRecordDto.OvertimeListRecordType.ABSENCE;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeListRecordDto.OvertimeListRecordType.OVERTIME;
 
 final class OvertimeListMapper {
 
@@ -24,7 +23,7 @@ final class OvertimeListMapper {
         // ok
     }
 
-    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<Overtime> overtimes, Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime, Person signedInUser, boolean isUserIsAllowedToEditOvertime, int selectedYear) {
+    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime, Person signedInUser, boolean isUserIsAllowedToEditOvertime, int selectedYear) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
         Duration sum = totalOvertimeLastYear;
@@ -40,7 +39,7 @@ final class OvertimeListMapper {
         return new OvertimeListDto(overtimeListRecordDtos, totalOvertime, totalOvertimeLastYear, leftOvertime);
     }
 
-    private static List<OvertimeListRecordDto> orderedOvertimesAndAbsences(List<Application> overtimeAbsences, List<Overtime> overtimes, Person signInUser, boolean isUserIsAllowedToEditOvertime) {
+    private static List<OvertimeListRecordDto> orderedOvertimesAndAbsences(List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Person signInUser, boolean isUserIsAllowedToEditOvertime) {
         return concat(byOvertimes(overtimes, isUserIsAllowedToEditOvertime), byAbsences(overtimeAbsences, signInUser))
             .sorted(comparing(OvertimeListRecordDto::getStartDate))
             .toList();
@@ -62,7 +61,7 @@ final class OvertimeListMapper {
             );
     }
 
-    private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, boolean isUserIsAllowedToEditOvertime) {
+    private static Stream<OvertimeListRecordDto> byOvertimes(List<OvertimeEntity> overtimes, boolean isUserIsAllowedToEditOvertime) {
         return overtimes.stream()
             .map(overtime -> new OvertimeListRecordDto(
                 overtime.getId(),

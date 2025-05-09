@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  * @since 2.11.0
  */
 @Entity
-public class Overtime extends AbstractTenantAwareEntity {
+public class OvertimeEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -58,15 +58,15 @@ public class Overtime extends AbstractTenantAwareEntity {
     @Column(nullable = false)
     private LocalDate lastModificationDate;
 
-    protected Overtime() {
+    protected OvertimeEntity() {
         // OK
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
         this(person, startDate, endDate, duration, LocalDate.now(UTC));
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -203,7 +203,7 @@ public class Overtime extends AbstractTenantAwareEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Overtime that = (Overtime) o;
+        final OvertimeEntity that = (OvertimeEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 
