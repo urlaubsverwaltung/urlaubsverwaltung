@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -37,7 +37,7 @@ class OvertimeCommentDTOTest {
         OvertimeCommentDTO dto = new OvertimeCommentDTO(Instant.now(), "text", OvertimeCommentActionDTO.CREATED, "username");
         Person person = new Person();
         person.setUsername("username");
-        Overtime overtime = new Overtime(null, null, null, null);
+        OvertimeEntity overtime = new OvertimeEntity(null, null, null, null);
 
         OvertimeComment overtimeComment = dto.toOvertimeComment(overtime, person);
 

@@ -9,7 +9,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.department.Department;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -59,18 +59,18 @@ public final class TestDataCreator {
     }
 
     // Overtime record -------------------------------------------------------------------------------------------------
-    public static Overtime createOvertimeRecord() {
+    public static OvertimeEntity createOvertimeRecord() {
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(7);
-        return new Overtime(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, Duration.ofHours(1));
+        return new OvertimeEntity(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, Duration.ofHours(1));
     }
 
-    public static Overtime createOvertimeRecord(Person person) {
+    public static OvertimeEntity createOvertimeRecord(Person person) {
 
         LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(7);
 
-        Overtime overtime = new Overtime(person, startDate, endDate, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, Duration.ofHours(1));
         overtime.setId(1234L);
         return overtime;
     }
