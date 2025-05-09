@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -142,7 +142,7 @@ public class OvertimeViewController implements HasLaunchpad {
     @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
-        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person person = overtime.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
@@ -219,9 +219,9 @@ public class OvertimeViewController implements HasLaunchpad {
             return "overtime/overtime_form";
         }
 
-        final Overtime overtime = overtimeForm.generateOvertime();
+        final OvertimeEntity overtime = overtimeForm.generateOvertime();
         final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeForm.getComment());
-        final Overtime recordedOvertime = overtimeService.save(overtime, overtimeFormComment, signedInUser);
+        final OvertimeEntity recordedOvertime = overtimeService.save(overtime, overtimeFormComment, signedInUser);
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
@@ -232,7 +232,7 @@ public class OvertimeViewController implements HasLaunchpad {
         @PathVariable("id") Long id, Model model
     ) throws UnknownOvertimeException {
 
-        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
@@ -254,7 +254,7 @@ public class OvertimeViewController implements HasLaunchpad {
         Model model, RedirectAttributes redirectAttributes
     ) throws UnknownOvertimeException {
 
-        final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
+        final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
@@ -283,7 +283,7 @@ public class OvertimeViewController implements HasLaunchpad {
         @ModelAttribute("comment") OvertimeCommentFormDto comment
     ) throws UnknownOvertimeException {
 
-        final Overtime overtime = overtimeService.getOvertimeById(overtimeId).orElseThrow(() -> new UnknownOvertimeException(overtimeId));
+        final OvertimeEntity overtime = overtimeService.getOvertimeById(overtimeId).orElseThrow(() -> new UnknownOvertimeException(overtimeId));
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
