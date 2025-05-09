@@ -116,11 +116,11 @@ class OvertimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/overtime").param("person", "1337"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
             .andExpect(model().attribute("person", overtimePerson))
             .andExpect(view().name("overtime/overtime_form"));
 
-        verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
+        verify(validator).validate(any(OvertimeFormDto.class), any(Errors.class));
     }
 
     @Test
@@ -146,7 +146,7 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         perform(post("/web/overtime/5").param("person.id", "1"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
             .andExpect(view().name("overtime/overtime_form"));
     }
 
@@ -383,7 +383,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
@@ -416,7 +416,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))));
     }
 
     @Test
@@ -457,7 +457,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
 
@@ -484,7 +484,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
 
@@ -509,7 +509,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
             .andExpect(model().attribute("person", is(overtimePerson)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }

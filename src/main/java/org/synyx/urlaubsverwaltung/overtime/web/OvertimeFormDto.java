@@ -19,7 +19,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 /**
  * View class to record overtime for a certain period of time.
  */
-public class OvertimeForm {
+public class OvertimeFormDto {
 
     private Long id;
     private Person person;
@@ -33,15 +33,15 @@ public class OvertimeForm {
     private BigDecimal hours;
     private Integer minutes;
 
-    OvertimeForm() {
+    OvertimeFormDto() {
         // OK
     }
 
-    OvertimeForm(Person person) {
+    OvertimeFormDto(Person person) {
         this.person = person;
     }
 
-    OvertimeForm(OvertimeEntity overtime) {
+    OvertimeFormDto(OvertimeEntity overtime) {
         final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
