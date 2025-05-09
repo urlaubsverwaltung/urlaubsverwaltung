@@ -41,13 +41,13 @@ public class OvertimeFormValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return OvertimeForm.class.equals(clazz);
+        return OvertimeFormDto.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
 
-        final OvertimeForm overtimeForm = (OvertimeForm) target;
+        final OvertimeFormDto overtimeFormDto = (OvertimeFormDto) target;
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
         if (!overtimeSettings.isOvertimeActive()) {
@@ -57,15 +57,15 @@ public class OvertimeFormValidator implements Validator {
             return;
         }
 
-        validatePeriod(overtimeForm, errors);
-        validateNumberOfHours(overtimeSettings, overtimeForm, errors);
-        validateMaximumOvertimeNotReached(overtimeSettings, overtimeForm, errors);
+        validatePeriod(overtimeFormDto, errors);
+        validateNumberOfHours(overtimeSettings, overtimeFormDto, errors);
+        validateMaximumOvertimeNotReached(overtimeSettings, overtimeFormDto, errors);
     }
 
-    private void validatePeriod(OvertimeForm overtimeForm, Errors errors) {
+    private void validatePeriod(OvertimeFormDto overtimeFormDto, Errors errors) {
 
-        final LocalDate startDate = overtimeForm.getStartDate();
-        final LocalDate endDate = overtimeForm.getEndDate();
+        final LocalDate startDate = overtimeFormDto.getStartDate();
+        final LocalDate endDate = overtimeFormDto.getEndDate();
 
         validateDateNotNull(startDate, ATTRIBUTE_START_DATE, errors);
         validateDateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
@@ -82,24 +82,24 @@ public class OvertimeFormValidator implements Validator {
         }
     }
 
-    private void validateNumberOfHours(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateNumberOfHours(OvertimeSettings overtimeSettings, OvertimeFormDto overtimeFormDto, Errors errors) {
 
-        final BigDecimal hours = overtimeForm.getHours();
-        final Integer minutes = overtimeForm.getMinutes();
+        final BigDecimal hours = overtimeFormDto.getHours();
+        final Integer minutes = overtimeFormDto.getMinutes();
 
         final boolean overtimeReductionEnabled = overtimeSettings.isOvertimeReductionWithoutApplicationActive();
 
         if (hours == null && minutes == null) {
             errors.rejectValue("hours", "overtime.error.hoursOrMinutesRequired");
             errors.rejectValue("minutes", "overtime.error.hoursOrMinutesRequired");
-        } else if (!overtimeReductionEnabled && (overtimeForm.isReduce() || (hours != null && hours.signum() < 0) || (minutes != null && minutes < 0))) {
+        } else if (!overtimeReductionEnabled && (overtimeFormDto.isReduce() || (hours != null && hours.signum() < 0) || (minutes != null && minutes < 0))) {
             errors.rejectValue("reduce", "overtime.error.overtimeReductionNotAllowed");
         }
     }
 
-    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeFormDto overtimeFormDto, Errors errors) {
 
-        final Duration numberOfHours = overtimeForm.getDuration();
+        final Duration numberOfHours = overtimeFormDto.getDuration();
         if (numberOfHours != null) {
             final Duration maximumOvertime = Duration.ofHours(overtimeSettings.getMaximumOvertime());
             final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
@@ -109,9 +109,9 @@ public class OvertimeFormValidator implements Validator {
                 return;
             }
 
-            Duration leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeForm.getPerson());
+            Duration leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeFormDto.getPerson());
 
-            final Long overtimeRecordId = overtimeForm.getId();
+            final Long overtimeRecordId = overtimeFormDto.getId();
             if (overtimeRecordId != null) {
                 final Optional<OvertimeEntity> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
                 if (overtimeRecordOptional.isPresent()) {
