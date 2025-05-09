@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -12,11 +12,11 @@ public record OvertimeDTO(
     LocalDate lastModificationDate, boolean external, List<OvertimeCommentDTO> overtimeComments
 ) {
 
-    public static OvertimeDTO of(Overtime overtime, String externalIdOfOwner, List<OvertimeCommentDTO> overtimeCommentDTOs) {
+    public static OvertimeDTO of(OvertimeEntity overtime, String externalIdOfOwner, List<OvertimeCommentDTO> overtimeCommentDTOs) {
         return new OvertimeDTO(overtime.getId(), externalIdOfOwner, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate(), overtime.isExternal(), overtimeCommentDTOs);
     }
 
-    public Overtime toOverTime(Person person) {
-        return new Overtime(person, startDate, endDate, duration, external, lastModificationDate);
+    public OvertimeEntity toOverTime(Person person) {
+        return new OvertimeEntity(person, startDate, endDate, duration, external, lastModificationDate);
     }
 }
