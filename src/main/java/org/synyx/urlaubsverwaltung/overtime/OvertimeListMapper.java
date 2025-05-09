@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -16,8 +15,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListRecordDto.OvertimeListRecordType.ABSENCE;
-import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListRecordDto.OvertimeListRecordType.OVERTIME;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeListRecordDto.OvertimeListRecordType.ABSENCE;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeListRecordDto.OvertimeListRecordType.OVERTIME;
 
 final class OvertimeListMapper {
 

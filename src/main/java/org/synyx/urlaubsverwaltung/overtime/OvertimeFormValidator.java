@@ -1,13 +1,10 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;

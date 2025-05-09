@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import java.io.Serializable;
 

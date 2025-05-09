@@ -1,9 +1,8 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
