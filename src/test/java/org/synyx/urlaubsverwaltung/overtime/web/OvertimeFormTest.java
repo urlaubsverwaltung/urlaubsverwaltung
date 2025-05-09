@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
@@ -46,7 +46,7 @@ class OvertimeFormTest {
         overtimeForm.setMinutes(15);
         overtimeForm.setComment("Lorem ipsum");
 
-        final Overtime overtime = overtimeForm.generateOvertime();
+        final OvertimeEntity overtime = overtimeForm.generateOvertime();
 
         assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
         assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
@@ -103,10 +103,10 @@ class OvertimeFormTest {
     void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
 
         // Simulate existing overtime record
-        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final OvertimeEntity overtime = TestDataCreator.createOvertimeRecord();
         overtime.setDuration(Duration.ofMinutes(75));
 
-        final Field idField = ReflectionUtils.findField(Overtime.class, "id");
+        final Field idField = ReflectionUtils.findField(OvertimeEntity.class, "id");
         idField.setAccessible(true);
         idField.set(overtime, 42L);
 
@@ -134,7 +134,7 @@ class OvertimeFormTest {
         overtimeForm.setMinutes(15);
         overtimeForm.setComment("Lorem ipsum");
 
-        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final OvertimeEntity overtime = TestDataCreator.createOvertimeRecord();
 
         overtimeForm.updateOvertime(overtime);
 
@@ -147,7 +147,7 @@ class OvertimeFormTest {
 
     @Test
     void ensureNegativeNumberOfHours() {
-        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final OvertimeEntity overtime = TestDataCreator.createOvertimeRecord();
         overtime.setDuration(Duration.ofMinutes(-2550));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
@@ -159,7 +159,7 @@ class OvertimeFormTest {
 
     @Test
     void ensureRoundingOfNumberOfHoursToOneMinute() {
-        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final OvertimeEntity overtime = TestDataCreator.createOvertimeRecord();
         overtime.setDuration(Duration.ofMinutes(61));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
@@ -170,7 +170,7 @@ class OvertimeFormTest {
 
     @Test
     void ensureRoundingOfNumberOfHoursTo59Minutes() {
-        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final OvertimeEntity overtime = TestDataCreator.createOvertimeRecord();
         overtime.setDuration(Duration.ofMinutes(119));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);

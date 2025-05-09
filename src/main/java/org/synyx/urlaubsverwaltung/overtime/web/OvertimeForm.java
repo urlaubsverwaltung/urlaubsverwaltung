@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -41,7 +41,7 @@ public class OvertimeForm {
         this.person = person;
     }
 
-    OvertimeForm(Overtime overtime) {
+    OvertimeForm(OvertimeEntity overtime) {
         final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
@@ -133,11 +133,11 @@ public class OvertimeForm {
         this.reduce = reduce;
     }
 
-    Overtime generateOvertime() {
-        return new Overtime(getPerson(), getStartDate(), getEndDate(), getDuration());
+    OvertimeEntity generateOvertime() {
+        return new OvertimeEntity(getPerson(), getStartDate(), getEndDate(), getDuration());
     }
 
-    void updateOvertime(Overtime overtime) {
+    void updateOvertime(OvertimeEntity overtime) {
         overtime.setPerson(getPerson());
         overtime.setDuration(getDuration());
         overtime.setStartDate(getStartDate());
