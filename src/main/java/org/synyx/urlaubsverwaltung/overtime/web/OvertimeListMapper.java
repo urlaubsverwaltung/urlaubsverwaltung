@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -26,9 +26,9 @@ final class OvertimeListMapper {
     }
 
     static OvertimeListDto mapToDto(
-        List<Application> overtimeAbsences, List<Overtime> overtimes,
+        List<Application> overtimeAbsences, List<OvertimeEntity> overtimes,
         Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime,
-        Person signedInUser, Predicate<Overtime> isUserIsAllowedToEditOvertime, int selectedYear
+        Person signedInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime, int selectedYear
     ) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
@@ -46,7 +46,7 @@ final class OvertimeListMapper {
     }
 
     private static List<OvertimeListRecordDto> orderedOvertimesAndAbsences(
-        List<Application> overtimeAbsences, List<Overtime> overtimes, Person signInUser, Predicate<Overtime> isUserIsAllowedToEditOvertime
+        List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Person signInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime
     ) {
         return concat(byOvertimes(overtimes, isUserIsAllowedToEditOvertime), byAbsences(overtimeAbsences, signInUser))
             .sorted(comparing(OvertimeListRecordDto::getStartDate))
@@ -69,7 +69,7 @@ final class OvertimeListMapper {
             );
     }
 
-    private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, Predicate<Overtime> isUserIsAllowedToEditOvertime) {
+    private static Stream<OvertimeListRecordDto> byOvertimes(List<OvertimeEntity> overtimes, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime) {
         return overtimes.stream()
             .map(overtime ->
                 new OvertimeListRecordDto(
