@@ -82,6 +82,7 @@
               class="control-label col-md-4"
               for="accountSettings.doRemainingVacationDaysExpireGlobally.true"
             >
+              Globaler Verfall von Resturlaub
             </label>
             <div class="col-md-8 radio">
               <label class="halves">
@@ -120,7 +121,9 @@
                   th:text="#{settings.vacation.expiryDateDayOfMonth}"
                   class="tw-sr-only"
                   th:classappend="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth') ? 'error' : ''}"
-                ></label>
+                >
+                  Tag
+                </label>
                 <input
                   type="text"
                   inputmode="numeric"

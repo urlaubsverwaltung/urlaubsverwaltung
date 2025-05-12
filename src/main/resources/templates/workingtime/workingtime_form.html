@@ -136,9 +136,9 @@
                 </div>
 
                 <div class="form-group is-required">
-                  <label th:text="|#{person.form.workingTime.weekDays}:|" class="control-label col-md-3"
-                    >Wochentage</label
-                  >
+                  <label th:text="|#{person.form.workingTime.weekDays}:|" class="control-label col-md-3">
+                    Wochentage
+                  </label>
                   <div class="col-md-9">
                     <div th:each="weekDay : ${weekDays}" class="checkbox">
                       <label th:for="${weekDay}">
