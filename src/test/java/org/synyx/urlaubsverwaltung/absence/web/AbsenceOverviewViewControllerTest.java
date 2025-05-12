@@ -1233,7 +1233,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, "other", false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -1301,7 +1300,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OTHER).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -1376,7 +1374,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -1444,7 +1441,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -1519,7 +1515,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1588,7 +1583,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -1664,7 +1658,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, "other", false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -1732,7 +1725,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -1807,7 +1799,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -1875,7 +1866,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -1950,7 +1940,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -2019,7 +2008,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
@@ -2310,7 +2298,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -2377,7 +2364,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -2451,7 +2437,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -2517,7 +2502,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -2657,7 +2641,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
@@ -2946,7 +2929,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -3013,7 +2995,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
@@ -3087,7 +3068,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
@@ -3153,7 +3133,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -3226,7 +3205,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
@@ -3293,7 +3271,6 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
