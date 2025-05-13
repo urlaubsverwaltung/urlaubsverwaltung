@@ -17,7 +17,7 @@ public final class SubmittedSickNoteDto {
     private final String durationOfAbsenceDescription;
     private final boolean extensionSubmitted;
     private final BigDecimal additionalWorkDays;
-    private final String status = "SUBMITTED";
+    private static final String SUBMITTED = "SUBMITTED";
 
     public SubmittedSickNoteDto(
         String id,
@@ -66,7 +66,7 @@ public final class SubmittedSickNoteDto {
     }
 
     public String getStatus() {
-        return status;
+        return SUBMITTED;
     }
 
     @Override
@@ -96,6 +96,6 @@ public final class SubmittedSickNoteDto {
             "durationOfAbsenceDescription=" + durationOfAbsenceDescription + ", " +
             "extensionSubmitted=" + extensionSubmitted + ", " +
             "additionalWorkDays=" + additionalWorkDays + ", " +
-            "status=" + status + ']';
+            "status=" + SUBMITTED + ']';
     }
 }
