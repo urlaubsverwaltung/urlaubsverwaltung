@@ -1627,7 +1627,6 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
-//        final List<VacationType<?>> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/15/convert"))
@@ -1643,7 +1642,6 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
-//        final List<VacationType<?>> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/15/convert"))
@@ -1678,7 +1676,6 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
-//        final List<VacationType<?>> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
@@ -1702,7 +1699,6 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType<?>> vacationTypes = List.of(ProvidedVacationType.builder(new StaticMessageSource()).build());
-//        final List<VacationType<?>> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
