@@ -35,6 +35,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @ExtendWith(MockitoExtension.class)
 class SickDaysStatisticsViewControllerTest {
 
+    private static final Clock clock = Clock.systemUTC();
+
     private SickDaysStatisticsViewController sut;
 
     @Mock
@@ -45,8 +47,6 @@ class SickDaysStatisticsViewControllerTest {
     private SickDaysDetailedStatisticsCsvExportService sickDaysDetailedStatisticsCsvExportService;
     @Mock
     private DateFormatAware dateFormatAware;
-
-    private final static Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
