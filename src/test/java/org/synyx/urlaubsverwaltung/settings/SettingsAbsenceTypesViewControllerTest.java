@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.CustomVacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -37,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType.builder;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OTHER;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.CYAN;
@@ -71,9 +71,8 @@ class SettingsAbsenceTypesViewControllerTest {
     void ensureGetSettings() throws Exception {
 
         final Locale locale = GERMAN;
-        final MessageSource messageSource = messageSourceForVacationType("message-key-1", "label-1", locale);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(
-            ProvidedVacationType.builder(messageSource)
+            builder(messageSourceForVacationType("message-key-1", "label-1", locale))
                 .id(1L)
                 .active(true)
                 .category(HOLIDAY)
@@ -317,9 +316,9 @@ class SettingsAbsenceTypesViewControllerTest {
     }
 
     private MessageSource messageSourceForVacationType(String messageKey, String label, Locale locale) {
-        final MessageSource messageSource = mock(MessageSource.class);
-        when(messageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
-        return messageSource;
+        final MessageSource mockedMessageSource = mock(MessageSource.class);
+        when(mockedMessageSource.getMessage(messageKey, new Object[]{}, locale)).thenReturn(label);
+        return mockedMessageSource;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
