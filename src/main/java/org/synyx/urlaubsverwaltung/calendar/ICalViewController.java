@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Locale;
@@ -18,7 +17,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @Hidden
-@Controller
+@RestController
 @RequestMapping("/web")
 public class ICalViewController {
 
@@ -38,7 +37,6 @@ public class ICalViewController {
     }
 
     @GetMapping("/persons/{personId}/calendar")
-    @ResponseBody
     public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
@@ -56,7 +54,6 @@ public class ICalViewController {
     }
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
-    @ResponseBody
     public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Long departmentId, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
@@ -74,7 +71,6 @@ public class ICalViewController {
     }
 
     @GetMapping("/company/persons/{personId}/calendar")
-    @ResponseBody
     public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
