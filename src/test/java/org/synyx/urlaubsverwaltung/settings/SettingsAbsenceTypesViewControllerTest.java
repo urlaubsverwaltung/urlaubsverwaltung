@@ -71,8 +71,9 @@ class SettingsAbsenceTypesViewControllerTest {
     void ensureGetSettings() throws Exception {
 
         final Locale locale = GERMAN;
+        final MessageSource messageSource = messageSourceForVacationType("message-key-1", "label-1", locale);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(
-            builder(messageSourceForVacationType("message-key-1", "label-1", locale))
+            builder(messageSource)
                 .id(1L)
                 .active(true)
                 .category(HOLIDAY)
