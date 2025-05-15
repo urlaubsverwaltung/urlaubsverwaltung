@@ -102,7 +102,7 @@ const Assertion = (function () {
       return holidayService.isNoWorkday(date);
     },
     isHalfDayAbsence: function (date) {
-      if (assert.isPersonalHolidayMorningWaiting(date) || assert.isPersonalHolidayNoonWaiting(date)) {
+      if (assert.isPersonalHolidayMorning(date) || assert.isPersonalHolidayNoon(date)) {
         return true;
       }
       if (assert.isSickDayMorning(date) || assert.isSickDayNoon(date)) {
@@ -131,6 +131,14 @@ const Assertion = (function () {
     isPersonalHolidayFullCancellationRequest: function (date) {
       return holidayService.isPersonalHolidayFullCancellationRequest(date);
     },
+    isPersonalHolidayMorning: function (date) {
+      return (
+        assert.isPersonalHolidayMorningWaiting(date) ||
+        assert.isPersonalHolidayMorningTemporaryApproved(date) ||
+        assert.isPersonalHolidayMorningApproved(date) ||
+        assert.isPersonalHolidayMorningCancellationRequest(date)
+      );
+    },
     isPersonalHolidayMorningWaiting: function (date) {
       return holidayService.isPersonalHolidayMorningWaiting(date);
     },
@@ -142,6 +150,14 @@ const Assertion = (function () {
     },
     isPersonalHolidayMorningCancellationRequest: function (date) {
       return holidayService.isPersonalHolidayMorningCancellationRequest(date);
+    },
+    isPersonalHolidayNoon: function (date) {
+      return (
+        assert.isPersonalHolidayNoonWaiting(date) ||
+        assert.isPersonalHolidayNoonTemporaryApproved(date) ||
+        assert.isPersonalHolidayNoonApproved(date) ||
+        assert.isPersonalHolidayNoonCancellationRequest(date)
+      );
     },
     isPersonalHolidayNoonWaiting: function (date) {
       return holidayService.isPersonalHolidayNoonWaiting(date);
