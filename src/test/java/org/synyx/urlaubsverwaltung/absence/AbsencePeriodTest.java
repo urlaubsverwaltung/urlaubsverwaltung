@@ -207,30 +207,30 @@ class AbsencePeriodTest {
         final Person person = anyPerson();
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning, noon);
-        assertThat(record.isHalfDayAbsence()).isFalse();
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning, noon);
+        assertThat(absencePeriodRecord.isHalfDayAbsence()).isFalse();
     }
 
     @Test
     void isHalfDayAbsenceIsNoDay() {
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), null, null);
-        assertThat(record.isHalfDayAbsence()).isFalse();
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), null, null);
+        assertThat(absencePeriodRecord.isHalfDayAbsence()).isFalse();
     }
 
     @Test
     void isHalfDayAbsenceIsMorning() {
         final Person person = anyPerson();
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning);
-        assertThat(record.isHalfDayAbsence()).isTrue();
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning);
+        assertThat(absencePeriodRecord.isHalfDayAbsence()).isTrue();
     }
 
     @Test
     void isHalfDayAbsenceIsNoon() {
         final Person person = anyPerson();
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), noon);
-        assertThat(record.isHalfDayAbsence()).isTrue();
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), noon);
+        assertThat(absencePeriodRecord.isHalfDayAbsence()).isTrue();
     }
 
     @Test

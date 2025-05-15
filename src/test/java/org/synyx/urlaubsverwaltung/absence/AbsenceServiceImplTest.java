@@ -283,11 +283,11 @@ class AbsenceServiceImplTest {
 
         assertThat(actualAbsences.get(0)).satisfies(absence -> {
             assertThat(absence.absenceRecords()).hasSize(1);
-            assertThat(absence.absenceRecords().getFirst()).satisfies(record -> {
-                assertThat(record.isHalfDayAbsence()).isTrue();
-                assertThat(record.getPerson()).isSameAs(batman);
-                assertThat(record.getMorning()).isPresent();
-                assertThat(record.getMorning().get()).satisfies(morning -> {
+            assertThat(absence.absenceRecords().getFirst()).satisfies(absenceRecord -> {
+                assertThat(absenceRecord.isHalfDayAbsence()).isTrue();
+                assertThat(absenceRecord.getPerson()).isSameAs(batman);
+                assertThat(absenceRecord.getMorning()).isPresent();
+                assertThat(absenceRecord.getMorning().get()).satisfies(morning -> {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ALLOWED);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.VACATION);
@@ -299,18 +299,18 @@ class AbsenceServiceImplTest {
                     assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
                     assertThat(morning.hasStatusAllowedCancellationRequested()).isFalse();
                 });
-                assertThat(record.getNoon()).isEmpty();
+                assertThat(absenceRecord.getNoon()).isEmpty();
             });
         });
 
         assertThat(actualAbsences.get(1)).satisfies(absence -> {
             assertThat(absence.absenceRecords()).hasSize(1);
-            assertThat(absence.absenceRecords().getFirst()).satisfies(record -> {
-                assertThat(record.isHalfDayAbsence()).isTrue();
-                assertThat(record.getPerson()).isSameAs(batman);
-                assertThat(record.getMorning()).isEmpty();
-                assertThat(record.getNoon()).isPresent();
-                assertThat(record.getNoon().get()).satisfies(noon -> {
+            assertThat(absence.absenceRecords().getFirst()).satisfies(absenceRecord -> {
+                assertThat(absenceRecord.isHalfDayAbsence()).isTrue();
+                assertThat(absenceRecord.getPerson()).isSameAs(batman);
+                assertThat(absenceRecord.getMorning()).isEmpty();
+                assertThat(absenceRecord.getNoon()).isPresent();
+                assertThat(absenceRecord.getNoon().get()).satisfies(noon -> {
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
@@ -427,17 +427,17 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences).hasSize(1);
         assertThat(actualAbsences.getFirst()).satisfies(absence -> {
             assertThat(absence.absenceRecords()).hasSize(1);
-            assertThat(absence.absenceRecords().getFirst()).satisfies(record -> {
-                assertThat(record.isHalfDayAbsence()).isFalse();
-                assertThat(record.getPerson()).isSameAs(batman);
-                assertThat(record.getMorning()).isPresent();
-                assertThat(record.getMorning().get()).satisfies(morning -> {
+            assertThat(absence.absenceRecords().getFirst()).satisfies(absenceRecord -> {
+                assertThat(absenceRecord.isHalfDayAbsence()).isFalse();
+                assertThat(absenceRecord.getPerson()).isSameAs(batman);
+                assertThat(absenceRecord.getMorning()).isPresent();
+                assertThat(absenceRecord.getMorning().get()).satisfies(morning -> {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.SICK);
                 });
-                assertThat(record.getNoon()).isPresent();
-                assertThat(record.getNoon().get()).satisfies(noon -> {
+                assertThat(absenceRecord.getNoon()).isPresent();
+                assertThat(absenceRecord.getNoon().get()).satisfies(noon -> {
                     assertThat(noon.getId()).hasValue(42L);
                     assertThat(noon.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.SICK);
@@ -482,11 +482,11 @@ class AbsenceServiceImplTest {
 
         assertThat(actualAbsences.get(0)).satisfies(absence -> {
             assertThat(absence.absenceRecords()).hasSize(1);
-            assertThat(absence.absenceRecords().getFirst()).satisfies(record -> {
-                assertThat(record.isHalfDayAbsence()).isTrue();
-                assertThat(record.getPerson()).isSameAs(batman);
-                assertThat(record.getMorning()).isPresent();
-                assertThat(record.getMorning().get()).satisfies(morning -> {
+            assertThat(absence.absenceRecords().getFirst()).satisfies(absenceRecord -> {
+                assertThat(absenceRecord.isHalfDayAbsence()).isTrue();
+                assertThat(absenceRecord.getPerson()).isSameAs(batman);
+                assertThat(absenceRecord.getMorning()).isPresent();
+                assertThat(absenceRecord.getMorning().get()).satisfies(morning -> {
                     assertThat(morning.getId()).hasValue(42L);
                     assertThat(morning.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(morning.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.SICK);
@@ -498,18 +498,18 @@ class AbsenceServiceImplTest {
                     assertThat(morning.hasStatusTemporaryAllowed()).isFalse();
                     assertThat(morning.hasStatusAllowedCancellationRequested()).isFalse();
                 });
-                assertThat(record.getNoon()).isEmpty();
+                assertThat(absenceRecord.getNoon()).isEmpty();
             });
         });
 
         assertThat(actualAbsences.get(1)).satisfies(absence -> {
             assertThat(absence.absenceRecords()).hasSize(1);
-            assertThat(absence.absenceRecords().getFirst()).satisfies(record -> {
-                assertThat(record.isHalfDayAbsence()).isTrue();
-                assertThat(record.getPerson()).isSameAs(batman);
-                assertThat(record.getMorning()).isEmpty();
-                assertThat(record.getNoon()).isPresent();
-                assertThat(record.getNoon().get()).satisfies(noon -> {
+            assertThat(absence.absenceRecords().getFirst()).satisfies(absenceRecord -> {
+                assertThat(absenceRecord.isHalfDayAbsence()).isTrue();
+                assertThat(absenceRecord.getPerson()).isSameAs(batman);
+                assertThat(absenceRecord.getMorning()).isEmpty();
+                assertThat(absenceRecord.getNoon()).isPresent();
+                assertThat(absenceRecord.getNoon().get()).satisfies(noon -> {
                     assertThat(noon.getId()).isEmpty();
                     assertThat(noon.getStatus()).isEqualTo(AbsencePeriod.AbsenceStatus.ACTIVE);
                     assertThat(noon.getAbsenceType()).isEqualTo(AbsencePeriod.AbsenceType.PUBLIC_HOLIDAY);
