@@ -134,7 +134,7 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
-    isPersonalHolidayFull(date) {
+    isPersonalHolidayFullWaiting(date) {
       return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
     },
 
@@ -150,7 +150,7 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
-    isPersonalHolidayMorning(date) {
+    isPersonalHolidayMorningWaiting(date) {
       return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
     },
 
@@ -166,7 +166,7 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
     },
 
-    isPersonalHolidayNoon(date) {
+    isPersonalHolidayNoonWaiting(date) {
       return isPersonalHolidayWaitingNoon(getAbsencesForDate(date));
     },
 
