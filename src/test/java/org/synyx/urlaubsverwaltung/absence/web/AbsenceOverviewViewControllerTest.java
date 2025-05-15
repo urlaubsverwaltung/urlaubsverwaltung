@@ -796,8 +796,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "HOLIDAY", 42L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -866,8 +866,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -937,8 +937,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1017,8 +1017,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1087,8 +1087,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1158,8 +1158,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1235,8 +1235,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1302,8 +1302,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OTHER).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1376,8 +1376,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1443,8 +1443,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1518,8 +1518,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1586,8 +1586,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1660,8 +1660,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1727,8 +1727,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1801,8 +1801,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1868,8 +1868,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -1943,8 +1943,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2011,8 +2011,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2082,8 +2082,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2152,8 +2152,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2223,8 +2223,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2300,8 +2300,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2366,8 +2366,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2439,8 +2439,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2504,8 +2504,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2574,12 +2574,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
-//        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, OTHER, null, false, false, CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2644,8 +2643,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2714,8 +2713,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2784,8 +2783,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2855,8 +2854,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2931,8 +2930,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -2997,8 +2996,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3070,8 +3069,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3135,8 +3134,8 @@ class AbsenceOverviewViewControllerTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(ProvidedVacationType.builder(new StaticMessageSource()).id(1L).color(CYAN).build()));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3208,8 +3207,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3274,8 +3273,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, "Erholungsurlaub", 1L, false);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3341,8 +3340,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3407,8 +3406,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3475,8 +3474,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3549,8 +3548,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3612,8 +3611,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3682,8 +3681,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3746,8 +3745,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3818,8 +3817,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -3882,8 +3881,8 @@ class AbsenceOverviewViewControllerTest {
 
         final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
         final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L, AbsencePeriod.AbsenceStatus.ACTIVE, "SICK_NOTE", 1L);
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.Record absencePeriodRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(absencePeriodRecord));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
