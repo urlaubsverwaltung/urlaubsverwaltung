@@ -42,12 +42,10 @@ import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -85,58 +83,10 @@ class ApplicationForLeaveFormValidatorTest {
     @Mock
     private Errors errors;
 
-    private ApplicationForLeaveForm appForm;
-
-    private static Stream<Arguments> overtimeReductionInput() {
-        return Stream.of(
-            Arguments.of(null, 1),
-            Arguments.of(ZERO, 1)
-        );
-    }
-
-    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(absence.getInverse());
-        return settings;
-    }
-
-    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
-        return settings;
-    }
-
-    private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
-
-        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
-        vacationTypeDto.setId(1L);
-        vacationTypeDto.setLabel("message_key");
-        vacationTypeDto.setCategory(HOLIDAY);
-
-        return new ApplicationForLeaveForm.Builder()
-            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .vacationType(vacationTypeDto)
-            .holidayReplacements(new ArrayList<>());
-    }
-
     @BeforeEach
     void setUp() {
-
         sut = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
             settingsService, overtimeService, vacationTypeService, new ApplicationMapper(vacationTypeService), Clock.systemUTC());
-
-        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
-        vacationTypeDto.setId(1L);
-        vacationTypeDto.setLabel("message_key");
-        vacationTypeDto.setCategory(HOLIDAY);
-
-        appForm = new ApplicationForLeaveForm();
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC).plusDays(2));
-        appForm.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-        appForm.setHolidayReplacements(emptyList());
     }
 
     // Supports --------------------------------------------------------------------------------------------------------
@@ -162,8 +112,9 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startDate(null)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -176,8 +127,9 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setDayLength(FULL);
-        appForm.setEndDate(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .endDate(null)
+            .build();
 
         when(errors.hasErrors()).thenReturn(true);
 
@@ -192,9 +144,10 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(LocalDate.of(2012, 1, 17));
-        appForm.setEndDate(LocalDate.of(2012, 1, 12));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startDate(LocalDate.of(2012, 1, 17))
+            .endDate(LocalDate.of(2012, 1, 12))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -210,9 +163,10 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate pastDate = LocalDate.now(UTC).minusYears(10);
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(pastDate);
-        appForm.setEndDate(pastDate.plusDays(1));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startDate(pastDate)
+            .endDate(pastDate.plusDays(1))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -229,9 +183,10 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate futureDate = LocalDate.now(UTC).plusYears(10);
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(futureDate);
-        appForm.setEndDate(futureDate.plusDays(1));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startDate(futureDate)
+            .endDate(futureDate.plusDays(1))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -246,9 +201,11 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setDayLength(MORNING);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC).plusDays(1));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC).plusDays(1))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -261,9 +218,11 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setDayLength(NOON);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC).plusDays(1));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(NOON)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC).plusDays(1))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -284,9 +243,11 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate date = LocalDate.now(UTC);
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(date);
-        appForm.setEndDate(date);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(FULL)
+            .startDate(date)
+            .endDate(date)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -307,9 +268,11 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate date = LocalDate.now(UTC);
 
-        appForm.setDayLength(MORNING);
-        appForm.setStartDate(date);
-        appForm.setEndDate(date);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(date)
+            .endDate(date)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -330,9 +293,11 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate date = LocalDate.of(Year.now(UTC).getValue(), 10, 10);
 
-        appForm.setDayLength(NOON);
-        appForm.setStartDate(date);
-        appForm.setEndDate(date);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(NOON)
+            .startDate(date)
+            .endDate(date)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -352,8 +317,10 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setStartTime(null);
-        appForm.setEndTime(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startTime(null)
+            .endTime(null)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -372,8 +339,10 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setStartTime(LocalTime.of(9, 15, 0));
-        appForm.setEndTime(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startTime(LocalTime.of(9, 15, 0))
+            .endTime(null)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -392,8 +361,10 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setStartTime(null);
-        appForm.setEndTime(LocalTime.of(9, 15, 0));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .startTime(null)
+            .endTime(LocalTime.of(9, 15, 0))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -414,11 +385,13 @@ class ApplicationForLeaveFormValidatorTest {
 
         final LocalDate date = LocalDate.now(UTC);
 
-        appForm.setDayLength(MORNING);
-        appForm.setStartDate(date);
-        appForm.setEndDate(date);
-        appForm.setStartTime(LocalTime.of(13, 30, 0));
-        appForm.setEndTime(LocalTime.of(9, 15, 0));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(date)
+            .endDate(date)
+            .startTime(LocalTime.of(13, 30, 0))
+            .endTime(LocalTime.of(9, 15, 0))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -440,11 +413,13 @@ class ApplicationForLeaveFormValidatorTest {
         final LocalDate date = LocalDate.now(UTC);
         final LocalTime time = LocalTime.of(13, 30, 0);
 
-        appForm.setDayLength(MORNING);
-        appForm.setStartDate(date);
-        appForm.setEndDate(date);
-        appForm.setStartTime(time);
-        appForm.setEndTime(time);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(date)
+            .endDate(date)
+            .startTime(time)
+            .endTime(time)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -461,9 +436,11 @@ class ApplicationForLeaveFormValidatorTest {
         appSettings.setAllowHalfDays(false);
         settings.setApplicationSettings(appSettings);
 
-        appForm.setDayLength(MORNING);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(appForm.getStartDate());
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -490,8 +467,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setReason("");
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .reason("")
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -517,8 +496,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(UNPAIDLEAVE);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setReason("");
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .reason("")
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -544,8 +525,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setReason("");
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .reason("")
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -571,8 +554,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(SPECIALLEAVE);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setReason("");
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .reason("")
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -591,6 +576,8 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class),
             any(Person.class))).thenReturn(BigDecimal.ZERO);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
 
         sut.validate(appForm, errors);
 
@@ -616,10 +603,11 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
-        appForm.setDayLength(FULL);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .build();
 
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
@@ -646,10 +634,12 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(HOLIDAY);
 
-        appForm.setDayLength(NOON);
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(NOON)
+            .vacationType(vacationTypeDto)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .build();
 
         when(workDaysCountService.getWorkDaysCount(appForm.getDayLength(), appForm.getStartDate(), appForm.getEndDate(), appForm.getPerson()))
             .thenReturn(ONE);
@@ -674,6 +664,9 @@ class ApplicationForLeaveFormValidatorTest {
             any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(OverlapCase.FULLY_OVERLAPPING);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -701,8 +694,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setHours(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .hoursAndMinutes(null)
+            .vacationType(vacationTypeDto)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -726,6 +721,8 @@ class ApplicationForLeaveFormValidatorTest {
             .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(2L).messageKey("message_key_2").category(SPECIALLEAVE).build()));
         when(vacationTypeService.getById(3L))
             .thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).id(3L).messageKey("message_key_3").category(UNPAIDLEAVE).build()));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults().build();
 
         Consumer<ApplicationForLeaveFormVacationTypeDto> assertHoursNotMandatory = vacationTypeDto -> {
             appForm.setVacationType(vacationTypeDto);
@@ -776,8 +773,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setHours(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .hoursAndMinutes(null)
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -802,7 +801,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
+
         appForm.setHours(BigDecimal.ZERO);
         appForm.setMinutes(null);
 
@@ -829,7 +831,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
+
         appForm.setHours(ONE);
         appForm.setMinutes(0);
 
@@ -851,6 +856,9 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .build();
 
         appForm.setHours(hours);
         appForm.setMinutes(minutes);
@@ -877,8 +885,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setHours(BigDecimal.valueOf(3));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .hoursAndMinutes(Duration.ofHours(3))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -904,8 +914,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setHours(BigDecimal.valueOf(4));
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .hoursAndMinutes(Duration.ofHours(4))
+            .build();
 
         sut.validate(appForm, errors);
 
@@ -931,7 +943,9 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
         appForm.setHours(ONE.negate());
 
         sut.validate(appForm, errors);
@@ -957,7 +971,9 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
         appForm.setMinutes(-1);
 
         sut.validate(appForm, errors);
@@ -984,7 +1000,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .build();
+
         appForm.setHours(new BigDecimal("0.5").setScale(1, RoundingMode.HALF_UP));
 
         sut.validate(appForm, errors);
@@ -1012,8 +1031,11 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setVacationType(vacationTypeDto);
-        appForm.setHours(null);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .hoursAndMinutes(null)
+            .build();
+
 
         when(errors.hasFieldErrors("hours")).thenReturn(true);
 
@@ -1029,6 +1051,9 @@ class ApplicationForLeaveFormValidatorTest {
 
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
+
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .build();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getWorkingTime(any(Person.class),
@@ -1050,9 +1075,11 @@ class ApplicationForLeaveFormValidatorTest {
         setupOvertimeSettings();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        appForm.setStartDate(LocalDate.now(UTC));
-        appForm.setEndDate(LocalDate.now(UTC));
-        appForm.setDayLength(MORNING);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .dayLength(MORNING)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .build();
 
         when(errors.hasErrors()).thenReturn(FALSE);
 
@@ -1084,8 +1111,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final BigDecimal overtimeReductionHours = new BigDecimal("6");
-        overtimeMinimumTest(overtimeReductionHours);
+        final ApplicationForLeaveForm appForm = overtimeMinimumTest(Duration.ofHours(6));
 
         verify(overtimeService).getLeftOvertimeForPerson(appForm.getPerson());
         verify(errors).reject("application.error.notEnoughOvertime");
@@ -1106,9 +1132,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType()));
 
-        final BigDecimal overtimeReductionHours = new BigDecimal("5");
-        overtimeMinimumTest(overtimeReductionHours);
-
+        final ApplicationForLeaveForm appForm = overtimeMinimumTest(Duration.ofHours(5));
         assertThat(errors.hasErrors()).isFalse();
 
         verify(overtimeService).getLeftOvertimeForPerson(appForm.getPerson());
@@ -1166,8 +1190,6 @@ class ApplicationForLeaveFormValidatorTest {
             .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
 
-        final Errors errors = mock(Errors.class);
-
         sut.validate(appForm, errors);
 
         verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.morning");
@@ -1193,8 +1215,6 @@ class ApplicationForLeaveFormValidatorTest {
             .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
 
-        final Errors errors = mock(Errors.class);
-
         sut.validate(appForm, errors);
 
         verify(errors, never()).reject(anyString());
@@ -1218,8 +1238,6 @@ class ApplicationForLeaveFormValidatorTest {
             .startDate(LocalDate.of(actualYear, 12, 24))
             .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
-
-        final Errors errors = mock(Errors.class);
 
         sut.validate(appForm, errors);
 
@@ -1247,8 +1265,6 @@ class ApplicationForLeaveFormValidatorTest {
             .endDate(christmasEve)
             .build();
 
-        final Errors errors = mock(Errors.class);
-
         sut.validate(appForm, errors);
 
         verify(errors).reject("application.error.alreadyAbsentOn.christmasEve.full");
@@ -1272,8 +1288,6 @@ class ApplicationForLeaveFormValidatorTest {
             .startDate(LocalDate.of(actualYear, 12, 31))
             .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
-
-        final Errors errors = mock(Errors.class);
 
         sut.validate(appForm, errors);
 
@@ -1299,8 +1313,6 @@ class ApplicationForLeaveFormValidatorTest {
             .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
 
-        final Errors errors = mock(Errors.class);
-
         sut.validate(appForm, errors);
 
         verify(errors, never()).reject(anyString());
@@ -1324,8 +1336,6 @@ class ApplicationForLeaveFormValidatorTest {
             .startDate(LocalDate.of(actualYear, 12, 31))
             .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
-
-        final Errors errors = mock(Errors.class);
 
         sut.validate(appForm, errors);
 
@@ -1353,15 +1363,13 @@ class ApplicationForLeaveFormValidatorTest {
             .endDate(christmasEve)
             .build();
 
-        final Errors errors = mock(Errors.class);
-
         sut.validate(appForm, errors);
 
         verify(errors).reject("application.error.alreadyAbsentOn.newYearsEve.full");
         verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
     }
 
-    private void overtimeMinimumTest(BigDecimal hours) {
+    private ApplicationForLeaveForm overtimeMinimumTest(Duration hours) {
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(OVERTIME).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
@@ -1371,8 +1379,10 @@ class ApplicationForLeaveFormValidatorTest {
         vacationTypeDto.setLabel("message_key");
         vacationTypeDto.setCategory(OVERTIME);
 
-        appForm.setHours(hours);
-        appForm.setVacationType(vacationTypeDto);
+        final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
+            .vacationType(vacationTypeDto)
+            .hoursAndMinutes(hours)
+            .build();
 
         final Settings settings = setupOvertimeSettings();
         settings.getOvertimeSettings().setMinimumOvertime(5);
@@ -1380,6 +1390,8 @@ class ApplicationForLeaveFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
         sut.validate(appForm, errors);
+
+        return appForm;
     }
 
     private Settings setupOvertimeSettings() {
@@ -1392,5 +1404,40 @@ class ApplicationForLeaveFormValidatorTest {
 
     private VacationType<?> anyVacationType() {
         return ProvidedVacationType.builder(new StaticMessageSource()).id(1L).category(HOLIDAY).messageKey("message_key").build();
+    }
+
+    private static Stream<Arguments> overtimeReductionInput() {
+        return Stream.of(
+            Arguments.of(null, 1),
+            Arguments.of(ZERO, 1)
+        );
+    }
+
+    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getPublicHolidaysSettings().setWorkingDurationForChristmasEve(absence.getInverse());
+        return settings;
+    }
+
+    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
+        final Settings settings = new Settings();
+        settings.getPublicHolidaysSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
+        return settings;
+    }
+
+    private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
+
+        final ApplicationForLeaveFormVacationTypeDto vacationTypeDto = new ApplicationForLeaveFormVacationTypeDto();
+        vacationTypeDto.setId(1L);
+        vacationTypeDto.setLabel("message_key");
+        vacationTypeDto.setCategory(HOLIDAY);
+
+        return new ApplicationForLeaveForm.Builder()
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .vacationType(vacationTypeDto)
+            .dayLength(FULL)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC).plusDays(2))
+            .holidayReplacements(new ArrayList<>());
     }
 }
