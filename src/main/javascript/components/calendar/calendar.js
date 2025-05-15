@@ -110,6 +110,15 @@ const Assertion = (function () {
       }
       return assert.isPublicHolidayMorning(date) || assert.isPublicHolidayNoon(date);
     },
+    hasHolidayFull: function (date) {
+      return (
+        assert.isPublicHolidayFull(date) ||
+        assert.isPersonalHolidayFullWaiting(date) ||
+        assert.isPersonalHolidayFullTemporaryApproved(date) ||
+        assert.isPersonalHolidayFullApproved(date) ||
+        assert.isPersonalHolidayFullCancellationRequest(date)
+      );
+    },
     isPublicHolidayFull: function (date) {
       return holidayService.isPublicHolidayFull(date);
     },
@@ -131,6 +140,9 @@ const Assertion = (function () {
     isPersonalHolidayFullCancellationRequest: function (date) {
       return holidayService.isPersonalHolidayFullCancellationRequest(date);
     },
+    hasHolidayMorning: function (date) {
+      return assert.isPublicHolidayMorning(date) || assert.isPersonalHolidayMorning(date);
+    },
     isPersonalHolidayMorning: function (date) {
       return (
         assert.isPersonalHolidayMorningWaiting(date) ||
@@ -150,6 +162,9 @@ const Assertion = (function () {
     },
     isPersonalHolidayMorningCancellationRequest: function (date) {
       return holidayService.isPersonalHolidayMorningCancellationRequest(date);
+    },
+    hasHolidayNoon: function (date) {
+      return assert.isPublicHolidayNoon(date) || assert.isPersonalHolidayNoon(date);
     },
     isPersonalHolidayNoon: function (date) {
       return (
@@ -370,33 +385,21 @@ const View = (function () {
       const [idMorningOrFull, idNoon] = assert.typeId(date);
       const colorMorningOrFull = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
       const colorNoon = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idNoon]})`;
-      return [
-        assert.isPublicHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.isPublicHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
-        assert.isPublicHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
-        assert.isPersonalHolidayFullWaiting(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayFullTemporaryApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayFullApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayFullCancellationRequest(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayMorningWaiting(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayMorningTemporaryApproved(date)
-          ? `--absence-bar-color-morning:${colorMorningOrFull}`
-          : ``,
-        assert.isPersonalHolidayMorningApproved(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
-        assert.isPersonalHolidayMorningCancellationRequest(date)
-          ? `--absence-bar-color-morning:${colorMorningOrFull}`
-          : ``,
-        assert.isPersonalHolidayNoonWaiting(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
-        assert.isPersonalHolidayNoonTemporaryApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
-        assert.isPersonalHolidayNoonApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
-        assert.isPersonalHolidayNoonCancellationRequest(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
 
-        assert.isSickDayFullWaiting(date) ? "--absence-bar-color: var(--sick-note-color)" : "",
-        assert.isSickDayFullActive(date) ? "--absence-bar-color: var(--sick-note-color)" : "",
-        assert.isSickDayMorningWaiting(date) ? "--absence-bar-color-morning: var(--sick-note-color)" : "",
-        assert.isSickDayMorningActive(date) ? "--absence-bar-color-morning: var(--sick-note-color)" : "",
-        assert.isSickDayNoonWaiting(date) ? "--absence-bar-color-noon: var(--sick-note-color)" : "",
-        assert.isSickDayNoonActive(date) ? "--absence-bar-color-noon: var(--sick-note-color)" : "",
+      return [
+        assert.hasHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+        assert.hasHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+        assert.hasHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+
+        assert.isSickDayFullWaiting(date) || assert.isSickDayFullActive(date)
+          ? "--absence-bar-color: var(--sick-note-color)"
+          : "",
+        assert.isSickDayMorningWaiting(date) || assert.isSickDayMorningActive(date)
+          ? "--absence-bar-color-morning: var(--sick-note-color)"
+          : "",
+        assert.isSickDayNoonWaiting(date) || assert.isSickDayNoonActive(date)
+          ? "--absence-bar-color-noon: var(--sick-note-color)"
+          : "",
       ]
         .filter(Boolean)
         .join(";");
