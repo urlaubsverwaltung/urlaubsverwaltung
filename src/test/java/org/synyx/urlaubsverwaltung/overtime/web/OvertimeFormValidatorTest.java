@@ -497,7 +497,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        Consumer<String> assertMayBeEmpty = (comment) -> {
+        final Consumer<String> assertMayBeEmpty = comment -> {
             overtimeForm.setComment(comment);
 
             sut.validate(overtimeForm, errors);

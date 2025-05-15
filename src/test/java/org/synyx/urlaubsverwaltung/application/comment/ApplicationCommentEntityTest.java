@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class ApplicationCommentEntityTest {
 
     private final Clock clock = Clock.systemUTC();
@@ -18,9 +17,8 @@ class ApplicationCommentEntityTest {
     @Test
     void ensureDateIsSetOnInitialization() {
 
-        Consumer<ApplicationCommentEntity> assertDateIsSetToToday = (comment) -> {
+        final Consumer<ApplicationCommentEntity> assertDateIsSetToToday = comment ->
             assertThat(comment.getDate()).isEqualTo(Instant.now(Clock.systemUTC()).truncatedTo(DAYS));
-        };
 
         assertDateIsSetToToday.accept(new ApplicationCommentEntity(clock));
 
@@ -31,8 +29,8 @@ class ApplicationCommentEntityTest {
     @Test
     void ensureCanBeInitializedWithPerson() {
 
-        Person commentingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        ApplicationCommentEntity comment = new ApplicationCommentEntity(commentingPerson, clock);
+        final Person commentingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final ApplicationCommentEntity comment = new ApplicationCommentEntity(commentingPerson, clock);
 
         assertThat(comment.getPerson()).isEqualTo(commentingPerson);
     }
