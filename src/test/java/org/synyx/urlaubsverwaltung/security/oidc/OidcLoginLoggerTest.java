@@ -32,17 +32,14 @@ class OidcLoginLoggerTest {
     @Mock
     private PersonService personService;
 
-    private ListAppender<ILoggingEvent> loggingEventAppender;
-
     @BeforeEach
     void setup() {
-        loggingEventAppender = loggingEventAppender();
-
         sut = new OidcLoginLogger(personService);
     }
 
     @Test
     void ensureLoggingUserIdForExistingUser() {
+        final ListAppender<ILoggingEvent> loggingEventAppender = loggingEventAppender();
 
         final Person person = new Person("uniqueIdentifier", "lastname", "firstname", "firstname.lastname@example.org");
         person.setId(42L);
@@ -58,6 +55,8 @@ class OidcLoginLoggerTest {
 
     @Test
     void ensureLoggingErrorOnNonExistingUser() {
+        final ListAppender<ILoggingEvent> loggingEventAppender = loggingEventAppender();
+
         when(personService.getPersonByUsername("uniqueIdentifier")).thenReturn(Optional.empty());
 
         final Authentication authentication = prepareAuthentication();
@@ -70,6 +69,7 @@ class OidcLoginLoggerTest {
 
     @Test
     void ensureNotLoggingIfJWT() {
+        final ListAppender<ILoggingEvent> loggingEventAppender = loggingEventAppender();
 
         final Authentication authentication = mock(Authentication.class);
         final Jwt jwt = mock(Jwt.class);
@@ -91,17 +91,17 @@ class OidcLoginLoggerTest {
     private ListAppender<ILoggingEvent> loggingEventAppender() {
 
         // get Logback Logger
-        final Logger OidcLoginLoggerLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
+        final Logger oidcLoginLogger = (Logger) LoggerFactory.getLogger(OidcLoginLogger.class);
 
         // because of global test logging level WARN
-        OidcLoginLoggerLogger.setLevel(INFO);
+        oidcLoginLogger.setLevel(INFO);
 
         // create and start a ListAppender
         final ListAppender<ILoggingEvent> loggingEventAppender = new ListAppender<>();
         loggingEventAppender.start();
 
         // add the appender to the logger
-        OidcLoginLoggerLogger.addAppender(loggingEventAppender);
+        oidcLoginLogger.addAppender(loggingEventAppender);
 
         return loggingEventAppender;
     }
