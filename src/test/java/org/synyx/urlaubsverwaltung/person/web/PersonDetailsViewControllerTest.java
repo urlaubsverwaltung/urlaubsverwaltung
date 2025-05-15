@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -33,7 +35,6 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasProperty;
@@ -76,7 +77,6 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationForUnknownIdThrowsUnknownPersonException() {
-
         assertThatThrownBy(() ->
             perform(get("/web/person/1"))
         ).hasCauseInstanceOf(UnknownPersonException.class);
@@ -86,7 +86,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -101,7 +101,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesGivenYear() throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -117,7 +117,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationShowsBasedata() throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -136,7 +136,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -155,7 +155,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesAccountIfPresent() throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -176,7 +176,7 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesCorrectView() throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
@@ -187,11 +187,12 @@ class PersonDetailsViewControllerTest {
             .andExpect(view().name("person/person_detail"));
     }
 
-    @Test
-    void showPersonInformationOfficeCanEditPermissions() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"canEditPermissions", "canEditDepartments", "canEditAccounts", "canEditWorkingtime"})
+    void showPersonInformationOfficeCanEdit(String canEdit) throws Exception {
         final Person person = new Person();
         person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
@@ -202,61 +203,7 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/1"))
             .andExpect(view().name("person/person_detail"))
-            .andExpect(model().attribute("canEditPermissions", true));
-    }
-
-    @Test
-    void showPersonInformationOfficeCanEditDepartments() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
-
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        userIsAllowedToSubmitSickNotes(false);
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
-
-        perform(get("/web/person/1"))
-            .andExpect(view().name("person/person_detail"))
-            .andExpect(model().attribute("canEditDepartments", true));
-    }
-
-    @Test
-    void showPersonInformationOfficeCanEditAccounts() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
-
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        userIsAllowedToSubmitSickNotes(false);
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
-
-        perform(get("/web/person/1"))
-            .andExpect(view().name("person/person_detail"))
-            .andExpect(model().attribute("canEditAccounts", true));
-    }
-
-    @Test
-    void showPersonInformationOfficeCanEditWorkingtimes() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
-
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-        userIsAllowedToSubmitSickNotes(false);
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
-
-        perform(get("/web/person/1"))
-            .andExpect(view().name("person/person_detail"))
-            .andExpect(model().attribute("canEditWorkingtime", true));
+            .andExpect(model().attribute(canEdit, true));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
