@@ -1,5 +1,5 @@
 import { Calendar } from "./calendar";
-import { HolidayService } from "./calendar";
+import { HolidayService } from "./holiday-service";
 
 /**
  * @export
