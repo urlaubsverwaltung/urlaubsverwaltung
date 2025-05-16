@@ -46,6 +46,9 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
     private Person person;
 
     @Column(nullable = false)
+    private boolean external = false;
+
+    @Column(nullable = false)
     private LocalDate startDate;
 
     @Column(nullable = false)
@@ -184,10 +187,19 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         this.lastModificationDate = LocalDate.now(UTC);
     }
 
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
+
     @Override
     public String toString() {
         return "Overtime{" +
             "id=" + getId() +
+            ", external=" + external +
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             ", duration=" + duration +
