@@ -279,10 +279,66 @@ class OvertimeServiceImpl implements OvertimeService {
      */
     @Override
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
-        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
-        return signedInUser.hasRole(OFFICE)
+        final OvertimeSettings overtimeSettings = getOvertimeSettings();
+        return overtimeSettings.isOvertimeActive()
+            && !overtimeSettings.isOvertimeSyncActive()
+            &&
+            (
+                signedInUser.hasRole(OFFICE)
+                    || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
+                    || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly())
+            );
+    }
+
+
+    /**
+     * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
+     * <pre>
+     *  |                        | others | own   |  others | own  |
+     *  |------------------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | true   |       |  false  |      |
+     *  | OFFICE                 | true   | true  |  true   | true |
+     *  | BOSS                   | true   | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
+     *  | USER                   | false  | false |  false  | true |
+     * </pre>
+     *
+     * @param signedInUser     person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return @code{true} if allowed, otherwise @code{false}
+     */
+    @Override
+    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
+        final OvertimeSettings overtimeSettings = getOvertimeSettings();
+        return !overtime.isExternal() && (signedInUser.hasRole(OFFICE)
             || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
-            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
+            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly()));
+    }
+
+    /**
+     * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
+     * <pre>
+     *  |                        | others | own   |  others | own  |
+     *  |------------------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | true   |       |  false  |      |
+     *  | OFFICE                 | true   | true  |  true   | true |
+     *  | BOSS                   | true   | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
+     *  | USER                   | false  | false |  false  | true |
+     * </pre>
+     *
+     * @param signedInUser     person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return @code{true} if allowed, otherwise @code{false}
+     */
+    @Override
+    public boolean isUserIsAllowedToAddOvertimeComment(Person signedInUser, Person personOfOvertime) {
+        final OvertimeSettings overtimeSettings = getOvertimeSettings();
+        return (signedInUser.hasRole(OFFICE)
+            || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
+            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly()));
     }
 
     /**
@@ -312,9 +368,12 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     private record OvertimeReduction(Duration reductionOverall, Duration reductionDateRange) {
-
         static OvertimeReduction identity() {
             return new OvertimeReduction(ZERO, ZERO);
         }
+    }
+
+    private OvertimeSettings getOvertimeSettings() {
+        return settingsService.getSettings().getOvertimeSettings();
     }
 }

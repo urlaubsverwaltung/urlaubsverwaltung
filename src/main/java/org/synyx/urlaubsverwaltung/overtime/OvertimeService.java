@@ -39,9 +39,9 @@ public interface OvertimeService {
      * Saves a comment for a certain overtime record.
      *
      * @param overtime to save the comment for
-     * @param action type of the comment
-     * @param comment comment to save
-     * @param author the author of the comment
+     * @param action   type of the comment
+     * @param comment  comment to save
+     * @param author   the author of the comment
      * @return the saved comment
      */
     OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author);
@@ -112,13 +112,32 @@ public interface OvertimeService {
     Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end);
 
     /**
-     * Is signedInUser allowed to write (create or update) overtime records of given personOfOvertime.
+     * Is signedInUser allowed to create an overtime records of given personOfOvertime.
      *
      * @param signedInUser     person which writes overtime record
      * @param personOfOvertime person which the overtime record belongs to
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
     boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
+
+    /**
+     * Is signedInUser allowed to update an overtime records of given personOfOvertime.
+     *
+     * @param signedInUser     person which updates overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @param overtime         overtime to update
+     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
+     */
+    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime);
+
+    /**
+     * Is signedInUser allowed to add an overtime comment records of given personOfOvertime.
+     *
+     * @param signedInUser     person which updates overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
+     */
+    boolean isUserIsAllowedToAddOvertimeComment(Person signedInUser, Person personOfOvertime);
 
     /**
      * Get all overtime hours of the given person.

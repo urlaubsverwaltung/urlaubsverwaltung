@@ -56,6 +56,9 @@ public class Overtime extends AbstractTenantAwareEntity {
     private Duration duration;
 
     @Column(nullable = false)
+    private boolean external;
+
+    @Column(nullable = false)
     private LocalDate lastModificationDate;
 
     protected Overtime() {
@@ -63,14 +66,20 @@ public class Overtime extends AbstractTenantAwareEntity {
     }
 
     public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
-        this(person, startDate, endDate, duration, LocalDate.now(UTC));
+        this(person, startDate, endDate, duration, false, LocalDate.now(UTC));
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external) {
+        this(person, startDate, endDate, duration, external, LocalDate.now(UTC));
+    }
+
+
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external, LocalDate lastModificationDate) {
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
+        this.external = external;
         this.lastModificationDate = lastModificationDate;
     }
 
@@ -169,6 +178,14 @@ public class Overtime extends AbstractTenantAwareEntity {
         this.duration = duration;
     }
 
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean external) {
+        this.external = external;
+    }
+
     public LocalDate getLastModificationDate() {
         if (lastModificationDate == null) {
             throw new IllegalStateException("Missing last modification date!");
@@ -191,6 +208,7 @@ public class Overtime extends AbstractTenantAwareEntity {
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             ", duration=" + duration +
+            ", external=" + external +
             ", person=" + person +
             '}';
     }

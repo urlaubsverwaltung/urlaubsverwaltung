@@ -17,6 +17,14 @@ public class OvertimeSettings implements Serializable {
     @Column(name = "overtime_active")
     private boolean overtimeActive = false;
 
+    /**
+     * Activates or deactivates overtime sync settings.
+     *
+     * @since 5.26.0
+     */
+    @Column(name = "overtime_sync_active")
+    private boolean overtimeSyncActive = false;
+
     @Column(name = "overtime_reduction_without_application_active")
     private boolean overtimeReductionWithoutApplicationActive = true;
 
@@ -62,6 +70,14 @@ public class OvertimeSettings implements Serializable {
 
     public void setOvertimeActive(boolean overtimeActive) {
         this.overtimeActive = overtimeActive;
+    }
+
+    public boolean isOvertimeSyncActive() {
+        return overtimeSyncActive;
+    }
+
+    public void setOvertimeSyncActive(boolean overtimeSyncActive) {
+        this.overtimeSyncActive = overtimeSyncActive;
     }
 
     public boolean isOvertimeReductionWithoutApplicationActive() {

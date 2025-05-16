@@ -54,6 +54,37 @@
           </div>
           <div class="form-group is-required">
             <label
+              th:text="|#{settings.overtime.overtimeSyncActive}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.overtimeSyncActive.true"
+            >
+              Überstundenverwaltung aktivieren
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeSyncActive.true"
+                  th:field="*{overtimeSettings.overtimeSyncActive}"
+                  value="true"
+                  data-test-id="setting-overtime-sync-enabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeSyncActive.true}">aktivieren</th:block>
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeSyncActive.false"
+                  th:field="*{overtimeSettings.overtimeSyncActive}"
+                  value="false"
+                  data-test-id="setting-overtime-sync-disabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeActive.false}">deaktivieren</th:block>
+              </label>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
               th:text="|#{settings.overtime.overtimeWritePrivilegedOnly}:|"
               class="control-label col-md-4"
               for="overtimeSettings.overtimeWritePrivilegedOnly.true"
