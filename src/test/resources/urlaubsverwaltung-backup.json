@@ -1253,6 +1253,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1269,6 +1270,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1285,6 +1287,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1301,6 +1304,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1317,6 +1321,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1333,6 +1338,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1349,6 +1355,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1365,6 +1372,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1381,6 +1389,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1397,6 +1406,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1413,6 +1423,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1429,6 +1440,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1445,6 +1457,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1461,6 +1474,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1477,6 +1491,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1493,6 +1508,7 @@
       "startDate": "2024-12-23",
       "endDate": "2024-12-27",
       "duration": "PT2H30M",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1509,6 +1525,7 @@
       "startDate": "2024-12-16",
       "endDate": "2024-12-20",
       "duration": "PT3H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {
@@ -1525,6 +1542,7 @@
       "startDate": "2024-01-01",
       "endDate": "2024-01-05",
       "duration": "PT4H",
+      "external": false,
       "lastModificationDate": "2025-01-05",
       "overtimeComments": [
         {

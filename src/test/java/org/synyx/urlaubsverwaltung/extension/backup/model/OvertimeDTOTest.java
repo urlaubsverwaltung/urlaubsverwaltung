@@ -15,7 +15,7 @@ class OvertimeDTOTest {
 
     @Test
     void happyPathOvertimeToDTO() {
-        Overtime overtime = new Overtime(new Person(), LocalDate.now(), LocalDate.now().plusDays(1), Duration.ofHours(8), LocalDate.now());
+        Overtime overtime = new Overtime(new Person(), LocalDate.now(), LocalDate.now().plusDays(1), Duration.ofHours(8), false, LocalDate.now());
         String externalIdOfOwner = "ownerId";
         List<OvertimeCommentDTO> overtimeComments = List.of();
 
@@ -34,7 +34,7 @@ class OvertimeDTOTest {
     @Test
     void happyPathDTOToOvertime() {
         LocalDate now = LocalDate.now();
-        OvertimeDTO dto = new OvertimeDTO(1L, "ownerId", now, now.plusDays(1), Duration.ofHours(8), now, Collections.emptyList());
+        OvertimeDTO dto = new OvertimeDTO(1L, "ownerId", now, now.plusDays(1), Duration.ofHours(8), now, false, Collections.emptyList());
         Person person = new Person();
 
         final Overtime overtime = dto.toOverTime(person);

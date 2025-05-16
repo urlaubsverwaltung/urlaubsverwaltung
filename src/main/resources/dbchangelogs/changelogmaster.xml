@@ -18,5 +18,7 @@
   <include relativeToChangelogFile="true" file="changelog-5.15.0-add-missing-indices.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.20.0-time-start-end-minute.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.25.0-role-application-edit.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.26.0-overtime-settings-sync.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.26.0-overtime-external.xml"/>
 
 </databaseChangeLog>

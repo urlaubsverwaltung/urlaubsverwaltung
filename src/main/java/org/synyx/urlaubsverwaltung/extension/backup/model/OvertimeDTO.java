@@ -7,15 +7,16 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-public record OvertimeDTO(Long id, String externalIdOfOwner, LocalDate startDate, LocalDate endDate, Duration duration,
-                          LocalDate lastModificationDate, List<OvertimeCommentDTO> overtimeComments) {
+public record OvertimeDTO(
+    Long id, String externalIdOfOwner, LocalDate startDate, LocalDate endDate, Duration duration,
+    LocalDate lastModificationDate, boolean external, List<OvertimeCommentDTO> overtimeComments
+) {
 
     public static OvertimeDTO of(Overtime overtime, String externalIdOfOwner, List<OvertimeCommentDTO> overtimeCommentDTOs) {
-        return new OvertimeDTO(overtime.getId(), externalIdOfOwner, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate(), overtimeCommentDTOs);
+        return new OvertimeDTO(overtime.getId(), externalIdOfOwner, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate(), overtime.isExternal(), overtimeCommentDTOs);
     }
 
     public Overtime toOverTime(Person person) {
-        return new Overtime(person, startDate, endDate, duration, lastModificationDate);
+        return new Overtime(person, startDate, endDate, duration, external, lastModificationDate);
     }
-
 }

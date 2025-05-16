@@ -114,7 +114,7 @@
               <h2 th:text="#{overtime.progress.title}">Verlauf</h2>
             </th:block>
             <th:block th:ref="overtime-progress-heading-actions">
-              <th:block th:if="${userIsAllowedToWriteOvertime}">
+              <th:block th:if="${userIsAllowedToAddOvertimeComment}">
                 <button
                   class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
                   onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
@@ -162,7 +162,7 @@
           </table>
 
           <form
-            th:if="${userIsAllowedToWriteOvertime}"
+            th:if="${userIsAllowedToAddOvertimeComment}"
             id="comment-form"
             method="post"
             th:action="@{/web/overtime/__${record.id}__/comment}"
