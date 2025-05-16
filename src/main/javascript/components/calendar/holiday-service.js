@@ -134,6 +134,15 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
+    isPersonalHolidayFull: function (date) {
+      return (
+        this.isPersonalHolidayFullWaiting(date) ||
+        this.isPersonalHolidayFullTemporaryApproved(date) ||
+        this.isPersonalHolidayFullApproved(date) ||
+        this.isPersonalHolidayFullCancellationRequest(date)
+      );
+    },
+
     isPersonalHolidayFullWaiting(date) {
       return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
     },
@@ -150,6 +159,24 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
+    isHalfDayAbsence: function (date) {
+      return (
+        this.isPersonalHolidayMorning(date) ||
+        this.isPersonalHolidayNoon(date) ||
+        this.isSickDayMorning(date) ||
+        this.isSickDayNoon(date)
+      );
+    },
+
+    isPersonalHolidayMorning: function (date) {
+      return (
+        this.isPersonalHolidayMorningWaiting(date) ||
+        this.isPersonalHolidayMorningTemporaryApproved(date) ||
+        this.isPersonalHolidayMorningApproved(date) ||
+        this.isPersonalHolidayMorningCancellationRequest(date)
+      );
+    },
+
     isPersonalHolidayMorningWaiting(date) {
       return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
     },
@@ -164,6 +191,15 @@ export const HolidayService = (function () {
 
     isPersonalHolidayMorningCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
+    },
+
+    isPersonalHolidayNoon: function (date) {
+      return (
+        this.isPersonalHolidayNoonWaiting(date) ||
+        this.isPersonalHolidayNoonTemporaryApproved(date) ||
+        this.isPersonalHolidayNoonApproved(date) ||
+        this.isPersonalHolidayNoonCancellationRequest(date)
+      );
     },
 
     isPersonalHolidayNoonWaiting(date) {

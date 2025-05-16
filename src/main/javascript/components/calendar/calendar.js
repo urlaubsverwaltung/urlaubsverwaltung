@@ -85,8 +85,6 @@ function parseISO(dateStringValue) {
 }
 
 const Assertion = (function () {
-  let holidayService;
-
   const assert = {
     isToday: function (date) {
       return isToday(date);
@@ -98,138 +96,10 @@ const Assertion = (function () {
       /* NOTE: Today is not in the past! */
       return !isToday(date) && isPast(date);
     },
-    isNoWorkday: function (date) {
-      return holidayService.isNoWorkday(date);
-    },
-    isHalfDayAbsence: function (date) {
-      if (assert.isPersonalHolidayMorning(date) || assert.isPersonalHolidayNoon(date)) {
-        return true;
-      }
-      if (assert.isSickDayMorning(date) || assert.isSickDayNoon(date)) {
-        return true;
-      }
-      return assert.isPublicHolidayMorning(date) || assert.isPublicHolidayNoon(date);
-    },
-    hasHolidayFull: function (date) {
-      return (
-        assert.isPublicHolidayFull(date) ||
-        assert.isPersonalHolidayFullWaiting(date) ||
-        assert.isPersonalHolidayFullTemporaryApproved(date) ||
-        assert.isPersonalHolidayFullApproved(date) ||
-        assert.isPersonalHolidayFullCancellationRequest(date)
-      );
-    },
-    isPublicHolidayFull: function (date) {
-      return holidayService.isPublicHolidayFull(date);
-    },
-    isPublicHolidayMorning: function (date) {
-      return holidayService.isPublicHolidayMorning(date);
-    },
-    isPublicHolidayNoon: function (date) {
-      return holidayService.isPublicHolidayNoon(date);
-    },
-    isPersonalHolidayFullWaiting: function (date) {
-      return holidayService.isPersonalHolidayFullWaiting(date);
-    },
-    isPersonalHolidayFullTemporaryApproved: function (date) {
-      return holidayService.isPersonalHolidayFullTemporaryApproved(date);
-    },
-    isPersonalHolidayFullApproved: function (date) {
-      return holidayService.isPersonalHolidayFullApproved(date);
-    },
-    isPersonalHolidayFullCancellationRequest: function (date) {
-      return holidayService.isPersonalHolidayFullCancellationRequest(date);
-    },
-    hasHolidayMorning: function (date) {
-      return assert.isPublicHolidayMorning(date) || assert.isPersonalHolidayMorning(date);
-    },
-    isPersonalHolidayMorning: function (date) {
-      return (
-        assert.isPersonalHolidayMorningWaiting(date) ||
-        assert.isPersonalHolidayMorningTemporaryApproved(date) ||
-        assert.isPersonalHolidayMorningApproved(date) ||
-        assert.isPersonalHolidayMorningCancellationRequest(date)
-      );
-    },
-    isPersonalHolidayMorningWaiting: function (date) {
-      return holidayService.isPersonalHolidayMorningWaiting(date);
-    },
-    isPersonalHolidayMorningTemporaryApproved: function (date) {
-      return holidayService.isPersonalHolidayMorningTemporaryApproved(date);
-    },
-    isPersonalHolidayMorningApproved: function (date) {
-      return holidayService.isPersonalHolidayMorningApproved(date);
-    },
-    isPersonalHolidayMorningCancellationRequest: function (date) {
-      return holidayService.isPersonalHolidayMorningCancellationRequest(date);
-    },
-    hasHolidayNoon: function (date) {
-      return assert.isPublicHolidayNoon(date) || assert.isPersonalHolidayNoon(date);
-    },
-    isPersonalHolidayNoon: function (date) {
-      return (
-        assert.isPersonalHolidayNoonWaiting(date) ||
-        assert.isPersonalHolidayNoonTemporaryApproved(date) ||
-        assert.isPersonalHolidayNoonApproved(date) ||
-        assert.isPersonalHolidayNoonCancellationRequest(date)
-      );
-    },
-    isPersonalHolidayNoonWaiting: function (date) {
-      return holidayService.isPersonalHolidayNoonWaiting(date);
-    },
-    isPersonalHolidayNoonTemporaryApproved: function (date) {
-      return holidayService.isPersonalHolidayNoonTemporaryApproved(date);
-    },
-    isPersonalHolidayNoonApproved: function (date) {
-      return holidayService.isPersonalHolidayNoonApproved(date);
-    },
-    isPersonalHolidayNoonCancellationRequest: function (date) {
-      return holidayService.isPersonalHolidayNoonCancellationRequest(date);
-    },
-    isSickDayFull: function (date) {
-      return holidayService.isSickDayFull(date);
-    },
-    isSickDayFullWaiting: function (date) {
-      return holidayService.isSickDayFullWaiting(date);
-    },
-    isSickDayFullActive: function (date) {
-      return holidayService.isSickDayFullActive(date);
-    },
-    isSickDayMorning: function (date) {
-      return holidayService.isSickDayMorning(date);
-    },
-    isSickDayMorningWaiting: function (date) {
-      return holidayService.isSickDayMorningWaiting(date);
-    },
-    isSickDayMorningActive: function (date) {
-      return holidayService.isSickDayMorningActive(date);
-    },
-    isSickDayNoon: function (date) {
-      return holidayService.isSickDayNoon(date);
-    },
-    isSickDayNoonWaiting: function (date) {
-      return holidayService.isSickDayNoonWaiting(date);
-    },
-    isSickDayNoonActive: function (date) {
-      return holidayService.isSickDayNoonActive(date);
-    },
-    title: function (date) {
-      return holidayService.getDescription(date);
-    },
-    absenceId: function (date) {
-      return holidayService.getAbsenceId(date);
-    },
-    absenceType: function (date) {
-      return holidayService.getAbsenceType(date);
-    },
-    typeId: function (date) {
-      return holidayService.getTypeId(date);
-    },
   };
 
   return {
-    create: function (_holidayService) {
-      holidayService = _holidayService;
+    create: function () {
       return assert;
     },
   };
@@ -238,6 +108,7 @@ const Assertion = (function () {
 const View = (function () {
   let rootElement;
   let assert;
+  let holidayService;
   let i18n = () => "";
 
   const TMPL = {
@@ -354,27 +225,27 @@ const View = (function () {
         assert.isToday(date) ? CSS.dayToday : "",
         assert.isWeekend(date) ? CSS.dayWeekend : "",
         assert.isPast(date) ? CSS.dayPast : "",
-        assert.isPublicHolidayFull(date) ? CSS.dayPublicHolidayFull : "",
-        assert.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
-        assert.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
-        assert.isPersonalHolidayFullWaiting(date) ? CSS.dayPersonalHolidayFullWaiting : "",
-        assert.isPersonalHolidayFullTemporaryApproved(date) ? CSS.dayPersonalHolidayHalf : "",
-        assert.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
-        assert.isPersonalHolidayFullCancellationRequest(date) ? CSS.dayPersonalHolidaySecondHalf : "",
-        assert.isPersonalHolidayMorningWaiting(date) ? CSS.dayPersonalHolidayMorningWaiting : "",
-        assert.isPersonalHolidayMorningTemporaryApproved(date) ? CSS.dayPersonalHolidayMorningHalf : "",
-        assert.isPersonalHolidayMorningApproved(date) ? CSS.dayPersonalHolidayMorningApproved : "",
-        assert.isPersonalHolidayMorningCancellationRequest(date) ? CSS.dayPersonalHolidayMorningSecondHalf : "",
-        assert.isPersonalHolidayNoonWaiting(date) ? CSS.dayPersonalHolidayNoonWaiting : "",
-        assert.isPersonalHolidayNoonTemporaryApproved(date) ? CSS.dayPersonalHolidayNoonHalf : "",
-        assert.isPersonalHolidayNoonApproved(date) ? CSS.dayPersonalHolidayNoonApproved : "",
-        assert.isPersonalHolidayNoonCancellationRequest(date) ? CSS.dayPersonalHolidayNoonSecondHalf : "",
-        assert.isSickDayFullWaiting(date) ? CSS.daySickDayFullWaiting : "",
-        assert.isSickDayFullActive(date) ? CSS.daySickDayFullActive : "",
-        assert.isSickDayMorningWaiting(date) ? CSS.daySickDayMorningWaiting : "",
-        assert.isSickDayMorningActive(date) ? CSS.daySickDayMorningActive : "",
-        assert.isSickDayNoonWaiting(date) ? CSS.daySickDayNoonWaiting : "",
-        assert.isSickDayNoonActive(date) ? CSS.daySickDayNoonActive : "",
+        holidayService.isPublicHolidayFull(date) ? CSS.dayPublicHolidayFull : "",
+        holidayService.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
+        holidayService.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
+        holidayService.isPersonalHolidayFullWaiting(date) ? CSS.dayPersonalHolidayFullWaiting : "",
+        holidayService.isPersonalHolidayFullTemporaryApproved(date) ? CSS.dayPersonalHolidayHalf : "",
+        holidayService.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
+        holidayService.isPersonalHolidayFullCancellationRequest(date) ? CSS.dayPersonalHolidaySecondHalf : "",
+        holidayService.isPersonalHolidayMorningWaiting(date) ? CSS.dayPersonalHolidayMorningWaiting : "",
+        holidayService.isPersonalHolidayMorningTemporaryApproved(date) ? CSS.dayPersonalHolidayMorningHalf : "",
+        holidayService.isPersonalHolidayMorningApproved(date) ? CSS.dayPersonalHolidayMorningApproved : "",
+        holidayService.isPersonalHolidayMorningCancellationRequest(date) ? CSS.dayPersonalHolidayMorningSecondHalf : "",
+        holidayService.isPersonalHolidayNoonWaiting(date) ? CSS.dayPersonalHolidayNoonWaiting : "",
+        holidayService.isPersonalHolidayNoonTemporaryApproved(date) ? CSS.dayPersonalHolidayNoonHalf : "",
+        holidayService.isPersonalHolidayNoonApproved(date) ? CSS.dayPersonalHolidayNoonApproved : "",
+        holidayService.isPersonalHolidayNoonCancellationRequest(date) ? CSS.dayPersonalHolidayNoonSecondHalf : "",
+        holidayService.isSickDayFullWaiting(date) ? CSS.daySickDayFullWaiting : "",
+        holidayService.isSickDayFullActive(date) ? CSS.daySickDayFullActive : "",
+        holidayService.isSickDayMorningWaiting(date) ? CSS.daySickDayMorningWaiting : "",
+        holidayService.isSickDayMorningActive(date) ? CSS.daySickDayMorningActive : "",
+        holidayService.isSickDayNoonWaiting(date) ? CSS.daySickDayNoonWaiting : "",
+        holidayService.isSickDayNoonActive(date) ? CSS.daySickDayNoonActive : "",
       ]
         .filter(Boolean)
         .join(" ");
@@ -382,22 +253,22 @@ const View = (function () {
 
     function style() {
       // could be morning=sick and noon=vacation
-      const [idMorningOrFull, idNoon] = assert.typeId(date);
+      const [idMorningOrFull, idNoon] = holidayService.getTypeId(date);
       const colorMorningOrFull = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
       const colorNoon = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idNoon]})`;
 
       return [
-        assert.hasHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        assert.hasHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
-        assert.hasHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+        holidayService.isPersonalHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+        holidayService.isPersonalHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+        holidayService.isPersonalHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
 
-        assert.isSickDayFullWaiting(date) || assert.isSickDayFullActive(date)
+        holidayService.isSickDayFullWaiting(date) || holidayService.isSickDayFullActive(date)
           ? "--absence-bar-color: var(--sick-note-color)"
           : "",
-        assert.isSickDayMorningWaiting(date) || assert.isSickDayMorningActive(date)
+        holidayService.isSickDayMorningWaiting(date) || holidayService.isSickDayMorningActive(date)
           ? "--absence-bar-color-morning: var(--sick-note-color)"
           : "",
-        assert.isSickDayNoonWaiting(date) || assert.isSickDayNoonActive(date)
+        holidayService.isSickDayNoonWaiting(date) || holidayService.isSickDayNoonActive(date)
           ? "--absence-bar-color-noon: var(--sick-note-color)"
           : "",
       ]
@@ -408,12 +279,12 @@ const View = (function () {
     function isSelectable() {
       // NOTE: Order is important here!
 
-      const isPersonalHolidayWaiting = assert.isPersonalHolidayFullWaiting(date);
-      const isPersonalHolidayApproved = assert.isPersonalHolidayFullApproved(date);
-      const isPersonalHolidayCancellationRequest = assert.isPersonalHolidayFullCancellationRequest(date);
-      const isPersonalHolidayTemporaryApproved = assert.isPersonalHolidayFullTemporaryApproved(date);
-      const isSickDayActive = assert.isSickDayFullActive(date);
-      const isSickDayWaiting = assert.isSickDayFullWaiting(date);
+      const isPersonalHolidayWaiting = holidayService.isPersonalHolidayFullWaiting(date);
+      const isPersonalHolidayApproved = holidayService.isPersonalHolidayFullApproved(date);
+      const isPersonalHolidayCancellationRequest = holidayService.isPersonalHolidayFullCancellationRequest(date);
+      const isPersonalHolidayTemporaryApproved = holidayService.isPersonalHolidayFullTemporaryApproved(date);
+      const isSickDayActive = holidayService.isSickDayFullActive(date);
+      const isSickDayWaiting = holidayService.isSickDayFullWaiting(date);
 
       if (
         isPersonalHolidayWaiting ||
@@ -432,7 +303,7 @@ const View = (function () {
         return false;
       }
 
-      return assert.isHalfDayAbsence(date) || !assert.isPublicHolidayFull(date);
+      return holidayService.isHalfDayAbsence(date) || !holidayService.isPublicHolidayFull(date);
     }
 
     function cellStyle() {
@@ -455,10 +326,10 @@ const View = (function () {
       style: style(),
       cellStyle: cellStyle(),
       selectable: isSelectable(),
-      title: assert.title(date),
-      absenceId: assert.absenceId(date),
-      absenceType: assert.absenceType(date),
-      icon: assert.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
+      title: holidayService.getDescription(date),
+      absenceId: holidayService.getAbsenceId(date),
+      absenceType: holidayService.getAbsenceType(date),
+      icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
     });
   }
 
@@ -509,9 +380,10 @@ const View = (function () {
   };
 
   return {
-    create: function (_rootElement, _assert, _i18n) {
+    create: function (_rootElement, _assert, _holidayService, _i18n) {
       rootElement = _rootElement;
       assert = _assert;
+      holidayService = _holidayService;
       i18n = _i18n;
       return View;
     },
@@ -752,8 +624,8 @@ export const Calendar = (function () {
     init: function (rootElement, holidayService, referenceDate, i18n) {
       date = referenceDate;
 
-      const assertions = Assertion.create(holidayService);
-      view = View.create(rootElement, assertions, i18n);
+      const assertions = Assertion.create();
+      view = View.create(rootElement, assertions, holidayService, i18n);
       const controller = Controller.create(holidayService, view);
 
       view.display(date);
