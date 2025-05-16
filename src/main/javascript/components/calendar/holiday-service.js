@@ -268,49 +268,54 @@ export const HolidayService = (function () {
     },
 
     /**
+     * Shared function to fetch and cache data for a given endpoint and cache key.
+     * @param {string} endpoint
+     * @param {number} year
+     * @param {Object} parameters
+     * @param {string} cacheKey
+     * @param {Function} cacheHandler
+     * @returns {Promise}
+     */
+    fetchAndCache: function (endpoint, year, parameters, cacheKey, cacheHandler) {
+      _CACHE[cacheKey] = _CACHE[cacheKey] || {};
+
+      if (_CACHE[cacheKey][year]) {
+        return Promise.resolve(_CACHE[cacheKey][year]);
+      }
+
+      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
+      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
+        representation: "date",
+      });
+
+      return fetch(endpoint, { from: firstDayOfYear, to: lastDayOfYear, ...parameters }).then(cacheHandler(year));
+    },
+
+    /**
      *
      * @param {number} year
      * @returns {Promise}
      */
-    fetchPublic: function (year) {
-      _CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {};
-
-      if (_CACHE["publicHoliday"][year]) {
-        return Promise.resolve(_CACHE["publicHoliday"][year]);
-      }
-
-      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-
-      return fetch("/persons/" + personId + "/public-holidays", {
-        from: firstDayOfYear,
-        to: lastDayOfYear,
-      }).then(cachePublicHoliday(year));
+    fetchPublicHolidays: function (year) {
+      return this.fetchAndCache(
+        "/persons/" + personId + "/public-holidays",
+        year,
+        {},
+        "publicHoliday",
+        cachePublicHoliday,
+      );
     },
 
     fetchAbsences: function (year) {
-      _CACHE["absences"] = _CACHE["absences"] || {};
-
-      if (_CACHE["absences"][year]) {
-        return Promise.resolve(_CACHE["absences"][year]);
-      }
-
-      const firstDayOfYear = formatISO(startOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-      const lastDayOfYear = formatISO(endOfYear(parse(year.toString(), "yyyy", new Date())), {
-        representation: "date",
-      });
-
-      return fetch("/persons/" + personId + "/absences", {
-        from: firstDayOfYear,
-        to: lastDayOfYear,
-        "absence-types": "vacation,sick_note,no_workday",
-      }).then(cacheAbsences(year));
+      return this.fetchAndCache(
+        "/persons/" + personId + "/absences",
+        year,
+        { "absence-types": "vacation,sick_note,no_workday" },
+        "absences",
+        cacheAbsences,
+      );
     },
   };
 
