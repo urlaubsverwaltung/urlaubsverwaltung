@@ -134,6 +134,19 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
+    hasHolidayFull: function (date) {
+      return this.isPublicHolidayFull(date) || this.isPersonalHolidayFull(date);
+    },
+
+    isPersonalHolidayFull: function (date) {
+      return (
+        this.isPersonalHolidayFullWaiting(date) ||
+        this.isPersonalHolidayFullTemporaryApproved(date) ||
+        this.isPersonalHolidayFullApproved(date) ||
+        this.isPersonalHolidayFullCancellationRequest(date)
+      );
+    },
+
     isPersonalHolidayFullWaiting(date) {
       return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
     },
@@ -150,6 +163,28 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
+    isHalfDayAbsence: function (date) {
+      return (
+        this.hasHolidayMorning(date) ||
+        this.hasHolidayNoon(date) ||
+        this.isSickDayMorning(date) ||
+        this.isSickDayNoon(date)
+      );
+    },
+
+    hasHolidayMorning: function (date) {
+      return this.isPublicHolidayMorning(date) || this.isPersonalHolidayMorning(date);
+    },
+
+    isPersonalHolidayMorning: function (date) {
+      return (
+        this.isPersonalHolidayMorningWaiting(date) ||
+        this.isPersonalHolidayMorningTemporaryApproved(date) ||
+        this.isPersonalHolidayMorningApproved(date) ||
+        this.isPersonalHolidayMorningCancellationRequest(date)
+      );
+    },
+
     isPersonalHolidayMorningWaiting(date) {
       return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
     },
@@ -164,6 +199,19 @@ export const HolidayService = (function () {
 
     isPersonalHolidayMorningCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
+    },
+
+    hasHolidayNoon: function (date) {
+      return this.isPublicHolidayNoon(date) || this.isPersonalHolidayNoon(date);
+    },
+
+    isPersonalHolidayNoon: function (date) {
+      return (
+        this.isPersonalHolidayNoonWaiting(date) ||
+        this.isPersonalHolidayNoonTemporaryApproved(date) ||
+        this.isPersonalHolidayNoonApproved(date) ||
+        this.isPersonalHolidayNoonCancellationRequest(date)
+      );
     },
 
     isPersonalHolidayNoonWaiting(date) {
