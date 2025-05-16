@@ -597,9 +597,10 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = addMonths(new Date(y, m, 1), 1);
 
-      Promise.all([holidayService.fetchPublic(getYear(date)), holidayService.fetchAbsences(getYear(date))]).then(
-        view.displayNext,
-      );
+      Promise.all([
+        holidayService.fetchPublicHolidays(getYear(date)),
+        holidayService.fetchAbsences(getYear(date)),
+      ]).then(view.displayNext);
     },
 
     clickPrevious: function () {
@@ -612,9 +613,10 @@ const Controller = (function () {
       // to load data for the new (invisible) prev month
       const date = subMonths(new Date(y, m, 1), 1);
 
-      Promise.all([holidayService.fetchPublic(getYear(date)), holidayService.fetchAbsences(getYear(date))]).then(
-        view.displayPrevious,
-      );
+      Promise.all([
+        holidayService.fetchPublicHolidays(getYear(date)),
+        holidayService.fetchAbsences(getYear(date)),
+      ]).then(view.displayPrevious);
     },
   };
 
