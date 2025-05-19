@@ -7,6 +7,29 @@ updates:
     labels:
       - "type: dependencies"
       - "javascript"
+    groups:
+      rollup:
+        patterns:
+          - "@rollup/*"
+          - "rollup"
+          - "rollup-*"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+      jest:
+        patterns:
+          - "jest"
+          - "jest-*"
+      postcss:
+        patterns:
+          - "postcss"
+          - "postcss-*"
 
   - package-ecosystem: "maven"
     directory: "/"
