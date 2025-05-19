@@ -129,7 +129,7 @@ const View = (function () {
     dayPopover:
       '<div role="calendar_popover" data-date="{{date}}">{{content}}<div id="arrow" data-popper-arrow></div></div>',
 
-    popoverContentAbsence: '<div style="{{style}}">{{absenceType}}<br><a href="{{href}}">{{linkText}}</a></div>',
+    popoverContentAbsence: '<div style="{{style}}">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
 
     popoverContentAbsenceCreation: '<div ><a href="{{href}}">{{linkText}}</a></div>',
 
@@ -332,29 +332,28 @@ const View = (function () {
     return dayHtml + popoverHtml;
   }
 
-  function renderPopoverAbsenceContent(absenceType, absenceId) {
+  function renderPopoverAbsenceContent(absenceId, absenceType) {
     let href = "";
-    let linkText = "";
+    let title = "";
     if (absenceType === "VACATION" && absenceId !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absenceId);
-      linkText = "Details (i18n?)";
+      title = i18n("application.data.title");
     } else if (absenceType === "SICK_NOTE" && absenceId !== "-1") {
       href = holidayService.getSickNoteWebUrl(absenceId);
-      linkText = "Details (i18n?)";
-      //${i18n("sicknote.type.SICK_NOTE")} ?? ${i18n("absences.overview.sick")} ??
+      title = i18n("absences.overview.sick");
     }
 
     return render(TMPL.popoverContentAbsence, {
       style: `--absence-bar-color: var(--absence-color-YELLOW);`,
-      absenceType: absenceType,
+      title: title,
       href: href,
-      linkText: linkText,
+      linkText: "Details (i18n?)",
     });
   }
 
   function renderPopoverAbsenceCreationContent(date) {
     let href = holidayService.getNewHolidayUrl(date, date);
-    let linkText = "New Absence";
+    let linkText = i18n("action.apply.vacation");
 
     return render(TMPL.popoverContentAbsenceCreation, {
       href: href,
@@ -367,17 +366,17 @@ const View = (function () {
     if (holidayService.isAbsenceFull(date)) {
       const absenceId = holidayService.getAbsenceId(date)[0];
       const absenceType = holidayService.getAbsenceType(date)[0];
-      content = renderPopoverAbsenceContent(absenceType, absenceId);
+      content = renderPopoverAbsenceContent(absenceId, absenceType);
     }
     if (holidayService.isHalfDayAbsence(date)) {
       const [idMorningOrFull, idNoon] = holidayService.getAbsenceId(date);
       const [typeMorningOrFull, typeNoon] = holidayService.getAbsenceType(date);
 
       const morningContent = holidayService.isAbsenceMorning(date)
-        ? renderPopoverAbsenceContent(typeMorningOrFull, idMorningOrFull)
+        ? renderPopoverAbsenceContent(idMorningOrFull, typeMorningOrFull)
         : renderPopoverAbsenceCreationContent(date);
       const noonContent = holidayService.isAbsenceNoon(date)
-        ? renderPopoverAbsenceContent(typeNoon, idNoon)
+        ? renderPopoverAbsenceContent(idMorningOrFull, typeNoon)
         : renderPopoverAbsenceCreationContent(date);
 
       content = morningContent + noonContent;
