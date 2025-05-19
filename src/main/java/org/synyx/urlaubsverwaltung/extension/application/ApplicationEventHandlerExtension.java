@@ -138,6 +138,7 @@ public class ApplicationEventHandlerExtension {
             .reason(event.application().getReason())
             .status(status)
             .teamInformed(event.application().isTeamInformed())
+            .hours(event.application().getHours())
             .build();
     }
 
@@ -163,6 +164,7 @@ public class ApplicationEventHandlerExtension {
             .reason(event.application().getReason())
             .status(status)
             .teamInformed(event.application().isTeamInformed())
+            .hours(event.application().getHours())
             .build();
     }
 
@@ -189,6 +191,7 @@ public class ApplicationEventHandlerExtension {
             .reason(event.application().getReason())
             .status(status)
             .teamInformed(event.application().isTeamInformed())
+            .hours(event.application().getHours())
             .build();
     }
 
