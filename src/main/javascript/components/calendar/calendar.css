@@ -422,3 +422,54 @@ td.datepicker-day {
 .tw-dark .datepicker-day-public-holiday-full.datepicker-day-selected {
   @apply tw-shadow-sky-400/80;
 }
+
+[role="calendar_popover"] {
+  z-index: 1000;
+  background: #eee;
+  border-color: #333;
+  color: black;
+  font-weight: bold;
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 4px;
+  border-width: 1px;
+  display: none;
+
+  &[data-show] {
+    display: block;
+  }
+}
+
+#arrow,
+#arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+
+#arrow {
+  visibility: hidden;
+}
+
+#arrow::before {
+  visibility: visible;
+  content: "";
+  transform: rotate(45deg);
+}
+
+[role="calendar_popover"][data-popper-placement^="top"] > #arrow {
+  bottom: -4px;
+}
+
+[role="calendar_popover"][data-popper-placement^="bottom"] > #arrow {
+  top: -4px;
+}
+
+[role="calendar_popover"][data-popper-placement^="left"] > #arrow {
+  right: -4px;
+}
+
+[role="calendar_popover"][data-popper-placement^="right"] > #arrow {
+  left: -4px;
+}
