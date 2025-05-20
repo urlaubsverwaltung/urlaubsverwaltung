@@ -32,7 +32,7 @@
             <th:block th:fragment="overtime-details-heading-actions">
               <div class="tw-flex tw-flex-col sm:tw-flex-row">
                 <a
-                  th:if="${userIsAllowedToWriteOvertime}"
+                  th:if="${userIsAllowedToUpdateOvertime}"
                   th:href="@{/web/overtime/__${record.id}__/edit}"
                   class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                 >

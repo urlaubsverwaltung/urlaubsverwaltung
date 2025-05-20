@@ -170,7 +170,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("comment", new OvertimeCommentFormDto());
-        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person));
+        model.addAttribute("userIsAllowedToUpdateOvertime", overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime));
         model.addAttribute("userIsAllowedToAddOvertimeComment", overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person));
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 

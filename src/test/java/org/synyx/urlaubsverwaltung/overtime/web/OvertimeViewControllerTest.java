@@ -320,7 +320,7 @@ class OvertimeViewControllerTest {
         department.setName("Buchhaltung");
         when(departmentService.getAssignedDepartmentsOfMember(overtimePerson)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
 
         final OvertimeComment comment = new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC());
         final List<OvertimeComment> overtimeComments = List.of(comment);
@@ -339,7 +339,7 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)))
+            .andExpect(model().attribute("userIsAllowedToUpdateOvertime", is(true)))
             .andExpect(model().attribute("record", is(record)))
             .andExpect(model().attribute("comments", hasItem(commentDto)))
             .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
