@@ -23,7 +23,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now, now.plusDays(2), Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now, now.plusDays(2), Duration.ofHours(1));
         assertThat(overtime.getStartDate()).isEqualTo(now);
     }
 
@@ -32,7 +32,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now, Duration.ofHours(1));
         assertThat(overtime.getEndDate()).isEqualTo(now);
     }
 
@@ -41,7 +41,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now.plusDays(4), Duration.ofHours(1));
         assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
@@ -50,9 +50,9 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now, Duration.ofHours(1));
 
-        Field startDateField = ReflectionUtils.findField(Overtime.class, "startDate");
+        Field startDateField = ReflectionUtils.findField(OvertimeEntity.class, "startDate");
         startDateField.setAccessible(true);
         startDateField.set(overtime, null);
 
@@ -64,9 +64,9 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now, Duration.ofHours(1));
 
-        Field endDateField = ReflectionUtils.findField(Overtime.class, "endDate");
+        Field endDateField = ReflectionUtils.findField(OvertimeEntity.class, "endDate");
         endDateField.setAccessible(true);
         endDateField.set(overtime, null);
 
@@ -79,9 +79,9 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now, Duration.ofHours(1));
 
-        Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
+        Field lastModificationDateField = ReflectionUtils.findField(OvertimeEntity.class, "lastModificationDate");
         lastModificationDateField.setAccessible(true);
         lastModificationDateField.set(overtime, null);
 
@@ -94,10 +94,10 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
+        OvertimeEntity overtime = new OvertimeEntity(person, now.minusDays(2), now, Duration.ofHours(1));
 
         // Simulate that the overtime record has been created to an earlier time
-        Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
+        Field lastModificationDateField = ReflectionUtils.findField(OvertimeEntity.class, "lastModificationDate");
         lastModificationDateField.setAccessible(true);
         lastModificationDateField.set(overtime, now.minusDays(3));
 
@@ -109,7 +109,7 @@ class OvertimeTest {
     @Test
     void getDurationByYear() {
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setStartDate(LocalDate.of(2022, 12, 30));
         overtime.setEndDate(LocalDate.of(2023, 1, 2));
         overtime.setDuration(Duration.ofHours(20));
@@ -123,7 +123,7 @@ class OvertimeTest {
 
     @Test
     void getTotalDurationBefore() {
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setStartDate(LocalDate.of(2022, 12, 30));
         overtime.setEndDate(LocalDate.of(2023, 1, 2));
         overtime.setDuration(Duration.ofHours(20));
@@ -136,7 +136,7 @@ class OvertimeTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10L);
         person.setPermissions(List.of(USER));
-        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(1L);
 
         final String overtimeToString = overtime.toString();
@@ -145,13 +145,13 @@ class OvertimeTest {
 
     @Test
     void equals() {
-        final Overtime overtimeOne = new Overtime();
+        final OvertimeEntity overtimeOne = new OvertimeEntity();
         overtimeOne.setId(1L);
 
-        final Overtime overtimeOneOne = new Overtime();
+        final OvertimeEntity overtimeOneOne = new OvertimeEntity();
         overtimeOneOne.setId(1L);
 
-        final Overtime overtimeTwo = new Overtime();
+        final OvertimeEntity overtimeTwo = new OvertimeEntity();
         overtimeTwo.setId(2L);
 
         assertThat(overtimeOne)
@@ -164,7 +164,7 @@ class OvertimeTest {
 
     @Test
     void hashCodeTest() {
-        final Overtime overtimeOne = new Overtime();
+        final OvertimeEntity overtimeOne = new OvertimeEntity();
         overtimeOne.setId(1L);
 
         assertThat(overtimeOne.hashCode()).isEqualTo(32);

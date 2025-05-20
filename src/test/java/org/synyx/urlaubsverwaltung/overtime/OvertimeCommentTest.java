@@ -18,7 +18,7 @@ class OvertimeCommentTest {
     void ensureCorrectPropertiesAfterInitialization() {
 
         Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Overtime overtime = createOvertimeRecord();
+        OvertimeEntity overtime = createOvertimeRecord();
 
         OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeCommentAction.CREATED, clock);
 
