@@ -14,7 +14,7 @@
         <th:block th:ref="overtime-heading-actions">
           <div class="tw-flex tw-flex-col sm:tw-flex-row">
             <a
-              th:if="${userIsAllowedToWriteOvertime}"
+              th:if="${userIsAllowedToCreateOvertime}"
               class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
               href="#"
               th:href="@{/web/overtime/new (person=${person.id})}"

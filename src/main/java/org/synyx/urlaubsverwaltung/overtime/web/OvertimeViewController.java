@@ -136,8 +136,8 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
 
-        final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
-        model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
+        final boolean userIsAllowedToCreateOvertime = overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person);
+        model.addAttribute("userIsAllowedToCreateOvertime", userIsAllowedToCreateOvertime);
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         return "overtime/overtime_list";
@@ -170,7 +170,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("comment", new OvertimeCommentFormDto());
-        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person));
         model.addAttribute("userIsAllowedToAddOvertimeComment", overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person));
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
@@ -191,7 +191,7 @@ public class OvertimeViewController implements HasLaunchpad {
             person = signedInUser;
         }
 
-        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+        if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
@@ -212,7 +212,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtimeForm.getPerson();
 
-        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+        if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));

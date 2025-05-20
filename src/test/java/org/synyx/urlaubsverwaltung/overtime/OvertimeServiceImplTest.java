@@ -348,78 +348,78 @@ class OvertimeServiceImplTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void ensureCannotWriteOvertimeIfOvertimeSyncIsActive(boolean overtimeWritePrivilegedOnly) {
+    void ensureCannotCreateOvertimeIfOvertimeSyncIsActive(boolean overtimeWritePrivilegedOnly) {
 
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(USER, OFFICE));
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, false, true));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isFalse();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isFalse();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void ensureCannotWriteOvertimeIfOvertimeIsNotActive(boolean overtimeWritePrivilegedOnly) {
+    void ensureCannotCreateOvertimeIfOvertimeIsNotActive(boolean overtimeWritePrivilegedOnly) {
 
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(USER, OFFICE));
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, false, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isFalse();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isFalse();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void ensureOfficeIsAllowedToWriteOthersOvertime(boolean overtimeWritePrivilegedOnly) {
+    void ensureOfficeIsAllowedToCreateOthersOvertime(boolean overtimeWritePrivilegedOnly) {
 
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(USER, OFFICE));
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isTrue();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isTrue();
     }
 
     @Test
-    void ensureUserIsNotAllowedToWriteOwnOvertimeWithPrivilegedRestriction() {
+    void ensureUserIsNotAllowedToCreateOwnOvertimeWithPrivilegedRestriction() {
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isFalse();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(person, person)).isFalse();
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"OFFICE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS"})
-    void ensurePrivilegedPersonIsAllowedToWriteOwnOvertimeWithPrivilegedRestriction(Role role) {
+    void ensurePrivilegedPersonIsAllowedToCreateOwnOvertimeWithPrivilegedRestriction(Role role) {
 
         final Person person = new Person();
         person.setPermissions(List.of(USER, role));
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isTrue();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(person, person)).isTrue();
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"OFFICE", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
-    void ensurePersonIsAllowedToWriteOwnOvertimeWithoutPrivilegedRestriction(Role role) {
+    void ensurePersonIsAllowedToCreateOwnOvertimeWithoutPrivilegedRestriction(Role role) {
 
         final Person person = new Person();
         person.setPermissions(List.of(USER, role));
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(false, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isTrue();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(person, person)).isTrue();
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
-    void ensurePersonIsNotAllowedToWriteOthersOvertimeWithNoPrivilegedRestriction(Role role) {
+    void ensurePersonIsNotAllowedToCreateOthersOvertimeWithNoPrivilegedRestriction(Role role) {
 
         final Person person = new Person();
         person.setPermissions(List.of(USER, role));
@@ -427,12 +427,12 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(false, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(person, other)).isFalse();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(person, other)).isFalse();
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
-    void ensurePersonIsAllowedToWriteOthersOvertimeWithPrivilegedRestriction(Role role) {
+    void ensurePersonIsAllowedToCreateOthersOvertimeWithPrivilegedRestriction(Role role) {
 
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(USER, role));
@@ -440,7 +440,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isTrue();
+        assertThat(sut.isUserIsAllowedToCreateOvertime(signedInUser, personOfOvertime)).isTrue();
     }
 
     @ParameterizedTest

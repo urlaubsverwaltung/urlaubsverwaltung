@@ -22,7 +22,7 @@
         </th:block>
         <th:block th:fragment="overtime-list-heading-actions">
           <a
-            th:if="${userIsAllowedToWriteOvertime}"
+            th:if="${userIsAllowedToCreateOvertime}"
             th:href="@{/web/overtime/new?person=__${person.id}__}"
             class="icon-link tw-px-1"
           >

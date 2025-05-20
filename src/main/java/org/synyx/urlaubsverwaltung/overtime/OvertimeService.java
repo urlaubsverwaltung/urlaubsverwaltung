@@ -114,11 +114,11 @@ public interface OvertimeService {
     /**
      * Is signedInUser allowed to create an overtime records of given personOfOvertime.
      *
-     * @param signedInUser     person which writes overtime record
+     * @param signedInUser     person which create overtime record
      * @param personOfOvertime person which the overtime record belongs to
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
-    boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
+    boolean isUserIsAllowedToCreateOvertime(Person signedInUser, Person personOfOvertime);
 
     /**
      * Is signedInUser allowed to update an overtime records of given personOfOvertime.

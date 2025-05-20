@@ -261,8 +261,8 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     /**
-     * Is signedInUser person allowed to write the overtime record of personOfOvertime.
-     * If overtime is active and overtime sync is inactive, the user is allowed to write the overtime record:
+     * Is signedInUser person allowed to create the overtime record of personOfOvertime.
+     * If overtime is active and overtime sync is inactive, the user is allowed to create the overtime record:
      * <pre>
      *  |                        |overtime active| sync active| others | own   |  others | own  |
      *  |------------------------|---------------|------------|--------|-------|---------|------|
@@ -273,16 +273,16 @@ class OvertimeServiceImpl implements OvertimeService {
      *  | DEPARTMENT_HEAD        | true          | false      | true   | true  |  false  | true |
      *  | USER                   | true          | false      | false  | false |  false  | true |
      *
-     *  if overtime is inactive, the user is not allowed to write the overtime records
-     *  if overtime sync is active, the user is not allowed to write the overtime records
+     *  if overtime is inactive, the user is not allowed to create the overtime records
+     *  if overtime sync is active, the user is not allowed to create the overtime records
      * </pre>
      *
-     * @param signedInUser     person which writes overtime record
+     * @param signedInUser     person which creates overtime record
      * @param personOfOvertime person which the overtime record belongs to
      * @return @code{true} if allowed, otherwise @code{false}
      */
     @Override
-    public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
+    public boolean isUserIsAllowedToCreateOvertime(Person signedInUser, Person personOfOvertime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
         return overtimeSettings.isOvertimeActive()
             && !overtimeSettings.isOvertimeSyncActive()
