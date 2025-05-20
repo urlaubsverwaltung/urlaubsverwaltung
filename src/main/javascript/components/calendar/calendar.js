@@ -129,15 +129,83 @@ const View = (function () {
     dayPopover:
       '<div role="calendar_popover" data-date="{{date}}">{{content}}<div id="arrow" data-popper-arrow></div></div>',
 
-    popoverContentAbsence: '<div style="{{style}}">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
+    popoverContentAbsence:
+      '<div class="absence-details {{css_classes}}" style="{{style}}">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
 
-    popoverContentAbsenceCreation: '<div ><a href="{{href}}">{{linkText}}</a></div>',
+    popoverContentAbsenceCreation: '<div style="{{style}}"><a href="{{href}}">{{linkText}}</a></div>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 
     noWorkdayIcon:
       '<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
   };
+
+  function colors(date) {
+    const [idMorningOrFull, idNoon] = holidayService.getTypeId(date);
+    let colorFull;
+    let colorMorning;
+    let colorNoon;
+    if (holidayService.isPersonalHolidayFull(date)) {
+      colorFull = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
+    }
+    if (holidayService.isPersonalHolidayMorning(date)) {
+      colorMorning = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
+    }
+    if (holidayService.isPersonalHolidayNoon(date)) {
+      colorNoon = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idNoon]})`;
+    }
+
+    if (holidayService.isSickDayFullWaiting(date) || holidayService.isSickDayFullActive(date)) {
+      colorFull = `var(--sick-note-color)`;
+    }
+    if (holidayService.isSickDayMorningWaiting(date) || holidayService.isSickDayMorningActive(date)) {
+      colorMorning = `var(--sick-note-color)`;
+    }
+
+    if (holidayService.isSickDayNoonWaiting(date) || holidayService.isSickDayNoonActive(date)) {
+      colorNoon = `var(--sick-note-color)`;
+    }
+
+    return [colorFull, colorMorning, colorNoon];
+  }
+
+  function classes(date) {
+    let classFull;
+    let classMorning;
+    let classNoon;
+
+    if (holidayService.isPersonalHolidayFullWaiting(date) || holidayService.isSickDayFullWaiting(date)) {
+      classFull = "absence--outline";
+    } else if (holidayService.isPersonalHolidayFullTemporaryApproved(date)) {
+      classFull = "absence--outline-solid-half";
+    } else if (holidayService.isPersonalHolidayFullCancellationRequest(date)) {
+      classFull = "absence--outline-solid-second-half";
+    } else if (holidayService.isPersonalHolidayFullApproved(date) || holidayService.isSickDayFullActive(date)) {
+      classFull = "absence--solid";
+    }
+
+    if (holidayService.isPersonalHolidayMorningWaiting(date) || holidayService.isSickDayMorningWaiting(date)) {
+      classMorning = "absence--outline";
+    } else if (holidayService.isPersonalHolidayMorningTemporaryApproved(date)) {
+      classMorning = "absence--outline-solid-half";
+    } else if (holidayService.isPersonalHolidayMorningCancellationRequest(date)) {
+      classMorning = "absence--outline-solid-second-half";
+    } else if (holidayService.isPersonalHolidayMorningApproved(date) || holidayService.isSickDayMorningActive(date)) {
+      classMorning = "absence--solid";
+    }
+
+    if (holidayService.isPersonalHolidayNoonWaiting(date) || holidayService.isSickDayNoonWaiting(date)) {
+      classNoon = "absence--outline";
+    } else if (holidayService.isPersonalHolidayNoonTemporaryApproved(date)) {
+      classNoon = "absence--outline-solid-half";
+    } else if (holidayService.isPersonalHolidayNoonCancellationRequest(date)) {
+      classNoon = "absence--outline-solid-second-half";
+    } else if (holidayService.isPersonalHolidayNoonApproved(date) || holidayService.isSickDayNoonActive(date)) {
+      classNoon = "absence--solid";
+    }
+
+    return [classFull, classMorning, classNoon];
+  }
 
   function render(tmpl, data) {
     return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
@@ -260,24 +328,12 @@ const View = (function () {
 
     function style() {
       // could be morning=sick and noon=vacation
-      const [idMorningOrFull, idNoon] = holidayService.getTypeId(date);
-      const colorMorningOrFull = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idMorningOrFull]})`;
-      const colorNoon = `var(--absence-color-${globalThis.uv.vacationTypes.colors[idNoon]})`;
+      const [colorFull, colorMorning, colorNoon] = colors(date);
 
       return [
-        holidayService.isPersonalHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
-        holidayService.isPersonalHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
-        holidayService.isPersonalHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
-
-        holidayService.isSickDayFullWaiting(date) || holidayService.isSickDayFullActive(date)
-          ? "--absence-bar-color: var(--sick-note-color)"
-          : "",
-        holidayService.isSickDayMorningWaiting(date) || holidayService.isSickDayMorningActive(date)
-          ? "--absence-bar-color-morning: var(--sick-note-color)"
-          : "",
-        holidayService.isSickDayNoonWaiting(date) || holidayService.isSickDayNoonActive(date)
-          ? "--absence-bar-color-noon: var(--sick-note-color)"
-          : "",
+        colorFull ? `--absence-bar-color:${colorFull}` : ``,
+        colorMorning ? `--absence-bar-color-morning:${colorMorning}` : ``,
+        colorNoon ? `--absence-bar-color-noon:${colorNoon}` : ``,
       ]
         .filter(Boolean)
         .join(";");
@@ -332,7 +388,7 @@ const View = (function () {
     return dayHtml + popoverHtml;
   }
 
-  function renderPopoverAbsenceContent(absenceId, absenceType) {
+  function renderPopoverAbsenceContent(absenceId, absenceType, classes, style) {
     let href = "";
     let title = "";
     if (absenceType === "VACATION" && absenceId !== "-1") {
@@ -344,18 +400,20 @@ const View = (function () {
     }
 
     return render(TMPL.popoverContentAbsence, {
-      style: `--absence-bar-color: var(--absence-color-YELLOW);`,
+      css_classes: classes,
+      style: style,
       title: title,
       href: href,
       linkText: "Details (i18n?)",
     });
   }
 
-  function renderPopoverAbsenceCreationContent(date) {
+  function renderPopoverAbsenceCreationContent(date, style) {
     let href = holidayService.getNewHolidayUrl(date, date);
     let linkText = i18n("action.apply.vacation");
 
     return render(TMPL.popoverContentAbsenceCreation, {
+      style: style,
       href: href,
       linkText: linkText,
     });
@@ -363,21 +421,30 @@ const View = (function () {
 
   function renderPopover(date) {
     let content = "";
+
+    const [colorFull, colorMorning, colorNoon] = colors(date);
+    const [classFull, classMorning, classNoon] = classes(date);
+
     if (holidayService.isAbsenceFull(date)) {
       const absenceId = holidayService.getAbsenceId(date)[0];
       const absenceType = holidayService.getAbsenceType(date)[0];
-      content = renderPopoverAbsenceContent(absenceId, absenceType);
+      content = renderPopoverAbsenceContent(absenceId, absenceType, classFull, `--absence-bar-color:${colorFull}`);
     }
     if (holidayService.isHalfDayAbsence(date)) {
       const [idMorningOrFull, idNoon] = holidayService.getAbsenceId(date);
       const [typeMorningOrFull, typeNoon] = holidayService.getAbsenceType(date);
 
       const morningContent = holidayService.isAbsenceMorning(date)
-        ? renderPopoverAbsenceContent(idMorningOrFull, typeMorningOrFull)
-        : renderPopoverAbsenceCreationContent(date);
+        ? renderPopoverAbsenceContent(
+            idMorningOrFull,
+            typeMorningOrFull,
+            classMorning,
+            `float:left; --absence-bar-color:${colorMorning}`,
+          )
+        : renderPopoverAbsenceCreationContent(date, `float:left;`);
       const noonContent = holidayService.isAbsenceNoon(date)
-        ? renderPopoverAbsenceContent(idMorningOrFull, typeNoon)
-        : renderPopoverAbsenceCreationContent(date);
+        ? renderPopoverAbsenceContent(idNoon, typeNoon, classNoon, `float:right; ` + `--absence-bar-color:${colorNoon}`)
+        : renderPopoverAbsenceCreationContent(date, `float:right;`);
 
       content = morningContent + noonContent;
     }
