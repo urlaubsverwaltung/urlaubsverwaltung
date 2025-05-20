@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 0
     labels:
       - "type: dependencies"
       - "javascript"
