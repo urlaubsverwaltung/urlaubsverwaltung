@@ -133,6 +133,14 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
+    hasAnyPersonalAbsence: function (date) {
+      return this.isPersonalAbsenceFull(date) || this.isPersonalHalfDayAbsence(date);
+    },
+
+    isPersonalAbsenceFull: function (date) {
+      return this.isPersonalHolidayFull(date) || this.isSickDayFull(date);
+    },
+
     isPersonalHolidayFull: function (date) {
       return (
         this.isPersonalHolidayFullWaiting(date) ||
@@ -158,11 +166,11 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
-    isHalfDayAbsence: function (date) {
-      return this.isAbsenceMorning(date) || this.isAbsenceNoon(date);
+    isPersonalHalfDayAbsence: function (date) {
+      return this.isPersonalAbsenceMorning(date) || this.isPersonalAbsenceNoon(date);
     },
 
-    isAbsenceMorning: function (date) {
+    isPersonalAbsenceMorning: function (date) {
       return this.isPersonalHolidayMorning(date) || this.isSickDayMorning(date);
     },
 
@@ -191,7 +199,7 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
     },
 
-    isAbsenceNoon: function (date) {
+    isPersonalAbsenceNoon: function (date) {
       return this.isPersonalHolidayNoon(date) || this.isSickDayNoon(date);
     },
 
@@ -246,36 +254,30 @@ export const HolidayService = (function () {
       return "";
     },
 
-    getAbsenceId: function (date) {
-      let morningOrFull;
-      let noon;
-
-      const absences = getAbsencesForDate(date);
-      for (let absence of absences) {
-        if (absence.absent === "NOON") {
-          noon = absence.id;
-        } else {
-          morningOrFull = absence.id;
-        }
-      }
-
-      return [morningOrFull, noon];
+    getAbsencesForDate: function (date) {
+      return getAbsencesForDate(date);
     },
 
-    getAbsenceType: function (date) {
-      let morningOrFull;
+    getAbsencesOfType: function (date, types) {
+      let full;
+      let morning;
       let noon;
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (absence.absent === "NOON") {
-          noon = absence.absenceType;
-        } else {
-          morningOrFull = absence.absenceType;
+        if (types.includes(absence.absenceType)) {
+          if (absence.absent === "FULL") {
+            full = absence;
+          } else if (absence.absent === "MORNING") {
+            morning = absence;
+          } else if (absence.absent === "NOON") {
+            noon = absence;
+          } else {
+            console.log("TODO Error?");
+          }
         }
       }
-
-      return [morningOrFull, noon];
+      return [full, morning, noon];
     },
 
     getTypeId: function (date) {
