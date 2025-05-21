@@ -134,12 +134,12 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
-    isAbsenceFull: function (date) {
-      return this.hasHolidayFull(date) || this.isSickDayFull(date);
+    hasAnyPersonalAbsence: function (date) {
+      return this.isPersonalAbsenceFull(date) || this.isPersonalHalfDayAbsence(date);
     },
 
-    hasHolidayFull: function (date) {
-      return this.isPublicHolidayFull(date) || this.isPersonalHolidayFull(date);
+    isPersonalAbsenceFull: function (date) {
+      return this.isPersonalHolidayFull(date) || this.isSickDayFull(date);
     },
 
     isPersonalHolidayFull: function (date) {
@@ -167,16 +167,12 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
-    isHalfDayAbsence: function (date) {
-      return this.isAbsenceMorning(date) || this.isAbsenceNoon(date);
+    isPersonalHalfDayAbsence: function (date) {
+      return this.isPersonalAbsenceMorning(date) || this.isPersonalAbsenceNoon(date);
     },
 
-    isAbsenceMorning: function (date) {
-      return this.hasHolidayMorning(date) || this.isSickDayMorning(date);
-    },
-
-    hasHolidayMorning: function (date) {
-      return this.isPublicHolidayMorning(date) || this.isPersonalHolidayMorning(date);
+    isPersonalAbsenceMorning: function (date) {
+      return this.isPersonalHolidayMorning(date) || this.isSickDayMorning(date);
     },
 
     isPersonalHolidayMorning: function (date) {
@@ -204,12 +200,8 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
     },
 
-    isAbsenceNoon: function (date) {
-      return this.hasHolidayNoon(date) || this.isSickDayNoon(date);
-    },
-
-    hasHolidayNoon: function (date) {
-      return this.isPublicHolidayNoon(date) || this.isPersonalHolidayNoon(date);
+    isPersonalAbsenceNoon: function (date) {
+      return this.isPersonalHolidayNoon(date) || this.isSickDayNoon(date);
     },
 
     isPersonalHolidayNoon: function (date) {
@@ -265,36 +257,30 @@ export const HolidayService = (function () {
       return "";
     },
 
-    getAbsenceId: function (date) {
-      let morningOrFull;
-      let noon;
-
-      const absences = getAbsencesForDate(date);
-      for (let absence of absences) {
-        if (absence.absent === "NOON") {
-          noon = absence.id;
-        } else {
-          morningOrFull = absence.id;
-        }
-      }
-
-      return [morningOrFull, noon];
+    getAbsencesForDate: function (date) {
+      return getAbsencesForDate(date);
     },
 
-    getAbsenceType: function (date) {
-      let morningOrFull;
+    getAbsencesOfType: function (date, types) {
+      let full;
+      let morning;
       let noon;
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (absence.absent === "NOON") {
-          noon = absence.absenceType;
-        } else {
-          morningOrFull = absence.absenceType;
+        if (types.includes(absence.absenceType)) {
+          if (absence.absent === "FULL") {
+            full = absence;
+          } else if (absence.absent === "MORNING") {
+            morning = absence;
+          } else if (absence.absent === "NOON") {
+            noon = absence;
+          } else {
+            console.log("TODO Error?");
+          }
         }
       }
-
-      return [morningOrFull, noon];
+      return [full, morning, noon];
     },
 
     getTypeId: function (date) {
