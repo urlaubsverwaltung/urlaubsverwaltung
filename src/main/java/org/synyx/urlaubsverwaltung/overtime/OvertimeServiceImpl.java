@@ -197,6 +197,11 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeRepository.findAllByPersonId(personId);
     }
 
+    @Override
+    public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId) {
+        return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date);
+    }
+
     private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, int year) {
 
         final LocalDate lastDayOfLastYear = Year.of(year - 1).atDay(1).with(lastDayOfYear());
