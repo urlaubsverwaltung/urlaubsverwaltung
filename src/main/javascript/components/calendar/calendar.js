@@ -128,7 +128,7 @@ const View = (function () {
     day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only print:hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}" data-datepicker-has-any-absence="{{hasAnyAbsence}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
     dayPopover:
-      '<div role="calendar_popover" data-date="{{date}}">{{content}}<div id="arrow" data-popper-arrow></div></div>',
+      '<div class="calendar_popover" data-date="{{date}}">{{content}}<div id="arrow" data-popper-arrow></div></div>',
 
     popoverContentAbsence:
       '<div class="calendar_popover_entry absence-details {{css_classes}}" style="--absence-bar-color:{{color}};">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
@@ -394,7 +394,7 @@ const View = (function () {
     },
 
     initializePopovers() {
-      for (const popover of document.querySelectorAll('[role="calendar_popover"]')) {
+      for (const popover of document.querySelectorAll(".calendar_popover")) {
         const date = popover.dataset.date;
         const dayButton = document.querySelector(`[data-datepicker-date="${date}"]`);
         daysWithPopover.push(dayButton);
