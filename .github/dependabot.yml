@@ -39,6 +39,10 @@ updates:
     labels:
       - "type: dependencies"
       - "java"
+    groups:
+      jollyday:
+        patterns:
+          - "de.focus-shift:jollyday-*"
 
   - package-ecosystem: "github-actions"
     directory: "/.github/workflows"
