@@ -162,4 +162,28 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
         assertThat(actual.get(3).getPerson()).isEqualTo(person2);
         assertThat(actual.get(3).getDuration()).isEqualTo(Duration.ofHours(3));
     }
+
+    @Test
+    void ensureToRetrieveOvertimesByPersonIdAndStartDateAndEndDateAndExternalIsTrue() {
+
+        final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
+        final Person person2 = personService.create("retsum", "Enelram", "Retsum", "retsum@example.org");
+
+        final LocalDate date = LocalDate.of(2022, 2, 1);
+
+        // should be found
+        sut.save(new Overtime(person, date, date, Duration.ofHours(1), true));
+
+        // should not be found
+        sut.save(new Overtime(person, date.plusDays(1), date.plusDays(1), Duration.ofHours(12), true));
+        sut.save(new Overtime(person2, date, date, Duration.ofHours(12), true));
+        sut.save(new Overtime(person, date, date, Duration.ofHours(12)));
+
+        final Optional<Overtime> actual = sut.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date);
+
+        assertThat(actual).hasValueSatisfying(overtime -> {
+            assertThat(overtime.getPerson()).isEqualTo(person);
+            assertThat(overtime.getDuration()).isEqualTo(Duration.ofHours(1));
+        });
+    }
 }

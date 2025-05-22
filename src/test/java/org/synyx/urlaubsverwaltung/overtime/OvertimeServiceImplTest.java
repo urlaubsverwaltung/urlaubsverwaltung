@@ -838,6 +838,22 @@ class OvertimeServiceImplTest {
         assertThat(comment.getOvertime()).isEqualTo(overtime);
     }
 
+    @Test
+    void ensureToRetrieveExternalOvertimeByDate() {
+
+        final LocalDate date = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(firstDayOfMonth());
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Overtime overtime = new Overtime(person, date, date, Duration.ofHours(1), true);
+        when(overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date)).thenReturn(Optional.of(overtime));
+
+        sut.getExternalOvertimeByDate(date, person.getId());
+
+        verify(overtimeRepository).findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date);
+    }
+
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly, boolean overtimeActive, boolean overtimeSyncActive) {
 
         final Settings settings = new Settings();
