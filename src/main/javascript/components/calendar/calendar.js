@@ -332,10 +332,10 @@ const View = (function () {
     let title = ""; //TODO die public holidays haben eine localized description. Woher?
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absence.id);
-      title = i18n("application.data.title");
+      title = i18n("overtime.popover.absence.VACATION");
     } else if (absence.absenceType === "SICK_NOTE" && absence.id !== "-1") {
       href = holidayService.getSickNoteWebUrl(absence.id);
-      title = i18n("absences.overview.sick");
+      title = i18n("overtime.popover.absence.SICK_NOTE");
     }
 
     return render(TMPL.popoverContentAbsence, {
@@ -343,13 +343,13 @@ const View = (function () {
       style: `--absence-bar-color:${color(absence)}; ${style}`,
       title: title,
       href: href,
-      linkText: "Details (i18n?)",
+      linkText: i18n("overtime.popover.details"),
     });
   }
 
   function renderPopoverAbsenceCreationContent(date, style) {
     let href = holidayService.getNewHolidayUrl(date, date);
-    let linkText = i18n("action.apply.vacation");
+    let linkText = i18n("overtime.popover.new-application");
 
     return render(TMPL.popoverContentAbsenceCreation, {
       style: style,
