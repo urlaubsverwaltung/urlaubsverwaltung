@@ -254,18 +254,16 @@ export const HolidayService = (function () {
       return "";
     },
 
-    getAbsencesForDate: function (date) {
-      return getAbsencesForDate(date);
-    },
+    getPersonalAbsencesOfType: function (date) {
+      const acceptableTypes = ["VACATION", "SICK_NOTE"];
 
-    getAbsencesOfType: function (date, types) {
       let full;
       let morning;
       let noon;
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (types.includes(absence.absenceType)) {
+        if (acceptableTypes.includes(absence.absenceType)) {
           if (absence.absent === "FULL") {
             full = absence;
           } else if (absence.absent === "MORNING") {
