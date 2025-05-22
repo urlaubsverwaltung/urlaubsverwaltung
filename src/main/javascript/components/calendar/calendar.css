@@ -405,7 +405,7 @@ td.datepicker-day {
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
 
-[role="calendar_popover"] {
+.calendar_popover {
   z-index: 1000;
   background: theme("backgroundColor.calendar.DEFAULT");
   border-color: #333;
@@ -440,19 +440,19 @@ td.datepicker-day {
   transform: rotate(45deg);
 }
 
-[role="calendar_popover"][data-popper-placement^="top"] > #arrow {
+.calendar_popover[data-popper-placement^="top"] > #arrow {
   bottom: -4px;
 }
 
-[role="calendar_popover"][data-popper-placement^="bottom"] > #arrow {
+.calendar_popover[data-popper-placement^="bottom"] > #arrow {
   top: -4px;
 }
 
-[role="calendar_popover"][data-popper-placement^="left"] > #arrow {
+.calendar_popover[data-popper-placement^="left"] > #arrow {
   right: -4px;
 }
 
-[role="calendar_popover"][data-popper-placement^="right"] > #arrow {
+.calendar_popover[data-popper-placement^="right"] > #arrow {
   left: -4px;
 }
 
@@ -507,4 +507,28 @@ td.datepicker-day {
 
 .absence-details.absence--solid::after {
   background: var(--absence-bar-color);
+}
+
+@media (max-width: theme("screens.sm")) {
+  .calendar_popover_entry {
+    float: none;
+  }
+
+  .calendar_popover_entry + .calendar_popover_entry {
+    float: none;
+  }
+
+  /* Using !important to override style attribute set by popper.js*/
+  .calendar_popover {
+    transform: none !important;
+    inset: unset !important;
+
+    position: fixed !important;
+    width: 100vw !important;
+    height: 30vh !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    justify-content: center !important;
+    z-index: 40 !important;
+  }
 }
