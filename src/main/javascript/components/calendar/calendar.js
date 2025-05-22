@@ -287,10 +287,7 @@ const View = (function () {
 
     function style() {
       // could be morning=sick and noon=vacation
-      const [fullAbsence, morningAbsence, noonAbsence] = holidayService.getAbsencesOfType(date, [
-        "VACATION",
-        "SICK_NOTE",
-      ]);
+      const [fullAbsence, morningAbsence, noonAbsence] = holidayService.getPersonalAbsencesOfType(date);
 
       return [
         fullAbsence ? `--absence-bar-color:${color(fullAbsence)}` : ``,
@@ -364,7 +361,7 @@ const View = (function () {
   function renderPopover(date) {
     let content = "";
 
-    const [full, morning, noon] = holidayService.getAbsencesOfType(date, ["VACATION", "SICK_NOTE"]);
+    const [full, morning, noon] = holidayService.getPersonalAbsencesOfType(date);
 
     if (holidayService.isPersonalAbsenceFull(date)) {
       content = renderPopoverAbsenceContent(full, "");
