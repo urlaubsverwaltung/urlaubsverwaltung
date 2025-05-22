@@ -534,7 +534,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
@@ -604,7 +604,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("sickNotes", hasSize(2)))
             .andExpect(model().attribute("signedInUser", person))
-            .andExpect(model().attribute("userIsAllowedToWriteOvertime", true))
+            .andExpect(model().attribute("userIsAllowedToCreateOvertime", true))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
     }
 
@@ -619,12 +619,12 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(false);
+        when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
         final ResultActions resultActions = perform(builder);
         resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", false));
+        resultActions.andExpect(model().attribute("userIsAllowedToCreateOvertime", false));
     }
 
     private Person somePerson() {

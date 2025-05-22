@@ -140,7 +140,7 @@ class OvertimeTest {
         overtime.setId(1L);
 
         final String overtimeToString = overtime.toString();
-        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, duration=PT10H, person=Person{id='10'}}");
+        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, duration=PT10H, external=false, person=Person{id='10'}}");
     }
 
     @Test

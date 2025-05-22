@@ -36,8 +36,12 @@ public class FrameDataProvider implements DataProviderInterface {
     private final String applicationVersion;
 
     @Autowired
-    public FrameDataProvider(PersonService personService, SettingsService settingsService, MenuProperties menuProperties,
-                             @Value("${info.app.version}") String applicationVersion) {
+    public FrameDataProvider(
+        PersonService personService,
+        SettingsService settingsService,
+        MenuProperties menuProperties,
+        @Value("${info.app.version}") String applicationVersion
+    ) {
         this.personService = personService;
         this.settingsService = settingsService;
         this.menuProperties = menuProperties;
@@ -117,7 +121,7 @@ public class FrameDataProvider implements DataProviderInterface {
 
     private boolean isUserAllowedToWriteOvertime(Person signedInUser, OvertimeSettings overtimeSettings) {
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
-        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;
+        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime && !overtimeSettings.isOvertimeSyncActive();
     }
 
     private boolean isAllowedToAddOrSubmitSickNote(Person user, SickNoteSettings sickNoteSettings) {

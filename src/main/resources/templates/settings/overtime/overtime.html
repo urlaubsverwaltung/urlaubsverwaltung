@@ -14,12 +14,7 @@
       </div>
 
       <div class="row">
-        <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-            <th:block th:text="#{settings.overtime.description}" />
-          </p>
-        </aside>
+        <aside class="col-md-4 col-md-push-8"></aside>
         <div class="col-md-8 col-md-pull-4">
           <div class="form-group is-required">
             <label
@@ -47,6 +42,52 @@
                   th:field="*{overtimeSettings.overtimeActive}"
                   value="false"
                   data-test-id="setting-overtime-disabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeActive.false}">deaktivieren</th:block>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <span
+              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
+              th:text="#{settings.betaTag}"
+            >
+              BETA
+            </span>
+            <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required tw-mb-8">
+            <label
+              th:text="|#{settings.overtime.overtimeSyncActive}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.overtimeSyncActive.true"
+            >
+              Überstundenverwaltung aktivieren
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeSyncActive.true"
+                  th:field="*{overtimeSettings.overtimeSyncActive}"
+                  value="true"
+                  data-test-id="setting-overtime-sync-enabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeSyncActive.true}">aktivieren</th:block>
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeSyncActive.false"
+                  th:field="*{overtimeSettings.overtimeSyncActive}"
+                  value="false"
+                  data-test-id="setting-overtime-sync-disabled"
                 />
                 <th:block th:text="#{settings.overtime.overtimeActive.false}">deaktivieren</th:block>
               </label>
@@ -101,8 +142,8 @@
                   data-test-id="setting-overtime-reduction-enabled"
                 />
                 <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.true}"
-                  >aktivieren</th:block
-                >
+                  >aktivieren
+                </th:block>
               </label>
               <label class="halves">
                 <input
@@ -113,12 +154,22 @@
                   data-test-id="setting-overtime-reduction-disabled"
                 />
                 <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.false}"
-                  >deaktivieren</th:block
-                >
+                  >deaktivieren
+                </th:block>
               </label>
             </div>
           </div>
+        </div>
+      </div>
 
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <th:block th:text="#{settings.overtime.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
           <div class="form-group is-required">
             <label
               th:text="|#{settings.overtime.maximum}:|"
