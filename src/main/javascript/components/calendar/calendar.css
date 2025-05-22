@@ -456,24 +456,29 @@ td.datepicker-day {
   left: -4px;
 }
 
-.absence-details {
-  overflow: hidden;
-  position: relative;
-  --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
+.calendar_popover_entry {
   --font-color: theme("textColor.calendar.DEFAULT");
   align-items: center;
   @apply tw-pt-2;
   @apply tw-pb-3.5;
   @apply tw-pl-2;
   @apply tw-pr-0.5;
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
   @apply dark:tw-font-semibold;
   @apply tw-space-x-0.5;
   @apply tw-tabular-nums;
+
+  float: left;
+}
+
+.calendar_popover_entry + .calendar_popover_entry {
+  float: right;
+}
+
+.absence-details {
+  overflow: hidden;
+  position: relative;
 }
 
 .absence-details::after {

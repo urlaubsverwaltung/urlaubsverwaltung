@@ -131,9 +131,10 @@ const View = (function () {
       '<div role="calendar_popover" data-date="{{date}}">{{content}}<div id="arrow" data-popper-arrow></div></div>',
 
     popoverContentAbsence:
-      '<div class="absence-details {{css_classes}}" style="{{style}}">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
+      '<div class="calendar_popover_entry absence-details {{css_classes}}" style="--absence-bar-color:{{color}};">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
 
-    popoverContentAbsenceCreation: '<div style="{{style}}"><a href="{{href}}">{{linkText}}</a></div>',
+    popoverContentAbsenceCreation:
+      '<div class="calendar_popover_entry" >{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 
@@ -327,7 +328,7 @@ const View = (function () {
     return dayHtml + popoverHtml;
   }
 
-  function renderPopoverAbsenceContent(absence, style) {
+  function renderPopoverAbsenceContent(absence) {
     let href = "";
     let title = ""; //TODO die public holidays haben eine localized description. Woher?
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
@@ -340,20 +341,20 @@ const View = (function () {
 
     return render(TMPL.popoverContentAbsence, {
       css_classes: cssClass(absence),
-      style: `--absence-bar-color:${color(absence)}; ${style}`,
+      color: color(absence),
       title: title,
       href: href,
       linkText: i18n("overtime.popover.details"),
     });
   }
 
-  function renderPopoverAbsenceCreationContent(date, style) {
+  function renderPopoverAbsenceCreationContent(date) {
     let href = holidayService.getNewHolidayUrl(date, date);
     let linkText = i18n("overtime.popover.new-application");
 
     return render(TMPL.popoverContentAbsenceCreation, {
-      style: style,
       href: href,
+      title: "Keine Abwesenheit (i18n?)",
       linkText: linkText,
     });
   }
@@ -364,14 +365,14 @@ const View = (function () {
     const [full, morning, noon] = holidayService.getPersonalAbsencesOfType(date);
 
     if (holidayService.isPersonalAbsenceFull(date)) {
-      content = renderPopoverAbsenceContent(full, "");
+      content = renderPopoverAbsenceContent(full);
     } else if (holidayService.isPersonalHalfDayAbsence(date)) {
       const morningContent = holidayService.isPersonalAbsenceMorning(date)
-        ? renderPopoverAbsenceContent(morning, `float:left;`)
-        : renderPopoverAbsenceCreationContent(date, `float:left;`);
+        ? renderPopoverAbsenceContent(morning)
+        : renderPopoverAbsenceCreationContent(date);
       const noonContent = holidayService.isPersonalAbsenceNoon(date)
-        ? renderPopoverAbsenceContent(noon, `float:right;`)
-        : renderPopoverAbsenceCreationContent(date, `float:right;`);
+        ? renderPopoverAbsenceContent(noon)
+        : renderPopoverAbsenceCreationContent(date);
 
       content = morningContent + noonContent;
     }
