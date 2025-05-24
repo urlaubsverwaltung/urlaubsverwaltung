@@ -298,10 +298,12 @@ class ApplicationMailServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mail = argument.getAllValues();
         assertThat(mail.get(0).getMailAddressRecipients()).hasValue(List.of(editor));
+        assertThat(mail.get(0).getReplyTo()).hasValue(editor);
         assertThat(mail.get(0).getSubjectMessageKey()).isEqualTo("subject.application.edited.to_applicant_by_applicant");
         assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_applicant_to_applicant");
         assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.<String, Object>of("application", application));
         assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mail.get(1).getReplyTo()).hasValue(editor);
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
@@ -343,6 +345,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_management_to_applicant");
         assertThat(mail.get(0).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
         assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mail.get(1).getReplyTo()).hasValue(editor);
         assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
         assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
         assertThat(mail.get(1).getTemplateModel(GERMAN)).isEqualTo(Map.of("application", application, "editor", editor));
@@ -465,6 +468,10 @@ class ApplicationMailServiceTest {
         final Person holidayReplacement = new Person();
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
+        final Person boss = new Person();
+        boss.setFirstName("Boss");
+        boss.setLastName("boss");
+
         final Person applicant = new Person();
         applicant.setFirstName("Theo");
         applicant.setLastName("Fritz");
@@ -475,6 +482,7 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(applicant);
+        application.setBoss(boss);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 3, 5));
@@ -494,6 +502,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(boss);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("application_allowed_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
@@ -515,6 +524,10 @@ class ApplicationMailServiceTest {
         applicant.setFirstName("Theo");
         applicant.setLastName("Fritz");
 
+        final Person editor = new Person();
+        editor.setFirstName("Editor");
+        editor.setLastName("Editz");
+
         final Application application = new Application();
         application.setStatus(WAITING);
         application.setPerson(applicant);
@@ -526,12 +539,13 @@ class ApplicationMailServiceTest {
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
 
-        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(editor);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.edit");
         assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
@@ -551,6 +565,10 @@ class ApplicationMailServiceTest {
         applicant.setFirstName("Theo");
         applicant.setLastName("Fritz");
 
+        final Person editor = new Person();
+        editor.setFirstName("Editor");
+        editor.setLastName("Editz");
+
         final Application application = new Application();
         application.setStatus(ALLOWED);
         application.setPerson(applicant);
@@ -562,12 +580,13 @@ class ApplicationMailServiceTest {
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
 
-        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(editor);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow.edit");
         assertThat(mail.getTemplateName()).isEqualTo("application_edited_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
@@ -589,6 +608,7 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(applicant);
+        application.setApplier(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
 
@@ -597,12 +617,13 @@ class ApplicationMailServiceTest {
         model.put("holidayReplacement", holidayReplacement);
         model.put("holidayReplacementNote", "awesome note");
 
-        sut.notifyHolidayReplacementForApply(replacementEntity, application);
+        sut.notifyHolidayReplacementForApply(replacementEntity, application, applicant);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(applicant);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.apply");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
@@ -621,6 +642,9 @@ class ApplicationMailServiceTest {
         final Person applicant = new Person();
         applicant.setFirstName("Thomas");
 
+        final Person canceller = new Person();
+        canceller.setFirstName("Canceller");
+
         final Person holidayReplacement = new Person();
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
@@ -630,6 +654,7 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(applicant);
+        application.setCanceller(canceller);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 10, 2));
@@ -639,12 +664,13 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("holidayReplacement", holidayReplacement);
 
-        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application, canceller);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(canceller);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.cancellation");
         assertThat(mail.getTemplateName()).isEqualTo("application_cancelled_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
@@ -671,6 +697,7 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setPerson(person);
+        application.setApplier(person);
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
@@ -690,6 +717,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getReplyTo()).hasValue(person);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.user");
         assertThat(mail.getTemplateName()).isEqualTo("application_applied_by_applicant_to_applicant");
         assertThat(mail.getTemplateModel(locale)).isEqualTo(model);
@@ -890,6 +918,7 @@ class ApplicationMailServiceTest {
 
         final Application application = new Application();
         application.setPerson(applicant);
+        application.setApplier(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 10, 2));
@@ -906,6 +935,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getReplyTo()).hasValue(applicant);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.holidayReplacement");
         assertThat(mail.getTemplateName()).isEqualTo("application_allowed_directly_to_holiday_replacement");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(model);
