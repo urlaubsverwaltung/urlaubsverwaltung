@@ -1061,10 +1061,14 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureNotifyHolidayReplacementAboutDirectlyAllowedApplicationSent() throws Exception {
 
+        final Person applier = new Person("applier", "applier", "applier", "applier@example.org");
+
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, 12, 18));
         application.setEndDate(LocalDate.of(2020, 12, 18));
+        application.setApplier(applier);
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         holidayReplacement.setId(1L);
@@ -1086,6 +1090,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Eine Vertretung für Lieschen Müller wurde eingetragen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(applier.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         // check content of email
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -1124,7 +1129,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         application.setHolidayReplacements(List.of(replacementEntity));
 
-        sut.notifyHolidayReplacementForApply(replacementEntity, application);
+        sut.notifyHolidayReplacementForApply(replacementEntity, application, person);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1135,6 +1140,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
@@ -1153,8 +1159,11 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureCorrectHolidayReplacementAllowMailIsSent() throws Exception {
 
+        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setBoss(boss);
         application.setStartDate(LocalDate.of(2020, 5, 29));
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
@@ -1177,6 +1186,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine Vertretung für Lieschen Müller wurde eingeplant");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
@@ -1199,6 +1209,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureCorrectHolidayReplacementCancellationMailIsSent() throws Exception {
 
+        final Person canceller = new Person("canceller", "canceller", "canceller", "canceller@example.org");
+
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2020, 12, 18));
@@ -1212,7 +1224,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         application.setHolidayReplacements(List.of(replacementEntity));
 
-        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application, canceller);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1222,6 +1234,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde zurückgezogen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(canceller.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
@@ -1240,6 +1253,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsWaiting() throws MessagingException, IOException {
 
+        final Person editor = new Person("editor", "editor", "editor", "editor@example.org");
+
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setStatus(WAITING);
@@ -1254,7 +1269,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         application.setHolidayReplacements(List.of(replacementEntity));
 
-        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1265,6 +1280,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
@@ -1283,6 +1299,8 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
     @Test
     void ensureCorrectHolidayReplacementEditMailIsSentIfStatusIsAllowed() throws MessagingException, IOException {
 
+        final Person editor = new Person("editor", "editor", "editor", "editor@example.org");
+
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
         application.setStatus(ALLOWED);
@@ -1297,7 +1315,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
 
         application.setHolidayReplacements(List.of(replacementEntity));
 
-        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application, editor);
 
         await()
             .atMost(Duration.ofSeconds(3))
@@ -1307,6 +1325,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Deine geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Mar Teria,
 
@@ -1370,6 +1389,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -1424,6 +1444,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Antragsstellung");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getReplyTo()[0]);
 
         assertThat(readPlainContent(msg)).isEqualTo("""
             Hallo Lieschen Müller,
@@ -3385,6 +3406,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo(
             """
                 Hallo Max Muster,
@@ -3402,6 +3424,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msgRelevantPerson.getReplyTo()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo(
             """
                 Hallo Person Relevant,
@@ -3465,6 +3488,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgRelevantPerson.getReplyTo()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo(
             """
                 Hallo Person Relevant,

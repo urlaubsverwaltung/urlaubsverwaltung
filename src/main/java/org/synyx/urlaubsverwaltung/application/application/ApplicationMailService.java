@@ -213,6 +213,7 @@ class ApplicationMailService {
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
                 .withSubject("subject.application.edited.to_applicant_by_applicant")
                 .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
+                .withReplyToFrom(editor)
                 .build();
         } else {
             mailToApplicant = Mail.builder()
@@ -229,6 +230,7 @@ class ApplicationMailService {
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.edited.management", application.getPerson().getNiceName(), editor.getNiceName())
             .withTemplate("application_edited_by_applicant_to_management", locale -> Map.of(APPLICATION, application, "editor", editor))
+            .withReplyToFrom(editor)
             .build();
         mailService.send(mailToManagement);
     }
@@ -445,6 +447,7 @@ class ApplicationMailService {
             .withSubject("subject.application.allowedDirectly.holidayReplacement", application.getPerson().getNiceName())
             .withTemplate("application_allowed_directly_to_holiday_replacement", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withReplyToFrom(application.getApplier())
             .build();
 
         mailService.send(mailToReplacement);
@@ -458,7 +461,7 @@ class ApplicationMailService {
      * @param application to inform the replacement beforehand
      */
     @Async
-    void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
+    void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application, Person applierOrEditor) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -470,6 +473,7 @@ class ApplicationMailService {
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
             .withSubject("subject.application.holidayReplacement.apply", application.getPerson().getNiceName())
             .withTemplate("application_applied_to_holiday_replacement", modelSupplier)
+            .withReplyToFrom(applierOrEditor)
             .build();
 
         mailService.send(mailToReplacement);
@@ -498,6 +502,7 @@ class ApplicationMailService {
             .withSubject("subject.application.holidayReplacement.allow", application.getPerson().getNiceName())
             .withTemplate("application_allowed_to_holiday_replacement", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withReplyToFrom(application.getBoss())
             .build();
 
         mailService.send(mailToReplacement);
@@ -511,7 +516,7 @@ class ApplicationMailService {
      * @param application to inform the replacement was cancelled
      */
     @Async
-    void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
+    void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application, Person canceller) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
 
@@ -525,6 +530,7 @@ class ApplicationMailService {
             .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
             .withTemplate("application_cancelled_to_holiday_replacement", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
+            .withReplyToFrom(canceller)
             .build();
 
         mailService.send(mailToReplacement);
@@ -538,7 +544,7 @@ class ApplicationMailService {
      * @param application to inform the replacement was cancelled
      */
     @Async
-    void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
+    void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application, Person editor) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
@@ -553,6 +559,7 @@ class ApplicationMailService {
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
             .withSubject(messageKey, application.getPerson().getNiceName())
             .withTemplate("application_edited_to_holiday_replacement", modelSupplier)
+            .withReplyToFrom(editor)
             .build();
         mailService.send(mailToReplacement);
     }
@@ -577,6 +584,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_APPLIED)
             .withSubject("subject.application.applied.user")
             .withTemplate("application_applied_by_applicant_to_applicant", modelSupplier)
+            .withReplyToFrom(application.getApplier())
             .build();
 
         mailService.send(mailToApplicant);
