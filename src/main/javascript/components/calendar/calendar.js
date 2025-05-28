@@ -109,7 +109,7 @@ const View = (function () {
   let rootElement;
   let assert;
   let holidayService;
-  let i18n = () => "";
+  let i18n;
 
   const TMPL = {
     container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
