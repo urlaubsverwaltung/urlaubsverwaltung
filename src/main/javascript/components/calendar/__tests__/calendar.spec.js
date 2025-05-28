@@ -1,5 +1,6 @@
 import { cleanup, setup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
 import fetchMock from "fetch-mock";
+import { parseISO } from "date-fns";
 
 describe("calendar", () => {
   const RealDate = Date;
@@ -49,6 +50,122 @@ describe("calendar", () => {
     renderCalendar(createHolidayService());
     expect(document.body).toMatchSnapshot();
   });
+
+  it("clicking on empty day redirects to new application", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.mock(
+      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [],
+      },
+    );
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    holidayService.bookHoliday = jest.fn();
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+    expect(someDay).toBeTruthy();
+    someDay.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+    someDay.click();
+
+    expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-15"), parseISO("2017-12-15"));
+  });
+
+  it("clicking on day with absence redirects to existing application", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.mock(
+      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [
+          {
+            date: "2017-12-15",
+            absenceType: "VACATION",
+            id: 1337,
+            absent: "FULL",
+            absentNumeric: 1,
+            status: "ALLOWED",
+            typeId: 1,
+          },
+        ],
+      },
+    );
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    holidayService.navigateToApplicationForLeave = jest.fn();
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+    expect(someDay).toBeTruthy();
+    someDay.click();
+
+    expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
+  });
+
+  describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
+    "ensure correct rendering when clicking %s ",
+    (buttonSelector) => {
+      test("click", async () => {
+        // 01.12.2017
+        mockDate(1_512_130_448_379);
+
+        fetchMock.mock(
+          "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+          {
+            absences: [
+              {
+                date: "2017-12-01",
+                absenceType: "VACATION",
+                absent: "FULL",
+                absentNumeric: 1,
+                status: "ALLOWED",
+                typeId: 1,
+              },
+            ],
+          },
+        );
+
+        fetchMock.mock(`/persons/42/public-holidays?from=2017-01-01&to=2017-12-31`, {
+          publicHolidays: [
+            {
+              date: "2017-12-25",
+              description: "Christmas",
+              dayLength: "1",
+              absencePeriodName: "FULL",
+            },
+          ],
+        });
+
+        mockEmptyYear(42, 2018);
+
+        await calendarTestSetup();
+
+        renderCalendar(createHolidayService({ webPrefix: "", apiPrefix: "", personId: 42 }));
+
+        const button = document.querySelector(buttonSelector);
+        expect(button).toBeTruthy();
+        button.click();
+
+        expect(document.body).toMatchSnapshot();
+      });
+    },
+  );
 
   describe.each([["ALLOWED"], ["WAITING"], ["TEMPORARY_ALLOWED"]])(
     "ensure vacation of status=%s is clickable",
@@ -317,6 +434,19 @@ describe("calendar", () => {
     ).toBeTruthy();
     expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
   });
+
+  function mockEmptyYear(personId, year) {
+    fetchMock.mock(
+      `/persons/${personId}/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,
+      {
+        absences: [],
+      },
+    );
+
+    fetchMock.mock(`/persons/${personId}/public-holidays?from=${year}-01-01&to=${year}-12-31`, {
+      publicHolidays: [],
+    });
+  }
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
     return globalThis.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
