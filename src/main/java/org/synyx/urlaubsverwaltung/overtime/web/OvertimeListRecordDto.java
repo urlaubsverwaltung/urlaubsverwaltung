@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
@@ -95,6 +96,10 @@ public final class OvertimeListRecordDto {
 
     public boolean isAllowedToEdit() {
         return isAllowedToEdit;
+    }
+
+    public DayOfWeek getWeekDayOfStartDate() {
+        return getStartDate().getDayOfWeek();
     }
 
     @Override
