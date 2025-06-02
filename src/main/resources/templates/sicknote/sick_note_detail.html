@@ -270,10 +270,16 @@
               <td>
                 <th:block th:if="${sickNote.aubPresent}">
                   <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
-                    <svg th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4')}"></svg>
-                    &nbsp;<th:block
-                      th:replace="~{fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')}"
-                    ></th:block>
+                    <svg th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
+                    <th:block th:if="${sickNote.aubStartDate == sickNote.aubEndDate}">
+                      <th:block th:text="|${#messages.msg(sickNote.weekDayOfAubStartDate + '.short')}|"></th:block>,
+                      <th:block th:replace="~{fragments/date::date(${sickNote.aubStartDate})}"></th:block>
+                    </th:block>
+                    <th:block th:if="${sickNote.aubStartDate != sickNote.aubEndDate}">
+                      <span
+                        th:replace="~{fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')}"
+                      ></span>
+                    </th:block>
                   </div>
                   <div class="tw-ml-4" th:text="#{sicknote.data.days(${sickNote.workDaysWithAub})}"></div>
                 </th:block>
