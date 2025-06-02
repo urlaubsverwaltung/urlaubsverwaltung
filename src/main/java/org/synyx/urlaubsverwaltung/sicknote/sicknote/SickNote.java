@@ -159,6 +159,14 @@ public class SickNote {
         return workingTimeSum;
     }
 
+    public DayOfWeek getWeekDayOfAubStartDate() {
+        return getAubStartDate().getDayOfWeek();
+    }
+
+    public DayOfWeek getWeekDayOfAubEndDate() {
+        return getAubEndDate().getDayOfWeek();
+    }
+
     public DayOfWeek getWeekDayOfStartDate() {
         return getStartDate().getDayOfWeek();
     }
