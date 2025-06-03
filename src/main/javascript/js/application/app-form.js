@@ -5,7 +5,7 @@ import "../../components/timepicker";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
-$(document).ready(async function () {
+document.addEventListener("DOMContentLoaded", async function () {
   document.querySelector("#person-select")?.addEventListener("change", function (event) {
     const parameters = new URLSearchParams();
     parameters.set("personId", event.currentTarget.value);
