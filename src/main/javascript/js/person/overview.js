@@ -1,8 +1,7 @@
-import $ from "jquery";
 import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   const personId = globalThis.uv.personId;
   const webPrefix = globalThis.uv.webPrefix;
   const apiPrefix = globalThis.uv.apiPrefix;
@@ -43,7 +42,7 @@ $(document).ready(function () {
       );
     }
 
-    $.when(...fetchPromises).always(function () {
+    Promise.all(fetchPromises).finally(function () {
       const calendarParentElement = document.querySelector("#datepicker");
       Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
     });
