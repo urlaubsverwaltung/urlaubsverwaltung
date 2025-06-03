@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 (function () {
   /**
    * updates config section 'calendar sync'
@@ -16,7 +14,7 @@ import $ from "jquery";
     }
   }
 
-  $(document).ready(function () {
+  document.addEventListener("DOMContentLoaded", function () {
     // initial run to update view
     updateVisibilityCalendar();
 

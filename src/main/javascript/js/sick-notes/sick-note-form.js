@@ -1,11 +1,10 @@
-import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
 function getPersonId() {
   return document.querySelector("[name='person']").value;
 }
 
-$(document).ready(async function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const urlPrefix = globalThis.uv.apiPrefix;
 
   let fromDateElement;
