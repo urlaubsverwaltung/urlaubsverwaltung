@@ -16,11 +16,11 @@ $(document).ready(function () {
   }
 
   function initCalendar() {
-    const year = getUrlParameter("year");
+    const yearParameter = getUrlParameter("year");
     let date = new Date();
 
-    if (year && year != getYear(date)) {
-      date = startOfYear(setYear(date, year));
+    if (yearParameter && Number(yearParameter) !== getYear(date)) {
+      date = startOfYear(setYear(date, Number(yearParameter)));
     }
 
     const holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
