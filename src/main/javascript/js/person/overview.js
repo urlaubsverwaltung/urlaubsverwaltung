@@ -1,5 +1,5 @@
 import $ from "jquery";
-import { getYear, setYear, startOfYear, subMonths, addMonths } from "date-fns";
+import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
 $(document).ready(function () {
@@ -30,16 +30,20 @@ $(document).ready(function () {
     const endDate = addMonths(date, shownNumberOfMonths / 2);
 
     const yearOfStartDate = getYear(startDate);
-    const yearOfEndDate = getYear(endDate);
-
-    // TODO Performance reduce calls when yearOfStartDate === yearOfEndDate
-    $.when(
+    const fetchPromises = [
       holidayService.fetchPublicHolidays(yearOfStartDate),
       holidayService.fetchAbsences(yearOfStartDate),
+    ];
 
-      holidayService.fetchPublicHolidays(yearOfEndDate),
-      holidayService.fetchAbsences(yearOfEndDate),
-    ).always(function () {
+    const yearOfEndDate = getYear(endDate);
+    if (yearOfStartDate !== yearOfEndDate) {
+      fetchPromises.push(
+        holidayService.fetchPublicHolidays(yearOfEndDate),
+        holidayService.fetchAbsences(yearOfEndDate),
+      );
+    }
+
+    $.when(...fetchPromises).always(function () {
       const calendarParentElement = document.querySelector("#datepicker");
       Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
     });
