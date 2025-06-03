@@ -1,20 +1,13 @@
 import { addMonths, getYear, setYear, startOfYear, subMonths } from "date-fns";
 import "../../components/calendar";
 
-document.addEventListener("DOMContentLoaded", function () {
-  const personId = globalThis.uv.personId;
-  const webPrefix = globalThis.uv.webPrefix;
-  const apiPrefix = globalThis.uv.apiPrefix;
+document.addEventListener("DOMContentLoaded", async () => {
+  const { personId, webPrefix, apiPrefix, i18n: i18nMessages } = globalThis.uv;
 
-  function i18n(messageKey) {
-    return globalThis.uv.i18n[messageKey] || `/i18n:${messageKey}/`;
-  }
+  const i18n = (key) => i18nMessages?.[key] ?? `/i18n:${key}/`;
+  const getUrlParameter = (name) => new URL(globalThis.location).searchParams.get(name);
 
-  function getUrlParameter(name) {
-    return new URL(globalThis.location).searchParams.get(name);
-  }
-
-  function initCalendar() {
+  const initCalendar = async () => {
     const yearParameter = getUrlParameter("year");
     let date = new Date();
 
@@ -24,29 +17,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
-    const shownNumberOfMonths = 10;
-    const startDate = subMonths(date, shownNumberOfMonths / 2);
-    const endDate = addMonths(date, shownNumberOfMonths / 2);
+    const shownMonths = 10;
+    const startDate = subMonths(date, shownMonths / 2);
+    const endDate = addMonths(date, shownMonths / 2);
 
     const yearOfStartDate = getYear(startDate);
-    const fetchPromises = [
-      holidayService.fetchPublicHolidays(yearOfStartDate),
-      holidayService.fetchAbsences(yearOfStartDate),
-    ];
-
     const yearOfEndDate = getYear(endDate);
-    if (yearOfStartDate !== yearOfEndDate) {
-      fetchPromises.push(
-        holidayService.fetchPublicHolidays(yearOfEndDate),
-        holidayService.fetchAbsences(yearOfEndDate),
-      );
+
+    const fetchPromises = [];
+    for (let year = yearOfStartDate; year <= yearOfEndDate; year++) {
+      fetchPromises.push(holidayService.fetchPublicHolidays(year), holidayService.fetchAbsences(year));
     }
 
-    Promise.all(fetchPromises).finally(function () {
-      const calendarParentElement = document.querySelector("#datepicker");
-      Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
-    });
-  }
+    await Promise.all(fetchPromises);
 
-  initCalendar();
+    const calendarParentElement = document.querySelector("#datepicker");
+    Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
+  };
+
+  await initCalendar();
 });
