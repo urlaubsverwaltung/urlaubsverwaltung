@@ -18,7 +18,7 @@ import "bootstrap/js/tab";
     $('.nav-tabs a[href="#' + tab + '"]').tab("show");
   }
 
-  $(document).ready(function () {
+  document.addEventListener("DOMContentLoaded", function () {
     activateTabFromAnchorLink();
   });
 })();
