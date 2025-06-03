@@ -118,7 +118,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
-        return overtimeCommentRepository.findByOvertime(overtime);
+        return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime);
     }
 
     @Override

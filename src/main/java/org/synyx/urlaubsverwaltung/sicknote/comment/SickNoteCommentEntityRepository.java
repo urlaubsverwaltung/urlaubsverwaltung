@@ -13,7 +13,7 @@ import java.util.List;
  */
 interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteCommentEntity, Long> {
 
-    List<SickNoteCommentEntity> findBySickNoteId(Long sickNoteId);
+    List<SickNoteCommentEntity> findBySickNoteIdOrderByIdDesc(Long sickNoteId);
 
     List<SickNoteCommentEntity> findByPerson(Person author);
 

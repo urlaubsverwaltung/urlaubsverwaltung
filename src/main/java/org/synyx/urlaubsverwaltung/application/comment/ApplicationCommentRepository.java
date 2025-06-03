@@ -9,7 +9,7 @@ import java.util.List;
 
 interface ApplicationCommentRepository extends CrudRepository<ApplicationCommentEntity, Long> {
 
-    List<ApplicationCommentEntity> findByApplicationId(Long applicationId);
+    List<ApplicationCommentEntity> findByApplicationIdOrderByIdDesc(Long applicationId);
 
     List<ApplicationCommentEntity> findByPerson(Person person);
 

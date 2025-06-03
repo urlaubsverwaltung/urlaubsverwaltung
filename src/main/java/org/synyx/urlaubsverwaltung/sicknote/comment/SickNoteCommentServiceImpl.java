@@ -45,7 +45,7 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     @Override
     public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
-        return sickNoteCommentEntityRepository.findBySickNoteId(sickNote.getId());
+        return sickNoteCommentEntityRepository.findBySickNoteIdOrderByIdDesc(sickNote.getId());
     }
 
     @Override

@@ -110,6 +110,6 @@ class SickNoteCommentServiceImplTest {
 
         final ArgumentCaptor<List<SickNoteCommentEntity>> argument = ArgumentCaptor.forClass(List.class);
         verify(sickNoteCommentEntityRepository).saveAll(argument.capture());
-        assertThat(argument.getValue().get(0).getPerson()).isNull();
+        assertThat(argument.getValue().getFirst().getPerson()).isNull();
     }
 }

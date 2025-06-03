@@ -27,17 +27,21 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     private final Clock clock;
 
     @Autowired
-    ApplicationCommentServiceImpl(ApplicationCommentRepository commentRepository, ApplicationService applicationService,
-                                  Clock clock) {
-
+    ApplicationCommentServiceImpl(
+        ApplicationCommentRepository commentRepository,
+        ApplicationService applicationService,
+        Clock clock
+    ) {
         this.commentRepository = commentRepository;
         this.applicationService = applicationService;
         this.clock = clock;
     }
 
     @Override
-    public ApplicationComment create(Application application, ApplicationCommentAction action, Optional<String> text,
-                                     Person author) {
+    public ApplicationComment create(
+        Application application, ApplicationCommentAction action,
+        Optional<String> text, Person author
+    ) {
 
         final ApplicationCommentEntity commentEntity = new ApplicationCommentEntity(author, clock);
         commentEntity.setAction(action);
@@ -56,7 +60,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     @Override
     public List<ApplicationComment> getCommentsByApplication(Application application) {
 
-        final List<ApplicationCommentEntity> commentEntities = commentRepository.findByApplicationId(application.getId());
+        final List<ApplicationCommentEntity> commentEntities = commentRepository.findByApplicationIdOrderByIdDesc(application.getId());
 
         final List<Long> applicationIds = commentEntities
             .stream()

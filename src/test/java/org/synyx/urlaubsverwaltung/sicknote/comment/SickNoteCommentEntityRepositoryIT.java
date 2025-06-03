@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.COMMENTED;
 
 @SpringBootTest
 @Transactional
@@ -46,10 +47,10 @@ class SickNoteCommentEntityRepositoryIT extends SingleTenantTestContainersBase {
         final SickNote sickNoteBatmanTwo = sickNoteService.save(SickNote.builder().person(batman).startDate(now.minusDays(5)).endDate(now.minusDays(5)).build());
         final SickNote sickNoteRobinOne = sickNoteService.save(SickNote.builder().person(robin).startDate(now.minusDays(3)).endDate(now.minusDays(3)).build());
 
-        sickNoteCommentService.create(sickNoteBatmanOne, SickNoteCommentAction.COMMENTED, robin, "miss you, not");
-        sickNoteCommentService.create(sickNoteBatmanOne, SickNoteCommentAction.COMMENTED, robin, "well... actually...");
-        sickNoteCommentService.create(sickNoteBatmanTwo, SickNoteCommentAction.COMMENTED, robin, "aaaand again");
-        sickNoteCommentService.create(sickNoteRobinOne, SickNoteCommentAction.COMMENTED, alfred, "Get well soon!");
+        sickNoteCommentService.create(sickNoteBatmanOne, COMMENTED, robin, "miss you, not");
+        sickNoteCommentService.create(sickNoteBatmanOne, COMMENTED, robin, "well... actually...");
+        sickNoteCommentService.create(sickNoteBatmanTwo, COMMENTED, robin, "aaaand again");
+        sickNoteCommentService.create(sickNoteRobinOne, COMMENTED, alfred, "Get well soon!");
 
         final List<SickNoteCommentEntity> allCommentsBeforeDelete = getAllComments();
         assertThat(allCommentsBeforeDelete).hasSize(4);
@@ -58,8 +59,26 @@ class SickNoteCommentEntityRepositoryIT extends SingleTenantTestContainersBase {
 
         final List<SickNoteCommentEntity> allComments = getAllComments();
         assertThat(allComments).hasSize(1);
-        assertThat(allComments.get(0).getSickNoteId()).isEqualTo(sickNoteRobinOne.getId());
-        assertThat(allComments.get(0).getText()).isEqualTo("Get well soon!");
+        assertThat(allComments.getFirst().getSickNoteId()).isEqualTo(sickNoteRobinOne.getId());
+        assertThat(allComments.getFirst().getText()).isEqualTo("Get well soon!");
+    }
+
+    @Test
+    void ensureToGetSickNoteCommentsInCorrectOrder() {
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
+        final SickNote sickNote = sickNoteService.save(SickNote.builder().person(person).startDate(now).endDate(now).build());
+
+        final SickNoteCommentEntity first = sickNoteCommentService.create(sickNote, COMMENTED, person, "first");
+        final SickNoteCommentEntity second = sickNoteCommentService.create(sickNote, COMMENTED, person, "second");
+        final SickNoteCommentEntity third = sickNoteCommentService.create(sickNote, COMMENTED, person, "third");
+        final SickNoteCommentEntity fourth = sickNoteCommentService.create(sickNote, COMMENTED, person, "fourth");
+
+        final List<SickNoteCommentEntity> sickNoteComments = sut.findBySickNoteIdOrderByIdDesc(sickNote.getId());
+        assertThat(sickNoteComments)
+            .containsExactly(fourth, third, second, first);
     }
 
     private List<SickNoteCommentEntity> getAllComments() {

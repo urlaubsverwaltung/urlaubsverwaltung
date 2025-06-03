@@ -119,4 +119,16 @@ public class SickNoteCommentEntity extends AbstractTenantAwareEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "SickNoteCommentEntity{" +
+            "id=" + id +
+            ", sickNoteId=" + sickNoteId +
+            ", action=" + action +
+            ", person=" + person +
+            ", date=" + date +
+            ", text='" + text + '\'' +
+            '}';
+    }
 }
