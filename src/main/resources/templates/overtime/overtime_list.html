@@ -119,15 +119,12 @@
                     </a>
                   </th:block>
                   <span>
-                    <th:block th:if="${record.startDate == record.endDate}">
-                      <th:block th:text="|${#messages.msg(record.weekDayOfStartDate + '.short')}|"></th:block>,
-                      <th:block th:replace="~{fragments/date::date(${record.startDate})}"></th:block>
-                    </th:block>
-                    <th:block th:if="${record.startDate != record.endDate}">
-                      <span
-                        th:replace="~{fragments/date-range::date-range(from=${record.startDate}, to=${record.endDate}, pattern='E, dd.MM.yyyy')}"
-                      ></span>
-                    </th:block>
+                    <th:block
+                      th:replace="~{fragments/date-range::date-range-all(
+                      from=${record.startDate},
+                      to=${record.endDate}
+                    )}"
+                    ></th:block>
                   </span>
                 </div>
               </div>

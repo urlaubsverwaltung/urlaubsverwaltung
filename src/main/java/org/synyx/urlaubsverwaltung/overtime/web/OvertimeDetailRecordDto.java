@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
@@ -53,6 +52,7 @@ public class OvertimeDetailRecordDto {
         return lastModificationDate;
     }
 
+
     public Map<Integer, Duration> getDurationByYear() {
         return durationByYear;
     }
@@ -61,10 +61,6 @@ public class OvertimeDetailRecordDto {
         return durationByYear.entrySet().stream()
             .filter(e -> e.getKey() != withoutYear)
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    public DayOfWeek getWeekDayOfStartDate() {
-        return getStartDate().getDayOfWeek();
     }
 
     @Override

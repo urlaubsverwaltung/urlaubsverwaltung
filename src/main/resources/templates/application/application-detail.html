@@ -278,20 +278,13 @@
               </td>
               <td>
                 <span class="tw-flex tw-items-center">
-                  <th:block th:if="${departmentApplication.startDate == departmentApplication.endDate}">
-                    <th:block
-                      th:text="|${#messages.msg(departmentApplication.startDate.dayOfWeek + '.short')}|"
-                    ></th:block
-                    >,
-                    <th:block th:replace="~{fragments/date::date(${departmentApplication.startDate})}"></th:block
-                    >,&nbsp;
-                    <th:block th:text="${#messages.msg(departmentApplication.dayLength)}"></th:block>
-                  </th:block>
-                  <th:block th:if="${departmentApplication.startDate != departmentApplication.endDate}">
-                    <span
-                      th:replace="~{fragments/date-range::date-range(from=${departmentApplication.startDate}, to=${departmentApplication.endDate}, pattern='E, dd.MM.yyyy')}"
-                    ></span>
-                  </th:block>
+                  <th:block
+                    th:replace="~{fragments/date-range::date-range-all(
+                    from=${departmentApplication.startDate},
+                    to=${departmentApplication.endDate},
+                    dayLength=${departmentApplication.dayLength}
+                  )}"
+                  ></th:block>
                   <span th:if="${departmentApplication.status.name == 'ALLOWED'}" class="tw-text-emerald-500">
                     <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}" />
                   </span>

@@ -238,16 +238,13 @@
                 class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                 data-test-id="sicknote-date"
               >
-                <th:block th:if="${sickNote.startDate == sickNote.endDate}">
-                  <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                  <th:block th:replace="~{fragments/date::date(${sickNote.startDate})}"></th:block>,&nbsp;
-                  <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
-                </th:block>
-                <th:block th:if="${sickNote.startDate != sickNote.endDate}">
-                  <span
-                    th:replace="~{fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')}"
-                  ></span>
-                </th:block>
+                <th:block
+                  th:replace="~{fragments/date-range::date-range-all(
+                    from=${sickNote.startDate},
+                    to=${sickNote.endDate},
+                    dayLength=${sickNote.dayLength}
+                  )}"
+                ></th:block>
               </span>
             </th:block>
           </div>
@@ -271,14 +268,9 @@
                 <th:block th:if="${sickNote.aubPresent}">
                   <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
                     <svg th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
-                    <th:block th:if="${sickNote.aubStartDate == sickNote.aubEndDate}">
-                      <th:block th:text="|${#messages.msg(sickNote.weekDayOfAubStartDate + '.short')}|"></th:block>,
-                      <th:block th:replace="~{fragments/date::date(${sickNote.aubStartDate})}"></th:block>
-                    </th:block>
-                    <th:block th:if="${sickNote.aubStartDate != sickNote.aubEndDate}">
-                      <span
-                        th:replace="~{fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')}"
-                      ></span>
+                    <th:block
+                      th:replace="~{fragments/date-range::date-range-all(from=${sickNote.aubStartDate},to=${sickNote.aubEndDate})}"
+                    >
                     </th:block>
                   </div>
                   <div class="tw-ml-4" th:text="#{sicknote.data.days(${sickNote.workDaysWithAub})}"></div>
