@@ -34,10 +34,10 @@ $(document).ready(function () {
 
     // TODO Performance reduce calls when yearOfStartDate === yearOfEndDate
     $.when(
-      holidayService.fetchPublic(yearOfStartDate),
+      holidayService.fetchPublicHolidays(yearOfStartDate),
       holidayService.fetchAbsences(yearOfStartDate),
 
-      holidayService.fetchPublic(yearOfEndDate),
+      holidayService.fetchPublicHolidays(yearOfEndDate),
       holidayService.fetchAbsences(yearOfEndDate),
     ).always(function () {
       const calendarParentElement = document.querySelector("#datepicker");
