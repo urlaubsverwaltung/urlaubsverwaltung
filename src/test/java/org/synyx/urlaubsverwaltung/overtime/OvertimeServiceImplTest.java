@@ -230,7 +230,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         sut.getCommentsForOvertime(overtime);
 
-        verify(overtimeCommentRepository).findByOvertime(overtime);
+        verify(overtimeCommentRepository).findByOvertimeOrderByIdDesc(overtime);
     }
 
     // Get total overtime for year -------------------------------------------------------------------------------------
