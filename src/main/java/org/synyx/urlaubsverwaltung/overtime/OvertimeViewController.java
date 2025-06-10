@@ -66,10 +66,10 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @Autowired
     OvertimeViewController(
-        OvertimeService overtimeService, PersonService personService,
-        OvertimeFormValidator validator, DepartmentService departmentService,
-        ApplicationService applicationService, VacationTypeViewModelService vacationTypeViewModelService,
-        SettingsService settingsService, Clock clock
+            OvertimeService overtimeService, PersonService personService,
+            OvertimeFormValidator validator, DepartmentService departmentService,
+            ApplicationService applicationService, VacationTypeViewModelService vacationTypeViewModelService,
+            SettingsService settingsService, Clock clock
     ) {
         this.overtimeService = overtimeService;
         this.personService = personService;
@@ -95,17 +95,17 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @GetMapping(value = "/overtime", params = "person")
     public String showOvertime(
-        @RequestParam(value = "person") Long personId,
-        @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
-        throws UnknownPersonException {
+            @RequestParam(value = "person") Long personId,
+            @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
+            throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see overtime records of user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         final int currentYear = Year.now(clock).getValue();
@@ -116,16 +116,16 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("person", person);
 
         final Predicate<OvertimeEntity> userIsAllowedToUpdateOvertime =
-            overtime -> overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
+                overtime -> overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
 
         final OvertimeListDto overtimeListDto = mapToDto(
-            getOvertimeAbsences(selectedYear, person),
-            overtimeService.getOvertimeRecordsForPersonAndYear(person, selectedYear),
-            overtimeService.getTotalOvertimeForPersonAndYear(person, selectedYear),
-            overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
-            overtimeService.getLeftOvertimeForPerson(person),
-            signedInUser,
-            userIsAllowedToUpdateOvertime, selectedYear);
+                getOvertimeAbsences(selectedYear, person),
+                overtimeService.getOvertimeRecordsForPersonAndYear(person, selectedYear),
+                overtimeService.getTotalOvertimeForPersonAndYear(person, selectedYear),
+                overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
+                overtimeService.getLeftOvertimeForPerson(person),
+                signedInUser,
+                userIsAllowedToUpdateOvertime, selectedYear);
 
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
@@ -148,15 +148,15 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see overtime records of user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to see overtime records of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
-            overtime,
-            overtimeService.getCommentsForOvertime(overtime),
-            overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
-            overtimeService.getLeftOvertimeForPerson(person));
+                overtime,
+                overtimeService.getCommentsForOvertime(overtime),
+                overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
+                overtimeService.getLeftOvertimeForPerson(person));
 
         final int currentYear = Year.now(clock).getValue();
         model.addAttribute("currentYear", currentYear);
@@ -175,8 +175,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @GetMapping("/overtime/new")
     public String recordOvertime(
-        @RequestParam(value = "person", required = false) Long personId, Model model)
-        throws UnknownPersonException {
+            @RequestParam(value = "person", required = false) Long personId, Model model)
+            throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person;
@@ -189,8 +189,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to record overtime for user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to record overtime for user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
@@ -201,8 +201,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @PostMapping("/overtime")
     public String recordOvertime(
-        @Valid @ModelAttribute("overtime") OvertimeFormDto overtimeFormDto, Errors errors,
-        Model model, RedirectAttributes redirectAttributes
+            @Valid @ModelAttribute("overtime") OvertimeFormDto overtimeFormDto, Errors errors,
+            Model model, RedirectAttributes redirectAttributes
     ) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -210,8 +210,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to record overtime for user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to record overtime for user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         validator.validate(overtimeFormDto, errors);
@@ -230,7 +230,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @GetMapping("/overtime/{id}/edit")
     public String editOvertime(
-        @PathVariable("id") Long id, Model model
+            @PathVariable("id") Long id, Model model
     ) throws UnknownOvertimeException {
 
         final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -239,8 +239,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         prepareModelForEdit(model, signedInUser, person, new OvertimeFormDto(overtime));
@@ -250,9 +250,9 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @PostMapping("/overtime/{id}")
     public String updateOvertime(
-        @PathVariable("id") Long id,
-        @Valid @ModelAttribute("overtime") OvertimeFormDto overtimeFormDto, Errors errors,
-        Model model, RedirectAttributes redirectAttributes
+            @PathVariable("id") Long id,
+            @Valid @ModelAttribute("overtime") OvertimeFormDto overtimeFormDto, Errors errors,
+            Model model, RedirectAttributes redirectAttributes
     ) throws UnknownOvertimeException {
 
         final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
@@ -261,8 +261,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         validator.validate(overtimeFormDto, errors);
@@ -280,8 +280,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @PostMapping("/overtime/{id}/comment")
     public String addComment(
-        @PathVariable("id") Long overtimeId,
-        @ModelAttribute("comment") OvertimeCommentFormDto comment
+            @PathVariable("id") Long overtimeId,
+            @ModelAttribute("comment") OvertimeCommentFormDto comment
     ) throws UnknownOvertimeException {
 
         final OvertimeEntity overtime = overtimeService.getOvertimeById(overtimeId).orElseThrow(() -> new UnknownOvertimeException(overtimeId));
@@ -290,8 +290,8 @@ public class OvertimeViewController implements HasLaunchpad {
 
         if (!overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person)) {
             throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to add overtime comment of user '%s'",
-                signedInUser.getId(), person.getId()));
+                    "User '%s' has not the correct permissions to add overtime comment of user '%s'",
+                    signedInUser.getId(), person.getId()));
         }
 
         overtimeService.saveComment(overtime, COMMENTED, comment.getText(), signedInUser);
