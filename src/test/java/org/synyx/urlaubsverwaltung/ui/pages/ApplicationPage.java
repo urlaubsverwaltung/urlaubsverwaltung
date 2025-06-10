@@ -8,12 +8,14 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class ApplicationPage {
 
     private static final String FROM_INPUT_SELECTOR = "#from";
+    private static final String TO_INPUT_SELECTOR = "#to";
     private static final String SUBMIT_SELECTOR = "button#apply-application";
     private static final String VACATION_TYPE_SELECT_SELECTOR = "[data-test-id=vacation-type-select]";
     private static final String DAY_LENGTH_FULL_SELECTOR = "[data-test-id=day-length-full]";
@@ -29,6 +31,15 @@ public class ApplicationPage {
     public boolean isVisible() {
         return page.locator(VACATION_TYPE_SELECT_SELECTOR).isVisible()
             && page.locator(FROM_INPUT_SELECTOR).isVisible();
+    }
+
+    public void assertDatesAreSelected(LocalDate startDate, LocalDate endDate){
+        final String startDateString = ofPattern("d.M.yyyy").format(startDate);
+        final String endDateString = ofPattern("d.M.yyyy").format(endDate);
+
+        assertThat(page.locator(FROM_INPUT_SELECTOR)).hasValue(startDateString);
+        assertThat(page.locator(TO_INPUT_SELECTOR)).hasValue(endDateString);
+
     }
 
     public void from(LocalDate date) {
