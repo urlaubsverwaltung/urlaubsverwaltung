@@ -25,9 +25,9 @@ final class OvertimeListMapper {
     }
 
     static OvertimeListDto mapToDto(
-        List<Application> overtimeAbsences, List<OvertimeEntity> overtimes,
-        Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime,
-        Person signedInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime, int selectedYear
+            List<Application> overtimeAbsences, List<OvertimeEntity> overtimes,
+            Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime,
+            Person signedInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime, int selectedYear
     ) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
@@ -45,44 +45,44 @@ final class OvertimeListMapper {
     }
 
     private static List<OvertimeListRecordDto> orderedOvertimesAndAbsences(
-        List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Person signInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime
+            List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Person signInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime
     ) {
         return concat(byOvertimes(overtimes, isUserIsAllowedToEditOvertime), byAbsences(overtimeAbsences, signInUser))
-            .sorted(comparing(OvertimeListRecordDto::getStartDate))
-            .toList();
+                .sorted(comparing(OvertimeListRecordDto::getStartDate))
+                .toList();
     }
 
     private static Stream<OvertimeListRecordDto> byAbsences(List<Application> overtimeAbsences, Person signInUser) {
         return overtimeAbsences.stream()
-            .map(application -> new OvertimeListRecordDto(
-                application.getId(),
-                application.getStartDate(),
-                application.getEndDate(),
-                application.getHours().negated(),
-                application.getHoursByYear().entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> entry.getValue().negated())),
-                Duration.ZERO,
-                application.getStatus().name(),
-                application.getVacationType().getColor().name(),
-                ABSENCE.name(),
-                application.getPerson().equals(signInUser) && application.hasStatus(WAITING))
-            );
+                .map(application -> new OvertimeListRecordDto(
+                        application.getId(),
+                        application.getStartDate(),
+                        application.getEndDate(),
+                        application.getHours().negated(),
+                        application.getHoursByYear().entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> entry.getValue().negated())),
+                        Duration.ZERO,
+                        application.getStatus().name(),
+                        application.getVacationType().getColor().name(),
+                        ABSENCE.name(),
+                        application.getPerson().equals(signInUser) && application.hasStatus(WAITING))
+                );
     }
 
     private static Stream<OvertimeListRecordDto> byOvertimes(List<OvertimeEntity> overtimes, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime) {
         return overtimes.stream()
-            .map(overtime ->
-                new OvertimeListRecordDto(
-                    overtime.getId(),
-                    overtime.getStartDate(),
-                    overtime.getEndDate(),
-                    overtime.getDuration(),
-                    overtime.getDurationByYear(),
-                    Duration.ZERO,
-                    "",
-                    "",
-                    OVERTIME.name(),
-                    isUserIsAllowedToEditOvertime.test(overtime)
-                )
-            );
+                .map(overtime ->
+                        new OvertimeListRecordDto(
+                                overtime.getId(),
+                                overtime.getStartDate(),
+                                overtime.getEndDate(),
+                                overtime.getDuration(),
+                                overtime.getDurationByYear(),
+                                Duration.ZERO,
+                                "",
+                                "",
+                                OVERTIME.name(),
+                                isUserIsAllowedToEditOvertime.test(overtime)
+                        )
+                );
     }
 }

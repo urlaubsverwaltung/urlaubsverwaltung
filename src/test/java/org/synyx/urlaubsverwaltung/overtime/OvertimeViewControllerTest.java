@@ -113,9 +113,9 @@ class OvertimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/overtime").param("person", "1337"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
-            .andExpect(model().attribute("person", overtimePerson))
-            .andExpect(view().name("overtime/overtime_form"));
+                .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
+                .andExpect(model().attribute("person", overtimePerson))
+                .andExpect(view().name("overtime/overtime_form"));
 
         verify(validator).validate(any(OvertimeFormDto.class), any(Errors.class));
     }
@@ -143,8 +143,8 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         perform(post("/web/overtime/5").param("person.id", "1"))
-            .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
-            .andExpect(view().name("overtime/overtime_form"));
+                .andExpect(model().attribute("overtime", instanceOf(OvertimeFormDto.class)))
+                .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
@@ -155,8 +155,8 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/overtime"))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime?person=5"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime?person=5"));
     }
 
     @Test
@@ -171,8 +171,8 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/overtime").param("person", "5"))
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)));
     }
 
     @Test
@@ -187,8 +187,8 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/overtime").param("person", "5"))
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(false)));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(false)));
     }
 
     @Test
@@ -225,22 +225,22 @@ class OvertimeViewControllerTest {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, activeStatuses(), OVERTIME))
-            .thenReturn(List.of(applicationNonEditable));
+                .thenReturn(List.of(applicationNonEditable));
 
         perform(get("/web/overtime").param("person", "5"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_list"))
-            .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
-            .andExpect(model().attribute("selectedYear", is(Year.now(clock).getValue())))
-            .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
-            .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)))
-            .andExpect(model().attribute("records", hasItems(
-                new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true),
-                new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(), applicationNonEditable.getEndDate(), ofHours(-8), null, ofHours(2), "WAITING", "ORANGE", "ABSENCE", false)
-            )));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_list"))
+                .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
+                .andExpect(model().attribute("selectedYear", is(Year.now(clock).getValue())))
+                .andExpect(model().attribute("person", is(person)))
+                .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
+                .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
+                .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+                .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)))
+                .andExpect(model().attribute("records", hasItems(
+                        new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true),
+                        new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(), applicationNonEditable.getEndDate(), ofHours(-8), null, ofHours(2), "WAITING", "ORANGE", "ABSENCE", false)
+                )));
     }
 
     @Test
@@ -267,20 +267,20 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-            overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", true);
+                overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", true);
 
         perform(get("/web/overtime")
-            .param("person", "5")
-            .param("year", "2012"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_list"))
-            .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
-            .andExpect(model().attribute("selectedYear", is(2012)))
-            .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("overtimeTotalLastYear", is(ofHours(10))))
-            .andExpect(model().attribute("records", hasItem(listRecordDto)));
+                .param("person", "5")
+                .param("year", "2012"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_list"))
+                .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
+                .andExpect(model().attribute("selectedYear", is(2012)))
+                .andExpect(model().attribute("person", is(person)))
+                .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
+                .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+                .andExpect(model().attribute("overtimeTotalLastYear", is(ofHours(10))))
+                .andExpect(model().attribute("records", hasItem(listRecordDto)));
     }
 
     @Test
@@ -297,7 +297,7 @@ class OvertimeViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(get("/web/overtime").param("person", "5")))
-            .hasCause(new AccessDeniedException("User '1' has not the correct permissions to see overtime records of user '5'"));
+                .hasCause(new AccessDeniedException("User '1' has not the correct permissions to see overtime records of user '5'"));
     }
 
     @Test
@@ -331,15 +331,15 @@ class OvertimeViewControllerTest {
         final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getId(), comment.getPerson().getNiceName(), comment.getPerson().getInitials(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText());
 
         perform(get("/web/overtime/2"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_details"))
-            .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
-            .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToUpdateOvertime", is(true)))
-            .andExpect(model().attribute("record", is(record)))
-            .andExpect(model().attribute("comments", hasItem(commentDto)))
-            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_details"))
+                .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
+                .andExpect(model().attribute("overtimeTotal", is(ofHours(1))))
+                .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+                .andExpect(model().attribute("userIsAllowedToUpdateOvertime", is(true)))
+                .andExpect(model().attribute("record", is(record)))
+                .andExpect(model().attribute("comments", hasItem(commentDto)))
+                .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
     }
 
     @Test
@@ -360,7 +360,7 @@ class OvertimeViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2")))
-            .hasCause(new AccessDeniedException("User '1' has not the correct permissions to see overtime records of user '5'"));
+                .hasCause(new AccessDeniedException("User '1' has not the correct permissions to see overtime records of user '5'"));
     }
 
     @Test
@@ -378,11 +378,11 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "5"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
-            .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
+                .andExpect(model().attribute("person", is(person)))
+                .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -397,7 +397,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToCreateOvertime(person, person)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/new").param("person", "5")))
-            .hasCause(new AccessDeniedException("User '5' has not the correct permissions to record overtime for user '5'"));
+                .hasCause(new AccessDeniedException("User '5' has not the correct permissions to record overtime for user '5'"));
     }
 
     @Test
@@ -411,9 +411,9 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))));
     }
 
     @Test
@@ -428,7 +428,7 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/new").param("person", "5")))
-            .hasCause(new AccessDeniedException("User '1' has not the correct permissions to record overtime for user '5'"));
+                .hasCause(new AccessDeniedException("User '1' has not the correct permissions to record overtime for user '5'"));
     }
 
     @Test
@@ -452,10 +452,10 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "1"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
-            .andExpect(model().attribute("persons", is(activePersons)));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
+                .andExpect(model().attribute("persons", is(activePersons)));
     }
 
     @Test
@@ -479,10 +479,10 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "1"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
-            .andExpect(model().attribute("persons", is(activePersons)));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
+                .andExpect(model().attribute("persons", is(activePersons)));
     }
 
     @Test
@@ -504,11 +504,11 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
-            .andExpect(model().attribute("person", is(overtimePerson)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("overtime", is(instanceOf(OvertimeFormDto.class))))
+                .andExpect(model().attribute("person", is(overtimePerson)))
+                .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -527,7 +527,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
-            .hasCause(new AccessDeniedException("User '5' has not the correct permissions to edit overtime record of user '5'"));
+                .hasCause(new AccessDeniedException("User '5' has not the correct permissions to edit overtime record of user '5'"));
     }
 
     @Test
@@ -547,7 +547,7 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
-            .hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '5'"));
+                .hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '5'"));
     }
 
     @Test
@@ -569,9 +569,9 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         perform(get("/web/overtime/2/edit"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"))
-            .andExpect(model().attribute("canAddOvertimeForAnotherUser", true));
+                .andExpect(status().isOk())
+                .andExpect(view().name("overtime/overtime_form"))
+                .andExpect(model().attribute("canAddOvertimeForAnotherUser", true));
     }
 
     @Test
@@ -586,8 +586,8 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("overtimeReductionPossible", is(false)));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("overtimeReductionPossible", is(false)));
     }
 
     @Test
@@ -603,18 +603,18 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         );
 
         resultActions
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @ParameterizedTest
@@ -631,18 +631,18 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", givenDate)
-                .param("endDate", givenDate)
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", givenDate)
+                        .param("endDate", givenDate)
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         );
 
         resultActions
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
@@ -663,18 +663,18 @@ class OvertimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         final ResultActions resultActions = perform(
-            post("/web/overtime")
-                .param("person.id", "1")
-                .param("startDate", "02.07.2021")
-                .param("endDate", "02.07.2021")
-                .param("hours", "8")
-                .param("reduce", "true")
+                post("/web/overtime")
+                        .param("person.id", "1")
+                        .param("startDate", "02.07.2021")
+                        .param("endDate", "02.07.2021")
+                        .param("hours", "8")
+                        .param("reduce", "true")
         );
 
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("overtimeReductionPossible", is(false)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("overtimeReductionPossible", is(false)))
+                .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -687,12 +687,12 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '4' has not the correct permissions to record overtime for user '4'"));
     }
 
@@ -709,15 +709,15 @@ class OvertimeViewControllerTest {
         when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "18.12.2020")
-                .param("endDate", "18.12.2020")
-                .param("hours", "-8")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "18.12.2020")
+                        .param("endDate", "18.12.2020")
+                        .param("hours", "-8")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
@@ -733,15 +733,15 @@ class OvertimeViewControllerTest {
         when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
         perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "18.12.2020")
-                .param("endDate", "18.12.2020")
-                .param("minutes", "-30")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "18.12.2020")
+                        .param("endDate", "18.12.2020")
+                        .param("minutes", "-30")
         )
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
@@ -755,12 +755,12 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4L);
 
         assertThatThrownBy(() -> perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '1' has not the correct permissions to record overtime for user '4'"));
     }
 
@@ -780,18 +780,18 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
-            post("/web/overtime")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         );
 
         resultActions
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @ParameterizedTest
@@ -809,19 +809,19 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
 
         final ResultActions resultActions = perform(
-            post("/web/overtime/2")
-                .param("id", "2")
-                .param("person.id", "4")
-                .param("startDate", givenDate)
-                .param("endDate", givenDate)
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime/2")
+                        .param("id", "2")
+                        .param("person.id", "4")
+                        .param("startDate", givenDate)
+                        .param("endDate", givenDate)
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         );
 
         resultActions
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "EDITED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "EDITED"));
     }
 
     @Test
@@ -841,8 +841,8 @@ class OvertimeViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("overtimeReductionPossible", is(false)));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("overtimeReductionPossible", is(false)));
     }
 
     @Test
@@ -868,17 +868,17 @@ class OvertimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         final ResultActions resultActions = perform(
-            post("/web/overtime/2")
-                .param("person.id", "1")
-                .param("startDate", "02.07.2021")
-                .param("endDate", "02.07.2021")
-                .param("hours", "8")
-                .param("reduce", "true")
+                post("/web/overtime/2")
+                        .param("person.id", "1")
+                        .param("startDate", "02.07.2021")
+                        .param("endDate", "02.07.2021")
+                        .param("hours", "8")
+                        .param("reduce", "true")
         );
         resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("overtimeReductionPossible", is(false)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("overtimeReductionPossible", is(false)))
+                .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -896,13 +896,13 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(
-            post("/web/overtime/2")
-                .param("id", "2")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime/2")
+                        .param("id", "2")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '4' has not the correct permissions to edit overtime record of user '4'"));
     }
 
@@ -920,13 +920,13 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
 
         assertThatThrownBy(() -> perform(
-            post("/web/overtime/2")
-                .param("id", "2")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime/2")
+                        .param("id", "2")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '4'"));
     }
 
@@ -946,19 +946,19 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, overtimePerson, overtime)).thenReturn(true);
 
         final ResultActions resultActions = perform(
-            post("/web/overtime/2")
-                .param("id", "2")
-                .param("person.id", "4")
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime/2")
+                        .param("id", "2")
+                        .param("person.id", "4")
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         );
 
         resultActions
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/overtime/2"))
-            .andExpect(flash().attribute("overtimeRecord", "EDITED"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/web/overtime/2"))
+                .andExpect(flash().attribute("overtimeRecord", "EDITED"));
     }
 
     @Test
@@ -977,13 +977,13 @@ class OvertimeViewControllerTest {
 
         final String otherPersonId = "5";
         assertThatThrownBy(() -> perform(
-            post("/web/overtime/2")
-                .param("id", "2")
-                .param("person.id", otherPersonId)
-                .param("startDate", "02.07.2019")
-                .param("endDate", "02.07.2019")
-                .param("hours", "8")
-                .param("comment", "To much work")
+                post("/web/overtime/2")
+                        .param("id", "2")
+                        .param("person.id", otherPersonId)
+                        .param("startDate", "02.07.2019")
+                        .param("endDate", "02.07.2019")
+                        .param("hours", "8")
+                        .param("comment", "To much work")
         )).hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '4'"));
     }
 
@@ -991,7 +991,7 @@ class OvertimeViewControllerTest {
     void addCommentWithUnknownOvertimeIdThrowsUnknownOvertimeForLeaveException() {
 
         assertThatThrownBy(() ->
-            perform(post("/web/overtime/12345/comment"))
+                perform(post("/web/overtime/12345/comment"))
         ).hasCauseInstanceOf(UnknownOvertimeException.class);
     }
 
@@ -1013,7 +1013,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToAddOvertimeComment(signedInPerson, overtimePerson)).thenReturn(false);
 
         assertThatThrownBy(() ->
-            perform(post("/web/overtime/2/comment"))
+                perform(post("/web/overtime/2/comment"))
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
@@ -1035,11 +1035,11 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToAddOvertimeComment(signedInPerson, overtimePerson)).thenReturn(true);
 
         perform(
-            post("/web/overtime/2/comment")
-                .param("text", "comment")
+                post("/web/overtime/2/comment")
+                        .param("text", "comment")
         )
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/overtime/2"));
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/web/overtime/2"));
 
         verify(overtimeService).saveComment(overtime, COMMENTED, "comment", signedInPerson);
     }
