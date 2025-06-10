@@ -121,9 +121,9 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
 
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
         final BigDecimal secondsProRata = toFormattedDecimal(duration)
-            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-            .multiply(toFormattedDecimal(durationOfOverlap))
-            .setScale(0, HALF_EVEN);
+                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+                .multiply(toFormattedDecimal(durationOfOverlap))
+                .setScale(0, HALF_EVEN);
 
         return DecimalConverter.toDuration(secondsProRata);
     }
@@ -152,14 +152,14 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
 
     public Map<Integer, Duration> getDurationByYear() {
         return this.splitByYear().stream()
-            .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
+                .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
     }
 
     public Duration getTotalDurationBefore(int year) {
         return this.getDurationByYear().entrySet().stream()
-            .filter(entry -> entry.getKey() < year)
-            .map(Map.Entry::getValue)
-            .reduce(ZERO, Duration::plus);
+                .filter(entry -> entry.getKey() < year)
+                .map(Map.Entry::getValue)
+                .reduce(ZERO, Duration::plus);
     }
 
     public void setPerson(Person person) {
@@ -204,13 +204,13 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
     @Override
     public String toString() {
         return "OvertimeEntity{" +
-            "id=" + getId() +
-            ", startDate=" + startDate +
-            ", endDate=" + endDate +
-            ", duration=" + duration +
-            ", external=" + external +
-            ", person=" + person +
-            "}";
+                "id=" + getId() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", duration=" + duration +
+                ", external=" + external +
+                ", person=" + person +
+                "}";
     }
 
     @Override
