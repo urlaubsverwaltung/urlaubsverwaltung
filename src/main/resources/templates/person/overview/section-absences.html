@@ -181,9 +181,12 @@
                     th:text="${app.vacationType.label}"
                   ></span>
                   <span class="tw-block tw-text-[#444444] dark:tw-text-zinc-200">
+                    <th:block th:text="#{absence.period.for}" />
                     <th:block th:if="${app.startDate == app.endDate}">
-                      <th:block th:text="|${#messages.msg(app.weekDayOfStartDate + '.short')}|"></th:block>,
-                      <th:block th:replace="~{fragments/date::date(${app.startDate})}"></th:block>,
+                      <th:block
+                        th:replace="~{fragments/date::date(date=${app.startDate}, pattern='EEEE, dd.MM.yyyy')}"
+                      ></th:block
+                      >,
                       <th:block
                         th:if="${app.startTime != null && app.endTime != null}"
                         th:with="APPLICATION_START_TIME=${#temporals.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#temporals.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
@@ -196,7 +199,7 @@
                     </th:block>
                     <th:block th:if="${app.startDate != app.endDate}">
                       <th:block
-                        th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')}"
+                        th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='EEEE, dd.MM.yyyy')}"
                       ></th:block>
                     </th:block>
                   </span>

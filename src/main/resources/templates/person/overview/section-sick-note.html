@@ -155,6 +155,7 @@
                   th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
                 ></span>
                 <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
+                  <th:block th:text="#{absence.period.for}" />
                   <th:block
                     th:replace="~{fragments/date-range::date-range-all(
                     from=${sickNote.startDate},
