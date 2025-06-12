@@ -53,16 +53,13 @@
               </span>
               <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
                 <th:block th:text="#{absence.period.for}" />
-                <th:block th:if="${app.startDate == app.endDate}">
-                  <th:block th:text="|${#messages.msg(app.weekDayOfStartDate + '.short')}|"></th:block>,
-                  <th:block th:replace="~{fragments/date::date(${app.startDate})}"></th:block>,&nbsp;
-                  <th:block th:text="${#messages.msg(app.dayLength)}"></th:block>
-                </th:block>
-                <th:block th:if="${app.startDate != app.endDate}">
-                  <span
-                    th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')}"
-                  ></span>
-                </th:block>
+                <th:block
+                  th:replace="~{fragments/date-range::date-range-all(
+                    from=${app.startDate},
+                    to=${app.endDate},
+                    dayLength=${app.dayLength}
+                  )}"
+                ></th:block>
               </span>
             </th:block>
           </div>

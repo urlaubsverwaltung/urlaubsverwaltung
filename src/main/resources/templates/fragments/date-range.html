@@ -11,5 +11,19 @@
       th:text="#{date.range(${#temporals.format(from, pattern)}, ${#temporals.format(to, pattern)})}"
     >
     </th:block>
+    <th:block
+      th:fragment="date-range-all(from, to)"
+      th:with="dayLength=${dayLength == null ? null : #messages.msg(dayLength)}"
+    >
+      <th:block th:if="${from == to}">
+        <th:block th:replace="~{fragments/date::date(date=${from}, pattern='EEEE, dd.MM.yyyy')}"></th:block
+        ><th:block th:if="${dayLength != null}" th:text="${', ' + dayLength}"></th:block>
+      </th:block>
+      <th:block th:if="${from != to}">
+        <th:block
+          th:text="#{date.range(${#temporals.format(from, 'EEEE, dd.MM.yyyy')}, ${#temporals.format(to, 'EEEE, dd.MM.yyyy')})}"
+        ></th:block>
+      </th:block>
+    </th:block>
   </body>
 </html>

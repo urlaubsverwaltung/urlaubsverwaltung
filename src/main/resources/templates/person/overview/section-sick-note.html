@@ -155,16 +155,14 @@
                   th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
                 ></span>
                 <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
-                  <th:block th:if="${sickNote.startDate == sickNote.endDate}">
-                    <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                    <th:block th:replace="~{fragments/date::date(${sickNote.startDate})}"></th:block>,&nbsp;
-                    <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
-                  </th:block>
-                  <th:block th:if="${sickNote.startDate != sickNote.endDate}">
-                    <span
-                      th:replace="~{fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')}"
-                    ></span>
-                  </th:block>
+                  <th:block th:text="#{absence.period.for}" />
+                  <th:block
+                    th:replace="~{fragments/date-range::date-range-all(
+                    from=${sickNote.startDate},
+                    to=${sickNote.endDate},
+                    dayLength=${sickNote.dayLength}
+                  )}"
+                  ></th:block>
                 </span>
                 <span
                   th:if="${sickNote.aubPresent}"

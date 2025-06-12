@@ -77,8 +77,12 @@
                 >
                 </span>
                 <span class="tw-text-sm">
+                  <th:block th:text="#{absence.period.for}" />
                   <th:block
-                    th:replace="~{fragments/date-range::date-range(${record.startDate}, ${record.endDate})}"
+                    th:replace="~{fragments/date-range::date-range-all(
+                    from=${record.startDate},
+                    to=${record.endDate}
+                  )}"
                   ></th:block>
                 </span>
               </th:block>
