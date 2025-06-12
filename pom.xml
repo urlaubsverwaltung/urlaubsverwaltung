@@ -326,7 +326,6 @@
             <env>
               <BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>120%</BPE_DEFAULT_BPL_JVM_CLASS_ADJUSTMENT>
             </env>
-            <builder>paketobuildpacks/builder-jammy-base</builder>
           </image>
           <docker>
             <publishRegistry>
