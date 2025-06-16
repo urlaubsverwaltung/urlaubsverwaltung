@@ -42,7 +42,7 @@ class DepartmentDataProvider {
             department.setLastModification(now);
             departmentService.create(department);
         } else {
-            LOG.info("department with name={} already exists - nothing todo", name);
+            LOG.info("department with name={} already exists - nothing to do", name);
         }
     }
 
@@ -59,7 +59,7 @@ class DepartmentDataProvider {
             department.setMembers(addPersonToList(person, members));
             departmentService.update(department);
         } else {
-            LOG.info("person.id={} already member of department with name={} - nothing todo!", person.getId(), departmentName);
+            LOG.info("person.id={} already member of department with name={} - nothing to do!", person.getId(), departmentName);
         }
     }
 
@@ -76,7 +76,7 @@ class DepartmentDataProvider {
             department.setDepartmentHeads(addPersonToList(person, departmentHeads));
             departmentService.update(department);
         } else {
-            LOG.info("person.id={} already departmentHeads of department with name={} - nothing todo!", person.getId(), departmentName);
+            LOG.info("person.id={} already departmentHeads of department with name={} - nothing to do!", person.getId(), departmentName);
         }
     }
 
@@ -94,7 +94,7 @@ class DepartmentDataProvider {
             department.setTwoStageApproval(true);
             departmentService.update(department);
         } else {
-            LOG.info("person.id={} already secondStageAuthority of department with name={} - nothing todo!", person.getId(), departmentName);
+            LOG.info("person.id={} already secondStageAuthority of department with name={} - nothing to do!", person.getId(), departmentName);
         }
     }
 
