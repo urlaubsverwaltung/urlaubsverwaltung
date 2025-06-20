@@ -43,6 +43,8 @@ spring:
       enabled: true
 
 server:
+  tomcat:
+    max-part-count: 50
   compression:
     min-response-size: 1024
     enabled: true

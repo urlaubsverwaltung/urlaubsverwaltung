@@ -54,6 +54,10 @@ spring:
     virtual:
       enabled: true
 
+server:
+  tomcat:
+    max-part-count: 50
+
 info:
   app:
     name: "@project.name@"
