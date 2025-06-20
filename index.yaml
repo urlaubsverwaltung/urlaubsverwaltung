@@ -3,14 +3,14 @@ entries:
   urlaubsverwaltung:
   - apiVersion: v2
     appVersion: 5.27.1
-    created: "2025-06-16T07:47:48.581651845Z"
+    created: "2025-06-20T07:54:30.700019033Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
       repository: https://charts.bitnami.com/bitnami
       version: 12.12.10
     description: Helm Chart for the urlaubsverwaltung
-    digest: 126d3d85a4386f7d3e7505f9b6a9333dd3cf0870a499efd08c812f036a1417d5
+    digest: 1284099d6327c904133c836e74110457e5ceb8722fcf902db7546417b66d7738
     home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
     keywords:
     - urlaub
@@ -1878,4 +1878,4 @@ entries:
     urls:
     - https://urlaubsverwaltung.github.io/urlaubsverwaltung/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-16T07:47:48.575349049Z"
+generated: "2025-06-20T07:54:30.694770422Z"
