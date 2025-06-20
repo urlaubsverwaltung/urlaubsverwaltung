@@ -73,7 +73,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensurePersistsOvertimeAndComment() {
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         final Person author = new Person();
 
         sut.save(overtime, Optional.of("Foo Bar"), author);
@@ -86,10 +86,10 @@ class OvertimeServiceImplTest {
     void ensureRecordingUpdatesLastModificationDate() {
 
         final Person author = new Person();
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        final Overtime savedOvertime = sut.save(overtime, Optional.empty(), author);
+        final OvertimeEntity savedOvertime = sut.save(overtime, Optional.empty(), author);
         assertThat(savedOvertime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
     }
 
@@ -98,7 +98,7 @@ class OvertimeServiceImplTest {
 
         final Person author = new Person();
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(author);
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
@@ -121,7 +121,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setId(2L);
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(person);
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
@@ -138,7 +138,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureCreatesCommentWithCorrectActionForNewOvertime() {
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         final Person author = new Person();
 
         sut.save(overtime, Optional.empty(), author);
@@ -154,7 +154,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setId(1L);
         final Person author = new Person();
 
@@ -172,7 +172,7 @@ class OvertimeServiceImplTest {
 
         final Person author = new Person();
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
         sut.save(overtime, Optional.empty(), author);
@@ -191,7 +191,7 @@ class OvertimeServiceImplTest {
 
         final Person author = new Person();
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
         sut.save(overtime, Optional.of("Foo"), author);
@@ -219,7 +219,7 @@ class OvertimeServiceImplTest {
 
         when(overtimeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        final Optional<Overtime> maybeOvertime = sut.getOvertimeById(42L);
+        final Optional<OvertimeEntity> maybeOvertime = sut.getOvertimeById(42L);
         assertThat(maybeOvertime).isEmpty();
     }
 
@@ -227,7 +227,7 @@ class OvertimeServiceImplTest {
     @Test
     void ensureGetCommentsCorrectDAOMethod() {
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         sut.getCommentsForOvertime(overtime);
 
         verify(overtimeCommentRepository).findByOvertimeOrderByIdDesc(overtime);
@@ -251,8 +251,8 @@ class OvertimeServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Overtime overtimeRecord = new Overtime(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(1));
-        final Overtime otherOvertimeRecord = new Overtime(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(10));
+        final OvertimeEntity overtimeRecord = new OvertimeEntity(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(1));
+        final OvertimeEntity otherOvertimeRecord = new OvertimeEntity(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(10));
 
         final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
         final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
@@ -267,8 +267,8 @@ class OvertimeServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Overtime overtime = new Overtime(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(10));
-        final Overtime overtime2 = new Overtime(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(4));
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(10));
+        final OvertimeEntity overtime2 = new OvertimeEntity(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(4));
 
         final LocalDate firstDayOfYear = LocalDate.of(2017, 1, 1);
         final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
@@ -452,7 +452,7 @@ class OvertimeServiceImplTest {
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, false, true));
 
-        final Overtime overtime = new Overtime(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), true);
+        final OvertimeEntity overtime = new OvertimeEntity(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), true);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtime)).isFalse();
     }
@@ -466,7 +466,7 @@ class OvertimeServiceImplTest {
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, false, false));
 
-        final Overtime overtime = new Overtime(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtime)).isFalse();
     }
@@ -480,7 +480,7 @@ class OvertimeServiceImplTest {
         final Person personOfOvertime = new Person();
         when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly, true, false));
 
-        final Overtime overtime = new Overtime(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtime)).isTrue();
     }
@@ -493,7 +493,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        final Overtime overtime = new Overtime(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(person, person, overtime)).isFalse();
     }
@@ -507,7 +507,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        final Overtime overtime = new Overtime(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(person, person, overtime)).isTrue();
     }
@@ -521,7 +521,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(false, true, false));
 
-        final Overtime overtime = new Overtime(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(person, person, overtime)).isTrue();
     }
@@ -536,7 +536,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(false, true, false));
 
-        final Overtime overtime = new Overtime(other, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(other, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(person, other, overtime)).isFalse();
     }
@@ -551,7 +551,7 @@ class OvertimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true, true, false));
 
-        final Overtime overtime = new Overtime(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
+        final OvertimeEntity overtime = new OvertimeEntity(personOfOvertime, LocalDate.now(clock), LocalDate.now(clock), Duration.ofHours(1), false);
 
         assertThat(sut.isUserIsAllowedToUpdateOvertime(signedInUser, personOfOvertime, overtime)).isTrue();
     }
@@ -654,25 +654,25 @@ class OvertimeServiceImplTest {
 
         final List<Person> persons = List.of(person, person2);
 
-        final Overtime overtimeOne = new Overtime();
+        final OvertimeEntity overtimeOne = new OvertimeEntity();
         overtimeOne.setPerson(person);
         overtimeOne.setStartDate(from);
         overtimeOne.setEndDate(from.plusDays(1));
         overtimeOne.setDuration(Duration.ofHours(1));
 
-        final Overtime overtimeOneOne = new Overtime();
+        final OvertimeEntity overtimeOneOne = new OvertimeEntity();
         overtimeOneOne.setPerson(person);
         overtimeOneOne.setStartDate(to.plusDays(1));
         overtimeOneOne.setEndDate(to.plusDays(1));
         overtimeOneOne.setDuration(Duration.ofHours(1));
 
-        final Overtime overtimeTwo = new Overtime();
+        final OvertimeEntity overtimeTwo = new OvertimeEntity();
         overtimeTwo.setPerson(person2);
         overtimeTwo.setStartDate(from.plusDays(4));
         overtimeTwo.setEndDate(from.plusDays(4));
         overtimeTwo.setDuration(Duration.ofHours(10));
 
-        final Overtime overtimeThree = new Overtime();
+        final OvertimeEntity overtimeThree = new OvertimeEntity();
         overtimeThree.setPerson(person2);
         overtimeThree.setStartDate(to.plusDays(4));
         overtimeThree.setEndDate(to.plusDays(4));
@@ -713,25 +713,25 @@ class OvertimeServiceImplTest {
 
         final List<Person> persons = List.of(person, person2);
 
-        final Overtime overtimeOne = new Overtime();
+        final OvertimeEntity overtimeOne = new OvertimeEntity();
         overtimeOne.setPerson(person);
         overtimeOne.setStartDate(from);
         overtimeOne.setEndDate(from.plusDays(1));
         overtimeOne.setDuration(Duration.ofHours(1));
 
-        final Overtime overtimeOneOne = new Overtime();
+        final OvertimeEntity overtimeOneOne = new OvertimeEntity();
         overtimeOneOne.setPerson(person);
         overtimeOneOne.setStartDate(to.plusDays(1));
         overtimeOneOne.setEndDate(to.plusDays(1));
         overtimeOneOne.setDuration(Duration.ofHours(1));
 
-        final Overtime overtimeTwo = new Overtime();
+        final OvertimeEntity overtimeTwo = new OvertimeEntity();
         overtimeTwo.setPerson(person2);
         overtimeTwo.setStartDate(from.plusDays(4));
         overtimeTwo.setEndDate(from.plusDays(4));
         overtimeTwo.setDuration(Duration.ofHours(10));
 
-        final Overtime overtimeTwoTwo = new Overtime();
+        final OvertimeEntity overtimeTwoTwo = new OvertimeEntity();
         overtimeTwoTwo.setPerson(person2);
         overtimeTwoTwo.setStartDate(to.plusDays(4));
         overtimeTwoTwo.setEndDate(to.plusDays(4));
@@ -820,7 +820,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setId(1L);
 
-        final Overtime overtime = new Overtime();
+        final OvertimeEntity overtime = new OvertimeEntity();
         overtime.setPerson(person);
         overtime.setStartDate(from);
         overtime.setEndDate(to);
@@ -846,7 +846,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setId(1L);
 
-        final Overtime overtime = new Overtime(person, date, date, Duration.ofHours(1), true);
+        final OvertimeEntity overtime = new OvertimeEntity(person, date, date, Duration.ofHours(1), true);
         when(overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date)).thenReturn(Optional.of(overtime));
 
         sut.getExternalOvertimeByDate(date, person.getId());

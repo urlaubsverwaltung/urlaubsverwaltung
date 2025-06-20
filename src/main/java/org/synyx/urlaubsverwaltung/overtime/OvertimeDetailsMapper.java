@@ -1,7 +1,5 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -13,7 +11,7 @@ class OvertimeDetailsMapper {
         // ok
     }
 
-    static OvertimeDetailsDto mapToDto(Overtime overtime, List<OvertimeComment> comments, Duration totalOvertime, Duration leftOvertime) {
+    static OvertimeDetailsDto mapToDto(OvertimeEntity overtime, List<OvertimeComment> comments, Duration totalOvertime, Duration leftOvertime) {
 
         final Person overtimePerson = overtime.getPerson();
         final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), overtimePerson.isInactive());

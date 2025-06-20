@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Provides possibility to create and fetch {@link Overtime} records.
+ * Provides possibility to create and fetch {@link OvertimeEntity} records.
  *
  * @since 2.11.0
  */
@@ -23,7 +23,7 @@ public interface OvertimeService {
      * @param year   to fetch the overtime records for
      * @return list of matching overtime records
      */
-    List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
+    List<OvertimeEntity> getOvertimeRecordsForPersonAndYear(Person person, int year);
 
     /**
      * Saves an overtime record.
@@ -33,7 +33,7 @@ public interface OvertimeService {
      * @param author   identifies the person that recorded the overtime
      * @return the created overtime record
      */
-    Overtime save(Overtime overtime, Optional<String> comment, Person author);
+    OvertimeEntity save(OvertimeEntity overtime, Optional<String> comment, Person author);
 
     /**
      * Saves a comment for a certain overtime record.
@@ -44,7 +44,7 @@ public interface OvertimeService {
      * @param author   the author of the comment
      * @return the saved comment
      */
-    OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author);
+    OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author);
 
     /**
      * Fetch the overtime record for a certain ID.
@@ -52,7 +52,7 @@ public interface OvertimeService {
      * @param id to get the overtime record by
      * @return overtime record with the given ID or an empty optional if no entry found for the given ID
      */
-    Optional<Overtime> getOvertimeById(Long id);
+    Optional<OvertimeEntity> getOvertimeById(Long id);
 
     /**
      * Fetch the comments for a certain overtime record.
@@ -60,7 +60,7 @@ public interface OvertimeService {
      * @param overtime to get the comments for
      * @return comments to the given overtime record
      */
-    List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
+    List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime);
 
     /**
      * Get the total duration of all overtime records of the given person and year.
@@ -128,7 +128,7 @@ public interface OvertimeService {
      * @param overtime         overtime to update
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
-    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime);
+    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, OvertimeEntity overtime);
 
     /**
      * Is signedInUser allowed to add an overtime comment records of given personOfOvertime.
@@ -145,14 +145,14 @@ public interface OvertimeService {
      * @param personId id of the given person
      * @return all overtime hours of the given person
      */
-    List<Overtime> getAllOvertimesByPersonId(Long personId);
+    List<OvertimeEntity> getAllOvertimesByPersonId(Long personId);
 
     /**
      * Get external overtime record if exists, otherwise return optional empty
      *
-     * @param date date of overtime record
+     * @param date     date of overtime record
      * @param personId of person overtime was recorded
      * @return overtime record if exists, otherwise return optional empty
      */
-    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId);
+    Optional<OvertimeEntity> getExternalOvertimeByDate(LocalDate date, Long personId);
 }
