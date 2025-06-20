@@ -1133,7 +1133,7 @@
     "auth" : "",
     "port" : "1025",
     "replyTo" : "",
-    "host" : "mailhog",
+    "host" : "mailpit",
     "from" : "no-reply@example.org",
     "fromDisplayName" : "Urlaubsverwaltung",
     "envelopeFrom" : "",
