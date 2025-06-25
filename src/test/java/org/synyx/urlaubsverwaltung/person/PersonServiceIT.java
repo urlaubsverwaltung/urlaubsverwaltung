@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -111,7 +111,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
 
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 
-        final Overtime overtimeRecord = overtimeService.save(new Overtime(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
+        final OvertimeEntity overtimeRecord = overtimeService.save(new OvertimeEntity(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
 
         final Department department = new Department();
         department.setName("department");
