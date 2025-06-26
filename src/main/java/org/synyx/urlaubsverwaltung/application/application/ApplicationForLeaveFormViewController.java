@@ -41,8 +41,11 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -459,6 +462,19 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
+        model.addAttribute("timeValues", timeValues());
+    }
+
+    private List<String> timeValues() {
+        LocalDateTime time = LocalDateTime.now().withHour(0).withMinute(0);
+        final int dayOfYear = time.getDayOfYear();
+        final List<String> values = new ArrayList<>();
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        while (dayOfYear == time.getDayOfYear()) {
+            values.add(formatter.format(time));
+            time = time.plusMinutes(15);
+        }
+        return values;
     }
 
     private VacationType<?> findVacationType(Collection<VacationType<?>> vacationTypes, Long id) {
