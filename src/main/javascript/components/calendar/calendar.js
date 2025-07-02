@@ -445,13 +445,13 @@ const View = (function () {
         dayButton.addEventListener("closePopper", hide);
       }
 
-      // Close all poppers when clicking outside
       const calendarContainer = document.querySelector(`.calendar-container`);
       calendarContainer.addEventListener("closeAllPoppers", (event) => {
         const except = event.detail.except;
         closeAllExcept(except);
       });
-      calendarContainer.addEventListener("click", () => {
+      // Close all poppers when clicking outside
+      document.body.addEventListener("click", () => {
         closeAllExcept([]);
       });
 
