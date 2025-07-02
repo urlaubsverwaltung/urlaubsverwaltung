@@ -288,7 +288,7 @@ const View = (function () {
 
     function style() {
       // could be morning=sick and noon=vacation
-      const [fullAbsence, morningAbsence, noonAbsence] = holidayService.getPersonalAbsencesOfType(date);
+      const [fullAbsence, morningAbsence, noonAbsence] = holidayService.getPersonalAbsences(date);
 
       return [
         fullAbsence ? `--absence-bar-color:${color(fullAbsence)}` : ``,
@@ -362,7 +362,7 @@ const View = (function () {
   function renderPopover(date) {
     let content = "";
 
-    const [full, morning, noon] = holidayService.getPersonalAbsencesOfType(date);
+    const [full, morning, noon] = holidayService.getPersonalAbsences(date);
 
     if (holidayService.isPersonalAbsenceFull(date)) {
       content = renderPopoverAbsenceContent(full);
@@ -448,18 +448,18 @@ const View = (function () {
       const calendarContainer = document.querySelector(`.calendar-container`);
       calendarContainer.addEventListener("closeAllPoppers", (event) => {
         const except = event.detail.except;
-        closeAllExcept(except);
+        this.closeAllExcept(except);
       });
       // Close all poppers when clicking outside
       document.body.addEventListener("click", () => {
-        closeAllExcept([]);
+        this.closeAllExcept([]);
       });
+    },
 
-      function closeAllExcept(except) {
-        for (const dayButton of daysWithPopover) {
-          if (!except.includes(dayButton)) {
-            dayButton.dispatchEvent(new Event("closePopper"));
-          }
+    closeAllExcept: function (except) {
+      for (const dayButton of daysWithPopover) {
+        if (!except.includes(dayButton)) {
+          dayButton.dispatchEvent(new Event("closePopper"));
         }
       }
     },
