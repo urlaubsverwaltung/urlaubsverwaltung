@@ -1,354 +1,348 @@
-/**************************************************************************
+@reference "tailwindcss";
+@config "../../../../tailwind.config.js";
 
-  TABLES
+@layer components {
+  /**************************************************************************
 
-**************************************************************************/
+    TABLES
 
-table td {
-  /* allow children to fill full height with `height: 100%` */
-  /* note: this does not work in firefox. use `min-height` on children as 'workaround' additionally to `height` */
-  height: 0;
-}
+  **************************************************************************/
+  table td {
+    /* allow children to fill full height with `height: 100%` */
+    /* note: this does not work in firefox. use `min-height` on children as 'workaround' additionally to `height` */
+    height: 0;
+  }
 
-/**************************************************************************
-  ACTIVE/INACTIVE ROWS
-**************************************************************************/
+  /**************************************************************************
+    ACTIVE/INACTIVE ROWS
+  **************************************************************************/
+  tr.active {
+    /* OK */
+  }
 
-tr.active {
-  /* OK */
-}
+  tr.inactive td > * {
+    opacity: 0.4;
+  }
 
-tr.inactive td > * {
-  opacity: 0.4;
-}
+  /**************************************************************************
+    LIST TABLE
+  **************************************************************************/
+  .list-table {
+    width: 100%;
+    margin-bottom: 27px;
+  }
 
-/**************************************************************************
-  LIST TABLE
-**************************************************************************/
+  .list-table.list-table-bt-0 tr:first-child td {
+    border-top: none;
+  }
 
-.list-table {
-  width: 100%;
-  margin-bottom: 27px;
-}
+  .list-table td {
+    vertical-align: middle !important;
+    padding: 12px;
+    border-top: 1px solid #dddddd;
+    @apply dark:tw-border-zinc-700;
+  }
 
-.list-table.list-table-bt-0 tr:first-child td {
-  border-top: none;
-}
+  .list-table td.number {
+    padding-left: 24px;
+  }
 
-.list-table td {
-  vertical-align: middle !important;
-  padding: 12px;
-  border-top: 1px solid #dddddd;
-  @apply dark:tw-border-zinc-700;
-}
+  .list-table tr:last-child td {
+    border-bottom: 1px solid #dddddd;
+    @apply dark:tw-border-zinc-700;
+  }
 
-.list-table td.number {
-  padding-left: 24px;
-}
+  .list-table th {
+    padding: 8px;
+  }
 
-.list-table tr:last-child td {
-  border-bottom: 1px solid #dddddd;
-  @apply dark:tw-border-zinc-700;
-}
+  .list-table--second-row {
+    margin: 10px 0 0 0;
+  }
 
-.list-table th {
-  padding: 8px;
-}
+  /**************************************************************************
+    STRIPED TABLE
+  **************************************************************************/
+  .striped-table tr td {
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
+  }
 
-.list-table--second-row {
-  margin: 10px 0 0 0;
-}
+  .striped-table tr:nth-child(even) td {
+    @apply tw-bg-zinc-50;
+    @apply dark:tw-bg-zinc-800;
+  }
 
-/**************************************************************************
-  STRIPED TABLE
-**************************************************************************/
+  /**************************************************************************
+    BORDERED TABLE
+  **************************************************************************/
+  .bordered-table tbody {
+    border-left: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+    @apply dark:tw-border-neutral-700;
+  }
 
-.striped-table tr td {
-  @apply tw-bg-white;
-  @apply dark:tw-bg-zinc-900;
-}
+  /**************************************************************************
+    SELECTABLE TABLE
+  **************************************************************************/
+  .hoverable-table tr:hover td {
+    background-color: #fafafa;
+    @apply dark:tw-bg-zinc-800;
+  }
 
-.striped-table tr:nth-child(even) td {
-  @apply tw-bg-zinc-50;
-  @apply dark:tw-bg-zinc-800;
-}
+  .selectable-table tr:hover td {
+    cursor: pointer;
+    background-color: #fafafa;
+    @apply dark:tw-bg-zinc-800;
+  }
 
-/**************************************************************************
-  BORDERED TABLE
-**************************************************************************/
+  .hoverable-table tr:hover .action-link:hover,
+  .selectable-table tr:hover .action-link:hover {
+    @apply tw-text-zinc-900/100 !important;
+    @apply dark:tw-text-zinc-50/100 !important;
+  }
 
-.bordered-table tbody {
-  border-left: 1px solid #dddddd;
-  border-right: 1px solid #dddddd;
-  @apply dark:tw-border-neutral-700;
-}
+  /**************************************************************************
+    TABLE SORTER
+  **************************************************************************/
+  table thead th[data-sortable] {
+    color: #2a6496;
+    font-weight: normal;
+    @apply dark:tw-text-sky-500;
+  }
 
-/**************************************************************************
-  SELECTABLE TABLE
-**************************************************************************/
+  table thead th[data-sortable]:hover {
+    cursor: pointer;
+    color: #1896db;
+    @apply dark:tw-text-sky-400;
+  }
 
-.hoverable-table tr:hover td {
-  background-color: #fafafa;
-  @apply dark:tw-bg-zinc-800;
-}
+  .tablesorter-header-inner {
+    display: flex;
+    align-items: center;
+  }
 
-.selectable-table tr:hover td {
-  cursor: pointer;
-  background-color: #fafafa;
-  @apply dark:tw-bg-zinc-800;
-}
+  .tablesorter-header-inner:after {
+    content: "";
+    margin-left: 0.5rem;
+    background-size: cover;
+    width: 16px;
+    height: 16px;
+    background-image: url("../icons/selector.svg");
+  }
 
-.hoverable-table tr:hover .action-link,
-.selectable-table tr:hover .action-link {
-  @apply tw-text-opacity-75 !important;
-}
-.hoverable-table tr:hover .action-link:hover,
-.selectable-table tr:hover .action-link:hover {
-  @apply tw-text-opacity-100 !important;
-}
+  .tw-dark .tablesorter-header-inner:after {
+    background-image: url("../icons/selector-dark.svg");
+  }
 
-/**************************************************************************
-  TABLE SORTER
-**************************************************************************/
+  th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
+    background-image: url("../icons/chevron-down.svg");
+  }
 
-table thead th[data-sortable] {
-  color: #2a6496;
-  font-weight: normal;
-  @apply dark:tw-text-sky-500;
-}
+  .tw-dark th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
+    background-image: url("../icons/chevron-down-dark.svg");
+  }
 
-table thead th[data-sortable]:hover {
-  cursor: pointer;
-  color: #1896db;
-  @apply dark:tw-text-sky-400;
-}
+  th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
+    background-image: url("../icons/chevron-up.svg");
+  }
 
-.tablesorter-header-inner {
-  display: flex;
-  align-items: center;
-}
+  .tw-dark th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
+    background-image: url("../icons/chevron-up-dark.svg");
+  }
 
-.tablesorter-header-inner:after {
-  content: "";
-  margin-left: 0.5rem;
-  background-size: cover;
-  width: 16px;
-  height: 16px;
-  background-image: url("../icons/selector.svg");
-}
+  /**************************************************************************
+    TABLE OVERFLOW HANDLING
+  **************************************************************************/
+  .overflow {
+    white-space: nowrap;
+    max-width: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
 
-.tw-dark .tablesorter-header-inner:after {
-  background-image: url("../icons/selector-dark.svg");
-}
+  /**************************************************************************
+    CONTROL HEIGHT OF TABLE CELL CONTENT
+  **************************************************************************/
+  td.halves h4 {
+    margin-top: 5px;
+  }
 
-th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-down.svg");
-}
-
-.tw-dark th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-down-dark.svg");
-}
-
-th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-up.svg");
-}
-
-.tw-dark th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-up-dark.svg");
-}
-
-/**************************************************************************
-  TABLE OVERFLOW HANDLING
-**************************************************************************/
-.overflow {
-  white-space: nowrap;
-  max-width: 15em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
-}
-
-/**************************************************************************
-  CONTROL HEIGHT OF TABLE CELL CONTENT
-**************************************************************************/
-
-td.halves h4 {
-  margin-top: 5px;
-}
-
-/**************************************************************************
-  Absence Type Settings Table
-**************************************************************************/
-
-table.absence-type-settings-table thead {
-  z-index: 1; /* color-picker should not cover the sticky header */
-  position: sticky;
-  top: var(--uv-header-height);
-  @apply tw-bg-white;
-  @apply dark:tw-bg-zinc-900;
-}
-
-@screen sm {
+  /**************************************************************************
+    Absence Type Settings Table
+  **************************************************************************/
   table.absence-type-settings-table thead {
-    top: 3rem; /* header height */
+    z-index: 1; /* color-picker should not cover the sticky header */
+    position: sticky;
+    top: var(--uv-header-height);
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
   }
-}
 
-/* kudos https://css-tricks.com/responsive-data-tables/ */
-@media only screen and (max-width: 639px) {
-  table.absence-type-settings-table {
-    display: block;
+  @screen sm {
+    table.absence-type-settings-table thead {
+      top: 3rem; /* header height */
+    }
+  }
 
-    /* Force table to not be like tables anymore */
-    thead,
-    tbody,
-    th,
-    td,
-    tr {
+  /* kudos https://css-tricks.com/responsive-data-tables/ */
+  @media only screen and (max-width: 639px) {
+    table.absence-type-settings-table {
       display: block;
-      height: inherit;
-    }
 
-    /* Hide table headers (but not display: none;, for accessibility) */
-    thead tr {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-    }
+      /* Force table to not be like tables anymore */
 
-    tbody {
+      thead,
+      tbody,
+      th,
+      td,
       tr {
-        @apply tw-rounded;
-        @apply tw-border;
-        @apply tw-p-2;
-        @apply tw-transition-colors;
-        @apply tw-bg-white;
-        @apply dark:tw-border-zinc-800;
-        @apply dark:tw-bg-zinc-800;
-        @apply dark:tw-bg-opacity-20;
+        display: block;
+        height: inherit;
       }
 
-      tr:not(:last-child) {
-        @apply tw-mb-4;
+      /* Hide table headers (but not display: none;, for accessibility) */
+
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
       }
 
-      tr[data-enabled="true"] {
-        @apply tw-border-blue-100;
-        @apply tw-bg-blue-50;
-        @apply tw-bg-opacity-20;
-        @apply dark:tw-border-zinc-800;
-        @apply dark:tw-bg-zinc-800;
-        @apply dark:tw-bg-opacity-20;
-      }
+      tbody {
+        tr {
+          @apply tw-rounded;
+          @apply tw-border;
+          @apply tw-p-2;
+          @apply tw-transition-colors;
+          @apply tw-bg-white/20;
+          @apply dark:tw-border-zinc-800;
+          @apply dark:tw-bg-zinc-800/20;
+        }
 
-      td {
-        /* Behave  like a "row" */
-        @apply tw-px-2;
-        @apply tw-py-1;
-        display: flex;
-        align-items: center;
-        @apply tw-text-base;
-        @apply tw-text-black-almost;
-        @apply dark:tw-text-zinc-100;
-      }
+        tr:not(:last-child) {
+          @apply tw-mb-4;
+        }
 
-      tr[data-enabled="false"] td {
-        @apply tw-text-opacity-75;
-      }
+        tr[data-enabled="true"] {
+          @apply tw-border-blue-100;
+          @apply tw-bg-blue-50/20;
+          @apply dark:tw-border-zinc-800;
+          @apply dark:tw-bg-zinc-800/20;
+        }
 
-      td::before {
-        /* Now like a table header */
-        width: 40%;
-        white-space: nowrap;
-        @apply tw-pr-4;
-        @apply tw-font-medium;
-        @apply tw-text-zinc-800;
-        @apply dark:tw-text-zinc-200;
-        @apply tw-text-sm;
-        @apply tw-truncate;
-      }
+        td {
+          /* Behave  like a "row" */
+          @apply tw-px-2;
+          @apply tw-py-1;
+          display: flex;
+          align-items: center;
+          @apply tw-text-base;
+          @apply tw-text-black-almost;
+          @apply dark:tw-text-zinc-100;
+        }
 
-      /*
-      Label the data
-      */
-      td::before {
-        content: attr(data-table-head-text);
-      }
-    }
-  }
-}
+        tr[data-enabled="false"] td {
+          @apply tw-text-black-almost/75;
+          @apply dark:tw-text-zinc-100/75;
+        }
 
-@screen sm {
-  table.absence-type-settings-table tr {
-    @apply tw-transition-colors;
-  }
+        td::before {
+          /* Now like a table header */
+          width: 40%;
+          white-space: nowrap;
+          @apply tw-pr-4;
+          @apply tw-font-medium;
+          @apply tw-text-zinc-800;
+          @apply dark:tw-text-zinc-200;
+          @apply tw-text-sm;
+          @apply tw-truncate;
+        }
 
-  table.absence-type-settings-table tr[data-enabled="false"] {
-    @apply tw-text-zinc-500;
-    @apply dark:tw-text-zinc-300;
-  }
+        /*
+        Label the data
+        */
 
-  table.absence-type-settings-table tr[data-enabled="false"]:hover {
-    @apply tw-bg-zinc-100;
-    @apply dark:tw-bg-zinc-800;
-  }
-
-  table.absence-type-settings-table tr[data-enabled="true"] {
-    @apply tw-text-blue-900;
-    @apply tw-bg-blue-50;
-    @apply dark:tw-text-zinc-300;
-    @apply dark:tw-bg-zinc-800;
-    @apply tw-bg-opacity-75;
-  }
-
-  table.absence-type-settings-table tr[data-enabled="true"]:hover {
-    @apply tw-bg-blue-100;
-    @apply dark:tw-bg-zinc-700;
-    @apply tw-bg-opacity-70;
-  }
-
-  table.absence-type-settings-table {
-    border-collapse: separate;
-    border-spacing: 0 0.25rem;
-
-    thead {
-      th {
-        @apply tw-text-sm;
-        @apply tw-px-4;
-        @apply tw-py-1;
-      }
-
-      th:first-of-type {
-        @apply tw-pr-4;
-      }
-    }
-
-    tbody {
-      td {
-        @apply tw-mb-2;
-        @apply tw-py-1;
-      }
-
-      td:first-of-type {
-        @apply tw-rounded-l;
-        @apply tw-pl-4;
-        @apply tw-pr-4;
-      }
-      td:not(:first-of-type):not(:last-of-type) {
-        @apply tw-pl-4;
-        @apply tw-pr-8;
-      }
-      td:last-of-type {
-        @apply tw-rounded-r;
-        @apply tw-pl-4;
-        @apply tw-pr-4;
+        td::before {
+          content: attr(data-table-head-text);
+        }
       }
     }
   }
-}
 
-@screen md {
-  table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
-    @apply tw-pr-16;
+  @screen sm {
+    table.absence-type-settings-table tr {
+      @apply tw-transition-colors;
+    }
+
+    table.absence-type-settings-table tr[data-enabled="false"] {
+      @apply tw-text-zinc-500;
+      @apply dark:tw-text-zinc-300;
+    }
+
+    table.absence-type-settings-table tr[data-enabled="false"]:hover {
+      @apply tw-bg-zinc-100;
+      @apply dark:tw-bg-zinc-800;
+    }
+
+    table.absence-type-settings-table tr[data-enabled="true"] {
+      @apply tw-text-blue-900;
+      @apply tw-bg-blue-50/75;
+      @apply dark:tw-text-zinc-300;
+      @apply dark:tw-bg-zinc-800/75;
+    }
+
+    table.absence-type-settings-table tr[data-enabled="true"]:hover {
+      @apply tw-bg-blue-100/70;
+      @apply dark:tw-bg-zinc-700/70;
+    }
+
+    table.absence-type-settings-table {
+      border-collapse: separate;
+      border-spacing: 0 0.25rem;
+
+      thead {
+        th {
+          @apply tw-text-sm;
+          @apply tw-px-4;
+          @apply tw-py-1;
+        }
+
+        th:first-of-type {
+          @apply tw-pr-4;
+        }
+      }
+
+      tbody {
+        td {
+          @apply tw-mb-2;
+          @apply tw-py-1;
+        }
+
+        td:first-of-type {
+          @apply tw-rounded-l;
+          @apply tw-pl-4;
+          @apply tw-pr-4;
+        }
+
+        td:not(:first-of-type):not(:last-of-type) {
+          @apply tw-pl-4;
+          @apply tw-pr-8;
+        }
+
+        td:last-of-type {
+          @apply tw-rounded-r;
+          @apply tw-pl-4;
+          @apply tw-pr-4;
+        }
+      }
+    }
+  }
+
+  @screen md {
+    table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
+      @apply tw-pr-16;
+    }
   }
 }

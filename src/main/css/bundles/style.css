@@ -1,7 +1,6 @@
-@import "tailwindcss/base";
+@import "tailwindcss";
 @import "../base.css";
 
-@import "tailwindcss/components";
 @import "../components/absence-color.css";
 @import "../components/absence-type-box.css";
 @import "../components/alert.css";
@@ -36,8 +35,9 @@
 
 @import "../components/settings-absence-types.css";
 
-@import "tailwindcss/utilities";
 @import "../utility.css";
+
+@config "../../../../tailwind.config.js";
 
 @layer base {
   :root {

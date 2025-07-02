@@ -1,7 +1,12 @@
-.select-with-addon select {
-  @apply tw-rounded-r-none;
-}
+@reference "tailwindcss";
+@config "../../../../tailwind.config.js";
 
-.select-with-addon > .select-addon > *:first-child {
-  @apply tw-rounded-l-none;
+@layer components {
+  .select-with-addon select {
+    @apply tw-rounded-r-none;
+  }
+
+  .select-with-addon > .select-addon > *:first-child {
+    @apply tw-rounded-l-none;
+  }
 }
