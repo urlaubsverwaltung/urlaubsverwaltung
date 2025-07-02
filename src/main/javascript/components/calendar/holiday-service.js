@@ -254,8 +254,8 @@ export const HolidayService = (function () {
       return "";
     },
 
-    getPersonalAbsencesOfType: function (date) {
-      const acceptableTypes = ["VACATION", "SICK_NOTE"];
+    getPersonalAbsences: function (date) {
+      const acceptableTypes = new Set(["VACATION", "SICK_NOTE"]);
 
       let full;
       let morning;
@@ -263,15 +263,24 @@ export const HolidayService = (function () {
 
       const absences = getAbsencesForDate(date);
       for (let absence of absences) {
-        if (acceptableTypes.includes(absence.absenceType)) {
-          if (absence.absent === "FULL") {
-            full = absence;
-          } else if (absence.absent === "MORNING") {
-            morning = absence;
-          } else if (absence.absent === "NOON") {
-            noon = absence;
-          } else {
-            console.log("TODO Error?");
+        if (acceptableTypes.has(absence.absenceType)) {
+          switch (absence.absent) {
+            case "FULL": {
+              full = absence;
+              break;
+            }
+            case "MORNING": {
+              morning = absence;
+              break;
+            }
+            case "NOON": {
+              noon = absence;
+              break;
+            }
+            default: {
+              console.log("TODO Error?");
+              break;
+            }
           }
         }
       }
