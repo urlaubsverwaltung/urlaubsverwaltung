@@ -554,7 +554,7 @@ const Controller = (function () {
       }
     },
 
-    click: function () {
+    click: function (event) {
       const dateFrom = selectionFrom();
       const dateTo = selectionTo();
 
@@ -566,6 +566,7 @@ const Controller = (function () {
 
       if (hasAnyAbsence === "true") {
         this.dispatchEvent(new Event("openPopper"));
+        event.stopPropagation();
       } else if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&
