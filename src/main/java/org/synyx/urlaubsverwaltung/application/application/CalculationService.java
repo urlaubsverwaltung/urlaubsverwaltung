@@ -182,10 +182,10 @@ class CalculationService {
     }
 
     private Optional<Application> getSavedApplicationForEditing(Application application) {
-        Optional<Application> maybeSavedApplication = Optional.empty();
-        if (application.getId() != null) {
-            maybeSavedApplication = applicationService.getApplicationById(application.getId());
+        if (application.getId() == null) {
+            return Optional.empty();
         }
-        return maybeSavedApplication;
+
+        return applicationService.getApplicationById(application.getId());
     }
 }
