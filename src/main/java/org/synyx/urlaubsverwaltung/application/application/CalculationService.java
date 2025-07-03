@@ -21,6 +21,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
@@ -171,14 +172,13 @@ class CalculationService {
     }
 
     private Optional<Account> getHolidaysAccount(int year, Person person) {
+        return accountService.getHolidaysAccount(year, person)
+            .or(getHolidayAccountFromLastYear(year - 1, person));
+    }
 
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(year, person);
-        if (holidaysAccount.isPresent()) {
-            return holidaysAccount;
-        }
-
-        final Optional<Account> lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
-        return lastYearsHolidaysAccount.map(accountInteractionService::autoCreateOrUpdateNextYearsHolidaysAccount);
+    private Supplier<Optional<? extends Account>> getHolidayAccountFromLastYear(int lastYear, Person person) {
+        return () -> accountService.getHolidaysAccount(lastYear, person)
+            .map(accountInteractionService::autoCreateOrUpdateNextYearsHolidaysAccount);
     }
 
     private Optional<Application> getSavedApplicationForEditing(Application application) {
