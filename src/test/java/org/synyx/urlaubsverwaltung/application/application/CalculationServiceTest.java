@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
@@ -78,28 +77,25 @@ class CalculationServiceTest {
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
         final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
-        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,
-            new OverlapService(null, null), applicationService);
+        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService, applicationService);
     }
 
     @Test
-    void testCheckApplicationSameYearAndEnoughDaysLeftAreNegativeEditing() {
+    void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthReducesByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 21);
-        final DateRange dateRange = new DateRange(startDate, endDate);
-
         final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
-        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(dateRange, workingTime));
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
-        applicationForLeaveToCheckSaved.setStartDate(startDate);
-        applicationForLeaveToCheckSaved.setEndDate(endDate);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 21));
         applicationForLeaveToCheckSaved.setPerson(person);
         applicationForLeaveToCheckSaved.setDayLength(FULL);
 
@@ -107,8 +103,8 @@ class CalculationServiceTest {
 
         final Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setId(10L);
-        applicationForLeaveToCheck.setStartDate(startDate);
-        applicationForLeaveToCheck.setEndDate(startDate);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(FULL);
 
@@ -117,23 +113,21 @@ class CalculationServiceTest {
     }
 
     @Test
-    void testCheckApplicationSameYearAndEnoughDaysLeftAreNeutralEditing() {
+    void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthStaysSameByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 19);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 25);
-        final DateRange dateRange = new DateRange(startDate, endDate);
-
         final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
-        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(dateRange, workingTime));
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
         applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 23));
-        applicationForLeaveToCheckSaved.setEndDate(endDate);
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 25));
         applicationForLeaveToCheckSaved.setPerson(person);
         applicationForLeaveToCheckSaved.setDayLength(FULL);
 
@@ -141,7 +135,7 @@ class CalculationServiceTest {
 
         final Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setId(10L);
-        applicationForLeaveToCheck.setStartDate(startDate);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 19));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 21));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(FULL);
@@ -151,22 +145,21 @@ class CalculationServiceTest {
     }
 
     @Test
-    void testCheckApplicationSameYearAndEnoughDaysLeftArePositiveEditing() {
+    void testCheckApplicationSameYearAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 21);
-
         final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
-        applicationForLeaveToCheckSaved.setStartDate(startDate);
-        applicationForLeaveToCheckSaved.setEndDate(startDate);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheckSaved.setPerson(person);
         applicationForLeaveToCheckSaved.setDayLength(FULL);
 
@@ -174,8 +167,8 @@ class CalculationServiceTest {
 
         final Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setId(10L);
-        applicationForLeaveToCheck.setStartDate(startDate);
-        applicationForLeaveToCheck.setEndDate(endDate);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 21));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(FULL);
 
@@ -200,22 +193,69 @@ class CalculationServiceTest {
     }
 
     @Test
-    void testCheckApplicationDifferentYearAndEnoughDaysLeftAreNegativeEditing() {
+    void testCheckApplicationSameYearAndEnoughDaysLeftWillBeTakenFromRemainingVacationDaysWhenApplicationLengthIncreasesByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final LocalDate startDate = LocalDate.of(2012, DECEMBER, 28);
-        final LocalDate endDate = LocalDate.of(2013, JANUARY, 4);
-
+        final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
+        final LocalDate endDate = LocalDate.of(2012, AUGUST, 23);
         final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
-        applicationForLeaveToCheckSaved.setStartDate(startDate);
-        applicationForLeaveToCheckSaved.setEndDate(endDate);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 22));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10L)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10L);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 23));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, false, null, BigDecimal.valueOf(30), BigDecimal.valueOf(5), ZERO, "comment");
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(BigDecimal.valueOf(30))
+            .withRemainingVacation(BigDecimal.valueOf(5))
+            .notExpiring(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(33))
+            .withVacationDaysUsedNextYear(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), Year.of(2012), List.of()))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationDifferentYearAndEnoughDaysLeftWhenApplicationLengthReducesByEditing() {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate startDate = LocalDate.of(2012, DECEMBER, 28);
+        final LocalDate endDate = LocalDate.of(2013, JANUARY, 4);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10L);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, DECEMBER, 28));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2013, JANUARY, 4));
         applicationForLeaveToCheckSaved.setPerson(person);
         applicationForLeaveToCheckSaved.setDayLength(FULL);
 
@@ -233,21 +273,20 @@ class CalculationServiceTest {
     }
 
     @Test
-    void testCheckApplicationDifferentYearAndEnoughDaysLeftAreNeutralEditing() {
+    void testCheckApplicationDifferentYearAndEnoughDaysWhenApplicationLengthStaysSameByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 29);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 5);
-
         final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
-        applicationForLeaveToCheckSaved.setStartDate(startDate);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, DECEMBER, 29));
         applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2013, JANUARY, 4));
         applicationForLeaveToCheckSaved.setPerson(person);
         applicationForLeaveToCheckSaved.setDayLength(FULL);
@@ -257,7 +296,7 @@ class CalculationServiceTest {
         final Application applicationForLeaveToCheck = new Application();
         applicationForLeaveToCheck.setId(10L);
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
-        applicationForLeaveToCheck.setEndDate(endDate);
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 5));
         applicationForLeaveToCheck.setPerson(person);
         applicationForLeaveToCheck.setDayLength(FULL);
 
@@ -266,14 +305,16 @@ class CalculationServiceTest {
     }
 
     @Test
-    void testCheckApplicationDifferentYearAndEnoughDaysLeftArePositiveEditing() {
+    void testCheckApplicationDifferentYearAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2012, DECEMBER, 28), GERMANY_BADEN_WUERTTEMBERG, false);
+        final LocalDate startDate = LocalDate.of(2012, DECEMBER, 28);
+        final LocalDate endDate = LocalDate.of(2013, JANUARY, 7);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
-        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(LocalDate.of(2012, DECEMBER, 28), LocalDate.of(2013, JANUARY, 7)), workingTime));
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final Application applicationForLeaveToCheckSaved = new Application();
         applicationForLeaveToCheckSaved.setId(10L);
@@ -324,6 +365,40 @@ class CalculationServiceTest {
             .thenReturn(Map.of(account2012, new HolidayAccountVacationDays(account2012, vacationDaysLeft, vacationDaysLeft)));
         when(vacationDaysService.getVacationDaysLeft(List.of(account2013), year2013, List.of(account2014)))
             .thenReturn(Map.of(account2013, new HolidayAccountVacationDays(account2013, vacationDaysLeft, vacationDaysLeft)));
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void ensureApplicationSameYearAndAndEnoughDaysLeftWhenApplicationLengthIncreasesByEditing() {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
+        final LocalDate endDate = LocalDate.of(2012, AUGUST, 21);
+        final DateRange dateRange = new DateRange(startDate, endDate);
+
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(dateRange, workingTime));
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10L);
+        applicationForLeaveToCheckSaved.setStartDate(startDate);
+        applicationForLeaveToCheckSaved.setEndDate(endDate);
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10L)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10L);
+        applicationForLeaveToCheck.setStartDate(startDate);
+        applicationForLeaveToCheck.setEndDate(startDate);
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
@@ -803,24 +878,16 @@ class CalculationServiceTest {
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(applicationDate, applicationDate), workingTime));
 
         final Application applicationForLeaveToCheck = createApplicationStub(person);
-
         applicationForLeaveToCheck.setStartDate(applicationDate);
         applicationForLeaveToCheck.setEndDate(applicationDate);
 
         final Year year = Year.of(2022);
-        final LocalDate validFrom2022 = year.atDay(1);
-        final LocalDate validTo2022 = validFrom2022.with(lastDayOfYear());
-        final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, validTo2022, true, expireDate2022, TEN, TEN, ZERO, "");
-        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
-        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
-
-        final LocalDate validFrom2023 = Year.of(2023).atDay(1);
-        final LocalDate validTo2023 = validFrom2023.with(lastDayOfYear());
-        final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, validTo2023, true, expireDate2023, TEN, TEN, ZERO, "");
-        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
-        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
+        final LocalDate validFrom = year.atDay(1);
+        final LocalDate validTo = validFrom.with(lastDayOfYear());
+        final LocalDate expireDate = LocalDate.of(2022, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, ZERO, "");
+        account.setActualVacationDays(account.getAnnualVacationDays());
+        when(accountService.getHolidaysAccount(year.getValue(), person)).thenReturn(Optional.of(account));
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -830,8 +897,8 @@ class CalculationServiceTest {
             .forUsedVacationDaysAfterExpiry(TEN)
             .withVacationDaysUsedNextYear(ZERO)
             .build();
-        when(vacationDaysService.getVacationDaysLeft(List.of(account2022), year, List.of(account2023)))
-            .thenReturn(Map.of(account2022, new HolidayAccountVacationDays(account2022, vacationDaysLeft, vacationDaysLeft)));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), year, List.of()))
+            .thenReturn(Map.of(account, new HolidayAccountVacationDays(account, vacationDaysLeft, vacationDaysLeft)));
 
         final boolean actual = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(actual).isTrue();
