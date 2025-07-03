@@ -77,23 +77,23 @@ class CalculationService {
 
         if (yearOfStartDate == yearOfEndDate) {
             final BigDecimal oldWorkDays = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person).subtract(oldWorkDays);
-            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
+            final BigDecimal workDaysDifference = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person).subtract(oldWorkDays);
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysDifference, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
             final BigDecimal oldWorkDaysInOldYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getStartDate().with(lastDayOfYear()), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, startDate.with(lastDayOfYear()), person).subtract(oldWorkDaysInOldYear);
+            final BigDecimal workDaysInOldYearDifference = workDaysCountService.getWorkDaysCount(dayLength, startDate, startDate.with(lastDayOfYear()), person).subtract(oldWorkDaysInOldYear);
 
             // ensure that applying for leave for the period in the new year is possible
             final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), Year.of(savedApplication.getEndDate().getYear()).atDay(1), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, Year.of(yearOfEndDate).atDay(1), endDate, person).subtract(oldWorkDaysInNewYear);
+            final BigDecimal workDaysInNewYearDifference = workDaysCountService.getWorkDaysCount(dayLength, Year.of(yearOfEndDate).atDay(1), endDate, person).subtract(oldWorkDaysInNewYear);
 
-            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
-                && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYear, application);
+            return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYearDifference, application)
+                && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYearDifference, application);
         }
     }
 
-    boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays, Application application) {
+    private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays, Application application) {
 
         if (workDays.signum() <= 0) {
             return true;
