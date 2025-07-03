@@ -34,8 +34,12 @@ public final class VacationDaysLeft {
      */
     private final BigDecimal vacationDaysUsedNextYear;
 
-    private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
-                             BigDecimal remainingVacationDaysNotExpiring, BigDecimal vacationDaysUsedNextYear) {
+    private VacationDaysLeft(
+        BigDecimal vacationDays,
+        BigDecimal remainingVacationDays,
+        BigDecimal remainingVacationDaysNotExpiring,
+        BigDecimal vacationDaysUsedNextYear
+    ) {
         this.vacationDays = vacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
