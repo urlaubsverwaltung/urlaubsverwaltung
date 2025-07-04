@@ -1,17 +1,23 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
 /**
@@ -25,15 +31,21 @@ public class SickNoteStatistics {
     private final int totalNumberOfSickNotes;
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
+    private final List<BigDecimal> numberOfSickDaysByMonth;
+    private final List<BigDecimal> numberOfChildSickDaysByMonth;
 
     SickNoteStatistics(Clock clock, List<SickNote> sickNotes, WorkDaysCountService workDaysCountService) {
 
-        year = Year.now(clock).getValue();
-        numberOfPersonsWithMinimumOneSickNote = sickNotes.stream().map(SickNote::getPerson).distinct().count();
-        created = LocalDate.now(clock);
+        final Year year = Year.now(clock);
 
-        totalNumberOfSickNotes = sickNotes.size();
-        totalNumberOfSickDays = calculateTotalNumberOfSickDays(workDaysCountService, sickNotes);
+        this.year = year.getValue();
+        this.numberOfPersonsWithMinimumOneSickNote = sickNotes.stream().map(SickNote::getPerson).distinct().count();
+        this.created = LocalDate.now(clock);
+
+        this.totalNumberOfSickNotes = sickNotes.size();
+        this.totalNumberOfSickDays = calculateTotalNumberOfSickDays(workDaysCountService, sickNotes);
+        this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDays(year, workDaysCountService, sickNotes, SICK_NOTE);
+        this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDays(year, workDaysCountService, sickNotes, SICK_NOTE_CHILD);
     }
 
     public int getTotalNumberOfSickNotes() {
@@ -66,6 +78,14 @@ public class SickNoteStatistics {
         return BigDecimal.valueOf(averageDuration);
     }
 
+    public List<BigDecimal> getNumberOfSickDaysByMonth() {
+        return numberOfSickDaysByMonth;
+    }
+
+    public List<BigDecimal> getNumberOfChildSickDaysByMonth() {
+        return numberOfChildSickDaysByMonth;
+    }
+
     private BigDecimal calculateTotalNumberOfSickDays(WorkDaysCountService workDaysCountService, List<SickNote> sickNotes) {
 
         BigDecimal numberOfSickDays = ZERO;
@@ -74,14 +94,44 @@ public class SickNoteStatistics {
             final LocalDate firstDayOfYear = Year.of(year).atDay(1);
             final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-            final LocalDate startDate = sickNote.getStartDate().isBefore(firstDayOfYear) ? firstDayOfYear : sickNote.getStartDate();
-            final LocalDate endDate = sickNote.getEndDate().isAfter(lastDayOfYear) ? lastDayOfYear : sickNote.getEndDate();
-
-            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate, sickNote.getPerson());
+            final BigDecimal workDays = getWorkDays(workDaysCountService, sickNote, firstDayOfYear, lastDayOfYear);
             numberOfSickDays = numberOfSickDays.add(workDays);
         }
 
         return numberOfSickDays;
+    }
+
+    private List<BigDecimal> calculateTotalNumberOfSickDays(Year year, WorkDaysCountService workDaysCountService, List<SickNote> sickNotes, SickNoteCategory category) {
+
+        final List<BigDecimal> values = new ArrayList<>();
+
+        for (Month month : Month.values()) {
+
+            final LocalDate firstDateOfMonth = year.atMonth(month).atDay(1);
+            final LocalDate lastDateOfMonth = year.atMonth(month).atEndOfMonth();
+            final DateRange monthDateRange = new DateRange(firstDateOfMonth, lastDateOfMonth);
+
+            BigDecimal sumOfSickDaysInMonth = ZERO;
+
+            for (SickNote sickNote : sickNotes) {
+                final boolean matchesCategory = sickNote.getSickNoteType().getCategory().equals(category);
+                final boolean touchesMonth = sickNote.getDateRange().isOverlapping(monthDateRange);
+                if (matchesCategory && touchesMonth) {
+                    final BigDecimal workDays = getWorkDays(workDaysCountService, sickNote, firstDateOfMonth, lastDateOfMonth);
+                    sumOfSickDaysInMonth = sumOfSickDaysInMonth.add(workDays);
+                }
+            }
+
+            values.add(sumOfSickDaysInMonth);
+        }
+
+        return values;
+    }
+
+    private BigDecimal getWorkDays(WorkDaysCountService workDaysCountService, SickNote sickNote, LocalDate rangeMin, LocalDate rangeMax) {
+        final LocalDate startDate = sickNote.getStartDate().isBefore(rangeMin) ? rangeMin : sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate().isAfter(rangeMax) ? rangeMax : sickNote.getEndDate();
+        return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate, sickNote.getPerson());
     }
 
     @Override
@@ -92,6 +142,8 @@ public class SickNoteStatistics {
             ", totalNumberOfSickNotes=" + totalNumberOfSickNotes +
             ", totalNumberOfSickDays=" + totalNumberOfSickDays +
             ", numberOfPersonsWithMinimumOneSickNote=" + numberOfPersonsWithMinimumOneSickNote +
+            ", numberOfSickDaysByMonth=" + numberOfSickDaysByMonth +
+            ", numberOfChildSickDaysByMonth=" + numberOfChildSickDaysByMonth +
             '}';
     }
 }

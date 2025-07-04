@@ -75,6 +75,15 @@ public class SickNote {
         return endDate;
     }
 
+    /**
+     * {@link DateRange} from {@link #startDate} to {@link #endDate}.
+     *
+     * @return the {@link DateRange}
+     */
+    public DateRange getDateRange() {
+        return new DateRange(startDate, endDate);
+    }
+
     public DayLength getDayLength() {
         return dayLength;
     }
