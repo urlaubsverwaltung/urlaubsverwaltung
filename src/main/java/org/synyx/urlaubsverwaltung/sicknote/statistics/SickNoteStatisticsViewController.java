@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -44,6 +46,16 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("statistics", statistics);
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
+        final GraphDto graphDto = new GraphDto(
+            List.of("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"),
+            "Tage",
+            List.of(
+                new DataSeries("Krank", statistics.getNumberOfSickDaysByMonth()),
+                new DataSeries("Kind-Krank", statistics.getNumberOfChildSickDaysByMonth())
+            )
+        );
+        model.addAttribute("sickNoteGraphStatistic", graphDto);
+
         return "sicknote/sick_notes_statistics";
     }
 
@@ -53,4 +65,8 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         }
         return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
+
+    record GraphDto(List<String> xaxisLabels, String yaxisTitle, List<DataSeries> dataSeries) {};
+
+    record DataSeries(String name, List<BigDecimal> data) {}
 }

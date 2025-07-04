@@ -1,17 +1,24 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -20,7 +27,10 @@ import static java.time.LocalDate.of;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
+import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -113,9 +123,82 @@ class SickNoteStatisticsTest {
         final LocalDate to = of(2016, JANUARY, 11);
         final SickNote sickNote = createSickNote(person, from, to, FULL);
         final BigDecimal sickDays = new BigDecimal("9");
+        when(workDaysCountService.getWorkDaysCount(eq(FULL), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ZERO);
         when(workDaysCountService.getWorkDaysCount(FULL, of(2015, JANUARY, 1), of(2015, DECEMBER, 31), person)).thenReturn(sickDays);
 
         final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote), workDaysCountService);
         assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(sickDays);
+    }
+
+    @Nested
+    class NumberOfSickDaysByMonth {
+        @ParameterizedTest
+        @EnumSource(Month.class)
+        void ensureForMonth(Month givenMonth) {
+            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
+
+            final Person person = anyPerson();
+
+            final LocalDate startDate = of(2025, givenMonth.getValue(), 1);
+            final LocalDate endDate = of(2025, givenMonth.getValue(), 2);
+            final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);
+
+            final LocalDate date2 = endDate.plusDays(1);
+            final SickNote sickNote2 = createSickNote(person, date2, date2, FULL);
+
+            final SickNote childSickNote = SickNote.builder(sickNote).sickNoteType(childSickNoteType()).build();
+
+            when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(BigDecimal.valueOf(2));
+            when(workDaysCountService.getWorkDaysCount(FULL, date2, date2, person)).thenReturn(BigDecimal.ONE);
+
+            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote, sickNote2, childSickNote), workDaysCountService);
+            assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(stream(Month.values()).map(month -> month.equals(givenMonth) ? BigDecimal.valueOf(3) : ZERO).toList());
+        }
+
+        @Test
+        void ensureIgnoresChildSickNotes() {
+            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
+
+            final Person person = anyPerson();
+            final LocalDate startDate = of(2025, 1, 1);
+            final LocalDate endDate = of(2025, 1, 2);
+            final SickNote childSickNote = SickNote.builder(createSickNote(person, startDate, endDate, FULL)).sickNoteType(childSickNoteType()).build();
+
+            //constructor calls countService for global number of sickdays
+            when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(BigDecimal.valueOf(42));
+
+            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(childSickNote), workDaysCountService);
+            assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
+
+        }
+
+        @Test
+        void ensureWithMonthOverlap() {
+            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
+
+            final Person person = anyPerson();
+
+            final LocalDate startDate = LocalDate.parse("2025-01-31");
+            final LocalDate endDate = LocalDate.parse("2025-02-02");
+            final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);
+
+            when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.parse("2025-01-31"), LocalDate.parse("2025-01-31"), person)).thenReturn(BigDecimal.valueOf(1));
+            when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-02"), person)).thenReturn(BigDecimal.valueOf(2));
+            when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(BigDecimal.valueOf(2));
+
+
+            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote), workDaysCountService);
+            assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2), ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
+        }
+    }
+
+    private Person anyPerson() {
+       return new Person("muster", "Muster", "Marlene", "muster@example.org");
+    }
+
+    private SickNoteType childSickNoteType() {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
+        return sickNoteType;
     }
 }
