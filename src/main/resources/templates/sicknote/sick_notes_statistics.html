@@ -11,8 +11,21 @@
       <script th:inline="javascript">
         /*<![CDATA[*/
         window.sicknoteStatistic = {};
-        window.sicknoteStatistic.xaxisLabels = /*[[${sickNoteGraphStatistic.xaxisLabels}]]*/ [];
-        window.sicknoteStatistic.yaxisTitle = /*[[${sickNoteGraphStatistic.yaxisTitle}]]*/ "";
+        window.sicknoteStatistic.xaxisLabels = [
+          /*[[#{month.january}]]*/ "Januar",
+          /*[[#{month.february}]]*/ "Februar",
+          /*[[#{month.march}]]*/ "März",
+          /*[[#{month.april}]]*/ "April",
+          /*[[#{month.may}]]*/ "Mai",
+          /*[[#{month.june}]]*/ "Juni",
+          /*[[#{month.july}]]*/ "Juli",
+          /*[[#{month.august}]]*/ "August",
+          /*[[#{month.september}]]*/ "September",
+          /*[[#{month.october}]]*/ "Oktober",
+          /*[[#{month.november}]]*/ "November",
+          /*[[#{month.december}]]*/ "Dezember",
+        ];
+        window.sicknoteStatistic.yaxisTitle = /*[[#{sicknotes.statistics.chart.y-axis-label}]]*/ "";
         window.sicknoteStatistic.dataseries = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
         /*]]>*/
       </script>
