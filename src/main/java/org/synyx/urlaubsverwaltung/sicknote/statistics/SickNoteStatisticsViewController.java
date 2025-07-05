@@ -47,7 +47,6 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
         final GraphDto graphDto = new GraphDto(
-            "Tage",
             List.of(
                 new DataSeries("Krank", statistics.getNumberOfSickDaysByMonth()),
                 new DataSeries("Kind-Krank", statistics.getNumberOfChildSickDaysByMonth())

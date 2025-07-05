@@ -16,7 +16,6 @@ const options = {
   yaxis: {
     title: {
       text: globalThis.sicknoteStatistic.yaxisTitle,
-      rotate: 0,
     },
   },
   series: globalThis.sicknoteStatistic.dataseries,
