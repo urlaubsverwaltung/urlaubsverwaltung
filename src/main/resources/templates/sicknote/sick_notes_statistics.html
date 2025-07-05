@@ -25,8 +25,12 @@
           /*[[#{month.november}]]*/ "November",
           /*[[#{month.december}]]*/ "Dezember",
         ];
-        window.sicknoteStatistic.yaxisTitle = /*[[#{sicknotes.statistics.chart.y-axis-label}]]*/ "";
-        window.sicknoteStatistic.dataseries = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
+        window.sicknoteStatistic.yaxisTitle = /*[[#{sicknotes.statistics.chart.y-axis-label}]]*/ "Tage";
+        window.sicknoteStatistic.dataseriesNames = [
+          /*[[#{sicknote.type.SICK_NOTE}]]*/ "Krank",
+          /*[[#{sicknote.type.SICK_NOTE_CHILD}]]*/ "Kind-Krank",
+        ];
+        window.sicknoteStatistic.dataseriesValues = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
         /*]]>*/
       </script>
     </th:block>
