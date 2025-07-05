@@ -1,6 +1,11 @@
 import "../js/common";
 import ApexCharts from "apexcharts";
 
+let series = globalThis.sicknoteStatistic.dataseriesNames.map((name, i) => ({
+  name: name,
+  data: globalThis.sicknoteStatistic.dataseriesValues[i].data,
+}));
+
 const options = {
   chart: {
     type: "bar",
@@ -18,7 +23,7 @@ const options = {
       text: globalThis.sicknoteStatistic.yaxisTitle,
     },
   },
-  series: globalThis.sicknoteStatistic.dataseries,
+  series: series,
 };
 
 const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
