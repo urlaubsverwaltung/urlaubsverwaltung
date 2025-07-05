@@ -47,10 +47,9 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
         final GraphDto graphDto = new GraphDto(
-            "Tage",
             List.of(
-                new DataSeries("Krank", statistics.getNumberOfSickDaysByMonth()),
-                new DataSeries("Kind-Krank", statistics.getNumberOfChildSickDaysByMonth())
+                new DataSeries(statistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(statistics.getNumberOfChildSickDaysByMonth())
             )
         );
         model.addAttribute("sickNoteGraphStatistic", graphDto);
@@ -65,7 +64,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
 
-    record GraphDto(String yaxisTitle, List<DataSeries> dataSeries) {}
+    record GraphDto(List<DataSeries> dataSeries) {}
 
-    record DataSeries(String name, List<BigDecimal> data) {}
+    record DataSeries(List<BigDecimal> data) {}
 }
