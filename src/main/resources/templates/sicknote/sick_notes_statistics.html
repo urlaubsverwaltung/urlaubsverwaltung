@@ -12,31 +12,25 @@
         /*<![CDATA[*/
         window.sicknoteStatistic = {};
         window.sicknoteStatistic.xaxisLabels = [
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,/*[[#{month.january}]]*/
-          /*[[#{month.february}]]*/
-          /*[[#{month.march}]]*/
-          /*[[#{month.april}]]*/
-          /*[[#{month.may}]]*/
-          /*[[#{month.june}]]*/
-          /*[[#{month.july}]]*/
-          /*[[#{month.august}]]*/
-          /*[[#{month.september}]]*/
-          /*[[#{month.october}]]*/
-          /*[[#{month.november}]]*/
+          /*[[#{month.january}]]*/,
+          /*[[#{month.february}]]*/,
+          /*[[#{month.march}]]*/,
+          /*[[#{month.april}]]*/,
+          /*[[#{month.may}]]*/,
+          /*[[#{month.june}]]*/,
+          /*[[#{month.july}]]*/,
+          /*[[#{month.august}]]*/,
+          /*[[#{month.september}]]*/,
+          /*[[#{month.october}]]*/,
+          /*[[#{month.november}]]*/,
           /*[[#{month.december}]]*/
         ];
         window.sicknoteStatistic.yaxisTitle = /*[[#{sicknotes.statistics.chart.y-axis-label}]]*/ "";
-        window.sicknoteStatistic.dataseries = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
+        window.sicknoteStatistic.dataseriesNames = [
+          /*[[#{sicknote.type.SICK_NOTE}]]*/,
+          /*[[#{sicknote.type.SICK_NOTE_CHILD}]]*/
+        ];
+        window.sicknoteStatistic.dataseriesValues = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
         /*]]>*/
       </script>
     </th:block>
