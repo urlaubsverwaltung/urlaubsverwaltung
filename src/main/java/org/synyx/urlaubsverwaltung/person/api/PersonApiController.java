@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +21,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -151,5 +154,69 @@ public class PersonApiController {
 
         final Person person = personService.create(predictedUsername, personProvisionDto.getFirstName(), personProvisionDto.getLastName(), personProvisionDto.getEmail());
         return new ResponseEntity<>(mapToDto(person), CREATED);
+    }
+
+    @Operation(
+        summary = "Deactivates a person",
+        description = """
+            Deactivates a person by setting the INACTIVE role.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * boss
+            * office
+            """
+    )
+    @PutMapping(path = "/{personId}/deactivate", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
+    @PreAuthorize(IS_BOSS_OR_OFFICE)
+    public ResponseEntity<PersonDto> deactivatePerson(@PathVariable Long personId) {
+        return personService.getPersonByID(personId)
+            .map(person -> {
+                if (person.isInactive()) {
+                    return new ResponseEntity<>(mapToDto(person), OK);
+                }
+                
+                final List<Role> updatedRoles = new ArrayList<>(person.getPermissions());
+                updatedRoles.add(Role.INACTIVE);
+                person.setPermissions(updatedRoles);
+                
+                final Person updatedPerson = personService.update(person);
+                return new ResponseEntity<>(mapToDto(updatedPerson), OK);
+            })
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+    }
+
+    @Operation(
+        summary = "Activates a person",
+        description = """
+            Activates a person by removing the INACTIVE role.
+
+            Needed basic authorities:
+            * user
+
+            Needed additional authorities:
+            * boss
+            * office
+            """
+    )
+    @PutMapping(path = "/{personId}/activate", produces = {APPLICATION_JSON_VALUE, HAL_JSON_VALUE})
+    @PreAuthorize(IS_BOSS_OR_OFFICE)
+    public ResponseEntity<PersonDto> activatePerson(@PathVariable Long personId) {
+        return personService.getPersonByID(personId)
+            .map(person -> {
+                if (person.isActive()) {
+                    return new ResponseEntity<>(mapToDto(person), OK);
+                }
+                
+                final List<Role> updatedRoles = new ArrayList<>(person.getPermissions());
+                updatedRoles.remove(Role.INACTIVE);
+                person.setPermissions(updatedRoles);
+                
+                final Person updatedPerson = personService.update(person);
+                return new ResponseEntity<>(mapToDto(updatedPerson), OK);
+            })
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 }
