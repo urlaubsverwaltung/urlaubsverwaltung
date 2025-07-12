@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -177,11 +178,23 @@ public class PersonApiController {
                 if (person.isInactive()) {
                     return new ResponseEntity<>(mapToDto(person), OK);
                 }
-                
+
+                // Business rule: Prevent deactivating the last OFFICE user
+                if (person.hasRole(Role.OFFICE)) {
+                    int otherOfficeUsers = personService.numberOfPersonsWithOfficeRoleExcludingPerson(personId);
+                    if (otherOfficeUsers == 0) {
+                        throw new ResponseStatusException(BAD_REQUEST, "Cannot deactivate the last user with OFFICE role");
+                    }
+                }
+
                 final List<Role> updatedRoles = new ArrayList<>(person.getPermissions());
                 updatedRoles.add(Role.INACTIVE);
+
+                // Business rule: INACTIVE users cannot have other roles (except USER which is always present)
+                updatedRoles.removeIf(role -> role != Role.INACTIVE && role != Role.USER);
+
                 person.setPermissions(updatedRoles);
-                
+
                 final Person updatedPerson = personService.update(person);
                 return new ResponseEntity<>(mapToDto(updatedPerson), OK);
             })
@@ -209,11 +222,17 @@ public class PersonApiController {
                 if (person.isActive()) {
                     return new ResponseEntity<>(mapToDto(person), OK);
                 }
-                
+
                 final List<Role> updatedRoles = new ArrayList<>(person.getPermissions());
                 updatedRoles.remove(Role.INACTIVE);
+
+                // Ensure USER role is present when activating
+                if (!updatedRoles.contains(Role.USER)) {
+                    updatedRoles.add(Role.USER);
+                }
+
                 person.setPermissions(updatedRoles);
-                
+
                 final Person updatedPerson = personService.update(person);
                 return new ResponseEntity<>(mapToDto(updatedPerson), OK);
             })
