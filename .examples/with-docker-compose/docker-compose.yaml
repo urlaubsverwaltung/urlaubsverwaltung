@@ -38,7 +38,7 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
-      mailhog:
+      mailpit:
         condition: service_started
 
   postgres:
@@ -55,11 +55,15 @@ services:
       timeout: 1s
       retries: 5
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
+  mailpit:
+    image: axllent/mailpit:v1.26.1
     ports:
       - '1025:1025'
       - '8025:8025'
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.2.5
