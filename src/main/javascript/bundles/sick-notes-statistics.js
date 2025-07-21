@@ -1,12 +1,15 @@
 import "../js/common";
+import { useTheme } from "../js/use-theme";
 import ApexCharts from "apexcharts";
+import { useMedia } from "../js/use-media";
 
 const series = globalThis.sicknoteStatistic.dataseriesNames.map((name, index) => ({
   name,
   data: globalThis.sicknoteStatistic.dataseriesValues[index].data,
 }));
 
-const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)");
+const { theme } = useTheme();
+const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 
 const options = {
   chart: {
@@ -16,7 +19,7 @@ const options = {
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
     animations: {
-      enabled: !prefersReducedMotion.matches,
+      enabled: !reducedMotion.value,
       speed: 200,
     },
     toolbar: {
@@ -40,7 +43,8 @@ const options = {
     enabled: false,
   },
   theme: {
-    mode: "light",
+    // mode: theme.value === "dark" ? "dark" : "light",
+    mode: theme.value === "dark" ? "dark" : "light",
   },
   responsive: [
     {
@@ -66,3 +70,11 @@ const options = {
 
 const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
 chart.render();
+
+theme.subscribe(async function (nextTheme) {
+  await chart.updateOptions({
+    theme: {
+      mode: nextTheme === "dark" ? "dark" : "light",
+    },
+  });
+});
