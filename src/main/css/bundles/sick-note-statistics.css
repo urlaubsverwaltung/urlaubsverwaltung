@@ -1,6 +1,4 @@
 .sicknote-statistics-chart-container {
-  --uv-chart-container-background: theme("colors.gray.50");
-  --uv-chart-background: theme("colors.white");
   padding: 0.5rem;
   @apply tw-rounded-lg;
   background-color: var(--uv-chart-container-background);
@@ -16,14 +14,13 @@
 @screen sm {
   .sicknote-statistics-chart-container {
     padding: 1rem;
+    border: 1px solid var(--uv-chart-border);
   }
 }
 
 @screen md {
   .sicknote-statistics-chart-container {
     padding: 1.25rem;
-    @apply tw-border;
-    @apply tw-border-gray-100;
   }
 
   .sicknote-statistics-chart {
