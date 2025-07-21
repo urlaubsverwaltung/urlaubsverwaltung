@@ -330,7 +330,7 @@ const View = (function () {
 
   function renderPopoverAbsenceContent(absence) {
     let href = "";
-    let title = ""; //TODO die public holidays haben eine localized description. Woher?
+    let title = ""; //TODO die public holidays haben eine localized description. Woher? Hier: VacationType getLabel
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absence.id);
       title = i18n("overtime.popover.absence.VACATION");
@@ -354,7 +354,7 @@ const View = (function () {
 
     return render(TMPL.popoverContentAbsenceCreation, {
       href: href,
-      title: "Keine Abwesenheit (i18n?)",
+      title: i18n("overtime.popover.no-absence"),
       linkText: linkText,
     });
   }
