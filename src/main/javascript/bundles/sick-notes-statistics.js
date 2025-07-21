@@ -1,19 +1,53 @@
 import "../js/common";
 import ApexCharts from "apexcharts";
 
-let series = globalThis.sicknoteStatistic.dataseriesNames.map((name, i) => ({
+let series = globalThis.sicknoteStatistic.dataseriesNames.map((name, index) => ({
   name: name,
-  data: globalThis.sicknoteStatistic.dataseriesValues[i].data,
+  data: globalThis.sicknoteStatistic.dataseriesValues[index].data,
 }));
+
+const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)");
 
 const options = {
   chart: {
     type: "bar",
     stacked: true,
+    height: 320,
+    parentHeightOffset: 0,
+    background: "var(--uv-chart-background)",
+    animations: {
+      enabled: !prefersReducedMotion.matches,
+      speed: 200,
+    },
+    toolbar: {
+      show: false,
+    },
+    zoom: {
+      enabled: false,
+    },
+    selection: {
+      enabled: false,
+    },
+  },
+  legend: {
+    position: "bottom",
+  },
+  tooltip: {
+    enabled: false,
   },
   theme: {
     mode: "light",
   },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {},
+    },
+    {
+      breakpoint: Number.MAX_SAFE_INTEGER,
+      options: {},
+    },
+  ],
   colors: ["var(--sick-note-color)", "var(--sick-note-child-color)"],
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,

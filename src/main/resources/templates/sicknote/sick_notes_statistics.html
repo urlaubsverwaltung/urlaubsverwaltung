@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}">Krankmeldungsstatistik</title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/sick-note-statistics.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('sick_notes_statistics.js')}" />
     </th:block>
@@ -55,40 +58,56 @@
           </th:block>
         </div>
 
-        <div id="sicknote-statistic-chart"></div>
+        <div>
+          <div class="tw-mt-8 tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-gap-1">
+            <h2 class="tw-m-0 tw-font-bold tw-text-base" th:text="#{sicknotes.statistics.chart.title}">
+              Verteilung der Krankheitstage
+            </h2>
+            <div class="tw-text-sm md:tw-font-bold md:tw-text-right md:tw-px-3">
+              <th:block th:text="#{filter.validity}"></th:block>
+              <th:block th:text="${{statistics.created}}"></th:block>
+            </div>
+          </div>
 
-        <table class="list-table tw-text-sm">
+          <div class="tw-mt-4 sicknote-statistics-chart-container">
+            <div id="sicknote-statistic-chart" class="sicknote-statistics-chart"></div>
+          </div>
+        </div>
+
+        <div class="tw-mt-8 tw-flex tw-flex-col tw-justify-between tw-gap-1 md:tw-mt-12 md:tw-flex-row">
+          <h2 class="tw-m-0 tw-text-base tw-font-bold" th:text="#{sicknotes.statistics.summary.title}">
+            Zusammenfassung
+          </h2>
+          <div class="tw-text-sm md:tw-font-bold md:tw-text-right md:tw-px-3">
+            <th:block th:text="#{filter.validity}"></th:block>
+            <th:block th:text="${{statistics.created}}"></th:block>
+          </div>
+        </div>
+
+        <table class="tw-mt-4 list-table tw-text-sm">
           <caption class="tw-sr-only" th:text="#{sicknotes.statistics.title}">
             Statistik für das Jahr
           </caption>
-
-          <thead>
-            <tr>
-              <th scope="col" colspan="2" class="tw-text-right">
-                <span th:text="#{filter.validity}"></span>
-                <span th:text="${{statistics.created}}"></span>
-              </th>
-            </tr>
-          </thead>
-
           <tbody>
             <tr>
               <td th:text="#{sicknotes.statistics.totalNumber}"></td>
-              <td th:text="${statistics.totalNumberOfSickNotes}"></td>
+              <td class="tw-text-right" th:text="${statistics.totalNumberOfSickNotes}"></td>
             </tr>
             <tr>
               <td th:text="#{sicknotes.statistics.totalNumberOfDays}"></td>
               <td
+                class="tw-text-right"
                 th:text="${statistics.totalNumberOfSickDays} % 1 == 0 ? ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 0)} : ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 1)}"
               ></td>
             </tr>
             <tr>
               <td th:text="#{sicknotes.statistics.personWithSickNotes}"></td>
-              <td th:text="${statistics.numberOfPersonsWithMinimumOneSickNote}"></td>
+              <td class="tw-text-right" th:text="${statistics.numberOfPersonsWithMinimumOneSickNote}"></td>
             </tr>
             <tr>
               <td th:text="#{sicknotes.statistics.averageSickTime}"></td>
               <td
+                class="tw-text-right"
                 th:text="${statistics.averageDurationOfDiseasePerPerson} % 1 == 0 ? ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 0)} : ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 1)}"
               ></td>
             </tr>
