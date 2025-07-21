@@ -25,33 +25,13 @@ const options = {
     toolbar: {
       show: false,
     },
-    zoom: {
-      enabled: false,
-    },
-    selection: {
-      enabled: false,
-    },
-  },
-  legend: {
-    position: "bottom",
   },
   tooltip: {
     enabled: false,
   },
   theme: {
-    // mode: theme.value === "dark" ? "dark" : "light",
     mode: theme.value === "dark" ? "dark" : "light",
   },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {},
-    },
-    {
-      breakpoint: Number.MAX_SAFE_INTEGER,
-      options: {},
-    },
-  ],
   colors: ["var(--sick-note-color)", "var(--sick-note-child-color)"],
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
