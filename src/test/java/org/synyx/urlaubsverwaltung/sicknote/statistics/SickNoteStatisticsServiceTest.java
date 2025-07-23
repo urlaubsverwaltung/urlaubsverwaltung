@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -44,10 +45,12 @@ class SickNoteStatisticsServiceTest {
     private WorkDaysCountService workDaysCountService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, workDaysCountService, departmentService);
+        sut = new SickNoteStatisticsService(sickNoteService, workDaysCountService, departmentService, personService);
     }
 
     @Test
