@@ -90,10 +90,26 @@
               <td class="tw-text-right" th:text="${statistics.totalNumberOfSickNotes}"></td>
             </tr>
             <tr>
-              <td th:text="#{sicknotes.statistics.totalNumberOfDays}"></td>
+              <td th:text="#{sicknotes.statistics.totalNumberOfDaysAllCategories}">totalNumberOfDaysAllCategories</td>
               <td
                 class="tw-text-right"
-                th:text="${statistics.totalNumberOfSickDays} % 1 == 0 ? ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 0)} : ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 1)}"
+                th:text="${statistics.totalNumberOfSickDaysAllCategories} % 1 == 0 ? ${#numbers.formatDecimal(statistics.totalNumberOfSickDaysAllCategories, 1, 0)} : ${#numbers.formatDecimal(statistics.totalNumberOfSickDaysAllCategories, 1, 1)}"
+              ></td>
+            </tr>
+            <tr>
+              <td th:text="#{sicknotes.statistics.totalNumberOfDays.SICK_NOTE}">
+                Anzahl Krankheitstage (Normale Krankmeldung)
+              </td>
+              <td
+                class="tw-text-right"
+                th:text="${statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE)} % 1 == 0 ? ${#numbers.formatDecimal(statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE), 1, 0)} : ${#numbers.formatDecimal(statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE), 1, 1)}"
+              ></td>
+            </tr>
+            <tr>
+              <td th:text="#{sicknotes.statistics.totalNumberOfDays.SICK_NOTE_CHILD}">Anzahl Kind-Krankheitstage</td>
+              <td
+                class="tw-text-right"
+                th:text="${statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD)} % 1 == 0 ? ${#numbers.formatDecimal(statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD), 1, 0)} : ${#numbers.formatDecimal(statistics.getTotalNumberOfSickDaysByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD), 1, 1)}"
               ></td>
             </tr>
             <tr>
@@ -101,10 +117,28 @@
               <td class="tw-text-right" th:text="${statistics.numberOfPersonsWithMinimumOneSickNote}"></td>
             </tr>
             <tr>
+              <td>Anzahl der Personen ohne Krankmeldung</td>
+              <td class="tw-text-right" th:text="${statistics.numberOfPersonsWithoutSickNote}"></td>
+            </tr>
+            <tr>
               <td th:text="#{sicknotes.statistics.averageSickTime}"></td>
               <td
                 class="tw-text-right"
                 th:text="${statistics.averageDurationOfDiseasePerPerson} % 1 == 0 ? ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 0)} : ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 1)}"
+              ></td>
+            </tr>
+            <tr>
+              <td>Durchschnittliche Dauer einer Krankmeldung (Normale Krankmeldung)</td>
+              <td
+                class="tw-text-right"
+                th:text="${statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE)} % 1 == 0 ? ${#numbers.formatDecimal(statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE), 1, 0)} : ${#numbers.formatDecimal(statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE), 1, 1)}"
+              ></td>
+            </tr>
+            <tr>
+              <td>Durchschnittliche Dauer einer Kind-Krankmeldung</td>
+              <td
+                class="tw-text-right"
+                th:text="${statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD)} % 1 == 0 ? ${#numbers.formatDecimal(statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD), 1, 0)} : ${#numbers.formatDecimal(statistics.getAverageDurationOfSickNoteByCategory().get(T(org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory).SICK_NOTE_CHILD), 1, 1)}"
               ></td>
             </tr>
           </tbody>
