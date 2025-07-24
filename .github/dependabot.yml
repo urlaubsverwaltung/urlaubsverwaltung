@@ -55,5 +55,6 @@ updates:
   - package-ecosystem: "docker-compose"
     directories:
       - "/.examples/with-docker-compose"
+      - "/"
     schedule:
       interval: "weekly"
