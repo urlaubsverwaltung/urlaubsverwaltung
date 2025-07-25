@@ -1,0 +1,29 @@
+.sicknote-statistics-chart-container {
+  padding: 0.5rem;
+  @apply tw-rounded-lg;
+  background-color: var(--uv-chart-container-background);
+}
+
+.sicknote-statistics-chart {
+  @apply tw-rounded-md;
+  overflow: hidden;
+  padding: 0.25rem;
+  background-color: var(--uv-chart-background);
+}
+
+@screen sm {
+  .sicknote-statistics-chart-container {
+    padding: 1rem;
+    border: 1px solid var(--uv-chart-border);
+  }
+}
+
+@screen md {
+  .sicknote-statistics-chart-container {
+    padding: 1.25rem;
+  }
+
+  .sicknote-statistics-chart {
+    padding: 1rem;
+  }
+}

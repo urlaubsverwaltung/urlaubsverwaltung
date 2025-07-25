@@ -7,8 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -42,10 +45,12 @@ class SickNoteStatisticsServiceTest {
     private WorkDaysCountService workDaysCountService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, workDaysCountService, departmentService);
+        sut = new SickNoteStatisticsService(sickNoteService, workDaysCountService, departmentService, personService);
     }
 
     @Test
@@ -65,6 +70,7 @@ class SickNoteStatisticsServiceTest {
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = List.of(SickNote.builder()
             .person(member1)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
             .build());
@@ -106,6 +112,7 @@ class SickNoteStatisticsServiceTest {
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final SickNote sickNote = SickNote.builder()
             .person(member1)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
             .build();
@@ -145,6 +152,7 @@ class SickNoteStatisticsServiceTest {
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
             .build();
@@ -184,6 +192,7 @@ class SickNoteStatisticsServiceTest {
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
             .build();
@@ -194,6 +203,13 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+    }
+
+    private static SickNoteType sickNoteType(SickNoteCategory category) {
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setId(1L);
+        sickNoteType.setCategory(category);
+        return sickNoteType;
     }
 
     @Test

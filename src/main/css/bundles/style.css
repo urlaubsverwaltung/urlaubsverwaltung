@@ -50,6 +50,9 @@
     --uv-cal-weekend-color: 10, 10, 10;
     --uv-cal-public-holiday-bg: 203, 213, 225; /* slate.300 */
     --uv-cal-public-holiday-color: 10, 10, 10;
+    --uv-chart-container-background: theme("colors.gray.50");
+    --uv-chart-background: theme("colors.white");
+    --uv-chart-border: theme("colors.gray.100");
   }
 
   .tw-dark {
@@ -62,6 +65,9 @@
     --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
+    --uv-chart-container-background: theme("colors.zinc.800");
+    --uv-chart-background: theme("colors.zinc.800");
+    --uv-chart-border: theme("colors.zinc.700");
 
     * {
       color-scheme: dark;
