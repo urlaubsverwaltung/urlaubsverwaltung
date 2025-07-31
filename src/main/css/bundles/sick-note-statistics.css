@@ -11,9 +11,59 @@
   background-color: var(--uv-chart-background);
 }
 
+.statistic-summary-container {
+  .statistic-summary-container-title {
+    margin: 0;
+    @apply tw-text-sm;
+    font-weight: 600;
+  }
+
+  .statistic-summary-card-box {
+    --statistic-card-box-gap: 1rem;
+    margin-top: 1.5rem;
+    display: flex;
+    gap: var(--statistic-card-box-gap);
+
+    & ~ .statistic-summary-card-box {
+      margin-top: var(--statistic-card-box-gap);
+    }
+
+    .statistic-summary-card {
+      flex: 1 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background-color: var(--uv-chart-container-background);
+      padding: 0.5rem 1rem;
+      margin: 0;
+      @apply tw-rounded-md;
+
+      .statistic-summary-card__label {
+        @apply tw-text-sm;
+        font-weight: 500;
+        @apply tw-text-gray-600;
+        @apply dark:tw-text-zinc-200;
+      }
+
+      .statistic-summary-card__content {
+        @apply tw-text-xl;
+        font-weight: 600;
+        @apply tw-text-black;
+        @apply dark:tw-text-zinc-100;
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
 @screen sm {
   .sicknote-statistics-chart-container {
     padding: 1rem;
+    border: 1px solid var(--uv-chart-border);
+  }
+
+  .statistic-summary-card {
     border: 1px solid var(--uv-chart-border);
   }
 }

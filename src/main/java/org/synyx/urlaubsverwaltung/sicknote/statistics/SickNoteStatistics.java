@@ -69,11 +69,27 @@ public class SickNoteStatistics {
         return totalNumberOfSickDaysAllCategories;
     }
 
-    public Map<SickNoteCategory, BigDecimal> getTotalNumberOfSickDaysByCategory() {
+    public BigDecimal getTotalNumberOfSickDays() {
+        return getTotalNumberOfSickDaysByCategory().get(SICK_NOTE);
+    }
+
+    public BigDecimal getTotalNumberOfChildSickDays() {
+        return getTotalNumberOfSickDaysByCategory().get(SICK_NOTE_CHILD);
+    }
+
+    private Map<SickNoteCategory, BigDecimal> getTotalNumberOfSickDaysByCategory() {
         return totalNumberOfSickDaysByCategory;
     }
 
-    public Map<SickNoteCategory, BigDecimal> getAverageDurationOfSickNoteByCategory() {
+    public BigDecimal getAverageDurationOfSickNote() {
+        return getAverageDurationOfSickNoteByCategory().get(SICK_NOTE);
+    }
+
+    public BigDecimal getAverageDurationOfChildSickNote() {
+        return getAverageDurationOfSickNoteByCategory().get(SICK_NOTE_CHILD);
+    }
+
+    private Map<SickNoteCategory, BigDecimal> getAverageDurationOfSickNoteByCategory() {
         return averageDurationOfSickNoteByCategory;
     }
 
