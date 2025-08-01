@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
@@ -30,10 +29,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneOffset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static java.math.BigDecimal.TEN;
 import static java.time.LocalDate.of;
@@ -53,7 +50,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsBuilderTest {
@@ -103,11 +100,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -163,11 +157,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -221,11 +212,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -289,11 +277,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -356,11 +341,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Application holidayWaiting = new Application();
         holidayWaiting.setPerson(person);
@@ -469,11 +451,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final List<Person> persons = List.of(person);
         when(accountService.getHolidaysAccount(2014, persons)).thenReturn(List.of(account));
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final List<Application> applications = List.of();
         when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())).thenReturn(applications);
@@ -500,17 +479,5 @@ class ApplicationForLeaveStatisticsBuilderTest {
         assertThat(statistics.getPerson()).isEqualTo(person);
         assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ofHours(9));
         assertThat(statistics.getLeftOvertimeForPeriod()).isEqualTo(Duration.ofHours(3));
-    }
-
-    private static WorkingDayInformation fullWorkingDayInformation() {
-        return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }

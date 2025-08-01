@@ -14,11 +14,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInf
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.SATURDAY;
@@ -26,13 +24,15 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.noWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 class WorkingTimeCalendarTest {
 
@@ -45,15 +45,13 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2024, 7, 1);
             final LocalDate to = LocalDate.of(2024, 7, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> {
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> {
                 if (List.of(WEDNESDAY, SATURDAY, SUNDAY).contains(date.getDayOfWeek())) {
-                    return emptyWorkingDayInformation();
+                    return noWorkday();
                 } else {
-                    return fullWorkingDayInformation();
+                    return fullWorkday();
                 }
             });
-
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
 
             assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 30))).hasValue(LocalDate.of(2024, 7, 1));
             assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 7, 15))).hasValue(LocalDate.of(2024, 7, 16));
@@ -71,8 +69,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2024, 7, 1);
             final LocalDate to = LocalDate.of(2024, 7, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             // 2024-06-30 would return 2024-07-01 -> use 2024-06-30 to assert empty value
             assertThat(sut.nextWorkingFollowingTo(LocalDate.of(2024, 6, 29))).isEmpty();
@@ -89,8 +86,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             final Application application = new Application();
             application.setStartDate(from.plusDays(1));
@@ -108,8 +104,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             final Application application = new Application();
             application.setStartDate(from.plusDays(1));
@@ -128,8 +123,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
 
             final Application application = new Application();
             application.setStartDate(from.plusDays(1));
@@ -144,8 +138,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             final Optional<BigDecimal> actual = sut.workingTime(LocalDate.of(2022, 8, 10));
 
@@ -157,8 +150,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             assertThat(sut.workingTime(LocalDate.of(2022, 7, 31))).isEmpty();
             assertThat(sut.workingTime(LocalDate.of(2022, 9, 1))).isEmpty();
@@ -169,8 +161,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(31));
             assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(21));
@@ -181,8 +172,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(from, to);
 
             assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
         }
@@ -193,8 +183,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
 
             assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(15.5));
             assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(10.5));
@@ -206,8 +195,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayInformation);
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
 
             assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
         }
@@ -230,9 +218,7 @@ class WorkingTimeCalendarTest {
             final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
             final DateRange marchDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 31));
 
-
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(applicationFrom, applicationTo);
 
             final Application application = new Application();
             application.setStartDate(applicationFrom);
@@ -251,8 +237,7 @@ class WorkingTimeCalendarTest {
             final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
             final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
 
-            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> fullWorkingDayInformation());
-            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+            final WorkingTimeCalendar sut = workingTimeCalendarMondayToSunday(applicationFrom, applicationTo);
 
             final Application application = new Application();
             application.setStartDate(applicationFrom);
@@ -347,21 +332,5 @@ class WorkingTimeCalendarTest {
             final boolean actual = sut.workingDays().get(date).hasHalfDayPublicHoliday();
             assertThat(actual).isTrue();
         }
-    }
-
-    private static WorkingDayInformation emptyWorkingDayInformation() {
-        return new WorkingDayInformation(ZERO, NO_WORKDAY, NO_WORKDAY);
-    }
-
-    private static WorkingDayInformation fullWorkingDayInformation() {
-        return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private static Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }

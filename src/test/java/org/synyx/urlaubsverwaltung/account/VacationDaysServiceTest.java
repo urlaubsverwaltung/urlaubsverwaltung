@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
@@ -23,10 +22,8 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -47,9 +44,10 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToFriday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysServiceTest {
@@ -98,8 +96,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -133,8 +130,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -170,8 +166,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -207,8 +202,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Account account = anyAccount(person, Year.of(2022));
@@ -249,8 +243,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -287,8 +280,7 @@ class VacationDaysServiceTest {
         final LocalDate firstDayOfYear = LocalDate.of(year.getValue(), 1, 1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), year);
@@ -341,12 +333,12 @@ class VacationDaysServiceTest {
         accountNextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
         accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             year.atDay(1),
-            year.atDay(1).plusYears(1).with(lastDayOfYear()),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, new WorkingTimeCalendar(workingTimeByDate)));
-        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year.plusYears(1))).thenReturn(Map.of(person, new WorkingTimeCalendar(workingTimeByDate)));
+            year.atDay(1).plusYears(1).with(lastDayOfYear())
+        );
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year.plusYears(1))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), year, List.of(accountNextYear));
         assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal("12"));
@@ -377,8 +369,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(activeStatuses(), List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual =
@@ -424,8 +415,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY));
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual =
@@ -469,8 +459,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(firstDayOfYear, lastDayOfYear);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -513,8 +502,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(firstDayOfYear, lastDayOfYear);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -557,8 +545,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(firstDayOfYear, lastDayOfYear);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -601,8 +588,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(firstDayOfYear, lastDayOfYear);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -645,8 +631,7 @@ class VacationDaysServiceTest {
         when(applicationService.getForStatesAndPerson(applicationStatus, List.of(person), firstDayOfYear, lastDayOfYear))
             .thenReturn(List.of(application));
 
-        final Map<LocalDate, WorkingDayInformation> workingTimeByDate = workingTimeMondayToFriday(firstDayOfYear, lastDayOfYear);
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToFriday(firstDayOfYear, lastDayOfYear);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(year))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
@@ -728,22 +713,6 @@ class VacationDaysServiceTest {
         account.setDoRemainingVacationDaysExpireLocally(true);
 
         assertThat(sut.getUsedRemainingVacationDays(account)).isEqualTo(ZERO);
-    }
-
-    private Map<LocalDate, WorkingDayInformation> workingTimeMondayToFriday(LocalDate from, LocalDate to) {
-        return buildWorkingTimeByDate(from, to, date ->
-            weekend(date)
-                ? new WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY)
-                : new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
-        );
-    }
-
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 
     private boolean weekend(LocalDate date) {

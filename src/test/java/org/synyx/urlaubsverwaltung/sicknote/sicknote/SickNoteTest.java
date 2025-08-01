@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -13,9 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInf
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -26,6 +23,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 class SickNoteTest {
 
@@ -44,12 +42,10 @@ class SickNoteTest {
     @Test
     void ensureGetWorkDays() {
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, JUNE, 1),
-            LocalDate.of(2022, JUNE, 30),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, JUNE, 30)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
             .dayLength(FULL)
@@ -67,12 +63,10 @@ class SickNoteTest {
     @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
     void ensureGetWorkDaysHalfDay(DayLength givenDayLength) {
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, JUNE, 1),
-            LocalDate.of(2022, JUNE, 30),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, JUNE, 30)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
             .dayLength(givenDayLength)
@@ -91,12 +85,7 @@ class SickNoteTest {
     void ensureWorkingTimeForHalfDaySickNoteAtHalfPublicHoliday(DayLength givenDayLength) {
 
         final LocalDate christmas = LocalDate.of(2022, DECEMBER, 24);
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
-            christmas,
-            christmas,
-            date -> new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY)
-        );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(christmas, new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY)));
 
         final SickNote sickNote = SickNote.builder()
             .dayLength(givenDayLength)
@@ -138,12 +127,10 @@ class SickNoteTest {
     @Test
     void ensureGetWorkDaysWithAub() {
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, JUNE, 1),
-            LocalDate.of(2022, JUNE, 30),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, JUNE, 30)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
             .dayLength(FULL)
@@ -163,12 +150,10 @@ class SickNoteTest {
     @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
     void ensureGetWorkDaysWithAubHalfDay(DayLength givenDayLength) {
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, JUNE, 1),
-            LocalDate.of(2022, JUNE, 30),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, JUNE, 30)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
             .dayLength(givenDayLength)
@@ -313,12 +298,10 @@ class SickNoteTest {
         final Person applier = new Person();
         applier.setId(2L);
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, JANUARY, 1),
-            LocalDate.of(2022, DECEMBER, 31),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, DECEMBER, 31)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
             .id(1L)
@@ -340,13 +323,5 @@ class SickNoteTest {
             "applier=Person{id='2'}, sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=2022-01-01, " +
             "endDate=2022-01-31, dayLength=FULL, aubStartDate=2022-01-17, aubEndDate=2022-01-21," +
             " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE, workDays=31, workDaysWithAub=5, calendarDays=31}");
-    }
-
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }
