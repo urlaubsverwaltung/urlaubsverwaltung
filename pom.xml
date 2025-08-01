@@ -26,7 +26,7 @@
      https://www.cve.org/CVERecord?id=CVE-2024-25710
      https://www.cve.org/CVERecord?id=CVE-2024-26308
     -->
-    <commons-compress.version>1.27.1</commons-compress.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
