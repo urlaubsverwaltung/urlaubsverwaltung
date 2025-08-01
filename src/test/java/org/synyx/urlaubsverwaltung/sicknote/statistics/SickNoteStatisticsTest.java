@@ -35,9 +35,6 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-/**
- * Unit test for {@link SickNoteStatistics}.
- */
 @ExtendWith(MockitoExtension.class)
 class SickNoteStatisticsTest {
 
@@ -60,7 +57,7 @@ class SickNoteStatisticsTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
         final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
 
-        assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(2);
+        assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(new BigDecimal(2));
     }
 
     @Test
