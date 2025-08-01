@@ -20,7 +20,7 @@
 
   .statistic-summary-card-box {
     --statistic-card-box-gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     display: flex;
     gap: var(--statistic-card-box-gap);
 
