@@ -63,6 +63,11 @@ const options = {
 const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
 chart.render();
 
+const numberOfPersonWithAtLeastOneSickNote =
+  Number.parseFloat(document.querySelector("#sicknote-statistic-verteilung-mit-mindestens-einer").textContent) || 0;
+const numberOfPersonWithNoSickNote =
+  Number.parseFloat(document.querySelector("#sicknote-statistic-verteilung-mit-keiner").textContent) || 0;
+
 const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote-statistic-verteilung"), {
   chart: {
     type: "radialBar",
@@ -77,7 +82,10 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
       speed: 200,
     },
   },
-  series: [(4 / 14) * 100],
+  series: [
+    (numberOfPersonWithAtLeastOneSickNote / (numberOfPersonWithAtLeastOneSickNote + numberOfPersonWithNoSickNote)) *
+      100,
+  ],
   states: {
     hover: {
       filter: {
