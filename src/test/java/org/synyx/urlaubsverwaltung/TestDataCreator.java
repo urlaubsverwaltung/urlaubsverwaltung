@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -28,6 +29,7 @@ import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -45,6 +47,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 public final class TestDataCreator {
 
@@ -133,6 +136,10 @@ public final class TestDataCreator {
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
         sickNoteType.setMessageKey("Krankmeldung");
 
+        final Map<LocalDate, WorkingTimeCalendar.WorkingDayInformation> workingDays = Map.of(
+            startDate, new WorkingTimeCalendar.WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+        );
+
         return SickNote.builder()
             .person(person)
             .startDate(startDate)
@@ -140,6 +147,7 @@ public final class TestDataCreator {
             .dayLength(dayLength)
             .sickNoteType(sickNoteType)
             .status(SickNoteStatus.ACTIVE)
+            .workingTimeCalendar(new WorkingTimeCalendar(workingDays))
             .build();
     }
 
