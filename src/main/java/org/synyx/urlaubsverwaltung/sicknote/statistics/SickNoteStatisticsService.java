@@ -33,26 +33,26 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 public class SickNoteStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
 
-
     @Autowired
-    SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService, DepartmentService departmentService, PersonService personService) {
+    SickNoteStatisticsService(
+        SickNoteService sickNoteService,
+        DepartmentService departmentService,
+        PersonService personService
+    ) {
         this.sickNoteService = sickNoteService;
-        this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
     }
 
     SickNoteStatistics createStatisticsForPerson(Person person, Clock clock) {
-
         final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = getSickNotes(person, firstDayOfYear, lastDayOfYear);
         final List<Person> visibleActivePersonsForPerson = getVisibleActivePersonsForPerson(person);
-        return new SickNoteStatistics(clock, sickNotes, visibleActivePersonsForPerson, workDaysCountService);
+        return new SickNoteStatistics(clock, sickNotes, visibleActivePersonsForPerson);
     }
 
     private List<Person> getVisibleActivePersonsForPerson(Person person) {
