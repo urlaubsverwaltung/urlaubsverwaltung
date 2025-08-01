@@ -71,6 +71,14 @@ public class SickNoteStatistics {
         this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(actualYear, workDaysCountService, sickNotes, SICK_NOTE_CHILD);
     }
 
+    public List<BigDecimal> getNumberOfSickDaysByMonth() {
+        return numberOfSickDaysByMonth;
+    }
+
+    public List<BigDecimal> getNumberOfChildSickDaysByMonth() {
+        return numberOfChildSickDaysByMonth;
+    }
+
     public int getTotalNumberOfAllSickNotes() {
         return totalNumberOfAllSickNotes;
     }
@@ -81,6 +89,14 @@ public class SickNoteStatistics {
 
     public BigDecimal getTotalNumberOfChildSickNotes() {
         return totalNumberOfSickNotesByCategory.getOrDefault(SICK_NOTE_CHILD, ZERO);
+    }
+
+    public Long getNumberOfPersonsWithMinimumOneSickNote() {
+        return numberOfPersonsWithMinimumOneSickNote;
+    }
+
+    public Long getNumberOfPersonsWithoutSickNote() {
+        return numberOfPersonsWithoutSickNote;
     }
 
     public BigDecimal getTotalNumberOfSickDaysAllCategories() {
@@ -95,6 +111,15 @@ public class SickNoteStatistics {
         return totalNumberOfSickDaysByCategory.getOrDefault(SICK_NOTE_CHILD, ZERO);
     }
 
+    public BigDecimal getAverageDurationOfAllSickNotes() {
+        final BigDecimal totalNumberOfSickNotes = getTotalNumberOfSickNotes();
+        if (Objects.equals(totalNumberOfSickNotes, ZERO)) {
+            return ZERO;
+        }
+
+        return getTotalNumberOfSickDays().divide(getTotalNumberOfSickNotes(), 2, HALF_UP);
+    }
+
     public BigDecimal getAverageDurationOfSickNote() {
         return averageDurationOfSickNoteByCategory.getOrDefault(SICK_NOTE, ZERO);
     }
@@ -103,37 +128,39 @@ public class SickNoteStatistics {
         return averageDurationOfSickNoteByCategory.getOrDefault(SICK_NOTE_CHILD, ZERO);
     }
 
+    public BigDecimal getAverageDurationOfDiseasePerPerson() {
+        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
+        if (numberOfPersons == 0) {
+            return ZERO;
+        }
+
+        return valueOf(totalNumberOfSickDaysAllCategories.doubleValue() / numberOfPersons);
+    }
+
+    public BigDecimal getAverageDurationOfDiseasePerPersonAndSick() {
+        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
+        if (numberOfPersons == 0) {
+            return ZERO;
+        }
+
+        return getTotalNumberOfSickDays().divide(valueOf(numberOfPersons), 2, HALF_UP);
+    }
+
+    public BigDecimal getAverageDurationOfDiseasePerPersonAndChildSick() {
+        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
+        if (numberOfPersons == 0) {
+            return ZERO;
+        }
+
+        return getTotalNumberOfChildSickDays().divide(valueOf(numberOfPersons), 2, HALF_UP);
+    }
+
     public LocalDate getCreated() {
         return created;
     }
 
     public int getYear() {
         return year;
-    }
-
-    public Long getNumberOfPersonsWithMinimumOneSickNote() {
-        return numberOfPersonsWithMinimumOneSickNote;
-    }
-
-    public Long getNumberOfPersonsWithoutSickNote() {
-        return numberOfPersonsWithoutSickNote;
-    }
-
-    public BigDecimal getAverageDurationOfDiseasePerPerson() {
-        final BigDecimal totalNumberOfSickNotes = getTotalNumberOfSickNotes();
-        if (Objects.equals(totalNumberOfSickNotes, ZERO)) {
-            return ZERO;
-        }
-
-        return getTotalNumberOfSickDays().divide(getTotalNumberOfSickNotes(), HALF_UP);
-    }
-
-    public List<BigDecimal> getNumberOfSickDaysByMonth() {
-        return numberOfSickDaysByMonth;
-    }
-
-    public List<BigDecimal> getNumberOfChildSickDaysByMonth() {
-        return numberOfChildSickDaysByMonth;
     }
 
     private Long calculateNumberOfPersonWithoutSickNote(List<Person> visibleActivePersonsForPerson, List<SickNote> sickNotes) {
@@ -190,7 +217,7 @@ public class SickNoteStatistics {
 
         final List<BigDecimal> values = new ArrayList<>();
 
-        for (Month month : Month.values()) {
+        for (final Month month : Month.values()) {
 
             final LocalDate firstDateOfMonth = year.atMonth(month).atDay(1);
             final LocalDate lastDateOfMonth = year.atMonth(month).atEndOfMonth();
