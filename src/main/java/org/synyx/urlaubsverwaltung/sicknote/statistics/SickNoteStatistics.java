@@ -91,6 +91,12 @@ public class SickNoteStatistics {
         return totalNumberOfSickNotesByCategory.getOrDefault(SICK_NOTE_CHILD, ZERO);
     }
 
+    public BigDecimal getAtLeastOneSickNotePercent() {
+        return (valueOf(numberOfPersonsWithMinimumOneSickNote)
+            .divide(valueOf(numberOfPersonsWithMinimumOneSickNote).add(valueOf(numberOfPersonsWithoutSickNote)), 3, HALF_UP))
+            .multiply(valueOf(100));
+    }
+
     public Long getNumberOfPersonsWithMinimumOneSickNote() {
         return numberOfPersonsWithMinimumOneSickNote;
     }
@@ -134,7 +140,7 @@ public class SickNoteStatistics {
             return ZERO;
         }
 
-        return valueOf(totalNumberOfSickDaysAllCategories.doubleValue() / numberOfPersons);
+        return totalNumberOfSickDaysAllCategories.divide(valueOf(numberOfPersons), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfDiseasePerPersonAndSick() {
@@ -202,7 +208,7 @@ public class SickNoteStatistics {
         Arrays.stream(SickNoteCategory.values())
             .forEach(type -> {
                 final BigDecimal averageNumberOfDaysPerSickNote = totalNumberOfSickDaysByCategory.getOrDefault(type, ZERO)
-                    .divide(valueOf(countByCategory.getOrDefault(type, 1L)), HALF_UP);
+                    .divide(valueOf(countByCategory.getOrDefault(type, 1L)), 2, HALF_UP);
                 result.put(type, averageNumberOfDaysPerSickNote);
             });
 
