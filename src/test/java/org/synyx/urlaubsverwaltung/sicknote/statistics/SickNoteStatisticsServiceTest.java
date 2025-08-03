@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -21,11 +20,10 @@ import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
 
-import static java.math.BigDecimal.ONE;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -33,6 +31,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteStatisticsServiceTest {
@@ -42,15 +41,13 @@ class SickNoteStatisticsServiceTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, workDaysCountService, departmentService, personService);
+        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService);
     }
 
     @Test
@@ -66,16 +63,19 @@ class SickNoteStatisticsServiceTest {
         final List<Person> members = List.of(member1, member2);
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(members);
 
+        final LocalDate date = LocalDate.of(2022, 10, 10);
+
         final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = List.of(SickNote.builder()
             .person(member1)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(2022, 10, 10))
-            .endDate(LocalDate.of(2022, 10, 10))
+            .startDate(date)
+            .endDate(date)
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
             .build());
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
@@ -108,17 +108,20 @@ class SickNoteStatisticsServiceTest {
         final List<Person> members = List.of(member1, member2);
         when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(members);
 
+        final LocalDate date = LocalDate.of(2022, 10, 10);
+
         final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final SickNote sickNote = SickNote.builder()
             .person(member1)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(2022, 10, 10))
-            .endDate(LocalDate.of(2022, 10, 10))
+            .startDate(date)
+            .endDate(date)
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
             .build();
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
@@ -150,15 +153,18 @@ class SickNoteStatisticsServiceTest {
         final LocalDate from = LocalDate.of(2022, 1, 1);
         final LocalDate to = LocalDate.of(2022, 12, 31);
 
+        final LocalDate date = LocalDate.of(2022, 10, 10);
+
         final SickNote sickNote = SickNote.builder()
             .person(person)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(2022, 10, 10))
-            .endDate(LocalDate.of(2022, 10, 10))
+            .startDate(date)
+            .endDate(date)
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
             .build();
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
@@ -195,10 +201,10 @@ class SickNoteStatisticsServiceTest {
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
             .startDate(LocalDate.of(2022, 10, 10))
             .endDate(LocalDate.of(2022, 10, 10))
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
             .build();
-        final List<SickNote> sickNotes = List.of(sickNote);
-        when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
+        when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(List.of(sickNote));
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();

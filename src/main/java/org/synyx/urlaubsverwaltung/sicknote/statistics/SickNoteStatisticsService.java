@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -8,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -33,15 +31,11 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 public class SickNoteStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
 
-
-    @Autowired
-    SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService, DepartmentService departmentService, PersonService personService) {
+    SickNoteStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonService personService) {
         this.sickNoteService = sickNoteService;
-        this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
     }
@@ -56,7 +50,7 @@ public class SickNoteStatisticsService {
         final List<SickNote> sickNotes = getSickNotes(person, firstDayOfYear, lastDayOfYear);
         final List<Person> visibleActivePersonsForPerson = getVisibleActivePersonsForPerson(person);
 
-        return new SickNoteStatistics(year, today, sickNotes, visibleActivePersonsForPerson, workDaysCountService);
+        return new SickNoteStatistics(year, today, sickNotes, visibleActivePersonsForPerson);
     }
 
     private List<Person> getVisibleActivePersonsForPerson(Person person) {
