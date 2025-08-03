@@ -38,7 +38,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 public class SickNoteStatistics {
 
     @DateTimeFormat(pattern = DD_MM_YYYY)
-    private final LocalDate created;
+    private final LocalDate asOfDate;
     private final int year;
     private final int totalNumberOfAllSickNotes;
     private final BigDecimal totalNumberOfSickDaysAllCategories;
@@ -50,9 +50,9 @@ public class SickNoteStatistics {
     private final List<BigDecimal> numberOfSickDaysByMonth;
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
 
-    SickNoteStatistics(Year year, LocalDate created, List<SickNote> sickNotes, List<Person> visibleActivePersonsForPerson, WorkDaysCountService workDaysCountService) {
+    SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> visibleActivePersonsForPerson, WorkDaysCountService workDaysCountService) {
         this.year = year.getValue();
-        this.created = created;
+        this.asOfDate = asOfDate;
 
         this.numberOfPersonsWithMinimumOneSickNote = sickNotes.stream().map(SickNote::getPerson).distinct().count();
         this.numberOfPersonsWithoutSickNote = calculateNumberOfPersonWithoutSickNote(visibleActivePersonsForPerson, sickNotes);
@@ -158,8 +158,8 @@ public class SickNoteStatistics {
         return getTotalNumberOfChildSickDays().divide(valueOf(numberOfPersons), 2, HALF_UP);
     }
 
-    public LocalDate getCreated() {
-        return created;
+    public LocalDate getAsOfDate() {
+        return asOfDate;
     }
 
     public int getYear() {
@@ -252,7 +252,7 @@ public class SickNoteStatistics {
     @Override
     public String toString() {
         return "SickNoteStatistics{" +
-            "created=" + created +
+            "created=" + asOfDate +
             ", year=" + year +
             ", totalNumberOfSickNotes=" + totalNumberOfAllSickNotes +
             ", totalNumberOfSickNotesByCategory=" + totalNumberOfSickNotesByCategory +
