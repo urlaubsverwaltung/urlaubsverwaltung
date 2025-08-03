@@ -66,7 +66,7 @@
             </h2>
             <div class="tw-text-sm md:tw-font-bold md:tw-text-right md:tw-px-3">
               <th:block th:text="#{filter.validity}"></th:block>
-              <th:block th:text="${{statistics.asOfDate}}"></th:block>
+              <th:block th:text="${#temporals.format(statistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
             </div>
           </div>
 

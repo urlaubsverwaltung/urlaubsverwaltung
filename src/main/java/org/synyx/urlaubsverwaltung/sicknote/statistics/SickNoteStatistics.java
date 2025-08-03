@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -30,14 +29,12 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
-import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
 /**
  * A statistic containing information about sick notes of a year.
  */
 public class SickNoteStatistics {
 
-    @DateTimeFormat(pattern = DD_MM_YYYY)
     private final LocalDate asOfDate;
     private final int year;
     private final int totalNumberOfAllSickNotes;
