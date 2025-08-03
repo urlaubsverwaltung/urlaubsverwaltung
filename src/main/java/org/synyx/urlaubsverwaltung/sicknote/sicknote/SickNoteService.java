@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -80,8 +79,6 @@ public interface SickNoteService {
      * @return list of all matching {@link SickNote}s
      */
     List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
-
-    List<SickNote> getForStatesAndPersonAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end);
 
     /**
      * Set end of sick pay notification send for given sicknote.
