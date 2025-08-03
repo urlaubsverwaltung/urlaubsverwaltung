@@ -248,7 +248,8 @@ public class SickNote {
             .aubEndDate(sickNote.getAubEndDate())
             .lastEdited(sickNote.getLastEdited())
             .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
-            .status(sickNote.getStatus());
+            .status(sickNote.getStatus())
+            .workingTimeCalendar(sickNote.workingTimeCalendar);
     }
 
     public static class Builder {
