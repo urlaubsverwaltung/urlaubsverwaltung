@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -51,11 +50,9 @@ public class SickNoteStatistics {
     private final List<BigDecimal> numberOfSickDaysByMonth;
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
 
-    SickNoteStatistics(Clock clock, List<SickNote> sickNotes, List<Person> visibleActivePersonsForPerson, WorkDaysCountService workDaysCountService) {
-        final Year actualYear = Year.now(clock);
-
-        this.year = actualYear.getValue();
-        this.created = LocalDate.now(clock);
+    SickNoteStatistics(Year year, LocalDate created, List<SickNote> sickNotes, List<Person> visibleActivePersonsForPerson, WorkDaysCountService workDaysCountService) {
+        this.year = year.getValue();
+        this.created = created;
 
         this.numberOfPersonsWithMinimumOneSickNote = sickNotes.stream().map(SickNote::getPerson).distinct().count();
         this.numberOfPersonsWithoutSickNote = calculateNumberOfPersonWithoutSickNote(visibleActivePersonsForPerson, sickNotes);
@@ -67,8 +64,8 @@ public class SickNoteStatistics {
         this.totalNumberOfSickDaysAllCategories = calculateTotalNumberOfSickDaysAllCategories(totalNumberOfSickDaysByCategory);
         this.averageDurationOfSickNoteByCategory = calculateAverageDurationOfSickNoteByCategory(totalNumberOfSickDaysByCategory, sickNotes);
 
-        this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(actualYear, workDaysCountService, sickNotes, SICK_NOTE);
-        this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(actualYear, workDaysCountService, sickNotes, SICK_NOTE_CHILD);
+        this.numberOfSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, workDaysCountService, sickNotes, SICK_NOTE);
+        this.numberOfChildSickDaysByMonth = calculateTotalNumberOfSickDaysAllCategories(year, workDaysCountService, sickNotes, SICK_NOTE_CHILD);
     }
 
     public List<BigDecimal> getNumberOfSickDaysByMonth() {

@@ -48,11 +48,15 @@ public class SickNoteStatisticsService {
 
     SickNoteStatistics createStatisticsForPerson(Person person, Clock clock) {
 
-        final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
+        final Year year = Year.now(clock);
+        final LocalDate today = LocalDate.now(clock);
+
+        final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = getSickNotes(person, firstDayOfYear, lastDayOfYear);
         final List<Person> visibleActivePersonsForPerson = getVisibleActivePersonsForPerson(person);
-        return new SickNoteStatistics(clock, sickNotes, visibleActivePersonsForPerson, workDaysCountService);
+
+        return new SickNoteStatistics(year, today, sickNotes, visibleActivePersonsForPerson, workDaysCountService);
     }
 
     private List<Person> getVisibleActivePersonsForPerson(Person person) {

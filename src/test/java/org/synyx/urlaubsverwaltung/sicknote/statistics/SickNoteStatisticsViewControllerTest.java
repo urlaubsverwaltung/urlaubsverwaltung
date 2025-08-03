@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
@@ -49,7 +50,7 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), List.of(), workDaysCountService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of(), workDaysCountService);
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final int currentYear = Year.now(clock).getValue();
@@ -68,7 +69,7 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), List.of(), workDaysCountService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of(), workDaysCountService);
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final int currentYear = Year.now(clock).getValue();

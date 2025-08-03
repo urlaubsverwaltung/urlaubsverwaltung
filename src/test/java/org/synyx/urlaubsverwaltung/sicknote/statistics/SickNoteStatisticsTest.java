@@ -15,11 +15,9 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
+import java.time.Year;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
@@ -54,8 +52,9 @@ class SickNoteStatisticsTest {
         final SickNote sickNote2 = createSickNote(person, sickNote2From, of(2023, JANUARY, 3), FULL);
         when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person)).thenReturn(new BigDecimal("9"));
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
+        final Year year = Year.of(2022);
+        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
 
         assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(new BigDecimal(2));
     }
@@ -73,8 +72,9 @@ class SickNoteStatisticsTest {
         final SickNote sickNote2 = createSickNote(person, sickNote2From, of(2023, JANUARY, 3), FULL);
         when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person)).thenReturn(new BigDecimal("9"));
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
+        final Year year = Year.of(2022);
+        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
 
         assertThat(sut.getTotalNumberOfSickDaysAllCategories()).isEqualTo(new BigDecimal("14"));
     }
@@ -93,8 +93,9 @@ class SickNoteStatisticsTest {
         final SickNote sickNote2 = createSickNote(person2, sickNote2From, of(2023, JANUARY, 3), FULL);
         when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person2)).thenReturn(new BigDecimal("9"));
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
+        final Year year = Year.of(2022);
+        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(), workDaysCountService);
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 2 persons = 7 workdays per person
@@ -104,16 +105,16 @@ class SickNoteStatisticsTest {
 
     @Test
     void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
+        final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
+        final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(), List.of(), workDaysCountService);
 
-        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(), List.of(), workDaysCountService);
         final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
         assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(ZERO);
     }
 
     @Test
     void ensuresThatAnYearOverSpanningSickNoteCalculatesOnlyTheWorkdaysOfTheRequestedYear() {
-        final Clock fixedClock = Clock.fixed(Instant.parse("2015-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate from = of(2014, DECEMBER, 7);
@@ -123,7 +124,9 @@ class SickNoteStatisticsTest {
         when(workDaysCountService.getWorkDaysCount(eq(FULL), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(ZERO);
         when(workDaysCountService.getWorkDaysCount(FULL, of(2015, JANUARY, 1), of(2015, DECEMBER, 31), person)).thenReturn(sickDays);
 
-        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote), List.of(), workDaysCountService);
+        final Year year = Year.of(2015);
+        final LocalDate asOfDate = LocalDate.of(2015, 10, 17);
+        final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(), workDaysCountService);
         assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(sickDays);
     }
 
@@ -132,8 +135,6 @@ class SickNoteStatisticsTest {
         @ParameterizedTest
         @EnumSource(Month.class)
         void ensureForMonth(Month givenMonth) {
-            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
-
             final Person person = anyPerson();
 
             final LocalDate startDate = of(2025, givenMonth.getValue(), 1);
@@ -148,14 +149,14 @@ class SickNoteStatisticsTest {
             when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(BigDecimal.valueOf(2));
             when(workDaysCountService.getWorkDaysCount(FULL, date2, date2, person)).thenReturn(BigDecimal.ONE);
 
-            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote, sickNote2, childSickNote), List.of(), workDaysCountService);
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2022, 7, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNote2, childSickNote), List.of(), workDaysCountService);
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(stream(Month.values()).map(month -> month.equals(givenMonth) ? BigDecimal.valueOf(3) : ZERO).toList());
         }
 
         @Test
         void ensureIgnoresChildSickNotes() {
-            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
-
             final Person person = anyPerson();
             final LocalDate startDate = of(2025, 1, 1);
             final LocalDate endDate = of(2025, 1, 2);
@@ -164,15 +165,14 @@ class SickNoteStatisticsTest {
             //constructor calls countService for global number of sickdays
             when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), eq(person))).thenReturn(BigDecimal.valueOf(42));
 
-            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(childSickNote), List.of(), workDaysCountService);
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(childSickNote), List.of(), workDaysCountService);
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
-
         }
 
         @Test
         void ensureWithMonthOverlap() {
-            final Clock fixedClock = Clock.fixed(Instant.parse("2025-07-04T00:00:00.00Z"), ZoneId.systemDefault());
-
             final Person person = anyPerson();
 
             final LocalDate startDate = LocalDate.parse("2025-01-31");
@@ -183,8 +183,9 @@ class SickNoteStatisticsTest {
             when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.parse("2025-02-01"), LocalDate.parse("2025-02-02"), person)).thenReturn(BigDecimal.valueOf(2));
             when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(BigDecimal.valueOf(2));
 
-
-            final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote), List.of(), workDaysCountService);
+            final Year year = Year.of(2025);
+            final LocalDate asOfDate = LocalDate.of(2025, 7, 4);
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(), workDaysCountService);
             assertThat(sut.getNumberOfSickDaysByMonth()).isEqualTo(List.of(BigDecimal.valueOf(1), BigDecimal.valueOf(2), ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO));
         }
     }
