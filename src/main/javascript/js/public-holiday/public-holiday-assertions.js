@@ -1,13 +1,11 @@
-import { findWhere } from "underscore";
-
 export function isPublicHoliday(publicHolidays) {
-  return Boolean(findWhere(publicHolidays, { absencePeriodName: "FULL" }));
+  return publicHolidays.some((holiday) => holiday.absencePeriodName === "FULL");
 }
 
 export function isPublicHolidayMorning(publicHolidays) {
-  return Boolean(findWhere(publicHolidays, { absencePeriodName: "MORNING" }));
+  return publicHolidays.some((holiday) => holiday.absencePeriodName === "MORNING");
 }
 
 export function isPublicHolidayNoon(publicHolidays) {
-  return Boolean(findWhere(publicHolidays, { absencePeriodName: "NOON" }));
+  return publicHolidays.some((holiday) => holiday.absencePeriodName === "NOON");
 }
