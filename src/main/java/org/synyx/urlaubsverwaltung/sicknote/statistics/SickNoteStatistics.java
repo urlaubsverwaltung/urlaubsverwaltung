@@ -116,7 +116,7 @@ public class SickNoteStatistics {
             return ZERO;
         }
 
-        return getTotalNumberOfSickDays().divide(getTotalNumberOfSickNotes(), 2, HALF_UP);
+        return getTotalNumberOfSickDaysAllCategories().divide(valueOf(getTotalNumberOfAllSickNotes()), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfSickNote() {
