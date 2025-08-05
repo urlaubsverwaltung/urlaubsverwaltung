@@ -1,4 +1,3 @@
-import { findWhere } from "underscore";
 import {
   holidayFullApprovedCriteria,
   holidayFullCancellationRequestedCriteria,
@@ -110,4 +109,10 @@ export function isPersonalHolidayCancellationRequestedMorning(absences) {
 
 export function isPersonalHolidayCancellationRequestedNoon(absences) {
   return Boolean(findWhere(absences, holidayNoonCancellationRequestedCriteria));
+}
+
+function findWhere(array, criteria) {
+  return array.find((item) => {
+    return Object.keys(criteria).every((key) => item[key] === criteria[key]);
+  });
 }

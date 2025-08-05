@@ -26,7 +26,6 @@ import {
   isSickNoteWaitingNoon,
 } from "../../js/absence";
 import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
-import { findWhere } from "underscore";
 import parse from "../../lib/date-fns/parse";
 
 function paramize(parameters) {
@@ -235,9 +234,7 @@ export const HolidayService = (function () {
       const formattedDate = format(date, "yyyy-MM-dd");
 
       if (_CACHE["publicHoliday"] && _CACHE["publicHoliday"][year]) {
-        const publicHoliday = findWhere(_CACHE["publicHoliday"][year], {
-          date: formattedDate,
-        });
+        const publicHoliday = _CACHE["publicHoliday"][year].find((holiday) => holiday.date === formattedDate);
         if (publicHoliday) {
           return publicHoliday.description;
         }

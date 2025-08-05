@@ -1,5 +1,3 @@
-import { defaults } from "underscore";
-
 export async function getJSON(url) {
   const response = await doGet(url, {
     headers: {
@@ -14,26 +12,23 @@ export async function getJSON(url) {
 
 export function post(url, options = {}) {
   // eslint-disable-next-line no-restricted-globals
-  return fetch(
-    url,
-    defaults(options, {
-      method: "POST",
-      credentials: "include",
-      headers: defaults(options.headers, {
-        "X-Requested-With": "ajax",
-      }),
-    }),
-  );
+  return fetch(url, {
+    ...options,
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "X-Requested-With": "ajax",
+      ...options.headers,
+    },
+  });
 }
 
 export function doGet(url, options) {
   // eslint-disable-next-line no-restricted-globals
-  return fetch(
-    url,
-    defaults(options, {
-      method: "GET",
-    }),
-  );
+  return fetch(url, {
+    ...options,
+    method: "GET",
+  });
 }
 
 class FetchError extends Error {
