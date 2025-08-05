@@ -56,7 +56,7 @@ public class WorkingTimeCalendarFactory {
     }
 
     public static WorkingTimeCalendar workingTimeCalendarMondayToSunday(LocalDate startDate, LocalDate endDate, Function<LocalDate, Boolean> isFullWorkday) {
-        return new WorkingTimeCalendar(buildWorkingTimeByDate(startDate, endDate, (date) -> {
+        return new WorkingTimeCalendar(buildWorkingTimeByDate(startDate, endDate, date -> {
             if (isFullWorkday.apply(date)) {
                 return fullWorkday();
             } else {

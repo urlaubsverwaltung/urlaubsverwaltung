@@ -27,8 +27,6 @@ import java.util.Map;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -713,10 +711,6 @@ class VacationDaysServiceTest {
         account.setDoRemainingVacationDaysExpireLocally(true);
 
         assertThat(sut.getUsedRemainingVacationDays(account)).isEqualTo(ZERO);
-    }
-
-    private boolean weekend(LocalDate date) {
-        return date.getDayOfWeek().equals(SATURDAY) || date.getDayOfWeek().equals(SUNDAY);
     }
 
     private Person anyPerson() {
