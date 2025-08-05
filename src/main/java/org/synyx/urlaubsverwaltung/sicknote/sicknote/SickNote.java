@@ -75,6 +75,15 @@ public class SickNote {
         return endDate;
     }
 
+    /**
+     * {@link DateRange} from {@link #startDate} to {@link #endDate}.
+     *
+     * @return the {@link DateRange}
+     */
+    public DateRange getDateRange() {
+        return new DateRange(startDate, endDate);
+    }
+
     public DayLength getDayLength() {
         return dayLength;
     }
@@ -239,7 +248,8 @@ public class SickNote {
             .aubEndDate(sickNote.getAubEndDate())
             .lastEdited(sickNote.getLastEdited())
             .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
-            .status(sickNote.getStatus());
+            .status(sickNote.getStatus())
+            .workingTimeCalendar(sickNote.workingTimeCalendar);
     }
 
     public static class Builder {

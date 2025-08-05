@@ -9,9 +9,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
@@ -32,8 +32,6 @@ class SickNoteStatisticsViewControllerTest {
     @Mock
     private SickNoteStatisticsService statisticsService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private PersonService personService;
 
     private final Clock clock = Clock.systemUTC();
@@ -49,7 +47,7 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), workDaysCountService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final int currentYear = Year.now(clock).getValue();
@@ -68,7 +66,7 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), workDaysCountService);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
         final int currentYear = Year.now(clock).getValue();

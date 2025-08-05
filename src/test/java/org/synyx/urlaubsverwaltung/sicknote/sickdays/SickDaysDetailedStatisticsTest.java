@@ -1,19 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 import static java.util.Calendar.JUNE;
 import static java.util.Calendar.NOVEMBER;
@@ -23,7 +18,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 class SickDaysDetailedStatisticsTest {
 
@@ -37,12 +32,10 @@ class SickDaysDetailedStatisticsTest {
         sickNoteType.setId(1L);
         sickNoteType.setCategory(SICK_NOTE);
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, 1, 1),
-            LocalDate.of(2022, 12, 31),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, 12, 31)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNoteOne = SickNote.builder()
             .id(1L)
@@ -139,12 +132,10 @@ class SickDaysDetailedStatisticsTest {
         childSickNoteType.setId(1L);
         childSickNoteType.setCategory(SICK_NOTE_CHILD);
 
-        final Map<LocalDate, WorkingDayInformation> workingTimes = buildWorkingTimeByDate(
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(
             LocalDate.of(2022, 1, 1),
-            LocalDate.of(2022, 12, 31),
-            date -> new WorkingDayInformation(FULL, WORKDAY, WORKDAY)
+            LocalDate.of(2022, 12, 31)
         );
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote childSickNoteOne = SickNote.builder()
             .id(1L)
@@ -229,13 +220,5 @@ class SickDaysDetailedStatisticsTest {
 
         assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
         assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
-    }
-
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }

@@ -1,17 +1,17 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,22 +31,39 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 public class SickNoteStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
+    private final PersonService personService;
 
-    @Autowired
-    SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService, DepartmentService departmentService) {
+    SickNoteStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonService personService) {
         this.sickNoteService = sickNoteService;
-        this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
+        this.personService = personService;
     }
 
     SickNoteStatistics createStatisticsForPerson(Person person, Clock clock) {
 
-        final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
+        final Year year = Year.now(clock);
+        final LocalDate today = LocalDate.now(clock);
+
+        final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = getSickNotes(person, firstDayOfYear, lastDayOfYear);
-        return new SickNoteStatistics(clock, sickNotes, workDaysCountService);
+        final List<Person> visibleActivePersonsForPerson = getVisibleActivePersonsForPerson(person);
+
+        return new SickNoteStatistics(year, today, sickNotes, visibleActivePersonsForPerson);
+    }
+
+    private List<Person> getVisibleActivePersonsForPerson(Person person) {
+
+        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
+            return personService.getActivePersons();
+        }
+
+        if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+            return getMembersForPerson(person);
+        }
+
+        return Collections.emptyList();
     }
 
     private List<SickNote> getSickNotes(Person person, LocalDate from, LocalDate to) {

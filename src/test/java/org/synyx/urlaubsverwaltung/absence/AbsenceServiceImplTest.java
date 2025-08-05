@@ -23,11 +23,9 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInf
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
@@ -51,6 +49,9 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVE
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.SUBMITTED;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceServiceImplTest {
@@ -112,8 +113,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -156,8 +156,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -200,8 +199,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -250,22 +248,21 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
                 // half day "public holiday" at noon -> working in the morning
                 return new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
-                .id(1L)
-                .category(VacationCategory.HOLIDAY)
-                .visibleToEveryone(false)
-                .build();
+            .id(1L)
+            .category(VacationCategory.HOLIDAY)
+            .visibleToEveryone(false)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -335,8 +332,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -371,8 +367,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -407,8 +402,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -455,14 +449,13 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.isEqual(LocalDate.of(2021, DECEMBER, 24))) {
                 return new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -526,8 +519,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -581,8 +573,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -616,8 +607,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -652,15 +642,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, MAY, 20))) {
                 // public holiday -> no work 🎉
                 return new WorkingDayInformation(ZERO, PUBLIC_HOLIDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -745,15 +734,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
                 // half day "public holiday" at noon -> working in the morning
                 return new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -830,15 +818,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
                 // half day "public holiday" in the morning -> working at noon
                 return new WorkingDayInformation(NOON, PUBLIC_HOLIDAY, WORKDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -950,8 +937,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -994,8 +980,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -1038,8 +1023,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
@@ -1088,8 +1072,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -1124,8 +1107,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -1159,8 +1141,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -1214,8 +1195,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -1249,8 +1229,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> fullWorkDay());
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(start, end);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
@@ -1285,15 +1264,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, MAY, 20))) {
                 // public holiday -> no work 🎉
                 return new WorkingDayInformation(ZERO, PUBLIC_HOLIDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -1378,15 +1356,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
                 // half day "public holiday" at noon -> working in the morning
                 return new WorkingDayInformation(MORNING, WORKDAY, PUBLIC_HOLIDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -1463,15 +1440,14 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final Map<LocalDate, WorkingDayInformation> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendar(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
                 // half day "public holiday" in the morning -> working at noon
                 return new WorkingDayInformation(NOON, PUBLIC_HOLIDAY, WORKDAY);
             } else {
-                return fullWorkDay();
+                return fullWorkday();
             }
         });
-        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
@@ -1552,17 +1528,5 @@ class AbsenceServiceImplTest {
         sickNoteType.setId(1L);
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
         return sickNoteType;
-    }
-
-    private static WorkingDayInformation fullWorkDay() {
-        return new WorkingDayInformation(FULL, WORKDAY, WORKDAY);
-    }
-
-    private Map<LocalDate, WorkingDayInformation> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, WorkingDayInformation> dayLengthProvider) {
-        Map<LocalDate, WorkingDayInformation> map = new HashMap<>();
-        for (LocalDate date : new DateRange(from, to)) {
-            map.put(date, dayLengthProvider.apply(date));
-        }
-        return map;
     }
 }
