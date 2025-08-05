@@ -215,9 +215,6 @@ class SickNoteStatisticsTest {
                 .sickNoteType(childSickNoteType())
                 .build();
 
-//            when(workDaysCountService.getWorkDaysCount(FULL, startDate, endDate, person)).thenReturn(BigDecimal.valueOf(2));
-//            when(workDaysCountService.getWorkDaysCount(FULL, date2, date2, person)).thenReturn(BigDecimal.ONE);
-
             final Year year = Year.of(2025);
             final LocalDate asOfDate = LocalDate.of(2022, 7, 4);
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNote2, childSickNote), List.of());
