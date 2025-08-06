@@ -47,13 +47,12 @@ class SickNoteStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService);
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, fixedClock);
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleDepartmentHeadOnlyForMembers() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
@@ -65,7 +64,7 @@ class SickNoteStatisticsServiceTest {
 
         final LocalDate date = LocalDate.of(2022, 10, 10);
 
-        final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
+        final LocalDate firstDayOfYear = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = List.of(SickNote.builder()
             .person(member1)
@@ -77,7 +76,7 @@ class SickNoteStatisticsServiceTest {
             .build());
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
@@ -85,20 +84,16 @@ class SickNoteStatisticsServiceTest {
     @Test
     void ensureCreateStatisticsForNoPersonWithRoleDepartmentHeadWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleSecondStageAuthorityOnlyForMembers() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person ssa = new Person();
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
@@ -110,7 +105,7 @@ class SickNoteStatisticsServiceTest {
 
         final LocalDate date = LocalDate.of(2022, 10, 10);
 
-        final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
+        final LocalDate firstDayOfYear = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final SickNote sickNote = SickNote.builder()
             .person(member1)
@@ -123,7 +118,7 @@ class SickNoteStatisticsServiceTest {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
@@ -131,20 +126,16 @@ class SickNoteStatisticsServiceTest {
     @Test
     void ensureCreateNoStatisticsForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-
         final Person ssa = new Person();
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleBossAndSickNoteView() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person personWithRole = new Person();
         personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
@@ -166,7 +157,7 @@ class SickNoteStatisticsServiceTest {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
@@ -174,20 +165,16 @@ class SickNoteStatisticsServiceTest {
     @Test
     void ensureCreateNoStatisticsForPersonWithRoleBossWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-
         final Person personWithRole = new Person();
         personWithRole.setPermissions(List.of(USER, BOSS));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleOffice() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person personWithRole = new Person();
         personWithRole.setPermissions(List.of(USER, OFFICE));
@@ -206,9 +193,20 @@ class SickNoteStatisticsServiceTest {
             .build();
         when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(List.of(sickNote));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, Year.of(2022));
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+    }
+
+    @Test
+    void ensureCreateStatisticsForPersonWithoutPrivilegedRole() {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(person, Year.of(2022));
+        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
+        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
     }
 
     private static SickNoteType sickNoteType(SickNoteCategory category) {
@@ -216,18 +214,5 @@ class SickNoteStatisticsServiceTest {
         sickNoteType.setId(1L);
         sickNoteType.setCategory(category);
         return sickNoteType;
-    }
-
-    @Test
-    void ensureCreateStatisticsForPersonWithoutPrivilegedRole() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
-
-        final Person person = new Person();
-        person.setPermissions(List.of(USER));
-
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(person, fixedClock);
-        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
-        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
     }
 }

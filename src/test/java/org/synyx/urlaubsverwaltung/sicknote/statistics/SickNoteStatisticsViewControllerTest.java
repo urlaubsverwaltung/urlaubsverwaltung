@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -47,10 +45,11 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
+        final Year now = Year.now(clock);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(now, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(person, now)).thenReturn(sickNoteStatistics);
 
-        final int currentYear = Year.now(clock).getValue();
+        final int currentYear = now.getValue();
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(currentYear)));
         resultActions
@@ -66,8 +65,9 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
+        final Year now = Year.now(clock);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(now, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(person, now)).thenReturn(sickNoteStatistics);
 
         final int currentYear = Year.now(clock).getValue();
 

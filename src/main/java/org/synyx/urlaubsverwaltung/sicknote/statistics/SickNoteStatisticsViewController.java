@@ -47,10 +47,10 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
         final Person signedInUser = personService.getSignedInUser();
 
-        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, getClockOfRequestedYear(selectedYear));
+        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, selectedYear);
         model.addAttribute("selectedYearStatistics", selectedYearStatistics);
 
-        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, getClockOfRequestedYear(selectedYear.minusYears(1)));
+        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, selectedYear.minusYears(1));
         model.addAttribute("previousSelectedYearStatistics", previousSelectedYearStatistics);
 
         final GraphDto graphDto = new GraphDto(
@@ -66,10 +66,6 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
         return "sicknote/sick_notes_statistics";
-    }
-
-    private Clock getClockOfRequestedYear(final Year year) {
-        return Clock.fixed(ZonedDateTime.now(clock).withYear(year.getValue()).toInstant(), clock.getZone());
     }
 
     record GraphDto(List<DataSeries> dataSeries) {
