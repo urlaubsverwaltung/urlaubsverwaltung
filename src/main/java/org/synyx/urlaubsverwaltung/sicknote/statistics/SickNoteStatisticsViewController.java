@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +58,10 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
                 new DataSeries(selectedYearStatistics.getNumberOfChildSickDaysByMonth()),
                 new DataSeries(previousSelectedYearStatistics.getNumberOfSickDaysByMonth()),
                 new DataSeries(previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
+            ),
+            List.of(
+                selectedYearStatistics.getAtLeastOneSickNotePercent(),
+                previousSelectedYearStatistics.getAtLeastOneSickNotePercent()
             )
         );
         model.addAttribute("sickNoteGraphStatistic", graphDto);
@@ -68,7 +71,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         return "sicknote/sick_notes_statistics";
     }
 
-    record GraphDto(List<DataSeries> dataSeries) {
+    record GraphDto(List<DataSeries> dataSeries, List<BigDecimal> dataSeriesRadial) {
     }
 
     record DataSeries(List<BigDecimal> data) {
