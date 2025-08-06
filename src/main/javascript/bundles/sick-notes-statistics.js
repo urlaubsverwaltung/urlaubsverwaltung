@@ -14,7 +14,7 @@ const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 const options = {
   chart: {
     type: "bar",
-    stacked: true,
+    stacked: false,
     height: 320,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
@@ -48,7 +48,7 @@ const options = {
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
-  colors: ["var(--sick-note-color)", "var(--sick-note-child-color)"],
+  colors: ["var(--sick-note-color)", "var(--sick-note-child-color)", "var(--sick-note-color-light)", "var(--sick-note-child-color-light)"],
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
   },

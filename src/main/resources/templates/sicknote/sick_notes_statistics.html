@@ -3,7 +3,7 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}">Krankmeldungsstatistik</title>
+    <title th:text="#{sicknotes.statistics.header.title(${selectedYearStatistics.year})}">Krankmeldungsstatistik</title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" th:href="@{/css/sick-note-statistics.css}" />
     </th:block>
@@ -30,11 +30,13 @@
         ];
         window.sicknoteStatistic.yaxisTitle = /*[[#{sicknotes.statistics.chart.y-axis-label}]]*/ "Tage";
         window.sicknoteStatistic.dataseriesNames = [
-          /*[[#{sicknote.type.SICK_NOTE}]]*/ "Krank",
-          /*[[#{sicknote.type.SICK_NOTE_CHILD}]]*/ "Kind-Krank",
+          /*[[#{sicknote.type.SICK_NOTE}]]*/ "Krankmeldung",
+          /*[[#{sicknote.type.SICK_NOTE_CHILD}]]*/ "Kind-Krankmeldung",
+          /*[[#{sicknote.type.SICK_NOTE} + ' ' + ${previousSelectedYearStatistics.year}]]*/ "Krankmeldung",
+          /*[[#{sicknote.type.SICK_NOTE_CHILD} + ' ' + ${previousSelectedYearStatistics.year}]]*/ "Kind-Krankmeldung",
         ];
         window.sicknoteStatistic.dataseriesValues = /*[[${sickNoteGraphStatistic.dataSeries}]]*/ [];
-        window.sicknoteStatistic.atLeastOneSickNotePercent = /*[[${statistics.atLeastOneSickNotePercent}]]*/ "0";
+        window.sicknoteStatistic.atLeastOneSickNotePercent = /*[[${selectedYearStatistics.atLeastOneSickNotePercent}]]*/ "0";
         /*]]>*/
       </script>
     </th:block>
@@ -51,7 +53,7 @@
           <th:block th:ref="absences-statistics-heading-body">
             <h1 th:text="#{sicknotes.statistics.title}">Statistik für das Jahr</h1>
             <div
-              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${statistics.year})}"
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${selectedYearStatistics.year})}"
             ></div>
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
@@ -66,7 +68,7 @@
             </h2>
             <div class="tw-text-sm md:tw-font-bold md:tw-text-right md:tw-px-3">
               <th:block th:text="#{filter.validity}"></th:block>
-              <th:block th:text="${#temporals.format(statistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
+              <th:block th:text="${#temporals.format(selectedYearStatistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
             </div>
           </div>
 
@@ -97,7 +99,8 @@
                 Anzahl aller Krankmeldungen
               </span>
               <span class="statistic-summary-card__content">
-                <span th:text="${statistics.totalNumberOfAllSickNotes}"> 8 </span>
+                <span class="tw-text-left" th:text="${selectedYearStatistics.totalNumberOfAllSickNotes}"> 8 </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm" th:text="${previousSelectedYearStatistics.totalNumberOfAllSickNotes}"> 6 </span>
               </span>
             </p>
             <p class="statistic-summary-card">
@@ -111,7 +114,8 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span th:text="${statistics.totalNumberOfSickNotes}"> 3 </span>
+                <span class="tw-text-left" th:text="${selectedYearStatistics.totalNumberOfSickNotes}"> 3 </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm" th:text="${previousSelectedYearStatistics.totalNumberOfAllSickNotes}"> 6 </span>
               </span>
             </p>
             <p class="statistic-summary-card">
@@ -125,7 +129,8 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span th:text="${statistics.totalNumberOfChildSickNotes}"> 5 </span>
+                <span class="tw-text-left" th:text="${selectedYearStatistics.totalNumberOfChildSickNotes}"> 5 </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm" th:text="${selectedYearStatistics.totalNumberOfChildSickNotes}"> 5 </span>
               </span>
             </p>
           </div>
@@ -142,13 +147,13 @@
                   <div class="tw-flex-1 tw-flex tw-flex-col tw-gap-1 tw-text-sm">
                     <p
                       class="tw-m-0"
-                      th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${statistics.numberOfPersonsWithMinimumOneSickNote})}"
+                      th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${selectedYearStatistics.numberOfPersonsWithMinimumOneSickNote})}"
                     >
                       4 Mitarbeitende mit mindestens einer Krankmeldung
                     </p>
                     <p
                       class="tw-m-0"
-                      th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without(${statistics.numberOfPersonsWithoutSickNote})}"
+                      th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without(${selectedYearStatistics.numberOfPersonsWithoutSickNote})}"
                     >
                       10 Mitarbeitende ohne Krankmeldung
                     </p>
@@ -163,7 +168,7 @@
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.days-per-year.title}">
             Krankheitstage
           </h3>
-          <p class="tw-text-sm" th:text="#{sicknotes.statistics.summary.days-per-year.description(${statistics.year})}">
+          <p class="tw-text-sm" th:text="#{sicknotes.statistics.summary.days-per-year.description(${selectedYearStatistics.year})}">
             Alle Krankheitstage in diesem Jahr zusammen gezählt.
           </p>
           <div class="statistic-summary-card-box">
@@ -176,10 +181,17 @@
               </span>
               <span class="statistic-summary-card__content">
                 <span
-                  th:with="value=${statistics.totalNumberOfSickDaysAllCategories}"
+                  class="tw-text-left"
+                  th:with="value=${selectedYearStatistics.totalNumberOfSickDaysAllCategories}"
                   th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
                 >
                   1337
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm "
+                      th:with="value=${previousSelectedYearStatistics.totalNumberOfSickDaysAllCategories}"
+                      th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                >
+                  21
                 </span>
               </span>
             </p>
@@ -195,10 +207,17 @@
               </span>
               <span class="statistic-summary-card__content">
                 <span
-                  th:with="value=${statistics.totalNumberOfSickDays}"
+                  class="tw-text-left"
+                  th:with="value=${selectedYearStatistics.totalNumberOfSickDays}"
                   th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
                 >
                   42
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm"
+                      th:with="value=${previousSelectedYearStatistics.totalNumberOfSickDays}"
+                      th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                >
+                  21
                 </span>
               </span>
             </p>
@@ -213,9 +232,15 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span
-                  th:with="value=${statistics.totalNumberOfChildSickDays}"
+                <span class="tw-text-left"
+                  th:with="value=${selectedYearStatistics.totalNumberOfChildSickDays}"
                   th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                >
+                  21
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm"
+                      th:with="value=${previousSelectedYearStatistics.totalNumberOfChildSickDays}"
+                      th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
                 >
                   21
                 </span>
@@ -228,7 +253,7 @@
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.days-per-person.title}">
             Krankheitstage pro Mitarbeitende
           </h3>
-          <p class="tw-text-sm tw-m-0 tw-mt-0.5" th:text="#{sicknotes.statistics.summary.days-per-person.description(${statistics.year})}">
+          <p class="tw-text-sm tw-m-0 tw-mt-0.5" th:text="#{sicknotes.statistics.summary.days-per-person.description(${selectedYearStatistics.year})}">
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt krank sind.
           </p>
           <div class="statistic-summary-card-box">
@@ -240,12 +265,23 @@
                 Durchschnittliche Anzahl Tage
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfDiseasePerPerson}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  1337
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfDiseasePerPerson}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    1337
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPerson}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    1337
+                  </span>
                 </span>
               </span>
             </p>
@@ -260,12 +296,23 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfDiseasePerPersonAndSick}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  42
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfDiseasePerPersonAndSick}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPersonAndSick}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
                 </span>
               </span>
             </p>
@@ -280,12 +327,23 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfDiseasePerPersonAndChildSick}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  21
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfDiseasePerPersonAndChildSick}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    21
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfDiseasePerPersonAndChildSick}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
                 </span>
               </span>
             </p>
@@ -299,7 +357,7 @@
           >
             Krankheitstage pro Mitarbeitende Dauer einer Krankmeldung
           </h3>
-          <p class="tw-text-sm tw-mt-0" th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${statistics.year})}">
+          <p class="tw-text-sm tw-mt-0" th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${selectedYearStatistics.year})}">
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt je Krankmeldung abwesend sind.
           </p>
           <div class="statistic-summary-card-box">
@@ -311,12 +369,23 @@
                 Gesamt durchschnittliche Dauer
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfAllSickNotes}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  1337
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfAllSickNotes}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    1337
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfAllSickNotes}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
                 </span>
               </span>
             </p>
@@ -331,12 +400,23 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfSickNote}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  42
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfSickNote}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfSickNote}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
                 </span>
               </span>
             </p>
@@ -351,12 +431,23 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
-                <span
-                  th:with="value=${statistics.averageDurationOfChildSickNote}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
-                >
-                  21
+                <span class="tw-text-left">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${selectedYearStatistics.averageDurationOfChildSickNote}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    21
+                  </span>
+                </span>
+                <span class="tw-text-right tw-text-gray-500 tw-text-sm">
+                  <span class="tw-text-lg">ø</span>
+                  <span
+                    th:with="value=${previousSelectedYearStatistics.averageDurationOfChildSickNote}"
+                    th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  >
+                    42
+                  </span>
                 </span>
               </span>
             </p>

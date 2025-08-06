@@ -50,7 +50,9 @@
         font-weight: 600;
         @apply tw-text-black;
         @apply dark:tw-text-zinc-100;
-        display: flex;
+        display: inline-grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
         gap: 0.5rem;
       }
     }
