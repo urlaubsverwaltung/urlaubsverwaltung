@@ -14,8 +14,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -29,7 +29,11 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    SickNoteStatisticsViewController(SickNoteStatisticsService sickNoteStatisticsService, PersonService personService, Clock clock) {
+    SickNoteStatisticsViewController(
+        SickNoteStatisticsService sickNoteStatisticsService,
+        PersonService personService,
+        Clock clock
+    ) {
         this.sickNoteStatisticsService = sickNoteStatisticsService;
         this.personService = personService;
         this.clock = clock;
@@ -37,34 +41,39 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping
-    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Optional<Year> userRequestedYear, Model model) {
 
+        final Year selectedYear = userRequestedYear.orElse(Year.now(clock));
         final Person signedInUser = personService.getSignedInUser();
-        final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
-        final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, clockOfRequestedYear);
 
-        model.addAttribute("statistics", statistics);
-        model.addAttribute("currentYear", Year.now(clock).getValue());
+        final SickNoteStatistics selectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, selectedYear);
+        model.addAttribute("selectedYearStatistics", selectedYearStatistics);
+
+        final SickNoteStatistics previousSelectedYearStatistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, selectedYear.minusYears(1));
+        model.addAttribute("previousSelectedYearStatistics", previousSelectedYearStatistics);
 
         final GraphDto graphDto = new GraphDto(
             List.of(
-                new DataSeries(statistics.getNumberOfSickDaysByMonth()),
-                new DataSeries(statistics.getNumberOfChildSickDaysByMonth())
+                new DataSeries(selectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(selectedYearStatistics.getNumberOfChildSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getNumberOfSickDaysByMonth()),
+                new DataSeries(previousSelectedYearStatistics.getNumberOfChildSickDaysByMonth())
+            ),
+            List.of(
+                selectedYearStatistics.getAtLeastOneSickNotePercent(),
+                previousSelectedYearStatistics.getAtLeastOneSickNotePercent()
             )
         );
         model.addAttribute("sickNoteGraphStatistic", graphDto);
 
+        model.addAttribute("currentYear", Year.now(clock).getValue());
+
         return "sicknote/sick_notes_statistics";
     }
 
-    private Clock getClockOfRequestedYear(Integer requestedYear) {
-        if (requestedYear == null) {
-            requestedYear = Year.now(clock).getValue();
-        }
-        return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
+    record GraphDto(List<DataSeries> dataSeries, List<BigDecimal> dataSeriesRadial) {
     }
 
-    record GraphDto(List<DataSeries> dataSeries) {}
-
-    record DataSeries(List<BigDecimal> data) {}
+    record DataSeries(List<BigDecimal> data) {
+    }
 }

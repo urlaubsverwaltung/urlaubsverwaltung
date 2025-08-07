@@ -14,7 +14,7 @@ const { matches: reducedMotion } = useMedia("(prefers-reduced-motion: reduce)");
 const options = {
   chart: {
     type: "bar",
-    stacked: true,
+    stacked: false,
     height: 320,
     parentHeightOffset: 0,
     background: "var(--uv-chart-background)",
@@ -48,7 +48,7 @@ const options = {
   theme: {
     mode: theme.value === "dark" ? "dark" : "light",
   },
-  colors: ["var(--sick-note-color)", "var(--sick-note-child-color)"],
+  colors: ["var(--sick-note-color)", "var(--sick-note-child-color)", "var(--sick-note-color-light)", "var(--sick-note-child-color-light)"],
   xaxis: {
     categories: globalThis.sicknoteStatistic.xaxisLabels,
   },
@@ -63,7 +63,7 @@ const options = {
 const chart = new ApexCharts(document.querySelector("#sicknote-statistic-chart"), options);
 chart.render();
 
-const seriesForAtLeastOneSickNote = Number.parseFloat(globalThis.sicknoteStatistic.atLeastOneSickNotePercent) || 0;
+const dataseriesValuesForAtLeastOneSickNotePercent = globalThis.sicknoteStatistic.dataseriesValuesForAtLeastOneSickNotePercent || [0, 0];
 
 const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote-statistic-verteilung"), {
   chart: {
@@ -79,7 +79,7 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
       speed: 200,
     },
   },
-  series: [seriesForAtLeastOneSickNote],
+  series: dataseriesValuesForAtLeastOneSickNotePercent,
   states: {
     hover: {
       filter: {
@@ -94,21 +94,15 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
   },
   plotOptions: {
     radialBar: {
-      startAngle: -135,
-      endAngle: 135,
+      offsetY: 0,
+      startAngle: 0,
+      endAngle: 270,
       position: "front",
       hollow: {
         margin: 0,
-        size: "54%",
+        size: "30%",
         background: "#fff",
         position: "front",
-        dropShadow: {
-          enabled: true,
-          top: 1,
-          left: 0,
-          blur: 1,
-          opacity: 0.25,
-        },
       },
       track: {
         background: "#bfe3fd",
@@ -118,18 +112,20 @@ const atLeastOneSickNoteChart = new ApexCharts(document.querySelector("#sicknote
           show: false,
         },
         value: {
-          show: true,
-          fontSize: "20px",
-          color: "#111",
-          offsetY: 8,
-          fontWeight: 600,
-          formatter(value) {
-            return value + "%";
-          },
+          show: false,
+        },
+      },
+      barLabels: {
+        enabled: true,
+        offsetX: -8,
+        fontSize: '16px',
+        formatter: function(seriesName, opts) {
+          return opts.w.globals.series[opts.seriesIndex] + "%";
         },
       },
     },
   },
+  colors: ["#1e9dfc", "#9fbed6"],
   stroke: {
     lineCap: "round",
   },
