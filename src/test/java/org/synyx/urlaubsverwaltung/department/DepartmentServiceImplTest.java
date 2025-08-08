@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,6 +26,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +39,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.INCLUDE;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -72,6 +75,183 @@ class DepartmentServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new DepartmentServiceImpl(departmentRepository, applicationService, applicationEventPublisher, clock);
+    }
+
+    @Nested
+    class GetManagedMembersOfPersonYear {
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearForUser() {
+
+            final Person person = new Person();
+            person.setPermissions(List.of(USER));
+
+            final List<Person> actual = sut.getManagedMembersOfPerson(person, Year.now(clock));
+            assertThat(actual).isEmpty();
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"}, mode = INCLUDE)
+        void ensureGetManagedMembersOfPersonYearFor(Role role) {
+
+            final Person bossOrOfficePerson = new Person();
+            bossOrOfficePerson.setPermissions(List.of(USER, role));
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+            departmentHeadMember.getPerson().setId(1L);
+            departmentHeadMember.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+            member.getPerson().setId(2L);
+            member.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+            notMemberInYear.getPerson().setId(3L);
+            notMemberInYear.setAccessionDate(Instant.now(clock));
+
+            final DepartmentEntity department1 = new DepartmentEntity();
+            department1.setName("department one");
+            department1.setMembers(List.of(member, notMemberInYear, departmentHeadMember));
+
+            final DepartmentMemberEmbeddable department2Member = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+            department2Member.getPerson().setId(4L);
+            department2Member.setAccessionDate(joinedLastYear);
+
+            final DepartmentEntity department2 = new DepartmentEntity();
+            department2.setName("department two");
+            department2.setMembers(List.of(department2Member));
+
+            when(departmentRepository.findAll()).thenReturn(List.of(department1, department2));
+
+            final List<Person> members = sut.getManagedMembersOfPerson(bossOrOfficePerson, lastYear);
+            assertThat(members).containsOnly(member.getPerson(), department2Member.getPerson(), departmentHeadMember.getPerson());
+        }
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearForDepartmentHead() {
+
+            final Person departmentHeadPerson = new Person();
+            departmentHeadPerson.setId(1L);
+            departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            final DepartmentMemberEmbeddable departmentHeadMember = new DepartmentMemberEmbeddable();
+            departmentHeadMember.setPerson(departmentHeadPerson);
+            departmentHeadMember.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+            member.getPerson().setId(2L);
+            member.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+            notMemberInYear.getPerson().setId(3L);
+            notMemberInYear.setAccessionDate(Instant.now(clock));
+
+            final DepartmentEntity department1 = new DepartmentEntity();
+            department1.setName("department one");
+            department1.setMembers(List.of(member, notMemberInYear, departmentHeadMember));
+
+            final DepartmentMemberEmbeddable department2Member = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+            department2Member.getPerson().setId(4L);
+            department2Member.setAccessionDate(joinedLastYear);
+
+            final DepartmentEntity department2 = new DepartmentEntity();
+            department2.setName("department two");
+            department2.setMembers(List.of(department2Member));
+
+            when(departmentRepository.findByDepartmentHeads(departmentHeadPerson)).thenReturn(List.of(department1, department2));
+
+            final List<Person> members = sut.getManagedMembersOfPerson(departmentHeadPerson, lastYear);
+            assertThat(members).containsOnly(member.getPerson(), department2Member.getPerson(), departmentHeadMember.getPerson());
+        }
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearForSecondStageAuthority() {
+
+            final Person secondStageAuthority = new Person();
+            secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+            departmentHeadMember.getPerson().setId(1L);
+            departmentHeadMember.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+            member.getPerson().setId(2L);
+            member.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+            notMemberInYear.getPerson().setId(3L);
+            notMemberInYear.setAccessionDate(Instant.now(clock));
+
+            final DepartmentEntity department1 = new DepartmentEntity();
+            department1.setName("department one");
+            department1.setMembers(List.of(member, notMemberInYear, departmentHeadMember));
+            department1.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+            final DepartmentMemberEmbeddable department2Member = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+            department2Member.getPerson().setId(4L);
+            department2Member.setAccessionDate(joinedLastYear);
+
+            final DepartmentEntity department2 = new DepartmentEntity();
+            department2.setName("department two");
+            department2.setMembers(List.of(department2Member));
+            department2.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+            when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(department1, department2));
+
+            final List<Person> members = sut.getManagedMembersOfPerson(secondStageAuthority, lastYear);
+            assertThat(members).containsOnly(member.getPerson(), department2Member.getPerson(), departmentHeadMember.getPerson());
+        }
+
+        @Test
+        void ensureGetManagedMembersOfPersonYearForDepartmentHeadAndSecondStageAuthority() {
+
+            final Person person = new Person();
+            person.setId(1L);
+            person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+            final Year lastYear = Year.now(clock).minusYears(1);
+            final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+            final DepartmentMemberEmbeddable departmentHeadMember = new DepartmentMemberEmbeddable();
+            departmentHeadMember.setPerson(person);
+            departmentHeadMember.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+            member.getPerson().setId(2L);
+            member.setAccessionDate(joinedLastYear);
+
+            final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+            notMemberInYear.getPerson().setId(3L);
+            notMemberInYear.setAccessionDate(Instant.now(clock));
+
+            final DepartmentEntity departmentOfPersonHead = new DepartmentEntity();
+            departmentOfPersonHead.setName("department one");
+            departmentOfPersonHead.setMembers(List.of(member, notMemberInYear, departmentHeadMember));
+            departmentOfPersonHead.setDepartmentHeads(List.of(person));
+
+            final DepartmentMemberEmbeddable department2Member = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+            department2Member.getPerson().setId(4L);
+            department2Member.setAccessionDate(joinedLastYear);
+
+            final DepartmentEntity departmentOfPersonSecondStage = new DepartmentEntity();
+            departmentOfPersonSecondStage.setName("department two");
+            departmentOfPersonSecondStage.setMembers(List.of(department2Member));
+            departmentOfPersonSecondStage.setSecondStageAuthorities(List.of(person));
+
+            when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)).thenReturn(List.of(departmentOfPersonHead, departmentOfPersonSecondStage));
+
+            final List<Person> members = sut.getManagedMembersOfPerson(person, lastYear);
+            assertThat(members).containsOnly(member.getPerson(), department2Member.getPerson(), departmentHeadMember.getPerson());
+        }
     }
 
     @Test
@@ -1162,8 +1342,21 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
+    void ensureGetManagedDepartmentsOfDepartmentHeadReturnsEmptyListWhenPersonIsNotDepartmentHead() {
+
         final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final List<Department> actual = sut.getManagedDepartmentsOfDepartmentHead(person);
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
         sut.getManagedDepartmentsOfDepartmentHead(person);
         verify(departmentRepository).findByDepartmentHeads(person);
     }
@@ -1184,6 +1377,7 @@ class DepartmentServiceImplTest {
         departmentB.setId(2L);
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntityB, departmentEntityA));
 
@@ -1195,7 +1389,10 @@ class DepartmentServiceImplTest {
 
     @Test
     void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
+
         final Person person = new Person();
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
         sut.getManagedDepartmentsOfSecondStageAuthority(person);
         verify(departmentRepository).findBySecondStageAuthorities(person);
     }
@@ -1216,6 +1413,7 @@ class DepartmentServiceImplTest {
         departmentB.setId(2L);
 
         final Person person = new Person();
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(departmentEntityB, departmentEntityA));
 
@@ -1322,6 +1520,16 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void getMembersForDepartmentHeadEmptyListWhenPersonIsNotDepartmentHead() {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final List<Person> actual = sut.getMembersForDepartmentHead(person);
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
     void getMembersForDepartmentHeadDistinct() {
 
         final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
@@ -1364,6 +1572,16 @@ class DepartmentServiceImplTest {
 
         final List<Person> members = sut.getMembersForSecondStageAuthority(secondStageAuthority);
         assertThat(members).containsOnly(marleneMember.getPerson(), tomMember.getPerson(), departmentHeadMember.getPerson(), maxMember.getPerson());
+    }
+
+    @Test
+    void getMembersForSecondStageAuthorityEmptyListWhenPersonIsNotSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final List<Person> actual = sut.getMembersForSecondStageAuthority(person);
+        assertThat(actual).isEmpty();
     }
 
     @Test
@@ -2199,6 +2417,8 @@ class DepartmentServiceImplTest {
     void ensureDeletionOfDepartmentHeadAssignmentOnPersonDeletionEvent() {
         final Person departmentHead = new Person();
         departmentHead.setId(42L);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
         final Person other = new Person();
         other.setId(21L);
 
@@ -2220,8 +2440,11 @@ class DepartmentServiceImplTest {
 
     @Test
     void ensureDeletionOfSecondStageAuthorityAssignmentOnPersonDeletionEvent() {
+
         final Person secondStageAuthority = new Person();
         secondStageAuthority.setId(42L);
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
         final Person other = new Person();
         other.setId(21L);
 

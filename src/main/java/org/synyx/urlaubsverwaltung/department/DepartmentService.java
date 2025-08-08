@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,7 +81,7 @@ public interface DepartmentService {
      * Finds all departments the given person is set as department head.
      *
      * @param departmentHead to get the departments of
-     * @return list of departments the department head manages ordered by the department name
+     * @return list of departments the department head manages ordered by {@link Department#getName()}.
      */
     List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead);
 
@@ -88,7 +89,7 @@ public interface DepartmentService {
      * Finds all departments the given person is set as second stage authority.
      *
      * @param secondStageAuthority to get the departments of
-     * @return list of departments the second stage authority manages ordered by the department name
+     * @return list of departments the second stage authority manages ordered by {@link Department#getName()}.
      */
     List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
 
@@ -120,20 +121,22 @@ public interface DepartmentService {
     List<Application> getApplicationsFromColleaguesOf(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
-     * Get all distinct members of the departments where the given person is department head.
-     * (including the given person and second stage authorities)
+     * Get all distinct members of the departments (including the given person and second stage authorities)
+     * where the given person is department head.
      *
-     * @param departmentHead to know all the members of the department
-     * @return all unique members of the departments where the given person is department head.
+     * @param departmentHead consider all departments of this department head
+     * @return empty list when given person is not a {@link org.synyx.urlaubsverwaltung.person.Role#DEPARTMENT_HEAD},
+     * otherwise all unique members of the department head departments.
      */
     List<Person> getMembersForDepartmentHead(Person departmentHead);
 
     /**
-     * Get all distinct members of the departments where the given person is second stage authority.
-     * (including the given person)
+     * Get all distinct members of the departments (including the given person)
+     * where the given person is second stage authority.
      *
-     * @param secondStageAuthority to know all the members of the department
-     * @return all unique members of the departments where the given person is second stage authority.
+     * @param secondStageAuthority consider all departments of this second stage authority
+     * @return empty list when given person is not a {@link org.synyx.urlaubsverwaltung.person.Role#SECOND_STAGE_AUTHORITY},
+     * otherwise all unique members of the second stage authority departments.
      */
     List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority);
 
@@ -147,6 +150,21 @@ public interface DepartmentService {
      * else {@code false}
      */
     boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
+
+    /**
+     * Check the role of the given person and return a {@link List} of all managed {@link Person}s.
+     * Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * <p>
+     * Members must have been added to the department in or before the given year.
+     * (Requesting members for 2024 will not return members that were added in 2025.)
+     *
+     * @param person person to get managed members for
+     * @param year   to restrict the result set
+     * @return empty list when person has no authority to manage other person, otherwise all managed members for the person
+     */
+    List<Person> getManagedMembersOfPerson(Person person, Year year);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -210,7 +228,8 @@ public interface DepartmentService {
      * perform actions for this person.
      *
      * @param departmentHead to know all the members of the department
-     * @return all managed members of the department head
+     * @return empty list when given person is not a {@link org.synyx.urlaubsverwaltung.person.Role#DEPARTMENT_HEAD},
+     * otherwise all managed members.
      */
     List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
 

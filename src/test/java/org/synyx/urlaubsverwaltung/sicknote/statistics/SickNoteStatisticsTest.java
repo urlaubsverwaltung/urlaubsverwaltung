@@ -216,7 +216,7 @@ class SickNoteStatisticsTest {
 
             final Year year = Year.of(2022);
             final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
-            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of());
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2));
 
             // 2 sick notes: 1st with 3 workdays and 2nd with 10 workdays in year of statistic --> sum = 13 workdays
             // 15 workdays / 2 persons = 6.5 workdays per person
@@ -255,7 +255,7 @@ class SickNoteStatisticsTest {
 
             final Year year = Year.of(2015);
             final LocalDate asOfDate = LocalDate.of(2015, 10, 17);
-            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of());
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person));
 
             // 2015 has 261 monday to friday workdays
             assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(new BigDecimal(261));
@@ -294,7 +294,7 @@ class SickNoteStatisticsTest {
 
             final Year year = Year.of(2022);
             final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
-            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of());
+            final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of(person, person2));
 
             assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(valueOf(6.5));
             assertThat(sut.getAverageDurationOfDiseasePerPersonAndSick()).isEqualByComparingTo(valueOf(1.5));

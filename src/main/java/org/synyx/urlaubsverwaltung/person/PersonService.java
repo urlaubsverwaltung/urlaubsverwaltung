@@ -1,8 +1,10 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.data.domain.Page;
+import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,6 +101,17 @@ public interface PersonService {
      * @return returns all persons
      */
     List<Person> getAllPersons();
+
+    /**
+     * Returns all persons with an existing {@link Account} in the given year.
+     *
+     * <p>
+     * Having an {@link Account} means that the {@link Person} should have been active at least one day in the given year.
+     *
+     * @param year the year for which to find persons with an account
+     * @return list of persons with an account in the specified year
+     */
+    List<Person> getAllPersonsHavingAccountInYear(Year year);
 
     /**
      * Find all active persons matching the given query.
