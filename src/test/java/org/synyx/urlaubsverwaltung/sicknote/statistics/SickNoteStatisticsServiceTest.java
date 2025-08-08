@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -42,12 +43,14 @@ class SickNoteStatisticsServiceTest {
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
+    @Mock
+    private AccountService accountService;
 
     private static final Clock clock = Clock.systemDefaultZone();
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, clock);
+        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, accountService, clock);
     }
 
     @Test
