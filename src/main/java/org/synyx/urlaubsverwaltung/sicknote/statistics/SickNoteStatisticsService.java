@@ -33,16 +33,32 @@ public class SickNoteStatisticsService {
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
     private final PersonService personService;
+    private final Clock clock;
 
-    SickNoteStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonService personService) {
+    SickNoteStatisticsService(
+        SickNoteService sickNoteService,
+        DepartmentService departmentService,
+        PersonService personService,
+        Clock clock
+    ) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personService = personService;
+        this.clock = clock;
     }
 
-    SickNoteStatistics createStatisticsForPerson(Person person, Clock clock) {
+    /**
+     * Creates a {@link SickNoteStatistics} for the given year and person.
+     *
+     * <p>
+     * The given person is relevant for the visibility of sick notes and active persons considered in the statistics.
+     *
+     * @param year   the year for which the statistics should be created
+     * @param person the person for whom the statistics should be created
+     * @return a {@link SickNoteStatistics} object containing sick notes and visible active persons
+     */
+    SickNoteStatistics createStatisticsForPerson(Year year, Person person) {
 
-        final Year year = Year.now(clock);
         final LocalDate today = LocalDate.now(clock);
 
         final LocalDate firstDayOfYear = year.atDay(1);
