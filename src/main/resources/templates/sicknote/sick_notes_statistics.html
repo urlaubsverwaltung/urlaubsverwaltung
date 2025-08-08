@@ -144,7 +144,10 @@
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.days-per-person.title}">
             Krankheitstage pro Mitarbeitende
           </h3>
-          <p class="tw-text-sm tw-m-0 tw-mt-0.5" th:text="#{sicknotes.statistics.summary.days-per-person.description(${statistics.year})}">
+          <p
+            class="tw-text-sm tw-m-0 tw-mt-0.5"
+            th:text="#{sicknotes.statistics.summary.days-per-person.description(${statistics.year})}"
+          >
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt krank sind.
           </p>
           <div class="statistic-summary-card-box">
@@ -215,7 +218,10 @@
           >
             Krankheitstage pro Mitarbeitende Dauer einer Krankmeldung
           </h3>
-          <p class="tw-text-sm tw-mt-0" th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${statistics.year})}">
+          <p
+            class="tw-text-sm tw-mt-0"
+            th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${statistics.year})}"
+          >
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt je Krankmeldung abwesend sind.
           </p>
           <div class="statistic-summary-card-box">
@@ -279,7 +285,7 @@
           </div>
         </div>
 
-        <div class="tw-mt-8 statistic-summary-container">
+        <div class="tw-mt-12 statistic-summary-container">
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sicknotes.title}">
             Krankmeldungen
           </h3>
