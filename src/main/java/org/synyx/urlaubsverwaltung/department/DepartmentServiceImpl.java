@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.search.SortComparator;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -65,6 +66,20 @@ class DepartmentServiceImpl implements DepartmentService {
         this.clock = clock;
     }
 
+    private List<Person> getManagedMembersOfPerson(Person person) {
+        return managedDepartmentEntitiesOfPerson(person).stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(Collection::stream)
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .toList();
+    }
+
+    @Override
+    public List<Person> getManagedMembersOfPerson(Person person, Year year) {
+        return filterMembersByYear(year, managedDepartmentEntitiesOfPerson(person));
+    }
+
     @Override
     public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
         return getManagedMembersOfPerson(person, personPageableSearchQuery, not(Person::isInactive));
@@ -72,26 +87,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getManagedActiveMembersOfPerson(Person person) {
-
-        final List<DepartmentEntity> departments;
-
-        if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
-        } else if (person.hasRole(DEPARTMENT_HEAD)) {
-            departments = departmentRepository.findByDepartmentHeads(person);
-        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findBySecondStageAuthorities(person);
-        } else {
-            departments = List.of();
-        }
-
-        return departments.stream()
-            .map(DepartmentEntity::getMembers)
-            .flatMap(List::stream)
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .distinct()
-            .filter(Person::isActive)
-            .toList();
+        return getManagedMembersOfPerson(person).stream().filter(Person::isActive).toList();
     }
 
     @Override
@@ -112,19 +108,9 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
-        final List<DepartmentEntity> departments;
-
-        if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
-        } else if (person.hasRole(DEPARTMENT_HEAD)) {
-            departments = departmentRepository.findByDepartmentHeads(person);
-        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findBySecondStageAuthorities(person);
-        } else {
-            departments = List.of();
-        }
 
         final Pageable pageable = personPageableSearchQuery.getPageable();
+        final List<DepartmentEntity> departments = managedDepartmentEntitiesOfPerson(person);
 
         final List<Person> managedMembers = departments.stream()
             .map(DepartmentEntity::getMembers)
@@ -545,6 +531,26 @@ class DepartmentServiceImpl implements DepartmentService {
         return list;
     }
 
+    /**
+     * @param person person to get departments for
+     * @return all departments managed by the given person
+     */
+    private List<DepartmentEntity> managedDepartmentEntitiesOfPerson(Person person) {
+        final List<DepartmentEntity> departments;
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
+            departments = departmentRepository.findAll();
+        } else if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
+        } else if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments = departmentRepository.findByDepartmentHeads(person);
+        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findBySecondStageAuthorities(person);
+        } else {
+            departments = List.of();
+        }
+        return departments;
+    }
+
     private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
         final Pageable pageable = pageableSearchQuery.getPageable();
 
@@ -589,6 +595,23 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMemberEmbeddable::getPerson)
             .filter(oldMember -> !department.getMembers().contains(oldMember))
             .forEach(person -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, person.getId(), department.getId())));
+    }
+
+    private List<Person> filterMembersByYear(Year year, List<DepartmentEntity> departmentEntities) {
+        return departmentEntities.stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(List::stream)
+            .filter(departmentMember -> isMemberOfDepartmentInYear(departmentMember, year))
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .toList();
+    }
+
+    private boolean isMemberOfDepartmentInYear(DepartmentMemberEmbeddable departmentMemberEmbeddable, Year year) {
+        final LocalDate accessionDate = LocalDate.ofInstant(departmentMemberEmbeddable.getAccessionDate(), clock.getZone());
+        // we currently consider a member to be part of the department if they joined in the given year or earlier
+        // as we don't track when a member leaves a department and when a member joins a department again.
+        return accessionDate.getYear() <= year.getValue();
     }
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {

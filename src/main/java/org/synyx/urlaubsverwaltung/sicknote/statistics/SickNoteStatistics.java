@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
@@ -37,6 +36,7 @@ public class SickNoteStatistics {
     private final LocalDate asOfDate;
     private final int year;
     private final int totalNumberOfAllSickNotes;
+    private final int numberOfPersonsToConsider;
     private final BigDecimal totalNumberOfSickDaysAllCategories;
     private final Map<SickNoteCategory, BigDecimal> totalNumberOfSickNotesByCategory;
     private final Map<SickNoteCategory, BigDecimal> totalNumberOfSickDaysByCategory;
@@ -46,12 +46,14 @@ public class SickNoteStatistics {
     private final List<BigDecimal> numberOfSickDaysByMonth;
     private final List<BigDecimal> numberOfChildSickDaysByMonth;
 
-    SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> visibleActivePersonsForPerson) {
+    SickNoteStatistics(Year year, LocalDate asOfDate, List<SickNote> sickNotes, List<Person> persons) {
         this.year = year.getValue();
         this.asOfDate = asOfDate;
 
+        this.numberOfPersonsToConsider = persons.size();
+
         this.numberOfPersonsWithMinimumOneSickNote = sickNotes.stream().map(SickNote::getPerson).distinct().count();
-        this.numberOfPersonsWithoutSickNote = calculateNumberOfPersonWithoutSickNote(visibleActivePersonsForPerson, sickNotes);
+        this.numberOfPersonsWithoutSickNote = calculateNumberOfPersonWithoutSickNote(persons, sickNotes);
 
         this.totalNumberOfAllSickNotes = sickNotes.size();
         this.totalNumberOfSickNotesByCategory = calculateTotalNumberOfSickNotesByCategory(sickNotes);
@@ -85,8 +87,13 @@ public class SickNoteStatistics {
     }
 
     public BigDecimal getAtLeastOneSickNotePercent() {
+        final BigDecimal numberOfPersons = valueOf(numberOfPersonsWithMinimumOneSickNote).add(valueOf(numberOfPersonsWithoutSickNote));
+        if (numberOfPersons.equals(ZERO)) {
+            return ZERO;
+        }
+
         return (valueOf(numberOfPersonsWithMinimumOneSickNote)
-            .divide(valueOf(numberOfPersonsWithMinimumOneSickNote).add(valueOf(numberOfPersonsWithoutSickNote)), 3, HALF_UP))
+            .divide(numberOfPersons, 3, HALF_UP))
             .multiply(valueOf(100));
     }
 
@@ -111,12 +118,12 @@ public class SickNoteStatistics {
     }
 
     public BigDecimal getAverageDurationOfAllSickNotes() {
-        final BigDecimal totalNumberOfSickNotes = getTotalNumberOfSickNotes();
-        if (Objects.equals(totalNumberOfSickNotes, ZERO)) {
+        final int totalNumberOfAllSickNotes = getTotalNumberOfAllSickNotes();
+        if (totalNumberOfAllSickNotes == 0) {
             return ZERO;
         }
 
-        return getTotalNumberOfSickDaysAllCategories().divide(valueOf(getTotalNumberOfAllSickNotes()), 2, HALF_UP);
+        return getTotalNumberOfSickDaysAllCategories().divide(valueOf(totalNumberOfAllSickNotes), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfSickNote() {
@@ -128,30 +135,27 @@ public class SickNoteStatistics {
     }
 
     public BigDecimal getAverageDurationOfDiseasePerPerson() {
-        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
-        if (numberOfPersons == 0) {
+        if (numberOfPersonsToConsider == 0) {
             return ZERO;
         }
 
-        return totalNumberOfSickDaysAllCategories.divide(valueOf(numberOfPersons), 2, HALF_UP);
+        return totalNumberOfSickDaysAllCategories.divide(valueOf(numberOfPersonsToConsider), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfDiseasePerPersonAndSick() {
-        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
-        if (numberOfPersons == 0) {
+        if (numberOfPersonsToConsider == 0) {
             return ZERO;
         }
 
-        return getTotalNumberOfSickDays().divide(valueOf(numberOfPersons), 2, HALF_UP);
+        return getTotalNumberOfSickDays().divide(valueOf(numberOfPersonsToConsider), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfDiseasePerPersonAndChildSick() {
-        final Long numberOfPersons = numberOfPersonsWithMinimumOneSickNote;
-        if (numberOfPersons == 0) {
+        if (numberOfPersonsToConsider == 0) {
             return ZERO;
         }
 
-        return getTotalNumberOfChildSickDays().divide(valueOf(numberOfPersons), 2, HALF_UP);
+        return getTotalNumberOfChildSickDays().divide(valueOf(numberOfPersonsToConsider), 2, HALF_UP);
     }
 
     public LocalDate getAsOfDate() {
@@ -162,12 +166,12 @@ public class SickNoteStatistics {
         return year;
     }
 
-    private Long calculateNumberOfPersonWithoutSickNote(List<Person> visibleActivePersonsForPerson, List<SickNote> sickNotes) {
+    private Long calculateNumberOfPersonWithoutSickNote(List<Person> persons, List<SickNote> sickNotes) {
         final Set<Person> personsWithSickNotes = sickNotes.stream()
             .map(SickNote::getPerson)
             .collect(toSet());
 
-        return visibleActivePersonsForPerson.stream()
+        return persons.stream()
             .filter(person -> !personsWithSickNotes.contains(person))
             .count();
     }
