@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -35,20 +33,17 @@ public class SickNoteStatisticsService {
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
     private final PersonService personService;
-    private final AccountService accountService;
     private final Clock clock;
 
     SickNoteStatisticsService(
         SickNoteService sickNoteService,
         DepartmentService departmentService,
         PersonService personService,
-        AccountService accountService,
         Clock clock
     ) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personService = personService;
-        this.accountService = accountService;
         this.clock = clock;
     }
 
@@ -69,24 +64,23 @@ public class SickNoteStatisticsService {
         final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final List<Person> visibleActivePersonsForPerson = getVisibleActivePersonsForPerson(person);
-        final List<Person> personsToConsiderInStatistics = accountService.getHolidaysAccount(year.getValue(), visibleActivePersonsForPerson).stream()
-            .map(Account::getPerson)
-            .toList();
+        final List<Person> persons = getStatisticRelevantPersons(year, person);
+        final List<SickNote> sickNotes = getSickNotes(persons, firstDayOfYear, lastDayOfYear);
 
-        final List<SickNote> sickNotes = getSickNotes(personsToConsiderInStatistics, firstDayOfYear, lastDayOfYear);
-
-        return new SickNoteStatistics(year, today, sickNotes, personsToConsiderInStatistics);
+        return new SickNoteStatistics(year, today, sickNotes, persons);
     }
 
-    private List<Person> getVisibleActivePersonsForPerson(Person person) {
+    private List<Person> getStatisticRelevantPersons(Year year, Person person) {
 
         if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
-            return personService.getAllPersons();
+            // we don't know whether a person has been active/inactive over a certain year
+            // Therefore, we return all persons having an account in the given year.
+            return personService.getAllPersonsHavingAccountInYear(year);
         }
 
         if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
-            return getMembersForPerson(person);
+            // TODO do we have to check whether the member has an account in the given year or is it sufficient to be a department member in this year?
+            return getMembersForPerson(year, person);
         }
 
         return emptyList();
@@ -96,11 +90,21 @@ public class SickNoteStatisticsService {
            return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), persons, from, to);
     }
 
-    private List<Person> getMembersForPerson(Person person) {
-        final List<Person> membersDH = person.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(person) : List.of();
-        final List<Person> membersSSA = person.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(person) : List.of();
+    private List<Person> getMembersForPerson(Year year, Person person) {
+
+        final List<Person> membersDH = getDepartmentHeadMembers(year, person);
+        final List<Person> membersSSA = getSecondStageAuthorityMembers(year, person);
+
         return Stream.concat(membersDH.stream(), membersSSA.stream())
             .distinct()
             .toList();
+    }
+
+    private List<Person> getDepartmentHeadMembers(Year year, Person person) {
+        return person.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(year, person) : List.of();
+    }
+
+    private List<Person> getSecondStageAuthorityMembers(Year year, Person person) {
+        return person.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(year, person) : List.of();
     }
 }

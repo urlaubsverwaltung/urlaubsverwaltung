@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -277,6 +278,18 @@ class PersonServiceImplTest {
         sut.getPersonByMailAddress(mailAddress);
 
         verify(personRepository).findByEmailIgnoreCase(mailAddress);
+    }
+
+    @Test
+    void ensureGetAllPersonsHavingAccountInYear() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+
+        when(personRepository.findAllWithAccountByYear(2025)).thenReturn(List.of(person));
+
+        final List<Person> actual = sut.getAllPersonsHavingAccountInYear(Year.of(2025));
+        assertThat(actual).containsExactly(person);
     }
 
     @Test
