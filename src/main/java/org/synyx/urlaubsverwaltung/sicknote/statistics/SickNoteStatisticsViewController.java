@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -37,11 +36,12 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping
-    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYearValue, Model model) {
+
+        final Year year = requestedYearValue == null ? Year.now(clock) : Year.of(requestedYearValue);
 
         final Person signedInUser = personService.getSignedInUser();
-        final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
-        final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(signedInUser, clockOfRequestedYear);
+        final SickNoteStatistics statistics = sickNoteStatisticsService.createStatisticsForPerson(year, signedInUser);
 
         model.addAttribute("statistics", statistics);
         model.addAttribute("currentYear", Year.now(clock).getValue());
@@ -55,13 +55,6 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("sickNoteGraphStatistic", graphDto);
 
         return "sicknote/sick_notes_statistics";
-    }
-
-    private Clock getClockOfRequestedYear(Integer requestedYear) {
-        if (requestedYear == null) {
-            requestedYear = Year.now(clock).getValue();
-        }
-        return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
 
     record GraphDto(List<DataSeries> dataSeries) {}

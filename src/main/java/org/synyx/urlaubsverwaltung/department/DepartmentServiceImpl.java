@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.search.SortComparator;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -364,12 +365,22 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<Person> getMembersForDepartmentHead(Year year, Person departmentHead) {
+        return filterMembersByYear(year, departmentRepository.findByDepartmentHeads(departmentHead));
+    }
+
+    @Override
     public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
             .toList();
+    }
+
+    @Override
+    public List<Person> getMembersForSecondStageAuthority(Year year, Person secondStageAuthority) {
+        return filterMembersByYear(year, departmentRepository.findBySecondStageAuthorities(secondStageAuthority));
     }
 
     @Override
@@ -589,6 +600,23 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMemberEmbeddable::getPerson)
             .filter(oldMember -> !department.getMembers().contains(oldMember))
             .forEach(person -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, person.getId(), department.getId())));
+    }
+
+    private List<Person> filterMembersByYear(Year year, List<DepartmentEntity> departmentEntities) {
+        return departmentEntities.stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(List::stream)
+            .filter(departmentMember -> isMemberOfDepartmentInYear(departmentMember, year))
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .toList();
+    }
+
+    private boolean isMemberOfDepartmentInYear(DepartmentMemberEmbeddable departmentMemberEmbeddable, Year year) {
+        final LocalDate accessionDate = LocalDate.ofInstant(departmentMemberEmbeddable.getAccessionDate(), clock.getZone());
+        // we currently consider a member to be part of the department if they joined in the given year or earlier
+        // as we don't track when a member leaves a department and when a member joins a department again.
+        return accessionDate.getYear() <= year.getValue();
     }
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {

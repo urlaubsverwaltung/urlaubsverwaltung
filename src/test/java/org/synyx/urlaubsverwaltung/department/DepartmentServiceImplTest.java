@@ -25,6 +25,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1343,6 +1344,44 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureGetMembersForDepartmentHeadForYear() {
+
+        final Year lastYear = Year.now(clock).minusYears(1);
+        final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+        departmentHeadMember.getPerson().setId(1L);
+        departmentHeadMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+        marleneMember.getPerson().setId(2L);
+        marleneMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+        notMemberInYear.getPerson().setId(3L);
+        notMemberInYear.setAccessionDate(Instant.now(clock));
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(marleneMember, notMemberInYear, departmentHeadMember));
+
+        final DepartmentMemberEmbeddable tomMember = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+        tomMember.getPerson().setId(4L);
+        tomMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(tomMember));
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForDepartmentHead(lastYear, departmentHead);
+        assertThat(members).containsOnly(marleneMember.getPerson(), tomMember.getPerson(), departmentHeadMember.getPerson());
+    }
+
+    @Test
     void getMembersForSecondStageAuthority() {
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
@@ -1385,6 +1424,44 @@ class DepartmentServiceImplTest {
 
         final List<Person> members = sut.getMembersForSecondStageAuthority(secondStageAuthority);
         assertThat(members).containsOnly(member.getPerson());
+    }
+
+    @Test
+    void ensureGetMembersForForSecondStageAuthorityForYear() {
+
+        final Year lastYear = Year.now(clock).minusYears(1);
+        final Instant joinedLastYear = lastYear.atDay(42).atStartOfDay().toInstant(UTC);
+
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+        departmentHeadMember.getPerson().setId(1L);
+        departmentHeadMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+        marleneMember.getPerson().setId(2L);
+        marleneMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentMemberEmbeddable notMemberInYear = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+        notMemberInYear.getPerson().setId(3L);
+        notMemberInYear.setAccessionDate(Instant.now(clock));
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(marleneMember, notMemberInYear, departmentHeadMember));
+
+        final DepartmentMemberEmbeddable tomMember = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+        tomMember.getPerson().setId(4L);
+        tomMember.setAccessionDate(joinedLastYear);
+
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(tomMember));
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForSecondStageAuthority(lastYear, secondStageAuthority);
+        assertThat(members).containsOnly(marleneMember.getPerson(), tomMember.getPerson(), departmentHeadMember.getPerson());
     }
 
     @Test

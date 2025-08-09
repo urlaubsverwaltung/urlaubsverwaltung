@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,8 +121,8 @@ public interface DepartmentService {
     List<Application> getApplicationsFromColleaguesOf(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
-     * Get all distinct members of the departments where the given person is department head.
-     * (including the given person and second stage authorities)
+     * Get all distinct members of the departments where the given person is department head
+     * (including the given person and second stage authorities).
      *
      * @param departmentHead to know all the members of the department
      * @return all unique members of the departments where the given person is department head.
@@ -129,13 +130,43 @@ public interface DepartmentService {
     List<Person> getMembersForDepartmentHead(Person departmentHead);
 
     /**
-     * Get all distinct members of the departments where the given person is second stage authority.
-     * (including the given person)
+     * Get all distinct members of the departments in the given year, where the given person is department head
+     * (including the given person and second stage authorities).
+     *
+     * <p>
+     * This method is similar to {@link #getMembersForDepartmentHead(Person)} but allows to restrict the result set to a specific year.<br />
+     * Members must have been added to the department in or before the given year.
+     * (Requesting members for 2024 will not return members that were added in 2025.)
+     *
+     * @param year           to restrict the result set
+     * @param departmentHead to know all the members of the department
+     * @return all unique members of the departments where the given person is department head for the given year.
+     */
+    List<Person> getMembersForDepartmentHead(Year year, Person departmentHead);
+
+    /**
+     * Get all distinct members of the departments where the given person is second stage authority
+     * (including the given person).
      *
      * @param secondStageAuthority to know all the members of the department
      * @return all unique members of the departments where the given person is second stage authority.
      */
     List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority);
+
+    /**
+     * Get all distinct members of the departments in the given year, where the given person is second stage authority
+     * (including the given person).
+     *
+     * <p>
+     * This method is similar to {@link #getMembersForDepartmentHead(Person)} but allows to restrict the result set to a specific year.<br />
+     * Members must have been added to the department in or before the given year.
+     * (Requesting members for 2024 will not return members that were added in 2025.)
+     *
+     * @param year           to restrict the result set
+     * @param secondStageAuthority to know all the members of the department
+     * @return all unique members of the departments where the given person is department head for the given year.
+     */
+    List<Person> getMembersForSecondStageAuthority(Year year, Person secondStageAuthority);
 
     /**
      * Check if the given department head manages a department that the given person is assigned to.
