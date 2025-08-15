@@ -93,7 +93,7 @@
               <span class="statistic-summary-card__content">
                 <span
                   th:with="value=${statistics.totalNumberOfSickDaysAllCategories}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   1337
                 </span>
@@ -112,7 +112,7 @@
               <span class="statistic-summary-card__content">
                 <span
                   th:with="value=${statistics.totalNumberOfSickDays}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   42
                 </span>
@@ -131,7 +131,7 @@
               <span class="statistic-summary-card__content">
                 <span
                   th:with="value=${statistics.totalNumberOfChildSickDays}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   21
                 </span>
@@ -162,7 +162,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPerson}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   1337
                 </span>
@@ -182,7 +182,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPersonAndSick}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   42
                 </span>
@@ -202,7 +202,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPersonAndChildSick}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   21
                 </span>
@@ -236,7 +236,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfAllSickNotes}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   1337
                 </span>
@@ -256,7 +256,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfSickNote}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   42
                 </span>
@@ -276,7 +276,7 @@
                 <span class="tw-text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfChildSickNote}"
-                  th:text="${#numbers.formatDecimal(value, 0, (value % 1 == 0 ? 0 : 2))}"
+                  th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
                 >
                   21
                 </span>
