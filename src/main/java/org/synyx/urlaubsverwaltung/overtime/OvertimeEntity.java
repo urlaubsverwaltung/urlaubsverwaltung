@@ -33,8 +33,8 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  *
  * @since 2.11.0
  */
-@Entity
-public class Overtime extends AbstractTenantAwareEntity {
+@Entity(name = "overtime")
+public class OvertimeEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -56,25 +56,25 @@ public class Overtime extends AbstractTenantAwareEntity {
     private Duration duration;
 
     @Column(nullable = false)
-    private boolean external;
+    private boolean external = false;
 
     @Column(nullable = false)
     private LocalDate lastModificationDate;
 
-    protected Overtime() {
+    protected OvertimeEntity() {
         // OK
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
         this(person, startDate, endDate, duration, false, LocalDate.now(UTC));
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external) {
         this(person, startDate, endDate, duration, external, LocalDate.now(UTC));
     }
 
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external, LocalDate lastModificationDate) {
+    public OvertimeEntity(Person person, LocalDate startDate, LocalDate endDate, Duration duration, boolean external, LocalDate lastModificationDate) {
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -121,9 +121,9 @@ public class Overtime extends AbstractTenantAwareEntity {
 
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
         final BigDecimal secondsProRata = toFormattedDecimal(duration)
-            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-            .multiply(toFormattedDecimal(durationOfOverlap))
-            .setScale(0, HALF_EVEN);
+                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+                .multiply(toFormattedDecimal(durationOfOverlap))
+                .setScale(0, HALF_EVEN);
 
         return DecimalConverter.toDuration(secondsProRata);
     }
@@ -152,14 +152,14 @@ public class Overtime extends AbstractTenantAwareEntity {
 
     public Map<Integer, Duration> getDurationByYear() {
         return this.splitByYear().stream()
-            .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
+                .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
     }
 
     public Duration getTotalDurationBefore(int year) {
         return this.getDurationByYear().entrySet().stream()
-            .filter(entry -> entry.getKey() < year)
-            .map(Map.Entry::getValue)
-            .reduce(ZERO, Duration::plus);
+                .filter(entry -> entry.getKey() < year)
+                .map(Map.Entry::getValue)
+                .reduce(ZERO, Duration::plus);
     }
 
     public void setPerson(Person person) {
@@ -204,13 +204,13 @@ public class Overtime extends AbstractTenantAwareEntity {
     @Override
     public String toString() {
         return "Overtime{" +
-            "id=" + getId() +
-            ", startDate=" + startDate +
-            ", endDate=" + endDate +
-            ", duration=" + duration +
-            ", external=" + external +
-            ", person=" + person +
-            '}';
+                "id=" + getId() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", duration=" + duration +
+                ", external=" + external +
+                ", person=" + person +
+                '}';
     }
 
     @Override
@@ -221,7 +221,7 @@ public class Overtime extends AbstractTenantAwareEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Overtime that = (Overtime) o;
+        final OvertimeEntity that = (OvertimeEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

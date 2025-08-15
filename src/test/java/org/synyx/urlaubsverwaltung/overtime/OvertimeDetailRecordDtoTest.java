@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ class OvertimeDetailRecordDtoTest {
 
     @Test
     void getDurationByYearOverTwoYears() {
-        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "niceName", "N","gravatarUrl", false);
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "niceName", "N", "gravatarUrl", false);
         final OvertimeDetailRecordDto sut = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2022-06-29"), Duration.ofHours(4), Map.of(2021, Duration.ofHours(1), 2022, Duration.ofHours(3)), LocalDate.parse("2021-06-28"));
 
         final Map<Integer, Duration> durationByYear = sut.getDurationByYear(2021);
@@ -22,11 +22,11 @@ class OvertimeDetailRecordDtoTest {
 
     @Test
     void equals() {
-        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "niceName", "N","gravatarUrl", false);
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "niceName", "N", "gravatarUrl", false);
         final OvertimeDetailRecordDto overtimeDetailRecordDto = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
         final OvertimeDetailRecordDto overtimeDetailRecordDtoOne = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
 
-        final OvertimeDetailPersonDto personTwo = new OvertimeDetailPersonDto(1L, "differentEmail@example.org", "N","niceName", "gravatarUrl", false);
+        final OvertimeDetailPersonDto personTwo = new OvertimeDetailPersonDto(1L, "differentEmail@example.org", "N", "niceName", "gravatarUrl", false);
         final OvertimeDetailRecordDto overtimeDetailRecordDtoTwo = new OvertimeDetailRecordDto(1L, personTwo, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
         final OvertimeDetailRecordDto overtimeDetailRecordDtoThree = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-27"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
         final OvertimeDetailRecordDto overtimeDetailRecordDtoFour = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-30"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
@@ -45,7 +45,7 @@ class OvertimeDetailRecordDtoTest {
 
     @Test
     void hashCodeTest() {
-        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "N","niceName", "gravatarUrl", false);
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1L, "email@example.org", "N", "niceName", "gravatarUrl", false);
         final OvertimeDetailRecordDto overtimeDetailRecordDto = new OvertimeDetailRecordDto(1L, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
         assertThat(overtimeDetailRecordDto.hashCode()).isEqualTo(-8943973);
     }
