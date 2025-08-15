@@ -90,12 +90,17 @@ public class SickNoteStatisticsService {
             }
         }
 
-        // TODO return requested person when hasRole(SICK_NOTE_VIEW) but nothing else
+        if (person.hasRole(SICK_NOTE_VIEW)) {
+            return List.of(person);
+        }
 
         return emptyList();
     }
 
     private List<SickNote> getSickNotes(List<Person> persons, LocalDate from, LocalDate to) {
-           return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), persons, from, to);
+        if (persons.isEmpty()) {
+            return List.of();
+        }
+        return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), persons, from, to);
     }
 }

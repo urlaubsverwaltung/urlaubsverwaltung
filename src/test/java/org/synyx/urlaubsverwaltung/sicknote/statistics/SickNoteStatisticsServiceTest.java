@@ -20,6 +20,7 @@ import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -85,6 +86,8 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
     }
 
     @Test
@@ -98,6 +101,10 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
@@ -136,6 +143,8 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, secondStageAuthPerson);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
     }
 
     @Test
@@ -149,6 +158,10 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, ssa);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
@@ -183,6 +196,8 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(departmentService);
     }
 
     @Test
@@ -191,11 +206,16 @@ class SickNoteStatisticsServiceTest {
         final Year year = Year.of(2022);
 
         final Person personWithRole = new Person();
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS));
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
@@ -229,6 +249,8 @@ class SickNoteStatisticsServiceTest {
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, office);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(departmentService);
     }
 
     private static SickNoteType sickNoteType(SickNoteCategory category) {
@@ -239,15 +261,50 @@ class SickNoteStatisticsServiceTest {
     }
 
     @Test
+    void ensureCreateStatisticsForUser() {
+
+        final Year year = Year.of(2022);
+
+        final Person user = new Person();
+        user.setId(1L);
+        user.setPermissions(List.of(USER, SICK_NOTE_VIEW));
+
+        final LocalDate from = LocalDate.of(2022, 1, 1);
+        final LocalDate to = LocalDate.of(2022, 12, 31);
+
+        final SickNote sickNote = SickNote.builder()
+            .person(user)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
+            .startDate(LocalDate.of(year.getValue(), 10, 10))
+            .endDate(LocalDate.of(year.getValue(), 10, 10))
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
+            .build();
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(user), from, to)).thenReturn(List.of(sickNote));
+
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, user);
+        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
+        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
     void ensureCreateStatisticsForPersonWithoutPrivilegedRole() {
 
         final Year year = Year.of(2022);
 
         final Person person = new Person();
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, person);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 }
