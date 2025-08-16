@@ -66,15 +66,6 @@ class DepartmentServiceImpl implements DepartmentService {
         this.clock = clock;
     }
 
-    private List<Person> getManagedMembersOfPerson(Person person) {
-        return managedDepartmentEntitiesOfPerson(person).stream()
-            .map(DepartmentEntity::getMembers)
-            .flatMap(Collection::stream)
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .distinct()
-            .toList();
-    }
-
     @Override
     public List<Person> getManagedMembersOfPerson(Person person, Year year) {
         return filterMembersByYear(year, managedDepartmentEntitiesOfPerson(person));
@@ -549,6 +540,15 @@ class DepartmentServiceImpl implements DepartmentService {
             departments = List.of();
         }
         return departments;
+    }
+
+    private List<Person> getManagedMembersOfPerson(Person person) {
+        return managedDepartmentEntitiesOfPerson(person).stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(Collection::stream)
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .toList();
     }
 
     private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
