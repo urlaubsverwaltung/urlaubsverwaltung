@@ -66,6 +66,8 @@ class DepartmentServiceImplTest {
     @Mock
     private DepartmentRepository departmentRepository;
     @Mock
+    private DepartmentMembershipService departmentMembershipService;
+    @Mock
     private ApplicationService applicationService;
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
@@ -74,7 +76,7 @@ class DepartmentServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService, applicationEventPublisher, clock);
+        sut = new DepartmentServiceImpl(departmentRepository, departmentMembershipService, applicationService, applicationEventPublisher, clock);
     }
 
     @Nested

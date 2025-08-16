@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -33,11 +33,14 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -54,13 +57,20 @@ class DepartmentServiceImpl implements DepartmentService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentRepository departmentRepository;
+    private final DepartmentMembershipService departmentMembershipService;
     private final ApplicationService applicationService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
-    @Autowired
-    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
+    DepartmentServiceImpl(
+        DepartmentRepository departmentRepository,
+        DepartmentMembershipService departmentMembershipService,
+        ApplicationService applicationService,
+        ApplicationEventPublisher applicationEventPublisher,
+        Clock clock
+    ) {
         this.departmentRepository = departmentRepository;
+        this.departmentMembershipService = departmentMembershipService;
         this.applicationService = applicationService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
@@ -136,6 +146,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public Department create(Department department) {
 
         final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);
@@ -158,16 +169,25 @@ class DepartmentServiceImpl implements DepartmentService {
         final DepartmentEntity createdDepartmentEntity = departmentRepository.save(departmentEntity);
         final Department createdDepartment = mapToDepartment(createdDepartmentEntity);
 
+        departmentMembershipService.createInitialMemberships(
+            createdDepartmentEntity.getId(),
+            toPersonIds(createdDepartment.getMembers()),
+            toPersonIds(createdDepartment.getDepartmentHeads()),
+            toPersonIds(createdDepartment.getSecondStageAuthorities())
+        );
+
         LOG.info("Created department: {}", createdDepartment);
 
         return createdDepartment;
     }
 
     @Override
+    @Transactional
     public Department update(Department department) {
 
         final DepartmentEntity currentDepartmentEntity = departmentRepository.findById(department.getId())
             .orElseThrow(() -> new IllegalStateException("cannot update department since it does not exists."));
+        final Department currentDepartment = mapToDepartment(currentDepartmentEntity);
 
         final List<DepartmentMemberEmbeddable> departmentMembers =
             updatedDepartmentMembers(department.getMembers(), currentDepartmentEntity.getMembers());
@@ -179,6 +199,11 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
         final Department updatedDepartment = mapToDepartment(updatedDepartmentEntity);
+
+        final DepartmentMembershipBucket currentBucket = membershipBucketOfDepartment(currentDepartment);
+        final DepartmentMembershipBucket newBucket = membershipBucketOfDepartment(updatedDepartment);
+        departmentMembershipService.updateDepartmentMemberships(newBucket, currentBucket);
+
         sendMemberLeftDepartmentEvent(department, currentDepartmentEntity);
 
         LOG.info("Updated department: {}", updatedDepartment);
@@ -192,6 +217,7 @@ class DepartmentServiceImpl implements DepartmentService {
      * @param event the person who is deleted
      */
     @EventListener
+    @Transactional
     void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
         getAssignedDepartmentsOfMember(event.person())
             .forEach(department -> {
@@ -211,6 +237,7 @@ class DepartmentServiceImpl implements DepartmentService {
      * @param event the person who is deleted
      */
     @EventListener
+    @Transactional
     void deleteDepartmentHead(PersonDeletedEvent event) {
         getManagedDepartmentsOfDepartmentHead(event.person())
             .forEach(department -> {
@@ -231,6 +258,7 @@ class DepartmentServiceImpl implements DepartmentService {
      * @param event the person who is deleted
      */
     @EventListener
+    @Transactional
     void deleteSecondStageAuthority(PersonDeletedEvent event) {
         getManagedDepartmentsOfSecondStageAuthority(event.person())
             .forEach(department -> {
@@ -455,6 +483,23 @@ class DepartmentServiceImpl implements DepartmentService {
         return personDepartments.stream().anyMatch(otherPersonDepartments::contains);
     }
 
+    private static DepartmentMembershipBucket membershipBucketOfDepartment(Department department) {
+
+        final List<PersonId> newMemberIds = department.getMembers().stream().map(Person::getId).map(PersonId::new).toList();
+        final List<PersonId> newDepartmentHeadIds = department.getDepartmentHeads().stream().map(Person::getId).map(PersonId::new).toList();
+        final List<PersonId> newSecondStageIds = department.getSecondStageAuthorities().stream().map(Person::getId).map(PersonId::new).toList();
+
+        return new DepartmentMembershipBucket(department.getId(),
+            newMemberIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.MEMBER, null)).toList(),
+            newDepartmentHeadIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.DEPARTMENT_HEAD, null)).toList(),
+            newSecondStageIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, null)).toList()
+        );
+    }
+
+    private List<PersonId> toPersonIds(List<Person> persons) {
+        return persons.stream().map(Person::getId).map(PersonId::new).toList();
+    }
+
     private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
         return Stream.concat(bucket.stream(), departmentNames.stream()).toList();
     }
@@ -482,6 +527,46 @@ class DepartmentServiceImpl implements DepartmentService {
         department.setMembers(members);
 
         return department;
+    }
+
+    private Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentMembershipBucket membershipBucket, List<Person> persons) {
+
+        final Map<Long, Person> personById = persons.stream().collect(toMap(Person::getId, identity()));
+
+        final List<Person> members = membershipsToPersons(membershipBucket.members(), personById);
+        final List<Person> departmentHeads = membershipsToPersons(membershipBucket.departmentHeads(), personById);
+        final List<Person> secondStageAuthorities = membershipsToPersons(membershipBucket.secondStageAuthorities(), personById);
+
+        final Department department = new Department();
+
+        department.setId(departmentEntity.getId());
+        department.setName(departmentEntity.getName());
+        department.setDescription(departmentEntity.getDescription());
+        department.setMembers(members);
+        department.setDepartmentHeads(departmentHeads);
+        department.setSecondStageAuthorities(secondStageAuthorities);
+        department.setTwoStageApproval(departmentEntity.isTwoStageApproval());
+        department.setCreatedAt(departmentEntity.getCreatedAt());
+        department.setLastModification(departmentEntity.getLastModification());
+
+        return department;
+    }
+
+    private List<Person> membershipsToPersons(Collection<DepartmentMembership> memberships, Map<Long, Person> personById) {
+
+        final List<Person> persons = new ArrayList<>();
+
+        for (DepartmentMembership membership : memberships) {
+            final PersonId personId = membership.personId();
+            final Person person = personById.get(personId.value());
+            if (person == null) {
+                LOG.warn("Department id={} membership with personId={} but no active person found. Skipping this membership.", membership.departmentId(), personId);
+            } else {
+                persons.add(person);
+            }
+        }
+
+        return unmodifiableList(persons);
     }
 
     private DepartmentEntity mapToDepartmentEntityWithoutMembers(Department department) {
