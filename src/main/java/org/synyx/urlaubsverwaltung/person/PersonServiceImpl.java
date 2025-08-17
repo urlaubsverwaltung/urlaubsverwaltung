@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -177,6 +178,11 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllPersons() {
         return personRepository.findAllByOrderByIdAsc();
+    }
+
+    @Override
+    public List<Person> getAllPersonsByIds(Collection<PersonId> personIds) {
+        return personRepository.findAllByIdIsInOrderByFirstNameAscLastNameAsc(personIds.stream().map(PersonId::value).toList());
     }
 
     @Override

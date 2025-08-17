@@ -10,9 +10,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -187,6 +190,23 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
         final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(INACTIVE));
         final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(peter);
+    }
+
+    @Test
+    void ensureFindAllByIdOrderByFirstNameAscLastNameAsc() {
+
+        final Person person1 = personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
+        final Person person2 = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
+        final Person person3 = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
+        personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
+
+        final List<Person> actual = sut.findAllByIdIsInOrderByFirstNameAscLastNameAsc(List.of(person1.getId(), person2.getId(), person3.getId()));
+
+        assertThat(actual).satisfiesExactly(
+            person -> assertThat(person).isEqualTo(person3),
+            person -> assertThat(person).isEqualTo(person2),
+            person -> assertThat(person).isEqualTo(person1)
+        );
     }
 
     @Test

@@ -23,6 +23,22 @@ public record DepartmentMembership(
     Optional<Instant> validTo
 ) {
 
+    public boolean isMemberMembership() {
+        return membershipKind == DepartmentMembershipKind.MEMBER;
+    }
+
+    /**
+     * Checks if the membership is a management membership.
+     *
+     * @return {@code true} if the membership is a management membership, {@code false} otherwise
+     */
+    public boolean isManagementMembership() {
+        return switch (membershipKind) {
+            case DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY -> true;
+            case MEMBER -> false;
+        };
+    }
+
     public DepartmentMembership(PersonId personId, Long departmentId, DepartmentMembershipKind membershipKind, Instant validFrom) {
         this(personId, departmentId, membershipKind, validFrom, Optional.empty());
     }
