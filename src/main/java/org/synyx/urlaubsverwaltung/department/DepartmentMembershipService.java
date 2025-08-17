@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,54 @@ class DepartmentMembershipService {
     DepartmentMembershipService(DepartmentMembershipRepository repository, Clock clock) {
         this.repository = repository;
         this.clock = clock;
+    }
+
+    /**
+     * Returns all active memberships for a given person.
+     * A membership is considered active if it has a validToExclusive of null.
+     *
+     * @param personId the ID of the person for whom to retrieve active memberships
+     * @return a list of {@link DepartmentMembership} representing the active memberships of the person
+     */
+    List<DepartmentMembership> getActiveMemberships(PersonId personId) {
+        return getActiveMembershipsOfPersons(List.of(personId)).getOrDefault(personId, List.of());
+    }
+
+    /**
+     * Returns all active memberships for all persons in a given year.<br/>
+     * A membership is considered active if it has a {@link DepartmentMembership#validTo()} of {@code null}
+     * or a {@link DepartmentMembership#validTo()} after the end of the given year.
+     * And {@link DepartmentMembership#validFrom()} before the start or in the given year.
+     *
+     * @param year the year for which to retrieve active memberships
+     * @return map of all active {@link DepartmentMembership} by {@link PersonId}
+     */
+    Map<PersonId, List<DepartmentMembership>> getActiveMembershipsOfYear(Year year) {
+        return repository.findAllActiveInYear(year.getValue())
+            .stream().map(DepartmentMembershipService::toDepartmentMembership)
+            .collect(groupingBy(DepartmentMembership::personId));
+    }
+
+    /**
+     * Returns all active memberships for a collection of persons.
+     * A membership is considered active if it has a validToExclusive of null.
+     *
+     * @param personIds the IDs of the persons for whom to retrieve active memberships
+     * @return map of all active {@link DepartmentMembership} by person ID
+     */
+    Map<PersonId, List<DepartmentMembership>> getActiveMembershipsOfPersons(Collection<PersonId> personIds) {
+
+        final List<DepartmentMembershipEntity> entities =
+            repository.findAllByPersonIdIsInAndValidToIsNull(personIds.stream().map(PersonId::value).toList());
+
+        final Map<PersonId, List<DepartmentMembership>> map = entities.stream()
+            .map(DepartmentMembershipService::toDepartmentMembership)
+            .collect(groupingBy(DepartmentMembership::personId));
+
+        // ensure entries for all personIds, even if they have no memberships
+        personIds.forEach(id -> map.putIfAbsent(id, List.of()));
+
+        return map;
     }
 
     /**

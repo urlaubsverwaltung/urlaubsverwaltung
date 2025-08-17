@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.Year;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,6 +102,14 @@ public interface PersonService {
      * @return returns all persons
      */
     List<Person> getAllPersons();
+
+    /**
+     * Finds all persons by their ids ordered by {@link Person#getFirstName()}.
+     *
+     * @param personIds collection of person ids to find persons for
+     * @return ordered list of persons with the given ids, empty list if no persons found
+     */
+    List<Person> getAllPersonsByIds(Collection<PersonId> personIds);
 
     /**
      * Returns all persons with an existing {@link Account} in the given year.

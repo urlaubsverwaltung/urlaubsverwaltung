@@ -1,24 +1,16 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.ZoneOffset.UTC;
 
@@ -43,18 +35,6 @@ public class DepartmentEntity extends AbstractTenantAwareEntity {
 
     // flag for two stage approval process
     private boolean twoStageApproval;
-
-    @CollectionTable(name = "department_member", joinColumns = @JoinColumn(name = "department_id"))
-    @ElementCollection(fetch = EAGER)
-    private List<DepartmentMemberEmbeddable> members = new ArrayList<>();
-
-    @OneToMany(fetch = EAGER)
-    @CollectionTable(name = "department_department_head")
-    private List<Person> departmentHeads = new ArrayList<>();
-
-    @OneToMany(fetch = EAGER)
-    @CollectionTable(name = "department_second_stage_authority")
-    private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public DepartmentEntity() {
         this.lastModification = LocalDate.now(UTC);
@@ -108,30 +88,6 @@ public class DepartmentEntity extends AbstractTenantAwareEntity {
         this.twoStageApproval = twoStageApproval;
     }
 
-    public List<DepartmentMemberEmbeddable> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<DepartmentMemberEmbeddable> members) {
-        this.members = members;
-    }
-
-    public List<Person> getDepartmentHeads() {
-        return departmentHeads;
-    }
-
-    public void setDepartmentHeads(List<Person> departmentHeads) {
-        this.departmentHeads = departmentHeads;
-    }
-
-    public List<Person> getSecondStageAuthorities() {
-        return secondStageAuthorities;
-    }
-
-    public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
-        this.secondStageAuthorities = secondStageAuthorities;
-    }
-
     @Override
     public String toString() {
         return "DepartmentEntity{" +
@@ -139,9 +95,6 @@ public class DepartmentEntity extends AbstractTenantAwareEntity {
             ", description='" + description + '\'' +
             ", lastModification=" + lastModification +
             ", twoStageApproval=" + twoStageApproval +
-            ", members=" + members +
-            ", departmentHeads=" + departmentHeads +
-            ", secondStageAuthorities=" + secondStageAuthorities +
             '}';
     }
 
