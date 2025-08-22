@@ -47,6 +47,7 @@ class PersonDataCollectionService {
 
     List<PersonDTO> collectPersons(List<Person> persons) {
         return persons.stream().map(person -> {
+            final PersonId personId = person.getIdAsPersonId();
 
             final List<RoleDTO> permissions = person.getPermissions().stream().map(role -> RoleDTO.valueOf(role.name())).toList();
             final List<MailNotificationDTO> mailNotificationDTOS = person.getNotifications().stream().map(notification -> MailNotificationDTO.valueOf(notification.name())).toList();
@@ -55,8 +56,8 @@ class PersonDataCollectionService {
             final List<AccountDTO> accountDTOS = accountService.getHolidaysAccountsByPerson(person).stream().map(account -> new AccountDTO(account.getValidFrom(), account.getValidTo(), account.isDoRemainingVacationDaysExpireLocally(), account.isDoRemainingVacationDaysExpireGlobally(), account.getExpiryDateLocally(), account.getExpiryDateGlobally(), account.getExpiryNotificationSentDate(), account.getAnnualVacationDays(), account.getActualVacationDays(), account.getRemainingVacationDays(), account.getRemainingVacationDaysNotExpiring(), account.getComment())).toList();
             final List<WorkingTimeDTO> workingTimeDTOS = workingTimeService.getByPerson(person).stream().map(workingTime -> new WorkingTimeDTO(DayLengthDTO.valueOf(workingTime.getMonday().name()), DayLengthDTO.valueOf(workingTime.getTuesday().name()), DayLengthDTO.valueOf(workingTime.getWednesday().name()), DayLengthDTO.valueOf(workingTime.getThursday().name()), DayLengthDTO.valueOf(workingTime.getFriday().name()), DayLengthDTO.valueOf(workingTime.getSaturday().name()), DayLengthDTO.valueOf(workingTime.getSunday().name()), workingTime.getValidFrom(), FederalStateDTO.valueOf(workingTime.getFederalState().name()), workingTime.isDefaultFederalState())).toList();
 
-            final UserNotificationSettingsDTO userNotificationSettingsDTO = new UserNotificationSettingsDTO(userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId())).restrictToDepartments());
-            final UserPaginationSettingsDTO userPaginationSettingsDTO = new UserPaginationSettingsDTO(userPaginationSettingsSupplier.getUserPaginationSettings(new PersonId(person.getId())).getDefaultPageSize());
+            final UserNotificationSettingsDTO userNotificationSettingsDTO = new UserNotificationSettingsDTO(userNotificationSettingsService.findNotificationSettings(personId).restrictToDepartments());
+            final UserPaginationSettingsDTO userPaginationSettingsDTO = new UserPaginationSettingsDTO(userPaginationSettingsSupplier.getUserPaginationSettings(personId).getDefaultPageSize());
             final UserSettings userSettingsForPerson = userSettingsService.getUserSettingsForPerson(person);
             final UserSettingsDTO userSettings = new UserSettingsDTO(ThemeDTO.valueOf(userSettingsForPerson.theme().name()), userSettingsForPerson.locale().orElse(null), userSettingsForPerson.localeBrowserSpecific().orElse(null), userNotificationSettingsDTO, userPaginationSettingsDTO);
 
