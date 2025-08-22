@@ -96,7 +96,7 @@ class DepartmentServiceImpl implements DepartmentService {
             managedPersonIds = onlyMembers.stream().map(DepartmentMembership::personId).collect(toSet());
         } else {
             // otherwise we have to collect departments where the person is a department head or second stage authority
-            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.get(new PersonId(person.getId())).stream()
+            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.get(person.getIdAsPersonId()).stream()
                 .filter(DepartmentMembership::isManagementMembership)
                 .map(DepartmentMembership::departmentId)
                 .collect(toSet());
@@ -118,20 +118,20 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
-        final PersonId personId = new PersonId(person.getId());
+        final PersonId personId = person.getIdAsPersonId();
         return managedMembersOfPerson(personId, personPageableSearchQuery, not(Person::isInactive));
     }
 
     @Override
     public List<Person> getManagedActiveMembersOfPerson(Person person) {
-        final PersonId personId = new PersonId(person.getId());
+        final PersonId personId = person.getIdAsPersonId();
         final List<DepartmentMembership> members = getManagedMemberMembershipsOfPerson(personId);
         return membershipsToPersons(members).stream().filter(Person::isActive).toList();
     }
 
     @Override
     public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
-        final PersonId personId = new PersonId(person.getId());
+        final PersonId personId = person.getIdAsPersonId();
         return managedMembersOfPerson(personId, personPageableSearchQuery, Person::isInactive);
     }
 
@@ -308,19 +308,19 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
-        final PersonId personId = new PersonId(member.getId());
+        final PersonId personId = member.getIdAsPersonId();
         return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.MEMBER);
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
-        final PersonId personId = new PersonId(departmentHead.getId());
+        final PersonId personId = departmentHead.getIdAsPersonId();
         return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.DEPARTMENT_HEAD);
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
-        final PersonId personId = new PersonId(secondStageAuthority.getId());
+        final PersonId personId = secondStageAuthority.getIdAsPersonId();
         return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY);
     }
 
@@ -373,7 +373,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getMembersForDepartmentHead(Person departmentHead) {
-        final PersonId personId = new PersonId(departmentHead.getId());
+        final PersonId personId = departmentHead.getIdAsPersonId();
         return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.DEPARTMENT_HEAD).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
@@ -383,7 +383,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
-        final PersonId personId = new PersonId(secondStageAuthority.getId());
+        final PersonId personId = secondStageAuthority.getIdAsPersonId();
         return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
@@ -397,8 +397,8 @@ class DepartmentServiceImpl implements DepartmentService {
             return false;
         }
 
-        final PersonId departmentHeadId = new PersonId(departmentHead.getId());
-        final PersonId personId = new PersonId(person.getId());
+        final PersonId departmentHeadId = departmentHead.getIdAsPersonId();
+        final PersonId personId = person.getIdAsPersonId();
 
         final Map<PersonId, List<DepartmentMembership>> memberships =
             departmentMembershipService.getActiveMembershipsOfPersons(List.of(departmentHeadId, personId));
@@ -512,8 +512,8 @@ class DepartmentServiceImpl implements DepartmentService {
     @Override
     public boolean hasDepartmentMatch(Person person, Person otherPerson) {
 
-        final PersonId personId = new PersonId(person.getId());
-        final PersonId otherPersonId = new PersonId(otherPerson.getId());
+        final PersonId personId = person.getIdAsPersonId();
+        final PersonId otherPersonId = otherPerson.getIdAsPersonId();
 
         final Map<PersonId, List<DepartmentMembership>> membershipsByPersonId =
             departmentMembershipService.getActiveMembershipsOfPersons(List.of(personId, otherPersonId));
@@ -712,7 +712,7 @@ class DepartmentServiceImpl implements DepartmentService {
             return true;
         }
 
-        final PersonId personId = new PersonId(person.getId());
+        final PersonId personId = person.getIdAsPersonId();
 
         final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && staff.hasDepartmentHead(personId);
         final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.hasSecondStageAuthority(personId);

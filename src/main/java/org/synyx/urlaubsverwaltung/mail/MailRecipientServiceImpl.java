@@ -109,7 +109,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             return distinctOfficesAndBosses;
         }
 
-        final Map<PersonId, Person> byPersonId = distinctOfficesAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity(), (person, person2) -> person));
+        final Map<PersonId, Person> byPersonId = distinctOfficesAndBosses.stream().collect(toMap(Person::getIdAsPersonId, identity(), (person, person2) -> person));
         final List<PersonId> officeBossIds = distinctOfficesAndBosses.stream().map(Person::getId).map(PersonId::new).toList();
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
@@ -120,7 +120,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .toList();
 
         return distinctOfficesAndBosses.stream()
-            .filter(not(person -> notInterestedIds.contains(new PersonId(person.getId()))))
+            .filter(not(person -> notInterestedIds.contains(person.getIdAsPersonId())))
             .toList();
     }
 
