@@ -78,14 +78,12 @@ public class SickNoteStatisticsService {
         }
 
         if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
-            // Sadly, we neither know whether a person has been active or inactive,
-            // nor do we know whether the person's holiday account has been active in the requested year.
-            // (person's department membership is handled in departmentService as soon as we're able to determine it)
             final List<Person> managedMembers = departmentService.getManagedMembersOfPerson(person, year);
             if (year.equals(Year.now(clock))) {
                 // we can, however, determine it for THIS year.
                 return managedMembers.stream().filter(Person::isActive).toList();
             } else {
+                // Sadly, we do not know whether a person has been active or inactive in a year before this year
                 return managedMembers;
             }
         }
