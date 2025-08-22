@@ -55,25 +55,28 @@ public class TurnOfTheYearAccountUpdaterService {
 
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
-        // what's the new year?
         final int year = Year.now(clock).getValue();
-
-        // get all persons
-        final List<Person> persons = personService.getActivePersons();
+        final List<Person> activePersons = personService.getActivePersons();
 
         // get all their accounts and calculate the remaining vacation days for the new year
         final List<Account> updatedAccounts = new ArrayList<>();
-        for (Person person : persons) {
+        for (Person person : activePersons) {
             final Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
                 LOG.info("Updating account of person with id {}", person.getId());
                 final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear.get());
                 LOG.info("Setting remaining vacation days of person with id {} to {} for {}", person.getId(), holidaysAccount.getRemainingVacationDays(), year);
                 updatedAccounts.add(holidaysAccount);
+            } else {
+                LOG.info("No holiday account updated for person with id {}. Reason: No account for last year or annual vacation days not defined.", person.getId());
             }
         }
 
-        LOG.info("Updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
+        LOG.info("Updated holidays accounts for year {}: {} / {} ({} persons have no account)",
+            year,
+            updatedAccounts.size(),
+            activePersons.size(),
+            activePersons.size() - updatedAccounts.size());
         sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
         vacationDaysReminderService.remindForRemainingVacationDays();
     }

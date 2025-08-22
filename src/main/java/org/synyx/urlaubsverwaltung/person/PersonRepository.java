@@ -41,4 +41,10 @@ interface PersonRepository extends JpaRepository<Person, Long> {
     List<Person> findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(Role permissionNotContaining, MailNotification mailNotification);
 
     List<Person> findAllByOrderByIdAsc();
+
+    @Query("SELECT DISTINCT p FROM Person p " +
+        "JOIN account a ON p.id = a.person.id " +
+        "AND a.validFrom <= make_date(:year, 12, 31) " +
+        "AND a.validTo >= make_date(:year, 1, 1)")
+    List<Person> findAllWithAccountByYear(int year);
 }

@@ -9,7 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.account.AccountService;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +32,10 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
 
     @Autowired
     private PersonService personService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AccountInteractionService accountInteractionService;
 
     @Test
     void countPersonByPermissionsIsNot() {
@@ -178,6 +187,25 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
         final Person peter = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(INACTIVE));
         final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, PageRequest.of(0, 10));
         assertThat(actual.getContent()).containsExactly(peter);
+    }
+
+    @Test
+    void findAllWithAccountByYear() {
+
+        final Year currentYear = Year.now();
+
+        final Person person = personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER));
+        personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER, OFFICE));
+        personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
+
+        final Account previousYearAccount = new Account();
+        previousYearAccount.setPerson(person);
+        previousYearAccount.setValidFrom(LocalDate.of(currentYear.minusYears(1).getValue(), 1, 1));
+        previousYearAccount.setValidTo(LocalDate.of(currentYear.minusYears(1).getValue(), 12, 31));
+        accountService.save(previousYearAccount);
+
+        assertThat(sut.findAllWithAccountByYear(currentYear.getValue())).hasSize(3);
+        assertThat(sut.findAllWithAccountByYear(currentYear.minusYears(1).getValue())).hasSize(1);
     }
 }
 

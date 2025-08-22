@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -44,38 +42,37 @@ class SickNoteStatisticsViewControllerTest {
     @Test
     void sickNoteStatistics() throws Exception {
 
+        final Year year = Year.now(clock);
+
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
-        final int currentYear = Year.now(clock).getValue();
-        final ResultActions resultActions = perform(get("/web/sicknote/statistics")
-            .param("year", String.valueOf(currentYear)));
-        resultActions
+        perform(get("/web/sicknote/statistics")
+            .param("year", String.valueOf(year.getValue()))
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("statistics", sickNoteStatistics))
-            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
 
     @Test
     void sickNoteStatisticsWithoutYear() throws Exception {
 
+        final Year year = Year.now(clock);
+
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
+        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
+        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
-        final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(Year.now(clock), LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
-
-        final int currentYear = Year.now(clock).getValue();
-
-        final ResultActions resultActions = perform(get("/web/sicknote/statistics"));
-        resultActions
+        perform(get("/web/sicknote/statistics"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("statistics", sickNoteStatistics))
-            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(model().attribute("currentYear", year.getValue()))
             .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
 

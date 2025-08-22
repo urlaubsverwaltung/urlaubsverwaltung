@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -176,6 +177,11 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllPersons() {
         return personRepository.findAllByOrderByIdAsc();
+    }
+
+    @Override
+    public List<Person> getAllPersonsHavingAccountInYear(Year year) {
+        return personRepository.findAllWithAccountByYear(year.getValue());
     }
 
     @Override

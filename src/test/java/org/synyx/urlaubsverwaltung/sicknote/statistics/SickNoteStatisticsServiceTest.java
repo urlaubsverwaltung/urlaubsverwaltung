@@ -14,14 +14,13 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZoneId;
 import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -45,27 +44,34 @@ class SickNoteStatisticsServiceTest {
     @Mock
     private PersonService personService;
 
+    private static final Clock clock = Clock.systemDefaultZone();
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService);
+        sut = new SickNoteStatisticsService(sickNoteService, departmentService, personService, clock);
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleDepartmentHeadOnlyForMembers() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person departmentHead = new Person();
+        departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
 
         final Person member1 = new Person();
+        member1.setId(2L);
+
         final Person member2 = new Person();
+        member2.setId(3L);
+
         final List<Person> members = List.of(member1, member2);
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(members);
+        when(departmentService.getManagedMembersOfPerson(departmentHead, year)).thenReturn(members);
 
-        final LocalDate date = LocalDate.of(2022, 10, 10);
+        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
 
-        final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
+        final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = List.of(SickNote.builder()
             .person(member1)
@@ -77,40 +83,51 @@ class SickNoteStatisticsServiceTest {
             .build());
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
     }
 
     @Test
     void ensureCreateStatisticsForNoPersonWithRoleDepartmentHeadWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, departmentHead);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleSecondStageAuthorityOnlyForMembers() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
-        final Person ssa = new Person();
-        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
+        final Person secondStageAuthPerson = new Person();
+        secondStageAuthPerson.setId(1L);
+        secondStageAuthPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
 
         final Person member1 = new Person();
+        member1.setId(2L);
+
         final Person member2 = new Person();
+        member2.setId(3L);
+
         final List<Person> members = List.of(member1, member2);
-        when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(members);
+        when(departmentService.getManagedMembersOfPerson(secondStageAuthPerson, year)).thenReturn(members);
 
-        final LocalDate date = LocalDate.of(2022, 10, 10);
+        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
 
-        final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
+        final LocalDate firstDayOfYear = year.atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final SickNote sickNote = SickNote.builder()
             .person(member1)
@@ -123,37 +140,48 @@ class SickNoteStatisticsServiceTest {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, secondStageAuthPerson);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
     }
 
     @Test
     void ensureCreateNoStatisticsForPersonWithRoleSecondStageAuthorityWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person ssa = new Person();
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, ssa);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleBossAndSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person personWithRole = new Person();
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
 
         final Person person = new Person();
-        final LocalDate from = LocalDate.of(2022, 1, 1);
-        final LocalDate to = LocalDate.of(2022, 12, 31);
+        person.setId(2L);
+        person.setPermissions(List.of(USER));
 
-        final LocalDate date = LocalDate.of(2022, 10, 10);
+        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(personWithRole, person));
+
+        final LocalDate from = LocalDate.of(year.getValue(), 1, 1);
+        final LocalDate to = LocalDate.of(year.getValue(), 12, 31);
+        final LocalDate date = LocalDate.of(year.getValue(), 10, 10);
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
@@ -163,52 +191,66 @@ class SickNoteStatisticsServiceTest {
             .dayLength(FULL)
             .workingTimeCalendar(workingTimeCalendarMondayToSunday(date, date))
             .build();
-        final List<SickNote> sickNotes = List.of(sickNote);
-        when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(personWithRole, person), from, to)).thenReturn(List.of(sickNote));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(departmentService);
     }
 
     @Test
     void ensureCreateNoStatisticsForPersonWithRoleBossWithoutSickNoteView() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person personWithRole = new Person();
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, personWithRole);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 
     @Test
     void ensureCreateStatisticsForPersonWithRoleOffice() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
-        final Person personWithRole = new Person();
-        personWithRole.setPermissions(List.of(USER, OFFICE));
+        final Person office = new Person();
+        office.setId(1L);
+        office.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person();
+        person.setId(2L);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getAllPersonsHavingAccountInYear(year)).thenReturn(List.of(office, person));
+
         final LocalDate from = LocalDate.of(2022, 1, 1);
         final LocalDate to = LocalDate.of(2022, 12, 31);
 
         final SickNote sickNote = SickNote.builder()
             .person(person)
             .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
-            .startDate(LocalDate.of(2022, 10, 10))
-            .endDate(LocalDate.of(2022, 10, 10))
+            .startDate(LocalDate.of(year.getValue(), 10, 10))
+            .endDate(LocalDate.of(year.getValue(), 10, 10))
             .dayLength(FULL)
             .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
             .build();
-        when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office, person), from, to)).thenReturn(List.of(sickNote));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, office);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(departmentService);
     }
 
     private static SickNoteType sickNoteType(SickNoteCategory category) {
@@ -219,15 +261,50 @@ class SickNoteStatisticsServiceTest {
     }
 
     @Test
+    void ensureCreateStatisticsForUser() {
+
+        final Year year = Year.of(2022);
+
+        final Person user = new Person();
+        user.setId(1L);
+        user.setPermissions(List.of(USER, SICK_NOTE_VIEW));
+
+        final LocalDate from = LocalDate.of(2022, 1, 1);
+        final LocalDate to = LocalDate.of(2022, 12, 31);
+
+        final SickNote sickNote = SickNote.builder()
+            .person(user)
+            .sickNoteType(sickNoteType(SickNoteCategory.SICK_NOTE))
+            .startDate(LocalDate.of(year.getValue(), 10, 10))
+            .endDate(LocalDate.of(year.getValue(), 10, 10))
+            .dayLength(FULL)
+            .workingTimeCalendar(workingTimeCalendarMondayToSunday(from, to))
+            .build();
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(user), from, to)).thenReturn(List.of(sickNote));
+
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, user);
+        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
+        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
     void ensureCreateStatisticsForPersonWithoutPrivilegedRole() {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final Year year = Year.of(2022);
 
         final Person person = new Person();
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(person, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(year, person);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isZero();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isZero();
+
+        verifyNoMoreInteractions(personService);
+        verifyNoMoreInteractions(departmentService);
+        verifyNoMoreInteractions(sickNoteService);
     }
 }

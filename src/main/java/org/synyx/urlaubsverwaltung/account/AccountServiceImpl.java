@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.CachedSupplier;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -9,7 +10,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Implementation of {@link AccountService}.
@@ -133,22 +133,5 @@ class AccountServiceImpl implements AccountService {
 
     private LocalDate globallyExpiryDate(Year year) {
         return settingsService.getSettings().getAccountSettings().getExpiryDateForYear(year);
-    }
-
-    private static class CachedSupplier<T> implements Supplier<T> {
-        private T cachedValue;
-        private final Supplier<T> supplier;
-
-        CachedSupplier(Supplier<T> supplier) {
-            this.supplier = supplier;
-        }
-
-        @Override
-        public T get() {
-            if (cachedValue == null) {
-                cachedValue = supplier.get();
-            }
-            return cachedValue;
-        }
     }
 }
