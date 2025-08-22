@@ -609,8 +609,9 @@ class DepartmentServiceImpl implements DepartmentService {
 
     private boolean isMemberOfDepartmentInYear(DepartmentMemberEmbeddable departmentMemberEmbeddable, Year year) {
         final LocalDate accessionDate = LocalDate.ofInstant(departmentMemberEmbeddable.getAccessionDate(), clock.getZone());
-        // we currently consider a member to be part of the department if they joined in the given year or earlier
+        // We currently consider a member to be part of the department if they joined in the given year or earlier
         // as we don't track when a member leaves a department and when a member joins a department again.
+        // This means that a member, which rejoined is only tracked for the latest membership.
         return accessionDate.getYear() <= year.getValue();
     }
 
