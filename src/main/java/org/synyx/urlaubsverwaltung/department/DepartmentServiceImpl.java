@@ -85,6 +85,10 @@ class DepartmentServiceImpl implements DepartmentService {
         final Map<PersonId, List<DepartmentMembership>> activeMembershipsOfYear = departmentMembershipService.getActiveMembershipsOfYear(year);
         final Set<DepartmentMembership> onlyMembers = extractMemberMemberships(activeMembershipsOfYear);
 
+        if (onlyMembers.isEmpty()) {
+            return List.of();
+        }
+
         final Set<PersonId> managedPersonIds;
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
@@ -152,9 +156,9 @@ class DepartmentServiceImpl implements DepartmentService {
     public Optional<Department> getDepartmentById(Long departmentId) {
         return departmentRepository.findById(departmentId)
             .map(entity -> {
-                final DepartmentMembershipBucket membershipBucket = departmentMembershipService.getDepartmentMembershipBucket(entity.getId());
-                final List<Person> persons = personService.getAllPersonsByIds(membershipBucket.allPersonIds());
-                return mapToDepartment(entity, membershipBucket, persons);
+                final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(entity.getId());
+                final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+                return mapToDepartment(entity, staff, persons);
             });
     }
 
@@ -162,9 +166,9 @@ class DepartmentServiceImpl implements DepartmentService {
     public Optional<Department> getDepartmentByName(String departmentName) {
         return departmentRepository.findFirstByName(departmentName)
             .map(entity -> {
-                final DepartmentMembershipBucket membershipBucket = departmentMembershipService.getDepartmentMembershipBucket(entity.getId());
-                final List<Person> persons = personService.getAllPersonsByIds(membershipBucket.allPersonIds());
-                return mapToDepartment(entity, membershipBucket, persons);
+                final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(entity.getId());
+                final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+                return mapToDepartment(entity, staff, persons);
             });
     }
 
@@ -178,15 +182,15 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final DepartmentEntity savedEntity = departmentRepository.save(departmentEntity);
 
-        final DepartmentMembershipBucket membershipBucket = departmentMembershipService.createInitialMemberships(
+        final DepartmentStaff staff = departmentMembershipService.createInitialMemberships(
             savedEntity.getId(),
             personIdsOfPersons(department.getMembers()),
             personIdsOfPersons(department.getDepartmentHeads()),
             personIdsOfPersons(department.getSecondStageAuthorities())
         );
 
-        final List<Person> persons = personService.getAllPersonsByIds(membershipBucket.allPersonIds());
-        final Department createdDepartment = mapToDepartment(savedEntity, membershipBucket, persons);
+        final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+        final Department createdDepartment = mapToDepartment(savedEntity, staff, persons);
 
         LOG.info("Created department: {}", createdDepartment);
 
@@ -200,15 +204,15 @@ class DepartmentServiceImpl implements DepartmentService {
         final DepartmentEntity currentDepartmentEntity = departmentRepository.findById(department.getId())
             .orElseThrow(() -> new IllegalStateException("cannot update department since it does not exists."));
 
-        final DepartmentMembershipBucket currentBucket = departmentMembershipService.getDepartmentMembershipBucket(currentDepartmentEntity.getId());
+        final DepartmentStaff currentStaff = departmentMembershipService.getDepartmentStaff(currentDepartmentEntity.getId());
 
-        final Set<PersonId> oldAndNewPersonIds = Stream.concat(personIdsOfDepartment(department).stream(), currentBucket.allPersonIds().stream()).collect(toSet());
+        final Set<PersonId> oldAndNewPersonIds = Stream.concat(personIdsOfDepartment(department).stream(), currentStaff.allPersonIds().stream()).collect(toSet());
         final List<Person> persons = personService.getAllPersonsByIds(oldAndNewPersonIds);
 
         // update memberships
-        final DepartmentMembershipBucket nextBucket = membershipBucketOfDepartment(department);
+        final DepartmentStaff nextStaff = departmentToStaff(department);
         // TODO nextBucket contains validTo null values --> this seems to be the wrong way. personIds are the only required thing... see membershipService implementation!
-        final DepartmentMembershipBucket updatedBucket = departmentMembershipService.updateDepartmentMemberships(nextBucket, currentBucket);
+        final DepartmentStaff updatedStaff = departmentMembershipService.updateDepartmentMemberships(nextStaff, currentStaff);
 
         // update department entity
         final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
@@ -216,9 +220,9 @@ class DepartmentServiceImpl implements DepartmentService {
         departmentEntity.setLastModification(LocalDate.now(clock));
 
         final DepartmentEntity updatedEntity = departmentRepository.save(departmentEntity);
-        final Department updatedDepartment = mapToDepartment(updatedEntity, updatedBucket, persons);
+        final Department updatedDepartment = mapToDepartment(updatedEntity, updatedStaff, persons);
 
-        sendMemberLeftDepartmentEvent(updatedBucket, currentBucket);
+        sendMemberLeftDepartmentEvent(updatedStaff, currentStaff);
 
         LOG.info("Updated department: {}", updatedDepartment);
 
@@ -488,12 +492,12 @@ class DepartmentServiceImpl implements DepartmentService {
         final List<DepartmentEntity> departmentEntities = departmentRepository.findAllById(departmentIds);
         final Map<Long, String> departmentNameById = departmentEntities.stream().collect(toMap(DepartmentEntity::getId, DepartmentEntity::getName));
 
-        final Map<Long, DepartmentMembershipBucket> bucketsByDepartmentId = departmentMembershipService.getDepartmentMembershipBucket(departmentIds);
+        final Map<Long, DepartmentStaff> staffByDepartmentId = departmentMembershipService.getDepartmentStaff(departmentIds);
 
         final Map<PersonId, Set<String>> departmentsByPerson = new HashMap<>();
 
-        bucketsByDepartmentId.forEach((departmentId, membershipBucket) -> {
-            for (DepartmentMembership member : membershipBucket.members()) {
+        staffByDepartmentId.forEach((departmentId, staff) -> {
+            for (DepartmentMembership member : staff.members()) {
                 final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), (key) -> new HashSet<>());
                 if (departmentNameById.containsKey(departmentId)) {
                     departmentNames.add(departmentNameById.get(departmentId));
@@ -520,13 +524,13 @@ class DepartmentServiceImpl implements DepartmentService {
         return personDepartmentIds.stream().anyMatch(otherPersonDepartmentIds::contains);
     }
 
-    private static DepartmentMembershipBucket membershipBucketOfDepartment(Department department) {
+    private static DepartmentStaff departmentToStaff(Department department) {
 
         final List<PersonId> newMemberIds = department.getMembers().stream().map(Person::getId).map(PersonId::new).toList();
         final List<PersonId> newDepartmentHeadIds = department.getDepartmentHeads().stream().map(Person::getId).map(PersonId::new).toList();
         final List<PersonId> newSecondStageIds = department.getSecondStageAuthorities().stream().map(Person::getId).map(PersonId::new).toList();
 
-        return new DepartmentMembershipBucket(department.getId(),
+        return new DepartmentStaff(department.getId(),
             newMemberIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.MEMBER, null)).toList(),
             newDepartmentHeadIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.DEPARTMENT_HEAD, null)).toList(),
             newSecondStageIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, null)).toList()
@@ -542,8 +546,8 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMembership::departmentId)
             .collect(toSet());
 
-        return departmentMembershipService.getDepartmentMembershipBucket(managedDepartmentIds).values().stream()
-            .map(DepartmentMembershipBucket::members)
+        return departmentMembershipService.getDepartmentStaff(managedDepartmentIds).values().stream()
+            .map(DepartmentStaff::members)
             .flatMap(Collection::stream)
             .toList();
     }
@@ -563,13 +567,13 @@ class DepartmentServiceImpl implements DepartmentService {
         return person -> !department.getSecondStageAuthorities().contains(person);
     }
 
-    private Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentMembershipBucket membershipBucket, List<Person> persons) {
+    private Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentStaff staff, List<Person> persons) {
 
         final Map<Long, Person> personById = persons.stream().collect(toMap(Person::getId, identity()));
 
-        final List<Person> members = membershipsToPersons(membershipBucket.members(), personById);
-        final List<Person> departmentHeads = membershipsToPersons(membershipBucket.departmentHeads(), personById);
-        final List<Person> secondStageAuthorities = membershipsToPersons(membershipBucket.secondStageAuthorities(), personById);
+        final List<Person> members = membershipsToPersons(staff.members(), personById);
+        final List<Person> departmentHeads = membershipsToPersons(staff.departmentHeads(), personById);
+        final List<Person> secondStageAuthorities = membershipsToPersons(staff.secondStageAuthorities(), personById);
 
         final Department department = new Department();
 
@@ -592,13 +596,13 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         final Set<Long> departmentIds = entities.stream().map(DepartmentEntity::getId).collect(toSet());
-        final Map<Long, DepartmentMembershipBucket> bucketByDepartmentId = departmentMembershipService.getDepartmentMembershipBucket(departmentIds);
+        final Map<Long, DepartmentStaff> staffByDepartmentId = departmentMembershipService.getDepartmentStaff(departmentIds);
 
-        final Set<PersonId> personIds = bucketByDepartmentId.values().stream().map(DepartmentMembershipBucket::allPersonIds).flatMap(Collection::stream).collect(toSet());
+        final Set<PersonId> personIds = staffByDepartmentId.values().stream().map(DepartmentStaff::allPersonIds).flatMap(Collection::stream).collect(toSet());
         final List<Person> persons = personService.getAllPersonsByIds(personIds);
 
         return entities.stream()
-            .map(entity -> mapToDepartment(entity, bucketByDepartmentId.get(entity.getId()), persons))
+            .map(entity -> mapToDepartment(entity, staffByDepartmentId.get(entity.getId()), persons))
             .sorted(comparator)
             .toList();
     }
@@ -680,12 +684,12 @@ class DepartmentServiceImpl implements DepartmentService {
 
     private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
 
-        final DepartmentMembershipBucket membershipBucket = departmentMembershipService.getDepartmentMembershipBucket(departmentId);
-        if (!doesPersonManageDepartment(person, membershipBucket)) {
+        final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(departmentId);
+        if (!doesPersonManageDepartment(person, staff)) {
             return Page.empty();
         }
 
-        final Set<PersonId> memberPersonIds = membershipBucket.members().stream()
+        final Set<PersonId> memberPersonIds = staff.members().stream()
             .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
             .map(DepartmentMembership::personId)
             .collect(toSet());
@@ -703,24 +707,24 @@ class DepartmentServiceImpl implements DepartmentService {
         return new PageImpl<>(content, pageable, members.size());
     }
 
-    private static boolean doesPersonManageDepartment(Person person, DepartmentMembershipBucket membershipBucket) {
+    private static boolean doesPersonManageDepartment(Person person, DepartmentStaff staff) {
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
             return true;
         }
 
         final PersonId personId = new PersonId(person.getId());
 
-        final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && membershipBucket.isInDepartmentHeads(personId);
-        final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && membershipBucket.isInSecondStageAuthorities(personId);
+        final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && staff.isInDepartmentHeads(personId);
+        final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.isInSecondStageAuthorities(personId);
 
         return isDepartmentHead || isSecondStage;
     }
 
-    private void sendMemberLeftDepartmentEvent(DepartmentMembershipBucket newBucket, DepartmentMembershipBucket previousBucket) {
-        final Long departmentId = newBucket.departmentId();
+    private void sendMemberLeftDepartmentEvent(DepartmentStaff newStaff, DepartmentStaff previousStaff) {
+        final Long departmentId = newStaff.departmentId();
 
-        previousBucket.members().stream()
-            .filter(newBucket.members()::contains)
+        previousStaff.members().stream()
+            .filter(newStaff.members()::contains)
             .map(DepartmentMembership::personId)
             .forEach(personId -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, personId.value(), departmentId)));
 
