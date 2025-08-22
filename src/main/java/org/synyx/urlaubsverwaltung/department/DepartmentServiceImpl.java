@@ -714,8 +714,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final PersonId personId = new PersonId(person.getId());
 
-        final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && staff.isInDepartmentHeads(personId);
-        final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.isInSecondStageAuthorities(personId);
+        final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && staff.hasDepartmentHead(personId);
+        final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.hasSecondStageAuthority(personId);
 
         return isDepartmentHead || isSecondStage;
     }
