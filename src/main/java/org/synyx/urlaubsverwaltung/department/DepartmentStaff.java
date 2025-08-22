@@ -25,7 +25,7 @@ public record DepartmentStaff(
      * @param personId the person to check
      * @return {@code true} if the person is a department head, {@code false} otherwise
      */
-    public boolean isInDepartmentHeads(PersonId personId) {
+    public boolean hasDepartmentHead(PersonId personId) {
         return departmentHeads.stream()
             .anyMatch(departmentHead -> departmentHead.personId().equals(personId));
     }
@@ -36,7 +36,7 @@ public record DepartmentStaff(
      * @param personId the person to check
      * @return {@code true} if the person is a second stage authority, {@code false} otherwise
      */
-    public boolean isInSecondStageAuthorities(PersonId personId) {
+    public boolean hasSecondStageAuthority(PersonId personId) {
         return secondStageAuthorities.stream()
             .anyMatch(secondStageAuthority -> secondStageAuthority.personId().equals(personId));
     }
