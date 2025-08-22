@@ -67,10 +67,16 @@ public class TurnOfTheYearAccountUpdaterService {
                 final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear.get());
                 LOG.info("Setting remaining vacation days of person with id {} to {} for {}", person.getId(), holidaysAccount.getRemainingVacationDays(), year);
                 updatedAccounts.add(holidaysAccount);
+            } else {
+                LOG.info("No holiday account updated for person with id {}. Reason: No account for last year or annual vacation days not defined.", person.getId());
             }
         }
 
-        LOG.info("Updated holidays accounts: {} / {}", updatedAccounts.size(), activePersons.size());
+        LOG.info("Updated holidays accounts for year {}: {} / {} ({} persons have no account)",
+            year,
+            updatedAccounts.size(),
+            activePersons.size(),
+            activePersons.size() - updatedAccounts.size());
         sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
         vacationDaysReminderService.remindForRemainingVacationDays();
     }
