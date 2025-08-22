@@ -10,10 +10,9 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 /**
- * A bucket that contains all current memberships of a department.
- * It contains members, department heads and second stage authorities.
+ * Staff of a department contains members, department heads and second stage authorities.
  */
-public record DepartmentMembershipBucket(
+public record DepartmentStaff(
     Long departmentId,
     List<DepartmentMembership> members,
     List<DepartmentMembership> departmentHeads,
@@ -42,19 +41,19 @@ public record DepartmentMembershipBucket(
             .anyMatch(secondStageAuthority -> secondStageAuthority.personId().equals(personId));
     }
 
-    public static DepartmentMembershipBucket empty(Long departmentId) {
-        return new DepartmentMembershipBucket(departmentId, List.of(), List.of(), List.of());
+    public static DepartmentStaff empty(Long departmentId) {
+        return new DepartmentStaff(departmentId, List.of(), List.of(), List.of());
     }
 
     /**
-     * Creates a new {@link DepartmentMembershipBucket} from a list of memberships which will be categorized into members,
+     * Creates a new {@link DepartmentStaff} from a list of memberships which will be categorized into members,
      * department heads, and second stage authorities based on their membership kind.
      *
      * @param departmentId the ID of the department
      * @param memberships the list of memberships to categorize
-     * @return a new {@link DepartmentMembershipBucket} containing categorized memberships
+     * @return a new {@link DepartmentStaff} containing categorized memberships
      */
-    public static DepartmentMembershipBucket ofMemberships(Long departmentId, List<DepartmentMembership> memberships) {
+    public static DepartmentStaff ofMemberships(Long departmentId, List<DepartmentMembership> memberships) {
 
         final List<DepartmentMembership> members = new ArrayList<>();
         final List<DepartmentMembership> departmentHeads = new ArrayList<>();
@@ -69,7 +68,7 @@ public record DepartmentMembershipBucket(
             bucket.add(membership);
         }
 
-        return new DepartmentMembershipBucket(
+        return new DepartmentStaff(
             departmentId,
             unmodifiableList(members),
             unmodifiableList(departmentHeads),

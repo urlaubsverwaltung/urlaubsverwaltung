@@ -325,11 +325,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -389,11 +389,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -453,11 +453,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -528,11 +528,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -590,11 +590,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -648,11 +648,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -723,11 +723,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -787,11 +787,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(personMembership1, otherDepartmentHeadMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(personMembership2), List.of(otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -845,11 +845,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(personMembership1, personMembership2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(maxMembership1, janeMembership1), List.of(otherDepartmentHeadMembership1), List.of(personMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(janeMembership2, inactiveMembership2), List.of(), List.of(personMembership2, otherSecondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
@@ -871,7 +871,7 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(membership));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of()))
+        when(departmentMembershipService.getDepartmentStaff(Set.of()))
             .thenReturn(Map.of());
 
         final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
@@ -917,8 +917,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getActiveMemberships(personId)).thenReturn(List.of(personMembership));
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(personMembership), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L))).thenReturn(Map.of(1L, bucket));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(personMembership), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
 
         when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId, inactiveId)))
             // service returns persons in order of firstName, actually.
@@ -970,8 +970,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getActiveMemberships(personId)).thenReturn(List.of(personMembership));
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, janeMembership, juleMembership), List.of(personMembership), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L))).thenReturn(Map.of(1L, bucket));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, janeMembership, juleMembership), List.of(personMembership), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
 
         when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId)))
             // service returns persons in order of firstName, actually.
@@ -1011,9 +1011,9 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership membership = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(membership, inactiveMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(membership, inactiveMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
@@ -1051,9 +1051,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership departmenHeadMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
         final DepartmentMembership membership = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(membership, inactiveMembership), List.of(departmenHeadMembership), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(membership, inactiveMembership), List.of(departmenHeadMembership), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
@@ -1091,9 +1091,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
         final DepartmentMembership membership = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(membership, inactiveMembership), List.of(), List.of(personMembership));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(membership, inactiveMembership), List.of(), List.of(personMembership));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
@@ -1131,9 +1131,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
         final DepartmentMembership membership = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(membership, inactiveMembership), List.of(), List.of(personMembership));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(membership, inactiveMembership), List.of(), List.of(personMembership));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PageRequest pageRequest = PageRequest.of(0, 10);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
@@ -1180,9 +1180,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership juleMembership = new DepartmentMembership(juleId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership, janeMembership, juleMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId, inactiveId)))
             // service returns persons in order of firstName, actually.
@@ -1222,9 +1222,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PageRequest pageRequest = PageRequest.of(1, 10);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
@@ -1258,9 +1258,9 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, inactiveMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
@@ -1297,9 +1297,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, inactiveMembership), List.of(personMembership), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership), List.of(personMembership), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
@@ -1336,9 +1336,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, inactiveMembership), List.of(), List.of(personMembership));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, inactiveMembership), List.of(), List.of(personMembership));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
@@ -1369,9 +1369,9 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, personMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, personMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PageRequest pageRequest = PageRequest.of(0, 10);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
@@ -1415,9 +1415,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership janeMembership = new DepartmentMembership(janeId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership juleMembership = new DepartmentMembership(juleId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(maxMembership, janeMembership, juleMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(maxMembership, janeMembership, juleMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         when(personService.getAllPersonsByIds(Set.of(maxId, janeId, juleId)))
             // service returns persons in order of firstName, actually.
@@ -1457,9 +1457,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PageRequest pageRequest = PageRequest.of(1, 10);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
@@ -1493,9 +1493,9 @@ class DepartmentServiceImplTest {
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership maxMembership = new DepartmentMembership(maxId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership inactiveMembership = new DepartmentMembership(inactiveId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(personMembership, maxMembership, inactiveMembership), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
         final PageRequest pageRequest = PageRequest.of(1, 10);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
@@ -1518,7 +1518,7 @@ class DepartmentServiceImplTest {
         when(departmentRepository.save(any())).thenReturn(savedDepartmentEntity);
 
         when(departmentMembershipService.createInitialMemberships(42L, List.of(), List.of(), List.of()))
-            .thenReturn(new DepartmentMembershipBucket(42L, List.of(), List.of(), List.of()));
+            .thenReturn(new DepartmentStaff(42L, List.of(), List.of(), List.of()));
 
         final Department createdDepartment = sut.create(department);
 
@@ -1540,7 +1540,7 @@ class DepartmentServiceImplTest {
         when(departmentRepository.save(any())).thenReturn(entity);
 
         when(departmentMembershipService.createInitialMemberships(42L, List.of(), List.of(), List.of()))
-            .thenReturn(new DepartmentMembershipBucket(42L, List.of(), List.of(), List.of()));
+            .thenReturn(new DepartmentStaff(42L, List.of(), List.of(), List.of()));
 
         sut.create(department);
 
@@ -1586,11 +1586,11 @@ class DepartmentServiceImplTest {
         updatedDepartmentEntity.setName("department");
         when(departmentRepository.save(any())).thenReturn(updatedDepartmentEntity);
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(42L, List.of(), List.of(), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(42L))
-            .thenReturn(bucket);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentMembershipBucket.class), any(DepartmentMembershipBucket.class)))
-            .thenReturn(bucket);
+        final DepartmentStaff staff = new DepartmentStaff(42L, List.of(), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L))
+            .thenReturn(staff);
+        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+            .thenReturn(staff);
 
         final Department updatedDepartment = sut.update(department);
 
@@ -1620,11 +1620,11 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findById(1L)).thenReturn(Optional.of(departmentEntity));
         when(departmentRepository.save(any())).thenReturn(departmentEntity);
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(), List.of(), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L))
-            .thenReturn(bucket);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentMembershipBucket.class), any(DepartmentMembershipBucket.class)))
-            .thenReturn(bucket);
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(1L))
+            .thenReturn(staff);
+        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+            .thenReturn(staff);
 
         sut.update(department);
 
@@ -1659,15 +1659,15 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership personMembership = new DepartmentMembership(personId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership personLeftMembership = new DepartmentMembership(personThatWillLeftId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
-        final DepartmentMembershipBucket currentBucket = new DepartmentMembershipBucket(42L, List.of(personMembership, personLeftMembership), List.of(), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(42L)).thenReturn(currentBucket);
+        final DepartmentStaff currentStaff = new DepartmentStaff(42L, List.of(personMembership, personLeftMembership), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L)).thenReturn(currentStaff);
 
         when(personService.getAllPersonsByIds(Set.of(personId, personThatWillLeftId))).thenReturn(List.of(person, personThatWillLeft));
 
-        final DepartmentMembershipBucket updatedBucket = new DepartmentMembershipBucket(42L, List.of(personMembership), List.of(), List.of());
+        final DepartmentStaff updatedStaff = new DepartmentStaff(42L, List.of(personMembership), List.of(), List.of());
 
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentMembershipBucket.class), any(DepartmentMembershipBucket.class)))
-            .thenReturn(updatedBucket);
+        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+            .thenReturn(updatedStaff);
 
         when(departmentRepository.save(any(DepartmentEntity.class))).thenReturn(departmentEntity);
 
@@ -1701,10 +1701,10 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAll()).thenReturn(List.of(departmentEntity1, departmentEntity2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
             .thenReturn(Map.of(
-                1L, new DepartmentMembershipBucket(1L, List.of(), List.of(), List.of()),
-                2L, new DepartmentMembershipBucket(2L, List.of(), List.of(), List.of())
+                1L, new DepartmentStaff(1L, List.of(), List.of(), List.of()),
+                2L, new DepartmentStaff(2L, List.of(), List.of(), List.of())
             ));
 
         final List<Department> actual = sut.getAllDepartments();
@@ -1741,11 +1741,11 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findAllById(Set.of(1L, 3L)))
             .thenReturn(List.of(departmentEntity1, departmentEntity3));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(departmentHeadMembership1), List.of());
-        final DepartmentMembershipBucket bucket3 = new DepartmentMembershipBucket(3L, List.of(), List.of(departmentHeadMembership3), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(departmentHeadMembership1), List.of());
+        final DepartmentStaff staff3 = new DepartmentStaff(3L, List.of(), List.of(departmentHeadMembership3), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 3L)))
-            .thenReturn(Map.of(1L, bucket1, 3L, bucket3));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 3L)))
+            .thenReturn(Map.of(1L, staff1, 3L, staff3));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId))).thenReturn(List.of(person, member));
 
@@ -1798,11 +1798,11 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findAllById(Set.of(1L, 3L)))
             .thenReturn(List.of(departmentEntity1, departmentEntity3));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of(secondStageMembership1));
-        final DepartmentMembershipBucket bucket3 = new DepartmentMembershipBucket(3L, List.of(), List.of(), List.of(secondStageMembership3));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of(secondStageMembership1));
+        final DepartmentStaff staff3 = new DepartmentStaff(3L, List.of(), List.of(), List.of(secondStageMembership3));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 3L)))
-            .thenReturn(Map.of(1L, bucket1, 3L, bucket3));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 3L)))
+            .thenReturn(Map.of(1L, staff1, 3L, staff3));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId))).thenReturn(List.of(person, member));
 
@@ -1855,11 +1855,11 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findAllById(Set.of(1L, 3L)))
             .thenReturn(List.of(departmentEntity1, departmentEntity3));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of());
-        final DepartmentMembershipBucket bucket3 = new DepartmentMembershipBucket(3L, List.of(membership3), List.of(departmentHeadMembership3), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of());
+        final DepartmentStaff staff3 = new DepartmentStaff(3L, List.of(membership3), List.of(departmentHeadMembership3), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 3L)))
-            .thenReturn(Map.of(1L, bucket1, 3L, bucket3));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 3L)))
+            .thenReturn(Map.of(1L, staff1, 3L, staff3));
 
         when(personService.getAllPersonsByIds(Set.of(personId, departmentHeadId))).thenReturn(List.of(person, departmentHead));
 
@@ -1919,9 +1919,9 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findById(1L)).thenReturn(Optional.of(departmentEntity));
         when(departmentRepository.save(departmentEntity)).thenReturn(departmentEntity);
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(), List.of(), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(1L)).thenReturn(bucket);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentMembershipBucket.class), any(DepartmentMembershipBucket.class))).thenReturn(bucket);
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
+        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class))).thenReturn(staff);
 
         final Department updatedDepartment = sut.update(department);
 
@@ -1965,11 +1965,11 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L, 2L))).thenReturn(List.of(departmentEntity1, departmentEntity2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(headMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(membership2), List.of(headMembership1), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(headMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(membership2), List.of(headMembership1), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId1, memberId2)))
             .thenReturn(List.of(person, member1, member2));
@@ -2014,11 +2014,11 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L, 2L))).thenReturn(List.of(departmentEntity1, departmentEntity2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(secondStageMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(membership2), List.of(secondStageMembership1), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(secondStageMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(membership2), List.of(secondStageMembership1), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId1, memberId2)))
             .thenReturn(List.of(person, member1, member2));
@@ -2146,11 +2146,11 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L, 2L))).thenReturn(List.of(departmentEntity1, departmentEntity2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership11, membership12), List.of(), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(membership21, membership23), List.of(), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership11, membership12), List.of(), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(membership21, membership23), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, personId2, personId3)))
             .thenReturn(List.of(person, person2, person3));
@@ -2201,11 +2201,11 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L, 2L))).thenReturn(List.of(departmentEntity1, departmentEntity2));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership11, membership12), List.of(), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(membership21, membership23), List.of(), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership11, membership12), List.of(), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(membership21, membership23), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, personId2, personId3)))
             .thenReturn(List.of(person, person2, person3));
@@ -2370,8 +2370,8 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L))).thenReturn(List.of(departmentEntity));
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(membership), List.of(headMembership), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L))).thenReturn(Map.of(1L, bucket));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(membership), List.of(headMembership), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
 
         when(personService.getAllPersonsByIds(Set.of(departmentHeadId, personId))).thenReturn(List.of(departmentHead, person));
 
@@ -2402,8 +2402,8 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L))).thenReturn(List.of(departmentEntity));
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(), List.of(headMembership), List.of());
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L))).thenReturn(Map.of(1L, bucket));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(headMembership), List.of());
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
 
         boolean actual = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, person);
         assertThat(actual).isFalse();
@@ -2433,8 +2433,8 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findAllById(Set.of(1L))).thenReturn(List.of(departmentEntity));
 
-        final DepartmentMembershipBucket bucket = new DepartmentMembershipBucket(1L, List.of(), List.of(headMembership), List.of(secondMembership));
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L))).thenReturn(Map.of(1L, bucket));
+        final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(headMembership), List.of(secondMembership));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L))).thenReturn(Map.of(1L, staff));
 
         when(personService.getAllPersonsByIds(Set.of(departmentHeadId, secondStageId))).thenReturn(List.of(secondStageAuthority, departmentHead));
 
@@ -2493,11 +2493,11 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership membership1 = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(), List.of(), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(memberId))).thenReturn(List.of(member));
 
@@ -2545,14 +2545,14 @@ class DepartmentServiceImplTest {
         final DepartmentMembership membership1 = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership secondStageMembership2 = new DepartmentMembership(personId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of(secondStageMembership1));
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(), List.of(), List.of(secondStageMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of(secondStageMembership1));
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(), List.of(), List.of(secondStageMembership2));
 
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(secondStageMembership1, secondStageMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId))).thenReturn(List.of(person, member));
 
@@ -2600,14 +2600,14 @@ class DepartmentServiceImplTest {
         final DepartmentMembership membership1 = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership headMembership2 = new DepartmentMembership(personId, 2L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(headMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(), List.of(headMembership2), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(headMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(), List.of(headMembership2), List.of());
 
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(headMembership1, headMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId, memberId))).thenReturn(List.of(person, member));
 
@@ -2656,16 +2656,16 @@ class DepartmentServiceImplTest {
         final DepartmentMembership membership1 = new DepartmentMembership(memberId, 1L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentMembership secondMembership2 = new DepartmentMembership(personId, 2L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, Instant.now(clock));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(headMembership1), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(), List.of(), List.of(secondMembership2));
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(headMembership1), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(), List.of(), List.of(secondMembership2));
 
         when(departmentMembershipService.getActiveMemberships(personId))
             .thenReturn(List.of(headMembership1, secondMembership2));
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L)))
-            .thenReturn(Map.of(1L, bucket1));
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(2L)))
-            .thenReturn(Map.of(2L, bucket2));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L)))
+            .thenReturn(Map.of(1L, staff1));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(2L)))
+            .thenReturn(Map.of(2L, staff2));
 
         when(personService.getAllPersonsByIds(Set.of(personId))).thenReturn(List.of(person));
         when(personService.getAllPersonsByIds(Set.of(personId, memberId))).thenReturn(List.of(person, member));
@@ -2727,11 +2727,11 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getActiveMembershipsOfPersons(List.of(personId)))
             .thenReturn(Map.of(personId, List.of(membership1, secondMembership2, headMembership3, membership3)));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of());
-        final DepartmentMembershipBucket bucket3 = new DepartmentMembershipBucket(3L, List.of(membership1), List.of(headMembership3), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of());
+        final DepartmentStaff staff3 = new DepartmentStaff(3L, List.of(membership1), List.of(headMembership3), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 3L)))
-            .thenReturn(Map.of(1L, bucket1, 3L, bucket3));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 3L)))
+            .thenReturn(Map.of(1L, staff1, 3L, staff3));
 
         final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person));
         assertThat(departmentsByMembers).containsEntry(personId, List.of("Department B", "Department AA"));
@@ -2774,12 +2774,12 @@ class DepartmentServiceImplTest {
                 personId2, List.of(secondMembership2, membership2, membership3)
             ));
 
-        final DepartmentMembershipBucket bucket1 = new DepartmentMembershipBucket(1L, List.of(membership1), List.of(), List.of());
-        final DepartmentMembershipBucket bucket2 = new DepartmentMembershipBucket(2L, List.of(membership2), List.of(headMembership2), List.of(secondMembership2));
-        final DepartmentMembershipBucket bucket3 = new DepartmentMembershipBucket(3L, List.of(membership3), List.of(), List.of());
+        final DepartmentStaff staff1 = new DepartmentStaff(1L, List.of(membership1), List.of(), List.of());
+        final DepartmentStaff staff2 = new DepartmentStaff(2L, List.of(membership2), List.of(headMembership2), List.of(secondMembership2));
+        final DepartmentStaff staff3 = new DepartmentStaff(3L, List.of(membership3), List.of(), List.of());
 
-        when(departmentMembershipService.getDepartmentMembershipBucket(Set.of(1L, 2L, 3L)))
-            .thenReturn(Map.of(1L, bucket1, 2L, bucket2, 3L, bucket3));
+        when(departmentMembershipService.getDepartmentStaff(Set.of(1L, 2L, 3L)))
+            .thenReturn(Map.of(1L, staff1, 2L, staff2, 3L, staff3));
 
         final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person, person2));
         assertThat(departmentsByMembers).containsEntry(personId, List.of("Department B"));

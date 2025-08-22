@@ -35,7 +35,7 @@ class DepartmentMembershipService {
 
     /**
      * Returns all active memberships for a given person.
-     * A membership is considered active if it has a validToExclusive of null.
+     * A membership is considered active if it has a validTo of null.
      *
      * @param personId the ID of the person for whom to retrieve active memberships
      * @return a list of {@link DepartmentMembership} representing the active memberships of the person
@@ -61,7 +61,7 @@ class DepartmentMembershipService {
 
     /**
      * Returns all active memberships for a collection of persons.
-     * A membership is considered active if it has a validToExclusive of null.
+     * A membership is considered active if it has a validTo of null.
      *
      * @param personIds the IDs of the persons for whom to retrieve active memberships
      * @return map of all active {@link DepartmentMembership} by person ID
@@ -92,7 +92,7 @@ class DepartmentMembershipService {
      * @param secondStageAuthorityIds the list of second stage authorities to be added to the department
      * @return a list of {@link DepartmentMembership} representing the initial memberships
      */
-    DepartmentMembershipBucket createInitialMemberships(
+    DepartmentStaff createInitialMemberships(
         Long departmentId,
         List<PersonId> memberIds,
         List<PersonId> departmentHeadIds,
@@ -119,18 +119,18 @@ class DepartmentMembershipService {
     }
 
     /**
-     * Updates the memberships of a department based on the new membership bucket and the current membership bucket.
+     * Updates the memberships of a department based on the new staff and the current staff.
      *
-     * @param newMembershipBucket the new membership bucket containing the updated membership information for the department
-     * @param currentMembershipBucket the current membership bucket containing the existing membership information for the department
-     * @return a {@link DepartmentMembershipBucket} containing the updated membership information
+     * @param newStaff the new staff containing the updated membership information for the department
+     * @param currentStaff the current staff containing the existing membership information for the department
+     * @return a {@link DepartmentStaff} containing the updated membership information
      */
-    DepartmentMembershipBucket updateDepartmentMemberships(DepartmentMembershipBucket newMembershipBucket, DepartmentMembershipBucket currentMembershipBucket) {
+    DepartmentStaff updateDepartmentMemberships(DepartmentStaff newStaff, DepartmentStaff currentStaff) {
 
-        final Long departmentId = newMembershipBucket.departmentId();
+        final Long departmentId = newStaff.departmentId();
 
         final Instant now = Instant.now(clock);
-        final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(newMembershipBucket, currentMembershipBucket);
+        final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(newStaff, currentStaff);
 
         // updates existing memberships when validTo is null nor today
         // TODO use a Map instead of list with filtering
@@ -149,18 +149,18 @@ class DepartmentMembershipService {
         return saveAll(departmentId, toSave);
     }
 
-    DepartmentMembershipBucket getDepartmentMembershipBucket(Long departmentId) {
-        return getDepartmentMembershipBucket(List.of(departmentId)).getOrDefault(departmentId, DepartmentMembershipBucket.empty(departmentId));
+    DepartmentStaff getDepartmentStaff(Long departmentId) {
+        return getDepartmentStaff(List.of(departmentId)).getOrDefault(departmentId, DepartmentStaff.empty(departmentId));
     }
 
     /**
-     * Returns the current memberships for the given department IDs.
+     * Returns the current staff for the given department IDs.
      * A membership is considered current if it has a validTo of null.
      *
      * @param departmentIds the IDs of the departments for which to retrieve current memberships
      * @return a map where the key is the department ID and the value is a list of current memberships for that department
      */
-    Map<Long, DepartmentMembershipBucket> getDepartmentMembershipBucket(Collection<Long> departmentIds) {
+    Map<Long, DepartmentStaff> getDepartmentStaff(Collection<Long> departmentIds) {
 
         final List<DepartmentMembershipEntity> currentMemberships =
             repository.findAllByDepartmentIdIsInAndValidToIsNull(departmentIds);
@@ -169,26 +169,26 @@ class DepartmentMembershipService {
             .map(DepartmentMembershipService::toDepartmentMembership)
             .collect(groupingBy(DepartmentMembership::departmentId));
 
-        final Map<Long, DepartmentMembershipBucket> buckets = new HashMap<>();
+        final Map<Long, DepartmentStaff> buckets = new HashMap<>();
 
         for (Long departmentId : departmentIds) {
             final List<DepartmentMembership> memberships = membershipsByDepartmentId.getOrDefault(departmentId, List.of());
-            buckets.put(departmentId, DepartmentMembershipBucket.ofMemberships(departmentId, memberships));
+            buckets.put(departmentId, DepartmentStaff.ofMemberships(departmentId, memberships));
         }
 
         return unmodifiableMap(buckets);
     }
 
-    private DepartmentMembershipBucket saveAll(long departmentId, List<DepartmentMembershipEntity> toSave) {
+    private DepartmentStaff saveAll(long departmentId, List<DepartmentMembershipEntity> toSave) {
 
         if (toSave.isEmpty()) {
-            return DepartmentMembershipBucket.empty(departmentId);
+            return DepartmentStaff.empty(departmentId);
         }
 
         final List<DepartmentMembershipEntity> savedEntities = repository.saveAll(toSave);
 
         final List<DepartmentMembership> memberships = savedEntities.stream().map(DepartmentMembershipService::toDepartmentMembership).toList();
-        return DepartmentMembershipBucket.ofMemberships(departmentId, memberships);
+        return DepartmentStaff.ofMemberships(departmentId, memberships);
     }
 
     private static DepartmentMembership toDepartmentMembership(DepartmentMembershipEntity entity) {
@@ -201,14 +201,14 @@ class DepartmentMembershipService {
         );
     }
 
-    private MemberIdsDiff getMemberIdsDiff(DepartmentMembershipBucket nextMembershipBucket, DepartmentMembershipBucket currentMembershipBucket) {
+    private MemberIdsDiff getMemberIdsDiff(DepartmentStaff nextStaff, DepartmentStaff currentStaff) {
 
-        final List<Long> nextMemberIds = personIdValues(nextMembershipBucket.members());
-        final List<Long> currentMemberIds = personIdValues(currentMembershipBucket.members());
-        final List<Long> nextDepartmentHeadIds = personIdValues(nextMembershipBucket.departmentHeads());
-        final List<Long> currentDepartmentHeadIds = personIdValues(currentMembershipBucket.departmentHeads());
-        final List<Long> nextSecondStageAuthorityIds = personIdValues(nextMembershipBucket.secondStageAuthorities());
-        final List<Long> currentSecondStageAuthorityIds = personIdValues(currentMembershipBucket.secondStageAuthorities());
+        final List<Long> nextMemberIds = personIdValues(nextStaff.members());
+        final List<Long> currentMemberIds = personIdValues(currentStaff.members());
+        final List<Long> nextDepartmentHeadIds = personIdValues(nextStaff.departmentHeads());
+        final List<Long> currentDepartmentHeadIds = personIdValues(currentStaff.departmentHeads());
+        final List<Long> nextSecondStageAuthorityIds = personIdValues(nextStaff.secondStageAuthorities());
+        final List<Long> currentSecondStageAuthorityIds = personIdValues(currentStaff.secondStageAuthorities());
 
         return new MemberIdsDiff(nextMemberIds, currentMemberIds, nextDepartmentHeadIds, currentDepartmentHeadIds, nextSecondStageAuthorityIds, currentSecondStageAuthorityIds);
     }
