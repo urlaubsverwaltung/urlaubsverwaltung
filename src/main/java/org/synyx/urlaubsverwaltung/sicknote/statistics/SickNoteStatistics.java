@@ -118,12 +118,12 @@ public class SickNoteStatistics {
     }
 
     public BigDecimal getAverageDurationOfAllSickNotes() {
-        final int totalNumberOfAllSickNotes = getTotalNumberOfAllSickNotes();
-        if (totalNumberOfAllSickNotes == 0) {
+        final int count = getTotalNumberOfAllSickNotes();
+        if (count == 0) {
             return ZERO;
         }
 
-        return getTotalNumberOfSickDaysAllCategories().divide(valueOf(totalNumberOfAllSickNotes), 2, HALF_UP);
+        return getTotalNumberOfSickDaysAllCategories().divide(valueOf(count), 2, HALF_UP);
     }
 
     public BigDecimal getAverageDurationOfSickNote() {

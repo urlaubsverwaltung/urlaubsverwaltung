@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -49,7 +48,7 @@ class SickNoteStatisticsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(year), eq(person))).thenReturn(sickNoteStatistics);
+        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
         perform(get("/web/sicknote/statistics")
             .param("year", String.valueOf(year.getValue()))
@@ -68,7 +67,7 @@ class SickNoteStatisticsViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(year, LocalDate.now(clock), List.of(), List.of());
-        when(statisticsService.createStatisticsForPerson(eq(year), eq(person))).thenReturn(sickNoteStatistics);
+        when(statisticsService.createStatisticsForPerson(year, person)).thenReturn(sickNoteStatistics);
 
         perform(get("/web/sicknote/statistics"))
             .andExpect(status().isOk())
