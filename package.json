@@ -79,7 +79,7 @@
     "globals": "16.3.0",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",
-    "less": "4.4.0",
+    "less": "4.4.1",
     "node-fetch": "2.7.0",
     "onchange": "7.1.0",
     "postcss": "8.5.6",
