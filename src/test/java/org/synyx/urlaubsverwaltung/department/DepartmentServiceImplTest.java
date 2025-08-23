@@ -2734,7 +2734,7 @@ class DepartmentServiceImplTest {
             .thenReturn(Map.of(1L, staff1, 3L, staff3));
 
         final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person));
-        assertThat(departmentsByMembers).containsEntry(personId, List.of("Department B", "Department AA"));
+        assertThat(departmentsByMembers).containsEntry(personId, List.of("Department AA", "Department B"));
     }
 
     @Test

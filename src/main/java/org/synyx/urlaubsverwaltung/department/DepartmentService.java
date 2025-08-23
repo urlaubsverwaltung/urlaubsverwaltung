@@ -280,10 +280,10 @@ public interface DepartmentService {
     long getNumberOfDepartments();
 
     /**
-     * Get all department names for the given persons as a map.
+     * Get all department names for the given persons as a map. The list of department names is sorted.
      *
-     * @param persons
-     * @return a map of personId mapped to department names
+     * @param persons to get the department names for
+     * @return a map of personId mapped to sorted department names
      */
     Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons);
 
