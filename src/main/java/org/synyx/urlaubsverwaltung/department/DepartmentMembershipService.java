@@ -121,16 +121,23 @@ class DepartmentMembershipService {
     /**
      * Updates the memberships of a department based on the new staff and the current staff.
      *
-     * @param newStaff the new staff containing the updated membership information for the department
+     * @param departmentId the ID of the department for which to update the memberships
      * @param currentStaff the current staff containing the existing membership information for the department
+     * @param nextMembers person IDs of the members that should be in the department after the update
+     * @param nextDepartmentHeads person IDs of the department heads that should be in the department after the update
+     * @param nextSecondStageAuthorities person IDs of the second stage authorities that should be in the department after the update
      * @return a {@link DepartmentStaff} containing the updated membership information
      */
-    DepartmentStaff updateDepartmentMemberships(DepartmentStaff newStaff, DepartmentStaff currentStaff) {
-
-        final Long departmentId = newStaff.departmentId();
+    DepartmentStaff updateDepartmentMemberships(
+        Long departmentId,
+        DepartmentStaff currentStaff,
+        List<PersonId> nextMembers,
+        List<PersonId> nextDepartmentHeads,
+        List<PersonId> nextSecondStageAuthorities
+    ) {
 
         final Instant now = Instant.now(clock);
-        final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(newStaff, currentStaff);
+        final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(currentStaff, nextMembers, nextDepartmentHeads, nextSecondStageAuthorities);
 
         // updates existing memberships when validTo is null nor today
         // TODO use a Map instead of list with filtering
@@ -201,13 +208,14 @@ class DepartmentMembershipService {
         );
     }
 
-    private MemberIdsDiff getMemberIdsDiff(DepartmentStaff nextStaff, DepartmentStaff currentStaff) {
+    private MemberIdsDiff getMemberIdsDiff(DepartmentStaff currentStaff, List<PersonId> nextMembers, List<PersonId> nextDepartmentHeads, List<PersonId> nextSecondStageAuthorities) {
 
-        final List<Long> nextMemberIds = personIdValues(nextStaff.members());
+        final List<Long> nextMemberIds = nextMembers.stream().map(PersonId::value).toList();
+        final List<Long> nextDepartmentHeadIds = nextDepartmentHeads.stream().map(PersonId::value).toList();
+        final List<Long> nextSecondStageAuthorityIds = nextSecondStageAuthorities.stream().map(PersonId::value).toList();
+
         final List<Long> currentMemberIds = personIdValues(currentStaff.members());
-        final List<Long> nextDepartmentHeadIds = personIdValues(nextStaff.departmentHeads());
         final List<Long> currentDepartmentHeadIds = personIdValues(currentStaff.departmentHeads());
-        final List<Long> nextSecondStageAuthorityIds = personIdValues(nextStaff.secondStageAuthorities());
         final List<Long> currentSecondStageAuthorityIds = personIdValues(currentStaff.secondStageAuthorities());
 
         return new MemberIdsDiff(nextMemberIds, currentMemberIds, nextDepartmentHeadIds, currentDepartmentHeadIds, nextSecondStageAuthorityIds, currentSecondStageAuthorityIds);

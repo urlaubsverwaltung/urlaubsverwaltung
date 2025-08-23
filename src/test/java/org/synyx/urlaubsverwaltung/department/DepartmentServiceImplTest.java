@@ -1589,7 +1589,7 @@ class DepartmentServiceImplTest {
         final DepartmentStaff staff = new DepartmentStaff(42L, List.of(), List.of(), List.of());
         when(departmentMembershipService.getDepartmentStaff(42L))
             .thenReturn(staff);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
             .thenReturn(staff);
 
         final Department updatedDepartment = sut.update(department);
@@ -1623,7 +1623,7 @@ class DepartmentServiceImplTest {
         final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(), List.of());
         when(departmentMembershipService.getDepartmentStaff(1L))
             .thenReturn(staff);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
             .thenReturn(staff);
 
         sut.update(department);
@@ -1666,7 +1666,7 @@ class DepartmentServiceImplTest {
 
         final DepartmentStaff updatedStaff = new DepartmentStaff(42L, List.of(personMembership), List.of(), List.of());
 
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class)))
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
             .thenReturn(updatedStaff);
 
         when(departmentRepository.save(any(DepartmentEntity.class))).thenReturn(departmentEntity);
@@ -1921,7 +1921,8 @@ class DepartmentServiceImplTest {
 
         final DepartmentStaff staff = new DepartmentStaff(1L, List.of(), List.of(), List.of());
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
-        when(departmentMembershipService.updateDepartmentMemberships(any(DepartmentStaff.class), any(DepartmentStaff.class))).thenReturn(staff);
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(staff);
 
         final Department updatedDepartment = sut.update(department);
 

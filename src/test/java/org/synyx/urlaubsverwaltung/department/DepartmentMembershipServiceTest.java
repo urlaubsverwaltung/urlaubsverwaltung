@@ -125,17 +125,13 @@ class DepartmentMembershipServiceTest {
         @Test
         void ensureMemberNewEntry() {
 
-            final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
 
             when(repository.findAllByDepartmentId(42L)).thenReturn(List.of());
 
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 42L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(42L, List.of(newMembership));
-
             final DepartmentStaff currentStaff = DepartmentStaff.empty(42L);
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(42L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -169,15 +165,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(currentMembershipEntity));
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership));
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository, times(0)).saveAll(anyList());
             verify(repository, times(0)).deleteAll(anyList());
@@ -199,13 +190,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(oldMembership));
 
-            final DepartmentStaff newStaff = DepartmentStaff.empty(1L);
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository, times(0)).saveAll(anyList());
             verify(repository, times(0)).deleteAll(anyList());
@@ -227,13 +215,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership));
 
-            final DepartmentStaff newStaff = DepartmentStaff.empty(1L);
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -267,13 +252,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership));
 
-            final DepartmentStaff newStaff = DepartmentStaff.empty(1L);
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository, times(0)).saveAll(anyList());
             verify(repository).deleteAll(deleteAllCaptor.capture());
@@ -290,18 +272,13 @@ class DepartmentMembershipServiceTest {
         @Test
         void ensureDepartmentHeadNewEntry() {
 
-            final Instant now = Instant.now(fixedClock);
-            final PersonId personId = new PersonId(1L);
+             final PersonId personId = new PersonId(1L);
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of());
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership));
-
             final DepartmentStaff currentStaff = DepartmentStaff.empty(1L);
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(personId), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -335,13 +312,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership));
 
-            final DepartmentStaff newStaff = DepartmentStaff.empty(1L);
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -381,16 +355,11 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership, existingDepartmentHeadMembership));
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership));
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentMembership currentMembershipHead = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership, currentMembershipHead));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository, times(0)).saveAll(anyList());
             verify(repository).deleteAll(deleteAllCaptor.capture());
@@ -407,18 +376,13 @@ class DepartmentMembershipServiceTest {
         @Test
         void ensureSecondStageAuthorityNewEntry() {
 
-            final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of());
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership));
-
             final DepartmentStaff currentStaff = DepartmentStaff.empty(1L);
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of(personId));
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -452,13 +416,10 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership));
 
-            final DepartmentStaff newStaff = DepartmentStaff.empty(1L);
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -498,16 +459,11 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingMembership, existingSecondStageMembership));
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership));
-
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
             final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
             final DepartmentMembership currentMembershipSecondStage = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, now);
             final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership, currentMembershipSecondStage));
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository, times(0)).saveAll(anyList());
             verify(repository).deleteAll(deleteAllCaptor.capture());
@@ -524,19 +480,13 @@ class DepartmentMembershipServiceTest {
         @Test
         void ensureMemberAndDepartmentHeadNewEntry() {
 
-            final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of());
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentMembership newMembershipHead = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.DEPARTMENT_HEAD, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership, newMembershipHead));
-
             final DepartmentStaff currentStaff = DepartmentStaff.empty(1L);
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(personId), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
@@ -565,7 +515,6 @@ class DepartmentMembershipServiceTest {
         @Test
         void ensureMemberAndSecondStageAuthorityNewEntry() {
 
-            final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
 
             final Person person = new Person();
@@ -584,14 +533,9 @@ class DepartmentMembershipServiceTest {
 
             when(repository.findAllByDepartmentId(1L)).thenReturn(List.of());
 
-            // personId is the only interest here... public API to update memberships has to be refactored actually...
-            final DepartmentMembership newMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
-            final DepartmentMembership newMembershipSecond = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, now);
-            final DepartmentStaff newStaff = DepartmentStaff.ofMemberships(1L, List.of(newMembership, newMembershipSecond));
-
             final DepartmentStaff currentStaff = DepartmentStaff.empty(1L);
 
-            sut.updateDepartmentMemberships(newStaff, currentStaff);
+            sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of(personId));
 
             verify(repository).saveAll(saveAllCaptor.capture());
             verify(repository, times(0)).deleteAll(anyList());
