@@ -506,7 +506,7 @@ class DepartmentServiceImpl implements DepartmentService {
         });
 
         return departmentsByPerson.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream().sorted().toList()));
     }
 
     @Override
