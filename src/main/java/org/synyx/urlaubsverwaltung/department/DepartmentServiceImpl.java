@@ -206,12 +206,14 @@ class DepartmentServiceImpl implements DepartmentService {
         final Set<PersonId> oldAndNewPersonIds = Stream.concat(personIdsOfDepartment(department).stream(), currentStaff.allPersonIds().stream()).collect(toSet());
         final List<Person> persons = personService.getAllPersonsByIds(oldAndNewPersonIds);
 
-        // update memberships
-        final DepartmentStaff nextStaff = departmentToStaff(department);
-        // TODO nextBucket contains validTo null values --> this seems to be the wrong way. personIds are the only required thing... see membershipService implementation!
-        final DepartmentStaff updatedStaff = departmentMembershipService.updateDepartmentMemberships(nextStaff, currentStaff);
+        final DepartmentStaff updatedStaff = departmentMembershipService.updateDepartmentMemberships(
+            department.getId(),
+            currentStaff,
+            department.getMembers().stream().map(Person::getIdAsPersonId).toList(),
+            department.getDepartmentHeads().stream().map(Person::getIdAsPersonId).toList(),
+            department.getSecondStageAuthorities().stream().map(Person::getIdAsPersonId).toList()
+        );
 
-        // update department entity
         final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
         departmentEntity.setCreatedAt(currentDepartmentEntity.getCreatedAt());
         departmentEntity.setLastModification(LocalDate.now(clock));
