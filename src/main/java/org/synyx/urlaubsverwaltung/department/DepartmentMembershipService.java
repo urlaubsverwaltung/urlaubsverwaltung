@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.MEMBER;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.SECOND_STAGE_AUTHORITY;
@@ -94,26 +96,28 @@ class DepartmentMembershipService {
      */
     DepartmentStaff createInitialMemberships(
         Long departmentId,
-        List<PersonId> memberIds,
-        List<PersonId> departmentHeadIds,
-        List<PersonId> secondStageAuthorityIds
+        Collection<PersonId> memberIds,
+        Collection<PersonId> departmentHeadIds,
+        Collection<PersonId> secondStageAuthorityIds
     ) {
 
         final Instant now = Instant.now(clock);
-
         final List<DepartmentMembershipEntity> membershipEntities = new ArrayList<>();
 
-        for (PersonId personId : memberIds) {
-            membershipEntities.add(newMembershipEntity(departmentId, personId, MEMBER, now));
-        }
+        memberIds.stream()
+            .distinct()
+            .map(personId -> newMembershipEntity(departmentId, personId, MEMBER, now))
+            .forEach(membershipEntities::add);
 
-        for (PersonId personId : departmentHeadIds) {
-            membershipEntities.add(newMembershipEntity(departmentId, personId, DEPARTMENT_HEAD, now));
-        }
+        departmentHeadIds.stream()
+            .distinct()
+            .map(personId -> newMembershipEntity(departmentId, personId, DEPARTMENT_HEAD, now))
+            .forEach(membershipEntities::add);
 
-        for (PersonId personId : secondStageAuthorityIds) {
-            membershipEntities.add(newMembershipEntity(departmentId, personId, SECOND_STAGE_AUTHORITY, now));
-        }
+        secondStageAuthorityIds.stream()
+            .distinct()
+            .map(personId -> newMembershipEntity(departmentId, personId, SECOND_STAGE_AUTHORITY, now))
+            .forEach(membershipEntities::add);
 
         return saveAll(departmentId, membershipEntities);
     }
@@ -131,9 +135,9 @@ class DepartmentMembershipService {
     DepartmentStaff updateDepartmentMemberships(
         Long departmentId,
         DepartmentStaff currentStaff,
-        List<PersonId> nextMembers,
-        List<PersonId> nextDepartmentHeads,
-        List<PersonId> nextSecondStageAuthorities
+        Collection<PersonId> nextMembers,
+        Collection<PersonId> nextDepartmentHeads,
+        Collection<PersonId> nextSecondStageAuthorities
     ) {
 
         final Instant now = Instant.now(clock);
@@ -186,7 +190,7 @@ class DepartmentMembershipService {
         return unmodifiableMap(buckets);
     }
 
-    private DepartmentStaff saveAll(long departmentId, List<DepartmentMembershipEntity> toSave) {
+    private DepartmentStaff saveAll(long departmentId, Collection<DepartmentMembershipEntity> toSave) {
 
         if (toSave.isEmpty()) {
             return DepartmentStaff.empty(departmentId);
@@ -208,21 +212,21 @@ class DepartmentMembershipService {
         );
     }
 
-    private MemberIdsDiff getMemberIdsDiff(DepartmentStaff currentStaff, List<PersonId> nextMembers, List<PersonId> nextDepartmentHeads, List<PersonId> nextSecondStageAuthorities) {
+    private MemberIdsDiff getMemberIdsDiff(DepartmentStaff currentStaff, Collection<PersonId> nextMembers, Collection<PersonId> nextDepartmentHeads, Collection<PersonId> nextSecondStageAuthorities) {
 
-        final List<Long> nextMemberIds = nextMembers.stream().map(PersonId::value).toList();
-        final List<Long> nextDepartmentHeadIds = nextDepartmentHeads.stream().map(PersonId::value).toList();
-        final List<Long> nextSecondStageAuthorityIds = nextSecondStageAuthorities.stream().map(PersonId::value).toList();
+        final Set<Long> nextMemberIds = nextMembers.stream().map(PersonId::value).collect(toSet());
+        final Set<Long> nextDepartmentHeadIds = nextDepartmentHeads.stream().map(PersonId::value).collect(toSet());
+        final Set<Long> nextSecondStageAuthorityIds = nextSecondStageAuthorities.stream().map(PersonId::value).collect(toSet());
 
-        final List<Long> currentMemberIds = personIdValues(currentStaff.members());
-        final List<Long> currentDepartmentHeadIds = personIdValues(currentStaff.departmentHeads());
-        final List<Long> currentSecondStageAuthorityIds = personIdValues(currentStaff.secondStageAuthorities());
+        final Set<Long> currentMemberIds = personIdValues(currentStaff.members());
+        final Set<Long> currentDepartmentHeadIds = personIdValues(currentStaff.departmentHeads());
+        final Set<Long> currentSecondStageAuthorityIds = personIdValues(currentStaff.secondStageAuthorities());
 
         return new MemberIdsDiff(nextMemberIds, currentMemberIds, nextDepartmentHeadIds, currentDepartmentHeadIds, nextSecondStageAuthorityIds, currentSecondStageAuthorityIds);
     }
 
-    private List<Long> personIdValues(Collection<DepartmentMembership> memberships) {
-        return memberships.stream().map(DepartmentMembership::personId).map(PersonId::value).toList();
+    private Set<Long> personIdValues(Collection<DepartmentMembership> memberships) {
+        return memberships.stream().map(DepartmentMembership::personId).map(PersonId::value).collect(toSet());
     }
 
     private List<DepartmentMembershipEntity> createNewMemberships(MemberIdsDiff memberIdsDiff, Long departmentId, Instant timestamp) {
@@ -335,24 +339,24 @@ class DepartmentMembershipService {
     }
 
     private record MemberIdsDiff(
-        List<Long> nextMemberIds,
-        List<Long> currentMemberIds,
-        List<Long> nextDepartmentHeadIds,
-        List<Long> currentDepartmentHeadIds,
-        List<Long> nextSecondStageAuthorityIds,
-        List<Long> currentSecondStageAuthorityIds
+        Set<Long> nextMemberIds,
+        Set<Long> currentMemberIds,
+        Set<Long> nextDepartmentHeadIds,
+        Set<Long> currentDepartmentHeadIds,
+        Set<Long> nextSecondStageAuthorityIds,
+        Set<Long> currentSecondStageAuthorityIds
     ) {
 
-        List<Long> newMemberIds() {
-            return nextMemberIds.stream().filter(id -> !currentMemberIds.contains(id)).toList();
+        Set<Long> newMemberIds() {
+            return nextMemberIds.stream().filter(id -> !currentMemberIds.contains(id)).collect(toSet());
         }
 
-        List<Long> newDepartmentHeadIds() {
-            return nextDepartmentHeadIds.stream().filter(id -> !currentDepartmentHeadIds.contains(id)).toList();
+        Set<Long> newDepartmentHeadIds() {
+            return nextDepartmentHeadIds.stream().filter(id -> !currentDepartmentHeadIds.contains(id)).collect(toSet());
         }
 
-        List<Long> newSecondStageAuthorityIds() {
-            return nextSecondStageAuthorityIds.stream().filter(id -> !currentSecondStageAuthorityIds.contains(id)).toList();
+        Set<Long> newSecondStageAuthorityIds() {
+            return nextSecondStageAuthorityIds.stream().filter(id -> !currentSecondStageAuthorityIds.contains(id)).collect(toSet());
         }
     }
 }
