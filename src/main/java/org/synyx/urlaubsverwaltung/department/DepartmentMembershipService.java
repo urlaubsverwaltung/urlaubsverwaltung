@@ -144,7 +144,6 @@ class DepartmentMembershipService {
         final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(currentStaff, nextMembers, nextDepartmentHeads, nextSecondStageAuthorities);
 
         // updates existing memberships when validTo is null nor today
-        // TODO use a Map instead of list with filtering
         final List<UpdateOrDelete> updatedOrDeleteMemberships = updateActiveMemberships(memberIdsDiff, departmentId, now);
         final List<DepartmentMembershipEntity> toDelete = updatedOrDeleteMemberships.stream().filter(UpdateOrDelete::delete).map(UpdateOrDelete::membershipEntity).toList();
         final List<DepartmentMembershipEntity> toUpdate = updatedOrDeleteMemberships.stream().filter(UpdateOrDelete::update).map(UpdateOrDelete::membershipEntity).toList();
