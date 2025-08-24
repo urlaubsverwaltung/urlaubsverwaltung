@@ -6,11 +6,11 @@ import org.synyx.urlaubsverwaltung.department.DepartmentEntity;
 import org.synyx.urlaubsverwaltung.department.DepartmentImportService;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentDTO;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.HashMap.newHashMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -27,7 +27,7 @@ class DepartmentRestoreService {
 
     Map<Long, Long> restore(List<DepartmentDTO> departments) {
 
-        final Map<Long, Long> newDepartmentIdByOldId = new HashMap<>(departments.size());
+        final Map<Long, Long> newDepartmentIdByOldId = newHashMap(departments.size());
 
         for (DepartmentDTO dto : departments) {
             final DepartmentEntity toImport = dto.toDepartmentEntity();

@@ -10,12 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 
-import java.time.LocalDate;
-import java.time.Year;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
