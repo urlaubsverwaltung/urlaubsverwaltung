@@ -1,45 +1,42 @@
 package org.synyx.urlaubsverwaltung.extension.backup.restore;
 
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.department.DepartmentEntity;
 import org.synyx.urlaubsverwaltung.department.DepartmentImportService;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentDTO;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.HashMap.newHashMap;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 @ConditionalOnBackupRestoreEnabled
 class DepartmentRestoreService {
 
-    private final PersonService personService;
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private final DepartmentImportService departmentImportService;
 
-    DepartmentRestoreService(PersonService personService, DepartmentImportService departmentImportService) {
-        this.personService = personService;
+    DepartmentRestoreService(DepartmentImportService departmentImportService) {
         this.departmentImportService = departmentImportService;
     }
 
-    void restore(List<DepartmentDTO> departments) {
-        departments.stream().map(dto -> {
-            final List<Person> departmentHeads = getPersons(dto.externalIdsOfDepartmentHeads());
-            final List<Person> secondStageAuthorities = getPersons(dto.externalIdsOfSecondStageAuthorities());
-            final List<Person> members = getPersons(dto.externalIdsOfMembers());
-            return dto.toDepartmentEntity(departmentHeads, secondStageAuthorities, members);
-        }).forEach(departmentImportService::importDepartment);
-    }
+    Map<Long, Long> restore(List<DepartmentDTO> departments) {
 
-    /**
-     * Get persons by external ids aka usernames, when a person is not found it is not included in the result!
-     *
-     * @param externalIds list of external ids / usernames
-     * @return
-     */
-    private List<Person> getPersons(List<String> externalIds) {
-        return externalIds.stream()
-            .map(personService::getPersonByUsername)
-            .<Person>mapMulti(Optional::ifPresent)
-            .toList();
+        final Map<Long, Long> newDepartmentIdByOldId = newHashMap(departments.size());
+
+        for (DepartmentDTO dto : departments) {
+            final DepartmentEntity toImport = dto.toDepartmentEntity();
+            final DepartmentEntity importedEntity = departmentImportService.importDepartment(toImport);
+            newDepartmentIdByOldId.put(dto.id(), importedEntity.getId());
+        }
+
+        LOG.info("Restored {} departments.", newDepartmentIdByOldId.size());
+
+        return newDepartmentIdByOldId;
     }
 }

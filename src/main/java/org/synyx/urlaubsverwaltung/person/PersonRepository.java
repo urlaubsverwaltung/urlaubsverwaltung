@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,4 +48,6 @@ interface PersonRepository extends JpaRepository<Person, Long> {
         "AND a.validFrom <= make_date(:year, 12, 31) " +
         "AND a.validTo >= make_date(:year, 1, 1)")
     List<Person> findAllWithAccountByYear(int year);
+
+    List<Person> findAllByIdIsInOrderByFirstNameAscLastNameAsc(Collection<Long> personIds);
 }

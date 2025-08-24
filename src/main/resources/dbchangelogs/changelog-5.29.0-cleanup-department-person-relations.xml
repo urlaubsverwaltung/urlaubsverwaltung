@@ -1,0 +1,26 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="seber" id="cleanup-department--member">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="department_member"/>
+    </preConditions>
+    <dropTable tableName="department_member"/>
+  </changeSet>
+
+  <changeSet author="seber" id="cleanup-department--department-head">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="department_department_head"/>
+    </preConditions>
+    <dropTable tableName="department_department_head"/>
+  </changeSet>
+
+  <changeSet author="seber" id="cleanup-department--second-stage-authority">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="department_second_stage_authority"/>
+    </preConditions>
+    <dropTable tableName="department_second_stage_authority"/>
+  </changeSet>
+</databaseChangeLog>

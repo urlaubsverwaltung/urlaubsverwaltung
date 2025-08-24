@@ -43,19 +43,20 @@ class PageableUserAwareArgumentResolver extends PageableHandlerMethodArgumentRes
     @Override
     public Pageable resolveArgument(@NonNull MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
 
-        final Pageable pageable = super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
-
         final Person signedInUser = personService.getSignedInUser();
+        final PersonId signedInUserId = signedInUser.getIdAsPersonId();
+
+        final Pageable pageable = super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
         final String pageSizeParameter = webRequest.getParameter(getParameterNameToUse(getSizeParameterName(), methodParameter));
 
         if (pageSizeParameter == null) {
             // note that this overrides possible @PageableDefault(size) annotations.
             final int defaultPageSize = userPaginationSettingsSupplier
-                .getUserPaginationSettings(new PersonId(signedInUser.getId()))
+                .getUserPaginationSettings(signedInUserId)
                 .getDefaultPageSize();
             return PageRequest.of(pageable.getPageNumber(), defaultPageSize, pageable.getSort());
         } else {
-            applicationEventPublisher.publishEvent(new PageableDefaultSizeChangedEvent(new PersonId(signedInUser.getId()), parseInt(pageSizeParameter)));
+            applicationEventPublisher.publishEvent(new PageableDefaultSizeChangedEvent(signedInUserId, parseInt(pageSizeParameter)));
         }
 
         return pageable;
