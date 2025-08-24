@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
@@ -19,16 +20,20 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.MEMBER;
 import static org.synyx.urlaubsverwaltung.department.DepartmentMembershipKind.SECOND_STAGE_AUTHORITY;
 
 @Service
 class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentMembershipRepository repository;
     private final Clock clock;
@@ -130,7 +135,12 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
             .map(personId -> newMembershipEntity(departmentId, personId, SECOND_STAGE_AUTHORITY, now))
             .forEach(membershipEntities::add);
 
-        return saveAll(departmentId, membershipEntities);
+        final DepartmentStaff departmentStaff = saveAll(departmentId, membershipEntities);
+
+        LOG.info("Created initial memberships for department with id {}: {} members, {} department heads, {} second stage authorities.",
+            departmentId, memberIds.size(), departmentHeadIds.size(), secondStageAuthorityIds.size());
+
+        return departmentStaff;
     }
 
     /**
@@ -158,7 +168,17 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
         final List<DepartmentMembershipEntity> newMemberships = createNewMemberships(memberIdsDiff, departmentId, now);
 
         final List<DepartmentMembershipEntity> toSave = Stream.concat(toUpdate.stream(), newMemberships.stream()).toList();
-        return saveAll(departmentId, toSave);
+
+        final DepartmentStaff departmentStaff = saveAll(departmentId, toSave);
+
+        LOG.info("updated memberships for department with id {}: {}/{} members, {}/{} department heads, {}/{} second stage authorities.",
+            departmentId,
+            nextMembers.size(), memberIdsDiff.currentMemberIds.size(),
+            nextDepartmentHeads.size(), memberIdsDiff.currentDepartmentHeadIds.size(),
+            nextSecondStageAuthorities.size(), memberIdsDiff.currentSecondStageAuthorityIds.size()
+        );
+
+        return departmentStaff;
     }
 
     DepartmentStaff getDepartmentStaff(Long departmentId) {
@@ -299,6 +319,7 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
             final boolean hasBeenMemberBefore = currentPersonIds.contains(membershipEntity.getPersonId());
              if (hasBeenMemberBefore && !isMemberNow) {
                 membershipEntity.setValidTo(validTo);
+                LOG.debug("Update validTo of departmentMembership id={} to {}", membershipEntity.getId(), validTo);
                 return membershipEntity;
             }
         }
