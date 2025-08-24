@@ -8,18 +8,23 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.ApplicationBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CalendarBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.CalendarIntegrationBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentDTO;
+import org.synyx.urlaubsverwaltung.extension.backup.model.DepartmentMembershipDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.PersonDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.SettingsDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.SickNoteBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -35,6 +40,7 @@ class BackupDataCollectionService {
     private final CalendarDataCollectionService calendarDataCollectionService;
     private final SettingsDataCollectionService settingsDataCollectionService;
     private final DepartmentDataCollectionService departmentDataCollectionService;
+    private final DepartmentMembershipDataCollectionService departmentMembershipDataCollectionService;
     private final ApplicationDataCollectionService applicationDataCollectionService;
     private final SickNoteDataCollectionService sickNoteDataCollectionService;
     private final OvertimeDataCollectionService overtimeDataCollectionService;
@@ -47,6 +53,7 @@ class BackupDataCollectionService {
                                 CalendarDataCollectionService calendarDataCollectionService,
                                 SettingsDataCollectionService settingsDataCollectionService,
                                 DepartmentDataCollectionService departmentDataCollectionService,
+                                DepartmentMembershipDataCollectionService departmentMembershipDataCollectionService,
                                 ApplicationDataCollectionService applicationDataCollectionService,
                                 SickNoteDataCollectionService sickNoteDataCollectionService,
                                 OvertimeDataCollectionService overtimeDataCollectionService,
@@ -58,6 +65,7 @@ class BackupDataCollectionService {
         this.calendarDataCollectionService = calendarDataCollectionService;
         this.settingsDataCollectionService = settingsDataCollectionService;
         this.departmentDataCollectionService = departmentDataCollectionService;
+        this.departmentMembershipDataCollectionService = departmentMembershipDataCollectionService;
         this.applicationDataCollectionService = applicationDataCollectionService;
         this.sickNoteDataCollectionService = sickNoteDataCollectionService;
         this.overtimeDataCollectionService = overtimeDataCollectionService;
@@ -77,10 +85,13 @@ class BackupDataCollectionService {
         final List<Person> allPersons = personService.getAllPersons();
 
         final List<PersonDTO> persons = personDataCollectionService.collectPersons(allPersons);
+        final Map<PersonId, PersonDTO> personDTOById = persons.stream().collect(toMap(dto -> new PersonId(dto.id()), identity()));
+
         final List<OvertimeDTO> overtimes = overtimeDataCollectionService.collectOvertimes(persons);
         final SickNoteBackupDTO sickNotes = sickNoteDataCollectionService.collectSickNotes(allPersons, exportFrom, exportTo);
         final ApplicationBackupDTO applications = applicationDataCollectionService.collectApplications(allPersons, exportFrom, exportTo);
         final List<DepartmentDTO> departments = departmentDataCollectionService.collectDepartments();
+        final List<DepartmentMembershipDTO> departmentMemberships = departmentMembershipDataCollectionService.collectDepartmentMemberships(personDTOById::get);
         final SettingsDTO settings = settingsDataCollectionService.collectSettings();
         final CalendarBackupDTO calendars = calendarDataCollectionService.collectCalendars(allPersons);
         final CalendarIntegrationBackupDTO calendarIntegration = calendarIntegrationDataCollectionService.collectCalendarIntegration();
@@ -88,6 +99,6 @@ class BackupDataCollectionService {
         LOG.info("Collected data for backup");
 
         return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, persons, overtimes, sickNotes,
-            applications, departments, calendars, calendarIntegration, settings);
+            applications, departments, departmentMemberships, calendars, calendarIntegration, settings);
     }
 }

@@ -2660,19 +2660,7 @@
       "description": "Das sind die, die so Admin Sachen machen",
       "createdAt": "2025-01-05",
       "lastModification": "2025-01-05",
-      "twoStageApproval": true,
-      "externalIdsOfDepartmentHeads": [
-        "departmentHead"
-      ],
-      "externalIdsOfSecondStageAuthorities": [
-        "secondStageAuthority"
-      ],
-      "externalIdsOfMembers": [
-        "departmentHead",
-        "secondStageAuthority",
-        "hdampf",
-        "bhaendel"
-      ]
+      "twoStageApproval": true
     },
     {
       "id": 2,
@@ -2680,14 +2668,7 @@
       "description": "Das sind die, die so entwickeln",
       "createdAt": "2025-01-05",
       "lastModification": "2025-01-05",
-      "twoStageApproval": false,
-      "externalIdsOfDepartmentHeads": [],
-      "externalIdsOfSecondStageAuthorities": [],
-      "externalIdsOfMembers": [
-        "user",
-        "departmentHead",
-        "nschmidt"
-      ]
+      "twoStageApproval": false
     },
     {
       "id": 3,
@@ -2695,13 +2676,7 @@
       "description": "Das sind die, die so Geschäftsführung Sachen machen",
       "createdAt": "2025-01-05",
       "lastModification": "2025-01-05",
-      "twoStageApproval": false,
-      "externalIdsOfDepartmentHeads": [],
-      "externalIdsOfSecondStageAuthorities": [],
-      "externalIdsOfMembers": [
-        "boss",
-        "office"
-      ]
+      "twoStageApproval": false
     },
     {
       "id": 4,
@@ -2709,13 +2684,100 @@
       "description": "Das sind die, die so Marketing Sachen machen",
       "createdAt": "2025-01-05",
       "lastModification": "2025-01-05",
-      "twoStageApproval": false,
-      "externalIdsOfDepartmentHeads": [],
-      "externalIdsOfSecondStageAuthorities": [],
-      "externalIdsOfMembers": [
-        "fbaier",
-        "eschneider"
-      ]
+      "twoStageApproval": false
+    }
+  ],
+  "departmentMemberships": [
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 1,
+      "membershipKind": "DEPARTMENT_HEAD",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "departmentId": 1,
+      "membershipKind": "SECOND_STAGE_AUTHORITY",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "secondStageAuthority",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "hdampf",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "bhaendel",
+      "departmentId": 1,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "user",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "departmentHead",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "nschmidt",
+      "departmentId": 2,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "boss",
+      "departmentId": 3,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "office",
+      "departmentId": 3,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "fbaier",
+      "departmentId": 4,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
+    },
+    {
+      "personExternalId": "eschneider",
+      "departmentId": 4,
+      "membershipKind": "MEMBER",
+      "validFrom": "2025-01-01T12:21:20.973065Z",
+      "validTo": null
     }
   ],
   "calendars": {

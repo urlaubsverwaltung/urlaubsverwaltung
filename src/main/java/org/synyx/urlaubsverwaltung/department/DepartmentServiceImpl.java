@@ -54,7 +54,7 @@ class DepartmentServiceImpl implements DepartmentService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentRepository departmentRepository;
-    private final DepartmentMembershipService departmentMembershipService;
+    private final DepartmentMembershipServiceImpl departmentMembershipService;
     private final PersonService personService;
     private final ApplicationService applicationService;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -62,7 +62,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
     DepartmentServiceImpl(
         DepartmentRepository departmentRepository,
-        DepartmentMembershipService departmentMembershipService,
+        DepartmentMembershipServiceImpl departmentMembershipService,
         PersonService personService,
         ApplicationService applicationService,
         ApplicationEventPublisher applicationEventPublisher,
