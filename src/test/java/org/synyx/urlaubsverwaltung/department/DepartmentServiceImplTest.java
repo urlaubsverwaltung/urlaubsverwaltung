@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.ZoneOffset.UTC;
@@ -2783,8 +2782,10 @@ class DepartmentServiceImplTest {
             .thenReturn(Map.of(1L, staff1, 2L, staff2, 3L, staff3));
 
         final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person, person2));
-        assertThat(departmentsByMembers).containsEntry(personId, List.of("Department B"));
-        assertThat(departmentsByMembers).containsEntry(personId2, List.of("Department A", "Department AA"));
+        assertThat(departmentsByMembers).containsExactlyInAnyOrderEntriesOf(Map.of(
+            personId, List.of("Department B"),
+            personId2, List.of("Department A", "Department AA")
+        ));
     }
 
     @Test
@@ -2931,16 +2932,5 @@ class DepartmentServiceImplTest {
 
     private static PageRequest defaultPageRequest() {
         return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
-    }
-
-    private static Person anyPerson(int id) {
-        final Person person = new Person();
-        person.setId((long) id);
-        return person;
-    }
-
-    private static List<Person> anyPersons(int size, int firstPersonId) {
-        final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().toList();
-        return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).toList();
     }
 }

@@ -436,7 +436,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
         staffByDepartmentId.forEach((departmentId, staff) -> {
             for (DepartmentMembership member : staff.members()) {
-                final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), (key) -> new HashSet<>());
+                final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), key -> new HashSet<>());
                 if (departmentNameById.containsKey(departmentId)) {
                     departmentNames.add(departmentNameById.get(departmentId));
                 }
@@ -460,19 +460,6 @@ class DepartmentServiceImpl implements DepartmentService {
         final List<Long> otherPersonDepartmentIds = membershipsByPersonId.get(otherPersonId).stream().map(DepartmentMembership::departmentId).toList();
 
         return personDepartmentIds.stream().anyMatch(otherPersonDepartmentIds::contains);
-    }
-
-    private static DepartmentStaff departmentToStaff(Department department) {
-
-        final List<PersonId> newMemberIds = department.getMembers().stream().map(Person::getId).map(PersonId::new).toList();
-        final List<PersonId> newDepartmentHeadIds = department.getDepartmentHeads().stream().map(Person::getId).map(PersonId::new).toList();
-        final List<PersonId> newSecondStageIds = department.getSecondStageAuthorities().stream().map(Person::getId).map(PersonId::new).toList();
-
-        return new DepartmentStaff(department.getId(),
-            newMemberIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.MEMBER, null)).toList(),
-            newDepartmentHeadIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.DEPARTMENT_HEAD, null)).toList(),
-            newSecondStageIds.stream().map(id -> new DepartmentMembership(id, department.getId(), DepartmentMembershipKind.SECOND_STAGE_AUTHORITY, null)).toList()
-        );
     }
 
     private List<DepartmentMembership> getManagedMemberMembershipsOfPerson(PersonId personId) {
