@@ -61,7 +61,7 @@ class DepartmentServiceImplTest {
     @Mock
     private DepartmentRepository departmentRepository;
     @Mock
-    private DepartmentMembershipService departmentMembershipService;
+    private DepartmentMembershipServiceImpl departmentMembershipService;
     @Mock
     private PersonService personService;
     @Mock

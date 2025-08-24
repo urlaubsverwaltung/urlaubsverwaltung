@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DepartmentMembershipServiceTest {
 
-    private DepartmentMembershipService sut;
+    private DepartmentMembershipServiceImpl sut;
 
     @Mock
     private DepartmentMembershipRepository repository;
@@ -46,7 +47,44 @@ class DepartmentMembershipServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentMembershipService(repository, fixedClock);
+        sut = new DepartmentMembershipServiceImpl(repository, fixedClock);
+    }
+
+    @Nested
+    class GetAllDepartmentMemberships {
+
+        @Test
+        void ensureReturnsAllDepartmentMembershipsSortedById() {
+
+            final Instant validFrom1 = Instant.now(fixedClock).minus(Duration.ofDays(10));
+            final Instant validTo1 = Instant.now(fixedClock).minus(Duration.ofDays(5));
+
+            final DepartmentMembershipEntity entity1 = new DepartmentMembershipEntity();
+            entity1.setId(1L);
+            entity1.setPersonId(2L);
+            entity1.setDepartmentId(3L);
+            entity1.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            entity1.setValidFrom(validFrom1);
+            entity1.setValidTo(validTo1);
+
+            final Instant validFrom2 = Instant.now(fixedClock).minus(Duration.ofDays(20));
+
+            final DepartmentMembershipEntity entity2 = new DepartmentMembershipEntity();
+            entity2.setId(2L);
+            entity2.setPersonId(4L);
+            entity2.setDepartmentId(5L);
+            entity2.setMembershipKind(DepartmentMembershipKind.DEPARTMENT_HEAD);
+            entity2.setValidFrom(validFrom2);
+            entity2.setValidTo(null);
+
+            when(repository.findAll()).thenReturn(List.of(entity2, entity1));
+
+            final List<DepartmentMembership> actual = sut.getAllDepartmentMemberships();
+            assertThat(actual).containsExactly(
+                new DepartmentMembership(new PersonId(2L), 3L, DepartmentMembershipKind.MEMBER, validFrom1, Optional.of(validTo1)),
+                new DepartmentMembership(new PersonId(4L), 5L, DepartmentMembershipKind.DEPARTMENT_HEAD, validFrom2)
+            );
+        }
     }
 
     @Nested

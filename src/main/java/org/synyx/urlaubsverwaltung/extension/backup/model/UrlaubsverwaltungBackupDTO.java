@@ -5,7 +5,7 @@ import java.util.List;
 public record UrlaubsverwaltungBackupDTO(String tenantId, String urlaubsverwaltungVersion, List<PersonDTO> persons,
                                          List<OvertimeDTO> overtimes, SickNoteBackupDTO sickNotes,
                                          ApplicationBackupDTO applications, List<DepartmentDTO> departments,
-                                         CalendarBackupDTO calendars,
+                                         List<DepartmentMembershipDTO> departmentMemberships, CalendarBackupDTO calendars,
                                          CalendarIntegrationBackupDTO calendarIntegration,
                                          SettingsDTO settings) {
 }
