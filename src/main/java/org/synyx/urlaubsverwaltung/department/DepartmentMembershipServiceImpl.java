@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -152,17 +154,8 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
         final Instant now = Instant.now(clock);
         final MemberIdsDiff memberIdsDiff = getMemberIdsDiff(currentStaff, nextMembers, nextDepartmentHeads, nextSecondStageAuthorities);
 
-        // updates existing memberships when validTo is null nor today
-        final List<UpdateOrDelete> updatedOrDeleteMemberships = updateActiveMemberships(memberIdsDiff, departmentId, now);
-        final List<DepartmentMembershipEntity> toDelete = updatedOrDeleteMemberships.stream().filter(UpdateOrDelete::delete).map(UpdateOrDelete::membershipEntity).toList();
-        final List<DepartmentMembershipEntity> toUpdate = updatedOrDeleteMemberships.stream().filter(UpdateOrDelete::update).map(UpdateOrDelete::membershipEntity).toList();
-
-        // new membership entities for members that are not yet in the history with a validTo eq null
+        final List<DepartmentMembershipEntity> toUpdate = updateActiveMemberships(memberIdsDiff, departmentId, now);
         final List<DepartmentMembershipEntity> newMemberships = createNewMemberships(memberIdsDiff, departmentId, now);
-
-        if (!toDelete.isEmpty()) {
-            repository.deleteAll(toDelete);
-        }
 
         final List<DepartmentMembershipEntity> toSave = Stream.concat(toUpdate.stream(), newMemberships.stream()).toList();
         return saveAll(departmentId, toSave);
@@ -276,7 +269,7 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
         return membership;
     }
 
-    private List<UpdateOrDelete> updateActiveMemberships(MemberIdsDiff idsDiff, Long departmentId, Instant validTo) {
+    private List<DepartmentMembershipEntity> updateActiveMemberships(MemberIdsDiff idsDiff, Long departmentId, Instant validTo) {
 
         final List<DepartmentMembershipEntity> currentMemberships =
             repository.findAllByDepartmentId(departmentId);
@@ -290,42 +283,26 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
                 case SECOND_STAGE_AUTHORITY ->
                     updateMembershipValidTo(membershipEntity, idsDiff.currentSecondStageAuthorityIds, idsDiff.nextSecondStageAuthorityIds, validTo);
             })
+            .filter(Objects::nonNull)
             .toList();
     }
 
-    private record UpdateOrDelete(
-        DepartmentMembershipEntity membershipEntity,
-        boolean update,
-        boolean delete
-    ) {}
-
-    private UpdateOrDelete updateMembershipValidTo(
+    @Nullable
+    private DepartmentMembershipEntity updateMembershipValidTo(
         DepartmentMembershipEntity membershipEntity,
         Collection<Long> currentPersonIds,
         Collection<Long> nextPersonIds,
         Instant validTo
     ) {
-        boolean update = false;
-        boolean delete =  false;
-
         if (isValidToNullOrSameDay(membershipEntity, validTo)) {
             final boolean isMemberNow = nextPersonIds.contains(membershipEntity.getPersonId());
             final boolean hasBeenMemberBefore = currentPersonIds.contains(membershipEntity.getPersonId());
              if (hasBeenMemberBefore && !isMemberNow) {
-                if (isSameDay(membershipEntity.getValidFrom(), validTo)) {
-                    // person has been added to department today, and removed today
-                    // e.g. because someone is testing departments in the UI
-                    // therefore remove the membership entry
-                    delete = true;
-                } else {
-                    // otherwise keep the membership entry with validTo set
-                    membershipEntity.setValidTo(validTo);
-                    update = true;
-                }
+                membershipEntity.setValidTo(validTo);
+                return membershipEntity;
             }
         }
-
-        return new UpdateOrDelete(membershipEntity, update, delete);
+        return null;
     }
 
     private boolean isValidToNullOrSameDay(DepartmentMembershipEntity entity, Instant timestamp) {

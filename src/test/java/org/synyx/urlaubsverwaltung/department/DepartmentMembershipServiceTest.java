@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,11 +40,6 @@ class DepartmentMembershipServiceTest {
     @Captor
     @SuppressWarnings("unchecked")
     private final ArgumentCaptor<List<DepartmentMembershipEntity>> saveAllCaptor = ArgumentCaptor.forClass(List.class);
-
-    @Captor
-    @SuppressWarnings("unchecked")
-    private final ArgumentCaptor<List<DepartmentMembershipEntity>> deleteAllCaptor = ArgumentCaptor.forClass(List.class);
-
 
     @BeforeEach
     void setUp() {
@@ -275,7 +271,7 @@ class DepartmentMembershipServiceTest {
         }
 
         @Test
-        void ensureMemberEntryIsDeletedWhenItHasBeenAddedTodayAndRemovedToday() {
+        void ensureMemberEntryIsNotDeletedWhenItHasBeenAddedTodayAndRemovedToday() {
 
             final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
@@ -295,14 +291,18 @@ class DepartmentMembershipServiceTest {
 
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
-            verify(repository, times(0)).saveAll(anyList());
-            verify(repository).deleteAll(deleteAllCaptor.capture());
+            verify(repository).saveAll(saveAllCaptor.capture());
+            verifyNoMoreInteractions(repository);
 
-            final List<DepartmentMembershipEntity> actualDeleted = deleteAllCaptor.getValue();
-            assertThat(actualDeleted).satisfiesExactly(
+            final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
+            assertThat(actualSaved).satisfiesExactly(
                 entry -> {
                     assertThat(entry.getId()).isEqualTo(42L);
-                    assertThat(entry.getMembershipKind()).isEqualTo(DepartmentMembershipKind.MEMBER);
+                    assertThat(entry.getPersonId()).isEqualTo(1L);
+                    assertThat(entry.getDepartmentId()).isEqualTo(1L);
+                    assertThat(entry.getMembershipKind()).isEqualByComparingTo(DepartmentMembershipKind.MEMBER);
+                    assertThat(entry.getValidFrom()).isEqualTo(today);
+                    assertThat(entry.getValidTo()).isEqualTo(Instant.now(fixedClock));
                 }
             );
         }
@@ -372,7 +372,7 @@ class DepartmentMembershipServiceTest {
         }
 
         @Test
-        void ensureDepartmentHeadEntryIsDeletedWhenItHasBeenAddedTodayAndRemovedToday() {
+        void ensureDepartmentHeadEntryIsNotDeletedWhenItHasBeenAddedTodayAndRemovedToday() {
 
             final Instant now = Instant.now(fixedClock);
             final PersonId personId = new PersonId(1L);
@@ -399,14 +399,18 @@ class DepartmentMembershipServiceTest {
 
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
-            verify(repository, times(0)).saveAll(anyList());
-            verify(repository).deleteAll(deleteAllCaptor.capture());
+            verify(repository).saveAll(saveAllCaptor.capture());
+            verifyNoMoreInteractions(repository);
 
-            final List<DepartmentMembershipEntity> actualDeleted = deleteAllCaptor.getValue();
-            assertThat(actualDeleted).satisfiesExactly(
+            final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
+            assertThat(actualSaved).satisfiesExactly(
                 entry -> {
                     assertThat(entry.getId()).isEqualTo(42L);
-                    assertThat(entry.getMembershipKind()).isEqualTo(DepartmentMembershipKind.DEPARTMENT_HEAD);
+                    assertThat(entry.getPersonId()).isEqualTo(1L);
+                    assertThat(entry.getDepartmentId()).isEqualTo(1L);
+                    assertThat(entry.getMembershipKind()).isEqualByComparingTo(DepartmentMembershipKind.DEPARTMENT_HEAD);
+                    assertThat(entry.getValidFrom()).isEqualTo(now);
+                    assertThat(entry.getValidTo()).isEqualTo(Instant.now(fixedClock));
                 }
             );
         }
@@ -503,14 +507,18 @@ class DepartmentMembershipServiceTest {
 
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
-            verify(repository, times(0)).saveAll(anyList());
-            verify(repository).deleteAll(deleteAllCaptor.capture());
+            verify(repository).saveAll(saveAllCaptor.capture());
+            verifyNoMoreInteractions(repository);
 
-            final List<DepartmentMembershipEntity> actualDeleted = deleteAllCaptor.getValue();
-            assertThat(actualDeleted).satisfiesExactly(
+            final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
+            assertThat(actualSaved).satisfiesExactly(
                 entry -> {
                     assertThat(entry.getId()).isEqualTo(42L);
-                    assertThat(entry.getMembershipKind()).isEqualTo(DepartmentMembershipKind.SECOND_STAGE_AUTHORITY);
+                    assertThat(entry.getPersonId()).isEqualTo(1L);
+                    assertThat(entry.getDepartmentId()).isEqualTo(1L);
+                    assertThat(entry.getMembershipKind()).isEqualByComparingTo(DepartmentMembershipKind.SECOND_STAGE_AUTHORITY);
+                    assertThat(entry.getValidFrom()).isEqualTo(now);
+                    assertThat(entry.getValidTo()).isEqualTo(Instant.now(fixedClock));
                 }
             );
         }
