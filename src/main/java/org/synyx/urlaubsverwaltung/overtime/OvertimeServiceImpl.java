@@ -69,20 +69,20 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
+    public List<OvertimeEntity> getOvertimeRecordsForPersonAndYear(Person person, int year) {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         return overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear);
     }
 
     @Override
-    public Overtime save(Overtime overtime, Optional<String> comment, Person author) {
+    public OvertimeEntity save(OvertimeEntity overtime, Optional<String> comment, Person author) {
 
         final boolean isNewOvertime = overtime.getId() == null;
 
         // save overtime record
         overtime.onUpdate();
-        final Overtime savedOvertime = overtimeRepository.save(overtime);
+        final OvertimeEntity savedOvertime = overtimeRepository.save(overtime);
 
         // save comment
         final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
@@ -103,7 +103,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author) {
+    public OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
 
         final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
         overtimeComment.setText(comment);
@@ -112,19 +112,19 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Optional<Overtime> getOvertimeById(Long id) {
+    public Optional<OvertimeEntity> getOvertimeById(Long id) {
         return overtimeRepository.findById(id);
     }
 
     @Override
-    public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
+    public List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime) {
         return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime);
     }
 
     @Override
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
         return getOvertimeRecordsForPersonAndYear(person, year).stream()
-            .map(Overtime::getDurationByYear)
+            .map(OvertimeEntity::getDurationByYear)
             .map(map -> map.getOrDefault(year, ZERO))
             .reduce(ZERO, Duration::plus);
     }
@@ -193,12 +193,12 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<Overtime> getAllOvertimesByPersonId(Long personId) {
+    public List<OvertimeEntity> getAllOvertimesByPersonId(Long personId) {
         return overtimeRepository.findAllByPersonId(personId);
     }
 
     @Override
-    public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId) {
+    public Optional<OvertimeEntity> getExternalOvertimeByDate(LocalDate date, Long personId) {
         return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date);
     }
 
@@ -319,7 +319,7 @@ class OvertimeServiceImpl implements OvertimeService {
      * @return @code{true} if allowed, otherwise @code{false}
      */
     @Override
-    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
+    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, OvertimeEntity overtime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
         return overtimeSettings.isOvertimeActive()
             && !overtime.isExternal()
@@ -361,7 +361,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     /**
-     * Deletes all {@link Overtime} in the database of person with id.
+     * Deletes all {@link OvertimeEntity} in the database of person with id.
      *
      * @param event deletion event with the id of the person which is deleted
      */

@@ -18,7 +18,7 @@ public class OvertimeImportService {
         overtimeRepository.deleteAll();
     }
 
-    public Overtime importOvertime(Overtime overtime) {
+    public OvertimeEntity importOvertime(OvertimeEntity overtime) {
         return overtimeRepository.save(overtime);
     }
 
