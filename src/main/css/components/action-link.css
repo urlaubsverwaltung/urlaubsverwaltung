@@ -1,18 +1,19 @@
-.action-link {
-  @apply tw-whitespace-nowrap;
-  @apply tw-no-underline !important;
-  @apply tw-flex !important;
-  @apply tw-items-center !important;
-  @apply tw-transition-opacity !important;
-  @apply tw-duration-100 !important;
-  @apply tw-text-zinc-900 !important;
-  @apply tw-text-opacity-50;
-  @apply dark:tw-text-zinc-50 !important;
-  @apply dark:hover:tw-text-zinc-50 !important;
-  @apply dark:focus:tw-text-zinc-50 !important;
-  @apply dark:tw-text-opacity-75;
-}
+@reference "tailwindcss";
+@config "../../../../tailwind.config.js";
 
-.action-link:hover {
-  @apply tw-text-opacity-100 !important;
+@layer components {
+  .action-link {
+    /* note: .action-link text-color(opacity) is also styled in table. */
+    @apply tw-whitespace-nowrap;
+    @apply tw-no-underline !important;
+    @apply tw-flex !important;
+    @apply tw-items-center !important;
+    @apply tw-transition-opacity !important;
+    @apply tw-duration-100 !important;
+    @apply tw-text-zinc-900/50 !important;
+    @apply hover:tw-text-zinc-900/100 !important;
+    @apply dark:tw-text-zinc-50/75 !important;
+    @apply dark:hover:tw-text-zinc-50/75 !important;
+    @apply dark:focus:tw-text-zinc-50/75 !important;
+  }
 }

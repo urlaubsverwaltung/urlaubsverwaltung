@@ -1,17 +1,22 @@
-a {
-  color: #2a6496;
-  @apply dark:tw-text-sky-500;
-}
+@reference "tailwindcss";
+@config "../../../../tailwind.config.js";
 
-a:hover,
-a:focus,
-a:active {
-  color: #1896db;
-  @apply dark:tw-text-sky-400;
-}
+@layer components {
+  a {
+    color: #2a6496;
+    @apply dark:tw-text-sky-500;
+  }
 
-@media print {
-  a[href].print\:no-link:after {
-    content: "" !important;
+  a:hover,
+  a:focus,
+  a:active {
+    color: #1896db;
+    @apply dark:tw-text-sky-400;
+  }
+
+  @media print {
+    a[href].print\:no-link:after {
+      content: "" !important;
+    }
   }
 }

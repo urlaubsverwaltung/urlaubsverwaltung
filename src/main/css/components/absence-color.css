@@ -1,3 +1,6 @@
+@reference "tailwindcss";
+@config "../../../../tailwind.config.js";
+
 @layer base {
   :root {
     /* 500 */
