@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up JDK from .tool-versions
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'liberica'
           java-version-file: ".tool-versions"
@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up JDK from .tool-versions
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'liberica'
           java-version-file: ".tool-versions"
