@@ -1,21 +1,25 @@
-.content {
-  /* = height of navbar (50px) plus margin-bottom of row (27px) */
-  margin-top: 77px;
-}
+@reference "./config.css";
 
-.modal-dialog {
-  margin-top: 77px;
-  z-index: 2000;
-}
+@layer utility {
+  .content {
+    /* = height of navbar (50px) plus margin-bottom of row (27px) */
+    margin-top: 77px;
+  }
 
-.is-centered {
-  text-align: center;
-}
+  .modal-dialog {
+    margin-top: 77px;
+    z-index: 2000;
+  }
 
-.is-inline-block {
-  display: inline-block;
-}
+  .is-centered {
+    text-align: center;
+  }
 
-.is-sticky {
-  margin: 0;
+  .is-inline-block {
+    display: inline-block;
+  }
+
+  .is-sticky {
+    margin: 0;
+  }
 }

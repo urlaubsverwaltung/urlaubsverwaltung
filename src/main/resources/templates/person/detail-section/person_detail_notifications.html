@@ -39,7 +39,7 @@
       <p
         th:if="${!showAbsences and !showAbsencesManagement and !showSickNoteManagement and !showOvertime and !showOvertimeManagement and !showPersons}"
         th:text="#{person.account.notifications.nothing-active}"
-        class="tw-text-sm"
+        class="tw:text-sm"
       >
         Keine E-Mail Benachrichtigungen aktiviert.
       </p>
@@ -49,7 +49,7 @@
       >
         <th:block th:if="${showAbsences}">
           <dt
-            class="tw-font-medium tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.absences.title}"
           >
             Meine Abwesenheiten
@@ -61,7 +61,7 @@
                 active=${active == null ? notifications.applicationAppliedAndChanges.active : active}
               "
           >
-            <dd class="tw-text-sm tw-mb-1" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
+            <dd class="tw:text-sm tw:mb-1" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
           </th:block>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.applicationUpcoming.active},info='person.notifications.section.absences.upcoming.label')}"
@@ -75,7 +75,7 @@
         </th:block>
         <th:block th:if="${showAbsencesManagement}">
           <dt
-            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mt-8 tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.absences.management.title}"
           >
             Abwesenheiten meiner Kolleg:innen
@@ -104,7 +104,7 @@
         </th:block>
         <th:block th:if="${showSickNoteManagement}">
           <dt
-            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mt-8 tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.sicknote.management.title}"
           >
             Krankmeldungen meiner Kolleg:innen
@@ -121,7 +121,7 @@
         </th:block>
         <th:block th:if="${showOvertime}">
           <dt
-            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mt-8 tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.overtime.title}"
           >
             Überstunden
@@ -135,7 +135,7 @@
         </th:block>
         <th:block th:if="${showOvertimeManagement}">
           <dt
-            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mt-8 tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.overtime.management.title}"
           >
             Überstunden meiner Kolleg:innen
@@ -146,7 +146,7 @@
         </th:block>
         <th:block th:if="${showPersons}">
           <dt
-            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            class="tw:font-medium tw:mt-8 tw:mb-2 tw:bg-white tw:dark:bg-zinc-900 tw:dark:py-0.5"
             th:text="#{person.notifications.section.persons.title}"
           >
             Personen
