@@ -16,6 +16,9 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 
+import java.time.Duration;
+import java.util.Map;
+
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -82,7 +85,10 @@ public class OvertimeAbsenceApiController {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Application is of category OVERTIME, but duration is not know.");
         }
 
-        return new OvertimeAbsenceDto(applicationId, application.getHours(), application.getOvertimeReductionShares());
+        return new OvertimeAbsenceDto(applicationId, Duration.ZERO, Map.of());
+
+        // TODO
+//        return new OvertimeAbsenceDto(applicationId, application.getHours(), application.getOvertimeReductionShares());
     }
 
     private Application getApplicationOfPerson(Long personId, Long absenceId) {

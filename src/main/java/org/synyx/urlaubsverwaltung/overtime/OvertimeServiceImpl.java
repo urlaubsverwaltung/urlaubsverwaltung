@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -23,10 +24,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.math.RoundingMode.HALF_EVEN;
+import static java.math.RoundingMode.HALF_UP;
 import static java.time.Duration.ZERO;
 import static java.time.temporal.ChronoUnit.MINUTES;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -35,8 +35,9 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.durationToBigDecimalInHours;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.hoursBigDecimalToDuration;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 @Transactional
 @Service
@@ -162,32 +163,86 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end) {
+    public Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(
+        List<Person> persons,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson,
+        List<Application> applications,
+        LocalDate start,
+        LocalDate end
+    ) {
+
+        // this method is only use once, currently
+        // and start/end are both in the same year, always
+        final Year year = Year.from(start); // TODO really? year must be part of the signature, does it?
 
         final Map<Person, List<Application>> overtimeApplicationsByPerson = applications.stream()
             .filter(application -> application.getVacationType().getCategory().equals(OVERTIME))
             .filter(application -> activeStatuses().contains(application.getStatus()))
             .collect(groupingBy(Application::getPerson));
 
-        final Map<Person, Duration> overtimeSumBeforeYearByPerson = getOvertimeSumBeforeYear(persons, start.getYear());
-        final Map<Person, Duration> yearOvertimeSumByPerson = getTotalOvertimeUntil(persons, start.with(firstDayOfYear()), start.with(lastDayOfYear()));
-        final Map<Person, Duration> dateRangeOvertimeSumByPerson = getTotalOvertimeUntil(persons, start, end);
-        final Map<Person, OvertimeReduction> dateRangeOvertimeReductionByPerson = getOvertimeReduction(overtimeApplicationsByPerson, start, end);
+        // überstunden duration bis jahresgrenze vor `start`
+        // IST: 12h
+        // SOLL: 14,22h -- 32h(angesammelt) minus 17,78h(anteilig abgebaut) = 14,22h
+        final Map<Person, Duration> overtimeSumBeforeYearByPerson = getOvertimeSumBeforeYear(persons, year);
+
+        // überstunden
+        // IST: leer, es wird für komplett 2025 angefragt
+        // SOLL: 0h (2025 keine überstunden, 2024 waren 32h)
+        final Map<Person, Duration> yearOvertimeSumByPerson =
+            getTotalOvertimeUntil(persons, year.atDay(1), year.atDay(year.length()));
+
+        // überstunden
+        // IST: leer, es wird für 1.1.25 bis 31.12.25 angefragt
+        // SOLL: 0h (2025 keine überstunden, 2024 waren 32h)
+        final Map<Person, Duration> dateRangeOvertimeSumByPerson =
+            getTotalOvertimeUntil(persons, start, end);
+
+        // überstunden-abbau mit anträgen
+        // IST: 32h / 0h
+        // SOLL: 14,22h -- von 1.1.25 bis 21.12.25 sind es anteilig 14,22h überstundenabbau
+        //
+        // -----------------------------------------------
+        // start/end: 1.1.25 bis 31.1.25
+        // SOLL: 14,22h
+        //
+        // start/end: 1.2.25 bis 28.2.25
+        // SOLL: 0h -- application ist im januar
+        final Map<Person, OvertimeReduction> dateRangeOvertimeReductionByPerson =
+            getOvertimeReduction(overtimeApplicationsByPerson, workingTimeCalendarByPerson, start, end);
 
         return persons.stream()
             .map(person -> {
-                final OvertimeReduction personOvertimeReduction = dateRangeOvertimeReductionByPerson.getOrDefault(person, OvertimeReduction.identity());
-                final Duration overallOvertimeBeforeYear = overtimeSumBeforeYearByPerson.getOrDefault(person, ZERO);
+
+                // abgebaut mit überstundenabbau anträgen
+                final OvertimeReduction ueberstundenAbbauDiesesJahr =
+                    dateRangeOvertimeReductionByPerson.getOrDefault(person, OvertimeReduction.identity());
+                // IST: 32h
+                // SOLL: 14,22h
+
+                // TODO fixme
+                final Duration angesammelteUeberstundenVorjahr = overtimeSumBeforeYearByPerson.getOrDefault(person, ZERO);
+                // IST: 32h
+                // SOLL: 14,22h -- 32h(angesammelt) minus 17,78h(anteilig abgebaut) = 14,22h : 14,22h
 
                 // overall
-                final Duration yearDuration = yearOvertimeSumByPerson.getOrDefault(person, ZERO);
-                final Duration finalOverallDuration = overallOvertimeBeforeYear.plus(yearDuration).minus(personOvertimeReduction.reductionOverall());
+                final Duration angesammelteUeberstundenDiesesJahr = yearOvertimeSumByPerson.getOrDefault(person, ZERO);
+                // IST: 0h
+                // SOLL: 0h keine überstunden gesammelt in 2025
+
+                final Duration angesammelteUeberstundenGesamt =
+                    angesammelteUeberstundenVorjahr.plus(angesammelteUeberstundenDiesesJahr).minus(ueberstundenAbbauDiesesJahr.reductionYear());
+                // SOLL: 0 = 14,22 + 0 - 14,22
 
                 // date range
-                final Duration dateRangeDuration = dateRangeOvertimeSumByPerson.getOrDefault(person, ZERO);
-                final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.reductionDateRange());
+                final Duration angesammelteUeberstundenDateRange = dateRangeOvertimeSumByPerson.getOrDefault(person, ZERO);
+                // IST: 0h
+                // SOLL: 0h -- keine überstunden angesammelt in 2025
 
-                return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
+                final Duration angesammelteUeberstundenGesamtDateRange =
+                    angesammelteUeberstundenVorjahr.plus(angesammelteUeberstundenDateRange).minus(ueberstundenAbbauDiesesJahr.reductionDateRange());
+                // SOLL: 0 = 14,22 + 0 - 14,22
+
+                return Map.entry(person, new LeftOvertime(angesammelteUeberstundenGesamt, angesammelteUeberstundenGesamtDateRange));
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -202,16 +257,40 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date);
     }
 
-    private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, int year) {
+    private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, Year year) {
 
-        final LocalDate lastDayOfLastYear = Year.of(year - 1).atDay(1).with(lastDayOfYear());
-        final Map<Person, Duration> totalReductionBeforeYearByPerson = applicationService.getTotalOvertimeReductionOfPersonUntil(persons, lastDayOfLastYear);
-        final Map<Person, Duration> overtimesStartingWithoutRequestedYearByPerson = getTotalOvertimeUntil(persons, lastDayOfLastYear);
+        // year = 2025
+
+        final Year previousYear = year.minusYears(1);
+        final LocalDate lastDayOfPreviousYear = previousYear.atDay(previousYear.length());
+        // 31.12.2024
+
+        // abgebaute überstunden mit anträgen
+        // von an-beginn der Zeit bis zum letzten tag des angefragten jahres
+        // IST:
+        // SOLL: 17,78h (17h 48min)
+        final Map<Person, Duration> totalReductionPreviousYearByPerson =
+            applicationService.getTotalOvertimeReductionOfPersonUntil(persons, lastDayOfPreviousYear);
+
+        // überstunden einträge
+        // von an-beginn der Zeit bis zum letzten tag des angefragten jahres
+        // IST:
+        // SOLL: 32h
+        final Map<Person, Duration> overtimesStartingWithoutRequestedYearByPerson = getTotalOvertimeUntil(persons, lastDayOfPreviousYear);
+
         return persons.stream()
             .map(person -> {
-                final Duration totalOvertimeReductionBeforeYear = totalReductionBeforeYearByPerson.getOrDefault(person, ZERO);
+                final Duration totalOvertimeReductionPreviousYear = totalReductionPreviousYearByPerson.getOrDefault(person, ZERO);
+                // SOLL: 17,78h
+
                 final Duration totalOvertimeBeforeYear = overtimesStartingWithoutRequestedYearByPerson.getOrDefault(person, ZERO);
-                final Duration duration = totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
+                // SOLL: 32h
+
+                final Duration duration = totalOvertimeBeforeYear.minus(totalOvertimeReductionPreviousYear);
+                // SOLL: 32h - 17,78h = 14,22 h
+
+                // IST: 12h
+                // SOLL: 17,78h (17h 48min)
                 return Map.entry(person, duration);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -237,30 +316,76 @@ class OvertimeServiceImpl implements OvertimeService {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
     }
 
-    private Map<Person, OvertimeReduction> getOvertimeReduction(Map<Person, List<Application>> overtimeApplicationsByPerson, LocalDate start, LocalDate end) {
+    private Map<Person, OvertimeReduction> getOvertimeReduction(
+        Map<Person, List<Application>> overtimeApplicationsByPerson,
+        Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson,
+        LocalDate start,
+        LocalDate end
+    ) {
+
+        // currently, start and end are always in the same year.
+        final Year year = Year.from(start);
+        final DateRange yearDateRange = new DateRange(year.atDay(1), year.atDay(year.length()));
+
         final DateRange dateRange = new DateRange(start, end);
+
         return overtimeApplicationsByPerson.entrySet()
             .stream()
             .map(entry -> {
-                final List<Application> overtimeApplications = entry.getValue();
-                final Duration totalOvertimeReductionDuration = overtimeApplications.stream()
-                    .map(Application::getHours)
-                    .reduce(ZERO, Duration::plus);
-
-                final BigDecimal dateRangeOvertimeReductionSeconds = overtimeApplications.stream()
-                    .filter(application -> !application.getStartDate().isBefore(start) && !application.getStartDate().isAfter(end))
-                    .map(application -> {
-                        final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-                        final Duration durationOfOverlap = dateRange.overlap(applicationDateRage).map(DateRange::duration).orElse(ZERO);
-                        return toFormattedDecimal(application.getHours())
-                            .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
-                            .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
-                    })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-                final Duration dateRangeOvertimeReductionDuration = Duration.ofSeconds(dateRangeOvertimeReductionSeconds.longValue());
-
                 final Person person = entry.getKey();
-                return Map.entry(person, new OvertimeReduction(totalOvertimeReductionDuration, dateRangeOvertimeReductionDuration));
+                final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarByPerson.get(person);
+                final List<Application> overtimeApplications = entry.getValue();
+
+                final Duration reductionYear = overtimeApplications.stream()
+                    .map(application -> {
+                        // TODO same calculation in OvertimeListMapper#byAbsences
+
+                        final BigDecimal arbeitstageDesAntrags = workingTimeCalendar.workingTime(application);
+                        // SOLL: 4.5
+
+                        final BigDecimal ueberstundenDesAntrags = durationToBigDecimalInHours(application.getHours());
+                        // SOLL: 32.0
+
+                        final BigDecimal ueberstundenAbbauTagesAnteil = ueberstundenDesAntrags.divide(arbeitstageDesAntrags, HALF_UP);
+                        // SOLL: 7.11
+
+                        // 0, 0.5, 1, 1.5, 2, 2.5, ... Anzahl Tage die gearbeitet wird. Wochenenden und Feiertage sind hier z. B. raus.
+                        final LocalDate from = application.getStartDate().isBefore(yearDateRange.startDate()) ? yearDateRange.startDate() : application.getStartDate();
+                        final LocalDate to = application.getEndDate().isAfter(yearDateRange.endDate()) ? yearDateRange.endDate() : application.getEndDate();
+                        final BigDecimal arbeitstageImBerechnetenJahr = workingTimeCalendar.workingTime(from, to);
+                        // SOLL: 2.5
+
+                        final BigDecimal ueberstundenAbbauImBerechnetenJahr = ueberstundenAbbauTagesAnteil.multiply(arbeitstageImBerechnetenJahr);
+                        // SOLL: 17.78
+
+                        return hoursBigDecimalToDuration(ueberstundenAbbauImBerechnetenJahr);
+                    })
+                    .reduce(Duration.ZERO, Duration::plus);
+                // SOLL: 14,22h -- weil nur ein kalenderjahr beachtet wird (2025)
+
+                final Duration reductionDateRange = overtimeApplications.stream()
+                    .map(application -> {
+                        if (application.getStartDate().isAfter(end) || application.getEndDate().isBefore(start)) {
+                            return ZERO;
+                        }
+
+                        final BigDecimal arbeitstageDesAntrags = workingTimeCalendar.workingTime(application);
+                        final BigDecimal ueberstundenDesAntrags = durationToBigDecimalInHours(application.getHours());
+                        final BigDecimal ueberstundenAbbauTagesAnteil = ueberstundenDesAntrags.divide(arbeitstageDesAntrags, HALF_UP);
+
+                        final LocalDate from = application.getStartDate().isBefore(start) ? start : application.getStartDate();
+                        final LocalDate to = application.getEndDate().isAfter(end) ? end : application.getEndDate();
+                        final BigDecimal arbeitstageImBerechnetenJahr = workingTimeCalendar.workingTime(from, to);
+
+                        final BigDecimal ueberstundenAbbauImBerechnetenJahr = ueberstundenAbbauTagesAnteil.multiply(arbeitstageImBerechnetenJahr);
+
+                        return hoursBigDecimalToDuration(ueberstundenAbbauImBerechnetenJahr);
+                    })
+                    .reduce(Duration.ZERO, Duration::plus);
+
+                // IST:
+                // SOLL: 14,22h -- von 1.1.25 bis 21.12.25 sind es anteilig 14,22h überstundenabbau
+                return Map.entry(person, new OvertimeReduction(reductionYear, reductionDateRange));
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -386,7 +511,7 @@ class OvertimeServiceImpl implements OvertimeService {
             .orElse(ZERO);
     }
 
-    private record OvertimeReduction(Duration reductionOverall, Duration reductionDateRange) {
+    private record OvertimeReduction(Duration reductionYear, Duration reductionDateRange) {
         static OvertimeReduction identity() {
             return new OvertimeReduction(ZERO, ZERO);
         }

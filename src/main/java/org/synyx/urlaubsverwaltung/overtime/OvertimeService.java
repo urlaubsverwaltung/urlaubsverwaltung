@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -109,7 +110,7 @@ public interface OvertimeService {
      * @param end          of period
      * @return the left overtime
      */
-    Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end);
+    Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson, List<Application> applications, LocalDate start, LocalDate end);
 
     /**
      * Is signedInUser allowed to create an overtime records of given personOfOvertime.

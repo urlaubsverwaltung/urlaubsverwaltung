@@ -14,14 +14,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
-import static java.time.Duration.ofHours;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -161,21 +156,21 @@ class ApplicationTest {
         assertThat(endDateWithTime).isNull();
     }
 
-    @Test
-    void getHoursByYear() {
-
-        final Application application = new Application();
-        application.setStartDate(LocalDate.of(2022, 12, 30));
-        application.setEndDate(LocalDate.of(2023, 1, 2));
-        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        application.setHours(Duration.ofHours(20));
-
-        final Map<Integer, Duration> hoursByYear = application.getHoursByYear();
-
-        assertThat(hoursByYear).hasSize(2)
-            .containsEntry(2022, Duration.ofHours(10))
-            .containsEntry(2023, Duration.ofHours(10));
-    }
+//    @Test
+//    void getHoursByYear() {
+//
+//        final Application application = new Application();
+//        application.setStartDate(LocalDate.of(2022, 12, 30));
+//        application.setEndDate(LocalDate.of(2023, 1, 2));
+//        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+//        application.setHours(Duration.ofHours(20));
+//
+//        final Map<Integer, Duration> hoursByYear = application.getHoursByYear();
+//
+//        assertThat(hoursByYear).hasSize(2)
+//            .containsEntry(2022, Duration.ofHours(10))
+//            .containsEntry(2023, Duration.ofHours(10));
+//    }
 
     @Test
     void toStringTest() {
@@ -228,43 +223,43 @@ class ApplicationTest {
             "status=ALLOWED, teamInformed=true, hours=PT10H}");
     }
 
-    @Test
-    void ensureGetOvertimeReductionSharesForSingleDays() {
-        final LocalDate date = LocalDate.of(2022, 8, 10);
+//    @Test
+//    void ensureGetOvertimeReductionSharesForSingleDays() {
+//        final LocalDate date = LocalDate.of(2022, 8, 10);
+//
+//        final Application application = new Application();
+//        application.setStartDate(date);
+//        application.setEndDate(date);
+//        application.setStatus(WAITING);
+//        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+//        application.setHours(Duration.ofHours(3).plusMinutes(40));
+//
+//        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares();
+//        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
+//            date, Duration.ofHours(3).plusMinutes(40))
+//        );
+//    }
 
-        final Application application = new Application();
-        application.setStartDate(date);
-        application.setEndDate(date);
-        application.setStatus(WAITING);
-        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        application.setHours(Duration.ofHours(3).plusMinutes(40));
-
-        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares();
-        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
-            date, Duration.ofHours(3).plusMinutes(40))
-        );
-    }
-
-    @Test
-    void ensureGetOvertimeReductionSharesForMultipleDays() {
-        final LocalDate startDate = LocalDate.of(2022, 8, 10);
-        final LocalDate middleDate = LocalDate.of(2022, 8, 11);
-        final LocalDate endDate = LocalDate.of(2022, 8, 12);
-
-        final Application application = new Application();
-        application.setStartDate(startDate);
-        application.setEndDate(endDate);
-        application.setStatus(WAITING);
-        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        application.setHours(Duration.ofHours(12));
-
-        final var partitionedDurations = application.getOvertimeReductionShares();
-        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
-            startDate, ofHours(4),
-            middleDate, ofHours(4),
-            endDate, ofHours(4))
-        );
-    }
+//    @Test
+//    void ensureGetOvertimeReductionSharesForMultipleDays() {
+//        final LocalDate startDate = LocalDate.of(2022, 8, 10);
+//        final LocalDate middleDate = LocalDate.of(2022, 8, 11);
+//        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+//
+//        final Application application = new Application();
+//        application.setStartDate(startDate);
+//        application.setEndDate(endDate);
+//        application.setStatus(WAITING);
+//        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+//        application.setHours(Duration.ofHours(12));
+//
+//        final var partitionedDurations = application.getOvertimeReductionShares();
+//        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
+//            startDate, ofHours(4),
+//            middleDate, ofHours(4),
+//            endDate, ofHours(4))
+//        );
+//    }
 
     @Test
     void equals() {

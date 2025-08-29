@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.time.Duration.ZERO;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -67,12 +65,34 @@ class ApplicationForLeaveStatisticsBuilder {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
         final LocalDate today = LocalDate.now(clock);
+        final Year year = Year.from(from);
+
+        final List<Account> holidayAccounts = accountService.getHolidaysAccount(year.getValue(), persons);
+
+        final List<Application> allApplicationsInYear =
+            applicationService.getApplicationsForACertainPeriodAndStatus(year.atDay(1), year.atDay(year.length()), persons, activeStatuses());
+
+
+        LocalDate minFrom = year.atDay(1);
+        LocalDate maxTo = year.atDay(year.length());
+        for (Application application : allApplicationsInYear) {
+            if (application.getStartDate().isBefore(minFrom)) {
+                minFrom = application.getStartDate();
+            }
+            if (application.getEndDate().isAfter(maxTo)) {
+                maxTo = application.getEndDate();
+            }
+        }
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson =
+            workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(minFrom, maxTo));
+
         final DateRange dateRange = new DateRange(from, to);
 
-        final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
+        final Map<Person, LeftOvertime> leftOvertimeForPersons =
+            overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, workingTimeCalendarsByPerson, allApplicationsInYear, from, to);
 
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, activeStatuses());
-        final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
+        // nur für ein kalender jahr
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange);
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
@@ -104,14 +124,14 @@ class ApplicationForLeaveStatisticsBuilder {
                 return statistics;
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-        final Map<Person, List<Application>> applicationsByPerson =
+        final Map<Person, List<Application>> applicationsRequestDateRangeByPerson =
             applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses())
                 .stream()
                 .collect(groupingBy(Application::getPerson));
+
         for (Person person : persons) {
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
-            final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
+            final List<Application> personApplications = applicationsRequestDateRangeByPerson.getOrDefault(person, List.of());
             for (Application application : personApplications) {
 
                 final BigDecimal workingTime = workingTimeCalendar.workingTimeInDateRage(application, dateRange);

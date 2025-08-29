@@ -31,6 +31,8 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -39,6 +41,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.lang.String.format;
@@ -61,6 +64,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
     private final ApplicationService applicationService;
@@ -70,13 +74,19 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @Autowired
     OvertimeViewController(
-        OvertimeService overtimeService, PersonService personService,
-        OvertimeFormValidator validator, DepartmentService departmentService,
-        ApplicationService applicationService, VacationTypeViewModelService vacationTypeViewModelService,
-        SettingsService settingsService, Clock clock
+        OvertimeService overtimeService,
+        PersonService personService,
+        WorkingTimeCalendarService workingTimeCalendarService,
+        OvertimeFormValidator validator,
+        DepartmentService departmentService,
+        ApplicationService applicationService,
+        VacationTypeViewModelService vacationTypeViewModelService,
+        SettingsService settingsService,
+        Clock clock
     ) {
         this.overtimeService = overtimeService;
         this.personService = personService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.validator = validator;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
@@ -122,6 +132,9 @@ public class OvertimeViewController implements HasLaunchpad {
         final Predicate<Overtime> userIsAllowedToUpdateOvertime =
             overtime -> overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime);
 
+        final WorkingTimeCalendar workingTimeCalendar =
+            workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), Year.of(selectedYear)).get(person);
+
         final OvertimeListDto overtimeListDto = mapToDto(
             getOvertimeAbsences(selectedYear, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, selectedYear),
@@ -129,6 +142,7 @@ public class OvertimeViewController implements HasLaunchpad {
             overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
+            workingTimeCalendar,
             userIsAllowedToUpdateOvertime, selectedYear);
 
         model.addAttribute("records", overtimeListDto.getRecords());
