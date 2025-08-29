@@ -21,7 +21,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
  *
  * <p>
  * An entry with a defined {@link DepartmentMembershipEntity#getValidFrom()} but with
- * {@link DepartmentMembershipEntity#getValidFrom()} eq {@code null} means, that the membership is currently valid.
+ * {@link DepartmentMembershipEntity#getValidTo()} eq {@code null} means, that the membership is currently valid.
  */
 @Entity(name = "department_membership")
 public class DepartmentMembershipEntity extends AbstractTenantAwareEntity {
