@@ -11,7 +11,7 @@
     <createTable tableName="department_membership">
       <column name="tenant_id" type="text"/>
       <column name="id" type="bigint">
-        <constraints primaryKey="true" nullable="false" unique="true"/>
+        <constraints primaryKey="true" nullable="false" primaryKeyName="department_membership_pkey"/>
       </column>
       <column name="department_id" type="bigint">
         <constraints nullable="false"/>
