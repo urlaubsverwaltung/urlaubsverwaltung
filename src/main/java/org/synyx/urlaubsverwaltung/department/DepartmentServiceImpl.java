@@ -649,7 +649,7 @@ class DepartmentServiceImpl implements DepartmentService {
         final Long departmentId = newStaff.departmentId();
 
         previousStaff.members().stream()
-            .filter(newStaff.members()::contains)
+            .filter(not(newStaff.members()::contains))
             .map(DepartmentMembership::personId)
             .forEach(personId -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, personId.value(), departmentId)));
 

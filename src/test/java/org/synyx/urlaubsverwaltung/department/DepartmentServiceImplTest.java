@@ -1678,7 +1678,7 @@ class DepartmentServiceImplTest {
 
         final PersonLeftDepartmentEvent departmentLeftEvent = captor.getValue();
         assertThat(departmentLeftEvent.getDepartmentId()).isEqualTo(42);
-        assertThat(departmentLeftEvent.getPersonId()).isEqualTo(1);
+        assertThat(departmentLeftEvent.getPersonId()).isEqualTo(2);
     }
 
     @Test
