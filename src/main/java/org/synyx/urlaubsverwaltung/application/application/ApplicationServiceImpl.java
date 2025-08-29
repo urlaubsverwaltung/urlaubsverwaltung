@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -9,6 +8,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -20,11 +21,14 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.durationToBigDecimalInHours;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.hoursBigDecimalToDuration;
 
 /**
  * Implementation of interface {@link ApplicationService}.
@@ -33,11 +37,16 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeS
 class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final MessageSource messageSource;
 
-    @Autowired
-    ApplicationServiceImpl(ApplicationRepository applicationRepository, MessageSource messageSource) {
+    ApplicationServiceImpl(
+        ApplicationRepository applicationRepository,
+        WorkingTimeCalendarService workingTimeCalendarService,
+        MessageSource messageSource
+    ) {
         this.applicationRepository = applicationRepository;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.messageSource = messageSource;
     }
 
@@ -131,12 +140,50 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
-        final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until).stream()
+        final List<ApplicationEntity> overtimeApplicationEntities =
+            applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until);
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson;
+        if (overtimeApplicationEntities.isEmpty()) {
+            workingTimeCalendarByPerson = Map.of();
+        } else {
+            LocalDate from = LocalDate.MAX;
+            LocalDate to = until;
+            for (ApplicationEntity entity : overtimeApplicationEntities) {
+                if (entity.getStartDate().isBefore(from)) {
+                    from = entity.getStartDate();
+                }
+                if (entity.getEndDate().isAfter(to)) {
+                    to = entity.getEndDate();
+                }
+            }
+            workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(from, to));
+        }
+
+
+        final Map<Person, Duration> overtimeReductionByPerson = overtimeApplicationEntities.stream()
             .map(applicationEntity -> {
+
                 final Application application = toApplication(applicationEntity);
-                final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
-                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod);
-                return Map.entry(application.getPerson(), overtimeReduction);
+                final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarByPerson.get(application.getPerson());
+
+                final BigDecimal arbeitstageDesAntrags = workingTimeCalendar.workingTime(application);
+                // SOLL: 4.5
+
+                final BigDecimal ueberstundenDesAntrags = durationToBigDecimalInHours(application.getHours());
+                // SOLL: 32.0
+
+                final BigDecimal ueberstundenAbbauTagesAnteil = ueberstundenDesAntrags.divide(arbeitstageDesAntrags, HALF_UP);
+                // SOLL: 7.11
+
+                final LocalDate endDateOrUntil = application.getEndDate().isAfter(until) ? until : application.getEndDate();
+                final BigDecimal arbeitstageUntil = workingTimeCalendar.workingTime(application.getStartDate(), endDateOrUntil);
+
+                final BigDecimal ueberstundenAbbauUntil = ueberstundenAbbauTagesAnteil.multiply(arbeitstageUntil);
+                // SOLL: 17.78
+
+                final Duration duration = hoursBigDecimalToDuration(ueberstundenAbbauUntil);
+                return Map.entry(application.getPerson(), duration);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
 

@@ -25,7 +25,18 @@ public final class OvertimeListRecordDto {
     private final String type;
     private final boolean isAllowedToEdit;
 
-    OvertimeListRecordDto(Long id, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, Duration sum, String status, String color, String type, boolean isAllowedToEdit) {
+    OvertimeListRecordDto(
+        Long id,
+        LocalDate startDate,
+        LocalDate endDate,
+        Duration duration,
+        Map<Integer, Duration> durationByYear,
+        Duration sum,
+        String status,
+        String color,
+        String type,
+        boolean isAllowedToEdit
+    ) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
