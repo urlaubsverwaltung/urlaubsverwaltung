@@ -105,7 +105,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return personService.getAllPersonsByIds(managedPersonIds);
     }
 
-    private Set<DepartmentMembership> extractMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
+    private static Set<DepartmentMembership> extractMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
         return membershipsByPersonId.values()
             .stream()
             .flatMap(Collection::stream)
@@ -492,7 +492,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return person -> !department.getSecondStageAuthorities().contains(person);
     }
 
-    private Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentStaff staff, List<Person> persons) {
+    private static Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentStaff staff, List<Person> persons) {
 
         final Map<Long, Person> personById = persons.stream().collect(toMap(Person::getId, identity()));
 
@@ -558,7 +558,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return personService.getAllPersonsByIds(personIds);
     }
 
-    private List<Person> membershipsToPersons(Collection<DepartmentMembership> memberships, Map<Long, Person> personById) {
+    private static List<Person> membershipsToPersons(Collection<DepartmentMembership> memberships, Map<Long, Person> personById) {
 
         final List<Person> persons = new ArrayList<>();
 
@@ -575,7 +575,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return unmodifiableList(persons);
     }
 
-    private DepartmentEntity mapToDepartmentEntity(Department department) {
+    private static DepartmentEntity mapToDepartmentEntity(Department department) {
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
 
@@ -683,7 +683,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return person -> person.getNiceName().toLowerCase().contains(query.toLowerCase());
     }
 
-    private Comparator<Department> departmentComparator() {
+    private static Comparator<Department> departmentComparator() {
         return comparing(department -> department.getName().toLowerCase());
     }
 }
