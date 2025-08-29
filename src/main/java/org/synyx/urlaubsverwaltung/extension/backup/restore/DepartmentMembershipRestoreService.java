@@ -45,7 +45,7 @@ class DepartmentMembershipRestoreService {
             final Person person = personByExternalId.get(membershipDTO.personExternalId());
             final Long newDepartmentId = newDepartmentIdByOldId.get(membershipDTO.departmentId());
             if (person == null) {
-                LOG.warn("departmentMembership owner with externalId={} no found - skip importing departmentMembership!", membershipDTO.personExternalId());
+                LOG.warn("departmentMembership person with externalId={} not found - skip importing departmentMembership!", membershipDTO.personExternalId());
                 skipped++;
             } else if (newDepartmentId == null) {
                 LOG.warn("departmentMembership department with old id={} not found - skip importing departmentMembership!", membershipDTO.departmentId());
