@@ -1,3 +1,5 @@
+@reference "../config.css";
+
 .text-bubble {
   display: inline-flex;
   align-items: center;
@@ -5,7 +7,7 @@
   padding: 1rem 1.5rem;
   border: 2px solid theme("colors.blue.100");
   border-radius: 1rem;
-  @apply dark:tw-border-sky-800;
+  @apply tw:dark:border-sky-800;
 }
 
 .text-bubble.text-bubble--triangle-top-right {
@@ -25,7 +27,7 @@
   border-color: transparent theme("colors.blue.100") theme("colors.blue.100") transparent;
 }
 
-.tw-dark .text-bubble--triangle-top-right:before {
+.dark .text-bubble--triangle-top-right:before {
   border-color: transparent theme("colors.sky.800") theme("colors.sky.800") transparent;
 }
 
@@ -42,6 +44,6 @@
   border-color: transparent white white transparent;
 }
 
-.tw-dark .text-bubble--triangle-top-right:after {
+.dark .text-bubble--triangle-top-right:after {
   border-color: transparent theme("colors.neutral.900") theme("colors.neutral.900") transparent;
 }

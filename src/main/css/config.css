@@ -1,0 +1,38 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+/* ignore tailwind preflight since we are using bootstrap  */
+/* @import "tailwindcss/preflight.css" layer(base); */
+/* use prefix to avoid conflicts with bootstrap */
+/* use `important` to override bootstrap selectors */
+@import "tailwindcss/utilities.css" layer(utilities) source(none) prefix(tw) important;
+
+@theme {
+  --breakpoint-xs: 480px;
+
+  --color-black-almost: #444444;
+  --color-bootstrap-green: #5cb85c;
+  --color-bootstrap-green-dark: #449d44;
+  --color-calendar: var(--uv-cal-default-color);
+  --color-calendar-today: var(--uv-cal-default-color);
+  --color-calendar-past: var(--uv-cal-weekend-color);
+  --color-calendar-weekend: var(--uv-cal-weekend-color);
+
+  --font-logo: 'KaushanScript', cursive, sans-serif;
+  --text-10rem: 10rem;
+
+  --spacing-3: 3px;
+  --spacing-25: calc(var(--spacing) * 25);
+  --spacing-normal: normal;
+
+  --bg-color-calendar-default: var(--uv-cal-default-bg);
+  --bg-color-calendar-public-holiday: var(--uv-cal-public-holiday-bg);
+  --bg-color-calendar-weekend: var(--uv-cal-weekend-bg);
+  --border-color-calendar-default: var(--uv-cal-border-color);
+  --text-color-calendar-default: var(--uv-cal-default-color);
+  --text-color-calendar-public-holiday: var(--uv-cal-public-holiday-color);
+  --text-color-calendar-weekend: var(--uv-cal-weekend-color);
+}
+
+@theme dark {
+}

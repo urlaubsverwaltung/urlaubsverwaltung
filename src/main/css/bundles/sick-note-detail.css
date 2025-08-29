@@ -1,1 +1,1 @@
-@import "../components/sick-note-extension-preview.css";
+@import "../components/sick-note-extension-preview.css" layer(components);
