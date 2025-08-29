@@ -1,0 +1,133 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="seber" id="add-department-membership--table">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="department_membership_id_seq" startValue="1"/>
+
+    <createTable tableName="department_membership">
+      <column name="tenant_id" type="text"/>
+      <column name="id" type="bigint">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="department_membership_pkey"/>
+      </column>
+      <column name="department_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="membership_kind" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_from" type="timestamptz">
+        <constraints nullable="false"/>
+      </column>
+      <column name="valid_to" type="timestamptz"/>
+    </createTable>
+
+    <addForeignKeyConstraint baseTableName="department_membership"
+                             baseColumnNames="department_id"
+                             constraintName="fk_department_membership_department"
+                             referencedTableName="department"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <addForeignKeyConstraint baseTableName="department_membership"
+                             baseColumnNames="person_id"
+                             constraintName="fk_department_membership_person"
+                             referencedTableName="person"
+                             referencedColumnNames="id"
+                             onDelete="CASCADE"/>
+
+    <createIndex tableName="department_membership" indexName="idx_membership_department">
+      <column name="department_id"/>
+    </createIndex>
+    <createIndex tableName="department_membership" indexName="idx_membership_person">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="seber" id="add-department-membership--migrate-members">
+    <preConditions>
+      <tableExists tableName="department_membership"/>
+    </preConditions>
+    <sql>
+      INSERT INTO department_membership (
+        tenant_id,
+        id,
+        department_id,
+        person_id,
+        membership_kind,
+        valid_from,
+        valid_to
+      )
+      SELECT
+        department.tenant_id,
+        nextval('department_membership_id_seq') as id,
+        member.department_id,
+        member.members_id as person_id,
+        'MEMBER' as membership_kind,
+        member.accession_date as valid_from,
+        NULL as valid_to
+      FROM department_member member
+      JOIN department department ON department.id = member.department_id;
+    </sql>
+  </changeSet>
+
+  <changeSet author="seber" id="add-department-membership--migrate-department-heads">
+    <preConditions>
+      <tableExists tableName="department_membership"/>
+    </preConditions>
+    <sql>
+      INSERT INTO department_membership (
+        tenant_id,
+        id,
+        department_id,
+        person_id,
+        membership_kind,
+        valid_from,
+        valid_to
+      )
+      SELECT
+        department.tenant_id,
+        nextval('department_membership_id_seq') as id,
+        department_head.department_id,
+        department_head.department_heads_id as person_id,
+        'DEPARTMENT_HEAD' as membership_kind,
+        department.created_at as valid_from,
+        NULL as valid_to
+      FROM department_department_head department_head
+      JOIN department department ON department.id = department_head.department_id;
+    </sql>
+  </changeSet>
+
+  <changeSet author="seber" id="add-department-membership--migrate-second-stage">
+    <preConditions>
+      <tableExists tableName="department_membership"/>
+    </preConditions>
+    <sql>
+      INSERT INTO department_membership (
+        tenant_id,
+        id,
+        department_id,
+        person_id,
+        membership_kind,
+        valid_from,
+        valid_to
+      )
+      SELECT
+        department.tenant_id,
+        nextval('department_membership_id_seq') as id,
+        second_stage_authority.department_id,
+        second_stage_authority.second_stage_authorities_id as person_id,
+        'SECOND_STAGE_AUTHORITY' as membership_kind,
+        department.created_at as valid_from,
+        NULL as valid_to
+      FROM department_second_stage_authority second_stage_authority
+      JOIN department department ON department.id = second_stage_authority.department_id;
+    </sql>
+  </changeSet>
+</databaseChangeLog>

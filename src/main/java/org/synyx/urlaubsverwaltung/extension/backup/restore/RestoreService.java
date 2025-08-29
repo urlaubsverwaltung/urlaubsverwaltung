@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -22,16 +23,28 @@ class RestoreService {
     private final SickNoteRestoreService sickNoteRestoreService;
     private final CalendarsRestoreService calendarsRestoreService;
     private final DepartmentRestoreService departmentRestoreService;
+    private final DepartmentMembershipRestoreService departmentMembershipRestoreService;
     private final ApplicationRestoreService applicationRestoreService;
     private final CalendarIntegrationRestoreService calendarIntegrationRestoreService;
 
-    RestoreService(SettingsRestoreService settingsRestoreService, PersonRestoreService personRestoreService, OvertimeRestoreService overtimeRestoreService, SickNoteRestoreService sickNoteRestoreService, CalendarsRestoreService calendarsRestoreService, DepartmentRestoreService departmentRestoreService, ApplicationRestoreService applicationRestoreService, CalendarIntegrationRestoreService calendarIntegrationRestoreService) {
+    RestoreService(
+        SettingsRestoreService settingsRestoreService,
+        PersonRestoreService personRestoreService,
+        OvertimeRestoreService overtimeRestoreService,
+        SickNoteRestoreService sickNoteRestoreService,
+        CalendarsRestoreService calendarsRestoreService,
+        DepartmentRestoreService departmentRestoreService,
+        DepartmentMembershipRestoreService departmentMembershipRestoreService,
+        ApplicationRestoreService applicationRestoreService,
+        CalendarIntegrationRestoreService calendarIntegrationRestoreService
+    ) {
         this.settingsRestoreService = settingsRestoreService;
         this.personRestoreService = personRestoreService;
         this.overtimeRestoreService = overtimeRestoreService;
         this.sickNoteRestoreService = sickNoteRestoreService;
         this.calendarsRestoreService = calendarsRestoreService;
         this.departmentRestoreService = departmentRestoreService;
+        this.departmentMembershipRestoreService = departmentMembershipRestoreService;
         this.applicationRestoreService = applicationRestoreService;
         this.calendarIntegrationRestoreService = calendarIntegrationRestoreService;
     }
@@ -46,8 +59,11 @@ class RestoreService {
         final List<ImportedIdTuple> createdSicknotes = sickNoteRestoreService.restore(backupToRestore.sickNotes());
         calendarIntegrationRestoreService.restore(backupToRestore.calendarIntegration(), createdApplications, createdSicknotes);
 
-        departmentRestoreService.restore(backupToRestore.departments());
+        final Map<Long, Long> newDepartmentIdByOldId = departmentRestoreService.restore(backupToRestore.departments());
+        departmentMembershipRestoreService.restore(backupToRestore.departmentMemberships(), newDepartmentIdByOldId);
+
         calendarsRestoreService.restore(backupToRestore.calendars(), backupToRestore.departments());
+
         LOG.info("Finished restoring data");
     }
 

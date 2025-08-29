@@ -190,6 +190,23 @@ class PersonRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     @Test
+    void ensureFindAllByIdOrderByFirstNameAscLastNameAsc() {
+
+        final Person person1 = personService.create("username_1", "xenia", "Basta", "xenia@example.org", List.of(), List.of(USER));
+        final Person person2 = personService.create("username_2", "Peter", "Muster", "peter@example.org", List.of(), List.of(USER));
+        final Person person3 = personService.create("username_3", "Mustafa", "Tunichtgut", "mustafa@example.org", List.of(), List.of(INACTIVE));
+        personService.create("username_4", "Rosamund", "Hatgoldimmund", "rosamund@example.org", List.of(), List.of(USER));
+
+        final List<Person> actual = sut.findAllByIdIsInOrderByFirstNameAscLastNameAsc(List.of(person1.getId(), person2.getId(), person3.getId()));
+
+        assertThat(actual).satisfiesExactly(
+            person -> assertThat(person).isEqualTo(person3),
+            person -> assertThat(person).isEqualTo(person2),
+            person -> assertThat(person).isEqualTo(person1)
+        );
+    }
+
+    @Test
     void findAllWithAccountByYear() {
 
         final Year currentYear = Year.now();

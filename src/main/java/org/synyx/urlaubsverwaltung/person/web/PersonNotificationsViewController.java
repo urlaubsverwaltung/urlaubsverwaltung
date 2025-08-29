@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -89,7 +88,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         final long numberOfDepartments = departmentService.getNumberOfDepartments();
         final List<Department> personDepartments = numberOfDepartments == 0 ? List.of() : departmentService.getDepartmentsPersonHasAccessTo(person);
 
-        final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
+        final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(person.getIdAsPersonId());
 
         final boolean userIsAllowedToSubmitSickNotes = settingsService.getSettings().getSickNoteSettings().getUserIsAllowedToSubmitSickNotes();
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person, userIsAllowedToSubmitSickNotes);
@@ -169,7 +168,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         personService.update(person);
 
         final boolean restrictToDepartments = newPersonNotificationsDto.getRestrictToDepartments().isActive();
-        userNotificationSettingsService.updateNotificationSettings(new PersonId(person.getId()), restrictToDepartments);
+        userNotificationSettingsService.updateNotificationSettings(person.getIdAsPersonId(), restrictToDepartments);
 
         redirectAttributes.addFlashAttribute("success", true);
 

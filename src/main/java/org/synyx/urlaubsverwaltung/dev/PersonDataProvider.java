@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -70,7 +69,7 @@ class PersonDataProvider {
             person.setNotifications(notifications);
 
             final Person savedPerson = personService.update(person);
-            personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
+            personBasedataService.update(new PersonBasedata(savedPerson.getIdAsPersonId(), String.valueOf(personnelNumber), ""));
 
             final int currentYear = Year.now(clock).getValue();
             final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);

@@ -66,6 +66,10 @@ public class Person extends AbstractTenantAwareEntity {
         return id;
     }
 
+    public PersonId getIdAsPersonId() {
+        return new PersonId(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

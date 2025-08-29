@@ -15,7 +15,7 @@ public class DepartmentImportService {
         departmentRepository.deleteAll();
     }
 
-    public void importDepartment(DepartmentEntity departmentEntity) {
-        departmentRepository.save(departmentEntity);
+    public DepartmentEntity importDepartment(DepartmentEntity departmentEntity) {
+        return departmentRepository.save(departmentEntity);
     }
 }

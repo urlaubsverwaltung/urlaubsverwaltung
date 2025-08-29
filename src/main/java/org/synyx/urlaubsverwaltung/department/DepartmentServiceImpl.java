@@ -1,23 +1,21 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
@@ -33,11 +31,13 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -54,13 +54,23 @@ class DepartmentServiceImpl implements DepartmentService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentRepository departmentRepository;
+    private final DepartmentMembershipServiceImpl departmentMembershipService;
+    private final PersonService personService;
     private final ApplicationService applicationService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
-    @Autowired
-    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
+    DepartmentServiceImpl(
+        DepartmentRepository departmentRepository,
+        DepartmentMembershipServiceImpl departmentMembershipService,
+        PersonService personService,
+        ApplicationService applicationService,
+        ApplicationEventPublisher applicationEventPublisher,
+        Clock clock
+    ) {
         this.departmentRepository = departmentRepository;
+        this.departmentMembershipService = departmentMembershipService;
+        this.personService = personService;
         this.applicationService = applicationService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
@@ -68,22 +78,58 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getManagedMembersOfPerson(Person person, Year year) {
-        return filterMembersByYear(year, managedDepartmentEntitiesOfPerson(person));
+
+        final Map<PersonId, List<DepartmentMembership>> activeMembershipsOfYear = departmentMembershipService.getActiveMembershipsOfYear(year);
+        final Set<DepartmentMembership> onlyMembers = extractMemberMemberships(activeMembershipsOfYear);
+
+        if (onlyMembers.isEmpty()) {
+            return List.of();
+        }
+
+        final Set<PersonId> managedPersonIds;
+
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
+            // office or boss is allowed to manage all other persons
+            managedPersonIds = onlyMembers.stream().map(DepartmentMembership::personId).collect(toSet());
+        } else {
+            // otherwise we have to collect departments where the person is a department head or second stage authority
+            final Set<Long> managedDepartmentIds = activeMembershipsOfYear.get(person.getIdAsPersonId()).stream()
+                .filter(DepartmentMembership::isManagementMembership)
+                .map(DepartmentMembership::departmentId)
+                .collect(toSet());
+            managedPersonIds = onlyMembers.stream()
+                .filter(m -> managedDepartmentIds.contains(m.departmentId())).map(DepartmentMembership::personId)
+                .collect(toSet());
+        }
+
+        return personService.getAllPersonsByIds(managedPersonIds);
+    }
+
+    private static Set<DepartmentMembership> extractMemberMemberships(Map<PersonId, List<DepartmentMembership>> membershipsByPersonId) {
+        return membershipsByPersonId.values()
+            .stream()
+            .flatMap(Collection::stream)
+            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .collect(toSet());
     }
 
     @Override
     public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
-        return getManagedMembersOfPerson(person, personPageableSearchQuery, not(Person::isInactive));
+        final PersonId personId = person.getIdAsPersonId();
+        return managedMembersOfPerson(personId, personPageableSearchQuery, not(Person::isInactive));
     }
 
     @Override
     public List<Person> getManagedActiveMembersOfPerson(Person person) {
-        return getManagedMembersOfPerson(person).stream().filter(Person::isActive).toList();
+        final PersonId personId = person.getIdAsPersonId();
+        final List<DepartmentMembership> members = getManagedMemberMembershipsOfPerson(personId);
+        return membershipsToPersons(members).stream().filter(Person::isActive).toList();
     }
 
     @Override
     public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
-        return getManagedMembersOfPerson(person, personPageableSearchQuery, Person::isInactive);
+        final PersonId personId = person.getIdAsPersonId();
+        return managedMembersOfPerson(personId, personPageableSearchQuery, Person::isInactive);
     }
 
     @Override
@@ -98,28 +144,6 @@ class DepartmentServiceImpl implements DepartmentService {
         return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
     }
 
-    private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
-
-        final Pageable pageable = personPageableSearchQuery.getPageable();
-        final List<DepartmentEntity> departments = managedDepartmentEntitiesOfPerson(person);
-
-        final List<Person> managedMembers = departments.stream()
-            .map(DepartmentEntity::getMembers)
-            .flatMap(List::stream)
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .distinct()
-            .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
-            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
-            .toList();
-
-        final List<Person> content = managedMembers.stream()
-            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-            .limit(pageable.getPageSize())
-            .toList();
-
-        return new PageImpl<>(content, pageable, managedMembers.size());
-    }
-
     @Override
     public boolean departmentExists(Long departmentId) {
         return departmentRepository.existsById(departmentId);
@@ -127,36 +151,43 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Optional<Department> getDepartmentById(Long departmentId) {
-        return departmentRepository.findById(departmentId).map(this::mapToDepartment);
+        return departmentRepository.findById(departmentId)
+            .map(entity -> {
+                final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(entity.getId());
+                final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+                return mapToDepartment(entity, staff, persons);
+            });
     }
 
     @Override
     public Optional<Department> getDepartmentByName(String departmentName) {
-        return departmentRepository.findFirstByName(departmentName).map(this::mapToDepartment);
+        return departmentRepository.findFirstByName(departmentName)
+            .map(entity -> {
+                final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(entity.getId());
+                final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+                return mapToDepartment(entity, staff, persons);
+            });
     }
 
     @Override
+    @Transactional
     public Department create(Department department) {
 
-        final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);
+        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
         departmentEntity.setCreatedAt(LocalDate.now(clock));
         departmentEntity.setLastModification(LocalDate.now(clock));
 
-        final Instant now = Instant.now(clock);
+        final DepartmentEntity savedEntity = departmentRepository.save(departmentEntity);
 
-        final List<DepartmentMemberEmbeddable> departmentMembers = department.getMembers().stream()
-            .map(person -> {
-                final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
-                memberEmbeddable.setPerson(person);
-                memberEmbeddable.setAccessionDate(now);
-                return memberEmbeddable;
-            })
-            .collect(toList());
+        final DepartmentStaff staff = departmentMembershipService.createInitialMemberships(
+            savedEntity.getId(),
+            personIdsOfPersons(department.getMembers()),
+            personIdsOfPersons(department.getDepartmentHeads()),
+            personIdsOfPersons(department.getSecondStageAuthorities())
+        );
 
-        departmentEntity.setMembers(departmentMembers);
-
-        final DepartmentEntity createdDepartmentEntity = departmentRepository.save(departmentEntity);
-        final Department createdDepartment = mapToDepartment(createdDepartmentEntity);
+        final List<Person> persons = personService.getAllPersonsByIds(staff.allPersonIds());
+        final Department createdDepartment = mapToDepartment(savedEntity, staff, persons);
 
         LOG.info("Created department: {}", createdDepartment);
 
@@ -164,84 +195,37 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public Department update(Department department) {
 
         final DepartmentEntity currentDepartmentEntity = departmentRepository.findById(department.getId())
             .orElseThrow(() -> new IllegalStateException("cannot update department since it does not exists."));
 
-        final List<DepartmentMemberEmbeddable> departmentMembers =
-            updatedDepartmentMembers(department.getMembers(), currentDepartmentEntity.getMembers());
+        final DepartmentStaff currentStaff = departmentMembershipService.getDepartmentStaff(currentDepartmentEntity.getId());
 
-        final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);
+        final Set<PersonId> oldAndNewPersonIds = Stream.concat(personIdsOfDepartment(department).stream(), currentStaff.allPersonIds().stream()).collect(toSet());
+        final List<Person> persons = personService.getAllPersonsByIds(oldAndNewPersonIds);
+
+        final DepartmentStaff updatedStaff = departmentMembershipService.updateDepartmentMemberships(
+            department.getId(),
+            currentStaff,
+            department.getMembers().stream().map(Person::getIdAsPersonId).toList(),
+            department.getDepartmentHeads().stream().map(Person::getIdAsPersonId).toList(),
+            department.getSecondStageAuthorities().stream().map(Person::getIdAsPersonId).toList()
+        );
+
+        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
         departmentEntity.setCreatedAt(currentDepartmentEntity.getCreatedAt());
         departmentEntity.setLastModification(LocalDate.now(clock));
-        departmentEntity.setMembers(departmentMembers);
 
-        final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
-        final Department updatedDepartment = mapToDepartment(updatedDepartmentEntity);
-        sendMemberLeftDepartmentEvent(department, currentDepartmentEntity);
+        final DepartmentEntity updatedEntity = departmentRepository.save(departmentEntity);
+        final Department updatedDepartment = mapToDepartment(updatedEntity, updatedStaff, persons);
+
+        sendMemberLeftDepartmentEvent(updatedStaff, currentStaff);
 
         LOG.info("Updated department: {}", updatedDepartment);
 
         return updatedDepartment;
-    }
-
-    /**
-     * Deletes all department head assignments of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    @EventListener
-    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
-        getAssignedDepartmentsOfMember(event.person())
-            .forEach(department -> {
-                department.setMembers(
-                    department.getMembers().stream()
-                        .filter(not(isEqual(event.person())))
-                        .collect(toList())
-                );
-
-                update(department);
-            });
-    }
-
-    /**
-     * Deletes all department head assignments of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    @EventListener
-    void deleteDepartmentHead(PersonDeletedEvent event) {
-        getManagedDepartmentsOfDepartmentHead(event.person())
-            .forEach(department -> {
-                department.setDepartmentHeads(
-                    department.getDepartmentHeads().stream()
-                        .filter(not(isEqual(event.person())))
-                        .collect(toList())
-                );
-
-                update(department);
-            });
-    }
-
-
-    /**
-     * Deletes all second stage authorities assignments of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    @EventListener
-    void deleteSecondStageAuthority(PersonDeletedEvent event) {
-        getManagedDepartmentsOfSecondStageAuthority(event.person())
-            .forEach(department -> {
-                department.setSecondStageAuthorities(
-                    department.getSecondStageAuthorities().stream()
-                        .filter(not(isEqual(event.person())))
-                        .collect(toList())
-                );
-
-                update(department);
-            });
     }
 
     @Override
@@ -256,34 +240,26 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAllDepartments() {
-        return departmentRepository.findAll().stream()
-            .map(this::mapToDepartment)
-            .sorted(departmentComparator())
-            .toList();
+        final List<DepartmentEntity> entities = departmentRepository.findAll();
+        return mapToDepartments(entities, departmentComparator());
     }
 
     @Override
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
-        return departmentRepository.findByMembersPerson(member).stream()
-            .map(this::mapToDepartment)
-            .sorted(departmentComparator())
-            .toList();
+        final PersonId personId = member.getIdAsPersonId();
+        return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.MEMBER);
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
-        return departmentRepository.findByDepartmentHeads(departmentHead).stream()
-            .map(this::mapToDepartment)
-            .sorted(departmentComparator())
-            .toList();
+        final PersonId personId = departmentHead.getIdAsPersonId();
+        return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.DEPARTMENT_HEAD);
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
-        return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
-            .map(this::mapToDepartment)
-            .sorted(departmentComparator())
-            .toList();
+        final PersonId personId = secondStageAuthority.getIdAsPersonId();
+        return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY);
     }
 
     @Override
@@ -320,10 +296,12 @@ class DepartmentServiceImpl implements DepartmentService {
                 .filter(application -> !application.getPerson().equals(person))
                 .toList();
         } else {
-            final List<Person> colleagues = getMembersOfAssignedDepartments(person).stream()
-                .filter(not(isEqual(person)))
-                .toList();
-            colleaguesApplications = applicationService.getForStatesAndPerson(activeStatuses(), colleagues, startDate, endDate);
+            final List<Person> colleagues = getMembersOfAssignedDepartments(person).stream().filter(not(isEqual(person))).toList();
+            if (colleagues.isEmpty()) {
+                colleaguesApplications = List.of();
+            } else {
+                colleaguesApplications = applicationService.getForStatesAndPerson(activeStatuses(), colleagues, startDate, endDate);
+            }
         }
 
         return colleaguesApplications.stream()
@@ -333,7 +311,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getMembersForDepartmentHead(Person departmentHead) {
-        return getManagedDepartmentsOfDepartmentHead(departmentHead).stream()
+        final PersonId personId = departmentHead.getIdAsPersonId();
+        return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.DEPARTMENT_HEAD).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
@@ -342,7 +321,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
-        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).stream()
+        final PersonId personId = secondStageAuthority.getIdAsPersonId();
+        return getDepartmentsOfPersonWithMembershipKind(personId, DepartmentMembershipKind.SECOND_STAGE_AUTHORITY).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
@@ -351,11 +331,27 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person) {
-        if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
-            return getManagedMembersOfDepartmentHead(departmentHead).contains(person);
+        if (!departmentHead.hasRole(DEPARTMENT_HEAD)) {
+            return false;
         }
 
-        return false;
+        final PersonId departmentHeadId = departmentHead.getIdAsPersonId();
+        final PersonId personId = person.getIdAsPersonId();
+
+        final Map<PersonId, List<DepartmentMembership>> memberships =
+            departmentMembershipService.getActiveMembershipsOfPersons(List.of(departmentHeadId, personId));
+
+        final Set<Long> departmentHeadDepartmentIds = memberships.get(departmentHeadId).stream()
+            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.DEPARTMENT_HEAD))
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
+
+        final Set<Long> personMemberDepartmentIds = memberships.get(personId).stream()
+            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
+
+        return departmentHeadDepartmentIds.stream().anyMatch(personMemberDepartmentIds::contains);
     }
 
     @Override
@@ -389,11 +385,21 @@ class DepartmentServiceImpl implements DepartmentService {
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
         final boolean isOwnData = person.getId().equals(signedInUser.getId());
-        final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
-        final boolean isSecondStageAuthorityAllowedToAccessPersonalData = isSecondStageAuthorityAllowedToAccessPersonData(signedInUser, person);
-        final boolean isDepartmentHeadAllowedToAccessPersonalData = isDepartmentHeadAllowedToAccessPersonData(signedInUser, person);
+        if (isOwnData) {
+            return true;
+        }
 
-        return isOwnData || isBossOrOffice || isDepartmentHeadAllowedToAccessPersonalData || isSecondStageAuthorityAllowedToAccessPersonalData;
+        final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
+        if (isBossOrOffice) {
+            return true;
+        }
+
+        final boolean isDepartmentHeadAllowed = isDepartmentHeadAllowedToAccessPersonData(signedInUser, person);
+        if (isDepartmentHeadAllowed) {
+            return true;
+        }
+
+        return isSecondStageAuthorityAllowedToAccessPersonData(signedInUser, person);
     }
 
     @Override
@@ -412,207 +418,241 @@ class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons) {
 
-        final Map<List<Person>, List<Department>> personDepartmentList = departmentRepository.findDistinctByMembersPersonIn(persons).stream()
-            .map(this::mapToDepartment)
-            .collect(groupingBy(Department::getMembers));
+        final List<PersonId> personIds = personIdsOfPersons(persons);
+        final Map<PersonId, List<DepartmentMembership>> membershipsByPersonId = departmentMembershipService.getActiveMembershipsOfPersons(personIds);
 
-        final Map<PersonId, List<String>> departmentsByPerson = new HashMap<>();
-        personDepartmentList.forEach((personList, departmentList) -> {
+        final Set<Long> departmentIds = membershipsByPersonId.values().stream()
+            .flatMap(Collection::stream)
+            .filter(DepartmentMembership::isMemberMembership)
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
 
-            final List<String> departmentNames = departmentList.stream()
-                .map(Department::getName)
-                .toList();
+        final List<DepartmentEntity> departmentEntities = departmentRepository.findAllById(departmentIds);
+        final Map<Long, String> departmentNameById = departmentEntities.stream().collect(toMap(DepartmentEntity::getId, DepartmentEntity::getName));
 
-            personList.forEach(person -> {
-                if (persons.contains(person)) {
-                    final PersonId personId = new PersonId(person.getId());
-                    final List<String> bucket = departmentsByPerson.getOrDefault(personId, List.of());
-                    departmentsByPerson.put(personId, merge(departmentNames, bucket));
+        final Map<Long, DepartmentStaff> staffByDepartmentId = departmentMembershipService.getDepartmentStaff(departmentIds);
+
+        final Map<PersonId, Set<String>> departmentsByPerson = new HashMap<>();
+
+        staffByDepartmentId.forEach((departmentId, staff) -> {
+            for (DepartmentMembership member : staff.members()) {
+                final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), key -> new HashSet<>());
+                if (departmentNameById.containsKey(departmentId)) {
+                    departmentNames.add(departmentNameById.get(departmentId));
                 }
-            });
+            }
         });
 
-        return departmentsByPerson;
+        return departmentsByPerson.entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().stream().sorted().toList()));
     }
 
     @Override
     public boolean hasDepartmentMatch(Person person, Person otherPerson) {
 
-        final Set<DepartmentEntity> personDepartments = new HashSet<>(departmentRepository.findByMembersPerson(person));
-        if (person.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            personDepartments.addAll(
-                departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)
-            );
-        }
+        final PersonId personId = person.getIdAsPersonId();
+        final PersonId otherPersonId = otherPerson.getIdAsPersonId();
 
-        final Set<DepartmentEntity> otherPersonDepartments = new HashSet<>(departmentRepository.findByMembersPerson(otherPerson));
-        if (otherPerson.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
-            otherPersonDepartments.addAll(
-                departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(otherPerson, otherPerson)
-            );
-        }
+        final Map<PersonId, List<DepartmentMembership>> membershipsByPersonId =
+            departmentMembershipService.getActiveMembershipsOfPersons(List.of(personId, otherPersonId));
 
-        return personDepartments.stream().anyMatch(otherPersonDepartments::contains);
+        final List<Long> personDepartmentIds = membershipsByPersonId.get(personId).stream().map(DepartmentMembership::departmentId).toList();
+        final List<Long> otherPersonDepartmentIds = membershipsByPersonId.get(otherPersonId).stream().map(DepartmentMembership::departmentId).toList();
+
+        return personDepartmentIds.stream().anyMatch(otherPersonDepartmentIds::contains);
     }
 
-    private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
-        return Stream.concat(bucket.stream(), departmentNames.stream()).toList();
+    private List<DepartmentMembership> getManagedMemberMembershipsOfPerson(PersonId personId) {
+
+        final List<DepartmentMembership> personsMemberships = departmentMembershipService.getActiveMemberships(personId);
+
+        final Set<Long> managedDepartmentIds = personsMemberships.stream()
+            .filter(DepartmentMembership::isManagementMembership)
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
+
+        return departmentMembershipService.getDepartmentStaff(managedDepartmentIds).values().stream()
+            .map(DepartmentStaff::members)
+            .flatMap(Collection::stream)
+            .toList();
+    }
+
+    private static List<PersonId> personIdsOfPersons(List<Person> persons) {
+        return persons.stream().map(Person::getId).map(PersonId::new).toList();
+    }
+
+    private static List<PersonId> personIdsOfDepartment(Department department) {
+        final List<Long> memberIds = department.getMembers().stream().map(Person::getId).toList();
+        final List<Long> departmentHeadIds = department.getDepartmentHeads().stream().map(Person::getId).toList();
+        final List<Long> secondStageAuthorityIds = department.getSecondStageAuthorities().stream().map(Person::getId).toList();
+        return Stream.concat(Stream.concat(memberIds.stream(), departmentHeadIds.stream()), secondStageAuthorityIds.stream()).map(PersonId::new).distinct().toList();
     }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);
     }
 
-    private Department mapToDepartment(DepartmentEntity departmentEntity) {
+    private static Department mapToDepartment(DepartmentEntity departmentEntity, DepartmentStaff staff, List<Person> persons) {
+
+        final Map<Long, Person> personById = persons.stream().collect(toMap(Person::getId, identity()));
+
+        final List<Person> members = membershipsToPersons(staff.members(), personById);
+        final List<Person> departmentHeads = membershipsToPersons(staff.departmentHeads(), personById);
+        final List<Person> secondStageAuthorities = membershipsToPersons(staff.secondStageAuthorities(), personById);
+
         final Department department = new Department();
 
         department.setId(departmentEntity.getId());
         department.setName(departmentEntity.getName());
         department.setDescription(departmentEntity.getDescription());
-        department.setDepartmentHeads(departmentEntity.getDepartmentHeads());
-        department.setSecondStageAuthorities(departmentEntity.getSecondStageAuthorities());
+        department.setMembers(members);
+        department.setDepartmentHeads(departmentHeads);
+        department.setSecondStageAuthorities(secondStageAuthorities);
         department.setTwoStageApproval(departmentEntity.isTwoStageApproval());
         department.setCreatedAt(departmentEntity.getCreatedAt());
         department.setLastModification(departmentEntity.getLastModification());
 
-        final List<Person> members = departmentEntity.getMembers().stream()
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .toList();
-
-        department.setMembers(members);
-
         return department;
     }
 
-    private DepartmentEntity mapToDepartmentEntityWithoutMembers(Department department) {
+    private List<Department> mapToDepartments(List<DepartmentEntity> entities, Comparator<Department> comparator) {
+        if (entities.isEmpty()) {
+            return List.of();
+        }
+
+        final Set<Long> departmentIds = entities.stream().map(DepartmentEntity::getId).collect(toSet());
+        final Map<Long, DepartmentStaff> staffByDepartmentId = departmentMembershipService.getDepartmentStaff(departmentIds);
+
+        final Set<PersonId> personIds = staffByDepartmentId.values().stream().map(DepartmentStaff::allPersonIds).flatMap(Collection::stream).collect(toSet());
+        final List<Person> persons = personService.getAllPersonsByIds(personIds);
+
+        return entities.stream()
+            .map(entity -> mapToDepartment(entity, staffByDepartmentId.get(entity.getId()), persons))
+            .sorted(comparator)
+            .toList();
+    }
+
+    private List<Department> getDepartmentsOfPersonWithMembershipKind(PersonId personId, DepartmentMembershipKind membershipKind) {
+
+        final List<DepartmentMembership> memberships = departmentMembershipService.getActiveMemberships(personId);
+
+        final Set<Long> departmentIds = memberships.stream()
+            .filter(m -> m.membershipKind().equals(membershipKind))
+            .map(DepartmentMembership::departmentId)
+            .collect(toSet());
+
+        if (departmentIds.isEmpty()) {
+            return List.of();
+        }
+
+        final List<DepartmentEntity> entities = departmentRepository.findAllById(departmentIds);
+        return mapToDepartments(entities, departmentComparator());
+    }
+
+    private List<Person> membershipsToPersons(Collection<DepartmentMembership> memberships) {
+
+        final Set<PersonId> personIds = memberships.stream()
+            .map(DepartmentMembership::personId)
+            .collect(toSet());
+
+        return personService.getAllPersonsByIds(personIds);
+    }
+
+    private static List<Person> membershipsToPersons(Collection<DepartmentMembership> memberships, Map<Long, Person> personById) {
+
+        final List<Person> persons = new ArrayList<>();
+
+        for (DepartmentMembership membership : memberships) {
+            final PersonId personId = membership.personId();
+            final Person person = personById.get(personId.value());
+            if (person == null) {
+                LOG.warn("Department id={} membership with personId={} but no active person found. Skipping this membership.", membership.departmentId(), personId);
+            } else {
+                persons.add(person);
+            }
+        }
+
+        return unmodifiableList(persons);
+    }
+
+    private static DepartmentEntity mapToDepartmentEntity(Department department) {
+
         final DepartmentEntity departmentEntity = new DepartmentEntity();
 
         departmentEntity.setId(department.getId());
         departmentEntity.setName(department.getName());
         departmentEntity.setDescription(department.getDescription());
-        departmentEntity.setDepartmentHeads(department.getDepartmentHeads());
-        departmentEntity.setSecondStageAuthorities(department.getSecondStageAuthorities());
         departmentEntity.setTwoStageApproval(department.isTwoStageApproval());
         departmentEntity.setLastModification(department.getLastModification());
 
         return departmentEntity;
     }
 
-    private List<DepartmentMemberEmbeddable> updatedDepartmentMembers(List<Person> nextPersons, List<DepartmentMemberEmbeddable> currentMembers) {
+    private Page<Person> managedMembersOfPerson(PersonId personId, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
 
-        final List<DepartmentMemberEmbeddable> list = new ArrayList<>();
-        final Instant now = Instant.now(clock);
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+        final List<DepartmentMembership> memberships = getManagedMemberMembershipsOfPerson(personId);
 
-        for (Person person : nextPersons) {
-            final DepartmentMemberEmbeddable currentMember = currentMembers.stream()
-                .filter(departmentMember -> departmentMember.getPerson().equals(person))
-                .findFirst()
-                .orElse(null);
-
-            if (currentMember == null) {
-                final DepartmentMemberEmbeddable departmentMember = new DepartmentMemberEmbeddable();
-                departmentMember.setPerson(person);
-                departmentMember.setAccessionDate(now);
-                list.add(departmentMember);
-            } else {
-                list.add(currentMember);
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * @param person person to get departments for
-     * @return all departments managed by the given person
-     */
-    private List<DepartmentEntity> managedDepartmentEntitiesOfPerson(Person person) {
-        final List<DepartmentEntity> departments;
-        if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            departments = departmentRepository.findAll();
-        } else if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
-        } else if (person.hasRole(DEPARTMENT_HEAD)) {
-            departments = departmentRepository.findByDepartmentHeads(person);
-        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findBySecondStageAuthorities(person);
-        } else {
-            departments = List.of();
-        }
-        return departments;
-    }
-
-    private List<Person> getManagedMembersOfPerson(Person person) {
-        return managedDepartmentEntitiesOfPerson(person).stream()
-            .map(DepartmentEntity::getMembers)
-            .flatMap(Collection::stream)
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .distinct()
+        final List<Person> managedMembers = membershipsToPersons(memberships)
+            .stream()
+            .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .toList();
+
+        final List<Person> content = managedMembers.stream()
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .toList();
+
+        return new PageImpl<>(content, pageable, managedMembers.size());
     }
 
     private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
-        final Pageable pageable = pageableSearchQuery.getPageable();
 
-        final DepartmentEntity departmentEntity = departmentRepository.findById(departmentId)
-            .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
-
-        if (!doesPersonManageDepartment(person, departmentEntity)) {
+        final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(departmentId);
+        if (!doesPersonManageDepartment(person, staff)) {
             return Page.empty();
         }
 
-        final List<DepartmentMemberEmbeddable> departmentMembers = departmentEntity.getMembers();
+        final Set<PersonId> memberPersonIds = staff.members().stream()
+            .filter(m -> m.membershipKind().equals(DepartmentMembershipKind.MEMBER))
+            .map(DepartmentMembership::personId)
+            .collect(toSet());
 
-        final List<Person> content = departmentMembers.stream()
-            .map(DepartmentMemberEmbeddable::getPerson)
+        final List<Person> members = personService.getAllPersonsByIds(memberPersonIds);
+
+        final Pageable pageable = pageableSearchQuery.getPageable();
+        final List<Person> content = members.stream()
             .filter(filter)
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
             .limit(pageable.getPageSize())
             .toList();
 
-        return new PageImpl<>(content, pageable, departmentMembers.size());
+        return new PageImpl<>(content, pageable, members.size());
     }
 
-    private static boolean doesPersonManageDepartment(Person person, DepartmentEntity departmentEntity) {
+    private static boolean doesPersonManageDepartment(Person person, DepartmentStaff staff) {
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
             return true;
         }
 
-        if (person.hasRole(DEPARTMENT_HEAD)) {
-            return departmentEntity.getDepartmentHeads().stream().anyMatch(person::equals);
-        }
+        final PersonId personId = person.getIdAsPersonId();
 
-        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            return departmentEntity.getSecondStageAuthorities().stream().anyMatch(person::equals);
-        }
+        final boolean isDepartmentHead = person.hasRole(DEPARTMENT_HEAD) && staff.hasDepartmentHead(personId);
+        final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.hasSecondStageAuthority(personId);
 
-        return false;
+        return isDepartmentHead || isSecondStage;
     }
 
-    private void sendMemberLeftDepartmentEvent(Department department, DepartmentEntity currentDepartmentEntity) {
-        currentDepartmentEntity.getMembers().stream()
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .filter(oldMember -> !department.getMembers().contains(oldMember))
-            .forEach(person -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, person.getId(), department.getId())));
-    }
+    private void sendMemberLeftDepartmentEvent(DepartmentStaff newStaff, DepartmentStaff previousStaff) {
+        final Long departmentId = newStaff.departmentId();
 
-    private List<Person> filterMembersByYear(Year year, List<DepartmentEntity> departmentEntities) {
-        return departmentEntities.stream()
-            .map(DepartmentEntity::getMembers)
-            .flatMap(List::stream)
-            .filter(departmentMember -> isMemberOfDepartmentInYear(departmentMember, year))
-            .map(DepartmentMemberEmbeddable::getPerson)
-            .distinct()
-            .toList();
-    }
+        previousStaff.members().stream()
+            .filter(not(newStaff.members()::contains))
+            .map(DepartmentMembership::personId)
+            .forEach(personId -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, personId.value(), departmentId)));
 
-    private boolean isMemberOfDepartmentInYear(DepartmentMemberEmbeddable departmentMemberEmbeddable, Year year) {
-        final LocalDate accessionDate = LocalDate.ofInstant(departmentMemberEmbeddable.getAccessionDate(), clock.getZone());
-        // We currently consider a member to be part of the department if they joined in the given year or earlier
-        // as we don't track when a member leaves a department and when a member joins a department again.
-        // This means that a member, which rejoined is only tracked for the latest membership.
-        return accessionDate.getYear() <= year.getValue();
     }
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {
@@ -643,7 +683,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return person -> person.getNiceName().toLowerCase().contains(query.toLowerCase());
     }
 
-    private Comparator<Department> departmentComparator() {
+    private static Comparator<Department> departmentComparator() {
         return comparing(department -> department.getName().toLowerCase());
     }
 }
