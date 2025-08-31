@@ -27,15 +27,6 @@ interface OvertimeRepository extends CrudRepository<OvertimeEntity, Long> {
         """)
     Optional<Double> calculateTotalHoursForPerson(@Param("person") Person person);
 
-    @Query("""
-        SELECT p as person, SUM(o.duration) as durationDouble
-        FROM overtime o
-        INNER JOIN Person p on p.id = o.person.id
-        WHERE o.person IN :persons
-        GROUP BY p.id
-        """)
-    List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") Collection<Person> persons);
-
     List<OvertimeEntity> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
 
     List<OvertimeEntity> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);
