@@ -210,7 +210,7 @@ class OvertimeServiceImplTest {
                 assertThat(actualComment.getId()).isNull();
                 assertThat(actualComment.getPerson()).isEqualTo(author);
                 assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
-                assertThat(actualComment.getText()).isEqualTo("");
+                assertThat(actualComment.getText()).isEmpty();
                 assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
             });
         }
@@ -412,7 +412,7 @@ class OvertimeServiceImplTest {
                 assertThat(actualComment.getId()).isNull();
                 assertThat(actualComment.getPerson()).isEqualTo(author);
                 assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
-                assertThat(actualComment.getText()).isEqualTo("");
+                assertThat(actualComment.getText()).isEmpty();
                 assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
             });
         }
