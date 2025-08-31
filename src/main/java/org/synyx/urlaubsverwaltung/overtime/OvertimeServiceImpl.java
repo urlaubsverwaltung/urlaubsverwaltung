@@ -86,9 +86,9 @@ class OvertimeServiceImpl implements OvertimeService {
 
         // save comment
         final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
-        final OvertimeComment overtimeComment = new OvertimeComment(author, savedOvertime, action, clock);
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, savedOvertime, action, clock);
         comment.ifPresent(overtimeComment::setText);
-        final OvertimeComment savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
+        final OvertimeCommentEntity savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
 
         if (author.equals(overtime.getPerson())) {
             overtimeMailService.sendOvertimeNotificationToApplicantFromApplicant(savedOvertime, savedOvertimeComment);
@@ -103,9 +103,9 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
+    public OvertimeCommentEntity saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
 
-        final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtime, action, clock);
         overtimeComment.setText(comment);
 
         return overtimeCommentRepository.save(overtimeComment);
@@ -117,7 +117,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime) {
+    public List<OvertimeCommentEntity> getCommentsForOvertime(OvertimeEntity overtime) {
         return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime);
     }
 
@@ -374,7 +374,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     void deleteCommentAuthor(Person author) {
-        final List<OvertimeComment> overtimeComments = overtimeCommentRepository.findByPerson(author);
+        final List<OvertimeCommentEntity> overtimeComments = overtimeCommentRepository.findByPerson(author);
         overtimeComments.forEach(overtimeComment -> overtimeComment.setPerson(null));
         overtimeCommentRepository.saveAll(overtimeComments);
     }

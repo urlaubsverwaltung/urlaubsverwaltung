@@ -23,7 +23,7 @@ public class OvertimeImportService {
     }
 
 
-    public void importOvertimeComment(OvertimeComment overtimeComment) {
+    public void importOvertimeComment(OvertimeCommentEntity overtimeComment) {
         overtimeCommentRepository.save(overtimeComment);
     }
 

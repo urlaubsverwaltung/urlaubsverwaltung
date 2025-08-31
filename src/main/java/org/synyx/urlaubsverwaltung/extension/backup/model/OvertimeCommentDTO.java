@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNullElse;
 public record OvertimeCommentDTO(Instant date, String text, OvertimeCommentActionDTO action,
                                  String externalIdOfCommentAuthor) {
 
-    public static OvertimeCommentDTO of(OvertimeComment overtimeComment) {
+    public static OvertimeCommentDTO of(OvertimeCommentEntity overtimeComment) {
 
         final String externalIdOfCommentAuthor = Optional.ofNullable(overtimeComment.getPerson())
             .map(Person::getUsername)
@@ -24,8 +24,8 @@ public record OvertimeCommentDTO(Instant date, String text, OvertimeCommentActio
         return new OvertimeCommentDTO(overtimeComment.getDate(), overtimeComment.getText(), OvertimeCommentActionDTO.valueOf(overtimeComment.getAction().name()), externalIdOfCommentAuthor);
     }
 
-    public OvertimeComment toOvertimeComment(OvertimeEntity overtime, Person commentAuthor) {
-        final OvertimeComment overtimeComment = new OvertimeComment(Clock.fixed(this.date(), ZoneId.systemDefault()));
+    public OvertimeCommentEntity toOvertimeComment(OvertimeEntity overtime, Person commentAuthor) {
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(Clock.fixed(this.date(), ZoneId.systemDefault()));
         overtimeComment.setPerson(commentAuthor);
         overtimeComment.setOvertime(overtime);
         overtimeComment.setAction(this.action.toOvertimeCommentAction());

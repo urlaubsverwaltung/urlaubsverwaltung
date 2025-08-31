@@ -39,12 +39,12 @@ class OvertimeCommentRepositoryIT extends SingleTenantTestContainersBase {
         final OvertimeEntity overtime = new OvertimeEntity(person, now, now, Duration.ofHours(4));
         final OvertimeEntity savedOvertime = overtimeService.save(overtime, Optional.empty(), person);
 
-        final OvertimeComment first = overtimeService.getCommentsForOvertime(savedOvertime).getFirst();
-        final OvertimeComment second = overtimeService.saveComment(savedOvertime, COMMENTED, "second", person);
-        final OvertimeComment third = overtimeService.saveComment(savedOvertime, COMMENTED, "third", person);
-        final OvertimeComment fourth = overtimeService.saveComment(savedOvertime, COMMENTED, "fourth", person);
+        final OvertimeCommentEntity first = overtimeService.getCommentsForOvertime(savedOvertime).getFirst();
+        final OvertimeCommentEntity second = overtimeService.saveComment(savedOvertime, COMMENTED, "second", person);
+        final OvertimeCommentEntity third = overtimeService.saveComment(savedOvertime, COMMENTED, "third", person);
+        final OvertimeCommentEntity fourth = overtimeService.saveComment(savedOvertime, COMMENTED, "fourth", person);
 
-        final List<OvertimeComment> overtimeComments = sut.findByOvertimeOrderByIdDesc(savedOvertime);
+        final List<OvertimeCommentEntity> overtimeComments = sut.findByOvertimeOrderByIdDesc(savedOvertime);
         assertThat(overtimeComments)
             .containsExactly(fourth, third, second, first);
     }

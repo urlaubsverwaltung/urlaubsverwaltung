@@ -319,8 +319,8 @@ class OvertimeViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
 
-        final OvertimeComment comment = new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC());
-        final List<OvertimeComment> overtimeComments = List.of(comment);
+        final OvertimeCommentEntity comment = new OvertimeCommentEntity(overtimePerson, overtime, CREATED, Clock.systemUTC());
+        final List<OvertimeCommentEntity> overtimeComments = List.of(comment);
         when(overtimeService.getCommentsForOvertime(overtime)).thenReturn(overtimeComments);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(ofHours(1));

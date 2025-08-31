@@ -79,7 +79,7 @@ class OvertimeServiceImplTest {
         sut.save(overtime, Optional.of("Foo Bar"), author);
 
         verify(overtimeRepository).save(overtime);
-        verify(overtimeCommentRepository).save(any(OvertimeComment.class));
+        verify(overtimeCommentRepository).save(any(OvertimeCommentEntity.class));
     }
 
     @Test
@@ -102,7 +102,7 @@ class OvertimeServiceImplTest {
         overtime.setPerson(author);
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        final OvertimeComment overtimeComment = new OvertimeComment();
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity();
         when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
         sut.save(overtime, Optional.of("Foo Bar"), author);
@@ -125,7 +125,7 @@ class OvertimeServiceImplTest {
         overtime.setPerson(person);
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        final OvertimeComment overtimeComment = new OvertimeComment();
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity();
         when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
         sut.save(overtime, Optional.of("Foo Bar"), author);
@@ -143,10 +143,10 @@ class OvertimeServiceImplTest {
 
         sut.save(overtime, Optional.empty(), author);
 
-        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
 
-        final OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeCommentEntity comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
     }
@@ -160,9 +160,9 @@ class OvertimeServiceImplTest {
 
         sut.save(overtime, Optional.empty(), author);
 
-        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeCommentEntity comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
     }
@@ -177,9 +177,9 @@ class OvertimeServiceImplTest {
 
         sut.save(overtime, Optional.empty(), author);
 
-        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeCommentEntity comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getOvertime()).isEqualTo(overtime);
@@ -196,9 +196,9 @@ class OvertimeServiceImplTest {
 
         sut.save(overtime, Optional.of("Foo"), author);
 
-        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeCommentEntity comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getOvertime()).isEqualTo(overtime);
@@ -828,10 +828,10 @@ class OvertimeServiceImplTest {
 
         sut.saveComment(overtime, OvertimeCommentAction.COMMENTED, "Foo Bar", person);
 
-        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
 
-        final OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeCommentEntity comment = commentCaptor.getValue();
         assertThat(comment.getText()).isEqualTo("Foo Bar");
         assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.COMMENTED);
         assertThat(comment.getPerson()).isEqualTo(person);

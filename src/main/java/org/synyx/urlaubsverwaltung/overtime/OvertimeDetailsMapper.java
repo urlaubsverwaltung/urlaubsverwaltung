@@ -11,7 +11,7 @@ class OvertimeDetailsMapper {
         // ok
     }
 
-    static OvertimeDetailsDto mapToDto(OvertimeEntity overtime, List<OvertimeComment> comments, Duration totalOvertime, Duration leftOvertime) {
+    static OvertimeDetailsDto mapToDto(OvertimeEntity overtime, List<OvertimeCommentEntity> comments, Duration totalOvertime, Duration leftOvertime) {
 
         final Person overtimePerson = overtime.getPerson();
         final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), overtimePerson.isInactive());
@@ -24,7 +24,7 @@ class OvertimeDetailsMapper {
         return new OvertimeDetailsDto(record, commentDtos, totalOvertime, leftOvertime);
     }
 
-    private static OvertimeCommentDto mapComment(OvertimeComment comment) {
+    private static OvertimeCommentDto mapComment(OvertimeCommentEntity comment) {
         final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(comment.getPerson().getId(), comment.getPerson().getNiceName(), comment.getPerson().getInitials(), comment.getPerson().getGravatarURL());
         return new OvertimeCommentDto(personDto, comment.getAction().toString(), comment.getDate(), comment.getText());
     }
