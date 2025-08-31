@@ -36,6 +36,6 @@ class OvertimeRecordDataProvider {
     }
 
     boolean personHasNoOvertimes(Person person) {
-        return overtimeService.getAllOvertimesByPersonId(person.getId()).isEmpty();
+        return overtimeService.getAllOvertimesByPersonId(person.getIdAsPersonId()).isEmpty();
     }
 }

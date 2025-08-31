@@ -31,7 +31,7 @@ class OvertimeDataCollectionService {
     }
 
     private List<OvertimeDTO> createOvertimeDTOS(PersonDTO person, Function<PersonId, Person> personById) {
-        return overtimeService.getAllOvertimesByPersonId(person.id()).stream()
+        return overtimeService.getAllOvertimesByPersonId(new PersonId(person.id())).stream()
             .map(overtime -> {
 
                 final List<OvertimeCommentDTO> overtimeCommentDTOs = overtimeService.getCommentsForOvertime(overtime.id()).stream()

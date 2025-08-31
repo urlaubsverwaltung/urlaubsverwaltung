@@ -266,15 +266,15 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<Overtime> getAllOvertimesByPersonId(Long personId) {
-        return overtimeRepository.findAllByPersonId(personId).stream()
+    public List<Overtime> getAllOvertimesByPersonId(PersonId personId) {
+        return overtimeRepository.findAllByPersonId(personId.value()).stream()
             .map(OvertimeServiceImpl::entityToOvertime)
             .toList();
     }
 
     @Override
-    public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId) {
-        return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date)
+    public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, PersonId personId) {
+        return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId.value(), date, date)
             .map(OvertimeServiceImpl::entityToOvertime);
     }
 
