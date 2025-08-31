@@ -24,8 +24,8 @@ import static java.util.Optional.ofNullable;
  *
  * @since 2.11.0
  */
-@Entity
-public class OvertimeComment extends AbstractTenantAwareEntity {
+@Entity(name = "overtime_comment")
+public class OvertimeCommentEntity extends AbstractTenantAwareEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
@@ -48,16 +48,16 @@ public class OvertimeComment extends AbstractTenantAwareEntity {
 
     private String text;
 
-    protected OvertimeComment() {
+    protected OvertimeCommentEntity() {
         // needed for hibernate
     }
 
-    public OvertimeComment(Clock clock) {
+    public OvertimeCommentEntity(Clock clock) {
         final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
-    public OvertimeComment(Person author, OvertimeEntity overtime, OvertimeCommentAction action, Clock clock) {
+    public OvertimeCommentEntity(Person author, OvertimeEntity overtime, OvertimeCommentAction action, Clock clock) {
         final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
         setPerson(author);
@@ -118,7 +118,7 @@ public class OvertimeComment extends AbstractTenantAwareEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final OvertimeComment that = (OvertimeComment) o;
+        final OvertimeCommentEntity that = (OvertimeCommentEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

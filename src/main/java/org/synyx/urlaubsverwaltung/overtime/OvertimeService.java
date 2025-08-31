@@ -44,7 +44,7 @@ public interface OvertimeService {
      * @param author   the author of the comment
      * @return the saved comment
      */
-    OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author);
+    OvertimeCommentEntity saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author);
 
     /**
      * Fetch the overtime record for a certain ID.
@@ -60,7 +60,7 @@ public interface OvertimeService {
      * @param overtime to get the comments for
      * @return comments to the given overtime record
      */
-    List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime);
+    List<OvertimeCommentEntity> getCommentsForOvertime(OvertimeEntity overtime);
 
     /**
      * Get the total duration of all overtime records of the given person and year.

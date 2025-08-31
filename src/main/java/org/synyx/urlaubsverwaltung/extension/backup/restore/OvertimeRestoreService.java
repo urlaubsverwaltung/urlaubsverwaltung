@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeCommentDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeDTO;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeImportService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -43,7 +43,7 @@ class OvertimeRestoreService {
             // it can happen that the comment autor was deleted in the past
             // and so there will no person be found for the given externalId
             final Person commentAutor = findOptionalPerson(commentDTO);
-            final OvertimeComment overtimeComment = commentDTO.toOvertimeComment(importedOvertime, commentAutor);
+            final OvertimeCommentEntity overtimeComment = commentDTO.toOvertimeComment(importedOvertime, commentAutor);
             overtimeImportService.importOvertimeComment(overtimeComment);
         });
     }

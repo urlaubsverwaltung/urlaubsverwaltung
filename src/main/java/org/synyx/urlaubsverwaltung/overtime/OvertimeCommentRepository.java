@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @since 2.11.0
  */
-interface OvertimeCommentRepository extends CrudRepository<OvertimeComment, Long> {
+interface OvertimeCommentRepository extends CrudRepository<OvertimeCommentEntity, Long> {
 
-    List<OvertimeComment> findByOvertimeOrderByIdDesc(OvertimeEntity overtime);
+    List<OvertimeCommentEntity> findByOvertimeOrderByIdDesc(OvertimeEntity overtime);
 
-    List<OvertimeComment> findByPerson(Person person);
+    List<OvertimeCommentEntity> findByPerson(Person person);
 
     @Modifying
     void deleteByOvertimePerson(Person person);
