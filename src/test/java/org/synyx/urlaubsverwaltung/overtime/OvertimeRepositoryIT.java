@@ -61,39 +61,6 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void ensureCalculateTotalHoursForPersons() {
-
-        final Person savedPerson = personService.create("batman", "Marlene", "Muster", "muster@example.org");
-        sut.save(new OvertimeEntity(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
-        sut.save(new OvertimeEntity(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(3)));
-        sut.save(new OvertimeEntity(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
-
-        final Person savedPerson2 = personService.create("joker", "Marlene", "Muster", "muster@example.org");
-        sut.save(new OvertimeEntity(savedPerson2, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(1)));
-        sut.save(new OvertimeEntity(savedPerson2, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(1)));
-
-        // should not be in result set
-        final Person savedPerson3 = personService.create("robin", "Marlene", "Muster", "muster@example.org");
-        sut.save(new OvertimeEntity(savedPerson3, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(42)));
-
-        final List<OvertimeDurationSum> actual = sut.calculateTotalHoursForPersons(List.of(savedPerson, savedPerson2));
-        assertThat(actual).hasSize(2);
-        assertThat(actual.get(0).getPerson()).isEqualTo(savedPerson);
-        assertThat(actual.get(0).getDurationDouble()).isEqualTo(6);
-        assertThat(actual.get(1).getPerson()).isEqualTo(savedPerson2);
-        assertThat(actual.get(1).getDurationDouble()).isEqualTo(2);
-    }
-
-    @Test
-    void ensureCalculateTotalHoursForPersonsDoesNotIncludePersonsWithoutOvertimeReduction() {
-
-        final Person person = personService.create("joker", "Marlene", "Muster", "muster@example.org");
-
-        final List<OvertimeDurationSum> actual = sut.calculateTotalHoursForPersons(List.of(person));
-        assertThat(actual).isEmpty();
-    }
-
-    @Test
     void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
         final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
