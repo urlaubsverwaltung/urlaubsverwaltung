@@ -163,7 +163,7 @@ public interface OvertimeService {
      * @param personId id of the given person
      * @return all overtime hours of the given person
      */
-    List<Overtime> getAllOvertimesByPersonId(Long personId);
+    List<Overtime> getAllOvertimesByPersonId(PersonId personId);
 
     /**
      * Get external overtime record if exists, otherwise return optional empty
@@ -172,5 +172,5 @@ public interface OvertimeService {
      * @param personId of person overtime was recorded
      * @return overtime record if exists, otherwise return optional empty
      */
-    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId);
+    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, PersonId personId);
 }

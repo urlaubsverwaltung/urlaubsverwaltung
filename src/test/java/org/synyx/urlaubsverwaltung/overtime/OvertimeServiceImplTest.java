@@ -1243,7 +1243,7 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date))
             .thenReturn(Optional.of(overtime));
 
-        sut.getExternalOvertimeByDate(date, person.getId());
+        sut.getExternalOvertimeByDate(date, person.getIdAsPersonId());
 
         verify(overtimeRepository).findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date);
     }
