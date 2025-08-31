@@ -4,6 +4,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.function.Function;
 
@@ -14,16 +16,16 @@ class OvertimeDetailsMapper {
     }
 
     static OvertimeDetailsDto mapToDto(
-        OvertimeEntity overtime,
+        Overtime overtime,
         List<OvertimeComment> comments,
         Duration totalOvertime,
         Duration leftOvertime,
         Function<PersonId, Person> personById
     ) {
 
-        final Person overtimePerson = overtime.getPerson();
+        final Person overtimePerson = personById.apply(overtime.personId());
         final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), overtimePerson.isInactive());
-        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtime.getId(), person, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), overtime.getLastModificationDate());
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtime.id().value(), person, overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")));
 
         final List<OvertimeCommentDto> commentDtos = comments.stream()
             .map(comment -> mapComment(comment, personById))

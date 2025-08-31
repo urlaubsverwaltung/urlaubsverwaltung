@@ -8,25 +8,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.DurationConverter;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
-import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
-import static java.math.RoundingMode.HALF_EVEN;
-import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toMap;
-import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * Represents the overtime of a person for a certain period of time.
@@ -115,53 +105,6 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         return duration;
     }
 
-    public Duration getDurationForDateRange(DateRange dateRange) {
-        final DateRange overtimeDateRange = new DateRange(startDate, endDate);
-        final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
-
-        final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-        final BigDecimal secondsProRata = toFormattedDecimal(duration)
-                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-                .multiply(toFormattedDecimal(durationOfOverlap))
-                .setScale(0, HALF_EVEN);
-
-        return DecimalConverter.toDuration(secondsProRata);
-    }
-
-    private List<DateRange> splitByYear() {
-        List<DateRange> dateRangesByYear = new ArrayList<>();
-
-        LocalDate currentStartDate = startDate;
-        LocalDate currentEndDate = startDate.withDayOfYear(1).plusYears(1).minusDays(1);
-
-        while (currentEndDate.isBefore(endDate) || currentEndDate.isEqual(endDate)) {
-            dateRangesByYear.add(new DateRange(currentStartDate, currentEndDate));
-
-            currentStartDate = currentEndDate.plusDays(1);
-            currentEndDate = currentStartDate.withDayOfYear(1).plusYears(1).minusDays(1);
-        }
-
-        // Add the remaining date range if endDate is not on a year boundary
-        if (!currentStartDate.isAfter(endDate)) {
-            dateRangesByYear.add(new DateRange(currentStartDate, endDate));
-        }
-
-        return dateRangesByYear;
-    }
-
-
-    public Map<Integer, Duration> getDurationByYear() {
-        return this.splitByYear().stream()
-                .collect(toMap(dateRangeForYear -> dateRangeForYear.startDate().getYear(), this::getDurationForDateRange));
-    }
-
-    public Duration getTotalDurationBefore(int year) {
-        return this.getDurationByYear().entrySet().stream()
-                .filter(entry -> entry.getKey() < year)
-                .map(Map.Entry::getValue)
-                .reduce(ZERO, Duration::plus);
-    }
-
     public void setPerson(Person person) {
         this.person = person;
     }
@@ -184,6 +127,10 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
 
     public void setExternal(boolean external) {
         this.external = external;
+    }
+
+    public void setLastModificationDate(LocalDate lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
     }
 
     public LocalDate getLastModificationDate() {

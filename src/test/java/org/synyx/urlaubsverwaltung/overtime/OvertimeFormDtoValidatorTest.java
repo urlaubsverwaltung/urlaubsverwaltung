@@ -8,12 +8,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -21,12 +24,10 @@ import java.util.function.Consumer;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeFormDtoValidatorTest {
@@ -67,7 +68,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         sut.validate(overtimeFormDto, errors);
 
         verifyNoInteractions(errors);
@@ -82,7 +83,7 @@ class OvertimeFormDtoValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setStartDate(null);
 
         sut.validate(overtimeFormDto, errors);
@@ -99,7 +100,7 @@ class OvertimeFormDtoValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setEndDate(null);
 
         sut.validate(overtimeFormDto, errors);
@@ -118,7 +119,7 @@ class OvertimeFormDtoValidatorTest {
 
         LocalDate now = LocalDate.now(UTC);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setStartDate(now);
         overtimeFormDto.setEndDate(now);
 
@@ -136,7 +137,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setStartDate(overtimeFormDto.getEndDate().plusDays(3));
 
         sut.validate(overtimeFormDto, errors);
@@ -153,7 +154,7 @@ class OvertimeFormDtoValidatorTest {
         when(errors.hasFieldErrors("startDate")).thenReturn(true);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setStartDate(null);
 
         sut.validate(overtimeFormDto, errors);
@@ -171,7 +172,7 @@ class OvertimeFormDtoValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
         when(errors.hasFieldErrors("endDate")).thenReturn(true);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setEndDate(null);
 
         sut.validate(overtimeFormDto, errors);
@@ -188,7 +189,7 @@ class OvertimeFormDtoValidatorTest {
         settings.getOvertimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(null);
         overtimeFormDto.setMinutes(null);
 
@@ -207,7 +208,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(BigDecimal.ONE.negate());
         overtimeFormDto.setMinutes(0);
 
@@ -225,7 +226,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(BigDecimal.ZERO);
         overtimeFormDto.setMinutes(0);
 
@@ -242,7 +243,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(BigDecimal.ZERO);
         overtimeFormDto.setMinutes(30);
 
@@ -261,7 +262,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any())).thenReturn(Duration.ofHours(42));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(BigDecimal.valueOf(hour));
         overtimeFormDto.setMinutes(minutes);
         overtimeFormDto.setReduce(isReduce);
@@ -280,7 +281,7 @@ class OvertimeFormDtoValidatorTest {
         settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(BigDecimal.valueOf(hour));
         overtimeFormDto.setMinutes(minutes);
         overtimeFormDto.setReduce(isReduce);
@@ -298,7 +299,7 @@ class OvertimeFormDtoValidatorTest {
         settings.getOvertimeSettings().setOvertimeActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
 
         sut.validate(overtimeFormDto, errors);
         verify(errors).reject("overtime.record.error.deactivated");
@@ -311,7 +312,7 @@ class OvertimeFormDtoValidatorTest {
         settings.getOvertimeSettings().setMaximumOvertime(0);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         // just not important how many number of hours, can not record overtime!
         overtimeFormDto.setHours(BigDecimal.ZERO);
         overtimeFormDto.setMinutes(0);
@@ -333,7 +334,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(8));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(new BigDecimal(8));
         overtimeFormDto.setMinutes(0);
 
@@ -353,7 +354,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofDays(8));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(new BigDecimal(8));
         overtimeFormDto.setMinutes(30);
 
@@ -373,7 +374,7 @@ class OvertimeFormDtoValidatorTest {
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(-9));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setReduce(true);
         overtimeFormDto.setHours(BigDecimal.ONE);
         overtimeFormDto.setMinutes(30);
@@ -387,28 +388,32 @@ class OvertimeFormDtoValidatorTest {
     // Validate changes in existing overtime record --------------------------------------------------------------------
     @Test
     void foo() {
+        final Person person = new Person();
+        person.setId(1L);
+
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeActive(true);
         settings.getOvertimeSettings().setMaximumOvertime(100);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofMinutes(5970));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(5970));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final LocalDate startDate = LocalDate.now(UTC);
+        final LocalDate endDate = startDate.plusDays(7);
+
+        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
+        overtimeFormDto.setId(42L);
+        overtimeFormDto.setPerson(person);
+        overtimeFormDto.setStartDate(startDate);
+        overtimeFormDto.setEndDate(endDate);
         overtimeFormDto.setHours(new BigDecimal(2));
         overtimeFormDto.setMinutes(0);
-        overtimeFormDto.setId(42L);
 
-        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setDuration(Duration.ofHours(3));
-
-        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
+        final Overtime originalOvertime = new Overtime(new OvertimeId(42L), person.getIdAsPersonId(), new DateRange(startDate, endDate), Duration.ofHours(3), OvertimeType.UV_INTERNAL, Instant.now());
+        when(overtimeService.getOvertimeById(new OvertimeId(42L))).thenReturn(Optional.of(originalOvertime));
 
         sut.validate(overtimeFormDto, errors);
         verifyNoInteractions(errors);
-        verify(overtimeService).getOvertimeById(overtimeFormDto.getId());
-        verify(settingsService).getSettings();
-        verify(overtimeService).getLeftOvertimeForPerson(overtimeFormDto.getPerson());
     }
 
     @Test
@@ -421,19 +426,17 @@ class OvertimeFormDtoValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(Duration.ofMinutes(210));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setHours(new BigDecimal(3));
         overtimeFormDto.setMinutes(0);
         overtimeFormDto.setId(42L);
 
-        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setDuration(Duration.ofMinutes(150));
-
-        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(any(OvertimeId.class)))
+            .thenReturn(Optional.of(anyOvertime(new OvertimeId(1L), Duration.ofMinutes(150))));
 
         sut.validate(overtimeFormDto, errors);
         verifyNoInteractions(errors);
-        verify(overtimeService).getOvertimeById(overtimeFormDto.getId());
+        verify(overtimeService).getOvertimeById(new OvertimeId(overtimeFormDto.getId()));
         verify(settingsService).getSettings();
         verify(overtimeService).getLeftOvertimeForPerson(overtimeFormDto.getPerson());
     }
@@ -448,19 +451,17 @@ class OvertimeFormDtoValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
             .thenReturn(Duration.ofMinutes(210));
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setReduce(true);
         overtimeFormDto.setHours(new BigDecimal(3));
         overtimeFormDto.setId(42L);
 
-        OvertimeEntity originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setDuration(Duration.ofMinutes(-150));
-
-        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(any(OvertimeId.class)))
+            .thenReturn(Optional.of(anyOvertime(new OvertimeId(1L), Duration.ofMinutes(150).negated())));
 
         sut.validate(overtimeFormDto, errors);
         verifyNoInteractions(errors);
-        verify(overtimeService).getOvertimeById(overtimeFormDto.getId());
+        verify(overtimeService).getOvertimeById(new OvertimeId(overtimeFormDto.getId()));
         verify(settingsService).getSettings();
         verify(overtimeService).getLeftOvertimeForPerson(overtimeFormDto.getPerson());
     }
@@ -476,7 +477,7 @@ class OvertimeFormDtoValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setComment(
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore "
                 + "et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores");
@@ -494,7 +495,7 @@ class OvertimeFormDtoValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
-        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto(createOvertimeRecord());
+        final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         final Consumer<String> assertMayBeEmpty = comment -> {
             overtimeFormDto.setComment(comment);
 
@@ -505,5 +506,29 @@ class OvertimeFormDtoValidatorTest {
 
         assertMayBeEmpty.accept(null);
         assertMayBeEmpty.accept("");
+    }
+
+    private Overtime anyOvertime(OvertimeId id) {
+        return anyOvertime(id, Duration.ofHours(1));
+    }
+
+    private Overtime anyOvertime(OvertimeId id, Duration duration) {
+        return new Overtime(id, new PersonId(1L), new DateRange(LocalDate.now(), LocalDate.now()), duration, OvertimeType.UV_INTERNAL, Instant.now());
+    }
+
+    private static OvertimeFormDto validOvertimeFormDto() {
+        final OvertimeFormDto dto = new OvertimeFormDto();
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        dto.setPerson(person);
+        dto.setStartDate(LocalDate.now());
+        dto.setEndDate(LocalDate.now());
+        dto.setHours(BigDecimal.ONE);
+        dto.setMinutes(0);
+        dto.setReduce(false);
+
+        return dto;
     }
 }

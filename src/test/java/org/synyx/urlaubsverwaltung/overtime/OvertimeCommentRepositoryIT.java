@@ -39,14 +39,14 @@ class OvertimeCommentRepositoryIT extends SingleTenantTestContainersBase {
 
         final PersonId personId = person.getIdAsPersonId();
         final DateRange dateRange = new DateRange(now, now);
-        final OvertimeEntity savedOvertime = overtimeService.createOvertime(personId, dateRange, Duration.ofHours(4), personId, "");
+        final Overtime savedOvertime = overtimeService.createOvertime(personId, dateRange, Duration.ofHours(4), personId, "");
 
-        final OvertimeComment first = overtimeService.getCommentsForOvertime(savedOvertime).getFirst();
-        final OvertimeComment second = overtimeService.saveComment(savedOvertime, COMMENTED, "second", person);
-        final OvertimeComment third = overtimeService.saveComment(savedOvertime, COMMENTED, "third", person);
-        final OvertimeComment fourth = overtimeService.saveComment(savedOvertime, COMMENTED, "fourth", person);
+        final OvertimeComment first = overtimeService.getCommentsForOvertime(savedOvertime.id()).getFirst();
+        final OvertimeComment second = overtimeService.saveComment(savedOvertime.id(), COMMENTED, "second", person);
+        final OvertimeComment third = overtimeService.saveComment(savedOvertime.id(), COMMENTED, "third", person);
+        final OvertimeComment fourth = overtimeService.saveComment(savedOvertime.id(), COMMENTED, "fourth", person);
 
-        final List<OvertimeCommentEntity> overtimeComments = sut.findByOvertimeOrderByIdDesc(savedOvertime);
+        final List<OvertimeCommentEntity> overtimeComments = sut.findByOvertimeIdOrderByIdDesc(savedOvertime.id().value());
 
         assertThat(overtimeComments).satisfiesExactly(
             entity -> assertThat(entity.getId()).isEqualTo(fourth.id().value()),

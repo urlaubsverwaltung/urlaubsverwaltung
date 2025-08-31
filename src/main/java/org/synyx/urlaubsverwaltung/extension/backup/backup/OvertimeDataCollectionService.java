@@ -34,7 +34,7 @@ class OvertimeDataCollectionService {
         return overtimeService.getAllOvertimesByPersonId(person.id()).stream()
             .map(overtime -> {
 
-                final List<OvertimeCommentDTO> overtimeCommentDTOs = overtimeService.getCommentsForOvertime(overtime).stream()
+                final List<OvertimeCommentDTO> overtimeCommentDTOs = overtimeService.getCommentsForOvertime(overtime.id()).stream()
                     .map(comment -> OvertimeCommentDTO.of(comment, personById))
                     .toList();
 
