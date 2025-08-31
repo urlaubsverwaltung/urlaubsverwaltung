@@ -94,13 +94,13 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime")
-    public String showPersonalOvertime() {
+    public String showOvertimeOverview() {
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
 
     @GetMapping(value = "/overtime", params = "person")
-    public String showOvertime(
+    public String showOvertimeOverviewOfPerson(
             @RequestParam(value = "person") Long personId,
             @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
             throws UnknownPersonException {
@@ -146,7 +146,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime/{id}")
-    public String showOvertimeDetails(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
+    public String showOvertime(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person person = overtime.getPerson();
@@ -189,9 +189,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime/new")
-    public String recordOvertime(
-            @RequestParam(value = "person", required = false) Long personId, Model model)
-            throws UnknownPersonException {
+    public String showNewOvertime(@RequestParam(value = "person", required = false) Long personId, Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person;
@@ -215,7 +213,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @PostMapping("/overtime")
-    public String recordOvertime(
+    public String createNewOvertime(
             @Valid @ModelAttribute("overtime") OvertimeFormDto overtimeFormDto, Errors errors,
             Model model, RedirectAttributes redirectAttributes
     ) {
@@ -244,9 +242,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime/{id}/edit")
-    public String editOvertime(
-            @PathVariable("id") Long id, Model model
-    ) throws UnknownOvertimeException {
+    public String showOvertimeEdit(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final OvertimeEntity overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();
