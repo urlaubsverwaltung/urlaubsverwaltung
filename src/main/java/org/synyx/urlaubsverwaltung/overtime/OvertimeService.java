@@ -26,7 +26,7 @@ public interface OvertimeService {
      * @param year   to fetch the overtime records for
      * @return list of matching overtime records
      */
-    List<OvertimeEntity> getOvertimeRecordsForPersonAndYear(Person person, int year);
+    List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
 
     /**
      * Creates a new Overtime entry.
@@ -38,7 +38,7 @@ public interface OvertimeService {
      * @param comment optional creation comment, can be {@code null}
      * @return the created overtime
      */
-    OvertimeEntity createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
+    Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
 
     /**
      * Updates an existing Overtime entry.
@@ -50,34 +50,34 @@ public interface OvertimeService {
      * @param comment optional creation comment, can be {@code null}
      * @return the updated overtime
      */
-    OvertimeEntity updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment);
+    Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment);
 
     /**
      * Saves a comment for a certain overtime record.
      *
-     * @param overtime to save the comment for
-     * @param action   type of the comment
-     * @param comment  comment to save
-     * @param author   the author of the comment
+     * @param overtimeId to save the comment for
+     * @param action     type of the comment
+     * @param comment    comment to save
+     * @param author     the author of the comment
      * @return the saved comment
      */
-    OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author);
+    OvertimeComment saveComment(OvertimeId overtimeId, OvertimeCommentAction action, String comment, Person author);
 
     /**
      * Fetch the overtime record for a certain ID.
      *
-     * @param id to get the overtime record by
+     * @param overtimeId overtime identifier
      * @return overtime record with the given ID or an empty optional if no entry found for the given ID
      */
-    Optional<OvertimeEntity> getOvertimeById(Long id);
+    Optional<Overtime> getOvertimeById(OvertimeId overtimeId);
 
     /**
      * Fetch the comments for a certain overtime record.
      *
-     * @param overtime to get the comments for
+     * @param overtimeId overtime identifier
      * @return comments to the given overtime record
      */
-    List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime);
+    List<OvertimeComment> getCommentsForOvertime(OvertimeId overtimeId);
 
     /**
      * Get the total duration of all overtime records of the given person and year.
@@ -145,7 +145,7 @@ public interface OvertimeService {
      * @param overtime         overtime to update
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
-    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, OvertimeEntity overtime);
+    boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime);
 
     /**
      * Is signedInUser allowed to add an overtime comment records of given personOfOvertime.
@@ -162,7 +162,7 @@ public interface OvertimeService {
      * @param personId id of the given person
      * @return all overtime hours of the given person
      */
-    List<OvertimeEntity> getAllOvertimesByPersonId(Long personId);
+    List<Overtime> getAllOvertimesByPersonId(Long personId);
 
     /**
      * Get external overtime record if exists, otherwise return optional empty
@@ -171,5 +171,5 @@ public interface OvertimeService {
      * @param personId of person overtime was recorded
      * @return overtime record if exists, otherwise return optional empty
      */
-    Optional<OvertimeEntity> getExternalOvertimeByDate(LocalDate date, Long personId);
+    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId);
 }

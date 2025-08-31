@@ -29,8 +29,10 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -128,15 +130,24 @@ class OvertimeViewControllerTest {
     @Test
     void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
 
-        Person person = new Person();
-        person.setId(1L);
-        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10), false);
-        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(overtime));
-
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));
 
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            person.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(any(OvertimeId.class))).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(person.getId())).thenReturn(Optional.of(person));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, person, overtime)).thenReturn(true);
 
         doAnswer(invocation -> {
@@ -216,8 +227,15 @@ class OvertimeViewControllerTest {
 
         final LocalDate today = LocalDate.now(clock);
         final int year = today.getYear();
-        final OvertimeEntity overtime = new OvertimeEntity(person, today, today, ofHours(10));
-        overtime.setId(1L);
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            person.getIdAsPersonId(),
+            new DateRange(today, today),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(List.of(overtime));
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(ofHours(1));
@@ -243,8 +261,8 @@ class OvertimeViewControllerTest {
                 .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
                 .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)))
                 .andExpect(model().attribute("records", hasItems(
-                        new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true),
-                        new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(), applicationNonEditable.getEndDate(), ofHours(-8), null, ofHours(2), "WAITING", "ORANGE", "ABSENCE", false)
+                        new OvertimeListRecordDto(overtime.id().value(), overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true),
+                        new OvertimeListRecordDto(overtime.id().value(), applicationNonEditable.getStartDate(), applicationNonEditable.getEndDate(), ofHours(-8), null, ofHours(2), "WAITING", "ORANGE", "ABSENCE", false)
                 )));
     }
 
@@ -264,15 +282,22 @@ class OvertimeViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, person)).thenReturn(true);
 
-        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2012, 2, 5), LocalDate.of(2012, 2, 5), ofHours(10));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            person.getIdAsPersonId(),
+            new DateRange( LocalDate.of(2012, 2, 5), LocalDate.of(2012, 2, 5)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(List.of(overtime));
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(ofHours(1));
         when(overtimeService.getTotalOvertimeForPersonBeforeYear(person, year)).thenReturn(ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-                overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", true);
+        final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.id().value(), overtime.startDate(),
+                overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", true);
 
         perform(get("/web/overtime")
                 .param("person", "5")
@@ -316,36 +341,44 @@ class OvertimeViewControllerTest {
         overtimePerson.setLastName("lastname");
         overtimePerson.setEmail("person@example.org");
 
-        final long overtimeId = 2;
+        final OvertimeId overtimeId = new OvertimeId(2L);
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtimeEntity = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
-        overtimeEntity.setId(overtimeId);
 
-        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtimeEntity));
+        final Overtime overtime = new Overtime(
+           overtimeId,
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(personService.getAllPersonsByIds(Set.of(overtimePersonId))).thenReturn(List.of(overtimePerson));
 
         final Department department = new Department();
         department.setName("Buchhaltung");
         when(departmentService.getAssignedDepartmentsOfMember(overtimePerson)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtimeEntity)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
 
         final OvertimeComment comment = new OvertimeComment(
             new OvertimeCommentId(1L),
-            overtimeEntity.getId(),
+            overtimeId.value(),
             CREATED,
             Optional.of(overtimePerson.getIdAsPersonId()),
             Clock.systemUTC().instant(),
             "overtime comment text"
         );
-        when(overtimeService.getCommentsForOvertime(overtimeEntity)).thenReturn(List.of(comment));
+        when(overtimeService.getCommentsForOvertime(overtimeId)).thenReturn(List.of(comment));
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), false);
-        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtimeEntity.getStartDate(), overtimeEntity.getEndDate(), overtimeEntity.getDuration(), overtimeEntity.getDurationByYear(), overtimeEntity.getLastModificationDate());
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId.value(), personDto, overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")));
         final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(overtimePerson.getId(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL()), comment.action().toString(), comment.createdAt(), comment.text());
 
         perform(get("/web/overtime/2"))
@@ -366,14 +399,21 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(5L);
 
-        final long overtimeId = 2;
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), ofHours(10));
-        overtime.setId(overtimeId);
+        final OvertimeId overtimeId = new OvertimeId(2L);
+        final Overtime overtime = new Overtime(
+            overtimeId,
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(false);
 
@@ -507,14 +547,22 @@ class OvertimeViewControllerTest {
     void editOvertime() throws Exception {
 
         final Person overtimePerson = new Person();
+        overtimePerson.setId(1L);
 
-        final long overtimeId = 2;
+        final OvertimeId overtimeId = new OvertimeId(2L);
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10), false);
-        overtime.setId(overtimeId);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)));
 
@@ -536,12 +584,20 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(5L);
         overtimePerson.setPermissions(List.of(USER));
 
-        final long overtimeId = 2;
+        final OvertimeId overtimeId = new OvertimeId(2L);
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
-        overtime.setId(overtimeId);
-        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange( LocalDate.of(2016, 2, 5), overtimeEndDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
@@ -551,18 +607,26 @@ class OvertimeViewControllerTest {
     @Test
     void editOvertimeDifferentPersons() {
 
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
+
         final Person overtimePerson = new Person();
         overtimePerson.setId(5L);
 
-        final long overtimeId = 2;
+        final OvertimeId overtimeId = new OvertimeId(2L);
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
-        overtime.setId(overtimeId);
-        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
-        final Person signedInPerson = new Person();
-        signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
         assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
                 .hasCause(new AccessDeniedException("User '1' has not the correct permissions to edit overtime record of user '5'"));
@@ -571,17 +635,27 @@ class OvertimeViewControllerTest {
     @Test
     void editOvertimeDifferentPersonsButOffice() throws Exception {
 
-        final Person overtimePerson = new Person();
-
-        final long overtimeId = 2;
-        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10), false);
-        overtime.setId(overtimeId);
-        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
-
         final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(OFFICE));
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(2L);
+
+        final OvertimeId overtimeId = new OvertimeId(2L);
+        final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(1L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2016, 2, 5), overtimeEndDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, overtimePerson, overtime)).thenReturn(true);
 
         mockSettings();
@@ -622,8 +696,14 @@ class OvertimeViewControllerTest {
         final DateRange dateRange = new DateRange(startDate, endDate);
         final Duration duration = ofHours(8);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, startDate, endDate, duration);
-        overtime.setId(2L);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(startDate, endDate),
+            duration,
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.createOvertime(overtimePersonId, dateRange, duration, overtimePersonId, "To much work")).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
@@ -652,8 +732,14 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(overtimePersonId.value());
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
-        overtime.setId(2L);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
@@ -734,8 +820,14 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofHours(-10));
-        overtime.setId(2L);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18)),
+            ofHours(-10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class),any(Duration.class), any(PersonId.class), isNull()))
             .thenReturn(overtime);
@@ -760,8 +852,14 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofMinutes(-30));
-        overtime.setId(2L);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18)),
+            ofMinutes(-30),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), isNull(String.class)))
             .thenReturn(overtime);
@@ -809,8 +907,14 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final OvertimeEntity overtime = new OvertimeEntity(signedInPerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
         when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
@@ -839,13 +943,21 @@ class OvertimeViewControllerTest {
         final PersonId overtimePersonId = new PersonId(4L);
         final Person overtimePerson = new Person();
         overtimePerson.setId(overtimePersonId.value());
-        when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
         final LocalDate startDate = LocalDate.of(2022, 3, 1);
         final LocalDate endDate = LocalDate.of(2022, 4, 28);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, startDate, endDate, ofHours(10), false);
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(startDate, endDate),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
 
         when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
@@ -874,19 +986,26 @@ class OvertimeViewControllerTest {
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
 
-        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(8));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            person.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2)),
+            ofHours(8),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(person.getId())).thenReturn(Optional.of(person));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(person, person, overtime)).thenReturn(true);
 
         mockSettingsWithOvertimeReductionDisabled();
 
-        final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("overtimeReductionPossible", is(false)));
+        perform(get("/web/overtime/2/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("overtimeReductionPossible", is(false)));
     }
 
     @Test
@@ -895,11 +1014,19 @@ class OvertimeViewControllerTest {
         final Person person = new Person();
         person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
 
-        final OvertimeEntity overtime = new OvertimeEntity(person, LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2), ofHours(8), false);
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            person.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(8),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(person.getId())).thenReturn(Optional.of(person));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(person, person, overtime)).thenReturn(true);
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, VacationTypeColor.ORANGE)));
 
@@ -932,11 +1059,18 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4L);
         overtimePerson.setPermissions(List.of(USER));
 
-        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10), false);
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(false);
 
         assertThatThrownBy(() -> perform(
@@ -955,13 +1089,22 @@ class OvertimeViewControllerTest {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
         assertThatThrownBy(() -> perform(
                 post("/web/overtime/2")
@@ -980,13 +1123,22 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
         when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
@@ -1015,13 +1167,22 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
         final String otherPersonId = "5";
         assertThatThrownBy(() -> perform(
@@ -1049,14 +1210,22 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
         when(overtimeService.isUserIsAllowedToAddOvertimeComment(signedInPerson, overtimePerson)).thenReturn(false);
 
@@ -1071,14 +1240,22 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4L);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
-        overtime.setId(2L);
-        when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
+        final Overtime overtime = new Overtime(
+            new OvertimeId(2L),
+            overtimePerson.getIdAsPersonId(),
+            new DateRange(LocalDate.of(2021, 7, 2), LocalDate.of(2021, 7, 2)),
+            ofHours(10),
+            OvertimeType.UV_INTERNAL,
+            Instant.now(clock)
+        );
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
         when(overtimeService.isUserIsAllowedToAddOvertimeComment(signedInPerson, overtimePerson)).thenReturn(true);
 
@@ -1089,7 +1266,7 @@ class OvertimeViewControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/web/overtime/2"));
 
-        verify(overtimeService).saveComment(overtime, COMMENTED, "comment", signedInPerson);
+        verify(overtimeService).saveComment(new OvertimeId(2L), COMMENTED, "comment", signedInPerson);
     }
 
     private void mockSettings() {

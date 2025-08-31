@@ -25,9 +25,14 @@ final class OvertimeListMapper {
     }
 
     static OvertimeListDto mapToDto(
-            List<Application> overtimeAbsences, List<OvertimeEntity> overtimes,
-            Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime,
-            Person signedInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime, int selectedYear
+        List<Application> overtimeAbsences,
+        List<Overtime> overtimes,
+        Duration totalOvertime,
+        Duration totalOvertimeLastYear,
+        Duration leftOvertime,
+        Person signedInUser,
+        Predicate<Overtime> isUserIsAllowedToEditOvertime,
+        int selectedYear
     ) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
@@ -45,7 +50,10 @@ final class OvertimeListMapper {
     }
 
     private static List<OvertimeListRecordDto> orderedOvertimesAndAbsences(
-            List<Application> overtimeAbsences, List<OvertimeEntity> overtimes, Person signInUser, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime
+        List<Application> overtimeAbsences,
+        List<Overtime> overtimes,
+        Person signInUser,
+        Predicate<Overtime> isUserIsAllowedToEditOvertime
     ) {
         return concat(byOvertimes(overtimes, isUserIsAllowedToEditOvertime), byAbsences(overtimeAbsences, signInUser))
                 .sorted(comparing(OvertimeListRecordDto::getStartDate))
@@ -68,14 +76,14 @@ final class OvertimeListMapper {
                 );
     }
 
-    private static Stream<OvertimeListRecordDto> byOvertimes(List<OvertimeEntity> overtimes, Predicate<OvertimeEntity> isUserIsAllowedToEditOvertime) {
+    private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, Predicate<Overtime> isUserIsAllowedToEditOvertime) {
         return overtimes.stream()
                 .map(overtime ->
                         new OvertimeListRecordDto(
-                                overtime.getId(),
-                                overtime.getStartDate(),
-                                overtime.getEndDate(),
-                                overtime.getDuration(),
+                                overtime.id().value(),
+                                overtime.startDate(),
+                                overtime.endDate(),
+                                overtime.duration(),
                                 overtime.getDurationByYear(),
                                 Duration.ZERO,
                                 "",

@@ -13,7 +13,7 @@ import java.util.List;
  */
 interface OvertimeCommentRepository extends CrudRepository<OvertimeCommentEntity, Long> {
 
-    List<OvertimeCommentEntity> findByOvertimeOrderByIdDesc(OvertimeEntity overtime);
+    List<OvertimeCommentEntity> findByOvertimeIdOrderByIdDesc(Long overtimeId);
 
     List<OvertimeCommentEntity> findByPerson(Person person);
 

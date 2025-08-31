@@ -20,6 +20,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -77,15 +78,18 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<OvertimeEntity> getOvertimeRecordsForPersonAndYear(Person person, int year) {
+    public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear);
+        return overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear)
+            .stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .toList();
     }
 
     @Override
     @Transactional
-    public OvertimeEntity createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, @Nullable String comment) {
+    public Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, @Nullable String comment) {
 
         final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(overtimePersonId, authorId))
             .stream()
@@ -121,12 +125,12 @@ class OvertimeServiceImpl implements OvertimeService {
         LOG.info("Created new overtime. overtime id={}, person id={}, author id={}",
             saved.getId(), saved.getPerson().getId(), commentEntity.getPerson().getId());
 
-        return saved;
+        return entityToOvertime(saved);
     }
 
     @Override
     @Transactional
-    public OvertimeEntity updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) {
+    public Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) {
 
         final OvertimeEntity existingEntity = overtimeRepository.findById(overtimeId)
             // TODO explicit exception
@@ -162,13 +166,16 @@ class OvertimeServiceImpl implements OvertimeService {
         LOG.info("Updated overtime. overtime id={}, person id={}, author id={}",
             updated.getId(), updated.getPerson().getId(), commentEntity.getPerson().getId());
 
-        return updated;
+        return entityToOvertime(updated);
     }
 
     @Override
-    public OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
+    public OvertimeComment saveComment(OvertimeId overtimeId, OvertimeCommentAction action, String comment, Person author) {
 
-        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtime, action, clock);
+        final OvertimeEntity overtimeEntity = overtimeRepository.findById(overtimeId.value())
+            .orElseThrow(() -> new IllegalStateException("expected overtime to exist."));
+
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtimeEntity, action, clock);
         overtimeComment.setText(comment);
 
         final OvertimeCommentEntity saved = overtimeCommentRepository.save(overtimeComment);
@@ -177,13 +184,13 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Optional<OvertimeEntity> getOvertimeById(Long id) {
-        return overtimeRepository.findById(id);
+    public Optional<Overtime> getOvertimeById(OvertimeId id) {
+        return overtimeRepository.findById(id.value()).map(OvertimeServiceImpl::entityToOvertime);
     }
 
     @Override
-    public List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime) {
-        return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime).stream()
+    public List<OvertimeComment> getCommentsForOvertime(OvertimeId overtimeId) {
+        return overtimeCommentRepository.findByOvertimeIdOrderByIdDesc(overtimeId.value()).stream()
             .map(OvertimeServiceImpl::entityToOvertimeComment)
             .toList();
     }
@@ -191,7 +198,7 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
         return getOvertimeRecordsForPersonAndYear(person, year).stream()
-            .map(OvertimeEntity::getDurationByYear)
+            .map(Overtime::getDurationByYear)
             .map(map -> map.getOrDefault(year, ZERO))
             .reduce(ZERO, Duration::plus);
     }
@@ -201,7 +208,9 @@ class OvertimeServiceImpl implements OvertimeService {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
         final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonUntil(person, lastDayOfBeforeYear);
-        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear).stream()
+        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear)
+            .stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
             .map(overtime -> overtime.getTotalDurationBefore(year))
             .reduce(ZERO, Duration::plus);
 
@@ -260,13 +269,27 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<OvertimeEntity> getAllOvertimesByPersonId(Long personId) {
-        return overtimeRepository.findAllByPersonId(personId);
+    public List<Overtime> getAllOvertimesByPersonId(Long personId) {
+        return overtimeRepository.findAllByPersonId(personId).stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
+            .toList();
     }
 
     @Override
-    public Optional<OvertimeEntity> getExternalOvertimeByDate(LocalDate date, Long personId) {
-        return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date);
+    public Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId) {
+        return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date)
+            .map(OvertimeServiceImpl::entityToOvertime);
+    }
+
+    private static Overtime entityToOvertime(OvertimeEntity entity) {
+        return new Overtime(
+            new OvertimeId(entity.getId()),
+            entity.getPerson().getIdAsPersonId(),
+            new DateRange(entity.getStartDate(), entity.getEndDate()),
+            entity.getDuration(),
+            entity.isExternal() ? OvertimeType.EXTERNAL : OvertimeType.UV_INTERNAL,
+            entity.getLastModificationDate().atStartOfDay().toInstant(ZoneOffset.UTC)
+        );
     }
 
     private static OvertimeComment entityToOvertimeComment(OvertimeCommentEntity entity) {
@@ -299,21 +322,34 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     private Map<Person, Duration> getTotalOvertimeUntil(Collection<Person> persons, LocalDate until) {
+
+        final Map<PersonId, Person> personById = persons.stream()
+            .distinct()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
+
         return overtimeRepository.findByPersonIsInAndStartDateIsLessThanEqual(persons, until).stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
             .map(overtime -> {
-                final DateRange requestedDateRange = new DateRange(overtime.getStartDate(), until);
-                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
-                return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
+                final DateRange requestedDateRange = new DateRange(overtime.startDate(), until);
+                final Duration overtimeDurationForDateRange = overtime.durationForDateRange(requestedDateRange);
+                return Map.entry(personById.get(overtime.personId()), overtimeDurationForDateRange);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
     }
 
     private Map<Person, Duration> getTotalOvertimeUntil(List<Person> persons, LocalDate start, LocalDate end) {
+
+        final Map<PersonId, Person> personById = persons.stream()
+            .distinct()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
+
         final DateRange requestedDateRange = new DateRange(start, end);
+
         return overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end).stream()
+            .map(OvertimeServiceImpl::entityToOvertime)
             .map(overtime -> {
-                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
-                return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
+                final Duration overtimeDurationForDateRange = overtime.durationForDateRange(requestedDateRange);
+                return Map.entry(personById.get(overtime.personId()), overtimeDurationForDateRange);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
     }
@@ -400,10 +436,10 @@ class OvertimeServiceImpl implements OvertimeService {
      * @return @code{true} if allowed, otherwise @code{false}
      */
     @Override
-    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, OvertimeEntity overtime) {
+    public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
         return overtimeSettings.isOvertimeActive()
-            && !overtime.isExternal()
+            && !overtime.type().equals(OvertimeType.EXTERNAL)
             &&
             (
                 signedInUser.hasRole(OFFICE)

@@ -4,7 +4,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,18 +37,6 @@ public class OvertimeFormDto {
 
     OvertimeFormDto(Person person) {
         this.person = person;
-    }
-
-    OvertimeFormDto(OvertimeEntity overtime) {
-        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
-
-        this.id = overtime.getId();
-        this.person = overtime.getPerson();
-        this.startDate = overtime.getStartDate();
-        this.endDate = overtime.getEndDate();
-        this.hours = overtimeHours.setScale(0, RoundingMode.DOWN).abs();
-        this.minutes = overtimeHours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
-        this.reduce = overtimeHours.doubleValue() < 0;
     }
 
     public Long getId() {
@@ -130,17 +117,6 @@ public class OvertimeFormDto {
 
     public void setReduce(boolean reduce) {
         this.reduce = reduce;
-    }
-
-    OvertimeEntity generateOvertime() {
-        return new OvertimeEntity(getPerson(), getStartDate(), getEndDate(), getDuration());
-    }
-
-    void updateOvertime(OvertimeEntity overtime) {
-        overtime.setPerson(getPerson());
-        overtime.setDuration(getDuration());
-        overtime.setStartDate(getStartDate());
-        overtime.setEndDate(getEndDate());
     }
 
     /**
