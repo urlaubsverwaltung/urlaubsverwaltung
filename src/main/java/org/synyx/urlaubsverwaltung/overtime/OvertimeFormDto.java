@@ -1,11 +1,9 @@
-package org.synyx.urlaubsverwaltung.overtime.web;
+package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +17,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 /**
  * View class to record overtime for a certain period of time.
  */
-public class OvertimeForm {
+public class OvertimeFormDto {
 
     private Long id;
     private Person person;
@@ -33,24 +31,12 @@ public class OvertimeForm {
     private BigDecimal hours;
     private Integer minutes;
 
-    OvertimeForm() {
+    OvertimeFormDto() {
         // OK
     }
 
-    OvertimeForm(Person person) {
+    OvertimeFormDto(Person person) {
         this.person = person;
-    }
-
-    OvertimeForm(Overtime overtime) {
-        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
-
-        this.id = overtime.getId();
-        this.person = overtime.getPerson();
-        this.startDate = overtime.getStartDate();
-        this.endDate = overtime.getEndDate();
-        this.hours = overtimeHours.setScale(0, RoundingMode.DOWN).abs();
-        this.minutes = overtimeHours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
-        this.reduce = overtimeHours.doubleValue() < 0;
     }
 
     public Long getId() {
@@ -131,17 +117,6 @@ public class OvertimeForm {
 
     public void setReduce(boolean reduce) {
         this.reduce = reduce;
-    }
-
-    Overtime generateOvertime() {
-        return new Overtime(getPerson(), getStartDate(), getEndDate(), getDuration());
-    }
-
-    void updateOvertime(Overtime overtime) {
-        overtime.setPerson(getPerson());
-        overtime.setDuration(getDuration());
-        overtime.setStartDate(getStartDate());
-        overtime.setEndDate(getEndDate());
     }
 
     /**

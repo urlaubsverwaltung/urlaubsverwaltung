@@ -10,7 +10,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 
-class OvertimeCommentTest {
+class OvertimeCommentEntityTest {
 
     private final Clock clock = Clock.systemUTC();
 
@@ -18,9 +18,9 @@ class OvertimeCommentTest {
     void ensureCorrectPropertiesAfterInitialization() {
 
         Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Overtime overtime = createOvertimeRecord();
+        OvertimeEntity overtime = createOvertimeRecord();
 
-        OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeCommentAction.CREATED, clock);
+        OvertimeCommentEntity comment = new OvertimeCommentEntity(author, overtime, OvertimeCommentAction.CREATED, clock);
 
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getOvertime()).isEqualTo(overtime);
@@ -31,13 +31,13 @@ class OvertimeCommentTest {
 
     @Test
     void equals() {
-        final OvertimeComment commentOne = new OvertimeComment(Clock.systemUTC());
+        final OvertimeCommentEntity commentOne = new OvertimeCommentEntity(Clock.systemUTC());
         commentOne.setId(1L);
 
-        final OvertimeComment commentOneOne = new OvertimeComment(Clock.systemUTC());
+        final OvertimeCommentEntity commentOneOne = new OvertimeCommentEntity(Clock.systemUTC());
         commentOneOne.setId(1L);
 
-        final OvertimeComment commentTwo = new OvertimeComment(Clock.systemUTC());
+        final OvertimeCommentEntity commentTwo = new OvertimeCommentEntity(Clock.systemUTC());
         commentTwo.setId(2L);
 
         assertThat(commentOne)
@@ -50,7 +50,7 @@ class OvertimeCommentTest {
 
     @Test
     void hashCodeTest() {
-        final OvertimeComment commentOne = new OvertimeComment(Clock.systemUTC());
+        final OvertimeCommentEntity commentOne = new OvertimeCommentEntity(Clock.systemUTC());
         commentOne.setId(1L);
 
         assertThat(commentOne.hashCode()).isEqualTo(32);
