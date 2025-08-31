@@ -129,10 +129,10 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     @Transactional
-    public Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) throws UnknownOvertimeException {
+    public Overtime updateOvertime(OvertimeId overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) throws UnknownOvertimeException {
 
-        final OvertimeEntity existingEntity = overtimeRepository.findById(overtimeId)
-            .orElseThrow(() -> new UnknownOvertimeException(overtimeId));
+        final OvertimeEntity existingEntity = overtimeRepository.findById(overtimeId.value())
+            .orElseThrow(() -> new UnknownOvertimeException(overtimeId.value()));
 
         final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(existingEntity.getPerson().getIdAsPersonId(), editorId))
             .stream()
