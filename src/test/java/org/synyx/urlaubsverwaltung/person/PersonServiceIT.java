@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
@@ -111,7 +112,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
 
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 
-        final OvertimeEntity overtimeRecord = overtimeService.save(new OvertimeEntity(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
+        final OvertimeEntity overtimeRecord = overtimeService.createOvertime(personWithId.getIdAsPersonId(), new DateRange(now, now), Duration.ZERO, personWithId.getIdAsPersonId(), "");
 
         final Department department = new Department();
         department.setName("department");

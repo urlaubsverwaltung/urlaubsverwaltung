@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +37,9 @@ class OvertimeCommentRepositoryIT extends SingleTenantTestContainersBase {
 
         final Person person = personService.create("batman", "Bruce", "Wayne", "batman@example.org");
 
-        final OvertimeEntity overtime = new OvertimeEntity(person, now, now, Duration.ofHours(4));
-        final OvertimeEntity savedOvertime = overtimeService.save(overtime, Optional.empty(), person);
+        final PersonId personId = person.getIdAsPersonId();
+        final DateRange dateRange = new DateRange(now, now);
+        final OvertimeEntity savedOvertime = overtimeService.createOvertime(personId, dateRange, Duration.ofHours(4), personId, "");
 
         final OvertimeComment first = overtimeService.getCommentsForOvertime(savedOvertime).getFirst();
         final OvertimeComment second = overtimeService.saveComment(savedOvertime, COMMENTED, "second", person);

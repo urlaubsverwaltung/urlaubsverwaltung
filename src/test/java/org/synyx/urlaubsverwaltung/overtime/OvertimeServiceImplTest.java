@@ -1,16 +1,20 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -18,6 +22,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -58,151 +64,391 @@ class OvertimeServiceImplTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
+    private PersonService personService;
+    @Mock
     private OvertimeMailService overtimeMailService;
     @Mock
     private SettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
+    @Captor
+    private ArgumentCaptor<OvertimeEntity> overtimeEntityCaptor;
+    @Captor
+    private ArgumentCaptor<OvertimeCommentEntity> commentEntityCaptor;
+
     @BeforeEach
     void setUp() {
-        sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, overtimeMailService, settingsService, clock);
+        sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, personService, overtimeMailService, settingsService, clock);
     }
 
-    // Record overtime -------------------------------------------------------------------------------------------------
-    @Test
-    void ensurePersistsOvertimeAndComment() {
+    @Nested
+    class CreateOvertime {
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        final Person author = new Person();
+        @Test
+        void ensureCreateOvertime() {
 
-        sut.save(overtime, Optional.of("Foo Bar"), author);
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
 
-        verify(overtimeRepository).save(overtime);
-        verify(overtimeCommentRepository).save(any(OvertimeCommentEntity.class));
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = LocalDate.now();
+            final DateRange dateRange = new DateRange(startDate, endDate);
+            final Duration duration = Duration.ofHours(8);
+
+            final OvertimeEntity actual = sut.createOvertime(ownerId, dateRange, duration, authorId, "Foo Bar");
+
+            assertThat(actual.getId()).isEqualTo(1L);
+
+            verify(overtimeRepository).save(overtimeEntityCaptor.capture());
+            assertThat(overtimeEntityCaptor.getValue()).satisfies(actualEntity -> {
+                assertThat(actualEntity.getId()).isNull();
+                assertThat(actualEntity.getPerson()).isSameAs(owner);
+                assertThat(actualEntity.getStartDate()).isEqualTo(startDate);
+                assertThat(actualEntity.getEndDate()).isEqualTo(endDate);
+                assertThat(actualEntity.getDuration()).isEqualTo(duration);
+            });
+        }
+
+        @Test
+        void ensureCreateOvertimeWithComment() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+
+            sut.createOvertime(ownerId, dateRange, duration, authorId, "Foo Bar");
+
+            verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
+            assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
+                assertThat(actualComment.getId()).isNull();
+                assertThat(actualComment.getPerson()).isEqualTo(author);
+                assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
+                assertThat(actualComment.getText()).isEqualTo("Foo Bar");
+                assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
+            });
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"", "   "})
+        @NullSource
+        void ensureCreateOvertimeWithoutComment(String givenComment) {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+
+            sut.createOvertime(ownerId, dateRange, duration, authorId, givenComment);
+
+            verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
+            assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
+                assertThat(actualComment.getId()).isNull();
+                assertThat(actualComment.getPerson()).isEqualTo(author);
+                assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
+                assertThat(actualComment.getText()).isEqualTo("");
+                assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
+            });
+        }
+
+        @Test
+        void ensureRecordingOvertimeSendsNotification() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            when(personService.getAllPersonsByIds(List.of(authorId, authorId))).thenReturn(List.of(author));
+
+            final OvertimeEntity overtime = new OvertimeEntity();
+            overtime.setPerson(author);
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(overtime);
+
+            final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(clock);
+            when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+            sut.createOvertime(authorId, dateRange, duration, authorId, "Foo Bar");
+
+            verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+            verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+            verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+        }
+
+        @Test
+        void ensureRecordingOvertimeSendsNotificationFromManagement() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId personId = new PersonId(2L);
+            final Person person = new Person();
+            person.setId(personId.value());
+
+            final OvertimeEntity overtime = new OvertimeEntity();
+            overtime.setId(1L);
+            overtime.setPerson(person);
+
+            final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(clock);
+            overtimeComment.setId(1L);
+            overtimeComment.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(personId, authorId))).thenReturn(List.of(person, author));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(overtime);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(overtimeComment);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+            sut.createOvertime(personId, dateRange, duration, authorId, "Foo Bar");
+
+            verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+            verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+            verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+        }
     }
 
-    @Test
-    void ensureRecordingUpdatesLastModificationDate() {
+    @Nested
+    class UpdateOvertime {
 
-        final Person author = new Person();
-        final OvertimeEntity overtime = new OvertimeEntity();
-        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+        @Test
+        void ensureUpdatesOvertime() {
 
-        final OvertimeEntity savedOvertime = sut.save(overtime, Optional.empty(), author);
-        assertThat(savedOvertime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
-    }
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
 
-    @Test
-    void ensureRecordingOvertimeSendsNotification() {
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
 
-        final Person author = new Person();
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        overtime.setPerson(author);
-        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
 
-        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity();
-        when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.findById(anyLong())).thenReturn(Optional.of(savedOvertimeEntity));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
 
-        sut.save(overtime, Optional.of("Foo Bar"), author);
+            final LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = LocalDate.now();
+            final DateRange dateRange = new DateRange(startDate, endDate);
+            final Duration duration = Duration.ofHours(8);
 
-        verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
-        verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
-        verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
-    }
+            final OvertimeEntity actual = sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
 
-    @Test
-    void ensureRecordingOvertimeSendsNotificationFromManagement() {
+            assertThat(actual.getId()).isEqualTo(1L);
 
-        final Person author = new Person();
-        author.setId(1L);
+            verify(overtimeRepository).save(overtimeEntityCaptor.capture());
+            assertThat(overtimeEntityCaptor.getValue()).satisfies(actualEntity -> {
+                assertThat(actualEntity.getId()).isEqualTo(1L);
+                assertThat(actualEntity.getPerson()).isSameAs(owner);
+                assertThat(actualEntity.getStartDate()).isEqualTo(startDate);
+                assertThat(actualEntity.getEndDate()).isEqualTo(endDate);
+                assertThat(actualEntity.getDuration()).isEqualTo(duration);
+            });
+        }
 
-        final Person person = new Person();
-        person.setId(2L);
+        @Test
+        void ensureUpdatesOvertimeWithComment() {
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        overtime.setPerson(person);
-        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
 
-        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity();
-        when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
 
-        sut.save(overtime, Optional.of("Foo Bar"), author);
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
 
-        verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
-        verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
-        verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
-    }
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
 
-    @Test
-    void ensureCreatesCommentWithCorrectActionForNewOvertime() {
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.findById(anyLong())).thenReturn(Optional.of(savedOvertimeEntity));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        final Person author = new Person();
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
 
-        sut.save(overtime, Optional.empty(), author);
+            verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
+            assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
+                assertThat(actualComment.getId()).isNull();
+                assertThat(actualComment.getPerson()).isEqualTo(author);
+                assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
+                assertThat(actualComment.getText()).isEqualTo("Foo Bar");
+                assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
+            });
+        }
 
-        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
-        verify(overtimeCommentRepository).save(commentCaptor.capture());
+        @ParameterizedTest
+        @ValueSource(strings = {"", "   "})
+        @NullSource
+        void ensureUpdatesOvertimeWithoutComment(String givenComment) {
 
-        final OvertimeCommentEntity comment = commentCaptor.getValue();
-        assertThat(comment).isNotNull();
-        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
-    }
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
 
-    @Test
-    void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        overtime.setId(1L);
-        final Person author = new Person();
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
 
-        sut.save(overtime, Optional.empty(), author);
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
 
-        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
-        verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeCommentEntity comment = commentCaptor.getValue();
-        assertThat(comment).isNotNull();
-        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
-    }
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.findById(anyLong())).thenReturn(Optional.of(savedOvertimeEntity));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
 
-    @Test
-    void ensureCreatedCommentWithoutTextHasCorrectProperties() {
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
 
-        final Person author = new Person();
+            sut.updateOvertime(1L, dateRange, duration, authorId, givenComment);
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+            verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
+            assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
+                assertThat(actualComment.getId()).isNull();
+                assertThat(actualComment.getPerson()).isEqualTo(author);
+                assertThat(actualComment.getOvertime()).isSameAs(savedOvertimeEntity);
+                assertThat(actualComment.getText()).isEqualTo("");
+                assertThat(actualComment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
+            });
+        }
 
-        sut.save(overtime, Optional.empty(), author);
+        @Test
+        void ensureUpdatingOvertimeSendsNotification() {
 
-        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
-        verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeCommentEntity comment = commentCaptor.getValue();
-        assertThat(comment).isNotNull();
-        assertThat(comment.getPerson()).isEqualTo(author);
-        assertThat(comment.getOvertime()).isEqualTo(overtime);
-        assertThat(comment.getText()).isNull();
-    }
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
 
-    @Test
-    void ensureCreatedCommentWithTextHasCorrectProperties() {
+            final OvertimeEntity overtime = new OvertimeEntity();
+            overtime.setId(1L);
+            overtime.setPerson(author);
 
-        final Person author = new Person();
+            final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(clock);
+            overtimeComment.setId(1L);
+            overtimeComment.setPerson(author);
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+            when(personService.getAllPersonsByIds(List.of(authorId, authorId))).thenReturn(List.of(author));
+            when(overtimeRepository.findById(anyLong())).thenReturn(Optional.of(overtime));
+            when(overtimeRepository.save(overtime)).thenReturn(overtime);
+            when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
-        sut.save(overtime, Optional.of("Foo"), author);
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
 
-        final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
-        verify(overtimeCommentRepository).save(commentCaptor.capture());
-        final OvertimeCommentEntity comment = commentCaptor.getValue();
-        assertThat(comment).isNotNull();
-        assertThat(comment.getPerson()).isEqualTo(author);
-        assertThat(comment.getOvertime()).isEqualTo(overtime);
-        assertThat(comment.getText()).isEqualTo("Foo");
+            verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+            verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+            verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+        }
+
+        @Test
+        void ensureUpdatingOvertimeSendsNotificationFromManagement() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId personId = new PersonId(2L);
+            final Person person = new Person();
+            person.setId(personId.value());
+
+            final OvertimeEntity overtime = new OvertimeEntity();
+            overtime.setId(1L);
+            overtime.setPerson(person);
+
+            final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(clock);
+            overtimeComment.setId(1L);
+            overtimeComment.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(personId, authorId))).thenReturn(List.of(author, person));
+            when(overtimeRepository.findById(1L)).thenReturn(Optional.of(overtime));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(overtime);
+            when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
+
+            verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+            verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+            verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+        }
     }
 
     // Get overtime record by ID ---------------------------------------------------------------------------------------
@@ -826,7 +1072,7 @@ class OvertimeServiceImplTest {
         overtimeEntity.setEndDate(to);
         overtimeEntity.setDuration(Duration.ofHours(1));
 
-        final OvertimeCommentEntity overtimeCommentEntity = new OvertimeCommentEntity();
+        final OvertimeCommentEntity overtimeCommentEntity = new OvertimeCommentEntity(clock);
         overtimeCommentEntity.setOvertime(overtimeEntity);
         overtimeCommentEntity.setAction(OvertimeCommentAction.CREATED);
         overtimeCommentEntity.setPerson(person);

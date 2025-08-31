@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -31,6 +32,7 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -233,9 +235,10 @@ public class OvertimeViewController implements HasLaunchpad {
             return "overtime/overtime_form";
         }
 
-        final OvertimeEntity overtime = overtimeFormDto.generateOvertime();
-        final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeFormDto.getComment());
-        final OvertimeEntity recordedOvertime = overtimeService.save(overtime, overtimeFormComment, signedInUser);
+        final DateRange dateRange = new DateRange(overtimeFormDto.getStartDate(), overtimeFormDto.getEndDate());
+        final Duration duration = overtimeFormDto.getDuration();
+        final PersonId authorId = signedInUser.getIdAsPersonId();
+        final OvertimeEntity recordedOvertime = overtimeService.createOvertime(person.getIdAsPersonId(), dateRange, duration, authorId, overtimeFormDto.getComment());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
@@ -282,8 +285,10 @@ public class OvertimeViewController implements HasLaunchpad {
             return "overtime/overtime_form";
         }
 
-        overtimeFormDto.updateOvertime(overtime);
-        overtimeService.save(overtime, Optional.ofNullable(overtimeFormDto.getComment()), signedInUser);
+        final DateRange dateRange = new DateRange(overtimeFormDto.getStartDate(), overtimeFormDto.getEndDate());
+        final Duration duration = overtimeFormDto.getDuration();
+        final PersonId authorId = signedInUser.getIdAsPersonId();
+        overtimeService.updateOvertime(id, dateRange, duration, authorId, overtimeFormDto.getComment());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
