@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -103,12 +104,14 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public OvertimeCommentEntity saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
+    public OvertimeComment saveComment(OvertimeEntity overtime, OvertimeCommentAction action, String comment, Person author) {
 
         final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtime, action, clock);
         overtimeComment.setText(comment);
 
-        return overtimeCommentRepository.save(overtimeComment);
+        final OvertimeCommentEntity saved = overtimeCommentRepository.save(overtimeComment);
+
+        return entityToOvertimeComment(saved);
     }
 
     @Override
@@ -117,8 +120,10 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<OvertimeCommentEntity> getCommentsForOvertime(OvertimeEntity overtime) {
-        return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime);
+    public List<OvertimeComment> getCommentsForOvertime(OvertimeEntity overtime) {
+        return overtimeCommentRepository.findByOvertimeOrderByIdDesc(overtime).stream()
+            .map(OvertimeServiceImpl::entityToOvertimeComment)
+            .toList();
     }
 
     @Override
@@ -200,6 +205,20 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Optional<OvertimeEntity> getExternalOvertimeByDate(LocalDate date, Long personId) {
         return overtimeRepository.findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(personId, date, date);
+    }
+
+    private static OvertimeComment entityToOvertimeComment(OvertimeCommentEntity entity) {
+
+        final PersonId personId = entity.getPerson() == null ? null : entity.getPerson().getIdAsPersonId();
+
+        return new OvertimeComment(
+            new OvertimeCommentId(entity.getId()),
+            entity.getOvertime().getId(),
+            entity.getAction(),
+            Optional.ofNullable(personId),
+            entity.getDate(),
+            entity.getText()
+        );
     }
 
     private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, int year) {

@@ -1,15 +1,18 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentEntity;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentEntity;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentId;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,19 +20,30 @@ class OvertimeCommentDTOTest {
 
     @Test
     void happyPathOvertimeCommentToDTO() {
-        OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(Clock.fixed(Instant.now(), ZoneId.systemDefault()));
-        overtimeComment.setText("text");
-        overtimeComment.setAction(OvertimeCommentAction.CREATED);
-        Person person = new Person();
+
+        final Person person = new Person();
+        person.setId(1L);
         person.setUsername("username");
-        overtimeComment.setPerson(person);
 
-        OvertimeCommentDTO dto = OvertimeCommentDTO.of(overtimeComment);
+        final Instant timestamp = Instant.now();
 
-        assertThat(dto.date()).isEqualTo(overtimeComment.getDate());
-        assertThat(dto.text()).isEqualTo(overtimeComment.getText());
+        final OvertimeComment overtimeComment = new OvertimeComment(
+            new OvertimeCommentId(1L),
+            1L,
+            OvertimeCommentAction.CREATED,
+            Optional.of(person.getIdAsPersonId()),
+            timestamp,
+            "text"
+        );
+
+        final Map<PersonId, Person> personByPersonId = Map.of(person.getIdAsPersonId(), person);
+
+        final OvertimeCommentDTO dto = OvertimeCommentDTO.of(overtimeComment, personByPersonId::get);
+
+        assertThat(dto.date()).isEqualTo(timestamp);
+        assertThat(dto.text()).isEqualTo("text");
         assertThat(dto.action()).isEqualTo(OvertimeCommentActionDTO.CREATED);
-        assertThat(dto.externalIdOfCommentAuthor()).isEqualTo(overtimeComment.getPerson().getUsername());
+        assertThat(dto.externalIdOfCommentAuthor()).isEqualTo("username");
     }
 
     @Test
