@@ -820,13 +820,25 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setId(1L);
 
-        final OvertimeEntity overtime = new OvertimeEntity();
-        overtime.setPerson(person);
-        overtime.setStartDate(from);
-        overtime.setEndDate(to);
-        overtime.setDuration(Duration.ofHours(1));
+        final OvertimeEntity overtimeEntity = new OvertimeEntity();
+        overtimeEntity.setPerson(person);
+        overtimeEntity.setStartDate(from);
+        overtimeEntity.setEndDate(to);
+        overtimeEntity.setDuration(Duration.ofHours(1));
 
-        sut.saveComment(overtime, OvertimeCommentAction.COMMENTED, "Foo Bar", person);
+        final OvertimeCommentEntity overtimeCommentEntity = new OvertimeCommentEntity();
+        overtimeCommentEntity.setOvertime(overtimeEntity);
+        overtimeCommentEntity.setAction(OvertimeCommentAction.CREATED);
+        overtimeCommentEntity.setPerson(person);
+        overtimeCommentEntity.setText("Foo Bar");
+
+        when(overtimeCommentRepository.save(any())).thenAnswer(args -> {
+            final OvertimeCommentEntity toBeSaved = args.getArgument(0);
+            toBeSaved.setId(1L);
+            return toBeSaved;
+        });
+
+        sut.saveComment(overtimeEntity, OvertimeCommentAction.COMMENTED, "Foo Bar", person);
 
         final ArgumentCaptor<OvertimeCommentEntity> commentCaptor = ArgumentCaptor.forClass(OvertimeCommentEntity.class);
         verify(overtimeCommentRepository).save(commentCaptor.capture());
@@ -835,7 +847,7 @@ class OvertimeServiceImplTest {
         assertThat(comment.getText()).isEqualTo("Foo Bar");
         assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.COMMENTED);
         assertThat(comment.getPerson()).isEqualTo(person);
-        assertThat(comment.getOvertime()).isEqualTo(overtime);
+        assertThat(comment.getOvertime()).isEqualTo(overtimeEntity);
     }
 
     @Test

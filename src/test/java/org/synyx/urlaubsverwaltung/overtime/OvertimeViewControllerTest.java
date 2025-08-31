@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMinutes;
@@ -303,32 +305,45 @@ class OvertimeViewControllerTest {
     @Test
     void showOvertimeDetails() throws Exception {
 
+        final PersonId overtimePersonId = new PersonId(1L);
         final Person overtimePerson = new Person();
+        overtimePerson.setId(overtimePersonId.value());
+        overtimePerson.setUsername("username");
+        overtimePerson.setFirstName("firstname");
+        overtimePerson.setLastName("lastname");
+        overtimePerson.setEmail("person@example.org");
 
         final long overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.of(2016, 2, 5);
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
-        overtime.setId(overtimeId);
-        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
+        final OvertimeEntity overtimeEntity = new OvertimeEntity(overtimePerson, LocalDate.of(2016, 2, 5), overtimeEndDate, ofHours(10));
+        overtimeEntity.setId(overtimeId);
 
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtimeEntity));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        when(personService.getAllPersonsByIds(Set.of(overtimePersonId))).thenReturn(List.of(overtimePerson));
 
         final Department department = new Department();
         department.setName("Buchhaltung");
         when(departmentService.getAssignedDepartmentsOfMember(overtimePerson)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtimeEntity)).thenReturn(true);
 
-        final OvertimeCommentEntity comment = new OvertimeCommentEntity(overtimePerson, overtime, CREATED, Clock.systemUTC());
-        final List<OvertimeCommentEntity> overtimeComments = List.of(comment);
-        when(overtimeService.getCommentsForOvertime(overtime)).thenReturn(overtimeComments);
+        final OvertimeComment comment = new OvertimeComment(
+            new OvertimeCommentId(1L),
+            overtimeEntity.getId(),
+            CREATED,
+            Optional.of(overtimePerson.getIdAsPersonId()),
+            Clock.systemUTC().instant(),
+            "overtime comment text"
+        );
+        when(overtimeService.getCommentsForOvertime(overtimeEntity)).thenReturn(List.of(comment));
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), false);
-        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), overtime.getLastModificationDate());
-        final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getId(), comment.getPerson().getNiceName(), comment.getPerson().getInitials(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText());
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtimeEntity.getStartDate(), overtimeEntity.getEndDate(), overtimeEntity.getDuration(), overtimeEntity.getDurationByYear(), overtimeEntity.getLastModificationDate());
+        final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(overtimePerson.getId(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL()), comment.action().toString(), comment.createdAt(), comment.text());
 
         perform(get("/web/overtime/2"))
                 .andExpect(status().isOk())

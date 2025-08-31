@@ -1,22 +1,27 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.annotation.Nullable;
+
 import java.time.Instant;
 import java.util.Objects;
 
 public class OvertimeCommentDto {
 
+    @Nullable
     private final OvertimeCommentPersonDto person;
+
     private final String action;
     private final Instant date;
     private final String text;
 
-    OvertimeCommentDto(OvertimeCommentPersonDto person, String action, Instant date, String text) {
+    OvertimeCommentDto(@Nullable OvertimeCommentPersonDto person, String action, Instant date, String text) {
         this.person = person;
         this.action = action;
         this.date = date;
         this.text = text;
     }
 
+    @Nullable
     public OvertimeCommentPersonDto getPerson() {
         return person;
     }

@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
@@ -34,11 +35,16 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.COMMENTED;
@@ -152,11 +158,20 @@ public class OvertimeViewController implements HasLaunchpad {
                     signedInUser.getId(), person.getId()));
         }
 
+        final List<OvertimeComment> overtimeComments = overtimeService.getCommentsForOvertime(overtime);
+        final Set<PersonId> personIds = overtimeComments.stream().map(OvertimeComment::personId).flatMap(Optional::stream).collect(toSet());
+        personIds.add(overtime.getPerson().getIdAsPersonId());
+
+        final Map<PersonId, Person> personById = personService.getAllPersonsByIds(personIds).stream()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
+
         final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
-                overtime,
-                overtimeService.getCommentsForOvertime(overtime),
-                overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
-                overtimeService.getLeftOvertimeForPerson(person));
+            overtime,
+            overtimeService.getCommentsForOvertime(overtime),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
+            overtimeService.getLeftOvertimeForPerson(person),
+            personById::get
+        );
 
         final int currentYear = Year.now(clock).getValue();
         model.addAttribute("currentYear", currentYear);
