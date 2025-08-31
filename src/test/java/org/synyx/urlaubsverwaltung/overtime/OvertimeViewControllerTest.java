@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -45,6 +46,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -608,13 +611,21 @@ class OvertimeViewControllerTest {
     @Test
     void createOvertimeRecord() throws Exception {
 
+        final PersonId overtimePersonId = new PersonId(4L);
         final Person overtimePerson = new Person();
-        overtimePerson.setId(4L);
+        overtimePerson.setId(overtimePersonId.value());
+
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
+        final LocalDate startDate = LocalDate.of(2019, 7, 2);
+        final LocalDate endDate = LocalDate.of(2019, 7, 2);
+        final DateRange dateRange = new DateRange(startDate, endDate);
+        final Duration duration = ofHours(8);
+
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, startDate, endDate, duration);
         overtime.setId(2L);
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.createOvertime(overtimePersonId, dateRange, duration, overtimePersonId, "To much work")).thenReturn(overtime);
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -636,13 +647,17 @@ class OvertimeViewControllerTest {
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void ensureCreateOvertimeRecordSucceedsWithDateFormat(String givenDate) throws Exception {
 
+        final PersonId overtimePersonId = new PersonId(4L);
         final Person overtimePerson = new Person();
-        overtimePerson.setId(4L);
+        overtimePerson.setId(overtimePersonId.value());
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
         final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+            .thenReturn(overtime);
+
         when(overtimeService.isUserIsAllowedToCreateOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -721,7 +736,9 @@ class OvertimeViewControllerTest {
 
         final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofHours(-10));
         overtime.setId(2L);
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class),any(Duration.class), any(PersonId.class), isNull()))
+            .thenReturn(overtime);
 
         perform(
                 post("/web/overtime")
@@ -745,7 +762,9 @@ class OvertimeViewControllerTest {
 
         final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2020, 12, 18), LocalDate.of(2020, 12, 18), ofMinutes(-30));
         overtime.setId(2L);
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), isNull(String.class)))
+            .thenReturn(overtime);
 
         perform(
                 post("/web/overtime")
@@ -783,7 +802,8 @@ class OvertimeViewControllerTest {
     void createOvertimeRecordNotSamePersonButOffice() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(List.of(OFFICE));
+        signedInPerson.setId(1L);
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person overtimePerson = new Person();
@@ -791,7 +811,10 @@ class OvertimeViewControllerTest {
 
         final OvertimeEntity overtime = new OvertimeEntity(signedInPerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.createOvertime(any(PersonId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+            .thenReturn(overtime);
+
         when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -813,14 +836,20 @@ class OvertimeViewControllerTest {
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void updateOvertimeWithDateSucceeds(String givenDate) throws Exception {
 
+        final PersonId overtimePersonId = new PersonId(4L);
         final Person overtimePerson = new Person();
-        overtimePerson.setId(4L);
+        overtimePerson.setId(overtimePersonId.value());
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2022, 3, 1), LocalDate.of(2022, 4, 28), ofHours(10), false);
+        final LocalDate startDate = LocalDate.of(2022, 3, 1);
+        final LocalDate endDate = LocalDate.of(2022, 4, 28);
+        final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, startDate, endDate, ofHours(10), false);
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+            .thenReturn(overtime);
+
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
 
         final ResultActions resultActions = perform(
@@ -949,6 +978,7 @@ class OvertimeViewControllerTest {
     void updateOvertimeIsNotSamePersonButOffice() throws Exception {
 
         final Person signedInPerson = new Person();
+        signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -957,7 +987,10 @@ class OvertimeViewControllerTest {
         final OvertimeEntity overtime = new OvertimeEntity(overtimePerson, LocalDate.of(2019, 7, 2), LocalDate.of(2019, 7, 2), ofHours(10));
         overtime.setId(2L);
         when(overtimeService.getOvertimeById(2L)).thenReturn(Optional.of(overtime));
-        when(overtimeService.save(any(OvertimeEntity.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+            .thenReturn(overtime);
+
         when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, overtimePerson, overtime)).thenReturn(true);
 
         final ResultActions resultActions = perform(

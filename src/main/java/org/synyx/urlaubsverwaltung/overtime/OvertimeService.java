@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.annotation.Nullable;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -26,14 +29,28 @@ public interface OvertimeService {
     List<OvertimeEntity> getOvertimeRecordsForPersonAndYear(Person person, int year);
 
     /**
-     * Saves an overtime record.
+     * Creates a new Overtime entry.
      *
-     * @param overtime to be saved
-     * @param comment  contains further information to the overtime record, is optional
-     * @param author   identifies the person that recorded the overtime
-     * @return the created overtime record
+     * @param overtimePersonId {@link PersonId} of the overtime owner
+     * @param dateRange {@link DateRange} of the overtime
+     * @param duration {@link Duration} of the overtime
+     * @param authorPersonId {@link PersonId} of the person creating this overtime entry
+     * @param comment optional creation comment, can be {@code null}
+     * @return the created overtime
      */
-    OvertimeEntity save(OvertimeEntity overtime, Optional<String> comment, Person author);
+    OvertimeEntity createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
+
+    /**
+     * Updates an existing Overtime entry.
+     *
+     * @param overtimeId identifier of the overtime
+     * @param dateRange new {@link DateRange} of the overtime
+     * @param duration new {@link Duration} of the overtime
+     * @param editorPersonId {@link PersonId} of the person updating this overtime entry
+     * @param comment optional creation comment, can be {@code null}
+     * @return the updated overtime
+     */
+    OvertimeEntity updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment);
 
     /**
      * Saves a comment for a certain overtime record.

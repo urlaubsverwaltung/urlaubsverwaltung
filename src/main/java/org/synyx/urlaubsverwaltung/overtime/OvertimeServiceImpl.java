@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -29,6 +31,8 @@ import static java.time.Duration.ZERO;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -48,6 +52,7 @@ class OvertimeServiceImpl implements OvertimeService {
     private final OvertimeRepository overtimeRepository;
     private final OvertimeCommentRepository overtimeCommentRepository;
     private final ApplicationService applicationService;
+    private final PersonService personService;
     private final OvertimeMailService overtimeMailService;
     private final SettingsService settingsService;
     private final Clock clock;
@@ -57,6 +62,7 @@ class OvertimeServiceImpl implements OvertimeService {
         OvertimeRepository overtimeRepository,
         OvertimeCommentRepository overtimeCommentRepository,
         ApplicationService applicationService,
+        PersonService personService,
         OvertimeMailService overtimeMailService,
         SettingsService settingsService,
         Clock clock
@@ -64,6 +70,7 @@ class OvertimeServiceImpl implements OvertimeService {
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
+        this.personService = personService;
         this.overtimeMailService = overtimeMailService;
         this.settingsService = settingsService;
         this.clock = clock;
@@ -77,30 +84,85 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public OvertimeEntity save(OvertimeEntity overtime, Optional<String> comment, Person author) {
+    @Transactional
+    public OvertimeEntity createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, @Nullable String comment) {
 
-        final boolean isNewOvertime = overtime.getId() == null;
+        final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(overtimePersonId, authorId))
+            .stream()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
 
-        // save overtime record
-        overtime.onUpdate();
-        final OvertimeEntity savedOvertime = overtimeRepository.save(overtime);
-
-        // save comment
-        final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
-        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, savedOvertime, action, clock);
-        comment.ifPresent(overtimeComment::setText);
-        final OvertimeCommentEntity savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
-
-        if (author.equals(overtime.getPerson())) {
-            overtimeMailService.sendOvertimeNotificationToApplicantFromApplicant(savedOvertime, savedOvertimeComment);
-        } else {
-            overtimeMailService.sendOvertimeNotificationToApplicantFromManagement(savedOvertime, savedOvertimeComment, author);
+        // TODO handle this
+        if (personById.isEmpty()) {
+            throw new IllegalStateException("overtime person and author must exist.");
         }
 
-        overtimeMailService.sendOvertimeNotificationToManagement(savedOvertime, savedOvertimeComment);
-        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", savedOvertime);
+        final OvertimeEntity entity = new OvertimeEntity();
+        entity.setPerson(personById.get(overtimePersonId));
+        entity.setStartDate(dateRange.startDate());
+        entity.setEndDate(dateRange.endDate());
+        entity.setDuration(duration);
+        entity.setExternal(false);
+        entity.onUpdate();
 
-        return savedOvertime;
+        final OvertimeEntity saved = overtimeRepository.save(entity);
+
+        final Person authorPerson = personById.get(authorId);
+
+        final OvertimeCommentEntity commentEntity = new OvertimeCommentEntity(clock);
+        commentEntity.setOvertime(saved);
+        commentEntity.setPerson(authorPerson);
+        commentEntity.setText(requireNonNullElse(comment, "").strip());
+        commentEntity.setAction(CREATED);
+
+        final OvertimeCommentEntity savedCommentEntity = overtimeCommentRepository.save(commentEntity);
+
+        sendOvertimeModifiedNotification(saved, savedCommentEntity, authorPerson);
+
+        LOG.info("Created new overtime. overtime id={}, person id={}, author id={}",
+            saved.getId(), saved.getPerson().getId(), commentEntity.getPerson().getId());
+
+        return saved;
+    }
+
+    @Override
+    @Transactional
+    public OvertimeEntity updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) {
+
+        final OvertimeEntity existingEntity = overtimeRepository.findById(overtimeId)
+            // TODO explicit exception
+            .orElseThrow(() -> new IllegalStateException("overtime must exist"));
+
+        final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(existingEntity.getPerson().getIdAsPersonId(), editorId))
+            .stream()
+            .collect(toMap(Person::getIdAsPersonId, identity()));
+
+        // TODO handle this
+        if (personById.isEmpty()) {
+            throw new IllegalStateException("overtime person and editor must exist.");
+        }
+
+        existingEntity.setStartDate(dateRange.startDate());
+        existingEntity.setEndDate(dateRange.endDate());
+        existingEntity.setDuration(duration);
+
+        final OvertimeEntity updated = overtimeRepository.save(existingEntity);
+
+        final Person editorPerson = personById.get(editorId);
+
+        final OvertimeCommentEntity commentEntity = new OvertimeCommentEntity(clock);
+        commentEntity.setOvertime(updated);
+        commentEntity.setPerson(editorPerson);
+        commentEntity.setAction(EDITED);
+        commentEntity.setText(requireNonNullElse(comment, "").strip());
+
+        final OvertimeCommentEntity savedCommentEntity = overtimeCommentRepository.save(commentEntity);
+
+        sendOvertimeModifiedNotification(updated, savedCommentEntity, editorPerson);
+
+        LOG.info("Updated overtime. overtime id={}, person id={}, author id={}",
+            updated.getId(), updated.getPerson().getId(), commentEntity.getPerson().getId());
+
+        return updated;
     }
 
     @Override
@@ -413,5 +475,16 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private OvertimeSettings getOvertimeSettings() {
         return settingsService.getSettings().getOvertimeSettings();
+    }
+
+    private void sendOvertimeModifiedNotification(OvertimeEntity overtimeEntity, OvertimeCommentEntity commentEntity, Person modifierPerson) {
+
+        if (modifierPerson.equals(overtimeEntity.getPerson())) {
+            overtimeMailService.sendOvertimeNotificationToApplicantFromApplicant(overtimeEntity, commentEntity);
+        } else {
+            overtimeMailService.sendOvertimeNotificationToApplicantFromManagement(overtimeEntity, commentEntity, modifierPerson);
+        }
+
+        overtimeMailService.sendOvertimeNotificationToManagement(overtimeEntity, commentEntity);
     }
 }
