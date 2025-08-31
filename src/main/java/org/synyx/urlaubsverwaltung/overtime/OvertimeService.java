@@ -49,8 +49,9 @@ public interface OvertimeService {
      * @param editorPersonId {@link PersonId} of the person updating this overtime entry
      * @param comment optional creation comment, can be {@code null}
      * @return the updated overtime
+     * @throws UnknownOvertimeException in case of no overtime found for given identifier
      */
-    Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment);
+    Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment) throws UnknownOvertimeException;
 
     /**
      * Saves a comment for a certain overtime record.

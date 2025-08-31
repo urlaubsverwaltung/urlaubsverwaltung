@@ -95,9 +95,8 @@ class OvertimeServiceImpl implements OvertimeService {
             .stream()
             .collect(toMap(Person::getIdAsPersonId, identity()));
 
-        // TODO handle this
         if (personById.isEmpty()) {
-            throw new IllegalStateException("overtime person and author must exist.");
+            throw new IllegalStateException("Cannot create overtime with non-existent person or author.");
         }
 
         final OvertimeEntity entity = new OvertimeEntity();
@@ -130,19 +129,17 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     @Transactional
-    public Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) {
+    public Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorId, @Nullable String comment) throws UnknownOvertimeException {
 
         final OvertimeEntity existingEntity = overtimeRepository.findById(overtimeId)
-            // TODO explicit exception
-            .orElseThrow(() -> new IllegalStateException("overtime must exist"));
+            .orElseThrow(() -> new UnknownOvertimeException(overtimeId));
 
         final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(existingEntity.getPerson().getIdAsPersonId(), editorId))
             .stream()
             .collect(toMap(Person::getIdAsPersonId, identity()));
 
-        // TODO handle this
         if (personById.isEmpty()) {
-            throw new IllegalStateException("overtime person and editor must exist.");
+            throw new IllegalStateException("Cannot update overtime with non-existent person and editor.");
         }
 
         existingEntity.setStartDate(dateRange.startDate());

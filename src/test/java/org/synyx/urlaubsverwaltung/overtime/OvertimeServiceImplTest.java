@@ -43,6 +43,7 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
@@ -284,7 +285,16 @@ class OvertimeServiceImplTest {
     class UpdateOvertime {
 
         @Test
-        void ensureUpdatesOvertime() {
+        void ensureThrowsWhenNoOvertimeFoundForIdentifier() {
+
+            when(overtimeRepository.findById(1L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.updateOvertime(1L, null, null, null, null))
+                .isInstanceOf(UnknownOvertimeException.class);
+        }
+
+        @Test
+        void ensureUpdatesOvertime() throws Exception {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
@@ -327,7 +337,7 @@ class OvertimeServiceImplTest {
         }
 
         @Test
-        void ensureUpdatesOvertimeWithComment() {
+        void ensureUpdatesOvertimeWithComment() throws Exception {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
@@ -368,7 +378,7 @@ class OvertimeServiceImplTest {
         @ParameterizedTest
         @ValueSource(strings = {"", "   "})
         @NullSource
-        void ensureUpdatesOvertimeWithoutComment(String givenComment) {
+        void ensureUpdatesOvertimeWithoutComment(String givenComment) throws Exception {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
@@ -408,7 +418,7 @@ class OvertimeServiceImplTest {
         }
 
         @Test
-        void ensureUpdatingOvertimeSendsNotification() {
+        void ensureUpdatingOvertimeSendsNotification() throws Exception {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
@@ -438,7 +448,7 @@ class OvertimeServiceImplTest {
         }
 
         @Test
-        void ensureUpdatingOvertimeSendsNotificationFromManagement() {
+        void ensureUpdatingOvertimeSendsNotificationFromManagement() throws Exception {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
