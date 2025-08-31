@@ -51,7 +51,7 @@ public interface OvertimeService {
      * @return the updated overtime
      * @throws UnknownOvertimeException in case of no overtime found for given identifier
      */
-    Overtime updateOvertime(Long overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment) throws UnknownOvertimeException;
+    Overtime updateOvertime(OvertimeId overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment) throws UnknownOvertimeException;
 
     /**
      * Saves a comment for a certain overtime record.

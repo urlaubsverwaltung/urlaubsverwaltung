@@ -301,7 +301,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final DateRange dateRange = new DateRange(overtimeFormDto.getStartDate(), overtimeFormDto.getEndDate());
         final Duration duration = overtimeFormDto.getDuration();
         final PersonId authorId = signedInUser.getIdAsPersonId();
-        overtimeService.updateOvertime(id, dateRange, duration, authorId, overtimeFormDto.getComment());
+        overtimeService.updateOvertime(new OvertimeId(id), dateRange, duration, authorId, overtimeFormDto.getComment());
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;

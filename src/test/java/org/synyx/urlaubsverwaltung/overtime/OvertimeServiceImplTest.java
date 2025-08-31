@@ -287,9 +287,10 @@ class OvertimeServiceImplTest {
         @Test
         void ensureThrowsWhenNoOvertimeFoundForIdentifier() {
 
+            final OvertimeId overtimeId = new OvertimeId(1L);
             when(overtimeRepository.findById(1L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.updateOvertime(1L, null, null, null, null))
+            assertThatThrownBy(() -> sut.updateOvertime(overtimeId, null, null, null, null))
                 .isInstanceOf(UnknownOvertimeException.class);
         }
 
@@ -323,8 +324,9 @@ class OvertimeServiceImplTest {
             final DateRange dateRange = new DateRange(startDate, endDate);
             final Duration duration = Duration.ofHours(8);
 
-            final Overtime actual = sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
-            assertThat(actual.id()).isEqualTo(new OvertimeId(1L));
+            final OvertimeId overtimeId = new OvertimeId(1L);
+            final Overtime actual = sut.updateOvertime(overtimeId, dateRange, duration, authorId, "Foo Bar");
+            assertThat(actual.id()).isEqualTo(overtimeId);
 
             verify(overtimeRepository).save(overtimeEntityCaptor.capture());
             assertThat(overtimeEntityCaptor.getValue()).satisfies(actualEntity -> {
@@ -363,7 +365,7 @@ class OvertimeServiceImplTest {
 
             final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
             final Duration duration = Duration.ofHours(8);
-            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
+            sut.updateOvertime(new OvertimeId(1L), dateRange, duration, authorId, "Foo Bar");
 
             verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
             assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
@@ -405,7 +407,7 @@ class OvertimeServiceImplTest {
             final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
             final Duration duration = Duration.ofHours(8);
 
-            sut.updateOvertime(1L, dateRange, duration, authorId, givenComment);
+            sut.updateOvertime(new OvertimeId(1L), dateRange, duration, authorId, givenComment);
 
             verify(overtimeCommentRepository).save(commentEntityCaptor.capture());
             assertThat(commentEntityCaptor.getValue()).satisfies(actualComment -> {
@@ -440,7 +442,7 @@ class OvertimeServiceImplTest {
 
             final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
             final Duration duration = Duration.ofHours(8);
-            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
+            sut.updateOvertime(new OvertimeId(1L), dateRange, duration, authorId, "Foo Bar");
 
             verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
             verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
@@ -474,7 +476,7 @@ class OvertimeServiceImplTest {
 
             final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
             final Duration duration = Duration.ofHours(8);
-            sut.updateOvertime(1L, dateRange, duration, authorId, "Foo Bar");
+            sut.updateOvertime(new OvertimeId(1L), dateRange, duration, authorId, "Foo Bar");
 
             verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
             verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);

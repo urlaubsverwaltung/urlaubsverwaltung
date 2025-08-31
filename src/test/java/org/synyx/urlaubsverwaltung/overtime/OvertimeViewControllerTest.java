@@ -47,7 +47,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
@@ -959,7 +958,7 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
 
-        when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+        when(overtimeService.updateOvertime(any(OvertimeId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
 
         when(overtimeService.isUserIsAllowedToUpdateOvertime(overtimePerson, overtimePerson, overtime)).thenReturn(true);
@@ -1140,7 +1139,7 @@ class OvertimeViewControllerTest {
         when(personService.getPersonByID(overtimePerson.getId())).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.getOvertimeById(new OvertimeId(2L))).thenReturn(Optional.of(overtime));
 
-        when(overtimeService.updateOvertime(anyLong(), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
+        when(overtimeService.updateOvertime(any(OvertimeId.class), any(DateRange.class), any(Duration.class), any(PersonId.class), anyString()))
             .thenReturn(overtime);
 
         when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, overtimePerson, overtime)).thenReturn(true);
