@@ -508,10 +508,6 @@ class OvertimeFormDtoValidatorTest {
         assertMayBeEmpty.accept("");
     }
 
-    private Overtime anyOvertime(OvertimeId id) {
-        return anyOvertime(id, Duration.ofHours(1));
-    }
-
     private Overtime anyOvertime(OvertimeId id, Duration duration) {
         return new Overtime(id, new PersonId(1L), new DateRange(LocalDate.now(), LocalDate.now()), duration, OvertimeType.UV_INTERNAL, Instant.now());
     }
