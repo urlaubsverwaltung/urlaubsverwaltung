@@ -330,7 +330,7 @@ const View = (function () {
 
   function renderPopoverAbsenceContent(absence) {
     let href = "";
-    let title = ""; //TODO die public holidays haben eine localized description. Woher? Hier: VacationType getLabel
+    let title = "";
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absence.id);
       title = i18n("overtime.popover.absence.VACATION");
