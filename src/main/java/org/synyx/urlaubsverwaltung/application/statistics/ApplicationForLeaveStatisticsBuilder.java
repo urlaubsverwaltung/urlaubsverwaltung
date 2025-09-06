@@ -71,8 +71,11 @@ class ApplicationForLeaveStatisticsBuilder {
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
 
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, activeStatuses());
-        final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
+        final LocalDate firstDateOfYear = from.with(firstDayOfYear());
+        final LocalDate lastDateOfYear = from.with(lastDayOfYear());
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(firstDateOfYear, lastDateOfYear, persons, activeStatuses());
+
+        final Map<Person, LeftOvertime> leftOvertimeByPerson = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange);
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
@@ -92,8 +95,8 @@ class ApplicationForLeaveStatisticsBuilder {
                     statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
                 }
 
-                if (leftOvertimeForPersons.containsKey(accountPerson)) {
-                    final LeftOvertime leftOvertime = leftOvertimeForPersons.get(accountPerson);
+                if (leftOvertimeByPerson.containsKey(accountPerson)) {
+                    final LeftOvertime leftOvertime = leftOvertimeByPerson.get(accountPerson);
                     statistics.setLeftOvertimeForYear(leftOvertime.leftOvertimeOverall());
                     statistics.setLeftOvertimeForPeriod(leftOvertime.leftOvertimeDateRange());
                 } else {

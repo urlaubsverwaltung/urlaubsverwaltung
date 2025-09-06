@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +14,14 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -37,10 +44,14 @@ public class OvertimeAbsenceApiController {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
 
-    @Autowired
-    public OvertimeAbsenceApiController(ApplicationService applicationService) {
+    OvertimeAbsenceApiController(
+        ApplicationService applicationService,
+        WorkingTimeCalendarService workingTimeCalendarService
+    ) {
         this.applicationService = applicationService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
     }
 
     @Operation(
@@ -82,7 +93,11 @@ public class OvertimeAbsenceApiController {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Application is of category OVERTIME, but duration is not know.");
         }
 
-        return new OvertimeAbsenceDto(applicationId, application.getHours(), application.getOvertimeReductionShares());
+        final Person person = application.getPerson();
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), application.getDateRange()).get(person);
+        final Map<LocalDate, Duration> overtimeReductionByDate = application.getOvertimeReductionShares((p, r) -> workingTimeCalendar);
+
+        return new OvertimeAbsenceDto(applicationId, application.getHours(), overtimeReductionByDate);
     }
 
     private Application getApplicationOfPerson(Long personId, Long absenceId) {
