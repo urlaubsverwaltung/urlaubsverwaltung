@@ -7,19 +7,23 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Duration.ZERO;
 import static java.util.Locale.JAPANESE;
@@ -36,6 +40,8 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.CYAN;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceImplTest {
@@ -45,11 +51,13 @@ class ApplicationServiceImplTest {
     @Mock
     private ApplicationRepository applicationRepository;
     @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationServiceImpl(applicationRepository, messageSource);
+        sut = new ApplicationServiceImpl(applicationRepository, workingTimeCalendarService, messageSource);
     }
 
     // Get application by ID -------------------------------------------------------------------------------------------
@@ -558,7 +566,7 @@ class ApplicationServiceImplTest {
         final Person alfred = new Person();
         alfred.setId(3L);
 
-        final List<Person> persons = List.of(batman, robin, alfred);
+        final Set<Person> persons = Set.of(batman, robin, alfred);
         final LocalDate until = LocalDate.of(2022, 8, 30);
 
         when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until))
@@ -576,18 +584,22 @@ class ApplicationServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setCategory(OVERTIME);
+        final VacationTypeEntity vacationTypeOvertime = new VacationTypeEntity();
+        vacationTypeOvertime.setCategory(OVERTIME);
+
+        final LocalDate startDate = LocalDate.of(2022, 8, 10);
+        final LocalDate endDate = LocalDate.of(2022, 8, 12);
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setPerson(batman);
-        applicationEntity.setStartDate(LocalDate.of(2022, 8, 10));
-        applicationEntity.setEndDate(LocalDate.of(2022, 8, 12));
+        applicationEntity.setStartDate(startDate);
+        applicationEntity.setEndDate(endDate);
+        applicationEntity.setDayLength(DayLength.FULL);
         applicationEntity.setStatus(WAITING);
-        applicationEntity.setVacationType(vacationTypeEntity);
+        applicationEntity.setVacationType(vacationTypeOvertime);
         applicationEntity.setHours(Duration.ofHours(10));
 
-        final List<Person> persons = List.of(batman);
+        final Set<Person> persons = Set.of(batman);
         final LocalDate until = LocalDate.of(2022, 8, 30);
 
         when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
@@ -596,6 +608,9 @@ class ApplicationServiceImplTest {
             activeStatuses(),
             until
         )).thenReturn(List.of(applicationEntity));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, (date) -> fullWorkday())));
 
         assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
             .containsEntry(batman, Duration.ofHours(10));
@@ -607,19 +622,23 @@ class ApplicationServiceImplTest {
         final Person batman = new Person();
         batman.setId(1L);
 
-        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setCategory(OVERTIME);
+        final VacationTypeEntity vacationTypeOvertime = new VacationTypeEntity();
+        vacationTypeOvertime.setCategory(OVERTIME);
+
+        final LocalDate startDate = LocalDate.of(2022, 8, 10);
+        final LocalDate endDate = LocalDate.of(2022, 8, 19);
 
         final ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setPerson(batman);
-        applicationEntity.setStartDate(LocalDate.of(2022, 8, 10));
-        applicationEntity.setEndDate(LocalDate.of(2022, 8, 20));
+        applicationEntity.setStartDate(startDate);
+        applicationEntity.setEndDate(endDate);
+        applicationEntity.setDayLength(DayLength.FULL);
         applicationEntity.setStatus(WAITING);
-        applicationEntity.setVacationType(vacationTypeEntity);
+        applicationEntity.setVacationType(vacationTypeOvertime);
         applicationEntity.setHours(Duration.ofHours(10));
 
-        final List<Person> persons = List.of(batman);
-        final LocalDate until = LocalDate.of(2022, 8, 15);
+        final Set<Person> persons = Set.of(batman);
+        final LocalDate until = LocalDate.of(2022, 8, 14);
 
         when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
             persons,
@@ -628,7 +647,10 @@ class ApplicationServiceImplTest {
             until
         )).thenReturn(List.of(applicationEntity));
 
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, (date) -> fullWorkday())));
+
         assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
-            .containsEntry(batman, Duration.parse("PT5H27M16S"));
+            .containsEntry(batman, Duration.ofHours(5));
     }
 }

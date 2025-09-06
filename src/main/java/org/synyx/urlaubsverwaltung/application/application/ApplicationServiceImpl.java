@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -9,14 +8,19 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
@@ -34,10 +38,15 @@ class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final MessageSource messageSource;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
 
-    @Autowired
-    ApplicationServiceImpl(ApplicationRepository applicationRepository, MessageSource messageSource) {
+    ApplicationServiceImpl(
+        ApplicationRepository applicationRepository,
+        WorkingTimeCalendarService workingTimeCalendarService,
+        MessageSource messageSource
+    ) {
         this.applicationRepository = applicationRepository;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.messageSource = messageSource;
     }
 
@@ -129,13 +138,17 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
+    public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate untilInclusive) {
 
-        final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), until).stream()
-            .map(applicationEntity -> {
-                final Application application = toApplication(applicationEntity);
-                final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
-                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod);
+        final List<ApplicationEntity> overtimeReductions =
+            applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, activeStatuses(), untilInclusive);
+
+        final Map<PersonId, WorkingTimeCalendar> workingTimeCalendarByPersonId = getWorkingTimeCalendars(overtimeReductions);
+
+        final Map<Person, Duration> overtimeReductionByPerson = overtimeReductions.stream().map(this::toApplication)
+            .map(application -> {
+                final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), untilInclusive);
+                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod, (personId, range) -> workingTimeCalendarByPersonId.get(personId));
                 return Map.entry(application.getPerson(), overtimeReduction);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
@@ -196,6 +209,30 @@ class ApplicationServiceImpl implements ApplicationService {
 
     private List<Application> toApplication(Iterable<ApplicationEntity> entityList) {
         return StreamSupport.stream(entityList.spliterator(), false).map(this::toApplication).toList();
+    }
+
+    private Map<PersonId, WorkingTimeCalendar> getWorkingTimeCalendars(Collection<ApplicationEntity> applicationEntities) {
+
+        if (applicationEntities.isEmpty()) {
+            return Map.of();
+        }
+
+        final Set<Person> persons = new HashSet<>();
+
+        LocalDate from = LocalDate.MAX;
+        LocalDate to = LocalDate.MIN;
+
+        for (ApplicationEntity entity : applicationEntities) {
+            from = entity.getStartDate().isBefore(from) ? entity.getStartDate() : from;
+            to = entity.getEndDate().isAfter(to) ? entity.getEndDate() : to;
+            persons.add(entity.getPerson());
+        }
+
+        return workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(from, to))
+            .entrySet().stream().collect(toMap(
+                entry -> entry.getKey().getIdAsPersonId(),
+                Map.Entry::getValue
+            ));
     }
 
     private Application toApplication(ApplicationEntity applicationEntity) {

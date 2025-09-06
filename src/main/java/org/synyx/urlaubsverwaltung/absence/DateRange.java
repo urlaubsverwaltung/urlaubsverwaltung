@@ -4,6 +4,7 @@ import org.springframework.util.Assert;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,6 +27,16 @@ import static java.time.temporal.ChronoUnit.DAYS;
  * @param endDate end of the date range, inclusive
  */
 public record DateRange(LocalDate startDate, LocalDate endDate) implements Iterable<LocalDate> {
+
+    /**
+     * Creates a DateRange from january 1 to december 31 of the given year.
+     *
+     * @param year to create the date range
+     * @return {@link DateRange} of the given year
+     */
+    public static DateRange ofYear(Year year) {
+        return new DateRange(year.atDay(1), year.atDay(year.length()));
+    }
 
     public DateRange {
         if (startDate != null && endDate != null) {
@@ -173,6 +184,7 @@ public record DateRange(LocalDate startDate, LocalDate endDate) implements Itera
 
             final LocalDate current = cursor;
             cursor = cursor.plusDays(1);
+
             return current;
         }
     }

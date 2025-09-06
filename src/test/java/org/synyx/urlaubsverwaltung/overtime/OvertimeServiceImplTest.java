@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -27,6 +28,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -35,6 +37,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.time.Month.AUGUST;
 import static java.time.Month.JANUARY;
@@ -53,6 +56,8 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeServiceImplTest {
@@ -68,6 +73,8 @@ class OvertimeServiceImplTest {
     @Mock
     private PersonService personService;
     @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
+    @Mock
     private OvertimeMailService overtimeMailService;
     @Mock
     private SettingsService settingsService;
@@ -81,7 +88,8 @@ class OvertimeServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, personService, overtimeMailService, settingsService, clock);
+        sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, personService,
+            workingTimeCalendarService, overtimeMailService, settingsService, clock);
     }
 
     @Nested
@@ -1123,17 +1131,25 @@ class OvertimeServiceImplTest {
             .category(OVERTIME)
             .build();
 
+        // overtime reduction should result in `overall`. NOT in `date range`.
+        final LocalDate applicationStartDate = LocalDate.now(clock).withMonth(JANUARY.getValue());
+        final LocalDate applicationEndDate = LocalDate.now(clock).withMonth(JANUARY.getValue());
+
         final Application personOvertimeReduction = new Application();
         personOvertimeReduction.setId(1L);
         personOvertimeReduction.setPerson(person);
         personOvertimeReduction.setStatus(ApplicationStatus.ALLOWED);
         personOvertimeReduction.setVacationType(overtimeVacationType);
         personOvertimeReduction.setHours(Duration.ofMinutes(90));
-        // overtime reduction should result in `overall`. NOT in `date range`.
-        personOvertimeReduction.setStartDate(LocalDate.now(clock).withMonth(JANUARY.getValue()));
-        personOvertimeReduction.setEndDate(LocalDate.now(clock).withMonth(JANUARY.getValue()));
+        personOvertimeReduction.setStartDate(applicationStartDate);
+        personOvertimeReduction.setEndDate(applicationEndDate);
+        personOvertimeReduction.setDayLength(DayLength.FULL);
 
         final List<Application> applications = List.of(personOvertimeReduction);
+
+        final DateRange applicationDateRange = new DateRange(applicationStartDate, applicationEndDate);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), applicationDateRange))
+            .thenReturn(Map.of(person, workingTimeCalendar(applicationDateRange, date -> fullWorkday())));
 
         final Map<Person, LeftOvertime> actual = sut.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         assertThat(actual)

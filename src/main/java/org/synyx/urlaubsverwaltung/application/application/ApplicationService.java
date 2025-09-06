@@ -148,7 +148,14 @@ public interface ApplicationService {
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
-    Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until);
+    /**
+     * Calculate total overtime reduction until the given date (inclusive).
+     *
+     * @param persons persons to calculate overtime reduction for
+     * @param untilInclusive date until to calculate, inclusive
+     * @return overtime reduction duration by person
+     */
+    Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate untilInclusive);
 
     Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate before);
 
