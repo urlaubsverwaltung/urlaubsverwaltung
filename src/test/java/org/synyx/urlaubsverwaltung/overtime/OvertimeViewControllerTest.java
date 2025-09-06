@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,6 +72,8 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeViewControllerTest {
@@ -87,6 +91,8 @@ class OvertimeViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
+    @Mock
     private VacationTypeViewModelService vacationTypeViewModelService;
     @Mock
     private SettingsService settingsService;
@@ -95,7 +101,8 @@ class OvertimeViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, applicationService, vacationTypeViewModelService, settingsService, clock);
+        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService,
+            applicationService, workingTimeCalendarService, vacationTypeViewModelService, settingsService, clock);
     }
 
     @Test
@@ -248,6 +255,9 @@ class OvertimeViewControllerTest {
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, activeStatuses(), OVERTIME))
                 .thenReturn(List.of(applicationNonEditable));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(today, today)))
+            .thenReturn(Map.of(person, workingTimeCalendar(today, today, date -> fullWorkday())));
 
         perform(get("/web/overtime").param("person", "5"))
                 .andExpect(status().isOk())

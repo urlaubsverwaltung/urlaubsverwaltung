@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -24,6 +25,10 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.noWorkday;
 
 /**
  * Unit test for {@link Application}.
@@ -164,17 +169,43 @@ class ApplicationTest {
     @Test
     void getHoursByYear() {
 
+        final Person person = new Person();
+        person.setId(1L);
+
         final Application application = new Application();
+        application.setPerson(person);
         application.setStartDate(LocalDate.of(2022, 12, 30));
         application.setEndDate(LocalDate.of(2023, 1, 2));
+        application.setDayLength(DayLength.FULL);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        application.setHours(Duration.ofHours(20));
 
-        final Map<Integer, Duration> hoursByYear = application.getHoursByYear();
+        application.setHours(
+            // 1h at 30.12.22
+            Duration.ofMinutes(60)
+            // 0.5h at 31.12.22
+            .plusMinutes(30)
+            // 0h at 1.1.23
+            .plusMinutes(0)
+            // 1h at 2.1.23
+            .plusMinutes(60)
+        );
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
+            // 1h reduction
+            LocalDate.of(2022, 12, 30), new WorkingTimeCalendar.WorkingDayInformation(DayLength.FULL, WORKDAY, WORKDAY),
+            // 0.5h reduction
+            LocalDate.of(2022, 12, 31), new WorkingTimeCalendar.WorkingDayInformation(DayLength.MORNING, WORKDAY, NO_WORKDAY),
+            // 0h
+            LocalDate.of(2023, 1, 1), new WorkingTimeCalendar.WorkingDayInformation(DayLength.ZERO, NO_WORKDAY, NO_WORKDAY),
+            // 1h reduction
+            LocalDate.of(2023, 1, 2), new WorkingTimeCalendar.WorkingDayInformation(DayLength.FULL, WORKDAY, WORKDAY)
+        ));
+
+        final Map<Integer, Duration> hoursByYear = application.getHoursByYear((personId, range) -> workingTimeCalendar);
 
         assertThat(hoursByYear).hasSize(2)
-            .containsEntry(2022, Duration.ofHours(10))
-            .containsEntry(2023, Duration.ofHours(10));
+            .containsEntry(2022, Duration.ofMinutes(90))
+            .containsEntry(2023, Duration.ofMinutes(60));
     }
 
     @Test
@@ -232,14 +263,21 @@ class ApplicationTest {
     void ensureGetOvertimeReductionSharesForSingleDays() {
         final LocalDate date = LocalDate.of(2022, 8, 10);
 
+        final Person person = new Person();
+        person.setId(1L);
+
         final Application application = new Application();
+        application.setPerson(person);
         application.setStartDate(date);
         application.setEndDate(date);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(WAITING);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         application.setHours(Duration.ofHours(3).plusMinutes(40));
 
-        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares();
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(date, fullWorkday()));
+
+        final Map<LocalDate, Duration> partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
             date, Duration.ofHours(3).plusMinutes(40))
         );
@@ -251,18 +289,61 @@ class ApplicationTest {
         final LocalDate middleDate = LocalDate.of(2022, 8, 11);
         final LocalDate endDate = LocalDate.of(2022, 8, 12);
 
+        final Person person = new Person();
+        person.setId(1L);
+
         final Application application = new Application();
+        application.setPerson(person);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
         application.setStatus(WAITING);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         application.setHours(Duration.ofHours(12));
 
-        final var partitionedDurations = application.getOvertimeReductionShares();
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
+            LocalDate.of(2022, 8, 10), fullWorkday(),
+            LocalDate.of(2022, 8, 11), fullWorkday(),
+            LocalDate.of(2022, 8, 12), fullWorkday()
+        ));
+
+        final var partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
         assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
             startDate, ofHours(4),
             middleDate, ofHours(4),
             endDate, ofHours(4))
+        );
+    }
+
+    @Test
+    void ensureGetOvertimeReductionSharesForMultipleDaysWithOneNoWorkday() {
+        final LocalDate startDate = LocalDate.of(2022, 8, 10);
+        final LocalDate middleDate = LocalDate.of(2022, 8, 11);
+        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        application.setHours(Duration.ofHours(12));
+
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(Map.of(
+            LocalDate.of(2022, 8, 10), fullWorkday(),
+            LocalDate.of(2022, 8, 11), noWorkday(),
+            LocalDate.of(2022, 8, 12), fullWorkday()
+        ));
+
+        final var partitionedDurations = application.getOvertimeReductionShares((personId, range) -> workingTimeCalendar);
+        assertThat(partitionedDurations).containsExactlyInAnyOrderEntriesOf(Map.of(
+            startDate, ofHours(6),
+            middleDate, ofHours(0),
+            endDate, ofHours(6))
         );
     }
 

@@ -1,11 +1,13 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DecimalConverter;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarSupplier;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -16,16 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
 import static java.math.RoundingMode.HALF_EVEN;
-import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * This class describes an application for leave.
@@ -317,42 +315,64 @@ public class Application {
         return hours;
     }
 
+    public DateRange getDateRange() {
+        return new DateRange(startDate, endDate);
+    }
+
     /**
      * Partition the overtime reduction duration of this application over all involved days.
      * The sum of these mapped durations equals the duration of the application.
-     * This partitioning weights all days evenly  and doesn't account for half days, weekends etc.
      *
+     * @param workingTimeCalendarSupplier workingTimeCalendar to consider working-days and no-working-days
      * @return a mapping of durations to the days involved in this application, never {@code null}
      */
-    public Map<LocalDate, Duration> getOvertimeReductionShares() {
-        return new DateRange(startDate, endDate).stream()
-            .collect(toMap(Function.identity(), this::getOvertimeReductionShareFor));
+    public Map<LocalDate, Duration> getOvertimeReductionShares(WorkingTimeCalendarSupplier workingTimeCalendarSupplier) {
+
+        final DateRange dateRange = getDateRange();
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.getWorkingTimeCalendar(person, dateRange);
+
+        // e.g. one day and a half
+        final BigDecimal workingTimeDays = workingTimeCalendar.workingTime(this);
+        // e.g. three
+        final int numberOfHalfDays = workingTimeDays.divide(BigDecimal.valueOf(0.5), HALF_EVEN).intValue();
+        // e.g. 12 hours
+        final Duration overtimeReduction = getHours();
+        // e.g. 12 hours / 3 half days = 4 hours
+        final Duration halfDayReduction = overtimeReduction.dividedBy(numberOfHalfDays);
+
+        // date 1 | FULL_DAY --> 8 hours
+        // date 2 | MORNING  --> 4 hours
+        return dateRange.stream().collect(toMap(identity(), date -> {
+            final DayLength dayLengthAtDate = workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO);
+            return switch (dayLengthAtDate) {
+                case ZERO -> Duration.ZERO;
+                case FULL -> halfDayReduction.multipliedBy(2);
+                case MORNING, NOON -> halfDayReduction;
+            };
+        }));
     }
 
-    public Duration getOvertimeReductionShareFor(LocalDate date) {
-        return getOvertimeReductionShareFor(new DateRange(date, date));
-    }
+    /**
+     * Calculates the overtime reduction duration for the given date range.
+     *
+     * @param dateRange date range to calculate overtime reduction
+     * @param workingTimeCalendarSupplier supplies working time calendar for this application
+     * @return overtime reduction duration for the given date range
+     */
+    public Duration getOvertimeReductionShareFor(DateRange dateRange, WorkingTimeCalendarSupplier workingTimeCalendarSupplier) {
 
-    public Duration getOvertimeReductionShareFor(DateRange dateRange) {
-
-        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
-            return ZERO;
+        if (vacationType == null || !VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
+            return Duration.ZERO;
         }
 
-        final DateRange overtimeDateRange = new DateRange(startDate, endDate);
-        final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
+        final Map<LocalDate, Duration> durationByDate = getOvertimeReductionShares(workingTimeCalendarSupplier);
 
-        final Duration overtimeReductionHours = Optional.ofNullable(hours).orElse(ZERO);
-        final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-        final BigDecimal secondsProRata = toFormattedDecimal(overtimeReductionHours)
-            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-            .multiply(toFormattedDecimal(durationOfOverlap))
-            .setScale(0, HALF_EVEN);
-
-        return DecimalConverter.toDuration(secondsProRata);
+        return dateRange.stream()
+            .map(date -> durationByDate.getOrDefault(date, Duration.ZERO))
+            .reduce(Duration.ZERO, Duration::plus);
     }
 
-    private List<DateRange> splitByYear() {
+    private List<DateRange> dateRangesSplitByYear() {
         List<DateRange> dateRangesByYear = new ArrayList<>();
 
         LocalDate currentStartDate = startDate;
@@ -373,12 +393,17 @@ public class Application {
         return dateRangesByYear;
     }
 
-    public Map<Integer, Duration> getHoursByYear() {
-        return this.splitByYear().stream()
-            .collect(toMap(
-                dateRangeForYear -> dateRangeForYear.startDate().getYear(),
-                this::getOvertimeReductionShareFor
-            ));
+    public Map<Integer, Duration> getHoursByYear(WorkingTimeCalendarSupplier workingTimeSupplier) {
+
+        final DateRange dateRange = getDateRange();
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeSupplier.getWorkingTimeCalendar(person, dateRange);
+
+        final List<DateRange> dateRanges = dateRangesSplitByYear();
+
+        return dateRanges.stream().collect(toMap(
+            dateRangeForYear -> dateRangeForYear.startDate().getYear(),
+            dateRangeForYear -> getOvertimeReductionShareFor(dateRangeForYear, (person, range) -> workingTimeCalendar)
+        ));
     }
 
     public void setHours(Duration hours) {

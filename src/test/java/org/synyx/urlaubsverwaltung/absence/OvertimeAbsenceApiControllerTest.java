@@ -15,11 +15,16 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,37 +32,46 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeAbsenceApiControllerTest {
 
     private OvertimeAbsenceApiController sut;
+
     @Mock
     private ApplicationService applicationService;
-
+    @Mock
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeAbsenceApiController(applicationService);
+        sut = new OvertimeAbsenceApiController(applicationService, workingTimeCalendarService);
     }
 
     @Test
     void threeHoursForty() throws Exception {
 
         final LocalDate date = LocalDate.of(2016, 1, 1);
-        final var duration = Duration.ofHours(3).plusMinutes(40);
+        final Duration duration = Duration.ofHours(3).plusMinutes(40);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
-        long applicationId = 3L;
+
         final Application application = new Application();
-        application.setId(applicationId);
+        application.setId(3L);
         application.setPerson(person);
         application.setStartDate(date);
         application.setEndDate(date);
+        application.setDayLength(DayLength.FULL);
         application.setHours(duration);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
+
+        when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(date, date)))
+            .thenReturn(Map.of(person, new WorkingTimeCalendar(Map.of(date, fullWorkday()))));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())
@@ -84,15 +98,20 @@ class OvertimeAbsenceApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
-        long applicationId = 3L;
+
         final Application application = new Application();
-        application.setId(applicationId);
+        application.setId(3L);
         application.setPerson(person);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
         application.setHours(Duration.ofHours(8));
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-        when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
+
+        when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(person, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
 
         perform(get("/api/persons/2/absences/3/overtime"))
             .andExpect(status().isOk())
