@@ -1,3 +1,5 @@
+@reference "./config.css";
+
 @layer base {
   html {
     height: -webkit-fill-available;
@@ -21,12 +23,15 @@
     font-size: 100%;
     margin: 0;
     color: #444444;
-    @apply dark:tw-bg-zinc-900;
-    @apply dark:tw-text-zinc-200;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     display: flex;
     flex-direction: column;
+
+    @variant dark {
+      @apply tw:bg-zinc-900;
+      @apply tw:text-zinc-200;
+    }
   }
 
   body > [class*="max-w"][class*="mx-auto"] {
@@ -45,9 +50,13 @@
       url("/fonts/kaushanscript/KaushanScript-Regular.woff") format("woff");
     font-display: swap;
   }
-}
 
-/**
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /**
  * 1. Prevent padding and border from affecting element width.
  *
  *    We used to set this in the html element and inherit from
@@ -73,85 +82,92 @@
  *    https://github.com/tailwindcss/tailwindcss/pull/116
  */
 
-*,
-::before,
-::after {
-  box-sizing: border-box; /* 1 */
-  border-width: 0; /* 2 */
-  border-style: solid; /* 2 */
-  border-color: #e5e7eb; /* 2 */
-  @apply dark:tw-border-neutral-600;
-}
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box; /* 1 */
+    border-width: 0; /* 2 */
+    border-style: solid; /* 2 */
+    border-color: #e5e7eb; /* 2 */
 
-/**
- * 1. Use the user's configured `sans` font-family (with Tailwind's default
- *    sans-serif font stack as a fallback) as a sane default.
- * 2. Use Tailwind's default "normal" line-height so the user isn't forced
- *    to override it to ensure consistency even when using the default theme.
- */
-html {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji"; /* 1 */
-  /* 2 */
-  line-height: 1.5;
-  /* override bootstrap 10px font-size */
-  /* to match 1rem to the user configured font size */
-  font-size: 100%;
+    @variant dark {
+      @apply tw:border-neutral-600;
+    }
+  }
 
-  --scroll-padding-top: 5rem;
-  scroll-padding-top: var(--scroll-padding-top);
-}
+  /**
+   * 1. Use the user's configured `sans` font-family (with Tailwind's default
+   *    sans-serif font stack as a fallback) as a sane default.
+   * 2. Use Tailwind's default "normal" line-height so the user isn't forced
+   *    to override it to ensure consistency even when using the default theme.
+   */
+  html {
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      "Noto Sans",
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji"; /* 1 */
+    /* 2 */
+    line-height: 1.5;
+    /* override bootstrap 10px font-size */
+    /* to match 1rem to the user configured font size */
+    font-size: 100%;
 
-hr {
-  border-color: #d5d5d5;
-  @apply dark:tw-border-zinc-600;
-}
+    --scroll-padding-top: 5rem;
+    scroll-padding-top: var(--scroll-padding-top);
+  }
 
-h1 {
-  @apply tw-text-2xl;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
-h2 {
-  @apply tw-text-xl;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
-h3 {
-  @apply tw-text-base;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
-h4 {
-  @apply tw-text-base;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
-h5 {
-  @apply tw-text-base;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
-h6 {
-  @apply tw-text-base;
-  @apply tw-font-normal;
-  @apply tw-leading-6;
-}
+  hr {
+    border-color: #d5d5d5;
 
-label {
-  @apply tw-font-semibold;
-  @apply tw-text-sm;
-  @apply tw-leading-6;
+    @variant dark {
+      @apply tw:border-zinc-600;
+    }
+  }
+
+  h1 {
+    @apply tw:text-2xl;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+  h2 {
+    @apply tw:text-xl;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+  h3 {
+    @apply tw:text-base;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+  h4 {
+    @apply tw:text-base;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+  h5 {
+    @apply tw:text-base;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+  h6 {
+    @apply tw:text-base;
+    @apply tw:font-normal;
+    @apply tw:leading-6;
+  }
+
+  label {
+    @apply tw:font-semibold;
+    @apply tw:text-sm;
+    @apply tw:leading-6;
+  }
 }

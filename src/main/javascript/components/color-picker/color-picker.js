@@ -47,9 +47,9 @@ class ColorPicker extends HTMLDivElement {
     this.#dialog.setAttribute("aria-labelledby", this.#dialogToggleButton.getAttribute("id"));
 
     this.setAttribute("tabindex", "0");
-    this.classList.add("tw-cursor-pointer", "focus:tw-outline-2", "focus:tw-outline-blue-500");
+    this.classList.add("tw:cursor-pointer", "tw:focus:outline-2", "tw:focus:outline-blue-500");
 
-    this.#dialogToggleButton.classList.add("tw-cursor-pointer");
+    this.#dialogToggleButton.classList.add("tw:cursor-pointer");
 
     for (let input of this.querySelectorAll("input")) {
       input.setAttribute("tabindex", "-1");
@@ -188,12 +188,12 @@ class ColorPicker extends HTMLDivElement {
   }
 
   #addListboxHint() {
-    this.classList.add("tw-flex", "tw-items-center");
+    this.classList.add("tw:flex", "tw:items-center");
 
     const span = document.createElement("span");
-    span.classList.add("dropdown-caret", "tw-cursor-pointer", "-tw-mt-px", "tw-ml-1.5");
+    span.classList.add("dropdown-caret", "tw:cursor-pointer", "-tw:mt-px", "tw:ml-1.5");
 
-    this.#dialogToggleButton.classList.add("tw-flex", "tw-items-center");
+    this.#dialogToggleButton.classList.add("tw:flex", "tw:items-center");
     this.#dialogToggleButton.append(span);
   }
 

@@ -1,41 +1,47 @@
+@reference "../config.css";
+
 legend {
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-font-normal;
+  @variant dark {
+    @apply tw:text-zinc-200;
+    @apply tw:font-normal;
+  }
 }
 
 .tw-form-control,
 .details-dropdown-input .details-dropdown_summary {
-  @apply tw-outline-0;
-  @apply tw-block;
-  @apply tw-text-sm;
-  @apply tw-w-full;
-  @apply tw-py-1;
-  @apply tw-px-2.5;
-  @apply tw-border;
-  @apply tw-border-neutral-300;
+  @apply tw:outline-0;
+  @apply tw:block;
+  @apply tw:text-sm;
+  @apply tw:w-full;
+  @apply tw:py-1;
+  @apply tw:px-2.5;
+  @apply tw:border;
+  @apply tw:border-neutral-300;
 }
 
 .form-control,
 .tw-form-control,
 .details-dropdown-input .details-dropdown_summary {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
-  @apply tw-rounded-md;
+  @apply tw:ring-0;
+  @apply tw:transition;
+  @apply tw:duration-150;
+  @apply tw:ease-in-out;
+  @apply tw:rounded-md;
 
-  :not([class*="tw-border-"]) {
+  :not([class*="border-"]) {
     /* actually colors are meant here, like tw-border-blue-400 */
     /* however tw-border-*-* is not a valid selector */
-    @apply dark:tw-border-neutral-600 !important;
+    @variant dark {
+      @apply tw:border-neutral-600;
+    }
   }
 }
 
 .details-dropdown-input .details-dropdown_summary {
-  @apply tw-px-3;
-  @apply tw-py-2;
-  @apply tw-rounded-md;
+  @apply tw:px-3;
+  @apply tw:py-2;
+  @apply tw:rounded-md;
 }
 
 input[disabled],
@@ -44,9 +50,12 @@ input[disabled],
 fieldset[disabled] input,
 fieldset[disabled] .form-control,
 fieldset[disabled] .tw-form-control {
-  @apply dark:tw-text-neutral-700 !important;
-  @apply dark:tw-bg-neutral-800 !important;
-  @apply tw-border-0 !important;
+  @apply tw:border-0;
+
+  @variant dark {
+    @apply tw:text-neutral-700;
+    @apply tw:bg-neutral-800;
+  }
 }
 
 .form-control:focus,
@@ -62,53 +71,62 @@ fieldset[disabled] .tw-form-control {
 .details-dropdown-input .details-dropdown_summary:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
-  @apply tw-ring-2 !important;
-  @apply tw-ring-blue-300 !important;
+  @apply tw:ring-2;
+  @apply tw:ring-blue-300;
 }
 
 .input-group {
-  @apply tw-rounded-md !important;
-  @apply tw-border;
-  @apply tw-transition;
+  @apply tw:rounded-md;
+  @apply tw:border;
+  @apply tw:border-gray-200;
+  @apply tw:transition;
   border-color: #ccc;
-  @apply dark:tw-border-neutral-600;
+
+  @variant dark {
+    @apply tw:border-neutral-600;
+  }
 }
 
 .input-group.has-error {
-  @apply tw-border-red-700;
+  @apply tw:border-red-700;
 }
 
 .input-group .form-control {
   /* remove border of form-control since the input-group defines it */
-  @apply tw-border-0 !important;
+  @apply tw:border-0;
   /* no right rounded corners since there is an input-group-addon attached to the right */
-  @apply tw-rounded-r-none !important;
+  @apply tw:rounded-r-none;
 }
 
 .input-group-addon {
-  @apply dark:tw-bg-zinc-800;
-  @apply dark:tw-text-zinc-200;
+  @variant dark {
+    @apply tw:bg-zinc-800;
+    @apply tw:text-zinc-200;
+  }
 }
 
 .input-group .input-group-addon {
   /* remove border of input-group-addon since the input-group defines it */
-  @apply tw-border-0 !important;
+  @apply tw:border-0;
   /* however, left border should still be visible */
-  @apply tw-border-l-2 !important;
+  @apply tw:border-l-2;
   border-color: #ccc;
-  @apply dark:tw-border-neutral-600;
+
+  @variant dark {
+    @apply tw:border-neutral-600;
+  }
 }
 
 .input-group:focus-within {
-  @apply tw-ring-2;
-  @apply tw-ring-blue-300;
-  @apply tw-border-transparent;
+  @apply tw:ring-2;
+  @apply tw:ring-blue-300;
+  @apply tw:border-transparent;
 }
 
 .input-group .form-control:focus {
   /* reset ring since input-group defines it already */
-  @apply tw-ring-0 !important;
-  @apply tw-border-transparent;
+  @apply tw:ring-0;
+  @apply tw:border-transparent;
 }
 
 /**************************************************************************
@@ -116,7 +134,6 @@ fieldset[disabled] .tw-form-control {
   REQUIRED FORM FIELDS
 
 **************************************************************************/
-
 label.is-required:after,
 .form-group.is-required > label:after {
   content: "*";
@@ -127,7 +144,6 @@ label.is-required:after,
   HORIZONTAL FORM
 
 **************************************************************************/
-
 .form-horizontal .control-label {
   text-align: left;
 }
@@ -145,25 +161,32 @@ label.is-required:after,
   FORM VALIDATION ERRORS
 
 **************************************************************************/
-
 .error {
-  @apply tw-text-red-800;
-  @apply dark:tw-text-red-400;
+  @apply tw:text-red-800;
+
+  @variant dark {
+    @apply tw:text-red-400;
+  }
 }
 
 input,
 select,
 textarea,
 .details-dropdown-input .details-dropdown_summary {
-  @apply dark:tw-border-zinc-600 !important;
-  @apply dark:tw-bg-zinc-700 !important;
-  @apply dark:tw-text-zinc-50 !important;
+  @variant dark {
+    @apply tw:border-zinc-600;
+    @apply tw:bg-zinc-700;
+    @apply tw:text-zinc-50;
+  }
 }
 
 input.error,
 textarea.error {
-  @apply tw-border-red-700 !important;
-  @apply dark:tw-border-red-500 !important;
+  @apply tw:border-red-700;
+
+  @variant dark {
+    @apply tw:border-red-500;
+  }
 }
 
 .info {
@@ -175,12 +198,13 @@ textarea.error {
   SINGLE COLUMN FORM
 
 **************************************************************************/
-
 .form-section .help-block {
   margin-top: 0;
   line-height: 1.375;
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-text-opacity-75;
+
+  @variant dark {
+    @apply tw:text-zinc-200/75;
+  }
 }
 
 /**************************************************************************
@@ -188,31 +212,42 @@ textarea.error {
   DEPARTMENT FORM
 
 **************************************************************************/
-
 .department--members {
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: auto;
   height: 400px;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+
+  @variant dark {
+    @apply tw:border-zinc-600;
+  }
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+
+  @variant dark {
+    @apply tw:border-zinc-600;
+  }
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
-  @apply dark:tw-bg-zinc-800;
+
+  @variant dark {
+    @apply tw:bg-zinc-800;
+  }
 }
 
 .department--member.is-inactive {
   background-color: #fff4ea;
-  @apply dark:tw-bg-transparent;
+
+  @variant dark {
+    @apply tw:bg-transparent;
+  }
 }
 
 .department--member:last-child {
@@ -248,15 +283,14 @@ textarea.error {
   SEARCH FIELD
 
 **************************************************************************/
-
 .search-field {
   margin-bottom: 21px;
 }
 
 .select-caret {
-  @apply tw-text-zinc-700;
-}
+  @apply tw:text-zinc-700;
 
-.select-caret {
-  @apply dark:tw-text-zinc-50;
+  @variant dark {
+    @apply tw:text-zinc-50;
+  }
 }

@@ -1,3 +1,5 @@
+@reference "../config.css";
+
 select[multiple] {
   overflow-y: scroll;
   scrollbar-width: none; /* firefox */
