@@ -25,7 +25,7 @@ class OvertimeMailService {
         this.mailRecipientService = mailRecipientService;
     }
 
-    void sendOvertimeNotificationToApplicantFromApplicant(Overtime overtime, OvertimeComment overtimeComment) {
+    void sendOvertimeNotificationToApplicantFromApplicant(OvertimeEntity overtime, OvertimeCommentEntity overtimeComment) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,
@@ -42,7 +42,7 @@ class OvertimeMailService {
         mailService.send(toPerson);
     }
 
-    void sendOvertimeNotificationToApplicantFromManagement(Overtime overtime, OvertimeComment overtimeComment, Person author) {
+    void sendOvertimeNotificationToApplicantFromManagement(OvertimeEntity overtime, OvertimeCommentEntity overtimeComment, Person author) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,
@@ -61,7 +61,7 @@ class OvertimeMailService {
         mailService.send(toPerson);
     }
 
-    void sendOvertimeNotificationToManagement(Overtime overtime, OvertimeComment overtimeComment) {
+    void sendOvertimeNotificationToManagement(OvertimeEntity overtime, OvertimeCommentEntity overtimeComment) {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             "overtime", overtime,

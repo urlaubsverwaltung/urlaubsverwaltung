@@ -5,9 +5,12 @@ import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeCommentDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.OvertimeDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.model.PersonDTO;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @ConditionalOnBackupCreateEnabled
@@ -19,17 +22,22 @@ class OvertimeDataCollectionService {
         this.overtimeService = overtimeService;
     }
 
-    List<OvertimeDTO> collectOvertimes(List<PersonDTO> persons) {
+    List<OvertimeDTO> collectOvertimes(List<PersonDTO> persons, Function<PersonId, Person> personById) {
+
         return persons.stream()
-            .map(this::createOvertimeDTOS)
+            .map(personDto -> createOvertimeDTOS(personDto, personById))
             .flatMap(Collection::stream)
             .toList();
     }
 
-    private List<OvertimeDTO> createOvertimeDTOS(PersonDTO person) {
-        return overtimeService.getAllOvertimesByPersonId(person.id()).stream()
+    private List<OvertimeDTO> createOvertimeDTOS(PersonDTO person, Function<PersonId, Person> personById) {
+        return overtimeService.getAllOvertimesByPersonId(new PersonId(person.id())).stream()
             .map(overtime -> {
-                final List<OvertimeCommentDTO> overtimeCommentDTOs = overtimeService.getCommentsForOvertime(overtime).stream().map(OvertimeCommentDTO::of).toList();
+
+                final List<OvertimeCommentDTO> overtimeCommentDTOs = overtimeService.getCommentsForOvertime(overtime.id()).stream()
+                    .map(comment -> OvertimeCommentDTO.of(comment, personById))
+                    .toList();
+
                 return OvertimeDTO.of(overtime, person.externalId(), overtimeCommentDTOs);
             })
             .toList();

@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Provides overtime record demo data.
@@ -30,11 +30,12 @@ class OvertimeRecordDataProvider {
     }
 
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
-        final Overtime overtime = new Overtime(person, startDate, endDate, duration);
-        overtimeService.save(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
+        final PersonId personId = person.getIdAsPersonId();
+        final DateRange dateRange = new DateRange(startDate, endDate);
+        overtimeService.createOvertime(personId, dateRange, duration, personId, "Ich habe ganz viel gearbeitet");
     }
 
     boolean personHasNoOvertimes(Person person) {
-        return overtimeService.getAllOvertimesByPersonId(person.getId()).isEmpty();
+        return overtimeService.getAllOvertimesByPersonId(person.getIdAsPersonId()).isEmpty();
     }
 }

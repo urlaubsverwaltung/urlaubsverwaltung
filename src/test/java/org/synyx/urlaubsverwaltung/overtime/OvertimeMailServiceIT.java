@@ -51,10 +51,10 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
-        final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
+        final OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 
-        final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(person, overtime, CREATED, clock);
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED), List.of(USER, OFFICE));
 
@@ -98,10 +98,10 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
-        final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
+        final OvertimeEntity overtime = new OvertimeEntity(person, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 
-        final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, CREATED, clock);
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtime, CREATED, clock);
 
         sut.sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
 
@@ -139,10 +139,10 @@ class OvertimeMailServiceIT extends SingleTenantTestContainersBase {
 
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
-        final Overtime overtime = new Overtime(author, startDate, endDate, Duration.parse("P1DT30H72M"));
+        final OvertimeEntity overtime = new OvertimeEntity(author, startDate, endDate, Duration.parse("P1DT30H72M"));
         overtime.setId(1L);
 
-        final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, CREATED, clock);
+        final OvertimeCommentEntity overtimeComment = new OvertimeCommentEntity(author, overtime, CREATED, clock);
 
         sut.sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
 

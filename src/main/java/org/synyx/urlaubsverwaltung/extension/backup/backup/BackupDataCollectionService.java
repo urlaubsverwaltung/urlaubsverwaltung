@@ -83,11 +83,12 @@ class BackupDataCollectionService {
         final LocalDate exportTo = getLastDayOfNextYear();
 
         final List<Person> allPersons = personService.getAllPersons();
+        final Map<PersonId, Person> personById = allPersons.stream().collect(toMap(Person::getIdAsPersonId, identity()));
 
-        final List<PersonDTO> persons = personDataCollectionService.collectPersons(allPersons);
-        final Map<PersonId, PersonDTO> personDTOById = persons.stream().collect(toMap(dto -> new PersonId(dto.id()), identity()));
+        final List<PersonDTO> personDtos = personDataCollectionService.collectPersons(allPersons);
+        final Map<PersonId, PersonDTO> personDTOById = personDtos.stream().collect(toMap(dto -> new PersonId(dto.id()), identity()));
 
-        final List<OvertimeDTO> overtimes = overtimeDataCollectionService.collectOvertimes(persons);
+        final List<OvertimeDTO> overtimes = overtimeDataCollectionService.collectOvertimes(personDtos, personById::get);
         final SickNoteBackupDTO sickNotes = sickNoteDataCollectionService.collectSickNotes(allPersons, exportFrom, exportTo);
         final ApplicationBackupDTO applications = applicationDataCollectionService.collectApplications(allPersons, exportFrom, exportTo);
         final List<DepartmentDTO> departments = departmentDataCollectionService.collectDepartments();
@@ -98,7 +99,7 @@ class BackupDataCollectionService {
 
         LOG.info("Collected data for backup");
 
-        return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, persons, overtimes, sickNotes,
+        return new UrlaubsverwaltungBackupDTO(tenantSupplier.get(), applicationVersion, personDtos, overtimes, sickNotes,
             applications, departments, departmentMemberships, calendars, calendarIntegration, settings);
     }
 }

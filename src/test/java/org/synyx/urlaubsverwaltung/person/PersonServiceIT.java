@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.SingleTenantTestContainersBase;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
@@ -111,7 +112,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
 
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 
-        final Overtime overtimeRecord = overtimeService.save(new Overtime(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
+        final Overtime overtimeRecord = overtimeService.createOvertime(personWithId.getIdAsPersonId(), new DateRange(now, now), Duration.ZERO, personWithId.getIdAsPersonId(), "");
 
         final Department department = new Department();
         department.setName("department");
@@ -133,7 +134,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(applicationService.getApplicationById(applicationWithApplierWithId.getId()).get().getApplier()).isEqualTo(personWithId);
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).hasValue(sickNoteWithId);
         assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId)).hasSize(1);
-        assertThat(overtimeService.getOvertimeById(overtimeRecord.getId())).hasValue(overtimeRecord);
+        assertThat(overtimeService.getOvertimeById(overtimeRecord.id())).hasValue(overtimeRecord);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getMembers()).hasSize(1);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).hasSize(1);
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).hasSize(1);
@@ -152,7 +153,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(applicationService.getApplicationById(applicationWithApplierWithId.getId()).get().getApplier()).isNull();
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).isEmpty();
         assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId).get(0).getPerson()).isNull();
-        assertThat(overtimeService.getOvertimeById(overtimeRecord.getId())).isEmpty();
+        assertThat(overtimeService.getOvertimeById(overtimeRecord.id())).isEmpty();
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getMembers()).isEmpty();
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).isEmpty();
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).isEmpty();

@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.annotation.Nullable;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -10,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Provides possibility to create and fetch {@link Overtime} records.
+ * Provides possibility to create and fetch {@link OvertimeEntity} records.
  *
  * @since 2.11.0
  */
@@ -26,41 +29,56 @@ public interface OvertimeService {
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
 
     /**
-     * Saves an overtime record.
+     * Creates a new Overtime entry.
      *
-     * @param overtime to be saved
-     * @param comment  contains further information to the overtime record, is optional
-     * @param author   identifies the person that recorded the overtime
-     * @return the created overtime record
+     * @param overtimePersonId {@link PersonId} of the overtime owner
+     * @param dateRange        {@link DateRange} of the overtime
+     * @param duration         {@link Duration} of the overtime
+     * @param authorPersonId   {@link PersonId} of the person creating this overtime entry
+     * @param comment          optional creation comment, can be {@code null}
+     * @return the created overtime
      */
-    Overtime save(Overtime overtime, Optional<String> comment, Person author);
+    Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
+
+    /**
+     * Updates an existing Overtime entry.
+     *
+     * @param overtimeId     identifier of the overtime
+     * @param dateRange      new {@link DateRange} of the overtime
+     * @param duration       new {@link Duration} of the overtime
+     * @param editorPersonId {@link PersonId} of the person updating this overtime entry
+     * @param comment        optional creation comment, can be {@code null}
+     * @return the updated overtime
+     * @throws UnknownOvertimeException in case of no overtime found for given identifier
+     */
+    Overtime updateOvertime(OvertimeId overtimeId, DateRange dateRange, Duration duration, PersonId editorPersonId, @Nullable String comment) throws UnknownOvertimeException;
 
     /**
      * Saves a comment for a certain overtime record.
      *
-     * @param overtime to save the comment for
-     * @param action   type of the comment
-     * @param comment  comment to save
-     * @param author   the author of the comment
+     * @param overtimeId to save the comment for
+     * @param action     type of the comment
+     * @param comment    comment to save
+     * @param author     the author of the comment
      * @return the saved comment
      */
-    OvertimeComment saveComment(Overtime overtime, OvertimeCommentAction action, String comment, Person author);
+    OvertimeComment saveComment(OvertimeId overtimeId, OvertimeCommentAction action, String comment, Person author);
 
     /**
      * Fetch the overtime record for a certain ID.
      *
-     * @param id to get the overtime record by
+     * @param overtimeId overtime identifier
      * @return overtime record with the given ID or an empty optional if no entry found for the given ID
      */
-    Optional<Overtime> getOvertimeById(Long id);
+    Optional<Overtime> getOvertimeById(OvertimeId overtimeId);
 
     /**
      * Fetch the comments for a certain overtime record.
      *
-     * @param overtime to get the comments for
+     * @param overtimeId overtime identifier
      * @return comments to the given overtime record
      */
-    List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
+    List<OvertimeComment> getCommentsForOvertime(OvertimeId overtimeId);
 
     /**
      * Get the total duration of all overtime records of the given person and year.
@@ -145,14 +163,14 @@ public interface OvertimeService {
      * @param personId id of the given person
      * @return all overtime hours of the given person
      */
-    List<Overtime> getAllOvertimesByPersonId(Long personId);
+    List<Overtime> getAllOvertimesByPersonId(PersonId personId);
 
     /**
      * Get external overtime record if exists, otherwise return optional empty
      *
-     * @param date date of overtime record
+     * @param date     date of overtime record
      * @param personId of person overtime was recorded
      * @return overtime record if exists, otherwise return optional empty
      */
-    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, Long personId);
+    Optional<Overtime> getExternalOvertimeByDate(LocalDate date, PersonId personId);
 }
