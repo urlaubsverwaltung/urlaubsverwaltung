@@ -75,7 +75,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-unicorn": "60.0.0",
-    "fetch-mock": "9.11.0",
+    "fetch-mock": "12.5.4",
     "globals": "16.3.0",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",
