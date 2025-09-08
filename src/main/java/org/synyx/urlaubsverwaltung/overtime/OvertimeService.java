@@ -32,10 +32,10 @@ public interface OvertimeService {
      * Creates a new Overtime entry.
      *
      * @param overtimePersonId {@link PersonId} of the overtime owner
-     * @param dateRange {@link DateRange} of the overtime
-     * @param duration {@link Duration} of the overtime
-     * @param authorPersonId {@link PersonId} of the person creating this overtime entry
-     * @param comment optional creation comment, can be {@code null}
+     * @param dateRange        {@link DateRange} of the overtime
+     * @param duration         {@link Duration} of the overtime
+     * @param authorPersonId   {@link PersonId} of the person creating this overtime entry
+     * @param comment          optional creation comment, can be {@code null}
      * @return the created overtime
      */
     Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
@@ -43,11 +43,11 @@ public interface OvertimeService {
     /**
      * Updates an existing Overtime entry.
      *
-     * @param overtimeId identifier of the overtime
-     * @param dateRange new {@link DateRange} of the overtime
-     * @param duration new {@link Duration} of the overtime
+     * @param overtimeId     identifier of the overtime
+     * @param dateRange      new {@link DateRange} of the overtime
+     * @param duration       new {@link Duration} of the overtime
      * @param editorPersonId {@link PersonId} of the person updating this overtime entry
-     * @param comment optional creation comment, can be {@code null}
+     * @param comment        optional creation comment, can be {@code null}
      * @return the updated overtime
      * @throws UnknownOvertimeException in case of no overtime found for given identifier
      */

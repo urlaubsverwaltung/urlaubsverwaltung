@@ -28,11 +28,11 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
  * {@link Application#getVacationType() type} {@link org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory#OVERTIME OVERTIME}.
  * An application is always a request to reduce overtime, which may even need to be approved.
  *
- * @param id overtime identifier
- * @param personId {@link org.synyx.urlaubsverwaltung.person.Person} identifier
- * @param dateRange overtime be spread over several days
- * @param duration duration of the overtime, can be positive or negative.
- * @param type {@link OvertimeType} of the overtime
+ * @param id               overtime identifier
+ * @param personId         {@link org.synyx.urlaubsverwaltung.person.Person} identifier
+ * @param dateRange        overtime be spread over several days
+ * @param duration         duration of the overtime, can be positive or negative.
+ * @param type             {@link OvertimeType} of the overtime
  * @param lastModification timestamp of last modification
  */
 public record Overtime(

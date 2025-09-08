@@ -85,12 +85,20 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         return person;
     }
 
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
     public LocalDate getStartDate() {
         if (startDate == null) {
             throw new IllegalStateException("Missing start date!");
         }
 
         return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     public LocalDate getEndDate() {
@@ -101,20 +109,12 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         return endDate;
     }
 
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Duration getDuration() {
+        return duration;
     }
 
     public void setDuration(Duration duration) {
@@ -129,16 +129,16 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
         this.external = external;
     }
 
-    public void setLastModificationDate(LocalDate lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
-    }
-
     public LocalDate getLastModificationDate() {
         if (lastModificationDate == null) {
             throw new IllegalStateException("Missing last modification date!");
         }
 
         return this.lastModificationDate;
+    }
+
+    public void setLastModificationDate(LocalDate lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
     }
 
     /**
@@ -151,13 +151,13 @@ public class OvertimeEntity extends AbstractTenantAwareEntity {
     @Override
     public String toString() {
         return "OvertimeEntity{" +
-                "id=" + getId() +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", duration=" + duration +
-                ", external=" + external +
-                ", person=" + person +
-                "}";
+            "id=" + getId() +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", duration=" + duration +
+            ", external=" + external +
+            ", person=" + person +
+            "}";
     }
 
     @Override
