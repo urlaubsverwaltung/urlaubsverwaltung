@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarSupplier;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -32,13 +33,14 @@ final class OvertimeListMapper {
         Duration leftOvertime,
         Person signedInUser,
         Predicate<Overtime> isUserIsAllowedToEditOvertime,
+        WorkingTimeCalendarSupplier workingTimeCalendarSupplier,
         int selectedYear
     ) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
         Duration sum = totalOvertimeLastYear;
 
-        final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, isUserIsAllowedToEditOvertime);
+        final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, workingTimeCalendarSupplier, isUserIsAllowedToEditOvertime);
         for (final OvertimeListRecordDto overtimeEntry : allOvertimes) {
             sum = sum.plus(overtimeEntry.getDurationByYear().getOrDefault(selectedYear, Duration.ZERO));
             overtimeListRecordDtos.add(new OvertimeListRecordDto(overtimeEntry, sum, overtimeEntry.getDurationByYear()));
@@ -53,27 +55,47 @@ final class OvertimeListMapper {
         List<Application> overtimeAbsences,
         List<Overtime> overtimes,
         Person signInUser,
+        WorkingTimeCalendarSupplier workingTimeCalendarSupplier,
         Predicate<Overtime> isUserIsAllowedToEditOvertime
     ) {
-        return concat(byOvertimes(overtimes, isUserIsAllowedToEditOvertime), byAbsences(overtimeAbsences, signInUser))
+
+        final Stream<OvertimeListRecordDto> byOvertimes = byOvertimes(overtimes, isUserIsAllowedToEditOvertime);
+        final Stream<OvertimeListRecordDto> byAbsences = byAbsences(overtimeAbsences, signInUser, workingTimeCalendarSupplier);
+
+        return concat(byOvertimes, byAbsences)
             .sorted(comparing(OvertimeListRecordDto::getStartDate))
             .toList();
     }
 
-    private static Stream<OvertimeListRecordDto> byAbsences(List<Application> overtimeAbsences, Person signInUser) {
+    private static Stream<OvertimeListRecordDto> byAbsences(
+        List<Application> overtimeAbsences,
+        Person signInUser,
+        WorkingTimeCalendarSupplier workingTimeCalendarSupplier
+    ) {
         return overtimeAbsences.stream()
-            .map(application -> new OvertimeListRecordDto(
-                application.getId(),
-                application.getStartDate(),
-                application.getEndDate(),
-                application.getHours().negated(),
-                application.getHoursByYear().entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> entry.getValue().negated())),
-                Duration.ZERO,
-                application.getStatus().name(),
-                application.getVacationType().getColor().name(),
-                ABSENCE.name(),
-                application.getPerson().equals(signInUser) && application.hasStatus(WAITING))
-            );
+            .map(application -> {
+                final Map<Integer, Duration> overtimeDurationByYear = application.getHoursByYear(workingTimeCalendarSupplier)
+                    .entrySet().stream()
+                    .collect(toMap(
+                        Map.Entry::getKey,
+                        // negate value because we're calculating overtime duration.
+                        // overtime reduction of 8 hours -> overtime duration of -8 hours
+                        entry -> entry.getValue().negated()
+                    ));
+
+                return new OvertimeListRecordDto(
+                    application.getId(),
+                    application.getStartDate(),
+                    application.getEndDate(),
+                    application.getHours().negated(),
+                    overtimeDurationByYear,
+                    Duration.ZERO,
+                    application.getStatus().name(),
+                    application.getVacationType().getColor().name(),
+                    ABSENCE.name(),
+                    application.getPerson().equals(signInUser) && application.hasStatus(WAITING)
+                );
+            });
     }
 
     private static Stream<OvertimeListRecordDto> byOvertimes(List<Overtime> overtimes, Predicate<Overtime> isUserIsAllowedToEditOvertime) {
