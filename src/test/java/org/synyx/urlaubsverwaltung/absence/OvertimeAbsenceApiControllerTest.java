@@ -33,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.halfWorkdayMorning;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.noWorkday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,7 +69,6 @@ class OvertimeAbsenceApiControllerTest {
         application.setDayLength(DayLength.FULL);
         application.setHours(duration);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-
         when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
 
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(date, date)))
@@ -107,7 +108,6 @@ class OvertimeAbsenceApiControllerTest {
         application.setDayLength(DayLength.FULL);
         application.setHours(Duration.ofHours(8));
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
-
         when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
 
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(startDate, endDate)))
@@ -128,6 +128,59 @@ class OvertimeAbsenceApiControllerTest {
                         {
                             "date": "2016-01-02",
                             "duration": "PT4H"
+                        }
+                    ]
+                }
+                """));
+
+    }
+
+    @Test
+    void multipleDaysWithDaysWithoutWorkingDaysAndHalfDays() throws Exception {
+        final LocalDate startDate = LocalDate.of(2016, 1, 1);
+        final LocalDate endDate = LocalDate.of(2016, 1, 3);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2L);
+
+        final Application application = new Application();
+        application.setId(3L);
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
+        application.setHours(Duration.ofHours(32));
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        when(applicationService.getApplicationById(3L)).thenReturn(Optional.of(application));
+
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(startDate, endDate)))
+            .thenReturn(Map.of(
+                person, new WorkingTimeCalendar(Map.of(
+                    LocalDate.of(2016, 1, 1), fullWorkday(),
+                    LocalDate.of(2016, 1, 2), halfWorkdayMorning(),
+                    LocalDate.of(2016, 1, 3), noWorkday()
+                ))
+            ));
+
+        perform(get("/api/persons/2/absences/3/overtime"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(content().json("""
+                {
+                    "id": 3,
+                    "duration": "PT32H",
+                    "durationShares": [
+                        {
+                            "date": "2016-01-01",
+                            "duration": "PT21H20M"
+                        },
+                        {
+                            "date": "2016-01-02",
+                            "duration": "PT10H40M"
+                        },
+                        {
+                            "date": "2016-01-03",
+                            "duration": "PT0S"
                         }
                     ]
                 }
