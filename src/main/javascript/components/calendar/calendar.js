@@ -538,11 +538,7 @@ const Controller = (function () {
       return;
     }
 
-    if (select) {
-      element.classList.add(CSS.daySelected);
-    } else {
-      element.classList.remove(CSS.daySelected);
-    }
+    element.classList.toggle(CSS.daySelected, select);
   }
 
   const matches = (element, query) => {

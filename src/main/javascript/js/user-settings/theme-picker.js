@@ -11,11 +11,7 @@ userSettingsForm.addEventListener("change", function (event) {
   if (event.target.name === "theme") {
     const value = event.target.value;
 
-    if (/system/i.test(value)) {
-      html.classList.add("tw-system");
-    } else {
-      html.classList.remove("tw-system");
-    }
+    html.classList.toggle("tw-system", /system/i.test(value));
 
     darkTheme = /system/i.test(value) ? mediaQueryDark.matches : /dark/i.test(value);
     render();
