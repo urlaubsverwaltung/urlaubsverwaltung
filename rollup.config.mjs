@@ -120,5 +120,5 @@ function inputFiles() {
 
 function entryName(file) {
   const filename = file.slice(Math.max(0, file.lastIndexOf("/") + 1));
-  return filename.slice(0, Math.max(0, filename.lastIndexOf("."))).replace(/-/g, "_");
+  return filename.slice(0, Math.max(0, filename.lastIndexOf("."))).replaceAll('-', "_");
 }
