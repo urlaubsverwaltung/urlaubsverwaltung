@@ -15,11 +15,7 @@ export class NavPopupMenuButton extends HTMLElement {
     const href = this.querySelector("a")?.getAttribute("href");
     const menu = document.querySelector(href);
 
-    if (this.#open) {
-      menu?.classList.add("visible");
-    } else {
-      menu?.classList.remove("visible");
-    }
+    menu?.classList.toggle("visible", this.#open);
   }
 
   connectedCallback() {

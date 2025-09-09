@@ -21,15 +21,15 @@ export async function setup() {
   // jest is configured with 'jsdom' environment
   // so window is already available here
   // and we're able to attach additional custom stuff
-  window.jQuery = window.$ = require("jquery");
+  globalThis.jQuery = globalThis.$ = require("jquery");
 
   // defined in 'actions.js' as global function
   // setting as spy function to assert things in the tests
-  window.tooltip = jest.fn();
+  globalThis.tooltip = jest.fn();
 
   // trigger ready event
   // so "modules" registered via $(function() { /* ... */ }) are executed immediately on file import
-  window.jQuery.ready();
+  globalThis.jQuery.ready();
 }
 
 /**
@@ -60,7 +60,7 @@ export async function setup() {
  */
 export function waitForFinishedJQueryReadyCallbacks() {
   return new Promise((resolve) => {
-    window.jQuery.fn.ready(function () {
+    globalThis.jQuery.fn.ready(function () {
       resolve();
     });
   });
