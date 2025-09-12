@@ -422,3 +422,150 @@ td.datepicker-day {
 .tw-dark .datepicker-day-public-holiday-full.datepicker-day-selected {
   @apply tw-shadow-sky-400/80;
 }
+
+.calendar_popover {
+  z-index: 1000;
+  padding: 0px 0px;
+  display: flex;
+  visibility: hidden;
+  &[data-show] {
+    visibility: visible;
+  }
+}
+
+.calendar_popover_content {
+  background: theme("backgroundColor.calendar.DEFAULT");
+  border-color: #333;
+  color: black;
+  font-weight: bold;
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 4px;
+  border-width: 1px;
+  display: flex;
+}
+
+#arrow,
+#arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #333;
+  z-index: -1;
+}
+
+#arrow {
+  visibility: hidden;
+}
+
+.calendar_popover[data-show] #arrow::before {
+  visibility: visible;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.calendar_popover[data-popper-placement^="top"] #arrow {
+  bottom: -4px;
+}
+
+.calendar_popover[data-popper-placement^="bottom"] #arrow {
+  top: -4px;
+}
+
+.calendar_popover[data-popper-placement^="left"] #arrow {
+  right: -4px;
+}
+
+.calendar_popover[data-popper-placement^="right"] #arrow {
+  left: -4px;
+}
+
+.calendar_popover_entry {
+  --font-color: theme("textColor.calendar.DEFAULT");
+  align-items: center;
+  @apply tw-pt-2;
+  @apply tw-pb-3.5;
+  @apply tw-pl-2;
+  @apply tw-pr-0.5;
+  cursor: default;
+  color: var(--font-color);
+  @apply dark:tw-font-semibold;
+  @apply tw-space-x-0.5;
+  @apply tw-tabular-nums;
+
+  float: left;
+}
+
+.calendar_popover_entry + .calendar_popover_entry {
+  float: right;
+}
+
+.absence-details {
+  overflow: hidden;
+  position: relative;
+}
+
+.absence-details::after {
+  content: "";
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.375rem;
+  right: 0.375rem;
+  height: 0.375rem;
+  border-radius: 99999px;
+}
+
+.absence-details.absence--outline::after {
+  border: solid 1px var(--absence-bar-color);
+}
+
+.absence-details.absence--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
+}
+
+.absence-details.absence--outline-solid-second-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
+}
+
+.absence-details.absence--solid::after {
+  background: var(--absence-bar-color);
+}
+
+@media (max-width: theme("screens.sm")) {
+  .calendar_popover_entry {
+    float: none;
+  }
+
+  .calendar_popover_entry + .calendar_popover_entry {
+    float: none;
+  }
+
+  /* Using !important to override style attribute set by popper.js*/
+  .calendar_popover {
+    transform: none !important;
+    inset: unset !important;
+    justify-content: center !important;
+    z-index: 40 !important;
+  }
+
+  #arrow::before {
+    visibility: hidden !important;
+  }
+
+  .calendar_popover_content {
+    display: block;
+    position: fixed;
+    width: 100vw;
+    height: 30vh;
+    left: 0;
+    bottom: -30vh;
+    transition: bottom 0.7s;
+  }
+
+  /* Slide in animation*/
+  .calendar_popover[data-show] .calendar_popover_content {
+    bottom: 0;
+  }
+}
