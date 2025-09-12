@@ -52,9 +52,11 @@ class ApplicationForLeaveStatisticsBuilder {
     private final Clock clock;
 
     @Autowired
-    ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-                                         WorkingTimeCalendarService workingTimeCalendarService,
-                                         VacationDaysService vacationDaysService, OvertimeService overtimeService, Clock clock) {
+    ApplicationForLeaveStatisticsBuilder(
+        AccountService accountService, ApplicationService applicationService,
+        WorkingTimeCalendarService workingTimeCalendarService,
+        VacationDaysService vacationDaysService, OvertimeService overtimeService, Clock clock
+    ) {
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.workingTimeCalendarService = workingTimeCalendarService;
