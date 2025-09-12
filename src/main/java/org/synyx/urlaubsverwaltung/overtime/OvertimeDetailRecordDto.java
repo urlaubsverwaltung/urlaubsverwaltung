@@ -14,11 +14,20 @@ public class OvertimeDetailRecordDto {
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Duration duration;
-
     private final Map<Integer, Duration> durationByYear;
     private final LocalDate lastModificationDate;
+    private final boolean isExternal;
 
-    OvertimeDetailRecordDto(Long id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, LocalDate lastModificationDate) {
+    OvertimeDetailRecordDto(
+        Long id,
+        OvertimeDetailPersonDto person,
+        LocalDate startDate,
+        LocalDate endDate,
+        Duration duration,
+        Map<Integer, Duration> durationByYear,
+        LocalDate lastModificationDate,
+        boolean isExternal
+    ) {
         this.id = id;
         this.person = person;
         this.startDate = startDate;
@@ -26,6 +35,7 @@ public class OvertimeDetailRecordDto {
         this.duration = duration;
         this.durationByYear = durationByYear;
         this.lastModificationDate = lastModificationDate;
+        this.isExternal = isExternal;
     }
 
     public Long getId() {
@@ -52,7 +62,6 @@ public class OvertimeDetailRecordDto {
         return lastModificationDate;
     }
 
-
     public Map<Integer, Duration> getDurationByYear() {
         return durationByYear;
     }
@@ -63,17 +72,28 @@ public class OvertimeDetailRecordDto {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    public boolean isExternal() {
+        return isExternal;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OvertimeDetailRecordDto that = (OvertimeDetailRecordDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(person, that.person) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate) && Objects.equals(duration, that.duration) && Objects.equals(durationByYear, that.durationByYear) && Objects.equals(lastModificationDate, that.lastModificationDate);
+        return Objects.equals(id, that.id)
+            && Objects.equals(person, that.person)
+            && Objects.equals(startDate, that.startDate)
+            && Objects.equals(endDate, that.endDate)
+            && Objects.equals(duration, that.duration)
+            && Objects.equals(durationByYear, that.durationByYear)
+            && Objects.equals(lastModificationDate, that.lastModificationDate)
+            && Objects.equals(isExternal, that.isExternal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, person, startDate, endDate, duration, durationByYear, lastModificationDate);
+        return Objects.hash(id, person, startDate, endDate, duration, durationByYear, lastModificationDate, isExternal);
     }
 
     @Override
@@ -86,6 +106,7 @@ public class OvertimeDetailRecordDto {
             ", duration=" + duration +
             ", durationByYear=" + durationByYear +
             ", lastModificationDate=" + lastModificationDate +
+            ", isExternal=" + isExternal +
             '}';
     }
 }
