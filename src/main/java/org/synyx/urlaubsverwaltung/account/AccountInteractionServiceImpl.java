@@ -38,8 +38,12 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private final Clock clock;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService,
-                                  SettingsService settingsService, Clock clock) {
+    AccountInteractionServiceImpl(
+        AccountService accountService,
+        VacationDaysService vacationDaysService,
+        SettingsService settingsService,
+        Clock clock
+    ) {
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.settingsService = settingsService;
@@ -67,11 +71,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
-                                                 Boolean doRemainingVacationDaysExpireLocally, @Nullable LocalDate expiryDate,
-                                                 BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
-                                                 String comment) {
+    public Account updateOrCreateHolidaysAccount(
+        Person person, LocalDate validFrom, LocalDate validTo,
+        Boolean doRemainingVacationDaysExpireLocally, @Nullable LocalDate expiryDate,
+        BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
+        String comment
+    ) {
 
         remainingVacationDays = requireNonNullElse(remainingVacationDays, ZERO);
         remainingVacationDaysNotExpiring = requireNonNullElse(remainingVacationDaysNotExpiring, ZERO);
@@ -101,9 +107,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
-                                       @Nullable LocalDate expiryDateLocally, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                       BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public Account editHolidaysAccount(
+        Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
+        @Nullable LocalDate expiryDateLocally, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+        BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment
+    ) {
 
         remainingVacationDaysNotExpiring = requireNonNullElseGet(remainingVacationDaysNotExpiring, account::getRemainingVacationDaysNotExpiring);
 

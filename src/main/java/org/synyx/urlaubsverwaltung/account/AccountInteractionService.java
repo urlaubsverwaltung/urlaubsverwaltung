@@ -35,10 +35,12 @@ public interface AccountInteractionService {
      * @param comment                          comment to changes to the annual vacation days
      * @return the created holidays account
      */
-    Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
-                                          @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                          BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
-                                          String comment);
+    Account updateOrCreateHolidaysAccount(
+        Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
+        @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
+        String comment
+    );
 
     /**
      * Edits the given {@link Account} with the given params.
@@ -55,10 +57,12 @@ public interface AccountInteractionService {
      * @param comment                          comment to changes to the annual vacation days
      * @return the updated holidays account
      */
-    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, @Nullable Boolean doRemainingVacationDaysExpire,
-                                @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring,
-                                String comment);
+    Account editHolidaysAccount(
+        Account account, LocalDate validFrom, LocalDate validTo, @Nullable Boolean doRemainingVacationDaysExpire,
+        @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+        BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring,
+        String comment
+    );
 
     /**
      * Auto-creates a new {@link Account} or updates the existing {@link Account} for the next year, based on the information of the given reference account.
