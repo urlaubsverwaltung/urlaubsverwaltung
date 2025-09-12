@@ -93,13 +93,16 @@
                   ></span>
                 </th:block>
               </span>
-              <span data-grid-ref="title">
+              <span data-grid-ref="title" class="tw-flex tw-items-center tw-gap-2">
                 <th:block th:if="${record.type == 'OVERTIME'}">
                   <a
                     th:text="#{overtime.link.overtime}"
                     class="print:tw-hidden tw-text-lg tw-mb-1"
                     th:href="@{__${recordDetailsUrl}__}"
                   ></a>
+                  <span th:if="${record.isExternal}" class="tw-text-gray-400 dark:tw-text-zinc-500">
+                    <span th:replace="~{icon/cloud-check::svg(className='tw-w-4 tw-h-4')}"></span>
+                  </span>
                 </th:block>
                 <a
                   th:if="${record.type == 'ABSENCE'}"

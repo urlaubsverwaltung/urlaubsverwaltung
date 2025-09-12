@@ -93,8 +93,8 @@ final class OvertimeListMapper {
                     application.getStatus().name(),
                     application.getVacationType().getColor().name(),
                     ABSENCE.name(),
-                    application.getPerson().equals(signInUser) && application.hasStatus(WAITING)
-                );
+                    false,
+                    application.getPerson().equals(signInUser) && application.hasStatus(WAITING));
             });
     }
 
@@ -111,6 +111,7 @@ final class OvertimeListMapper {
                     "",
                     "",
                     OVERTIME.name(),
+                    overtime.type().equals(OvertimeType.EXTERNAL),
                     isUserIsAllowedToEditOvertime.test(overtime)
                 )
             );
