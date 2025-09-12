@@ -56,10 +56,10 @@ class PersonMailServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(personWithNotification));
-        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.person.created");
-        assertThat(mails.get(0).getTemplateName()).isEqualTo("person_created_office");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(personWithNotification));
+        assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.person.created");
+        assertThat(mails.getFirst().getTemplateName()).isEqualTo("person_created_office");
+        assertThat(mails.getFirst().getTemplateModel(GERMAN)).isEqualTo(model);
     }
 
     @Test
@@ -77,9 +77,9 @@ class PersonMailServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.person.gained-permissions");
-        assertThat(mails.get(0).getTemplateName()).isEqualTo("person_gained_permissions");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(model);
+        assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.person.gained-permissions");
+        assertThat(mails.getFirst().getTemplateName()).isEqualTo("person_gained_permissions");
+        assertThat(mails.getFirst().getTemplateModel(GERMAN)).isEqualTo(model);
     }
 }

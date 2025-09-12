@@ -67,7 +67,7 @@ class SickNoteCommentFormValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
         sut.validate(sickNoteCommentFormDto, errors);
-        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
+        assertThat(errors.getFieldErrors("text").getFirst().getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
     }
 
     @Test
@@ -79,7 +79,7 @@ class SickNoteCommentFormValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(comment, "sickNote");
         sut.validate(comment, errors);
-        assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
+        assertThat(errors.getFieldErrors("text").getFirst().getCode()).isEqualTo("sicknote.action.reason.error.mandatory");
     }
 
     @Test

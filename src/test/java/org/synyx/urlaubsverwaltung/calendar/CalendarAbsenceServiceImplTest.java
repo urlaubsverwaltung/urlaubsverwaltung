@@ -69,7 +69,7 @@ class CalendarAbsenceServiceImplTest {
 
         final List<CalendarAbsence> openAbsences = sut.getOpenAbsencesSince(List.of(person), since);
         assertThat(openAbsences).hasSize(2);
-        assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
+        assertThat(openAbsences.getFirst().getPerson()).isEqualTo(person);
         assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-12-10T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-12-24T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);
@@ -102,7 +102,7 @@ class CalendarAbsenceServiceImplTest {
 
         final List<CalendarAbsence> openAbsences = sut.getOpenAbsencesSince(since);
         assertThat(openAbsences).hasSize(2);
-        assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
+        assertThat(openAbsences.getFirst().getPerson()).isEqualTo(person);
         assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-11-10T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-11-24T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);

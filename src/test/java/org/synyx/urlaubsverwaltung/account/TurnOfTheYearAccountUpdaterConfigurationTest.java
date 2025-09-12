@@ -43,7 +43,7 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
         assertThat(cronTaskList).hasSize(1);
 
-        final CronTask cronTask = cronTaskList.get(0);
+        final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 5 1 1 *");
 
         verifyNoInteractions(service);

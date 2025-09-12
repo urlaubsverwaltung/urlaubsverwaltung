@@ -106,7 +106,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
-        applicationForLeave.setVacationType(vacationTypes.get(0));
+        applicationForLeave.setVacationType(vacationTypes.getFirst());
         applicationForLeave.setStartDate(of(2014, 10, 13));
         applicationForLeave.setEndDate(of(2014, 10, 13));
         applicationForLeave.setStatus(ALLOWED);
@@ -163,7 +163,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
-        applicationForLeave.setVacationType(vacationTypes.get(0));
+        applicationForLeave.setVacationType(vacationTypes.getFirst());
         applicationForLeave.setStartDate(of(2014, 10, 13));
         applicationForLeave.setEndDate(of(2014, 10, 13));
         applicationForLeave.setStatus(ALLOWED);
@@ -218,7 +218,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
-        applicationForLeave.setVacationType(vacationTypes.get(0));
+        applicationForLeave.setVacationType(vacationTypes.getFirst());
         applicationForLeave.setStartDate(of(2014, 10, 13));
         applicationForLeave.setEndDate(of(2014, 10, 13));
         applicationForLeave.setStatus(ALLOWED);
@@ -283,7 +283,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setDayLength(FULL);
-        applicationForLeave.setVacationType(vacationTypes.get(0));
+        applicationForLeave.setVacationType(vacationTypes.getFirst());
         applicationForLeave.setStartDate(of(2014, 10, 13));
         applicationForLeave.setEndDate(of(2014, 10, 13));
         applicationForLeave.setStatus(ALLOWED);
@@ -347,7 +347,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application holidayWaiting = new Application();
         holidayWaiting.setPerson(person);
         holidayWaiting.setDayLength(FULL);
-        holidayWaiting.setVacationType(vacationTypes.get(0));
+        holidayWaiting.setVacationType(vacationTypes.getFirst());
         holidayWaiting.setStartDate(of(2014, 10, 13));
         holidayWaiting.setEndDate(of(2014, 10, 13));
         holidayWaiting.setStatus(WAITING);
@@ -355,7 +355,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application holidayTemporaryAllowed = new Application();
         holidayTemporaryAllowed.setPerson(person);
         holidayTemporaryAllowed.setDayLength(FULL);
-        holidayTemporaryAllowed.setVacationType(vacationTypes.get(0));
+        holidayTemporaryAllowed.setVacationType(vacationTypes.getFirst());
         holidayTemporaryAllowed.setStartDate(of(2014, 10, 12));
         holidayTemporaryAllowed.setEndDate(of(2014, 10, 12));
         holidayTemporaryAllowed.setStatus(TEMPORARY_ALLOWED);
@@ -363,7 +363,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application holidayAllowed = new Application();
         holidayAllowed.setPerson(person);
         holidayAllowed.setDayLength(FULL);
-        holidayAllowed.setVacationType(vacationTypes.get(0));
+        holidayAllowed.setVacationType(vacationTypes.getFirst());
         holidayAllowed.setStartDate(of(2014, 10, 14));
         holidayAllowed.setEndDate(of(2014, 10, 14));
         holidayAllowed.setStatus(ALLOWED);
@@ -371,7 +371,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Application holidayAllowedCancellationRequested = new Application();
         holidayAllowedCancellationRequested.setPerson(person);
         holidayAllowedCancellationRequested.setDayLength(FULL);
-        holidayAllowedCancellationRequested.setVacationType(vacationTypes.get(0));
+        holidayAllowedCancellationRequested.setVacationType(vacationTypes.getFirst());
         holidayAllowedCancellationRequested.setStartDate(of(2014, 10, 15));
         holidayAllowedCancellationRequested.setEndDate(of(2014, 10, 15));
         holidayAllowedCancellationRequested.setStatus(ALLOWED_CANCELLATION_REQUESTED);

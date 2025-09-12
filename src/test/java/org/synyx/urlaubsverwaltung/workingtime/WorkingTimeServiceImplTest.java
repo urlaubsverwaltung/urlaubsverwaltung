@@ -197,16 +197,16 @@ class WorkingTimeServiceImplTest {
 
         final List<WorkingTime> workingTimes = sut.getByPerson(person);
         assertThat(workingTimes).hasSize(1);
-        assertThat(workingTimes.get(0).getPerson()).isSameAs(person);
-        assertThat(workingTimes.get(0).getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
-        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
-        assertThat(workingTimes.get(0).getMonday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getTuesday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getWednesday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getThursday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getFriday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getSaturday()).isEqualTo(FULL);
-        assertThat(workingTimes.get(0).getSunday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getPerson()).isSameAs(person);
+        assertThat(workingTimes.getFirst().getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
+        assertThat(workingTimes.getFirst().getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(workingTimes.getFirst().getMonday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getTuesday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getWednesday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getThursday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getFriday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getSaturday()).isEqualTo(FULL);
+        assertThat(workingTimes.getFirst().getSunday()).isEqualTo(FULL);
     }
 
     @Test

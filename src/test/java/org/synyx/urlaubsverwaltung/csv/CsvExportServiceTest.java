@@ -70,7 +70,7 @@ class CsvExportServiceTest {
         final CsvExportService<String> sut = new CsvExportService<>() {
             @Override
             public void write(FilterPeriod period, Locale locale, List<String> data, CSVWriter csvWriter) {
-                csvWriter.writeNext(new String[]{data.get(0)});
+                csvWriter.writeNext(new String[]{data.getFirst()});
 
             }
 

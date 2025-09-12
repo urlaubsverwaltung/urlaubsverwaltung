@@ -135,7 +135,7 @@ class ApplicationServiceImplTest {
         final List<Application> actual = sut.findApplicationsByIds(List.of(1337L));
 
         assertThat(actual).hasSize(1);
-        assertThat(actual.get(0)).satisfies(application -> {
+        assertThat(actual.getFirst()).satisfies(application -> {
             assertThat(application.getId()).isEqualTo(1337L);
             assertThat(application.getAddress()).isEqualTo("address");
             assertThat(application.getApplicationDate()).isSameAs(applicationDate);

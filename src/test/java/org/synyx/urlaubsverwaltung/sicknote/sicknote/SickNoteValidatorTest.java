@@ -412,7 +412,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("dayLength").get(0).getCode()).isEqualTo("error.entry.mandatory");
+        assertThat(errors.getFieldErrors("dayLength").getFirst().getCode()).isEqualTo("error.entry.mandatory");
     }
 
     @Test
@@ -432,7 +432,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("startDate").get(0).getCode()).isEqualTo("error.entry.mandatory");
+        assertThat(errors.getFieldErrors("startDate").getFirst().getCode()).isEqualTo("error.entry.mandatory");
     }
 
     @Test
@@ -452,7 +452,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.mandatory");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.mandatory");
     }
 
     @Test
@@ -472,7 +472,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
 
         verifyNoInteractions(overlapService, workingTimeService);
     }
@@ -494,7 +494,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("sicknote.error.halfDayPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("sicknote.error.halfDayPeriod");
     }
 
     @Test
@@ -514,7 +514,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("sicknote.error.halfDayPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("sicknote.error.halfDayPeriod");
     }
 
     @Test
@@ -534,7 +534,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
     }
 
     @Test
@@ -554,7 +554,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
     }
 
     @Test
@@ -580,7 +580,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("aubEndDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
     }
 
     @Test
@@ -736,7 +736,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("application.error.overlap");
+        assertThat(errors.getGlobalErrors().getFirst().getCode()).isEqualTo("application.error.overlap");
     }
 
     @Test
@@ -760,7 +760,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("sicknote.error.noValidWorkingTime");
+        assertThat(errors.getGlobalErrors().getFirst().getCode()).isEqualTo("sicknote.error.noValidWorkingTime");
         verify(workingTimeService).getWorkingTime(sickNote.getPerson(), startDate);
     }
 
@@ -783,7 +783,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("endDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
     }
 
     @Test
@@ -809,7 +809,7 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
+        assertThat(errors.getFieldErrors("aubEndDate").getFirst().getCode()).isEqualTo("error.entry.invalidPeriod");
     }
 
     private void userIsAllowedToSubmitSickNotes(boolean allowed) {

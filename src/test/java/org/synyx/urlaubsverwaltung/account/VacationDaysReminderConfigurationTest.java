@@ -48,7 +48,7 @@ class VacationDaysReminderConfigurationTest {
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
         assertThat(cronTaskList).hasSize(2);
 
-        final CronTask remindForCurrentlyLeftVacationDaysCronTask = cronTaskList.get(0);
+        final CronTask remindForCurrentlyLeftVacationDaysCronTask = cronTaskList.getFirst();
         assertThat(remindForCurrentlyLeftVacationDaysCronTask.getExpression()).isEqualTo("0 0 6 1 10 *");
         remindForCurrentlyLeftVacationDaysCronTask.getRunnable().run();
         verify(vacationDaysReminderService).remindForCurrentlyLeftVacationDays();

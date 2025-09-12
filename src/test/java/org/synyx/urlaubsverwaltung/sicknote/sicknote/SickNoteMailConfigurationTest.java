@@ -43,7 +43,7 @@ class SickNoteMailConfigurationTest {
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
         assertThat(cronTaskList).hasSize(1);
 
-        final CronTask cronTask = cronTaskList.get(0);
+        final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 6 * * *");
 
         verifyNoInteractions(sickNoteMailService);
