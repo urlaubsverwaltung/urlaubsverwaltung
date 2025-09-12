@@ -103,9 +103,7 @@ class ApplicationCommentServiceImplTest {
         final ArgumentCaptor<ApplicationCommentEntity> captor = ArgumentCaptor.forClass(ApplicationCommentEntity.class);
         verify(commentRepository).save(captor.capture());
 
-        assertThat(captor.getValue()).satisfies(persistedComment -> {
-            assertThat(persistedComment.getText()).isEqualTo("Foo");
-        });
+        assertThat(captor.getValue()).satisfies(persistedComment -> assertThat(persistedComment.getText()).isEqualTo("Foo"));
     }
 
     @Test

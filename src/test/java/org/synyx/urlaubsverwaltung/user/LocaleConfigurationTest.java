@@ -24,9 +24,7 @@ class LocaleConfigurationTest {
         this.contextRunner
             .withBean(LocaleModelInterceptor.class)
             .withUserConfiguration(LocaleConfiguration.class)
-            .run(context -> {
-                assertThat(context).getBean("localeResolver").isInstanceOf(SessionLocaleResolver.class);
-            });
+            .run(context -> assertThat(context).getBean("localeResolver").isInstanceOf(SessionLocaleResolver.class));
     }
 
     @Test
