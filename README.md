@@ -53,7 +53,7 @@ kann man sich unter [urlaubsverwaltung.cloud/preis](https://urlaubsverwaltung.cl
 
 ### Voraussetzungen
 
-* [JDK 21](https://adoptium.net)
+* [JDK 24](https://adoptium.net)
 * [PostgreSQL Datenbank (v15.3)](https://www.postgresql.org/)
 * [E-Mail-Server](#e-mail-server-konfigurieren)
 * [Security Provider](#security-provider-konfigurieren)
@@ -330,7 +330,7 @@ Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urla
 
 ### Voraussetzungen
 
-* [JDK 21](https://adoptium.net)
+* [JDK 24](https://adoptium.net)
 * [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
