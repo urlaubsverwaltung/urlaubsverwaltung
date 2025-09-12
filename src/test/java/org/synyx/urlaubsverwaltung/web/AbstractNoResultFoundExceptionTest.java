@@ -25,7 +25,7 @@ class AbstractNoResultFoundExceptionTest {
             .isEqualTo("No person found for identifier = username");
     }
 
-    private class TestException extends AbstractNoResultFoundException {
+    private static class TestException extends AbstractNoResultFoundException {
 
         public TestException(Long id, String type) {
             super(id, type);
