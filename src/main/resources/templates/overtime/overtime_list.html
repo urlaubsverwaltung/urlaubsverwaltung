@@ -100,7 +100,11 @@
                     class="print:tw-hidden tw-text-lg tw-mb-1"
                     th:href="@{__${recordDetailsUrl}__}"
                   ></a>
-                  <span th:if="${record.isExternal}" class="tw-text-gray-400 dark:tw-text-zinc-500">
+                  <span
+                    th:if="${record.isExternal}"
+                    class="tw-text-gray-400 dark:tw-text-zinc-500"
+                    th:data-title="#{overtime.details.isExternal}"
+                  >
                     <span th:replace="~{icon/cloud-check::svg(className='tw-w-4 tw-h-4')}"></span>
                   </span>
                 </th:block>
