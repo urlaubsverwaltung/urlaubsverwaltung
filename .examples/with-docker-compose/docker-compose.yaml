@@ -66,7 +66,7 @@ services:
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.3.3
+    image: quay.io/keycloak/keycloak:26.3.4
     command: ["start-dev", "--import-realm"]
     environment:
       KEYCLOAK_ADMIN: admin
