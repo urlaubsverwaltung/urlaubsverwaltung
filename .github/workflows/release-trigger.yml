@@ -42,7 +42,9 @@ jobs:
   run-ui-test:
     name: "Run UI tests"
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     strategy:
+      fail-fast: false
       matrix:
         browser: ["chromium", "firefox", "webkit"]
     concurrency:
