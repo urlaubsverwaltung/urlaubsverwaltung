@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
@@ -224,12 +225,7 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final Department department = new Department();
-        department.setName("Buchhaltung");
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
-
-        when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, person)).thenReturn(true);
 
         final LocalDate today = LocalDate.now(clock);
         final int year = today.getYear();
@@ -247,17 +243,50 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final VacationType<?> vacationType = createVacationType(1L, OVERTIME, new StaticMessageSource());
-        final Application applicationNonEditable = createApplication(person, vacationType, today, today, FULL);
-        applicationNonEditable.setHours(ofHours(8));
+        when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, person)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, person, overtime)).thenReturn(false);
+
+        final VacationType<?> vacationTypeOvertime = createVacationType(1L, OVERTIME, new StaticMessageSource());
+        final Application overtimeReductionNonEditable = createApplication(person, vacationTypeOvertime, today, today, FULL);
+        overtimeReductionNonEditable.setId(2L);
+        overtimeReductionNonEditable.setHours(ofHours(8));
 
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, activeStatuses(), OVERTIME))
-                .thenReturn(List.of(applicationNonEditable));
+                .thenReturn(List.of(overtimeReductionNonEditable));
 
+        final WorkingTimeCalendar workingTimeCalendarPerson = workingTimeCalendar(today, today, date -> fullWorkday());
         when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(today, today)))
-            .thenReturn(Map.of(person, workingTimeCalendar(today, today, date -> fullWorkday())));
+            .thenReturn(Map.of(person, workingTimeCalendarPerson));
+
+        final OvertimeListRecordDto expectedOvertimeReductionDto = new OvertimeListRecordDto(
+            2L,
+            today,
+            today,
+            ofHours(-8),
+            Map.of(year, Duration.ofHours(-8)),
+            ofHours(2),
+            "WAITING",
+            "ORANGE",
+            "ABSENCE",
+            false,
+            false
+        );
+
+        final OvertimeListRecordDto expectedOvertimeDto = new OvertimeListRecordDto(
+            1L,
+            today,
+            today,
+            Duration.ofHours(10),
+            Map.of(year, Duration.ofHours(10)),
+            ofHours(10),
+            "",
+            "",
+            "OVERTIME",
+            false,
+            false
+        );
 
         perform(get("/web/overtime").param("person", "5"))
                 .andExpect(status().isOk())
@@ -269,10 +298,43 @@ class OvertimeViewControllerTest {
                 .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
                 .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
                 .andExpect(model().attribute("userIsAllowedToCreateOvertime", is(true)))
-                .andExpect(model().attribute("records", hasItems(
-                        new OvertimeListRecordDto(overtime.id().value(), overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true),
-                        new OvertimeListRecordDto(overtime.id().value(), applicationNonEditable.getStartDate(), applicationNonEditable.getEndDate(), ofHours(-8), null, ofHours(2), "WAITING", "ORANGE", "ABSENCE", false)
-                )));
+                .andExpect(model().attribute("records", hasItems(expectedOvertimeDto, expectedOvertimeReductionDto)));
+    }
+
+    @Test
+    void showsExternalOvertime() throws Exception {
+
+        final long personId = 5;
+        final Person person = new Person();
+        person.setId(personId);
+
+        when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        final LocalDate today = LocalDate.now(clock);
+        final int year = today.getYear();
+
+        final Overtime overtimeExternal = new Overtime(
+            new OvertimeId(1L),
+            person.getIdAsPersonId(),
+            new DateRange(today, today),
+            ofHours(10),
+            OvertimeType.EXTERNAL,
+            Instant.now(clock)
+        );
+
+        when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(List.of(overtimeExternal));
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(ofHours(1));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(person, person, overtimeExternal)).thenReturn(false);
+
+        perform(get("/web/overtime").param("person", "5"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("records", hasItems(
+                new OvertimeListRecordDto(1L, today, today, ofHours(10), overtimeExternal.getDurationByYear(), ofHours(10), "", "", "OVERTIME", true, false)
+            )));
     }
 
     @Test
@@ -289,7 +351,6 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
-        when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, person)).thenReturn(true);
 
         final Overtime overtime = new Overtime(
             new OvertimeId(1L),
@@ -305,8 +366,11 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonBeforeYear(person, year)).thenReturn(ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
+        when(overtimeService.isUserIsAllowedToCreateOvertime(signedInPerson, person)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToUpdateOvertime(signedInPerson, person, overtime)).thenReturn(true);
+
         final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.id().value(), overtime.startDate(),
-                overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", true);
+                overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), ofHours(20), "", "", "OVERTIME", false, true);
 
         perform(get("/web/overtime")
                 .param("person", "5")
@@ -387,7 +451,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), false);
-        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId.value(), personDto, overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")));
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId.value(), personDto, overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")), false);
         final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(overtimePerson.getId(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL()), comment.action().toString(), comment.createdAt(), comment.text());
 
         perform(get("/web/overtime/2"))

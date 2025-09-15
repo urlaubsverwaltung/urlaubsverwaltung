@@ -1,0 +1,315 @@
+.overtime-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  /* column template for every li element (using subgrid). overridden for bigger screens */
+  grid-template-columns: auto 0.75rem auto 0.75rem 1fr auto;
+
+  @screen xs {
+    grid-template-columns: 0.75rem auto 1rem auto 1rem 1fr 1rem auto 1rem auto;
+  }
+  @screen md {
+    grid-template-columns: 0.75rem auto 3rem auto 0.75rem 1fr 2rem auto 2rem auto 2rem auto;
+  }
+  @screen lg {
+    grid-template-columns: 1.75rem auto 1.75rem auto 0.75rem 1fr 3rem auto 3rem auto 3rem auto;
+  }
+
+  /* every element should inherit column subgrid of the grid container */
+  > li {
+    display: grid;
+    /* fill full width of parent grid */
+    grid-column: 1 / -1;
+    /* use columns of parent grid */
+    grid-template-columns: subgrid;
+  }
+
+  /* only separator (neither head-row nor overtime-entry-row) */
+  > li[role="separator"] {
+    height: 1px;
+    @apply tw-bg-gray-200;
+    @apply dark:tw-bg-gray-700;
+  }
+
+  /* only overtime-entry-element (neither head-row nor separator) */
+  > li:not([role]) {
+    cursor: pointer;
+  }
+
+  /* head-row and overtime-entry-element (not separator) */
+  > li:not([role="separator"]) {
+    padding: 0.75rem 0.25rem;
+    transition: background-color 150ms ease-in-out;
+
+    @apply dark:tw-bg-neutral-900;
+
+    &:not([role="presentation"]):hover {
+      @apply dark:tw-bg-neutral-800;
+    }
+
+    /* use isolated rows within this li. */
+    grid-template-rows: auto auto 0.5rem auto 0.5rem auto 1rem auto;
+
+    @screen xs {
+      grid-template-rows: auto auto auto 1rem auto;
+    }
+    @screen md {
+      grid-template-rows: auto auto;
+    }
+    @screen lg {
+      grid-template-rows: auto auto;
+    }
+
+    [data-grid-ref="plus-minus-icon"] {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: center;
+      display: flex;
+
+      @screen xs {
+        grid-row: 1;
+        grid-column: 2;
+      }
+
+      @screen md {
+        grid-row: 1;
+        grid-column: 2;
+      }
+      @screen lg {
+        grid-row: 1;
+        grid-column: 2;
+      }
+    }
+
+    [data-grid-ref="absence-type-box"] {
+      grid-row: 1 / span 2;
+      grid-column: 3;
+      display: flex;
+      align-items: center;
+
+      > span {
+        height: 90%;
+      }
+
+      @screen xs {
+        grid-row: 1 / span 2;
+        grid-column: 4;
+      }
+      @screen md {
+        grid-row: 1 / span 2;
+        grid-column: 4;
+        > span {
+          height: 70%;
+        }
+      }
+      @screen lg {
+        grid-row: 1 / span 2;
+        grid-column: 4;
+        > span {
+          height: 70%;
+        }
+      }
+    }
+
+    [data-grid-ref="title"] {
+      grid-row: 1;
+      grid-column: 5 / span 3;
+
+      @screen xs {
+        grid-row: 1;
+        grid-column: 6;
+      }
+      @screen md {
+        grid-row: 1;
+        grid-column: 6;
+      }
+      @screen lg {
+        grid-row: 1;
+        grid-column: 6;
+      }
+    }
+
+    [data-grid-ref="date-range"] {
+      grid-row: 2;
+      grid-column: 5 / span 3;
+      font-size: 0.95rem;
+
+      @screen xs {
+        grid-row: 2 / span 2;
+        grid-column: 6;
+      }
+      @screen lg {
+        grid-row: 2;
+        grid-column: 6;
+      }
+    }
+
+    /* span date-range over full width when there is no edit-button */
+    &:not(:has([data-grid-ref="action-buttons"] a)) {
+      @screen xs {
+        [data-grid-ref="date-range"] {
+          grid-row: 2 / span 2;
+          grid-column: 6 / span 5;
+        }
+      }
+      @screen md {
+        /* no span anymore, other layout */
+        [data-grid-ref="date-range"] {
+          grid-row: 2;
+          grid-column: 6;
+        }
+      }
+    }
+    /* otherwise */
+    &:has([data-grid-ref="action-buttons"] a) {
+      @screen xs {
+        [data-grid-ref="date-range"] {
+          grid-row: 2 / span 2;
+          grid-column: 6 / span 3;
+        }
+      }
+      @screen md {
+        /* no span anymore, other layout */
+        [data-grid-ref="date-range"] {
+          grid-row: 2;
+          grid-column: 6;
+        }
+      }
+    }
+
+    [data-grid-ref="info-split-year"] {
+      grid-row: 4;
+      grid-column: 5 / span 3;
+      /*text-align: right;*/
+      font-variant: tabular-nums;
+
+      > span:first-of-type {
+        white-space: nowrap;
+      }
+      > span:nth-of-type(2) {
+        white-space: nowrap;
+      }
+
+      @screen xs {
+        grid-row: 5;
+        grid-column: 6;
+      }
+      @screen md {
+        grid-row: 1 / span 2;
+        grid-column: 8;
+        align-self: center;
+        @apply tw-text-sm;
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+      }
+      @screen lg {
+        grid-row: 1 / span 2;
+        grid-column: 8;
+        align-self: center;
+        align-items: center;
+      }
+    }
+
+    [data-grid-ref="sum"] {
+      grid-row: 6;
+      grid-column: 5 / span 3;
+      align-self: start;
+      font-variant: tabular-nums;
+
+      > span:first-of-type {
+        white-space: nowrap;
+      }
+      > span:nth-of-type(2) {
+        white-space: nowrap;
+      }
+
+      @screen xs {
+        grid-row: 5;
+        grid-column: 8 / span 3;
+        text-align: right;
+      }
+      @screen md {
+        grid-row: 1 / span 2;
+        grid-column: 10;
+        @apply dark:tw-text-zinc-100;
+        align-self: center;
+        @apply tw-text-sm;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: flex-end;
+      }
+      @screen lg {
+        grid-row: 1 / span 2;
+        grid-column: 10;
+        @apply tw-text-sm;
+        > span:first-of-type {
+          padding-left: 2rem;
+        }
+        /* align sum character on the left */
+        > span:nth-of-type(2) {
+          flex: 1 0 0;
+        }
+      }
+    }
+
+    [data-grid-ref="action-buttons"] {
+      grid-row: 8;
+      grid-column: 5;
+      align-self: center;
+
+      @screen xs {
+        grid-row: 1 / span 2;
+        grid-column: 10;
+      }
+      @screen md {
+        grid-row: 1 / span 2;
+        grid-column: 12;
+        padding-right: 0.5rem;
+        align-self: center;
+      }
+      @screen lg {
+        grid-row: 1 / span 2;
+        grid-column: 12;
+        padding-right: 0.5rem;
+        align-self: center;
+      }
+    }
+  }
+
+  /* head-row only (neither separator nor overtime-entry-element) */
+  /* define last to override general entries */
+  > li[role="presentation"] {
+    padding: 0;
+    grid-template-rows: auto 0.25rem auto;
+
+    [data-grid-ref] {
+      align-self: end;
+    }
+
+    @screen xs {
+      [data-grid-ref="sum"] {
+        /* grid-col 6 overflows info-split-year, but text is aligned right -> should be ok :shrug: */
+        grid-column: 6 / span 5;
+        text-align: right;
+      }
+    }
+    @screen md {
+      /* only one row for header */
+      grid-template-rows: auto;
+
+      [data-grid-ref] {
+        grid-row: 1;
+      }
+
+      [data-grid-ref="sum"] {
+        grid-column: 10;
+        text-align: right;
+      }
+    }
+  }
+}

@@ -24,8 +24,26 @@ class OvertimeDetailsMapper {
     ) {
 
         final Person overtimePerson = personById.apply(overtime.personId());
-        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getInitials(), overtimePerson.getGravatarURL(), overtimePerson.isInactive());
-        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtime.id().value(), person, overtime.startDate(), overtime.endDate(), overtime.duration(), overtime.getDurationByYear(), LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")));
+
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(
+            overtimePerson.getId(),
+            overtimePerson.getEmail(),
+            overtimePerson.getNiceName(),
+            overtimePerson.getInitials(),
+            overtimePerson.getGravatarURL(),
+            overtimePerson.isInactive()
+        );
+
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(
+            overtime.id().value(),
+            person,
+            overtime.startDate(),
+            overtime.endDate(),
+            overtime.duration(),
+            overtime.getDurationByYear(),
+            LocalDate.ofInstant(overtime.lastModification(), ZoneId.of("Europe/Berlin")),
+            overtime.type().equals(OvertimeType.EXTERNAL)
+        );
 
         final List<OvertimeCommentDto> commentDtos = comments.stream()
             .map(comment -> mapComment(comment, personById))

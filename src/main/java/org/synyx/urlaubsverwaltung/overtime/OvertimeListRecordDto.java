@@ -23,9 +23,22 @@ public final class OvertimeListRecordDto {
     private final String status;
     private final String color;
     private final String type;
+    private final boolean isExternal;
     private final boolean isAllowedToEdit;
 
-    OvertimeListRecordDto(Long id, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, Duration sum, String status, String color, String type, boolean isAllowedToEdit) {
+    OvertimeListRecordDto(
+        Long id,
+        LocalDate startDate,
+        LocalDate endDate,
+        Duration duration,
+        Map<Integer, Duration> durationByYear,
+        Duration sum,
+        String status,
+        String color,
+        String type,
+        boolean isExternal,
+        boolean isAllowedToEdit
+    ) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -35,12 +48,24 @@ public final class OvertimeListRecordDto {
         this.status = status;
         this.color = color;
         this.type = type;
+        this.isExternal = isExternal;
         this.isAllowedToEdit = isAllowedToEdit;
     }
 
     OvertimeListRecordDto(OvertimeListRecordDto overtimeListRecordDto, Duration sum, Map<Integer, Duration> durationByYear) {
-        this(overtimeListRecordDto.id, overtimeListRecordDto.startDate, overtimeListRecordDto.endDate, overtimeListRecordDto.getDuration(),
-            durationByYear, sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getColor(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
+        this(
+            overtimeListRecordDto.id,
+            overtimeListRecordDto.startDate,
+            overtimeListRecordDto.endDate,
+            overtimeListRecordDto.getDuration(),
+            durationByYear,
+            sum,
+            overtimeListRecordDto.getStatus(),
+            overtimeListRecordDto.getColor(),
+            overtimeListRecordDto.getType(),
+            overtimeListRecordDto.isExternal,
+            overtimeListRecordDto.isAllowedToEdit
+        );
     }
 
     public Long getId() {
@@ -93,23 +118,34 @@ public final class OvertimeListRecordDto {
         return type;
     }
 
+    public boolean isExternal() {
+        return isExternal;
+    }
+
     public boolean isAllowedToEdit() {
         return isAllowedToEdit;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OvertimeListRecordDto that = (OvertimeListRecordDto) o;
-        return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate)
-            && Objects.equals(duration, that.duration) && Objects.equals(sum, that.sum)
-            && Objects.equals(status, that.status) && Objects.equals(color, that.color) && Objects.equals(type, that.type);
+        return isExternal == that.isExternal && isAllowedToEdit == that.isAllowedToEdit
+            && Objects.equals(id, that.id)
+            && Objects.equals(startDate, that.startDate)
+            && Objects.equals(endDate, that.endDate)
+            && Objects.equals(duration, that.duration)
+            && Objects.equals(durationByYear, that.durationByYear)
+            && Objects.equals(sum, that.sum)
+            && Objects.equals(status, that.status)
+            && Objects.equals(color, that.color)
+            && Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, duration, sum, status, color, type);
+        return Objects.hash(id, startDate, endDate, duration, durationByYear, sum, status, color, type, isExternal,
+            isAllowedToEdit);
     }
 
     @Override
@@ -119,10 +155,12 @@ public final class OvertimeListRecordDto {
             ", startDate=" + startDate +
             ", endDate=" + endDate +
             ", duration=" + duration +
+            ", durationByYear=" + durationByYear +
             ", sum=" + sum +
             ", status='" + status + '\'' +
             ", color='" + color + '\'' +
             ", type='" + type + '\'' +
+            ", isExternal=" + isExternal +
             ", isAllowedToEdit=" + isAllowedToEdit +
             '}';
     }

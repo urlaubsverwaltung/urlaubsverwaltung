@@ -1,7 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="#{overtime.header.title(${person.niceName})}"></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/overtime.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('overtime_overview.js')}" />
     </th:block>
@@ -48,158 +53,132 @@
         </div>
       </div>
 
-      <table class="list-table selectable-table tw-text-sm">
-        <caption th:text="#{overtime.list.title}" class="tw-sr-only"></caption>
-        <thead th:if="${not #lists.isEmpty(records)}">
-          <tr>
-            <th th:text="#{overtime.list.col.icon}" class="tw-hidden md:tw-table-cell tw-sr-only" scope="col"></th>
-            <th th:text="#{overtime.list.col.date}" class="tw-pl-8 tw-font-medium" scope="col"></th>
-            <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-center" scope="col"></th>
-            <th th:text="#{overtime.list.col.sum}" class="tw-font-medium tw-text-right" scope="col"></th>
-            <th th:text="#{overtime.list.col.actions}" class="tw-sr-only" scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            th:each="record : ${records}"
-            th:with="recordDetailsUrl=${record.type == 'OVERTIME' ? '/web/overtime/__${record.id}__' : '/web/application/__${record.id}__'}"
-            th:onclick="|navigate('__${recordDetailsUrl}__');|"
-            class="active"
-          >
-            <td class="tw-hidden md:tw-table-cell is-centered">
-              <th:block th:if="${record.negative}">
-                <svg th:replace="~{icon/arrow-down::svg(className='tw-w-5 tw-h-5')}"></svg>
-              </th:block>
-              <th:block th:if="${record.positive}">
-                <svg th:replace="~{icon/arrow-up::svg(className='tw-w-5 tw-h-5')}"></svg>
-              </th:block>
-            </td>
-
-            <td>
-              <div class="tw-flex">
-                <div class="tw-flex tw-items-center tw-mr-2">
-                  <th:block th:if="${record.type == 'OVERTIME'}">
-                    <div class="tw-w-3"></div>
-                  </th:block>
-                  <th:block th:if="${record.type == 'ABSENCE'}">
-                    <div
-                      class="absence-type_color-box tw-w-3"
-                      th:classappend="|
-                        ${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
-                        ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
-                        ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
-                        ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
-                        ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
-                        ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
-                        |"
-                      th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
-                      th:title="${#messages.msg(record.status)}"
-                    >
-                      &nbsp;
-                    </div>
-                  </th:block>
-                </div>
-                <div class="tw-flex tw-flex-col">
-                  <th:block th:if="${record.type == 'OVERTIME'}">
-                    <span th:text="#{overtime.link.overtime}" class="visible-print"></span>
-                    <a
-                      th:text="#{overtime.link.overtime}"
-                      class="print:tw-hidden tw-text-lg tw-mb-1"
-                      th:href="@{__${recordDetailsUrl}__}"
-                    >
-                    </a>
-                  </th:block>
-                  <th:block th:if="${record.type == 'ABSENCE'}">
-                    <span th:text="#{overtime.link.absence}" class="visible-print"></span>
-                    <a
-                      th:text="#{overtime.link.absence}"
-                      class="print:tw-hidden tw-text-lg tw-mb-1"
-                      th:href="@{__${recordDetailsUrl}__}"
-                    >
-                    </a>
-                  </th:block>
-                  <span>
-                    <th:block th:text="#{absence.period.for}" />
-                    <th:block
-                      th:replace="~{fragments/date-range::date-range-all(
-                      from=${record.startDate},
-                      to=${record.endDate}
-                    )}"
-                    ></th:block>
-                  </span>
-                </div>
-              </div>
-            </td>
-
-            <td class="tw-text-center">
-              <div th:text="${{record.durationByYear.get(selectedYear)}}"></div>
-              <span>
-                <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(selectedYear)}">
-                  <th:block
-                    th:if="${iterStat.first}"
-                    th:text="#{overtime.list.col.duration.additionalInfo.first}"
-                  ></th:block>
-                  <th:block
-                    th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
-                  ></th:block>
-                  <th:block
-                    th:if="${!iterStat.last}"
-                    th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
-                  ></th:block>
+      <div>
+        <ol class="overtime-list">
+          <li role="presentation" class="tw-mb-1 tw-font-medium tw-text-sm">
+            <span data-grid-ref="plus-minus-icon"></span>
+            <span data-grid-ref="absence-type-box"></span>
+            <span data-grid-ref="title" th:text="#{overtime.list.col.date}"> Überstundenauf-/abbau </span>
+            <span data-grid-ref="date-range"></span>
+            <span data-grid-ref="info-split-year" th:text="#{overtime.list.col.duration}">
+              Geleistete Überstunden
+            </span>
+            <span data-grid-ref="sum" th:text="#{overtime.list.col.sum}"> Summe der Überstunden </span>
+            <span data-grid-ref="action-buttons"></span>
+          </li>
+          <th:block th:each="record,it : ${records}">
+            <li role="separator"></li>
+            <li
+              th:with="recordDetailsUrl=${record.type == 'OVERTIME' ? '/web/overtime/__${record.id}__' : '/web/application/__${record.id}__'}"
+              th:onclick="|navigate('__${recordDetailsUrl}__');|"
+            >
+              <span data-grid-ref="plus-minus-icon">
+                <th:block th:if="${record.negative}">
+                  <span th:replace="~{icon/arrow-down::svg(className='tw-w-5 tw-h-5')}"></span>
+                </th:block>
+                <th:block th:if="${record.positive}">
+                  <span th:replace="~{icon/arrow-up::svg(className='tw-w-5 tw-h-5')}"></span>
                 </th:block>
               </span>
-            </td>
-
-            <td>
-              <div class="tw-flex tw-justify-end">
-                <div class="tw-flex tw-justify-between tw-gap-2 tw-w-full md:tw-w-8/12 lg:tw-w-8/12">
-                  <span>Σ</span>
-                  <span th:text="${{record.sum}}">1 Std. 30 Min. </span>
-                </div>
-              </div>
-            </td>
-
-            <td class="tw-text-right">
-              <a th:if="${record.allowedToEdit}" class="button tw-flex-1" th:href="|@{__${recordDetailsUrl}__/edit}|">
-                <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
-                <span th:text="#{action.edit}" class="tw-sr-only xs:tw-not-sr-only"> </span>
-              </a>
-            </td>
-          </tr>
-
-          <tr th:if="${#lists.isEmpty(records)}">
-            <td
-              th:text="#{overtime.none(${selectedYear})}"
-              colspan="5"
-              class="tw-border-t-0 tw-text-center tw-pb-10"
-            ></td>
-          </tr>
-
-          <tr
+              <span data-grid-ref="absence-type-box">
+                <th:block th:if="${record.type == 'OVERTIME'}">
+                  <span class="tw-w-3 tw-inline-block"></span>
+                </th:block>
+                <th:block th:if="${record.type == 'ABSENCE'}">
+                  <span
+                    class="absence-type_color-box tw-w-3 tw-inline-block"
+                    th:classappend="|${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''} ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''} ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''} ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''} ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''} ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}|"
+                    th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
+                    th:title="${#messages.msg(record.status)}"
+                  ></span>
+                </th:block>
+              </span>
+              <span data-grid-ref="title" class="tw-flex tw-items-center tw-gap-2">
+                <th:block th:if="${record.type == 'OVERTIME'}">
+                  <a
+                    th:text="#{overtime.link.overtime}"
+                    class="print:tw-hidden tw-text-lg tw-mb-1"
+                    th:href="@{__${recordDetailsUrl}__}"
+                  ></a>
+                  <span
+                    th:if="${record.isExternal}"
+                    class="tw-text-gray-400 dark:tw-text-zinc-500"
+                    th:data-title="#{overtime.details.isExternal}"
+                  >
+                    <span th:replace="~{icon/cloud-check::svg(className='tw-w-4 tw-h-4')}"></span>
+                  </span>
+                </th:block>
+                <a
+                  th:if="${record.type == 'ABSENCE'}"
+                  th:text="#{overtime.link.absence}"
+                  class="print:tw-hidden tw-text-lg tw-mb-1"
+                  th:href="@{__${recordDetailsUrl}__}"
+                ></a>
+              </span>
+              <span data-grid-ref="date-range">
+                <th:block th:text="#{absence.period.for}" />
+                <th:block
+                  th:replace="~{fragments/date-range::date-range-all(from=${record.startDate}, to=${record.endDate})}"
+                ></th:block>
+              </span>
+              <span data-grid-ref="info-split-year">
+                <span th:text="${{record.durationByYear.get(selectedYear)}}"></span>
+                <span>
+                  <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(selectedYear)}">
+                    <th:block
+                      th:if="${iterStat.first}"
+                      th:text="#{overtime.list.col.duration.additionalInfo.first}"
+                    ></th:block>
+                    <th:block
+                      th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
+                    ></th:block>
+                    <th:block
+                      th:if="${!iterStat.last}"
+                      th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
+                    ></th:block>
+                  </th:block>
+                </span>
+              </span>
+              <span data-grid-ref="sum">
+                <span>Σ</span>
+                <span th:text="${{record.sum}}">1 Std. 30 Min. </span>
+              </span>
+              <span data-grid-ref="action-buttons">
+                <a th:if="${record.allowedToEdit}" class="button tw-w-full" th:href="|@{__${recordDetailsUrl}__/edit}|">
+                  <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-flex-shrink-0')}"></svg>
+                  <span
+                    th:text="#{action.edit}"
+                    class="tw-ml-2 xs:tw-ml-0 xs:tw-sr-only sm:tw-not-sr-only sm:tw-ml-2 md:tw-sr-only md:tw-ml-0 lg:tw-not-sr-only lg:tw-ml-2"
+                  ></span>
+                </a>
+              </span>
+            </li>
+          </th:block>
+          <li role="separator"></li>
+          <li
             th:with="lastYear=${selectedYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
             th:onclick="|navigate('__${lastYearUrl}__');|"
           >
-            <td class="tw-hidden md:tw-table-cell tw-border-b-0">
+            <span data-grid-ref="plus-minus-icon">
               <svg th:replace="~{icon/reply::svg(className='tw-w-5 tw-h-5 tw--scale-x-100')}"></svg>
-            </td>
-
-            <td class="tw-border-b-0 tw-pl-8">
-              <span th:text="#{overtime.link.last-year}" class="visible-print"> </span>
+            </span>
+            <span data-grid-ref="absence-type-box"></span>
+            <span data-grid-ref="title">
               <a
                 th:text="#{overtime.link.last-year}"
                 class="print:tw-hidden tw-text-lg tw-mb-1"
                 th:href="@{/web/overtime?person=__${person.id}__&year=__${lastYear}__}"
-              >
-              </a>
-              <p th:text="|#{overtime.list.last-year-details} ${lastYear}|"></p>
-            </td>
-
-            <td th:text="${{overtimeTotalLastYear}}" colspan="2" class="tw-border-b-0 tw-text-right"></td>
-
-            <td class="tw-border-b-0"></td>
-          </tr>
-        </tbody>
-      </table>
+              ></a>
+            </span>
+            <span data-grid-ref="date-range">
+              <span th:text="|#{overtime.list.last-year-details} ${lastYear}|"></span>
+            </span>
+            <span data-grid-ref="info-split-year"></span>
+            <span data-grid-ref="sum" th:text="${{overtimeTotalLastYear}}"></span>
+            <span data-grid-ref="action-buttons"></span>
+          </li>
+        </ol>
+      </div>
     </main>
   </body>
 </html>
