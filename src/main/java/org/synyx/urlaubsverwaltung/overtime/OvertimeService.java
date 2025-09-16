@@ -29,7 +29,7 @@ public interface OvertimeService {
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
 
     /**
-     * Creates a new Overtime entry.
+     * Creates a new internal overtime entry.
      *
      * @param overtimePersonId {@link PersonId} of the overtime owner
      * @param dateRange        {@link DateRange} of the overtime
@@ -39,6 +39,19 @@ public interface OvertimeService {
      * @return the created overtime
      */
     Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, @Nullable String comment);
+
+    /**
+     * Creates a new Overtime entry.
+     *
+     * @param overtimePersonId {@link PersonId} of the overtime owner
+     * @param dateRange        {@link DateRange} of the overtime
+     * @param duration         {@link Duration} of the overtime
+     * @param authorPersonId   {@link PersonId} of the person creating this overtime entry
+     * @param type             {@link OvertimeType} of the overtime
+     * @param comment          optional creation comment, can be {@code null}
+     * @return the created overtime
+     */
+    Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorPersonId, OvertimeType type, @Nullable String comment);
 
     /**
      * Updates an existing Overtime entry.
