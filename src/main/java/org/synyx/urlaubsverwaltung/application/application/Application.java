@@ -333,10 +333,7 @@ public class Application {
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.getWorkingTimeCalendar(person, dateRange);
 
         // e.g. one day and a half
-        final BigDecimal workingTimeDays = workingTimeCalendar.workingTime(this)
-            .multiply(BigDecimal.valueOf(2))
-            .setScale(0, RoundingMode.CEILING)
-            .divide(BigDecimal.valueOf(2));
+        final BigDecimal workingTimeDays = workingTimeCalendar.workingTime(this);
 
         if (Objects.equals(workingTimeDays, ZERO)) {
             return dateRange.stream().collect(toMap(identity(), localDate -> Duration.ZERO));
