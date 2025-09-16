@@ -5,12 +5,17 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 
 /**
  * Provides information about the {@link DayLength} on a given {@link LocalDate} including publicHolidays.
@@ -74,14 +79,19 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
         final DateRange applicationDateRange = new DateRange(application.getStartDate(), application.getEndDate());
         final Optional<DateRange> overlap = dateRange.overlap(applicationDateRange);
         if (overlap.isEmpty()) {
-            return BigDecimal.ZERO;
+            return ZERO;
         } else {
-            BigDecimal workingTimeSum = BigDecimal.ZERO;
+            BigDecimal workingTimeSum = ZERO;
             for (LocalDate localDate : overlap.get()) {
-                final BigDecimal workingTime = workingTime(localDate).orElse(BigDecimal.ZERO);
+                final BigDecimal workingTime = workingTime(localDate).orElse(ZERO);
                 final WorkingDayInformation workingDayInformation = this.workingDays().get(application.getStartDate());
-                if (application.getDayLength().isHalfDay() && workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday()) {
-                    workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
+
+                if (application.getDayLength().isHalfDay() && (workingDayInformation != null && !workingDayInformation.hasHalfDayPublicHoliday())) {
+                    if (workingDayInformation.dayLength.isHalfDay() && (application.getDayLength() == MORNING && workingDayInformation.morning() == WORKDAY || application.getDayLength() == NOON && workingDayInformation.noon() == WORKDAY)) {
+                        workingTimeSum = workingTimeSum.add(workingTime);
+                    } else if (workingDayInformation.dayLength == FULL) {
+                        workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, HALF_UP));
+                    }
                 } else {
                     workingTimeSum = workingTimeSum.add(workingTime);
                 }
@@ -126,10 +136,10 @@ public record WorkingTimeCalendar(Map<LocalDate, WorkingDayInformation> workingD
     public BigDecimal workingTime(LocalDate from, LocalDate to) {
 
         if (from.isAfter(to)) {
-            return BigDecimal.ZERO;
+            return ZERO;
         }
 
-        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal sum = ZERO;
 
         for (Map.Entry<LocalDate, WorkingDayInformation> entry : workingDays.entrySet()) {
             final LocalDate localDate = entry.getKey();

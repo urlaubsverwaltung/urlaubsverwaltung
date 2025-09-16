@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.ZoneOffset.UTC;
 import static java.util.function.Function.identity;
@@ -333,6 +334,11 @@ public class Application {
 
         // e.g. one day and a half
         final BigDecimal workingTimeDays = workingTimeCalendar.workingTime(this);
+
+        if (Objects.equals(workingTimeDays, ZERO)) {
+            return dateRange.stream().collect(toMap(identity(), localDate -> Duration.ZERO));
+        }
+
         // e.g. three
         final int numberOfHalfDays = workingTimeDays.divide(BigDecimal.valueOf(0.5), HALF_EVEN).intValue();
         // e.g. 12 hours
@@ -346,8 +352,11 @@ public class Application {
             final DayLength dayLengthAtDate = workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO);
             return switch (dayLengthAtDate) {
                 case ZERO -> Duration.ZERO;
-                case FULL -> halfDayReduction.multipliedBy(2);
-                case MORNING, NOON -> halfDayReduction;
+                case FULL -> dayLength.isFull() ? halfDayReduction.multipliedBy(2) : halfDayReduction;
+                case MORNING ->
+                    (dayLength.isFull() || (dayLength.isMorning() && dayLengthAtDate.isMorning())) ? halfDayReduction : Duration.ZERO;
+                case NOON ->
+                    (dayLength.isFull() || (dayLength.isNoon() && dayLengthAtDate.isNoon())) ? halfDayReduction : Duration.ZERO;
             };
         }));
     }
@@ -355,7 +364,7 @@ public class Application {
     /**
      * Calculates the overtime reduction duration for the given date range.
      *
-     * @param dateRange date range to calculate overtime reduction
+     * @param dateRange                   date range to calculate overtime reduction
      * @param workingTimeCalendarSupplier supplies working time calendar for this application
      * @return overtime reduction duration for the given date range
      */

@@ -30,6 +30,8 @@ import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.Workin
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.PUBLIC_HOLIDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.halfWorkdayMorning;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.halfWorkdayNoon;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.noWorkday;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendar;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.workingTimeCalendarMondayToSunday;
@@ -283,6 +285,37 @@ class WorkingTimeCalendarTest {
 
             final BigDecimal actual = sut.workingTimeInDateRage(application, new DateRange(christmas, christmas.plusDays(1)));
             assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
+        }
+
+        static Stream<Arguments> singleHalfDay() {
+            return Stream.of(
+                arguments(MORNING, fullWorkday(), BigDecimal.valueOf(0.5)),
+                arguments(MORNING, halfWorkdayMorning(), BigDecimal.valueOf(0.5)),
+                arguments(MORNING, halfWorkdayNoon(), BigDecimal.ZERO),
+                arguments(MORNING, noWorkday(), BigDecimal.ZERO),
+                arguments(NOON, fullWorkday(), BigDecimal.valueOf(0.5)),
+                arguments(NOON, halfWorkdayMorning(), BigDecimal.ZERO),
+                arguments(NOON, halfWorkdayNoon(), BigDecimal.valueOf(0.5)),
+                arguments(NOON, noWorkday(), BigDecimal.ZERO)
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("singleHalfDay")
+        void ensureWorkingTimeForHalfDayApplicationAndWorkingDay(DayLength dayLength, WorkingDayInformation workingDayInformation, BigDecimal expectedWorkingTime) {
+
+            final LocalDate date = LocalDate.of(2024, 12, 24);
+
+            final Map<LocalDate, WorkingDayInformation> workingTimeByDate = Map.of(date, workingDayInformation);
+            final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+            final Application application = new Application();
+            application.setStartDate(date);
+            application.setEndDate(date);
+            application.setDayLength(dayLength);
+
+            final BigDecimal actual = sut.workingTimeInDateRage(application, new DateRange(date, date.plusDays(1)));
+            assertThat(actual).isEqualByComparingTo(expectedWorkingTime);
         }
     }
 

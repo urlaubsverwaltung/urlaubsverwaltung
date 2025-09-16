@@ -13,6 +13,7 @@ import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.NO_WORKDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar.WorkingDayInformation.WorkingTimeCalendarEntryType.WORKDAY;
@@ -96,6 +97,10 @@ public class WorkingTimeCalendarFactory {
 
     public static WorkingDayInformation halfWorkdayMorning() {
         return new WorkingDayInformation(MORNING, WORKDAY, NO_WORKDAY);
+    }
+
+    public static WorkingDayInformation halfWorkdayNoon() {
+        return new WorkingDayInformation(NOON, NO_WORKDAY, WORKDAY);
     }
 
     private static WorkingDayInformation fullDayMondayToFriday(LocalDate date) {
