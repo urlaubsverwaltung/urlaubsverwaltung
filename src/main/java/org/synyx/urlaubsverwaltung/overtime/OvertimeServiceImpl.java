@@ -40,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Transactional
@@ -90,6 +91,12 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     @Transactional
     public Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, @Nullable String comment) {
+        return createOvertime(overtimePersonId, dateRange, duration, authorId, UV_INTERNAL, comment);
+    }
+
+    @Override
+    @Transactional
+    public Overtime createOvertime(PersonId overtimePersonId, DateRange dateRange, Duration duration, PersonId authorId, OvertimeType type, @Nullable String comment) {
 
         final Map<PersonId, Person> personById = personService.getAllPersonsByIds(List.of(overtimePersonId, authorId))
             .stream()
@@ -104,7 +111,7 @@ class OvertimeServiceImpl implements OvertimeService {
         entity.setStartDate(dateRange.startDate());
         entity.setEndDate(dateRange.endDate());
         entity.setDuration(duration);
-        entity.setExternal(false);
+        entity.setExternal(type == OvertimeType.EXTERNAL);
         entity.onUpdate();
 
         final OvertimeEntity saved = overtimeRepository.save(entity);
@@ -286,7 +293,7 @@ class OvertimeServiceImpl implements OvertimeService {
             entity.getPerson().getIdAsPersonId(),
             new DateRange(entity.getStartDate(), entity.getEndDate()),
             entity.getDuration(),
-            entity.isExternal() ? OvertimeType.EXTERNAL : OvertimeType.UV_INTERNAL,
+            entity.isExternal() ? OvertimeType.EXTERNAL : UV_INTERNAL,
             entity.getLastModificationDate().atStartOfDay().toInstant(ZoneOffset.UTC)
         );
     }

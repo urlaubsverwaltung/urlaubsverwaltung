@@ -54,6 +54,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
@@ -96,7 +97,7 @@ class OvertimeServiceImplTest {
     class CreateOvertime {
 
         @Test
-        void ensureCreateOvertime() {
+        void ensureCreateAInternalOvertime() {
 
             final PersonId authorId = new PersonId(1L);
             final Person author = new Person();
@@ -136,6 +137,52 @@ class OvertimeServiceImplTest {
                 assertThat(actualEntity.getStartDate()).isEqualTo(startDate);
                 assertThat(actualEntity.getEndDate()).isEqualTo(endDate);
                 assertThat(actualEntity.getDuration()).isEqualTo(duration);
+                assertThat(actualEntity.isExternal()).isFalse();
+            });
+        }
+
+        @Test
+        void ensureCreateAExternalOvertime() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person();
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+            savedOvertimeEntity.setStartDate(LocalDate.now());
+            savedOvertimeEntity.setEndDate(LocalDate.now());
+            savedOvertimeEntity.setLastModificationDate(LocalDate.now());
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final LocalDate startDate = LocalDate.now();
+            final LocalDate endDate = LocalDate.now();
+            final DateRange dateRange = new DateRange(startDate, endDate);
+            final Duration duration = Duration.ofHours(8);
+
+            final Overtime actual = sut.createOvertime(ownerId, dateRange, duration, authorId, EXTERNAL, "Foo Bar");
+            assertThat(actual.id()).isEqualTo(new OvertimeId(1L));
+
+            verify(overtimeRepository).save(overtimeEntityCaptor.capture());
+            assertThat(overtimeEntityCaptor.getValue()).satisfies(actualEntity -> {
+                assertThat(actualEntity.getId()).isNull();
+                assertThat(actualEntity.getPerson()).isSameAs(owner);
+                assertThat(actualEntity.getStartDate()).isEqualTo(startDate);
+                assertThat(actualEntity.getEndDate()).isEqualTo(endDate);
+                assertThat(actualEntity.getDuration()).isEqualTo(duration);
+                assertThat(actualEntity.isExternal()).isTrue();
             });
         }
 
@@ -752,7 +799,7 @@ class OvertimeServiceImplTest {
             personOfOvertime.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.EXTERNAL,
+            EXTERNAL,
             Instant.now(clock)
         );
 
