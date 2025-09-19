@@ -427,10 +427,6 @@ td.datepicker-day {
   z-index: 1000;
   padding: 0px 0px;
   display: flex;
-  visibility: hidden;
-  &[data-show] {
-    visibility: visible;
-  }
 }
 
 .calendar_popover_content {
@@ -454,12 +450,7 @@ td.datepicker-day {
   z-index: -1;
 }
 
-#arrow {
-  visibility: hidden;
-}
-
-.calendar_popover[data-show] #arrow::before {
-  visibility: visible;
+.calendar_popover #arrow::before {
   content: "";
   transform: rotate(45deg);
 }
@@ -565,7 +556,7 @@ td.datepicker-day {
   }
 
   /* Slide in animation*/
-  .calendar_popover[data-show] .calendar_popover_content {
+  .calendar_popover .calendar_popover_content {
     bottom: 0;
   }
 }

@@ -113,6 +113,10 @@ const View = (function () {
   let holidayService;
   let i18n;
 
+  // clicking a date with absences opens an overlay with more detail.
+  // the overlay positioning is handled by popper.js
+  const popperInstanceByElement = new WeakMap();
+
   const TMPL = {
     container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
 
@@ -312,7 +316,7 @@ const View = (function () {
       }
     }
 
-    let dayHtml = render(TMPL.day, {
+    return render(TMPL.day, {
       date: format(date, "yyyy-MM-dd"),
       day: format(date, "dd"),
       ariaDay: format(date, "dd. MMMM"),
@@ -324,9 +328,6 @@ const View = (function () {
       title: holidayService.getDescription(date),
       icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
     });
-
-    let popoverHtml = renderPopover(date);
-    return dayHtml + popoverHtml;
   }
 
   function renderPopoverAbsenceContent(absence) {
@@ -386,23 +387,43 @@ const View = (function () {
     return "";
   }
 
-  let daysWithPopover = [];
+  function initializePopover() {
+    // https://popper.js.org/docs/v2/performance/#attaching-elements-to-the-dom
+    // > The recommended way to use Popper is to attach popper elements next to their reference elements.
+    // > This ensures that accessibility best practices are followed, such as keyboard navigation and screen reader support.
+    // however, the calendar is not accessible (day blocks are non-interactive DIVs with click handlers)
+    // and we're not displaying tooltips but more info. so... as soon as this will be accessible we have to
+    // introduce live regions I think? or better a <dialog>?
+    const popoverElement = document.createElement("div");
+    popoverElement.setAttribute("id", "calendar-popover");
+
+    // https://web.archive.org/web/20210827084020/https://atfzl.com/don-t-attach-tooltips-to-document-body
+    const tooltipContainer = document.createElement("div");
+    tooltipContainer.append(popoverElement);
+
+    document.body.append(tooltipContainer);
+  }
+
   const View = {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
       rootElement.classList.add("unselectable");
       tooltip();
-
-      this.initializePopovers();
+      initializePopover();
     },
 
-    initializePopovers() {
-      for (const popover of document.querySelectorAll(".calendar_popover")) {
-        const date = popover.dataset.date;
-        const dayButton = document.querySelector(`[data-datepicker-date="${date}"]`);
-        daysWithPopover.push(dayButton);
+    getRootElement() {
+      return rootElement;
+    },
 
-        const popperInstance = createPopper(dayButton, popover, {
+    displayDateDetail({ element, date }) {
+      const popover = document.querySelector("#calendar-popover");
+
+      // TODO async? if async -> loading animation when it requires over x milliseconds
+      popover.innerHTML = renderPopover(date);
+
+      if (!popperInstanceByElement.has(element)) {
+        const popperInstance = createPopper(element, popover, {
           modifiers: [
             {
               name: "offset",
@@ -412,63 +433,14 @@ const View = (function () {
             },
           ],
         });
-
-        function show() {
-          this.dispatchEvent(
-            new CustomEvent("closeAllPoppers", {
-              detail: { except: [dayButton] },
-              bubbles: true,
-            }),
-          );
-          // Make the popover visible
-          popover.dataset.show = "";
-
-          // Enable the event listeners
-          popperInstance.setOptions((options) => ({
-            ...options,
-            modifiers: [...options.modifiers, { name: "eventListeners", enabled: true }],
-          }));
-
-          // Update its position
-          popperInstance.update();
-        }
-
-        function hide() {
-          // Hide the popover
-          delete popover.dataset.show;
-
-          // Disable the event listeners
-          popperInstance.setOptions((options) => ({
-            ...options,
-            modifiers: [...options.modifiers, { name: "eventListeners", enabled: false }],
-          }));
-        }
-
-        dayButton.addEventListener("openPopper", show);
-        dayButton.addEventListener("closePopper", hide);
+        popperInstanceByElement.set(element, popperInstance);
       }
 
-      const calendarContainer = document.querySelector(`.calendar-container`);
-      calendarContainer.addEventListener("closeAllPoppers", (event) => {
-        const except = event.detail.except;
-        this.closeAllExcept(except);
-      });
-      // Close all poppers when clicking outside
-      document.body.addEventListener("click", () => {
-        this.closeAllExcept([]);
-      });
+      popperInstanceByElement.get(element).forceUpdate();
     },
 
-    closeAllExcept: function (except) {
-      for (const dayButton of daysWithPopover) {
-        if (!except.includes(dayButton)) {
-          dayButton.dispatchEvent(new Event("closePopper"));
-        }
-      }
-    },
-
-    getRootElement() {
-      return rootElement;
+    closeDateDetail() {
+      // TODO close popover
     },
 
     displayNext: function () {
@@ -559,7 +531,7 @@ const Controller = (function () {
       }
     },
 
-    click: function (event) {
+    click: function () {
       const dateFrom = selectionFrom();
       const dateTo = selectionTo();
 
@@ -570,8 +542,7 @@ const Controller = (function () {
       //These can be different for half days?
 
       if (hasAnyAbsence === "true") {
-        this.dispatchEvent(new Event("openPopper"));
-        event.stopPropagation();
+        view.displayDateDetail({ element: this, date: dateThis });
       } else if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&
@@ -707,6 +678,7 @@ const Controller = (function () {
       document.body.addEventListener("keyup", function (event) {
         if (event.key === "Escape") {
           clearSelection();
+          view.closeDateDetail();
         }
       });
 
