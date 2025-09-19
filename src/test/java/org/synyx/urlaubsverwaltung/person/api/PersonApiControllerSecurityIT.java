@@ -26,6 +26,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -206,6 +207,47 @@ class PersonApiControllerSecurityIT extends SingleTenantTestContainersBase {
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
         ).andExpect(status().isCreated());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/persons/1/deactivate", "/api/persons/1/activate"})
+    void ensurePersonActivationDeactivationRequiresAuthentication(String endpoint) throws Exception {
+        perform(put(endpoint))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/persons/1/deactivate", "/api/persons/1/activate"})
+    void ensurePersonActivationDeactivationRequiresBossOrOfficeRole(String endpoint) throws Exception {
+        perform(put(endpoint)
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER")))
+        ).andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/persons/1/deactivate", "/api/persons/1/activate"})
+    void ensurePersonActivationDeactivationAllowsBossRole(String endpoint) throws Exception {
+        final Person person = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(person)).thenReturn(person);
+
+        perform(put(endpoint)
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+        ).andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/persons/1/deactivate", "/api/persons/1/activate"})
+    void ensurePersonActivationDeactivationAllowsOfficeRole(String endpoint) throws Exception {
+        final Person person = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        when(personService.update(person)).thenReturn(person);
+
+        perform(put(endpoint)
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        ).andExpect(status().isOk());
     }
 
     public static String asJsonString(final Object obj) {
