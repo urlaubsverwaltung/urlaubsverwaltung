@@ -18,7 +18,7 @@
   <properties>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <java.version>24</java.version>
+    <java.version>25</java.version>
     <uv-extension-api.version>2.3.2</uv-extension-api.version>
 
     <!-- Remove commons-compress dependency when testcontainers ships with commons-compress >= 1.27.1, see
