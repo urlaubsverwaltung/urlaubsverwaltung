@@ -2,8 +2,14 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
+import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
+import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -21,6 +27,8 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
@@ -38,24 +46,27 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    private static final String CALENDAR_ICS = "calendar.ics";
 
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
     private final PersonService personService;
     private final MailRecipientService mailRecipientService;
+    private final ICalService iCalService;
     private final Clock clock;
 
     @Autowired
     SickNoteMailService(
         SettingsService settingsService, SickNoteService sickNoteService, MailService mailService,
-        PersonService personService, MailRecipientService mailRecipientService, Clock clock
+        PersonService personService, MailRecipientService mailRecipientService, ICalService iCalService, Clock clock
     ) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
         this.personService = personService;
         this.mailRecipientService = mailRecipientService;
+        this.iCalService = iCalService;
         this.clock = clock;
     }
 
@@ -127,6 +138,8 @@ public class SickNoteMailService {
     @Async
     void sendCreatedOrAcceptedToColleagues(SickNote sickNote) {
 
+        final ByteArrayResource calendarFile = generateCalendar(sickNote, DEFAULT, sickNote.getPerson());
+
         // Inform colleagues of applicant which are in same department
         final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
@@ -134,6 +147,7 @@ public class SickNoteMailService {
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.sicknote.createdOrAccepted.to_colleagues", sickNote.getPerson().getNiceName())
             .withTemplate("sick_note_created_or_accepted_to_colleagues", modelColleaguesSupplier)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantColleagues);
     }
@@ -272,5 +286,18 @@ public class SickNoteMailService {
             .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);
+    }
+
+    private ByteArrayResource generateCalendar(SickNote sickNote, CalendarAbsenceType absenceType, Person recipient) {
+        return generateCalendar(sickNote, absenceType, PUBLISHED, recipient);
+    }
+
+    private ByteArrayResource generateCalendar(SickNote sickNote, CalendarAbsenceType absenceType, ICalType iCalType, Person recipient) {
+        final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
+        return iCalService.getSingleAppointment(absence, iCalType, recipient);
+    }
+
+    private CalendarAbsenceConfiguration getAbsenceTimeConfiguration() {
+        return new CalendarAbsenceConfiguration(settingsService.getSettings().getTimeSettings());
     }
 }

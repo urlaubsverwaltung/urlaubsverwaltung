@@ -6,10 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
+import org.synyx.urlaubsverwaltung.calendar.TimeSettings;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -28,6 +32,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -60,12 +65,14 @@ class SickNoteMailServiceTest {
     @Mock
     private MailRecipientService mailRecipientService;
     @Mock
+    private ICalService iCalService;
+    @Mock
     private MailService mailService;
 
     @BeforeEach
     void setUp() {
         final Clock fixedClock = Clock.fixed(Instant.parse("2022-04-01T00:00:00.00Z"), ZoneId.of("UTC"));
-        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, personService, mailRecipientService, fixedClock);
+        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, personService, mailRecipientService, iCalService, fixedClock);
     }
 
     @Test
@@ -117,8 +124,8 @@ class SickNoteMailServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(4)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
-        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
+        assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
+        assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(modelA);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(office));
@@ -183,6 +190,13 @@ class SickNoteMailServiceTest {
     @Test
     void ensureSendSickNoteCreatedToColleagues() {
 
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
+
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1L);
 
@@ -191,6 +205,7 @@ class SickNoteMailServiceTest {
             .person(person)
             .startDate(LocalDate.of(2022, 4, 10))
             .endDate(LocalDate.of(2022, 4, 20))
+            .dayLength(DayLength.FULL)
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -208,6 +223,8 @@ class SickNoteMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.createdOrAccepted.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_or_accepted_to_colleagues");
         assertThat(mail.getTemplateModel(GERMAN)).isEqualTo(Map.of("sickNote", sickNote));
+        assertThat(mail.getMailAttachments().get().getFirst().getContent()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments().get().getFirst().getName()).isEqualTo("calendar.ics");
     }
 
     @Test

@@ -8,6 +8,8 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.simplejavamail.api.email.AttachmentResource;
+import org.simplejavamail.converter.EmailConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -236,7 +239,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
     }
 
     @Test
-    void sendSickNoteCreatedToColleagues() throws MessagingException, IOException {
+    void sendSickNoteCreatedToColleagues() throws MessagingException {
 
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED), List.of(USER));
 
@@ -260,7 +263,7 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             .untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(colleague.getEmail())).hasSize(1));
 
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
-        final Message msgColleague = inboxColleague[0];
+        final MimeMessage msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Müller");
         assertThat(readPlainContent(msgColleague)).isEqualTo("""
             Hallo Marlene Muster,
@@ -272,7 +275,11 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
             Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
 
 
-            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.
+            """.formatted(colleague.getId()));
+
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.getFirst().getName()).contains("calendar.ics");
     }
 
     @Test
@@ -668,5 +675,13 @@ class SickNoteMailServiceIT extends SingleTenantTestContainersBase {
 
     private String readPlainContent(Message message) throws MessagingException, IOException {
         return message.getContent().toString().replaceAll("\\r", "");
+    }
+
+    private String readPlainContent(MimeMessage message) {
+        return Objects.requireNonNull(EmailConverter.mimeMessageToEmail(message).getPlainText()).replaceAll("\\r", "");
+    }
+
+    private List<AttachmentResource> getAttachments(MimeMessage message) {
+        return EmailConverter.mimeMessageToEmail(message).getAttachments();
     }
 }
