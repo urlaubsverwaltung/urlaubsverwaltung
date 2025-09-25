@@ -136,8 +136,7 @@ class SettingsAbsenceTypesDtoValidatorTest {
 
         for (SupportedLanguages supportedLanguage : SupportedLanguages.values()) {
             final String message = switch (supportedLanguage) {
-                case GERMAN -> "Erholungsurlaub";
-                case GERMAN_AUSTRIA -> "Erholungsurlaub";
+                case GERMAN, GERMAN_AUSTRIA -> "Erholungsurlaub";
                 case ENGLISH -> "Holiday";
                 case GREEK -> "Διακοπές";
             };
