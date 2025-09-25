@@ -22,7 +22,7 @@ class CalendarProviderServiceTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    void testResult(Class input, Class expected) {
+    void testResult(Class<CalendarProvider> input, Class<CalendarProvider> expected) {
         final CalendarSettingsService settingsService = getPreparedSettingsServiceForProvider(input);
         final List<CalendarProvider> calendarProviders = getTypicalProviderList();
         final CalendarProviderService sut = new CalendarProviderService(calendarProviders, settingsService);
@@ -30,7 +30,7 @@ class CalendarProviderServiceTest {
         assertThat(sut.getCalendarProvider().get().getClass().getName()).isEqualTo(expected.getName());
     }
 
-    private CalendarSettingsService getPreparedSettingsServiceForProvider(Class provider) {
+    private CalendarSettingsService getPreparedSettingsServiceForProvider(Class<CalendarProvider> provider) {
         final CalendarSettingsService calendarSettingsService = mock(CalendarSettingsService.class);
         final CalendarSettings calendarSettings = mock(CalendarSettings.class);
         when(calendarSettingsService.getCalendarSettings()).thenReturn(calendarSettings);

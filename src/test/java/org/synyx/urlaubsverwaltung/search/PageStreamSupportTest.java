@@ -20,11 +20,11 @@ class PageStreamSupportTest {
         Function<Pageable, Page<String>> pageSupplier = pageable -> {
             int pageNumber = pageable.getPageNumber();
             if (pageNumber == 0) {
-                return new PageImpl(List.of("a"), pageable, 3);
+                return new PageImpl<>(List.of("a"), pageable, 3);
             } else if (pageNumber == 1) {
-                return new PageImpl(List.of("b"), pageable, 3);
+                return new PageImpl<>(List.of("b"), pageable, 3);
             } else if (pageNumber == 2) {
-                return new PageImpl(List.of("c"), pageable, 3);
+                return new PageImpl<>(List.of("c"), pageable, 3);
             } else {
                 return Page.empty();
             }

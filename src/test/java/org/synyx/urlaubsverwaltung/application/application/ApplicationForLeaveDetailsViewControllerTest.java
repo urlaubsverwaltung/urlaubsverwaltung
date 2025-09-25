@@ -1032,7 +1032,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         signedInPerson.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final VacationType vacationType = ProvidedVacationType.builder(new StaticMessageSource())
+        final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource())
             .id(1L)
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(false)

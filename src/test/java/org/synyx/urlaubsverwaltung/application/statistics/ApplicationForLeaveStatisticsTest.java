@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -34,7 +35,7 @@ class ApplicationForLeaveStatisticsTest {
         assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ZERO);
 
         // Per vacation type
-        for (VacationType type : createVacationTypes(new StaticMessageSource())) {
+        for (VacationType<?> type : createVacationTypes(new StaticMessageSource())) {
             assertThat(statistics.getWaitingVacationDays(type)).isEqualTo(ZERO);
             assertThat(statistics.getAllowedVacationDays(type)).isEqualTo(ZERO);
         }
