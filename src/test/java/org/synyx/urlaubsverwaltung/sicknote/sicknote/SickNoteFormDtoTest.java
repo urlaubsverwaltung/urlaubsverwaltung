@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SickNoteFormDtoTest {
 
     private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
-    private final Long id = 1L;
     private final Person person = new Person();
     private final SickNoteType type = new SickNoteType();
 
@@ -92,7 +91,7 @@ class SickNoteFormDtoTest {
     void toStringTest() {
 
         final SickNoteFormDto sut = new SickNoteFormDto();
-        sut.setId(id);
+        sut.setId(1L);
         sut.setPerson(person);
         sut.setSickNoteType(type);
         sut.setStartDate(day2019_04_16);
