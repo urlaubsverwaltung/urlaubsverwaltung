@@ -48,7 +48,7 @@
     "esbuild": "0.25.10",
     "fast-glob": "3.3.3",
     "font-awesome": "4.7.0",
-    "idiomorph": "0.7.3",
+    "idiomorph": "0.7.4",
     "jquery": "3.7.1",
     "less-plugin-clean-css": "1.6.0",
     "lint-staged": "16.2.1",
