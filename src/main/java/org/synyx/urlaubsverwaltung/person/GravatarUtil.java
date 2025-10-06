@@ -31,7 +31,7 @@ final class GravatarUtil {
      */
     static String createImgURL(String email) {
 
-        final String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        final String normalizedEmail = email == null ? "" : email.strip().toLowerCase();
 
         String encryptedEmail = null;
         try {
