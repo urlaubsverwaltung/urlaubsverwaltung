@@ -172,7 +172,7 @@ public class Person extends AbstractTenantAwareEntity {
             builder.append(this.lastName);
         }
 
-        final String niceName = builder.toString().trim();
+        final String niceName = builder.toString().strip();
         if (!hasText(niceName)) {
             return "---";
         }
@@ -190,14 +190,14 @@ public class Person extends AbstractTenantAwareEntity {
 
     public String getInitials() {
 
-        final String niceName = getNiceName();
+        final String name = getNiceName().strip();
 
-        final int idxLastWhitespace = niceName.lastIndexOf(' ');
+        final int idxLastWhitespace = name.lastIndexOf(' ');
         if (idxLastWhitespace == -1) {
-            return niceName.substring(0, 1).toUpperCase();
+            return name.substring(0, 1).toUpperCase();
         }
 
-        return (niceName.charAt(0) + niceName.substring(idxLastWhitespace + 1, idxLastWhitespace + 2)).toUpperCase();
+        return (name.charAt(0) + name.substring(idxLastWhitespace + 1, idxLastWhitespace + 2)).toUpperCase();
     }
 
     @Override
