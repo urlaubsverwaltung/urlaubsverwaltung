@@ -38,6 +38,7 @@ spring:
     fallback-to-system-locale: false
   liquibase:
     change-log: classpath:/dbchangelogs/changelogmaster.xml
+    analytics-enabled: false
   threads:
     virtual:
       enabled: true

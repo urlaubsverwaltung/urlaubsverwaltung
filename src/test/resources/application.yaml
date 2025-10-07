@@ -39,6 +39,7 @@ spring:
         default-page-size: 1
   liquibase:
     change-log: classpath:/dbchangelogs/changelogmaster.xml
+    analytics-enabled: false
   jpa:
     open-in-view: false
     properties:
