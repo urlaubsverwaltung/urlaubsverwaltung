@@ -14,7 +14,7 @@
       <li
         th:fragment="replacement-item"
         th:if="${holidayReplacement != null}"
-        class="form-group tw-mb-6"
+        class="tw-mb-6"
         data-test-id="holiday-replacement-row"
       >
         <input
@@ -22,17 +22,22 @@
           th:name="${'holidayReplacements[' + index + '].person'}"
           th:value="${holidayReplacement.person.id}"
         />
-        <div class="col-md-push-3 col-md-9">
+        <div class="tw-w-full lg:tw-w-3/4 lg:tw-ml-auto">
           <div class="tw-flex">
-            <div class="tw-mr-4 tw-mt-1 tw-text-blue-50 dark:tw-text-sky-800">
+            <div class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-2 tw-mt-1">
               <img
-                th:replace="~{fragments/avatar::avatar(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},initials=${holidayReplacement.person.initials},width='40',height='40',personId=null)}"
+                th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},initials=${holidayReplacement.person.initials},width='40',height='40',personId=${holidayReplacement.person.id})}"
                 alt=""
               />
             </div>
             <div>
               <div class="tw-flex tw-items-center tw-flex-wrap">
-                <span th:text="${holidayReplacement.person.niceName}"></span>
+                <a
+                  th:text="${holidayReplacement.person.niceName}"
+                  th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
+                  class="icon-link"
+                  data-turbo="false"
+                ></a>
                 <ul
                   th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
                   class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
