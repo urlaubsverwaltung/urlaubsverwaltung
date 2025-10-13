@@ -24,9 +24,13 @@
           </div>
           <form method="post" th:action="${url}" th:object="${period}" class="form-horizontal">
             <div class="modal-body">
-              <div class="form-group is-required">
-                <label th:text="|#{filter.period.startDate}: |" class="control-label col-md-3" for="startDate"></label>
-                <div class="col-md-9">
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
+                <label
+                  th:text="|#{filter.period.startDate}: |"
+                  class="is-required tw-w-full lg:tw-w-1/4"
+                  for="startDate"
+                ></label>
+                <div class="tw-w-full lg:tw-w-3/4">
                   <input
                     id="startDate"
                     th:field="*{startDate}"
@@ -38,9 +42,11 @@
                   <span class="help-block"></span>
                 </div>
               </div>
-              <div class="form-group is-required">
-                <label th:text="|#{filter.period.endDate}: |" class="control-label col-md-3" for="endDate">Bis</label>
-                <div class="col-md-9">
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
+                <label th:text="|#{filter.period.endDate}: |" class="is-required tw-w-full lg:tw-w-1/4" for="endDate"
+                  >Bis</label
+                >
+                <div class="tw-w-full lg:tw-w-3/4">
                   <input
                     id="endDate"
                     th:field="*{endDate}"
