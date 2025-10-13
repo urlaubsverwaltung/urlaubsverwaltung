@@ -33,19 +33,21 @@
             </th:block>
           </div>
 
-          <div class="row">
-            <div class="col-md-4 col-md-push-8">
+          <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4">
+            <div class="tw-w-full lg:tw-w-1/3">
               <span class="help-block tw-text-sm">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <span th:text="#{department.data.description}"></span>
               </span>
             </div>
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group is-required">
-                <label th:text="|#{department.data.name}:|" class="control-label col-md-3" for="name">
+
+            <div class="tw-w-full lg:tw-w-2/3">
+              <!-- Name -->
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
+                <label th:text="|#{department.data.name}:|" class="is-required tw-w-full lg:tw-w-1/4" for="name">
                   Abteilungsname
                 </label>
-                <div class="col-md-9">
+                <div class="tw-w-full lg:tw-w-3/4">
                   <input id="name" type="text" th:field="*{name}" class="form-control" th:errorclass="error" />
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
@@ -55,11 +57,13 @@
                   </p>
                 </div>
               </div>
-              <div class="form-group">
-                <label th:text="|#{department.data.info}:|" class="control-label col-md-3" for="description">
+
+              <!-- Description -->
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
+                <label th:text="|#{department.data.info}:|" class="tw-w-full lg:tw-w-1/4" for="description">
                   Beschreibung
                 </label>
-                <div class="col-md-9">
+                <div class="tw-w-full lg:tw-w-3/4">
                   <textarea
                     id="description"
                     rows="3"
@@ -78,8 +82,9 @@
             </div>
           </div>
 
-          <div class="row tw-mb-8">
-            <div class="col-md-4 col-md-push-8">
+          <!-- Two-stage approval process -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4 tw-mb-8">
+            <div class="tw-w-full lg:tw-w-1/3">
               <span class="help-block tw-text-sm">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <th:block th:text="#{department.data.twoStageApproval.help.members}" /><br />
@@ -87,15 +92,16 @@
                 <th:block th:text="#{department.data.twoStageApproval.help.departmentHead}" />
               </span>
             </div>
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group">
+
+            <div class="tw-w-full lg:tw-w-2/3">
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                 <label
                   th:text="|#{department.data.twoStageApproval}:|"
-                  class="control-label col-md-3"
+                  class="tw-w-full lg:tw-w-1/4"
                   for="twoStageApproval"
                   >Zweistufiger Genehmigungsprozess</label
                 >
-                <div class="col-md-9 checkbox">
+                <div class="tw-w-full lg:tw-w-3/4 checkbox">
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                     th:if="${#fields.hasErrors('twoStageApproval')}"
@@ -114,6 +120,7 @@
           </div>
         </div>
 
+        <!-- Department members -->
         <div class="form-section">
           <div th:replace="~{fragments/section-heading::section-heading(~{::department-members-body}, ~{})}">
             <th:block th:ref="department-members-body">
@@ -129,8 +136,8 @@
             <th:block th:errors="*{secondStageAuthorities}"> secondStageAuthorities Error</th:block>
           </div>
 
-          <div class="row">
-            <div class="col-md-4 col-md-push-8">
+          <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4 tw-mb-8">
+            <div class="tw-w-full lg:tw-w-1/3">
               <span class="help-block tw-text-sm">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <span th:text="#{department.members.description}"></span>
@@ -141,13 +148,13 @@
               </span>
             </div>
 
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group">
+            <div class="tw-w-full lg:tw-w-2/3">
+              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                 <p
                   th:text="|#{department.members.person}:|"
-                  class="control-label col-md-3 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"
+                  class="tw-w-full lg:tw-w-1/4 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"
                 ></p>
-                <div class="col-md-9">
+                <div class="tw-w-full lg:tw-w-3/4">
                   <div
                     class="tw-flex tw-items-stretch tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
                   >
