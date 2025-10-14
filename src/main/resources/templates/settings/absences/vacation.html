@@ -11,18 +11,19 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8"></aside>
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-y-4 tw-gap-x-8">
+        <aside class="tw-w-full lg:tw-w-1/3"></aside>
 
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Maximum months to apply for leave in advance -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="#{settings.vacation.maximumMonthsToApplyForLeaveInAdvance}"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
               >Wie viele Monate im Voraus dürfen Mitarbeitende eine neue Abwesenheit erstellen?</label
             >
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <input
                 id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
                 th:field="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}"
@@ -42,15 +43,16 @@
             </div>
           </div>
 
-          <div class="form-group is-required">
+          <!-- Maximum months to apply for leave afterwards -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="#{settings.vacation.maximumMonthsToApplyForLeaveAfterwards}"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
             >
               Wie viele Monate im Nachhinein dürfen Mitarbeitende eine neue Abwesenheit erstellen?
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <input
                 id="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
                 th:field="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}"
@@ -70,15 +72,16 @@
             </div>
           </div>
 
-          <div class="form-group is-required">
+          <!-- Allow half days for vacation -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.vacation.allowHalfDays}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="applicationSettings.allowHalfDays.true"
             >
               Halbe Tage
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-4/6 radio">
               <label class="halves" data-test-id="vacation-half-day-enable">
                 <input
                   type="radio"
