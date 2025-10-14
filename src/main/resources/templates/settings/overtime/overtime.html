@@ -13,18 +13,19 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8"></aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4">
+        <aside class="tw-w-full lg:tw-w-1/3"></aside>
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Overtime Active Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.overtimeActive}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.overtimeActive.true"
             >
               Überstundenverwaltung aktivieren
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-3/5 radio">
               <label class="halves">
                 <input
                   type="radio"
@@ -49,8 +50,9 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
+
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <span
               class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
@@ -61,16 +63,17 @@
             <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required tw-mb-8">
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Overtime Sync Active Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-12">
             <label
               th:text="|#{settings.overtime.overtimeSyncActive}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.overtimeSyncActive.true"
             >
               Überstundenverwaltung aktivieren
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-3/5 radio">
               <label class="halves">
                 <input
                   type="radio"
@@ -93,15 +96,17 @@
               </label>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Overtime Write Privileged Only Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.overtimeWritePrivilegedOnly}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.overtimeWritePrivilegedOnly.true"
             >
               Pflege von Überstunden nur durch privilegierte Benutzer
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-3/5 radio">
               <label class="halves">
                 <input
                   type="radio"
@@ -124,15 +129,17 @@
               </label>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Overtime Reduction Without Application Active Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.overtimeReductionWithoutApplicationActive}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.overtimeReductionWithoutApplicationActive.true"
             >
               Überstundenabbau ohne Antrag aktivieren
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-3/5 radio">
               <label class="halves">
                 <input
                   type="radio"
@@ -162,23 +169,24 @@
         </div>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.overtime.description}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Maximum Overtime Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.maximum}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.maximumOvertime"
             >
               Maximale Anzahl der Überstunden
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-3/5">
               <input
                 id="overtimeSettings.maximumOvertime"
                 th:field="*{overtimeSettings.maximumOvertime}"
@@ -198,15 +206,17 @@
               </div>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Minimum Overtime Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.minimum}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.minimumOvertime"
             >
               Maximale Anzahl der Minusstunden
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-3/5">
               <input
                 id="overtimeSettings.minimumOvertime"
                 th:field="*{overtimeSettings.minimumOvertime}"
@@ -226,15 +236,17 @@
               </div>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Minimum Overtime Reduction Settings -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.overtime.minimumOvertimeReduction}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/5"
               for="overtimeSettings.minimumOvertimeReduction"
             >
               Minimale Anzahl an abgebauten Stunden pro Antrag
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-3/5">
               <input
                 id="overtimeSettings.minimumOvertimeReduction"
                 th:field="*{overtimeSettings.minimumOvertimeReduction}"
