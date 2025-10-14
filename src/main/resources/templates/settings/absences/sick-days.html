@@ -11,22 +11,24 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse lg:tw-gap-y-4 tw-gap-x-8 tw-mb-8">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.sickDays.description}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Maximum sick pay days -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.sickDays.maximumSickPayDays}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="sickNoteSettings.maximumSickPayDays"
               >Dauer der Lohnfortzahlung im Krankheitsfall (in Tagen)</label
             >
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <input
                 id="sickNoteSettings.maximumSickPayDays"
                 th:field="*{sickNoteSettings.maximumSickPayDays}"
@@ -46,14 +48,16 @@
               </div>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Days before end of sick pay notification -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.sickDays.daysBeforeEndOfSickPayNotification}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="sickNoteSettings.daysBeforeEndOfSickPayNotification"
               >Wie viele Tage im Voraus soll der Arbeitnehmer über Lohnfortzahlungsende benachrichtigt werden</label
             >
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <input
                 id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
                 th:field="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}"
@@ -74,7 +78,10 @@
             </div>
           </div>
         </div>
-        <aside class="col-md-4 col-md-push-8">
+      </div>
+
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse lg:tw-gap-y-4 tw-gap-x-8">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <span
               class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
@@ -84,14 +91,16 @@
             <th:block th:utext="#{settings.sickDays.betaUserIsAllowedToSubmitSickNotes}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
-            <label class="control-label col-md-4" for="sickDays.userIsAllowedToSubmitSickNotes.true">
+
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Allow users to submit their own sick notes -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
+            <label class="is-required tw-w-full lg:tw-w-2/6" for="sickDays.userIsAllowedToSubmitSickNotes.true">
               <span th:text="|#{settings.sickDays.userIsAllowedToSubmitSickNotes}:|"
                 >Benutzer können Krankmeldungen selbst eintragen</span
               >
             </label>
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-4/6 radio">
               <label class="halves">
                 <input
                   type="radio"
