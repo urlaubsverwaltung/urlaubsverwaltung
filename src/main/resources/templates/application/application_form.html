@@ -234,8 +234,8 @@
               <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-8">
                 <th:block th:if="${showHalfDayOption}">
                   <label th:text="|#{absence.period}:|" class="is-required tw-w-full lg:tw-w-1/4">Zeitraum</label>
-                  <div class="tw-w-full lg:tw-w-3/4 radio">
-                    <label class="thirds" data-test-id="day-length-full">
+                  <div class="tw-w-full lg:tw-w-3/4">
+                    <label class="thirds tw-font-normal" data-test-id="day-length-full">
                       <input
                         type="radio"
                         id="fullDay"
@@ -246,11 +246,11 @@
                       />
                       <th:block th:text="#{FULL}">ganztätig</th:block>
                     </label>
-                    <label class="thirds" data-test-id="day-length-morning">
+                    <label class="thirds tw-font-normal" data-test-id="day-length-morning">
                       <input type="radio" id="morning" class="dayLength-half" th:field="*{dayLength}" value="MORNING" />
                       <th:block th:text="#{MORNING}">vormittags</th:block>
                     </label>
-                    <label class="thirds" data-test-id="day-length-noon">
+                    <label class="thirds tw-font-normal" data-test-id="day-length-noon">
                       <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
                       <th:block th:text="#{NOON}">nachmittags</th:block>
                     </label>
@@ -341,12 +341,12 @@
                   <label th:text="|#{application.data.teamInformed}:|" class="tw-w-full lg:tw-w-1/4">
                     Mit Team abgesprochen
                   </label>
-                  <div class="tw-w-full lg:tw-w-3/4 radio">
-                    <label class="thirds">
+                  <div class="tw-w-full lg:tw-w-3/4">
+                    <label class="thirds tw-font-normal">
                       <input type="radio" id="teamInformed" th:field="*{teamInformed}" value="true" />
                       <th:block th:text="#{application.data.teamInformed.true}">Ja</th:block>
                     </label>
-                    <label class="thirds">
+                    <label class="thirds tw-font-normal">
                       <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
                       <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
                     </label>
