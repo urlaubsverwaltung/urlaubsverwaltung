@@ -11,16 +11,22 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <div class="col-md-4 col-md-push-8">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-y-4 tw-gap-x-8">
+        <div class="tw-w-full lg:tw-w-1/3">
           <span class="help-block tw-text-sm"> </span>
         </div>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group">
-            <label th:text="|#{settings.time.timezone}:|" class="control-label col-md-4" for="timeSettings.timeZoneId">
+
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Selection of the time zone -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
+            <label
+              th:text="|#{settings.time.timezone}:|"
+              class="is-required tw-w-full lg:tw-w-2/6"
+              for="timeSettings.timeZoneId"
+            >
               Zeitzone
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <select
                 th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})}"
                 id="yearSelect"
@@ -36,29 +42,33 @@
               </select>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Start of working hours settings for a work day -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.time.workDay.begin}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="timeSettings.workDayBeginHour"
             >
               Beginn eines Arbeitstags
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <th:block
                 th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayBeginHour', 'settings-time-hours', 'timeSettings.workDayBeginMinute', 'settings-time-minutes')}"
               ></th:block>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- End of working hours settings for a work day -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.time.workDay.end}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="timeSettings.workDayEndHour"
             >
               Ende eines Arbeitstags
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <th:block
                 th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayEndHour', 'settings-time-hours', 'timeSettings.workDayEndMinute', 'settings-time-minutes')}"
               ></th:block>
