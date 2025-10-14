@@ -15,22 +15,24 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-y-4 tw-gap-x-8">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.vacation.remindForUpcomingApplications.description}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Activation of the reminder for upcoming applications -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.vacation.remindForUpcomingApplications}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="applicationSettings.remindForUpcomingApplications.true"
               >Automatische Erinnerungsfunktion</label
             >
-            <div class="col-md-8 radio">
+            <div class="tw-w-full lg:tw-w-4/6 radio">
               <label class="halves">
                 <input
                   type="radio"
@@ -52,14 +54,15 @@
             </div>
           </div>
 
-          <div class="form-group is-required">
+          <!-- Number of days before the upcoming applications reminder is sent -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.vacation.daysBeforeRemindForUpcomingApplications}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="applicationSettings.daysBeforeRemindForUpcomingApplications"
               >Wie viele Tage im Voraus soll die Antragsteller:in benachrichtigt werden</label
             >
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <input
                 id="applicationSettings.daysBeforeRemindForUpcomingApplications"
                 th:field="*{applicationSettings.daysBeforeRemindForUpcomingApplications}"
