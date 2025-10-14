@@ -120,9 +120,10 @@
               <div class="form-group is-required">
                 <label th:text="|#{absence.period}:|" class="control-label col-md-3" for="dayLength">Zeitraum</label>
                 <div class="col-md-9">
-                  <div class="radio">
-                    <label class="thirds">
+                  <div class="tw-flex tw-flex-row">
+                    <label class="tw-font-normal thirds">
                       <input
+                        class="tw-mr-1"
                         id="dayLength"
                         type="radio"
                         th:field="*{dayLength}"
@@ -132,25 +133,27 @@
                       />
                       <th:block th:text="#{FULL}">ganztägig</th:block>
                     </label>
-                    <label class="thirds">
+                    <label class="tw-font-normal thirds">
                       <input
+                        class="tw-mr-1"
                         type="radio"
                         th:field="*{dayLength}"
                         value="MORNING"
                         checked="checked"
                         data-test-id="day-type-morning"
                       />
-                      <th:block th:text="#{MORNING}">vormittags</th:block>
+                      <span th:text="#{MORNING}">vormittags</span>
                     </label>
-                    <label class="thirds">
+                    <label class="tw-font-normal thirds">
                       <input
+                        class="tw-mr-1"
                         type="radio"
                         th:field="*{dayLength}"
                         value="NOON"
                         checked="checked"
                         data-test-id="day-type-noon"
                       />
-                      <th:block th:text="#{NOON}">nachmittags</th:block>
+                      <span th:text="#{NOON}">nachmittags</span>
                     </label>
                   </div>
                   <p
