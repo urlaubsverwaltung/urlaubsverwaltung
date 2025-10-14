@@ -11,22 +11,24 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
+      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-y-4 tw-gap-x-8">
+        <aside class="tw-w-full lg:tw-w-1/3">
           <p class="help-block tw-text-sm">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.publicHolidays.description}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
+
+        <div class="tw-w-full lg:tw-w-2/3">
+          <!-- Working duration settings for Christmas Eve -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="publicHolidaysSettings.workingDurationForChristmasEve"
             >
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <select
                 th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForChristmasEve', name='publicHolidaysSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve})}"
               >
@@ -41,15 +43,17 @@
               </select>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Working duration settings for New Year's Eve -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="publicHolidaysSettings.workingDurationForNewYearsEve"
             >
               Arbeitsdauer an Silvester
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <select
                 th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForNewYearsEve', name='publicHolidaysSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve})}"
               >
@@ -64,15 +68,17 @@
               </select>
             </div>
           </div>
-          <div class="form-group is-required">
+
+          <!-- Federal state settings for public holidays -->
+          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
             <label
               th:text="|#{settings.publicHolidays.federalState}:|"
-              class="control-label col-md-4"
+              class="is-required tw-w-full lg:tw-w-2/6"
               for="federalStateType"
             >
               Globale Feiertagsregelung
             </label>
-            <div class="col-md-8">
+            <div class="tw-w-full lg:tw-w-4/6">
               <select
                 th:replace="~{fragments/select::one(id='federalStateType', name='publicHolidaysSettings.federalState', options=~{::settings-workingtimes-federalStateType})}"
               >
