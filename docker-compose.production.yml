@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      # Enable Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      # Enable the API (dashboard)
+      - "--api.dashboard=true"
+
+      # HTTP entrypoint
+      - "--entrypoints.web.address=:80"
+      # Redirect HTTP to HTTPS
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+      # HTTPS entrypoint
+      - "--entrypoints.websecure.address=:443"
+
+      # Let's Encrypt configuration
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+
+      # Logging
+      - "--log.level=INFO"
+      - "--accesslog=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certificates:/letsencrypt
+    networks:
+      - web
+
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-urlaubsverwaltung}
+      POSTGRES_USER: ${POSTGRES_USER:-urlaubsverwaltung}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.5
+    container_name: keycloak
+    restart: unless-stopped
+    command: ["start"]
+    environment:
+      # Admin credentials
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+
+      # Database configuration
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-urlaubsverwaltung}
+      KC_DB_USERNAME: ${POSTGRES_USER:-urlaubsverwaltung}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
+
+      # Hostname configuration
+      KC_HOSTNAME: ${KEYCLOAK_DOMAIN:-auth.llv24.de}
+      KC_HOSTNAME_STRICT: 'true'
+      KC_HOSTNAME_STRICT_HTTPS: 'true'
+
+      # Proxy configuration for Traefik
+      KC_PROXY: edge
+      KC_HTTP_ENABLED: 'true'
+
+      # Cache
+      KC_CACHE: ispn
+      KC_CACHE_STACK: kubernetes
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_DOMAIN:-auth.llv24.de}`)"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - web
+      - backend
+    volumes:
+      - ./docker/keycloak/export:/opt/keycloak/data/import
+
+  urlaubsverwaltung:
+    image: urlaubsverwaltung/urlaubsverwaltung:latest
+    container_name: urlaubsverwaltung
+    restart: unless-stopped
+    environment:
+      # Spring Boot configuration
+      SPRING_PROFILES_ACTIVE: production
+
+      # Database configuration
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-urlaubsverwaltung}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-urlaubsverwaltung}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
+
+      # OAuth2 / OIDC configuration
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT_ID: ${OAUTH_CLIENT_ID:-urlaubsverwaltung}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:-urlaubsverwaltung-secret}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_PROVIDER: default
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_SCOPE: openid,profile,email,roles
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION_GRANT_TYPE: authorization_code
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT_URI: https://${APP_DOMAIN:-urlaub.llv24.de}/login/oauth2/code/{registrationId}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER_URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
+
+      # Mail configuration
+      UV_MAIL_FROM: ${MAIL_FROM:-noreply@llv24.de}
+      UV_MAIL_FROM_DISPLAY_NAME: ${MAIL_FROM_DISPLAY_NAME:-Urlaubsverwaltung}
+      UV_MAIL_REPLY_TO: ${MAIL_REPLY_TO:-noreply@llv24.de}
+      UV_MAIL_REPLY_TO_DISPLAY_NAME: ${MAIL_REPLY_TO_DISPLAY_NAME:-Urlaubsverwaltung}
+      UV_MAIL_APPLICATION_URL: https://${APP_DOMAIN:-urlaub.llv24.de}
+
+      SPRING_MAIL_HOST: ${MAIL_HOST:-mailpit}
+      SPRING_MAIL_PORT: ${MAIL_PORT:-1025}
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+
+      # Calendar configuration
+      UV_CALENDAR_ORGANIZER: ${CALENDAR_ORGANIZER:-noreply@llv24.de}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.urlaubsverwaltung.rule=Host(`${APP_DOMAIN:-urlaub.llv24.de}`)"
+      - "traefik.http.routers.urlaubsverwaltung.entrypoints=websecure"
+      - "traefik.http.routers.urlaubsverwaltung.tls.certresolver=letsencrypt"
+      - "traefik.http.services.urlaubsverwaltung.loadbalancer.server.port=8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - web
+      - backend
+
+  mailpit:
+    image: axllent/mailpit:v1.27.10
+    container_name: mailpit
+    restart: unless-stopped
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailpit.rule=Host(`${MAILPIT_DOMAIN:-mail.llv24.de}`)"
+      - "traefik.http.routers.mailpit.entrypoints=websecure"
+      - "traefik.http.routers.mailpit.tls.certresolver=letsencrypt"
+      - "traefik.http.services.mailpit.loadbalancer.server.port=8025"
+    networks:
+      - web
+      - backend
+
+networks:
+  web:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  traefik-certificates:

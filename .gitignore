@@ -33,3 +33,8 @@ src/test/resources/google_oauth.properties
 
 # ignore chart requirements
 charts/urlaubsverwaltung/charts/
+
+# ignore environment files with sensitive data
+.env
+.env.local
+.env.production
