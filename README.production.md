@@ -56,11 +56,17 @@ OAUTH_CLIENT_SECRET=IHR_SICHERES_CLIENT_SECRET
 
 ### 2. Keycloak-Konfiguration vorbereiten
 
-Erstellen Sie das Verzeichnis für Keycloak-Importe (falls noch nicht vorhanden):
+Das Repository enthält bereits vorkonfigurierte Keycloak-Importdateien im Verzeichnis `docker/keycloak/export/`:
 
-```bash
-mkdir -p docker/keycloak/export
-```
+- `urlaubsverwaltung-realm.json` - Vorkonfigurierter Realm mit Client-Einstellungen
+- `urlaubsverwaltung-users-0.json` - Demo-Benutzer für Tests
+
+**Wichtig für Produktion:**
+- Die Konfiguration ist bereits für `urlaub.llv24.de` vorbereitet
+- Die Demo-Benutzer sollten in Produktion gelöscht oder deaktiviert werden
+- Das Client Secret sollte nach dem ersten Start geändert werden
+
+Siehe `docker/keycloak/export/README.md` für weitere Details.
 
 ### 3. Docker-Container starten
 
@@ -100,52 +106,53 @@ Melden Sie sich mit den Admin-Credentials an:
 - **Benutzername**: `admin` (oder der Wert aus `KEYCLOAK_ADMIN`)
 - **Passwort**: Der Wert aus `KEYCLOAK_ADMIN_PASSWORD`
 
-### 2. Realm erstellen
+### 2. Automatischer Import
 
-1. Klicken Sie auf **Create Realm**
-2. Name: `urlaubsverwaltung`
-3. Klicken Sie auf **Create**
+Der **Realm `urlaubsverwaltung`** und der **Client** werden automatisch beim ersten Start importiert!
 
-### 3. Client erstellen
+Die Konfiguration beinhaltet:
+- Realm: `urlaubsverwaltung`
+- Client ID: `urlaubsverwaltung`
+- Client Secret: `urlaubsverwaltung-secret` (sollte geändert werden!)
+- Demo-Benutzer (siehe unten)
 
-1. Navigieren Sie zu **Clients** → **Create client**
-2. **Client ID**: `urlaubsverwaltung` (muss mit `OAUTH_CLIENT_ID` übereinstimmen)
-3. **Client Protocol**: `openid-connect`
-4. Klicken Sie auf **Next**
+### 3. Client Secret ändern (empfohlen für Produktion)
 
-**Capability config**:
-- **Client authentication**: ON
-- **Authorization**: OFF
-- **Authentication flow**:
-  - Standard flow: ON
-  - Direct access grants: ON
-
-Klicken Sie auf **Next**
-
-**Login settings**:
-- **Valid redirect URIs**: `https://urlaub.llv24.de/*`
-- **Web origins**: `https://urlaub.llv24.de`
-
-Klicken Sie auf **Save**
-
-### 4. Client Secret kopieren
-
-1. Gehen Sie zum Tab **Credentials**
-2. Kopieren Sie das **Client Secret**
-3. Aktualisieren Sie die `.env`-Datei:
+1. Navigieren Sie zu **Clients** → **urlaubsverwaltung**
+2. Gehen Sie zum Tab **Credentials**
+3. Klicken Sie auf **Regenerate Secret**
+4. Kopieren Sie das neue Secret
+5. Aktualisieren Sie die `.env`-Datei:
    ```bash
-   OAUTH_CLIENT_SECRET=das-kopierte-secret
+   OAUTH_CLIENT_SECRET=das-neue-secret
    ```
-4. Starten Sie die Urlaubsverwaltung neu:
+6. Starten Sie die Urlaubsverwaltung neu:
    ```bash
    docker-compose -f docker-compose.production.yml restart urlaubsverwaltung
    ```
 
-### 5. Benutzer erstellen
+### 4. Demo-Benutzer
+
+Die folgenden Demo-Benutzer sind bereits importiert:
+
+| Benutzername                                 | Passwort | Rolle                            |
+|----------------------------------------------|----------|----------------------------------|
+| user@urlaubsverwaltung.cloud                 | secret   | User                             |
+| departmentHead@urlaubsverwaltung.cloud       | secret   | User & Abteilungsleiter          |
+| secondStageAuthority@urlaubsverwaltung.cloud | secret   | User & Freigabe-Verantwortlicher |
+| boss@urlaubsverwaltung.cloud                 | secret   | User & Chef                      |
+| office@urlaubsverwaltung.cloud               | secret   | User & Office                    |
+| admin@urlaubsverwaltung.cloud                | secret   | User & Admin                     |
+
+**Wichtig für Produktion:**
+- Löschen oder deaktivieren Sie diese Demo-Benutzer
+- Erstellen Sie eigene Benutzer mit sicheren Passwörtern
+
+### 5. Eigene Benutzer erstellen
 
 1. Navigieren Sie zu **Users** → **Add user**
 2. Füllen Sie die Felder aus:
-   - **Username**: z.B. `admin`
+   - **Username**: z.B. `admin@llv24.de`
    - **Email**: z.B. `admin@llv24.de`
    - **First name**: Vorname
    - **Last name**: Nachname
@@ -154,8 +161,8 @@ Klicken Sie auf **Save**
 **Passwort setzen**:
 1. Gehen Sie zum Tab **Credentials**
 2. Klicken Sie auf **Set password**
-3. Geben Sie ein Passwort ein
-4. **Temporary**: OFF (damit der Benutzer das Passwort nicht ändern muss)
+3. Geben Sie ein sicheres Passwort ein
+4. **Temporary**: OFF
 5. Klicken Sie auf **Save**
 
 ## Urlaubsverwaltung aufrufen

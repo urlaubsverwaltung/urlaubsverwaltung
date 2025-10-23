@@ -62,7 +62,7 @@ services:
     image: quay.io/keycloak/keycloak:26.3.5
     container_name: keycloak
     restart: unless-stopped
-    command: ["start"]
+    command: ["start", "--import-realm"]
     environment:
       # Admin credentials
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
@@ -83,6 +83,9 @@ services:
       KC_PROXY: edge
       KC_HTTP_ENABLED: 'true'
 
+      # Health check
+      KC_HEALTH_ENABLED: 'true'
+
       # Cache
       KC_CACHE: ispn
       KC_CACHE_STACK: kubernetes
@@ -92,6 +95,11 @@ services:
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9000/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 30
     depends_on:
       postgres:
         condition: service_healthy
@@ -102,34 +110,34 @@ services:
       - ./docker/keycloak/export:/opt/keycloak/data/import
 
   urlaubsverwaltung:
-    image: urlaubsverwaltung/urlaubsverwaltung:latest
+    image: urlaubsverwaltung/urlaubsverwaltung:5.29.3
     container_name: urlaubsverwaltung
     restart: unless-stopped
     environment:
-      # Spring Boot configuration
-      SPRING_PROFILES_ACTIVE: production
-
       # Database configuration
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-urlaubsverwaltung}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-urlaubsverwaltung}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
 
       # OAuth2 / OIDC configuration
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT_ID: ${OAUTH_CLIENT_ID:-urlaubsverwaltung}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:-urlaubsverwaltung-secret}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-ID: ${OAUTH_CLIENT_ID:-urlaubsverwaltung}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-SECRET: ${OAUTH_CLIENT_SECRET:-urlaubsverwaltung-secret}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-NAME: ${OAUTH_CLIENT_ID:-urlaubsverwaltung}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_PROVIDER: default
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_SCOPE: openid,profile,email,roles
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION_GRANT_TYPE: authorization_code
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT_URI: https://${APP_DOMAIN:-urlaub.llv24.de}/login/oauth2/code/{registrationId}
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER_URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_AUTHORIZATION-GRANT-TYPE: authorization_code
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_REDIRECT-URI: https://${APP_DOMAIN:-urlaub.llv24.de}/login/oauth2/code/{registrationId}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_DEFAULT_ISSUER-URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: https://${KEYCLOAK_DOMAIN:-auth.llv24.de}/realms/urlaubsverwaltung
+      UV_SECURITY_OIDC_CLAIM-MAPPERS_GROUP-CLAIM_ENABLED: "true"
+      UV_SECURITY_OIDC_CLAIM-MAPPERS_GROUP-CLAIM_CLAIM-NAME: groups
 
       # Mail configuration
       UV_MAIL_FROM: ${MAIL_FROM:-noreply@llv24.de}
-      UV_MAIL_FROM_DISPLAY_NAME: ${MAIL_FROM_DISPLAY_NAME:-Urlaubsverwaltung}
-      UV_MAIL_REPLY_TO: ${MAIL_REPLY_TO:-noreply@llv24.de}
-      UV_MAIL_REPLY_TO_DISPLAY_NAME: ${MAIL_REPLY_TO_DISPLAY_NAME:-Urlaubsverwaltung}
-      UV_MAIL_APPLICATION_URL: https://${APP_DOMAIN:-urlaub.llv24.de}
+      UV_MAIL_FROMDISPLAYNAME: ${MAIL_FROM_DISPLAY_NAME:-Urlaubsverwaltung}
+      UV_MAIL_REPLYTO: ${MAIL_REPLY_TO:-noreply@llv24.de}
+      UV_MAIL_REPLYTODISPLAYNAME: ${MAIL_REPLY_TO_DISPLAY_NAME:-Urlaubsverwaltung}
+      UV_MAIL_APPLICATIONURL: https://${APP_DOMAIN:-urlaub.llv24.de}
 
       SPRING_MAIL_HOST: ${MAIL_HOST:-mailpit}
       SPRING_MAIL_PORT: ${MAIL_PORT:-1025}
@@ -148,6 +156,8 @@ services:
       postgres:
         condition: service_healthy
       keycloak:
+        condition: service_healthy
+      mailpit:
         condition: service_started
     networks:
       - web
