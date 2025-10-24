@@ -51,7 +51,7 @@
     "idiomorph": "0.7.4",
     "jquery": "3.7.1",
     "less-plugin-clean-css": "1.6.0",
-    "lint-staged": "16.2.3",
+    "lint-staged": "16.2.6",
     "rimraf": "6.0.1",
     "rollup": "4.52.5",
     "rollup-plugin-esbuild": "6.2.1",
