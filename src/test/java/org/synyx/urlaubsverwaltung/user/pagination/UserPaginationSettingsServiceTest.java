@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebPropertiesorg.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
