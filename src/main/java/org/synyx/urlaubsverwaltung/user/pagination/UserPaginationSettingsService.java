@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.user.pagination;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
@@ -10,9 +10,9 @@ class UserPaginationSettingsService {
     private final UserPaginationSettingsRepository repository;
     private final int defaultPageSize;
 
-    protected UserPaginationSettingsService(UserPaginationSettingsRepository repository, SpringDataWebProperties springDataWebProperties) {
+    protected UserPaginationSettingsService(UserPaginationSettingsRepository repository, DataWebProperties dataWebProperties) {
         this.repository = repository;
-        this.defaultPageSize = springDataWebProperties.getPageable().getDefaultPageSize();
+        this.defaultPageSize = dataWebProperties.getPageable().getDefaultPageSize();
     }
 
     UserPaginationSettings getUserPaginationSettings(PersonId personId) {
