@@ -46,29 +46,28 @@
           <input type="hidden" th:field="*{doRemainingVacationDaysExpireGlobally}" />
 
           <div class="form-section">
-            <div class="row tw-mb-8" th:if="${#fields.hasErrors('*')}">
-              <div class="col-xs-12">
-                <div th:text="#{error.info.message}" class="alert alert-danger tw-text-sm"></div>
-              </div>
+            <div class="tw-mb-8" th:if="${#fields.hasErrors('*')}">
+              <div th:text="#{error.info.message}" class="alert alert-danger tw-text-sm"></div>
             </div>
 
-            <div class="row tw-mb-16">
-              <div class="col-md-4 col-md-push-8">
+            <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4 tw-mb-16">
+              <div class="tw-w-full lg:tw-w-1/3">
                 <span class="help-block tw-text-sm">
                   <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <span th:text="#{person.form.annualVacation.description}"></span>
                 </span>
               </div>
 
-              <div class="col-md-8 col-md-pull-4">
-                <div class="form-group is-required">
+              <div class="tw-w-full lg:tw-w-2/3">
+                <!-- Valid From -->
+                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                   <label
                     th:text="|#{person.form.annualVacation.period.start}:|"
                     for="holidaysAccountValidFrom"
-                    class="control-label col-md-3 tw-leading-snug"
+                    class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                     >Von</label
                   >
-                  <div class="col-md-9">
+                  <div class="tw-w-full lg:tw-w-3/4">
                     <input
                       id="holidaysAccountValidFrom"
                       th:field="*{holidaysAccountValidFrom}"
@@ -85,14 +84,15 @@
                   </div>
                 </div>
 
-                <div class="form-group is-required">
+                <!-- Valid To -->
+                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                   <label
                     th:text="|#{person.form.annualVacation.period.end}:|"
                     for="holidaysAccountValidTo"
-                    class="control-label col-md-3 tw-leading-snug"
+                    class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                     >Bis</label
                   >
-                  <div class="col-md-9">
+                  <div class="tw-w-full lg:tw-w-3/4">
                     <input
                       id="holidaysAccountValidTo"
                       th:field="*{holidaysAccountValidTo}"
@@ -111,14 +111,16 @@
 
                 <fieldset class="tw-mt-8">
                   <legend th:text="#{person.form.annualVacation.annualVacation.group.legend}">Urlaubsanspruch</legend>
-                  <div class="form-group is-required">
+
+                  <!-- Annual Vacation Days -->
+                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
                       th:text="|#{person.form.annualVacation.annualVacation}:|"
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       for="annualVacationDays"
                       >Jährlicher Urlaubsanspruch</label
                     >
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <input
                         id="annualVacationDays"
                         type="number"
@@ -133,14 +135,16 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group is-required">
+
+                  <!-- Actual Vacation Days -->
+                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
                       th:text="|#{person.form.annualVacation.actualVacation}:|"
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       for="actualVacationDays"
                       >Anteiliger Urlaubsanspruch</label
                     >
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <input
                         id="actualVacationDays"
                         type="number"
@@ -159,14 +163,16 @@
 
                 <fieldset class="tw-mt-8">
                   <legend th:text="#{person.form.annualVacation.remainingVacation}">Resturlaub</legend>
-                  <div class="form-group is-required">
+
+                  <!-- Remaining Vacation Days -->
+                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
                       th:text="|#{person.form.annualVacation.remainingVacation}:|"
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       for="remainingVacationDays"
                       >Resturlaub</label
                     >
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <input
                         id="remainingVacationDays"
                         type="number"
@@ -181,15 +187,17 @@
                       </div>
                     </div>
                   </div>
-                  <div class="tw-mt-4 md:tw-mt-8 form-group is-required">
+
+                  <!-- Remaining Vacation Days Expiry Toggle -->
+                  <div class="tw-mt-4 md:tw-mt-8 tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       th:text="|#{person.form.annualVacation.remainingVacation.expire}:|"
                       for="expiryDate"
                     >
                       Verfall von Resturlaub:
                     </label>
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <p
                         class="account-form-expire-description tw-mb-4"
                         th:with="
@@ -268,15 +276,17 @@
                   <legend th:text="#{person.form.annualVacation.remainingVacation.expire}">
                     Verfall von Resturlaub
                   </legend>
-                  <div class="form-group is-required">
+
+                  <!-- Remaining Vacation Days Expiry Date -->
+                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
                       for="expiryDate"
                     >
                       Verfallsdatum des Resturlaubs:
                     </label>
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <div class="tw-flex tw-flex-col">
                         <p
                           class="account-form-expire-description tw-m-0"
@@ -307,14 +317,16 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group is-required">
+
+                  <!-- Remaining Vacation Days That Does Not Expire -->
+                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                     <label
                       th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
-                      class="control-label col-md-3 tw-leading-snug"
+                      class="is-required tw-w-full lg:tw-w-1/4 tw-leading-snug"
                       for="remainingVacationDaysNotExpiring"
                       >Anteil des Resturlaubs, welcher zum Verfallsdatum nicht verfällt</label
                     >
-                    <div class="col-md-9">
+                    <div class="tw-w-full lg:tw-w-3/4">
                       <input
                         id="remainingVacationDaysNotExpiring"
                         type="number"
@@ -336,14 +348,15 @@
                   </div>
                 </fieldset>
 
-                <div class="tw-mt-8 form-group">
+                <!-- Comment -->
+                <div class="tw-mt-8 tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                   <label
                     th:text="|#{person.form.annualVacation.comment}:|"
-                    class="control-label col-md-3 tw-leading-snug"
+                    class="tw-w-full lg:tw-w-1/4 tw-leading-snug"
                     for="comment"
                     >Kommentar zur Änderung des Urlaubsanspruchs</label
                   >
-                  <div class="col-md-9">
+                  <div class="tw-w-full lg:tw-w-3/4">
                     <textarea
                       id="comment"
                       rows="3"
