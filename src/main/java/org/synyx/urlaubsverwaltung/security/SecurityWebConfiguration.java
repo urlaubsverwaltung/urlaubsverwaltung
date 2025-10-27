@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -35,10 +35,12 @@ class SecurityWebConfiguration {
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final Oauth2LoginConfigurationProperties oauth2LoginConfigurationProperties;
 
-    SecurityWebConfiguration(PersonService personService, SessionService sessionService,
-                             OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
-                             ClientRegistrationRepository clientRegistrationRepository,
-                             Oauth2LoginConfigurationProperties oauth2LoginConfigurationProperties) {
+    SecurityWebConfiguration(
+        PersonService personService, SessionService sessionService,
+        OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler,
+        ClientRegistrationRepository clientRegistrationRepository,
+        Oauth2LoginConfigurationProperties oauth2LoginConfigurationProperties
+    ) {
         this.personService = personService;
         this.sessionService = sessionService;
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
@@ -48,7 +50,7 @@ class SecurityWebConfiguration {
 
     @Bean
     @Order(2)
-    SecurityFilterChain actuatorSecurityFilterChain(final HttpSecurity http) throws Exception {
+    SecurityFilterChain actuatorSecurityFilterChain(final HttpSecurity http) {
         return http
             .securityMatcher(EndpointRequest.toAnyEndpoint())
             .authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
@@ -61,7 +63,7 @@ class SecurityWebConfiguration {
 
     @Bean
     @Order(3)
-    SecurityFilterChain calendarSecurityFilterChain(final HttpSecurity http) throws Exception {
+    SecurityFilterChain calendarSecurityFilterChain(final HttpSecurity http) {
         return http
             .securityMatchers(configurer ->
                 configurer
@@ -85,7 +87,7 @@ class SecurityWebConfiguration {
 
     @Bean
     @Order(4)
-    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder) throws Exception {
+    SecurityFilterChain webSecurityFilterChain(final HttpSecurity http, DelegatingSecurityContextRepository securityContextRepository, TenantContextHolder tenantContextHolder) {
         return http
             .authorizeHttpRequests(requests ->
                 requests
