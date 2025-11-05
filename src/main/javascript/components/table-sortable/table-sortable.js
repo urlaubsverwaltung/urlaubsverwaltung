@@ -1,3 +1,6 @@
+/**
+ * @param {HTMLTableElement} table
+ */
 function initTableSortable(table) {
   for (let th of table.querySelectorAll("th[data-sortable]")) {
     const container = document.createElement("div");
@@ -55,6 +58,14 @@ function initTableSortable(table) {
   }
 }
 
+/**
+ * @typedef {'date'|'numeric'|'string'} SortType
+ */
+
+/**
+ * @param {SortType} sortType
+ * @returns {(a: any, b: any) => number}
+ */
 function getComparator(sortType) {
   return function comparator(a, b) {
     if (sortType === "date") {
@@ -67,6 +78,11 @@ function getComparator(sortType) {
   };
 }
 
+/**
+ * @param {HTMLTableCellElement} cell
+ * @param {SortType} sortType
+ * @return {number|string|Date}
+ */
 function getSortValue(cell, sortType) {
   if (!("sortValue" in cell.dataset)) {
     let sortValue = cell.textContent?.trim() ?? "";
