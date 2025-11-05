@@ -56,13 +56,15 @@ function initTableSortable(table) {
 }
 
 function getComparator(sortType) {
-  if (sortType === "date") {
-    return (a, b) => a.getTime() - b.getTime();
-  }
-  if (sortType === "numeric") {
-    return (a, b) => a - b;
-  }
-  return (a, b) => a.localeCompare(b);
+  return function comparator(a, b) {
+    if (sortType === "date") {
+      return a.getTime() - b.getTime();
+    } else if (sortType === "numeric") {
+      return a - b;
+    } else {
+      return a.localCompare(b);
+    }
+  };
 }
 
 function getSortValue(cell, sortType) {
