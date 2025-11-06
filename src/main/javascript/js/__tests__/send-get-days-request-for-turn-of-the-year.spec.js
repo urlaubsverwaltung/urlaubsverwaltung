@@ -1,12 +1,25 @@
+/**
+ * @jest-environment jest-fixed-jsdom
+ *
+ * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
+ * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
+ * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
+ */
+
 import fetchMock from "fetch-mock";
 import sendGetDaysRequestForTurnOfTheYear from "../send-get-days-request-for-turn-of-the-year";
 
 describe("send-get-days-request-for-turn-of-the-year", function () {
+  beforeAll(function () {
+    fetchMock.mockGlobal();
+  });
+
   afterEach(function () {
     while (document.body.firstChild) {
       document.body.firstChild.remove();
     }
-    fetchMock.restore();
+    fetchMock.removeRoutes();
+    fetchMock.clearHistory();
     jest.clearAllMocks();
   });
 
@@ -22,7 +35,7 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
 
     await sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(fetchMock.called()).toBeFalsy();
+    expect(fetchMock.callHistory.called()).toBeFalsy();
   });
 
   it("clears the given elements html content when 'personId', 'startDate' and 'toDate' is not given", async function () {
@@ -52,7 +65,7 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
 
     await sendGetDaysRequestForTurnOfTheYear(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(fetchMock.called()).toBeFalsy();
+    expect(fetchMock.callHistory.called()).toBeFalsy();
   });
 
   it("clears the given elements html content when 'startDate' is after 'toDate'", async function () {
@@ -71,13 +84,13 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
   });
 
   it("fetches info for all years, async function", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31&length=FULL", {
       workDays: "1.0",
     });
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-12-31&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-12-31&length=FULL", {
       workDays: "2.0",
     });
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2023-01-01&to=2023-01-07&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2023-01-01&to=2023-01-07&length=FULL", {
       workDays: "3.0",
     });
 
@@ -96,11 +109,11 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
   });
 
   it("does not add 'length' to requested url when dayLength is unknown", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-31", {
       workDays: "1.0",
     });
 
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-01-07", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2022-01-01&to=2022-01-07", {
       workDays: "2.0",
     });
 

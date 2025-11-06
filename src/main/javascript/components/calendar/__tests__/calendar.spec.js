@@ -1,3 +1,11 @@
+/**
+ * @jest-environment jest-fixed-jsdom
+ *
+ * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
+ * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
+ * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
+ */
+
 import { cleanup, setup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
 import fetchMock from "fetch-mock";
 import { parseISO } from "date-fns";
@@ -33,12 +41,17 @@ describe("calendar", () => {
   beforeEach(setup);
   afterEach(cleanup);
 
+  beforeAll(() => {
+    fetchMock.mockGlobal();
+  });
+
   beforeEach(() => {
     globalThis.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
   });
 
   afterEach(() => {
-    fetchMock.restore();
+    fetchMock.removeRoutes();
+    fetchMock.clearHistory();
     globalThis.Date = RealDate;
   });
 
@@ -55,7 +68,7 @@ describe("calendar", () => {
     // today is 2017-12-01
     mockDate(1_512_130_448_379);
 
-    fetchMock.mock(
+    fetchMock.route(
       "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
       {
         absences: [],
@@ -84,7 +97,7 @@ describe("calendar", () => {
     // today is 2017-12-01
     mockDate(1_512_130_448_379);
 
-    fetchMock.mock(
+    fetchMock.route(
       "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
       {
         absences: [
@@ -125,7 +138,7 @@ describe("calendar", () => {
         // 01.12.2017
         mockDate(1_512_130_448_379);
 
-        fetchMock.mock(
+        fetchMock.route(
           "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
           {
             absences: [
@@ -141,7 +154,7 @@ describe("calendar", () => {
           },
         );
 
-        fetchMock.mock(`/persons/42/public-holidays?from=2017-01-01&to=2017-12-31`, {
+        fetchMock.route(`/persons/42/public-holidays?from=2017-01-01&to=2017-12-31`, {
           publicHolidays: [
             {
               date: "2017-12-25",
@@ -177,7 +190,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock(
+        fetchMock.route(
           "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
           {
             absences: [
@@ -217,7 +230,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock(
+        fetchMock.route(
           "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
           {
             absences: [
@@ -257,7 +270,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock(
+        fetchMock.route(
           "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
           {
             absences: [
@@ -300,7 +313,7 @@ describe("calendar", () => {
       // personId -> createHolidayService (param)
       // year -> holidayService.fetchPersonal (param)
       // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock(
+      fetchMock.route(
         "/persons/42/absences?from=2020-01-01&to=2020-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
         {
           absences: [
@@ -387,7 +400,7 @@ describe("calendar", () => {
     // personId -> createHolidayService (param)
     // year -> holidayService.fetchPersonal (param)
     // type -> holidayService.fetchPersonal (implementation detail)
-    fetchMock.mock(
+    fetchMock.route(
       "/persons/42/absences?from=2020-01-01&to=2020-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
       {
         absences: [
@@ -436,14 +449,14 @@ describe("calendar", () => {
   });
 
   function mockEmptyYear(personId, year) {
-    fetchMock.mock(
+    fetchMock.route(
       `/persons/${personId}/absences?from=${year}-01-01&to=${year}-12-31&absence-types=vacation%2Csick_note%2Cno_workday`,
       {
         absences: [],
       },
     );
 
-    fetchMock.mock(`/persons/${personId}/public-holidays?from=${year}-01-01&to=${year}-12-31`, {
+    fetchMock.route(`/persons/${personId}/public-holidays?from=${year}-01-01&to=${year}-12-31`, {
       publicHolidays: [],
     });
   }
