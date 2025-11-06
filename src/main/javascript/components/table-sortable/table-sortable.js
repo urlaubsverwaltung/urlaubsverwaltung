@@ -67,15 +67,13 @@ function initTableSortable(table) {
  * @returns {(a: any, b: any) => number}
  */
 function getComparator(sortType) {
-  return function comparator(a, b) {
-    if (sortType === "date") {
-      return a.getTime() - b.getTime();
-    } else if (sortType === "numeric") {
-      return a - b;
-    } else {
-      return a.localCompare(b);
-    }
-  };
+  if (sortType === "numeric") {
+    return new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+  }
+  if (sortType === "date") {
+    return (a, b) => a.getTime() - b.getTime();
+  }
+  return new Intl.Collator(undefined, { caseFirst: "upper" }).compare;
 }
 
 /**
