@@ -1,3 +1,11 @@
+/**
+ * @jest-environment jest-fixed-jsdom
+ *
+ * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
+ * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
+ * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
+ */
+
 import fetchMock from "fetch-mock";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDaysRequestForTurnOfTheYear from "../send-get-days-request-for-turn-of-the-year";
@@ -5,6 +13,10 @@ import sendGetDaysRequestForTurnOfTheYear from "../send-get-days-request-for-tur
 jest.mock("../send-get-days-request-for-turn-of-the-year");
 
 describe("send-get-days-request", function () {
+  beforeAll(function () {
+    fetchMock.mockGlobal();
+  });
+
   beforeEach(function () {
     globalThis.uv = {
       // just reset keys set explicitly in the tests below
@@ -16,7 +28,8 @@ describe("send-get-days-request", function () {
     while (document.body.firstChild) {
       document.body.firstChild.remove();
     }
-    fetchMock.restore();
+    fetchMock.removeRoutes();
+    fetchMock.clearHistory();
     jest.clearAllMocks();
   });
 
@@ -32,7 +45,7 @@ describe("send-get-days-request", function () {
 
     await sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(fetchMock.called()).toBeFalsy();
+    expect(fetchMock.callHistory.called()).toBeFalsy();
   });
 
   it("clears the given elements html content when 'personId', 'startDate' and 'toDate' is not given", async function () {
@@ -62,7 +75,7 @@ describe("send-get-days-request", function () {
 
     await sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(fetchMock.called()).toBeFalsy();
+    expect(fetchMock.callHistory.called()).toBeFalsy();
   });
 
   it("clears the given elements html content when 'startDate' is after 'toDate'", async function () {
@@ -81,7 +94,7 @@ describe("send-get-days-request", function () {
   });
 
   it("renders 'invalid periods' when response returns no workDays", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
 
     globalThis.uv.i18n["application.applier.invalidPeriod"] = "booooo, invalid!";
 
@@ -100,7 +113,7 @@ describe("send-get-days-request", function () {
   });
 
   it("renders workDays for one day", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {
       workDays: "1.0",
     });
 
@@ -121,7 +134,7 @@ describe("send-get-days-request", function () {
   });
 
   it("renders workDays for multiple days", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {
       workDays: "1.5",
     });
 
@@ -142,7 +155,7 @@ describe("send-get-days-request", function () {
   });
 
   it("removes 'hidden' css class when '#days-count' element exists", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
 
     const urlPrefix = "/url-prefix";
     const startDate = new Date("2021-09-19");
@@ -163,7 +176,7 @@ describe("send-get-days-request", function () {
   });
 
   it("does not fetch info for current year and next year when given dates have same year", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-24&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-12-20&to=2021-12-24&length=FULL", {
       workDays: "42",
     });
 
@@ -182,7 +195,7 @@ describe("send-get-days-request", function () {
   });
 
   it("fetches info for current year and next year when given dates have different years", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-12-20&to=2022-01-07&length=FULL", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-12-20&to=2022-01-07&length=FULL", {
       workDays: "42",
     });
 
@@ -208,7 +221,7 @@ describe("send-get-days-request", function () {
   });
 
   it("does not add 'length' to requested url when dayLength is unknown", async function () {
-    fetchMock.mock("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19", {
+    fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19", {
       workDays: "42",
     });
 

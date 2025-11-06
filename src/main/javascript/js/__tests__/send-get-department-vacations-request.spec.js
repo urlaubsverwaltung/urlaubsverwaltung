@@ -1,3 +1,11 @@
+/**
+ * @jest-environment jest-fixed-jsdom
+ *
+ * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
+ * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
+ * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
+ */
+
 import fetchMock from "fetch-mock";
 import { parseISO as dateParseISOSpy } from "date-fns/parseISO";
 import { format as dateFormatSpy } from "date-fns/format";
@@ -18,6 +26,10 @@ jest.mock("date-fns/format", () => {
 });
 
 describe("send-get-department-vacations-request", () => {
+  beforeAll(function () {
+    fetchMock.mockGlobal();
+  });
+
   beforeEach(() => {
     globalThis.uv = {
       i18n: {
@@ -33,14 +45,15 @@ describe("send-get-department-vacations-request", () => {
       document.body.firstElementChild.remove();
     }
     // and reset mocks
-    fetchMock.restore();
+    fetchMock.removeRoutes();
+    fetchMock.clearHistory();
     jest.clearAllMocks();
   });
 
   it("does nothing when startDate end endDate are not defined", async () => {
     await sendGetDepartmentVacationsRequest("", undefined, undefined, "", "");
 
-    expect(fetchMock.calls()).toHaveLength(0);
+    expect(fetchMock.callHistory.calls()).toHaveLength(0);
   });
 
   it("does nothing when startDate is after endDate", async () => {
@@ -49,11 +62,11 @@ describe("send-get-department-vacations-request", () => {
 
     await sendGetDepartmentVacationsRequest("", startDate, endDate, "", "");
 
-    expect(fetchMock.calls()).toHaveLength(0);
+    expect(fetchMock.callHistory.calls()).toHaveLength(0);
   });
 
   it("renders response", async () => {
-    fetchMock.mock(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
+    fetchMock.route(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
       vacations: [
         {
           status: "ALLOWED",
@@ -88,7 +101,7 @@ describe("send-get-department-vacations-request", () => {
   });
 
   it("renders empty response", async () => {
-    fetchMock.mock(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
+    fetchMock.route(`urlprefix/persons/1337/vacations?from=2020-08-16&to=2020-08-31&ofDepartmentMembers`, {
       vacations: [],
     });
 

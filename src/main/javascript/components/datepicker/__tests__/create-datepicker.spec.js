@@ -1,9 +1,21 @@
+/**
+ * @jest-environment jest-fixed-jsdom
+ *
+ * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
+ * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
+ * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
+ */
+
 import { createDatepicker } from "../create-datepicker";
 import fetchMock from "fetch-mock";
 import { de } from "date-fns/locale/de";
 import { setLocale } from "../../../lib/date-fns/locale-resolver";
 
 describe("create-datepicker", () => {
+  beforeAll(function () {
+    fetchMock.mockGlobal();
+  });
+
   beforeEach(() => {
     globalThis.uv = {
       datepicker: {
@@ -23,7 +35,8 @@ describe("create-datepicker", () => {
     }
 
     // and reset mocks
-    fetchMock.restore();
+    fetchMock.removeRoutes();
+    fetchMock.clearHistory();
   });
 
   test("replaces elements matching the selector with the @duetds/date-picker", async () => {
@@ -145,11 +158,11 @@ describe("create-datepicker", () => {
 
     describe("fetches absences and public-holidays when datepicker is opened", () => {
       beforeEach(async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -165,27 +178,27 @@ describe("create-datepicker", () => {
 
         await createDatepicker("input", { urlPrefix, getPersonId });
 
-        // duet datepicker must to be opened to update month and year select-box values
+        // duet datepicker must be opened to update month and year select-box values
         document.querySelector("button.duet-date__toggle").click();
-        fetchMock.resetHistory();
+        fetchMock.clearHistory();
       });
 
       test("with toggle button click", async () => {
         const button = document.querySelector("button.duet-date__toggle");
 
-        expect(fetchMock.calls()).toHaveLength(0);
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         button.click();
 
-        expect(fetchMock.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(2);
       });
 
       test("after month has been changed", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-01-01&to=2020-01-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-01-01&to=2020-01-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -194,20 +207,20 @@ describe("create-datepicker", () => {
 
         const monthElement = document.querySelector(".duet-date__select--month");
 
-        expect(fetchMock.calls()).toHaveLength(0);
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        expect(fetchMock.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(2);
       });
 
       test("after year has been changed", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2019-12-01&to=2019-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2019-12-01&to=2019-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -216,20 +229,20 @@ describe("create-datepicker", () => {
 
         const yearElement = document.querySelector(".duet-date__select--year");
 
-        expect(fetchMock.calls()).toHaveLength(0);
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        expect(fetchMock.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(2);
       });
 
       test("after next button has been clicked", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-11-01&to=2020-11-30`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-01&to=2020-11-30`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -238,18 +251,18 @@ describe("create-datepicker", () => {
 
         const previousMonthButton = document.querySelector(".duet-date__prev");
 
-        expect(fetchMock.calls()).toHaveLength(0);
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         previousMonthButton.click();
-        expect(fetchMock.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(2);
       });
 
       test("after prev button has been clicked", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2021-01-01&to=2021-01-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2021-01-01&to=2021-01-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -258,16 +271,16 @@ describe("create-datepicker", () => {
 
         const nextMonthButton = document.querySelector(".duet-date__next");
 
-        expect(fetchMock.calls()).toHaveLength(0);
+        expect(fetchMock.callHistory.calls()).toHaveLength(0);
 
         nextMonthButton.click();
-        expect(fetchMock.calls()).toHaveLength(2);
+        expect(fetchMock.callHistory.calls()).toHaveLength(2);
       });
     });
 
     describe("clears public holiday markers", function () {
       beforeEach(async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [
             {
               date: "2020-12-25",
@@ -280,7 +293,7 @@ describe("create-datepicker", () => {
           ],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -296,18 +309,18 @@ describe("create-datepicker", () => {
 
         await createDatepicker("input", { urlPrefix, getPersonId });
 
-        // duet datepicker must to be opened to update month and year select-box values
+        // duet datepicker must be opened to update month and year select-box values
         document.querySelector("button.duet-date__toggle").click();
         await new Promise((resolve) => setTimeout(resolve, 2));
-        fetchMock.resetHistory();
+        fetchMock.clearHistory();
       });
 
       test("after month has been changed", () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-01-01&to=2020-01-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-01-01&to=2020-01-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -325,11 +338,11 @@ describe("create-datepicker", () => {
       });
 
       test("after year has been changed", () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2019-12-01&to=2019-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2019-12-01&to=2019-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -347,11 +360,11 @@ describe("create-datepicker", () => {
       });
 
       test("after next button has been clicked", () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-11-01&to=2020-11-30`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-11-01&to=2020-11-30`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -367,11 +380,11 @@ describe("create-datepicker", () => {
       });
 
       test("after prev button has been clicked", () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2021-01-01&to=2021-01-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2021-01-01&to=2021-01-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -389,7 +402,7 @@ describe("create-datepicker", () => {
 
     describe("highlights days", () => {
       function mockAbsences(absences) {
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences,
@@ -398,11 +411,11 @@ describe("create-datepicker", () => {
       }
 
       test("weekend", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -450,7 +463,7 @@ describe("create-datepicker", () => {
       });
 
       test("weekend with absences", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
         });
 
@@ -572,11 +585,11 @@ describe("create-datepicker", () => {
       });
 
       test("no public holidays", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [],
@@ -603,13 +616,13 @@ describe("create-datepicker", () => {
 
       describe("public holiday", () => {
         function mockPublicHolidays(publicHolidays) {
-          fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
             publicHolidays,
           });
         }
 
         beforeEach(async () => {
-          fetchMock.mock(
+          fetchMock.route(
             `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences: [],
@@ -671,7 +684,7 @@ describe("create-datepicker", () => {
 
       describe("vacation waiting", () => {
         function mockVacationWaitingAbsences(absences) {
-          fetchMock.mock(
+          fetchMock.route(
             `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
@@ -680,7 +693,7 @@ describe("create-datepicker", () => {
         }
 
         beforeEach(async () => {
-          fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
             publicHolidays: [],
           });
 
@@ -781,7 +794,7 @@ describe("create-datepicker", () => {
 
       describe("vacation approved", () => {
         function mockVacationApprovedAbsences(absences) {
-          fetchMock.mock(
+          fetchMock.route(
             `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
@@ -790,7 +803,7 @@ describe("create-datepicker", () => {
         }
 
         beforeEach(async () => {
-          fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
             publicHolidays: [],
           });
 
@@ -891,7 +904,7 @@ describe("create-datepicker", () => {
 
       describe("sick day", () => {
         function mockSickDayAbsences(absences) {
-          fetchMock.mock(
+          fetchMock.route(
             `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
             {
               absences,
@@ -900,7 +913,7 @@ describe("create-datepicker", () => {
         }
 
         beforeEach(async () => {
-          fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
             publicHolidays: [],
           });
 
@@ -973,11 +986,11 @@ describe("create-datepicker", () => {
       });
 
       test("no-workday", async () => {
-        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.route(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
         });
 
-        fetchMock.mock(
+        fetchMock.route(
           `my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&absence-types=vacation,sick_note,no_workday`,
           {
             absences: [
