@@ -137,7 +137,7 @@
               <td class="is-centered">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="hidden-xs print:tw-hidden">
+              <td class="tw-hidden md:tw-table-cell print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
@@ -235,7 +235,7 @@
                   <th:block th:text="#{application.data.hours.number}" />
                 </span>
               </td>
-              <td class="hidden-xs print:tw-hidden">
+              <td class="tw-hidden md:tw-table-cell print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <span>

@@ -28,7 +28,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   element.innerHTML = text;
   let closest = element.closest("#days-count");
   if (closest) {
-    closest.classList.remove("hidden");
+    closest.classList.remove("tw-hidden");
   }
 
   if (getYear(startDate) !== getYear(toDate)) {

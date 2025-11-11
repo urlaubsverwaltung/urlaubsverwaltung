@@ -154,7 +154,7 @@ describe("send-get-days-request", function () {
     expect(document.querySelector("#awesome-element").innerHTML).toEqual("1.5 days");
   });
 
-  it("removes 'hidden' css class when '#days-count' element exists", async function () {
+  it("removes 'tw-hidden' css class when '#days-count' element exists", async function () {
     fetchMock.route("/url-prefix/persons/1/workdays?from=2021-09-19&to=2021-09-19&length=FULL", {});
 
     const urlPrefix = "/url-prefix";
@@ -165,14 +165,14 @@ describe("send-get-days-request", function () {
     const elementSelector = "#awesome-element";
 
     document.body.innerHTML = `
-      <div id="days-count" class="hidden">
+      <div id="days-count" class="tw-hidden">
         <div id="awesome-element"></div>
       </div>
     `;
 
     await sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector);
 
-    expect(document.querySelector("#days-count").classList.contains("hidden")).toBeFalsy();
+    expect(document.querySelector("#days-count").classList.contains("tw-hidden")).toBeFalsy();
   });
 
   it("does not fetch info for current year and next year when given dates have same year", async function () {

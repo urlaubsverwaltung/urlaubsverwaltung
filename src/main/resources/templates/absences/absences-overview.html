@@ -149,7 +149,7 @@
             th:classappend="${#lists.size(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
           >
             <th:block th:text="${month.nameOfMonth}" />
-            <span class="hidden print:tw-inline" th:text="${selectedYear}" />
+            <span class="tw-hidden print:tw-inline" th:text="${selectedYear}" />
           </h2>
           <table
             id="absence-table"
