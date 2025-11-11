@@ -212,7 +212,7 @@
             <div class="tw-max-w-full tw-overflow-x-auto">
               <table id="person-table" class="list-table person-table hoverable-table tw-text-sm">
                 <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-                <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+                <thead class="tw-hidden lg:tw-table-header-group print:tw-table-header-group">
                   <tr>
                     <th scope="col"><!-- placeholder to ensure correct number of th --></th>
                     <th
@@ -251,7 +251,7 @@
                     </td>
                     <td
                       th:if="${showPersonnelNumberColumn}"
-                      class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                      class="personnelNumber tw-hidden md:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
                       th:text="${person.personnelNumber}"
                     ></td>
                     <td class="firstname">
@@ -270,7 +270,7 @@
                         data-turbo="false"
                       ></a>
                     </td>
-                    <td th:if="${isDepartmentPresent}" class="hidden-xs hidden-sm">
+                    <td th:if="${isDepartmentPresent}" class="tw-hidden md:tw-table-cell">
                       <ul
                         th:if="${person.isDepartmentHead or person.isSecondStageAuthority}"
                         class="tw-list-none tw-m-0 tw-p-0"
@@ -291,7 +291,7 @@
                         </li>
                       </ul>
                     </td>
-                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <td class="is-centered tw-hidden md:tw-table-cell print:tw-table-cell">
                       <th:block th:if="${person.entitlementYear != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
                       </th:block>
@@ -300,7 +300,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <td class="is-centered tw-hidden md:tw-table-cell print:tw-table-cell">
                       <th:block th:if="${person.entitlementActual != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
                       </th:block>
@@ -309,7 +309,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <td class="is-centered tw-hidden md:tw-table-cell print:tw-table-cell">
                       <th:block th:if="${person.entitlementRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
                       </th:block>
@@ -318,7 +318,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <td class="is-centered tw-hidden md:tw-table-cell print:tw-table-cell">
                       <th:block th:if="${person.vacationDaysLeft != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
                       </th:block>
@@ -327,7 +327,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <td class="is-centered tw-hidden md:tw-table-cell print:tw-table-cell">
                       <th:block th:if="${person.vacationDaysLeftRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
                       </th:block>
@@ -336,7 +336,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="hidden-xs">
+                    <td class="tw-hidden md:tw-table-cell">
                       <div class="print:tw-hidden">
                         <a
                           class="action-link"

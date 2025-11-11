@@ -135,7 +135,9 @@
                         th:placeholder="#{pattern.date}"
                         class="form-control tw-mt-0.5"
                       />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4">Bis</label>
+                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4"
+                        >Bis</label
+                      >
                       <input
                         id="to-date-input"
                         name="to"
@@ -289,7 +291,7 @@
           <caption class="tw-sr-only" th:text="#{sicknotes.title}">
             Krankmeldungen
           </caption>
-          <thead class="hidden-xs hidden-sm">
+          <thead class="tw-hidden lg:tw-table-header-group">
             <tr>
               <th scope="col" class="print:tw-hidden"></th>
               <th
@@ -300,12 +302,12 @@
               ></th>
               <th scope="col" th:text="#{person.data.firstName}"></th>
               <th scope="col" th:text="#{person.data.lastName}"></th>
-              <th scope="col" class="hidden">
+              <th scope="col" class="tw-hidden">
                 <!-- placeholder for first name and last name column in xs screen-->
               </th>
               <th scope="col" th:text="#{sicknotes.daysOverview.sickDays.title}"></th>
               <th scope="col" th:text="#{sicknotes.daysOverview.sickDays.child.title}"></th>
-              <th scope="col" class="hidden"><!-- placeholder for sick days column in xs screen--></th>
+              <th scope="col" class="tw-hidden"><!-- placeholder for sick days column in xs screen--></th>
             </tr>
           </thead>
           <tbody>
@@ -321,7 +323,7 @@
                 th:text="${sickDaysStatistic.personnelNumber}"
                 class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
               ></td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:text="${sickDaysStatistic.personFirstName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -329,7 +331,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:text="${sickDaysStatistic.personLastName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -337,7 +339,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="visible-xs">
+              <td class="md:tw-hidden">
                 <a
                   th:text="${sickDaysStatistic.personNiceName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -345,7 +347,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link print:no-link"
@@ -371,7 +373,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link print:no-link"
@@ -397,7 +399,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="visible-xs">
+              <td class="md:tw-hidden">
                 <div class="tw-flex tw-items-center">
                   <svg th:replace="~{icon/medkit::svg(className='tw-w-3 tw-h-3')}"></svg>
                   &nbsp;<th:block
