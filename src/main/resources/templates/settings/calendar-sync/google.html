@@ -155,13 +155,17 @@
           <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
             <div class="tw-w-full lg:tw-w-1/4"></div>
             <div class="tw-w-full lg:tw-w-3/4">
-              <p th:if="${not #strings.isEmpty(oautherrors)}" th:text="${oautherrors}" class="text-danger tw-mb-4"></p>
+              <p
+                th:if="${not #strings.isEmpty(oautherrors)}"
+                th:text="${oautherrors}"
+                class="tw-text-red-600 tw-mb-4"
+              ></p>
 
               <th:block th:if="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
                 <div class="tw-flex tw-flex-row">
                   <p
                     th:text="#{settings.calendar.google.action.authenticate.description}"
-                    class="text-danger tw-w-2/3"
+                    class="tw-text-red-600 tw-w-2/3"
                   ></p>
                   <button
                     th:text="#{settings.calendar.google.action.authenticate}"
