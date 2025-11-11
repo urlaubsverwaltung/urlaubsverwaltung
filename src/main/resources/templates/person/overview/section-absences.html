@@ -208,7 +208,7 @@
               <td class="is-centered">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
-                  <span th:class="|text-muted days-${loopStatus.index}|">
+                  <span th:class="|tw-text-gray-500 days-${loopStatus.index}|">
                     <!-- is filled by javascript-->
                   </span>
                   <script type="text/javascript" th:inline="javascript">
@@ -229,7 +229,10 @@
                     });
                   </script>
                 </th:block>
-                <span th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}" class="text-muted">
+                <span
+                  th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}"
+                  class="tw-text-gray-500"
+                >
                   <br />
                   <th:block th:text="${{app.hours}}" />
                   <th:block th:text="#{application.data.hours.number}" />
