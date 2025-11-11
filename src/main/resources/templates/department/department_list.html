@@ -70,7 +70,7 @@
           <caption class="tw-sr-only" th:text="#{departments.title}">
             Departments
           </caption>
-          <thead class="hidden-xs hidden-sm">
+          <thead class="tw-hidden lg:tw-table-header-group">
             <tr>
               <th
                 th:text="#{department.data.name}"
@@ -108,7 +108,7 @@
                   <span th:text="${department.description}"></span>
                 </div>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:if="${department.activeMembersCount > 0}"
                   th:href="@{/web/person?active=true&department=__${department.id}__}"
@@ -128,12 +128,15 @@
                   <th:block th:text="#{department.members.inactive}" />
                 </a>
               </td>
-              <td class="is-centered hidden-xs" th:data-sort-value="${department.twoStageApproval ? 0 : 1}">
+              <td
+                class="is-centered tw-hidden md:tw-table-cell"
+                th:data-sort-value="${department.twoStageApproval ? 0 : 1}"
+              >
                 <th:block th:if="${department.twoStageApproval == true}">
                   <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
               </td>
-              <td th:text="${{department.lastModification}}" class="hidden-xs"></td>
+              <td th:text="${{department.lastModification}}" class="tw-hidden md:tw-table-cell"></td>
               <td th:if="${canCreateAndModifyDepartment}">
                 <form method="post" th:action="@{/web/department/__${department.id}__/delete}">
                   <div
