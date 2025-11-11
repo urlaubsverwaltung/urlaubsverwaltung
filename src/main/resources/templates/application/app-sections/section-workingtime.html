@@ -21,13 +21,13 @@
                 class="tw-pb-1 tw-w-5 tw-font-medium"
                 scope="col"
               ></th>
-              <th th:text="#{MONDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{TUESDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{WEDNESDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{THURSDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{FRIDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{SATURDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
-              <th th:text="#{SUNDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{MONDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{TUESDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{WEDNESDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{THURSDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{FRIDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{SATURDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{SUNDAY.short}" class="tw-pb-1 tw-text-center tw-w-4 tw-font-medium" scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -35,7 +35,7 @@
               <th class="tw-font-normal" scope="row">
                 <th:block th:replace="~{fragments/date::date(${dateRangeWorkingTime.key.startDate})}"></th:block>
               </th>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.monday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -46,7 +46,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.tuesday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -57,7 +57,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.wednesday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -68,7 +68,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.thursday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -79,7 +79,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.friday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -90,7 +90,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.saturday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
@@ -101,7 +101,7 @@
                 >
                 </span>
               </td>
-              <td class="tw-py-0.5 text-center">
+              <td class="tw-py-0.5 tw-text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.sunday.duration > 0}">
                   <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                 </th:block>
