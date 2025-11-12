@@ -126,7 +126,7 @@
             Abwesenheiten
           </caption>
           <tbody>
-            <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}" class="active">
+            <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}">
               <td></td>
               <td class="tw-py-4">
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>
