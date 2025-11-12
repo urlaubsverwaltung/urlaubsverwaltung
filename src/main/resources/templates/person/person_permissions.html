@@ -33,174 +33,167 @@
         <input type="hidden" th:field="*{email}" th:value="${person.email}" />
 
         <div class="form-section tw-mb-16">
-          <div class="row">
-            <p class="alert alert-danger" th:if="${#fields.hasErrors('permissions')}">
-              <th:block th:errors="*{permissions}"> permissions Error</th:block>
-            </p>
+          <p class="alert alert-danger" th:if="${#fields.hasErrors('permissions')}">
+            <th:block th:errors="*{permissions}"> permissions Error</th:block>
+          </p>
 
-            <aside class="col-md-4 col-md-push-8">
+          <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4">
+            <aside class="tw-w-full lg:tw-w-1/3">
               <p class="help-block tw-text-sm">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <th:block th:text="#{person.form.permissions.description}" />
               </p>
             </aside>
 
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group is-required">
-                <div class="col-md-9">
-                  <div class="checkbox tw-pb-2 tw-mb-2">
-                    <strong th:text="#{person.form.permissions.roles.INACTIVE}" class="tw-mb-2 tw-block"></strong>
-                    <label class="tw-leading-snug">
-                      <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
-                      <th:block th:text="#{person.form.permissions.roles.INACTIVE.description}">
-                        hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben bestehen)
-                      </th:block>
-                    </label>
-                  </div>
+            <div class="tw-w-full lg:tw-w-2/3">
+              <div class="checkbox tw-pb-2 tw-mb-2">
+                <strong th:text="#{person.form.permissions.roles.INACTIVE}" class="tw-mb-2 tw-block"></strong>
+                <label class="tw-leading-snug">
+                  <input type="checkbox" th:field="*{permissions}" value="INACTIVE" />
+                  <th:block th:text="#{person.form.permissions.roles.INACTIVE.description}">
+                    hat keinen Zugang mehr zur Urlaubsverwaltung (Daten des Benutzers bleiben bestehen)
+                  </th:block>
+                </label>
+              </div>
 
-                  <div class="checkbox tw-pb-2 tw-mb-2">
-                    <strong th:text="#{person.form.permissions.roles.USER}" class="tw-mb-2 tw-block"></strong>
-                    <label class="tw-leading-snug">
-                      <input type="checkbox" th:field="*{permissions}" value="USER" />
-                      <th:block th:text="#{person.form.permissions.roles.USER.description}">
-                        hat Zugang zur Urlaubsverwaltung und darf Abwesenheiten für sich selbst beantragen
-                      </th:block>
-                    </label>
-                  </div>
+              <div class="checkbox tw-pb-2 tw-mb-2">
+                <strong th:text="#{person.form.permissions.roles.USER}" class="tw-mb-2 tw-block"></strong>
+                <label class="tw-leading-snug">
+                  <input type="checkbox" th:field="*{permissions}" value="USER" />
+                  <th:block th:text="#{person.form.permissions.roles.USER.description}">
+                    hat Zugang zur Urlaubsverwaltung und darf Abwesenheiten für sich selbst beantragen
+                  </th:block>
+                </label>
+              </div>
 
-                  <h2 th:text="#{person.form.permissions.roles.basic_roles.description}" class="tw-mb-2 tw-block">
-                    Berechtigungen
-                  </h2>
-                  <div class="checkbox tw-pb-2 tw-mb-2">
-                    <strong
-                      th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD}"
-                      class="tw-mb-2 tw-block"
-                    ></strong>
-                    <label class="tw-leading-snug tw-mb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="DEPARTMENT_HEAD" />
-                      <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.description}">
-                        darf Abwesenheiten für die Benutzer seiner Abteilungen einsehen, genehmigen und ablehnen
-                      </th:block>
-                    </label>
-                    <div class="tw-ml-6 tw-text-sm tw-leading-snug">
-                      <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                      <th:block
-                        th:if="${#lists.isEmpty(departmentHeadDepartments)}"
-                        th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.none.description}"
-                      />
-                      <th:block th:if="${not #lists.isEmpty(departmentHeadDepartments)}">
-                        <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}" />
-                        <ul
-                          th:if="${departmentHeadDepartments != null && not #lists.isEmpty(departmentHeadDepartments)}"
-                          class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
-                          th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
+              <h2 th:text="#{person.form.permissions.roles.basic_roles.description}" class="tw-mb-2 tw-block">
+                Berechtigungen
+              </h2>
+              <div class="checkbox tw-pb-2 tw-mb-2">
+                <strong th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD}" class="tw-mb-2 tw-block"></strong>
+                <label class="tw-leading-snug tw-mb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="DEPARTMENT_HEAD" />
+                  <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.description}">
+                    darf Abwesenheiten für die Benutzer seiner Abteilungen einsehen, genehmigen und ablehnen
+                  </th:block>
+                </label>
+                <div class="tw-ml-6 tw-text-sm tw-leading-snug">
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <th:block
+                    th:if="${#lists.isEmpty(departmentHeadDepartments)}"
+                    th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.none.description}"
+                  />
+                  <th:block th:if="${not #lists.isEmpty(departmentHeadDepartments)}">
+                    <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}" />
+                    <ul
+                      th:if="${departmentHeadDepartments != null && not #lists.isEmpty(departmentHeadDepartments)}"
+                      class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                      th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
+                    >
+                      <li th:each="department : ${departmentHeadDepartments}">
+                        <a
+                          href="#"
+                          th:href="@{/web/absences (department=${department.name})}"
+                          th:text="${department.name}"
+                          class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
                         >
-                          <li th:each="department : ${departmentHeadDepartments}">
-                            <a
-                              href="#"
-                              th:href="@{/web/absences (department=${department.name})}"
-                              th:text="${department.name}"
-                              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
-                            >
-                              Geschäftsführung
-                            </a>
-                          </li>
-                        </ul>
-                      </th:block>
-                    </div>
-                  </div>
-
-                  <div class="checkbox tw-pb-2 tw-mb-2">
-                    <strong
-                      th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY}"
-                      class="tw-mb-2 tw-block"
-                    ></strong>
-                    <label class="tw-leading-snug tw-mb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="SECOND_STAGE_AUTHORITY" />
-                      <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description}">
-                        ist bei der zweistufigen Genehmigung von Anträgen verantwortlich für die endgültige Freigabe
-                      </th:block>
-                    </label>
-                    <div class="tw-ml-6 tw-text-sm tw-leading-snug">
-                      <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                      <th:block
-                        th:if="${#lists.isEmpty(secondStageDepartments)}"
-                        th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none.description}"
-                      />
-                      <th:block th:if="${not #lists.isEmpty(secondStageDepartments)}">
-                        <th:block
-                          th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.description}"
-                        />
-                        <ul
-                          th:if="${secondStageDepartments != null && not #lists.isEmpty(secondStageDepartments)}"
-                          class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
-                          th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
-                        >
-                          <li th:each="department : ${secondStageDepartments}">
-                            <a
-                              href="#"
-                              th:href="@{/web/absences (department=${department.name})}"
-                              th:text="${department.name}"
-                              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
-                            >
-                              Geschäftsführung
-                            </a>
-                          </li>
-                        </ul>
-                      </th:block>
-                    </div>
-                  </div>
-
-                  <div class="checkbox tw-pb-2 tw-mb-2">
-                    <strong th:text="#{person.form.permissions.roles.BOSS}" class="tw-mb-2 tw-block"></strong>
-                    <label class="tw-leading-snug tw-mb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="BOSS" />
-                      <th:block th:text="#{person.form.permissions.roles.BOSS.description}">
-                        darf Abwesenheiten aller Benutzer einsehen, genehmigen und ablehnen
-                      </th:block>
-                    </label>
-                  </div>
-
-                  <div class="checkbox tw-pb-4 tw-mb-4">
-                    <strong th:text="#{person.form.permissions.roles.OFFICE}" class="tw-mb-2 tw-block"></strong>
-                    <label class="tw-leading-snug tw-mb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="OFFICE" />
-                      <th:block th:text="#{person.form.permissions.roles.OFFICE.description}">
-                        darf Einstellungen zur Anwendung vornehmen
-                      </th:block>
-                    </label>
-                  </div>
-
-                  <h2 th:text="#{person.form.permissions.roles.additional_roles.description}" class="tw-mb-2 tw-block">
-                    Zusätzliche Berechtigungen
-                  </h2>
-                  <div class="checkbox">
-                    <strong
-                      th:text="#{person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT}"
-                      class="tw-mb-2 tw-block"
-                    ></strong>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="SICK_NOTE_VIEW_ADD_EDIT" />
-                      <th:block
-                        th:text="#{person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT.description(${person.niceName})}"
-                        >darf Krankmeldungen aller Mitarbeitenden pflegen</th:block
-                      >
-                    </label>
-                  </div>
-                  <div class="checkbox">
-                    <strong
-                      th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL_EDIT}"
-                      class="tw-mb-2 tw-block"
-                    ></strong>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="APPLICATION_ADD_CANCEL_EDIT" />
-                      <th:block
-                        th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL_EDIT.description(${person.niceName})}"
-                        >darf Abwesenheiten aller Mitarbeitenden pflegen</th:block
-                      >
-                    </label>
-                  </div>
+                          Geschäftsführung
+                        </a>
+                      </li>
+                    </ul>
+                  </th:block>
                 </div>
+              </div>
+
+              <div class="checkbox tw-pb-2 tw-mb-2">
+                <strong
+                  th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY}"
+                  class="tw-mb-2 tw-block"
+                ></strong>
+                <label class="tw-leading-snug tw-mb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="SECOND_STAGE_AUTHORITY" />
+                  <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description}">
+                    ist bei der zweistufigen Genehmigung von Anträgen verantwortlich für die endgültige Freigabe
+                  </th:block>
+                </label>
+                <div class="tw-ml-6 tw-text-sm tw-leading-snug">
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <th:block
+                    th:if="${#lists.isEmpty(secondStageDepartments)}"
+                    th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none.description}"
+                  />
+                  <th:block th:if="${not #lists.isEmpty(secondStageDepartments)}">
+                    <th:block
+                      th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.description}"
+                    />
+                    <ul
+                      th:if="${secondStageDepartments != null && not #lists.isEmpty(secondStageDepartments)}"
+                      class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                      th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
+                    >
+                      <li th:each="department : ${secondStageDepartments}">
+                        <a
+                          href="#"
+                          th:href="@{/web/absences (department=${department.name})}"
+                          th:text="${department.name}"
+                          class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                        >
+                          Geschäftsführung
+                        </a>
+                      </li>
+                    </ul>
+                  </th:block>
+                </div>
+              </div>
+
+              <div class="checkbox tw-pb-2 tw-mb-2">
+                <strong th:text="#{person.form.permissions.roles.BOSS}" class="tw-mb-2 tw-block"></strong>
+                <label class="tw-leading-snug tw-mb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="BOSS" />
+                  <th:block th:text="#{person.form.permissions.roles.BOSS.description}">
+                    darf Abwesenheiten aller Benutzer einsehen, genehmigen und ablehnen
+                  </th:block>
+                </label>
+              </div>
+
+              <div class="checkbox tw-pb-4 tw-mb-4">
+                <strong th:text="#{person.form.permissions.roles.OFFICE}" class="tw-mb-2 tw-block"></strong>
+                <label class="tw-leading-snug tw-mb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="OFFICE" />
+                  <th:block th:text="#{person.form.permissions.roles.OFFICE.description}">
+                    darf Einstellungen zur Anwendung vornehmen
+                  </th:block>
+                </label>
+              </div>
+
+              <h2 th:text="#{person.form.permissions.roles.additional_roles.description}" class="tw-mb-2 tw-block">
+                Zusätzliche Berechtigungen
+              </h2>
+              <div class="checkbox">
+                <strong
+                  th:text="#{person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT}"
+                  class="tw-mb-2 tw-block"
+                ></strong>
+                <label class="tw-leading-snug tw-ml-5 tw-pb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="SICK_NOTE_VIEW_ADD_EDIT" />
+                  <th:block
+                    th:text="#{person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT.description(${person.niceName})}"
+                    >darf Krankmeldungen aller Mitarbeitenden pflegen</th:block
+                  >
+                </label>
+              </div>
+              <div class="checkbox">
+                <strong
+                  th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL_EDIT}"
+                  class="tw-mb-2 tw-block"
+                ></strong>
+                <label class="tw-leading-snug tw-ml-5 tw-pb-2">
+                  <input type="checkbox" th:field="*{permissions}" value="APPLICATION_ADD_CANCEL_EDIT" />
+                  <th:block
+                    th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL_EDIT.description(${person.niceName})}"
+                    >darf Abwesenheiten aller Mitarbeitenden pflegen</th:block
+                  >
+                </label>
               </div>
             </div>
           </div>
