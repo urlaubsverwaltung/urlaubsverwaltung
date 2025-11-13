@@ -101,14 +101,14 @@
                   for="twoStageApproval"
                   >Zweistufiger Genehmigungsprozess</label
                 >
-                <div class="tw-w-full lg:tw-w-3/4 checkbox">
+                <div class="tw-w-full lg:tw-w-3/4">
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                     th:if="${#fields.hasErrors('twoStageApproval')}"
                   >
                     <th:block th:errors="*{twoStageApproval}"> twoStageApproval Error</th:block>
                   </p>
-                  <label>
+                  <label class="tw-flex tw-items-start tw-space-x-2 tw-font-normal">
                     <input id="twoStageApproval" type="checkbox" th:field="*{twoStageApproval}" th:errorclass="error" />
                     <span th:text="#{department.data.twoStageApproval.activate}">
                       Zweistufigen Genehmigungsprozess aktivieren
