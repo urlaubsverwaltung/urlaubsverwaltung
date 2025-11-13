@@ -66,7 +66,6 @@
               </div>
 
               <div class="tw-w-full lg:tw-w-2/3">
-
                 <!-- Federal State -->
                 <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
                   <label
@@ -140,19 +139,22 @@
 
                 <!-- Working days -->
                 <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label th:text="|#{person.form.workingTime.weekDays}:|" class="is-required tw-w-full lg:tw-w-1/4">
+                  <label
+                    th:text="|#{person.form.workingTime.weekDays}:|"
+                    class="is-required tw-w-full lg:tw-w-1/4 tw-mb-2"
+                  >
                     Wochentage
                   </label>
                   <div class="tw-w-full lg:tw-w-3/4">
-                    <div th:each="weekDay : ${weekDays}" class="checkbox">
-                      <label th:for="${weekDay}">
+                    <div th:each="weekDay : ${weekDays}">
+                      <label th:for="${weekDay}" class="tw-flex tw-items-start tw-space-x-2 tw-font-normal">
                         <input
                           type="checkbox"
-                          th:text="#{${weekDay}}"
                           th:id="${weekDay}"
                           th:field="*{workingDays}"
                           th:value="${weekDay.value}"
                         />
+                        <span th:text="#{${weekDay}}"></span>
                       </label>
                     </div>
                   </div>
