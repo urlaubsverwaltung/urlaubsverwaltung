@@ -52,7 +52,7 @@
     "jest-fixed-jsdom": "0.0.11",
     "jquery": "3.7.1",
     "less-plugin-clean-css": "1.6.0",
-    "lint-staged": "16.2.6",
+    "lint-staged": "16.2.7",
     "rimraf": "6.1.0",
     "rollup": "4.53.3",
     "rollup-plugin-esbuild": "6.2.1",
