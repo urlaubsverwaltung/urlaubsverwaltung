@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run chart-releaser
         uses: stefanprodan/helm-gh-pages@v1.7.0
         with:

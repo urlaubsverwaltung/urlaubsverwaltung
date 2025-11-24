@@ -18,7 +18,7 @@ jobs:
     name: test docker compose example
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Run docker compose
         uses: hoverkraft-tech/compose-action@v2.4.1
