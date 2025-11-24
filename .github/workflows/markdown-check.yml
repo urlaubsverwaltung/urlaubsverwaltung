@@ -9,7 +9,7 @@ jobs:
   check-links-in-chglog:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         # checks all markdown files from /.chglog including all subfolders
         with:
@@ -21,7 +21,7 @@ jobs:
   check-links-in-examples:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         # checks all markdown files from /.examples including all subfolders
         with:
@@ -32,7 +32,7 @@ jobs:
   check-links-in-charts:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         # checks all markdown files from /charts including all subfolders
         with:
@@ -43,7 +43,7 @@ jobs:
   check-links-in-root:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: gaurav-nelson/github-action-markdown-link-check@1.0.17
         # checks all markdown files from root but ignores subfolders
         with:
