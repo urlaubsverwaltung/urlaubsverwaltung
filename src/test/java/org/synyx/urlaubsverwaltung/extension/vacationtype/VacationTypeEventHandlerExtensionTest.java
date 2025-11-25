@@ -77,13 +77,13 @@ class VacationTypeEventHandlerExtensionTest {
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         final VacationTypeUpdatedEventDTO actualEvent = eventCaptor.getValue();
 
-        assertThat(actualEvent.getId()).isNotNull();
-        assertThat(actualEvent.getTenantId()).isEqualTo(tenant);
-        assertThat(actualEvent.getCategory()).isEqualTo("HOLIDAY");
-        assertThat(actualEvent.isRequiresApprovalToApply()).isFalse();
-        assertThat(actualEvent.isRequiresApprovalToCancel()).isFalse();
-        assertThat(actualEvent.getColor()).isEqualTo("YELLOW");
-        assertThat(actualEvent.isVisibleToEveryone()).isTrue();
+        assertThat(actualEvent.id()).isNotNull();
+        assertThat(actualEvent.tenantId()).isEqualTo(tenant);
+        assertThat(actualEvent.category()).isEqualTo("HOLIDAY");
+        assertThat(actualEvent.requiresApprovalToApply()).isFalse();
+        assertThat(actualEvent.requiresApprovalToCancel()).isFalse();
+        assertThat(actualEvent.color()).isEqualTo("YELLOW");
+        assertThat(actualEvent.visibleToEveryone()).isTrue();
     }
 
     @Test
@@ -108,18 +108,18 @@ class VacationTypeEventHandlerExtensionTest {
 
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         VacationTypeUpdatedEventDTO capturedEvent = eventCaptor.getValue();
-        assertThat(capturedEvent.getId()).isNotNull();
-        assertThat(capturedEvent.getTenantId()).isEqualTo(tenant);
-        assertThat(capturedEvent.getSourceId()).isEqualTo(providedVacationType.getId());
-        assertThat(capturedEvent.getCategory()).isEqualTo(providedVacationType.getCategory().name());
-        assertThat(capturedEvent.isRequiresApprovalToApply()).isEqualTo(providedVacationType.isRequiresApprovalToApply());
-        assertThat(capturedEvent.isRequiresApprovalToCancel()).isEqualTo(providedVacationType.isRequiresApprovalToCancel());
-        assertThat(capturedEvent.getColor()).isEqualTo(providedVacationType.getColor().name());
-        assertThat(capturedEvent.isVisibleToEveryone()).isEqualTo(providedVacationType.isVisibleToEveryone());
-        assertThat(capturedEvent.getLabel()).containsEntry(Locale.GERMAN, "Urlaub");
-        assertThat(capturedEvent.getLabel()).containsEntry(Locale.ENGLISH, "Holiday");
-        assertThat(capturedEvent.getLabel()).containsEntry(forLanguageTag("de-AT"), "Urlaub");
-        assertThat(capturedEvent.getLabel()).containsEntry(forLanguageTag("el"), "Holiday");
+        assertThat(capturedEvent.id()).isNotNull();
+        assertThat(capturedEvent.tenantId()).isEqualTo(tenant);
+        assertThat(capturedEvent.sourceId()).isEqualTo(providedVacationType.getId());
+        assertThat(capturedEvent.category()).isEqualTo(providedVacationType.getCategory().name());
+        assertThat(capturedEvent.requiresApprovalToApply()).isEqualTo(providedVacationType.isRequiresApprovalToApply());
+        assertThat(capturedEvent.requiresApprovalToCancel()).isEqualTo(providedVacationType.isRequiresApprovalToCancel());
+        assertThat(capturedEvent.color()).isEqualTo(providedVacationType.getColor().name());
+        assertThat(capturedEvent.visibleToEveryone()).isEqualTo(providedVacationType.isVisibleToEveryone());
+        assertThat(capturedEvent.label()).containsEntry(Locale.GERMAN, "Urlaub");
+        assertThat(capturedEvent.label()).containsEntry(Locale.ENGLISH, "Holiday");
+        assertThat(capturedEvent.label()).containsEntry(forLanguageTag("de-AT"), "Urlaub");
+        assertThat(capturedEvent.label()).containsEntry(forLanguageTag("el"), "Holiday");
 
     }
 
@@ -144,15 +144,15 @@ class VacationTypeEventHandlerExtensionTest {
 
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         VacationTypeUpdatedEventDTO capturedEvent = eventCaptor.getValue();
-        assertThat(capturedEvent.getId()).isNotNull();
-        assertThat(capturedEvent.getTenantId()).isEqualTo(tenant);
-        assertThat(capturedEvent.getSourceId()).isEqualTo(customVacationType.getId());
-        assertThat(capturedEvent.getCategory()).isEqualTo(customVacationType.getCategory().name());
-        assertThat(capturedEvent.isRequiresApprovalToApply()).isEqualTo(customVacationType.isRequiresApprovalToApply());
-        assertThat(capturedEvent.isRequiresApprovalToCancel()).isEqualTo(customVacationType.isRequiresApprovalToCancel());
-        assertThat(capturedEvent.getColor()).isEqualTo(customVacationType.getColor().name());
-        assertThat(capturedEvent.isVisibleToEveryone()).isEqualTo(customVacationType.isVisibleToEveryone());
-        assertThat(capturedEvent.getLabel()).containsEntry(Locale.GERMAN, "Gammeln");
+        assertThat(capturedEvent.id()).isNotNull();
+        assertThat(capturedEvent.tenantId()).isEqualTo(tenant);
+        assertThat(capturedEvent.sourceId()).isEqualTo(customVacationType.getId());
+        assertThat(capturedEvent.category()).isEqualTo(customVacationType.getCategory().name());
+        assertThat(capturedEvent.requiresApprovalToApply()).isEqualTo(customVacationType.isRequiresApprovalToApply());
+        assertThat(capturedEvent.requiresApprovalToCancel()).isEqualTo(customVacationType.isRequiresApprovalToCancel());
+        assertThat(capturedEvent.color()).isEqualTo(customVacationType.getColor().name());
+        assertThat(capturedEvent.visibleToEveryone()).isEqualTo(customVacationType.isVisibleToEveryone());
+        assertThat(capturedEvent.label()).containsEntry(Locale.GERMAN, "Gammeln");
 
     }
 

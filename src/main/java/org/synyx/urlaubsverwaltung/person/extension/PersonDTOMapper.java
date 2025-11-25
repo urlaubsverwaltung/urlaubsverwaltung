@@ -17,8 +17,8 @@ class PersonDTOMapper {
     }
 
     static Person toPerson(PersonDTO personDTO) {
-        final Person person = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
-        person.setId(personDTO.getId());
+        final Person person = new Person(personDTO.username(), personDTO.lastName(), personDTO.firstName(), personDTO.email());
+        person.setId(personDTO.id());
         person.setPermissions(toRoles(personDTO));
         person.setNotifications(toMailNotifications(personDTO));
         return person;
@@ -38,7 +38,7 @@ class PersonDTOMapper {
     }
 
     private static Set<MailNotification> toMailNotifications(PersonDTO personDTO) {
-        return personDTO.getNotifications().stream().map(dto -> MailNotification.valueOf(dto.name())).collect(Collectors.toSet());
+        return personDTO.notifications().stream().map(dto -> MailNotification.valueOf(dto.name())).collect(Collectors.toSet());
     }
 
     private static Set<MailNotificationDTO> toMailNotificationDTOs(Person person) {
@@ -46,10 +46,10 @@ class PersonDTOMapper {
     }
 
     static Set<Role> toRoles(PersonDTO personDTO) {
-        if (!personDTO.isEnabled()) {
+        if (!personDTO.enabled()) {
             return Set.of(Role.INACTIVE);
         }
-        return personDTO.getPermissions()
+        return personDTO.permissions()
             .stream()
             .map(roleDTO -> Role.valueOf(roleDTO.name()))
             .collect(Collectors.toSet());
