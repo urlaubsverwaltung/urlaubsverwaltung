@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
-public class SingleTenantTestPostgreSQLContainer extends PostgreSQLContainer<SingleTenantTestPostgreSQLContainer> {
+public class SingleTenantTestPostgreSQLContainer extends PostgreSQLContainer {
 
     private static final String VERSION = "15.3";
 
