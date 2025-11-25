@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.lang.Nullable;
 
 public class PersonCreatedEvent extends ApplicationEvent {
 
