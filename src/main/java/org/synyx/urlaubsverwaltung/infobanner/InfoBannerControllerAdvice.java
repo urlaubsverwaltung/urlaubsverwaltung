@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.infobanner;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.web.DataProviderInterface;
 

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.web.html.PreloadLink;

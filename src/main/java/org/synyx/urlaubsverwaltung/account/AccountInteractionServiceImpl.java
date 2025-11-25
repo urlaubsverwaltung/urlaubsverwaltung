@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;

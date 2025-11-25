@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
