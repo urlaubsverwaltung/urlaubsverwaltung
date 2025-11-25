@@ -39,7 +39,7 @@ import static java.time.temporal.TemporalAdjusters.nextOrSame;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
@@ -142,7 +142,7 @@ class SickNoteExtendViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             prepareSickNoteExtendPreview(signedInUser, maybeSickNote.get(), sickNoteExtendDto, extend, extendToDate, customDateSubmit, model);
             if (turboRequestId.isPresent()) {
-                response.setStatus(UNPROCESSABLE_ENTITY.value());
+                response.setStatus(UNPROCESSABLE_CONTENT.value());
             }
             return "sicknote/sick_note_extend";
         }
