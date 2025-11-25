@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.extension.backup.filesystem.restore;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
 import org.synyx.urlaubsverwaltung.extension.backup.restore.BackupRestoreService;
 import org.synyx.urlaubsverwaltung.extension.backup.restore.RestoreOrchestrationService;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,12 +21,12 @@ class FilesystemRestoreService implements BackupRestoreService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final RestoreOrchestrationService restoreOrchestrationService;
     private final FilesystemRestoreConfigurationProperties filesystemBackupConfigurationProperties;
 
-    FilesystemRestoreService(ObjectMapper objectMapper, RestoreOrchestrationService restoreOrchestrationService, FilesystemRestoreConfigurationProperties filesystemBackupConfigurationProperties) {
-        this.objectMapper = objectMapper;
+    FilesystemRestoreService(JsonMapper jsonMapper, RestoreOrchestrationService restoreOrchestrationService, FilesystemRestoreConfigurationProperties filesystemBackupConfigurationProperties) {
+        this.jsonMapper = jsonMapper;
         this.restoreOrchestrationService = restoreOrchestrationService;
         this.filesystemBackupConfigurationProperties = filesystemBackupConfigurationProperties;
     }
@@ -54,8 +54,8 @@ class FilesystemRestoreService implements BackupRestoreService {
 
     private Optional<UrlaubsverwaltungBackupDTO> readJsonFileToPojo(Path backup) {
         try {
-            return Optional.of(objectMapper.readValue(backup.toFile(), UrlaubsverwaltungBackupDTO.class));
-        } catch (IOException e) {
+            return Optional.of(jsonMapper.readValue(backup.toFile(), UrlaubsverwaltungBackupDTO.class));
+        } catch (JacksonException e) {
             LOG.warn("Could not read file={} to pojo", backup.toAbsolutePath(), e);
             return Optional.empty();
         }

@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.extension.backup.filesystem.backup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.extension.backup.backup.BackupCreateService;
 import org.synyx.urlaubsverwaltung.extension.backup.model.UrlaubsverwaltungBackupDTO;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,11 +19,11 @@ class FilesystemBackupCreateService implements BackupCreateService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties;
 
-    FilesystemBackupCreateService(ObjectMapper objectMapper, FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties) {
-        this.objectMapper = objectMapper;
+    FilesystemBackupCreateService(JsonMapper jsonMapper, FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties) {
+        this.jsonMapper = jsonMapper;
         this.filesystemBackupConfigurationProperties = filesystemBackupConfigurationProperties;
     }
 
@@ -38,7 +38,7 @@ class FilesystemBackupCreateService implements BackupCreateService {
             Files.createDirectories(filePath.getParent());
             final File exportFile = filePath.toFile();
             LOG.info("Writing export file={}", exportFile.getAbsolutePath());
-            objectMapper.writeValue(exportFile, exportModel);
+            jsonMapper.writeValue(exportFile, exportModel);
             LOG.info("Export file written to file={}", exportFile.getAbsolutePath());
         } catch (IOException e) {
             LOG.warn("Could not write export file={}", filePath.toAbsolutePath(), e);

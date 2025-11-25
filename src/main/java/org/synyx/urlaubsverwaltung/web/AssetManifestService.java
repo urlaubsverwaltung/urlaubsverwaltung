@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,10 +63,10 @@ public class AssetManifestService {
 
     private Map<String, Asset> readAssetManifest() {
         final InputStream manifest = getManifestFile();
-        final ObjectMapper objectMapper = new ObjectMapper();
+        final JsonMapper jsonMapper = new JsonMapper();
         try {
-            return objectMapper.readValue(manifest, new TypeReference<>() {});
-        } catch (IOException e) {
+            return jsonMapper.readValue(manifest, new TypeReference<>() {});
+        } catch (JacksonException e) {
             throw new IllegalStateException("could not parse manifest json file");
         }
     }

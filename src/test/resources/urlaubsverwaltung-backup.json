@@ -2811,7 +2811,7 @@
       "defaultVacationDays": 24,
       "maximumAnnualVacationDays": 40,
       "expiryDateDayOfMonth": 1,
-      "expiryDateMonth": "APRIL",
+      "expiryDateMonth": 4,
       "doRemainingVacationDaysExpireGlobally": true
     },
     "workingTimeSettings": {

@@ -1,13 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.slf4j.Logger;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,11 +16,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Converter
 final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Locale, String>, String> {
 
-    private final TypeReference<Map<Locale, String>> typeReference = new TypeReference<>() {};
+    private final TypeReference<Map<Locale, String>> typeReference = new TypeReference<>() {
+    };
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private static final ObjectMapper om = new ObjectMapper();
+    private static final JsonMapper JSON_MAPPER = new JsonMapper();
 
     @Override
     public String convertToDatabaseColumn(Map<Locale, String> attribute) {
@@ -31,8 +31,8 @@ final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Loca
         }
 
         try {
-            return om.writeValueAsString(attribute);
-        } catch (JsonProcessingException ex) {
+            return JSON_MAPPER.writeValueAsString(attribute);
+        } catch (JacksonException ex) {
             LOG.error("could not write value as string", ex);
             return null;
         }
@@ -46,8 +46,8 @@ final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Loca
         }
 
         try {
-            return om.readValue(dbData, typeReference);
-        } catch (IOException ex) {
+            return JSON_MAPPER.readValue(dbData, typeReference);
+        } catch (JacksonException ex) {
             LOG.error("could not convert to entity attribute", ex);
             return Map.of();
         }
