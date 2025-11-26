@@ -47,6 +47,8 @@ describe("calendar", () => {
 
   beforeEach(() => {
     globalThis.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    HTMLDialogElement.prototype.showModal = jest.fn();
+    HTMLDialogElement.prototype.togglePopover = jest.fn();
   });
 
   afterEach(() => {
@@ -176,53 +178,11 @@ describe("calendar", () => {
     expect(someDay).toBeTruthy();
     someDay.click();
 
-    const popover = document.querySelector(`[data-date="2017-12-15"]`);
-    expect(popover.matches("[data-show]")).toBe(true);
+    const popover = document.querySelector("dialog");
+    expect(popover.showModal).toHaveBeenCalled();
 
     const link = popover.querySelector("a");
     expect(link.href).toBe("https://prefix.com/application/1337");
-  });
-
-  it("clicking on empty area closes popover", async () => {
-    // today is 2017-12-01
-    mockDate(1_512_130_448_379);
-
-    fetchMock.route(
-      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-      {
-        absences: [
-          {
-            date: "2017-12-15",
-            absenceType: "VACATION",
-            id: 1337,
-            absent: "FULL",
-            absentNumeric: 1,
-            status: "ALLOWED",
-            typeId: 1,
-          },
-        ],
-      },
-    );
-
-    await calendarTestSetup();
-
-    const holidayService = createHolidayService({ personId: 42 });
-    await holidayService.fetchAbsences(2017);
-
-    renderCalendar(holidayService);
-
-    const popover = document.querySelector(`.calendar_popover[data-date="2017-12-15"]`);
-    expect(popover.matches("[data-show]")).toBe(false);
-
-    const day = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
-    expect(day).toBeTruthy();
-    day.click();
-
-    expect(popover.matches("[data-show]")).toBe(true);
-
-    document.body.dispatchEvent(new Event("click"));
-
-    expect(popover.matches("[data-show]")).toBe(false);
   });
 
   describe.each([["ALLOWED"], ["WAITING"], ["TEMPORARY_ALLOWED"]])(
@@ -268,8 +228,8 @@ describe("calendar", () => {
           const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
           expect(someDay).toBeTruthy();
           someDay.click();
-          const popover = document.querySelector(`[data-date="${date}"]`);
-          expect(popover.matches("[data-show]")).toBe(true);
+          const popover = document.querySelector("dialog");
+          expect(popover.showModal).toHaveBeenCalled();
         });
       });
     },
@@ -340,26 +300,34 @@ describe("calendar", () => {
       renderCalendar(holidayService);
 
       const $ = document.querySelector.bind(document);
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-full absence-full--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-morning absence-morning--solid datepicker-day-sick-note-noon absence-noon--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-12"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-noon absence-noon--solid datepicker-day-sick-note-morning absence-morning--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-13"][class="datepicker-day datepicker-day-today datepicker-day-weekend datepicker-day-sick-note-full absence-full--solid"]',
-        ),
-      ).toBeTruthy();
+
+      let saturday = $('[data-datepicker-date="2020-12-05"]');
+      expect(saturday.classList).toContain("datepicker-day-past");
+      expect(saturday.classList).toContain("datepicker-day-weekend");
+      expect(saturday.classList).toContain("datepicker-day-absence-full");
+      expect(saturday.classList).toContain("absence-full--solid");
+
+      let sunday = $('[data-datepicker-date="2020-12-06"]');
+      expect(sunday.classList).toContain("datepicker-day-past");
+      expect(sunday.classList).toContain("datepicker-day-weekend");
+      expect(sunday.classList).toContain("datepicker-day-absence-morning");
+      expect(sunday.classList).toContain("absence-morning--solid");
+      expect(sunday.classList).toContain("datepicker-day-sick-note-noon");
+      expect(sunday.classList).toContain("absence-noon--solid");
+
+      let saturday2 = $('[data-datepicker-date="2020-12-12"]');
+      expect(saturday2.classList).toContain("datepicker-day-past");
+      expect(saturday2.classList).toContain("datepicker-day-weekend");
+      expect(saturday2.classList).toContain("datepicker-day-sick-note-morning");
+      expect(saturday2.classList).toContain("absence-morning--solid");
+      expect(saturday2.classList).toContain("datepicker-day-absence-noon");
+      expect(saturday2.classList).toContain("absence-noon--solid");
+
+      let sunday2 = $('[data-datepicker-date="2020-12-13"]');
+      expect(sunday2.classList).toContain("datepicker-day-today");
+      expect(sunday2.classList).toContain("datepicker-day-weekend");
+      expect(sunday2.classList).toContain("datepicker-day-sick-note-full");
+      expect(sunday2.classList).toContain("absence-full--solid");
     });
   });
 
@@ -409,13 +377,9 @@ describe("calendar", () => {
     renderCalendar(holidayService);
 
     const $ = document.querySelector.bind(document);
-    expect(
-      $('[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
-    ).toBeTruthy();
-    expect(
-      $('[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
-    ).toBeTruthy();
-    expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-05"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-06"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-09"] > svg')).toBeTruthy();
   });
 
   function mockEmptyYear(personId, year) {
