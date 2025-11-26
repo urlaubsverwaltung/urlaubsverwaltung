@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.AriaRole;
 import org.springframework.context.MessageSource;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,10 @@ public class OverviewPage {
     }
 
     private Locator dayLocator(LocalDate date) {
-        final String dayName = "%s%02d".formatted(date.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, locale), date.getDayOfMonth());
-        return page.getByRole(AriaRole.LISTITEM).filter(new Locator.FilterOptions().setHasText(dayName)).locator("div");
+
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM", locale);
+        final String formatted = date.format(dateTimeFormatter);
+
+        return page.getByRole(AriaRole.BUTTON).filter(new Locator.FilterOptions().setHasText(formatted));
     }
 }
