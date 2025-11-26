@@ -342,30 +342,26 @@ const View = (function () {
 
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absence.id);
-      title = i18n("overtime.popover.absence.VACATION");
+      title = i18n("overview.calendar.popover.absence.VACATION");
     } else if (absence.absenceType === "SICK_NOTE" && absence.id !== "-1") {
       href = holidayService.getSickNoteWebUrl(absence.id);
-      title = i18n("overtime.popover.absence.SICK_NOTE");
+      title = i18n("overview.calendar.popover.absence.SICK_NOTE");
     }
 
     return render(TMPL.popoverContentAbsence, {
       css_classes: cssClass(absence),
       color: color(absence),
-      title: title,
-      href: href,
-      linkText: i18n("overtime.popover.details"),
+      title,
+      href,
+      linkText: i18n("overview.calendar.popover.detail.link.text"),
     });
   }
 
   function renderPopoverAbsenceCreationContent(date) {
-    let href = holidayService.getNewHolidayUrl(date, date);
-    let linkText = i18n("overtime.popover.new-application");
-
-    return render(TMPL.popoverContentAbsenceCreation, {
-      href: href,
-      title: i18n("overtime.popover.no-absence"),
-      linkText: linkText,
-    });
+    const href = holidayService.getNewHolidayUrl(date, date);
+    const title = i18n("overview.calendar.popover.no-absence");
+    const linkText = i18n("overview.calendar.popover.new-application.link.text");
+    return render(TMPL.popoverContentAbsenceCreation, { href, title, linkText });
   }
 
   function renderDayDetailDialog(date) {
@@ -391,7 +387,7 @@ const View = (function () {
       return render(TMPL.dayPopover, {
         day: format(date, "EEEE, dd. MMMM yyyy"),
         content,
-        closeText: "Schließen", // TODO i18n
+        closeText: i18n("overview.calendar.popover.close.text"),
       });
     }
 
