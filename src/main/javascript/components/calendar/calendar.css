@@ -405,81 +405,121 @@ td.datepicker-day {
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
 
-.calendar_popover {
-  z-index: 1000;
-  padding: 0px 0px;
-  display: flex;
-  visibility: hidden;
-  &[data-show] {
-    visibility: visible;
+.calendar-popover {
+  --arrow-size: 0.5rem;
+  --arrow-color: theme("colors.gray.300");
+
+  &:is(.tw-dark *) {
+    --arrow-color: theme("colors.zinc.700");
   }
-}
 
-.calendar_popover_content {
-  background: theme("backgroundColor.calendar.DEFAULT");
-  border-color: #333;
-  color: black;
-  font-weight: bold;
-  padding: 4px 8px;
-  font-size: 13px;
-  border-radius: 4px;
-  border-width: 1px;
-  display: flex;
-}
+  width: 100vw;
+  @apply tw-bg-gray-50;
+  @apply dark:tw-bg-zinc-800;
+  /* avoid hard transition to lighter colors with blur shadow  */
+  box-shadow: 0 0 8px theme("colors.zinc.800");
+  @apply tw-rounded-lg;
+  padding: 0.25rem;
 
-#arrow,
-#arrow::before {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background-color: #333;
-  z-index: -1;
-}
+  /* screen md shows two months */
+  /* at this breakpoint the detail will be shown in a popover next to element, instead of centered modal */
+  @apply md:tw-w-auto;
+  @apply md:tw-shadow-none;
 
-#arrow {
-  visibility: hidden;
-}
+  /* arrow is visible now */
+  /* since nothing overflows the dialog, the __content element now defines background */
+  /* and the padding between dialog and content shows the arrow */
+  @apply md:tw-bg-transparent;
+  @apply md:dark:tw-bg-transparent;
+  @apply md:tw-p-2; /* arrow size */
 
-.calendar_popover[data-show] #arrow::before {
-  visibility: visible;
-  content: "";
-  transform: rotate(45deg);
-}
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.41);
+    backdrop-filter: blur(3px);
+    @screen md {
+      background-color: transparent;
+      backdrop-filter: none;
+    }
+  }
 
-.calendar_popover[data-popper-placement^="top"] #arrow {
-  bottom: -4px;
-}
+  /* inner element is required for visible and aligned arrow */
+  .calendar-popover__inner {
+    padding: 0.25rem;
+    @apply tw-border;
+    @apply tw-border-gray-300;
+    @apply dark:tw-border-zinc-700;
+    @apply tw-rounded-md;
 
-.calendar_popover[data-popper-placement^="bottom"] #arrow {
-  top: -4px;
-}
+    @apply md:tw-bg-gray-50;
+    @apply md:dark:tw-bg-zinc-900;
 
-.calendar_popover[data-popper-placement^="left"] #arrow {
-  right: -4px;
-}
+    @apply md:tw-shadow-sm;
+    @apply md:dark:tw-shadow-md;
+    @apply md:tw-shadow-gray-300;
+    @apply md:dark:tw-shadow-zinc-900;
+  }
 
-.calendar_popover[data-popper-placement^="right"] #arrow {
-  left: -4px;
-}
+  [data-popper-arrow] {
+    @apply tw-hidden;
+    @apply md:tw-block;
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--arrow-size);
+  }
 
-.calendar_popover_entry {
-  --font-color: theme("textColor.calendar.DEFAULT");
-  align-items: center;
-  @apply tw-pt-2;
-  @apply tw-pb-3.5;
-  @apply tw-pl-2;
-  @apply tw-pr-0.5;
-  cursor: default;
-  color: var(--font-color);
-  @apply dark:tw-font-semibold;
-  @apply tw-space-x-0.5;
-  @apply tw-tabular-nums;
+  &[data-popper-placement="top"] [data-popper-arrow] {
+    bottom: calc(-1 * var(--arrow-size));
+    border-top-color: var(--arrow-color);
+  }
 
-  float: left;
-}
+  &[data-popper-placement="bottom"] [data-popper-arrow] {
+    top: calc(-1 * var(--arrow-size));
+    border-bottom-color: var(--arrow-color);
+  }
 
-.calendar_popover_entry + .calendar_popover_entry {
-  float: right;
+  .calendar-popover__content-container {
+    @apply md:tw-p-4;
+    @apply md:tw-pt-0;
+  }
+
+  .calendar_popover__title {
+    @apply tw-m-0;
+    @apply tw-mt-2;
+    @apply tw-text-base;
+    @apply tw-text-center;
+    @apply md:tw-hidden;
+  }
+
+  .calendar_popover__content {
+    @apply tw-mt-8;
+    @apply tw-flex;
+    @apply tw-justify-center;
+    @apply tw-gap-8;
+    @apply md:tw-mt-4;
+    @apply md:tw-gap-4;
+
+    .calendar-popover__entry {
+      --font-color: theme("textColor.calendar.DEFAULT");
+      color: var(--font-color);
+      @apply tw-tabular-nums;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      &::after {
+        /* override absence-bar positioning */
+        /* since we want the flex-container in action here */
+        position: static;
+      }
+    }
+  }
+
+  form {
+    @apply tw-mt-8;
+    @apply tw-text-right;
+    /* on larger screen: element is closed when another one is opened, or when clicked on body */
+    @apply md:tw-hidden;
+  }
 }
 
 .absence-details {
@@ -547,7 +587,7 @@ td.datepicker-day {
   }
 
   /* Slide in animation*/
-  .calendar_popover[data-show] .calendar_popover_content {
+  .calendar_popover .calendar_popover_content {
     bottom: 0;
   }
 }
