@@ -17,7 +17,11 @@ import {
 import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
 import "./calendar.css";
+import { useMedia } from "../../js/use-media";
 import { createPopper } from "@popperjs/core";
+
+/* two months are visible on screen md */
+const screenMd = useMedia("(min-width: 768px)");
 
 const numberOfMonths = 10;
 
@@ -125,16 +129,23 @@ const View = (function () {
 
     weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header print:hidden">{{text}}</li>`,
 
-    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><span class="sr-only print:hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}" data-datepicker-has-any-absence="{{hasAnyAbsence}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="border-b border-r border-white dark:border-zinc-900" style="{{cellStyle}}"><button type="button" class="w-full border-none datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}" data-datepicker-has-any-absence="{{hasAnyAbsence}}">{{day}}<span class="sr-only"> {{month}}</span>{{icon}}</button></li>',
 
-    dayPopover:
-      '<div class="calendar_popover" data-date="{{date}}"><div id="arrow" data-popper-arrow></div><div class="calendar_popover_content">{{content}}</div></div>',
+    dayPopover: `
+      <div class="calendar-popover__inner">
+        <div data-popper-arrow></div>
+        <div class="calendar-popover__content-container">
+          <h1 class="calendar_popover__title">{{day}}</h1>
+          <div class="calendar_popover__content">{{content}}</div>
+        </div>
+        <form method="dialog"><button type="submit" class="button">{{closeText}}</button></form>
+      </div>`,
 
     popoverContentAbsence:
-      '<div class="calendar_popover_entry absence-details {{css_classes}}" style="--absence-bar-color:{{color}};">{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
+      '<div class="calendar-popover__entry absence-details {{css_classes}}" style="--absence-bar-color:{{color}};">{{title}} <a href="{{href}}">{{linkText}}</a></div>',
 
     popoverContentAbsenceCreation:
-      '<div class="calendar_popover_entry" >{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
+      '<div class="calendar-popover__entry" >{{title}}<br><a href="{{href}}">{{linkText}}</a></div>',
 
     iconPlaceholder: '<span class="w-3 h-3 inline-block"></span>',
 
@@ -311,10 +322,10 @@ const View = (function () {
       }
     }
 
-    let dayHtml = render(TMPL.day, {
+    return render(TMPL.day, {
       date: format(date, "yyyy-MM-dd"),
       day: format(date, "dd"),
-      ariaDay: format(date, "dd. MMMM"),
+      month: format(date, "MMMM"),
       css: classes(),
       style: style(),
       cellStyle: cellStyle(),
@@ -323,14 +334,12 @@ const View = (function () {
       title: holidayService.getDescription(date),
       icon: holidayService.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
     });
-
-    let popoverHtml = renderPopover(date);
-    return dayHtml + popoverHtml;
   }
 
   function renderPopoverAbsenceContent(absence) {
     let href = "";
     let title = "";
+
     if (absence.absenceType === "VACATION" && absence.id !== "-1") {
       href = holidayService.getApplicationForLeaveWebUrl(absence.id);
       title = i18n("overtime.popover.absence.VACATION");
@@ -359,7 +368,7 @@ const View = (function () {
     });
   }
 
-  function renderPopover(date) {
+  function renderDayDetailDialog(date) {
     let content = "";
 
     const [full, morning, noon] = holidayService.getPersonalAbsences(date);
@@ -370,102 +379,67 @@ const View = (function () {
       const morningContent = holidayService.isPersonalAbsenceMorning(date)
         ? renderPopoverAbsenceContent(morning)
         : renderPopoverAbsenceCreationContent(date);
+
       const noonContent = holidayService.isPersonalAbsenceNoon(date)
         ? renderPopoverAbsenceContent(noon)
         : renderPopoverAbsenceCreationContent(date);
 
       content = morningContent + noonContent;
     }
+
     if (content) {
       return render(TMPL.dayPopover, {
-        date: format(date, "yyyy-MM-dd"),
-        content: content,
+        day: format(date, "EEEE, dd. MMMM yyyy"),
+        content,
+        closeText: "Schließen", // TODO i18n
       });
     }
+
     return "";
   }
 
-  let daysWithPopover = [];
   const View = {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
       rootElement.classList.add("unselectable");
-      this.initializePopovers();
-    },
 
-    initializePopovers() {
-      for (const popover of document.querySelectorAll(".calendar_popover")) {
-        const date = popover.dataset.date;
-        const dayButton = document.querySelector(`[data-datepicker-date="${date}"]`);
-        daysWithPopover.push(dayButton);
-
-        const popperInstance = createPopper(dayButton, popover, {
-          modifiers: [
-            {
-              name: "offset",
-              options: {
-                offset: [0, 8],
-              },
-            },
-          ],
-        });
-
-        function show() {
-          this.dispatchEvent(
-            new CustomEvent("closeAllPoppers", {
-              detail: { except: [dayButton] },
-              bubbles: true,
-            }),
-          );
-          // Make the popover visible
-          popover.dataset.show = "";
-
-          // Enable the event listeners
-          popperInstance.setOptions((options) => ({
-            ...options,
-            modifiers: [...options.modifiers, { name: "eventListeners", enabled: true }],
-          }));
-
-          // Update its position
-          popperInstance.update();
-        }
-
-        function hide() {
-          // Hide the popover
-          delete popover.dataset.show;
-
-          // Disable the event listeners
-          popperInstance.setOptions((options) => ({
-            ...options,
-            modifiers: [...options.modifiers, { name: "eventListeners", enabled: false }],
-          }));
-        }
-
-        dayButton.addEventListener("openPopper", show);
-        dayButton.addEventListener("closePopper", hide);
-      }
-
-      const calendarContainer = document.querySelector(`.calendar-container`);
-      calendarContainer.addEventListener("closeAllPoppers", (event) => {
-        const except = event.detail.except;
-        this.closeAllExcept(except);
-      });
-      // Close all poppers when clicking outside
-      document.body.addEventListener("click", () => {
-        this.closeAllExcept([]);
-      });
-    },
-
-    closeAllExcept: function (except) {
-      for (const dayButton of daysWithPopover) {
-        if (!except.includes(dayButton)) {
-          dayButton.dispatchEvent(new Event("closePopper"));
-        }
-      }
+      const detailPopover = document.createElement("dialog");
+      // detailPopover.setAttribute("popover", "");
+      detailPopover.setAttribute("id", "calendar-popover");
+      detailPopover.setAttribute("class", "calendar-popover");
+      document.body.append(detailPopover);
     },
 
     getRootElement() {
       return rootElement;
+    },
+
+    displayDateDetail({ element, date }) {
+      /** @type HTMLDialogElement */
+      const popover = document.querySelector("#calendar-popover");
+
+      // TODO async? if async -> loading animation when it requires over x milliseconds
+      popover.innerHTML = renderDayDetailDialog(date);
+
+      if (screenMd.matches.value) {
+        popover.setAttribute("popover", "");
+        popover.addEventListener("toggle", function destroyOnClose(event) {
+          if (event.newState === "closed") {
+            popperInstance.destroy();
+            popover.removeEventListener("toggle", destroyOnClose);
+          }
+        });
+        // note: implicit anchor reference via source option is not supported by Safari.
+        // however, since we're using popper this is not of interest right now.
+        popover.togglePopover({ source: element });
+        // NOTE: createPopper must be called AFTER popover.toggle, otherwise the browser jumps to the top.
+        // as soon as firefox supports position anchoring we can get rid of this javascript, I think.
+        const popperInstance = createPopper(element, popover);
+        // must be called, otherwise the dialog is on the left :/
+        popperInstance.forceUpdate();
+      } else {
+        popover.showModal();
+      }
     },
 
     displayNext: function () {
@@ -554,7 +528,7 @@ const Controller = (function () {
       }
     },
 
-    click: function (event) {
+    click: function () {
       const dateFrom = selectionFrom();
       const dateTo = selectionTo();
 
@@ -565,8 +539,7 @@ const Controller = (function () {
       //These can be different for half days?
 
       if (hasAnyAbsence === "true") {
-        this.dispatchEvent(new Event("openPopper"));
-        event.stopPropagation();
+        view.displayDateDetail({ element: this, date: dateThis });
       } else if (
         isSelectable === "true" &&
         isValidDate(dateFrom) &&
@@ -662,39 +635,32 @@ const Controller = (function () {
     element.classList.toggle(CSS.daySelected, select);
   }
 
-  const matches = (element, query) => {
-    if (!element) {
-      return;
-    }
-    if (element.matches(query)) {
-      return element;
-    }
-    return matches(element.parentElement, query);
-  };
-
   const Controller = {
     bind: function () {
+      const previousMonthButton = view.getRootElement().querySelector(`.${CSS.previous}`);
+      const nextMonthButton = view.getRootElement().querySelector(`.${CSS.next}`);
+
       view.getRootElement().addEventListener("mousedown", function (event) {
-        const element = matches(event.target, `.${CSS.day}`);
+        const element = event.target.closest(`.${CSS.day}`);
         if (element) {
           datepickerHandlers.mousedown.call(element, event);
         }
       });
 
       view.getRootElement().addEventListener("mouseover", function (event) {
-        const element = matches(event.target, `.${CSS.day}`);
+        const element = event.target.closest(`.${CSS.day}`);
         if (element) {
           datepickerHandlers.mouseover.call(element, event);
         }
       });
 
       view.getRootElement().addEventListener("click", function (event) {
-        let element = matches(event.target, `.${CSS.day}`);
+        let element = event.target.closest(`.${CSS.day}`);
         if (element) {
           datepickerHandlers.click.call(element, event);
-        } else if ((element = matches(event.target, `.${CSS.previous}`))) {
+        } else if ((element = event.target.closest(`.${CSS.previous}`))) {
           datepickerHandlers.clickPrevious.call(element, event);
-        } else if ((element = matches(event.target, `.${CSS.next}`))) {
+        } else if ((element = event.target.closest(`.${CSS.next}`))) {
           datepickerHandlers.clickNext.call(element, event);
         }
       });
@@ -711,15 +677,13 @@ const Controller = (function () {
 
       const smScreenQuery = globalThis.matchMedia("(max-width: 640px)");
       if (smScreenQuery.matches) {
-        for (const button of view.getRootElement().querySelectorAll("button")) {
-          button.classList.add("button");
-        }
+        previousMonthButton.classList.add("button");
+        nextMonthButton.classList.add("button");
       }
 
       smScreenQuery.addEventListener("change", function () {
-        for (const button of view.getRootElement().querySelectorAll("button")) {
-          button.classList.toggle("button");
-        }
+        previousMonthButton.classList.toggle("button");
+        nextMonthButton.classList.toggle("button");
       });
     },
   };
