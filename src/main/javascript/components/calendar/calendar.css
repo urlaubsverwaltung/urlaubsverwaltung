@@ -378,22 +378,22 @@ td.datepicker-day {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
   @apply tw:shadow-cyan-600;
   @apply tw:dark:shadow-sky-400/80;
-  --background-color-left: rgba(var(--uv-cal-weekend-bg), 0.85);
-  --background-color-right: rgba(var(--uv-cal-weekend-bg), 0.85);
+  --background-color-left: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
+  --background-color-right: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
 }
 
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
 .datepicker-day-public-holiday-morning {
-  --background-color-left: rgb(var(--uv-cal-public-holiday-bg));
+  --background-color-left: var(--uv-cal-public-holiday-bg);
 }
 .datepicker-day-public-holiday-noon {
-  --background-color-right: rgb(var(--uv-cal-public-holiday-bg));
+  --background-color-right: var(--uv-cal-public-holiday-bg);
 }
 .datepicker-day-public-holiday-full {
-  --background-color-left: rgb(var(--uv-cal-public-holiday-bg));
-  --background-color-right: rgb(var(--uv-cal-public-holiday-bg));
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
   --font-color: var(--uv-cal-public-holiday-color);
 }
 .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
@@ -401,6 +401,6 @@ td.datepicker-day {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
   @apply tw:shadow-cyan-600;
   @apply tw:dark:shadow-sky-400/80;
-  --background-color-left: rgba(var(--uv-cal-public-holiday-bg), 0.85);
-  --background-color-right: rgba(var(--uv-cal-public-holiday-bg), 0.85);
+  --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
+  --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }
