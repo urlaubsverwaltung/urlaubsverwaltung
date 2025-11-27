@@ -13,7 +13,7 @@
     @apply tw-inset-0;
     @apply tw-bg-zinc-100;
     @apply dark:tw-bg-zinc-900;
-    @apply dark:tw-backdrop-blur;
+    @apply dark:tw-backdrop-blur-sm;
     @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
     @apply lg:dark:tw-border-b;
     @apply lg:dark:tw-border-b-zinc-800;
