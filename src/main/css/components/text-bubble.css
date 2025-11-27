@@ -3,7 +3,7 @@
   align-items: center;
   position: relative;
   padding: 1rem 1.5rem;
-  border: 2px solid theme("colors.blue.100");
+  border: 2px solid var(--color-blue-100);
   border-radius: 1rem;
   @apply tw:dark:border-sky-800;
 }
@@ -22,9 +22,9 @@
   top: -12px;
   bottom: auto;
   border: 6px solid;
-  border-color: transparent theme("colors.blue.100") theme("colors.blue.100") transparent;
+  border-color: transparent var(--color-blue-100) var(--color-blue-100) transparent;
   @variant dark {
-    border-color: transparent theme("colors.sky.800") theme("colors.sky.800") transparent;
+    border-color: transparent var(--color-sky-800) var(--color-sky-800) transparent;
   }
 }
 
@@ -40,6 +40,6 @@
   border: 4px solid;
   border-color: transparent white white transparent;
   @variant dark {
-    border-color: transparent theme("colors.neutral.900") theme("colors.neutral.900") transparent;
+    border-color: transparent var(--color-neutral-900) var(--color-neutral-900) transparent;
   }
 }
