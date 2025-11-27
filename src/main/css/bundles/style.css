@@ -35,6 +35,9 @@
 @layer base {
   html {
     height: -webkit-fill-available;
+
+    --scroll-padding-top: 5rem;
+    scroll-padding-top: var(--scroll-padding-top);
   }
 
   body {
