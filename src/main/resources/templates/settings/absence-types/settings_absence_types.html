@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{settings.header.title}"></title>
     <th:block th:fragment="preload">
@@ -11,8 +11,8 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-        <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
+      <main class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
+        <h1 th:text="#{settings.header.title}" class="tw:sr-only">Einstellungen</h1>
 
         <form
           method="post"
@@ -28,12 +28,12 @@
 
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absence-types')}" />
 
-          <div id="absenceTypes" class="tw-mt-6">
-            <div class="form-section tw-mb-12 tw-relative tw-z-10">
+          <div id="absenceTypes" class="tw:mt-6">
+            <div class="form-section tw:mb-12 tw:relative tw:z-10">
               <div th:replace="~{settings/absence-types/absence-types::section}"></div>
-              <div class="form-section tw-mb-12 tw-relative tw-z-10">
-                <div class="form-section tw-mt-8">
-                  <div class="tw-mb-16 tw-flex tw-flex-col-reverse tw-gap-4 xs:tw-flex-row xs:tw-gap-4">
+              <div class="form-section tw:mb-12 tw:relative tw:z-10">
+                <div class="form-section tw:mt-8">
+                  <div class="tw:mb-16 tw:flex tw:flex-col-reverse tw:gap-4 tw:xs:flex-row tw:xs:gap-4">
                     <button
                       th:text="#{action.save}"
                       type="submit"

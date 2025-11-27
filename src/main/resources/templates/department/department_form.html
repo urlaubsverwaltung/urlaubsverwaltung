@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title
       th:with="departmentTitleMessagekey=${department.id == null ? 'department.data.header.title.new' : 'department.data.header.title.edit'}"
@@ -13,7 +13,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+    <main th:fragment="main" class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
       <form
         method="post"
         th:with="action=${department.id == null ? '/web/department/new' : '/web/department/' + department.id}"
@@ -22,7 +22,7 @@
         class="form-horizontal"
         data-turbo="true"
       >
-        <button type="submit" class="tw-hidden"></button>
+        <button type="submit" class="tw:hidden"></button>
 
         <input type="hidden" th:field="*{id}" />
 
@@ -35,8 +35,8 @@
 
           <div class="row">
             <div class="col-md-4 col-md-push-8">
-              <span class="help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <span class="help-block tw:text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <span th:text="#{department.data.description}"></span>
               </span>
             </div>
@@ -48,7 +48,7 @@
                 <div class="col-md-9">
                   <input id="name" type="text" th:field="*{name}" class="form-control" th:errorclass="error" />
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('name')}"
                   >
                     <th:block th:errors="*{name}"> name Error</th:block>
@@ -68,7 +68,7 @@
                     th:errorclass="error"
                   ></textarea>
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('description')}"
                   >
                     <th:block th:errors="*{description}"> description Error</th:block>
@@ -78,12 +78,12 @@
             </div>
           </div>
 
-          <div class="row tw-mb-8">
+          <div class="row tw:mb-8">
             <div class="col-md-4 col-md-push-8">
-              <span class="help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <span class="help-block tw:text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <th:block th:text="#{department.data.twoStageApproval.help.members}" /><br />
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <th:block th:text="#{department.data.twoStageApproval.help.departmentHead}" />
               </span>
             </div>
@@ -97,7 +97,7 @@
                 >
                 <div class="col-md-9 checkbox">
                   <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                    class="tw:mt-1 tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     th:if="${#fields.hasErrors('twoStageApproval')}"
                   >
                     <th:block th:errors="*{twoStageApproval}"> twoStageApproval Error</th:block>
@@ -121,22 +121,22 @@
             </th:block>
           </div>
 
-          <div class="alert alert-danger tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('departmentHeads')}">
+          <div class="alert alert-danger tw:mt-1 tw:text-sm" th:if="${#fields.hasErrors('departmentHeads')}">
             <th:block th:errors="*{departmentHeads}"> departmentHeads Error</th:block>
           </div>
 
-          <div class="alert alert-danger tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('secondStageAuthorities')}">
+          <div class="alert alert-danger tw:mt-1 tw:text-sm" th:if="${#fields.hasErrors('secondStageAuthorities')}">
             <th:block th:errors="*{secondStageAuthorities}"> secondStageAuthorities Error</th:block>
           </div>
 
           <div class="row">
             <div class="col-md-4 col-md-push-8">
-              <span class="help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <span class="help-block tw:text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <span th:text="#{department.members.description}"></span>
               </span>
-              <span class="help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <span class="help-block tw:text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                 <span th:text="#{department.members.secondStageAuthority.description}"></span>
               </span>
             </div>
@@ -145,17 +145,17 @@
               <div class="form-group">
                 <p
                   th:text="|#{department.members.person}:|"
-                  class="control-label col-md-3 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"
+                  class="control-label col-md-3 tw:m-0 tw:text-sm tw:font-semibold tw:leading-6"
                 ></p>
                 <div class="col-md-9">
                   <div
-                    class="tw-flex tw-items-stretch tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
+                    class="tw:flex tw:items-stretch tw:border tw:border-neutral-300 tw:dark:border-neutral-600 tw:rounded-md tw:focus-within:ring-2 tw:focus-within:ring-blue-300"
                   >
-                    <label for="member-search-input" class="tw-sr-only"> Mitarbeiter Suche </label>
+                    <label for="member-search-input" class="tw:sr-only"> Mitarbeiter Suche </label>
                     <input
                       id="member-search-input"
                       type="text"
-                      class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                      class="form-control tw:md:h-full tw:border-none tw:text-ellipsis tw:focus:ring-0 tw:rounded-r-none"
                       name="memberQuery"
                       th:placeholder="#{action.search.placeholder.firstname-lastname}"
                       th:value="${memberQuery}"
@@ -165,15 +165,15 @@
                     <button
                       type="submit"
                       id="member-search-submit"
-                      class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-flex tw-items-center"
+                      class="tw:dark:bg-zinc-800 tw:px-2 tw:rounded-r-md tw:flex tw:items-center"
                       name="do-member-search"
                       th:formaction="${department.id == null ? '/web/department/new' : '/web/department/' + department.id + '/edit'}"
                       data-turbo-frame="frame-department-members"
                       data-turbo-action="replace"
                       data-turbo="true"
                     >
-                      <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
-                      <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                      <svg th:replace="~{icon/search::svg(className='tw:w-5 tw:h-5 tw:stroke-2')}"></svg>
+                      <span class="tw:sr-only" th:text="#{action.search}">Suche</span>
                     </button>
                   </div>
                   <turbo-frame id="frame-department-members">
@@ -198,21 +198,21 @@
                       value="1337"
                       th:value="${secondStageAuthority.id}"
                     />
-                    <ul class="tw-mt-4 department--members tw-p-0 tw-m-0">
+                    <ul class="tw:mt-4 department--members tw:p-0 tw:m-0">
                       <li
                         th:each="person : ${persons}"
                         class="department--member"
                         th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
                         th:classappend="${isMember ? ( isInactive ? 'is-inactive' : 'is-assigned') : ''}"
                       >
-                        <div class="department--member-image tw-text-blue-50 dark:tw-text-sky-800">
+                        <div class="department--member-image tw:text-blue-50 tw:dark:text-sky-800">
                           <img
                             th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
                             alt=""
                           />
                         </div>
                         <div class="department--member-assignment">
-                          <p class="department--member-info tw-mb-2">
+                          <p class="department--member-info tw:mb-2">
                             <a
                               th:text="${person.niceName}"
                               th:href="@{/web/person/__${person.id}__/overview}"
@@ -220,21 +220,21 @@
                               data-turbo="false"
                             ></a>
                           </p>
-                          <div th:if="${isInactive}" class="tw-flex tw-items-center">
+                          <div th:if="${isInactive}" class="tw:flex tw:items-center">
                             <svg
-                              th:replace="~{icon/info::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')}"
+                              th:replace="~{icon/info::svg(className='tw:text-amber-300 tw:w-5 tw:h-5 tw:m-0 tw:mr-1')}"
                             ></svg>
                             <th:block th:text="#{department.members.assigned.inactive}"></th:block>
                           </div>
                           <div>
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                            <label class="tw:font-normal tw:m-0 tw:flex tw:items-center">
                               <input
                                 type="checkbox"
                                 name="members"
                                 th:id="${'members' + (personStat.index + 1)}"
                                 th:value="${person.id}"
                                 th:checked="${#lists.contains(department.members, person)}"
-                                class="tw-m-0 tw-mr-2"
+                                class="tw:m-0 tw:mr-2"
                               />
                               <input type="hidden" name="_members" value="on" />
                               <th:block th:text="#{department.members.assigned}"></th:block>
@@ -243,14 +243,14 @@
                           <div
                             th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).DEPARTMENT_HEAD)}"
                           >
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                            <label class="tw:font-normal tw:m-0 tw:flex tw:items-center">
                               <input
                                 type="checkbox"
                                 name="departmentHeads"
                                 th:id="${'departmentHeads' + (personStat.index + 1)}"
                                 th:value="${person.id}"
                                 th:checked="${#lists.contains(department.departmentHeads, person)}"
-                                class="tw-m-0 tw-mr-2"
+                                class="tw:m-0 tw:mr-2"
                               />
                               <input type="hidden" name="_departmentHeads" value="on" />
                               <th:block th:text="#{department.members.departmentHead}"> ist Abteilungsleiter </th:block>
@@ -259,14 +259,14 @@
                           <div
                             th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).SECOND_STAGE_AUTHORITY)}"
                           >
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                            <label class="tw:font-normal tw:m-0 tw:flex tw:items-center">
                               <input
                                 type="checkbox"
                                 name="secondStageAuthorities"
                                 th:id="${'secondStageAuthorities' + (personStat.index + 1)}"
                                 th:value="${person.id}"
                                 th:checked="${#lists.contains(department.secondStageAuthorities, person)}"
-                                class="tw-m-0 tw-mr-2"
+                                class="tw:m-0 tw:mr-2"
                               />
                               <input type="hidden" name="_secondStageAuthorities" value="on" />
                               <th:block th:text="#{department.members.secondStageAuthority}">
@@ -284,10 +284,10 @@
           </div>
         </div>
 
-        <hr class="tw-w-full tw-m-0 tw-mt-6" />
+        <hr class="tw:w-full tw:m-0 tw:mt-6" />
 
-        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
-          <button type="submit" class="button-main-green tw-w-56" th:text="#{action.save}">Speichern</button>
+        <div class="tw:mt-6 tw:flex tw:justify-between tw:gap-4">
+          <button type="submit" class="button-main-green tw:w-56" th:text="#{action.save}">Speichern</button>
           <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>
       </form>

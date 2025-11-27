@@ -8,31 +8,31 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToAllowTemporaryAllowedApplication}"
-        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
-        onclick="document.querySelector('#reject')?.classList.add('tw-hidden');
-        document.querySelector('#refer')?.classList.add('tw-hidden');
-        document.querySelector('#cancel')?.classList.add('tw-hidden');
-        document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
-        document.querySelector('#allow')?.classList.remove('tw-hidden');"
+        class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0 tw:hover:text-emerald-500"
+        onclick="document.querySelector('#reject')?.classList.add('tw:hidden');
+        document.querySelector('#refer')?.classList.add('tw:hidden');
+        document.querySelector('#cancel')?.classList.add('tw:hidden');
+        document.querySelector('#decline-cancellation-request')?.classList.add('tw:hidden');
+        document.querySelector('#allow')?.classList.remove('tw:hidden');"
         th:data-title="#{action.allow}"
       >
-        <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
-        <span class="tw-sr-only" th:text="#{action.allow}"></span>
+        <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+        <span class="tw:sr-only" th:text="#{action.allow}"></span>
       </button>
 
       <button
         th:if="${isAllowedToAllowWaitingApplication}"
         th:with="messageKey=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval ? 'action.temporary_allow' : 'action.allow'}"
-        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
-        onclick="document.querySelector('#reject')?.classList.add('tw-hidden');
-        document.querySelector('#refer')?.classList.add('tw-hidden');
-        document.querySelector('#cancel')?.classList.add('tw-hidden');
-        document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
-        document.querySelector('#allow')?.classList.remove('tw-hidden');"
+        class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0 tw:hover:text-emerald-500"
+        onclick="document.querySelector('#reject')?.classList.add('tw:hidden');
+        document.querySelector('#refer')?.classList.add('tw:hidden');
+        document.querySelector('#cancel')?.classList.add('tw:hidden');
+        document.querySelector('#decline-cancellation-request')?.classList.add('tw:hidden');
+        document.querySelector('#allow')?.classList.remove('tw:hidden');"
         th:data-title="#{__${messageKey}__}"
       >
-        <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
-        <span class="tw-sr-only" th:text="#{__${messageKey}__}"></span>
+        <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+        <span class="tw:sr-only" th:text="#{__${messageKey}__}"></span>
       </button>
     </th:block>
 
@@ -40,7 +40,7 @@
       <form
         id="allow"
         class="form confirm alert alert-success"
-        th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
+        th:classappend="${action eq 'allow' ? '' : 'tw:hidden'}"
         method="post"
         th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/allow?redirect=/web/application' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
         th:action="@{__${actionUrl}__}"
@@ -48,10 +48,10 @@
       >
         <div class="form-group">
           <th:block th:if="${temporary == true}">
-            <strong class="tw-font-medium" th:text="#{action.temporary_allow.confirm}"></strong>
+            <strong class="tw:font-medium" th:text="#{action.temporary_allow.confirm}"></strong>
           </th:block>
           <th:block th:if="${temporary == false}">
-            <strong class="tw-font-medium" th:text="#{action.allow.confirm}"></strong>
+            <strong class="tw:font-medium" th:text="#{action.allow.confirm}"></strong>
           </th:block>
         </div>
 
@@ -60,8 +60,8 @@
           <textarea id="text-confirm" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
         </div>
 
-        <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
-          <button type="submit" class="button-main-green tw-w-56">
+        <div class="form-group tw:mb-0 tw:flex tw:justify-between tw:gap-4">
+          <button type="submit" class="button-main-green tw:w-56">
             <th:block th:if="${temporary == true}" th:text="#{action.temporary_allow}"></th:block>
             <th:block th:if="${temporary == false}" th:text="#{action.allow}"></th:block>
           </button>
@@ -69,7 +69,7 @@
             type="button"
             th:text="#{action.cancel}"
             class="button"
-            onclick="document.querySelector('#allow')?.classList.add('tw-hidden');"
+            onclick="document.querySelector('#allow')?.classList.add('tw:hidden');"
           ></button>
         </div>
       </form>

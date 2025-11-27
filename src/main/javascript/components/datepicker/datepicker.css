@@ -1,43 +1,43 @@
+@reference "../../../css/config.css";
+
 duet-date-picker {
   --duet-color-button: #eee;
+
+  @variant dark {
+    --duet-color-primary: #005fcc;
+    --duet-color-text: var(--tw-color-neutral-50);
+    --duet-color-text-active: var(--tw-color-neutral-50);
+    --duet-color-placeholder: var(--tw-color-neutral-50);
+    --duet-color-button: var(--tw-color-neutral-800);
+    --duet-color-surface: var(--tw-color-neutral-800);
+    --duet-color-overlay: rgba(0, 0, 0, 0.8);
+    --duet-color-border: #fff;
+
+    --duet-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --duet-font-normal: 400;
+    --duet-font-bold: 600;
+
+    --duet-radius: 4px;
+    --duet-z-index: 600;
+  }
 }
 
-.tw-dark duet-date-picker {
-  --duet-color-primary: #005fcc;
-  --duet-color-text: theme("colors.neutral.50");
-  --duet-color-text-active: theme("colors.neutral.50");
-  --duet-color-placeholder: theme("colors.neutral.50");
-  --duet-color-button: theme("colors.neutral.800");
-  --duet-color-surface: theme("colors.neutral.800");
-  --duet-color-overlay: rgba(0, 0, 0, 0.8);
-  --duet-color-border: #fff;
-
-  --duet-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --duet-font-normal: 400;
-  --duet-font-bold: 600;
-
-  --duet-radius: 4px;
-  --duet-z-index: 600;
-}
-
-fieldset[disabled] duet-date-picker,
-duet-date-picker[disabled] {
-  @apply dark:tw-border-0 !important;
-}
-
-.tw-dark fieldset[disabled] duet-date-picker input,
-.tw-dark duet-date-picker[disabled] input {
-  @apply tw-text-neutral-700 !important; /* color of `input:read-only` */
-  background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
+fieldset[disabled] duet-date-picker duet-date-picker[disabled] {
+  @apply tw:dark:border-0!;
 }
 
 fieldset[disabled] duet-date-picker input,
 duet-date-picker[disabled] input {
   background-color: #eee !important; /* bootstrap .form-input[readonly] forms.less:L170 */
+
+  @variant dark {
+    @apply tw:text-neutral-700!; /* color of `input:read-only` */
+    background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
+  }
 }
 
 .duet-date__dialog-content {
-  @apply dark:tw-border-zinc-600;
+  @apply tw:dark:border-zinc-600;
 }
 
 duet-date-picker.form-control {
@@ -53,7 +53,7 @@ duet-date-picker.form-control {
 }
 
 duet-date-picker.error {
-  @apply tw-border-red-700;
+  @apply tw:border-red-700;
 }
 
 .duet-date__input {
@@ -77,7 +77,7 @@ duet-date-picker.error {
   }
 }
 
-@screen sm {
+@variant sm {
   .duet-date__dialog {
     /* stretch dialog content container */
     /* dialog-content has `margin-left: auto` which aligns it on the right */
@@ -97,9 +97,9 @@ duet-date-picker.error {
 .duet-date__day.datepicker-day:not(.is-month) {
   /* override duet stuff */
   opacity: 1;
-  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
-  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
-  --font-color: theme("textColor.calendar.DEFAULT");
+  --background-color-left: var(--uv-cal-default-bg);
+  --background-color-right: var(--uv-cal-default-bg);
+  --font-color: var(--uv-cal-default-color);
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   color: var(--font-color);
   padding: 0.5rem 0.375rem 1rem 0.5rem;
@@ -107,32 +107,30 @@ duet-date-picker.error {
 
 .duet-date__day.datepicker-day-weekend,
 .duet-date__day.datepicker-day-weekend:not(.is-month) {
-  --background-color-left: theme("backgroundColor.calendar.weekend");
-  --background-color-right: theme("backgroundColor.calendar.weekend");
-  --font-color: theme("textColor.calendar.weekend");
+  --background-color-left: var(--uv-cal-weekend-bg);
+  --background-color-right: var(--uv-cal-weekend-bg);
+  --font-color: var(--uv-cal-weekend-color);
 }
 
 .duet-date__day.datepicker-day-public-holiday-morning,
 .duet-date__day.datepicker-day-public-holiday-morning:not(.is-month) {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: var(--uv-cal-public-holiday-bg);
 }
 .duet-date__day.datepicker-day-public-holiday-noon,
 .duet-date__day.datepicker-day-public-holiday-noon:not(.is-month) {
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: var(--uv-cal-public-holiday-bg);
 }
 .duet-date__day.datepicker-day-public-holiday-full,
 .duet-date__day.datepicker-day-public-holiday-full:not(.is-month) {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
-  --font-color: theme("textColor.calendar.public-holiday");
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
+  --font-color: var(--uv-cal-public-holiday-color);
 }
 
 .duet-date__day.datepicker-day-today {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw-shadow-cyan-600;
-}
-.tw-dark .duet-date__day.datepicker-day-today {
-  @apply tw-shadow-sky-400;
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow);
+  @apply tw:shadow-cyan-600;
+  @apply tw:dark:shadow-sky-400;
 }
 
 /* override styling for selected or currently focused day */
@@ -153,7 +151,7 @@ duet-date-picker.error {
   width: 100%;
 }
 
-.duet-date__day:hover::before,
+.duet-date__day:hover:before,
 .duet-date__day.is-today::before {
   border-radius: 0;
 }
@@ -178,21 +176,21 @@ duet-date-picker.error {
 .duet-date__input,
 .duet-date__toggle {
   /* ring-0 is required to enable transition to ring-x of the focused element */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
+  @apply tw:ring-0;
+  @apply tw:transition;
+  @apply tw:duration-150;
+  @apply tw:ease-in-out;
 }
 
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   box-shadow: none !important;
-  @apply tw-ring-2 !important;
-  @apply tw-ring-blue-300 !important;
+  @apply tw:ring-2!;
+  @apply tw:ring-blue-300!;
 }
 
 /* override @duetds styling to not hide the absence-bars */
-.duet-date__day:hover::before,
+.duet-date__day:hover:before,
 .duet-date__day.is-today::before {
   opacity: 1; /* would be nearly opaque */
   top: auto; /* absence-bar should be shown at the bottom */

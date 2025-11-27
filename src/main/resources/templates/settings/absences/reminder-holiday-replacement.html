@@ -17,8 +17,8 @@
 
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <p class="help-block tw:text-sm">
+            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
             <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.description}" />
           </p>
         </aside>
@@ -77,7 +77,7 @@
                 step="1"
               />
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement')}"
               >
                 <th:block th:errors="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}">

@@ -13,40 +13,40 @@
 
       <div>
         <aside
-          class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
+          class="help-block tw:flex tw:flex-auto tw:justify-left tw:items-start tw:md:flex-none tw:pt-2 tw:md:pt-0 tw:text-sm"
         >
           <div>
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4 tw:mr-1')}"></svg>
           </div>
           <p>
             <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
             <a
-              class="tw-inline-flex tw-items-center"
+              class="tw:inline-flex tw:items-center"
               target="_blank"
               rel="noopener"
               href="https://urlaubsverwaltung.cloud/hilfe/benutzer/#gibt-es-die-moeglichkeit-gravatar-global-zu-deaktivieren"
             >
               <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.two}" />
-              <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
+              <svg th:replace="~{icon/external-link::svg(className='tw:w-4 tw:h-4 tw:ml-1')}"></svg>
             </a>
           </p>
         </aside>
 
-        <div class="tw-flex" th:data-enabled="${settings.avatarSettings.gravatarEnabled}">
-          <div class="tw-flex sm:tw-items-center tw-ml-2">
+        <div class="tw:flex" th:data-enabled="${settings.avatarSettings.gravatarEnabled}">
+          <div class="tw:flex tw:sm:items-center tw:ml-2">
             <span class="checkbox-switch">
               <input type="checkbox" th:field="*{avatarSettings.gravatarEnabled}" id="avatarSettings-gravatarEnabled" />
               <label
                 th:text="#{settings.avatar.gravatarEnabled.activation}"
                 for="avatarSettings-gravatarEnabled"
-                class="tw-sr-only"
+                class="tw:sr-only"
               >
                 Avatare über externen Dienst Gravatar darstellen
               </label>
             </span>
           </div>
-          <div class="tw-flex sm:tw-items-center tw-ml-2 sm:tw-overflow-hidden">
-            <span th:text="#{settings.avatar.gravatarEnabled.activation}" class="sm:tw-truncate"></span>
+          <div class="tw:flex tw:sm:items-center tw:ml-2 tw:sm:overflow-hidden">
+            <span th:text="#{settings.avatar.gravatarEnabled.activation}" class="tw:sm:truncate"></span>
           </div>
         </div>
       </div>
