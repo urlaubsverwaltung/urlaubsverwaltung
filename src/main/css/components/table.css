@@ -146,21 +146,30 @@ table thead th[data-sortable]:hover {
   width: 16px;
   height: 16px;
   background-image: url("../icons/selector.svg");
-  @variant dark {
+}
+
+@variant dark {
+  .tablesorter-header-inner:after {
     background-image: url("../icons/selector-dark.svg");
   }
 }
 
 th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-down.svg");
-  @variant dark {
+}
+
+@variant dark {
+  th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
     background-image: url("../icons/chevron-down-dark.svg");
   }
 }
 
 th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-up.svg");
-  @variant dark {
+}
+
+@variant dark {
+  th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
     background-image: url("../icons/chevron-up-dark.svg");
   }
 }
@@ -258,9 +267,14 @@ table.absence-type-settings-table thead {
         @apply tw:pr-4;
         @apply tw:font-medium;
         @apply tw:text-zinc-800;
-        @apply tw:dark:text-zinc-200;
         @apply tw:text-sm;
         @apply tw:truncate;
+      }
+
+      @variant dark {
+        td::before {
+          @apply tw:text-zinc-200;
+        }
       }
 
       /*

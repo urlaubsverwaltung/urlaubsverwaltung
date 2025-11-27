@@ -68,7 +68,12 @@
 
     &::after {
       background-color: #fff;
-      @apply tw:dark:bg-zinc-600;
+    }
+
+    @variant dark {
+      &::after {
+        @apply tw:bg-zinc-600;
+      }
     }
   }
 }
