@@ -62,10 +62,8 @@
   --absence-color-PINK: #ec4899;
   --sick-note-color: var(--tw-color-red-500);
   --sick-note-child-color: var(--tw-color-red-700);
-}
 
-@variant dark {
-  :root {
+  @variant dark {
     --uv-header-height: 3.438rem;
     --uv-cal-border-color: var(--tw-color-neutral-900);
     --uv-cal-today-border-color: var(--tw-color-gray-500);
@@ -93,7 +91,9 @@
     --sick-note-color: var(--tw-color-red-800);
     --sick-note-child-color: var(--tw-color-red-950);
   }
+}
 
+@variant dark {
   @layer base {
     * {
       color-scheme: dark;
