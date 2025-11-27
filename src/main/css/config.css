@@ -1,0 +1,164 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+
+/* omit preflight. we're still using bootstrap */
+/*@import "tailwindcss/preflight.css" layer(base);*/
+
+/* use important keyword for tailwind utility classes to override bootstrap selectors */
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) important;
+
+/* html element has .dark class to enforce dark theme */
+@custom-variant dark (&:where(.tw\:dark, .tw\:dark *));
+
+@custom-variant supports-backdrop-blur {
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    @slot;
+  }
+}
+
+@theme {
+  --breakpoint-xs: 30rem; /* = 480px, tailwind uses rem, so we are */
+
+  --font-logo: "KaushanScript";
+
+  --color-black-almost: #444444;
+  --color-bootstrap-green: #5cb85c;
+  --color-bootstrap-green-dark: #449d44;
+}
+
+/* regular variables not required by tailwindcss toolchain */
+:root {
+  --uv-header-height: 4.625rem;
+  --uv-cal-border-color: var(--color-white);
+  --uv-cal-today-border-color: var(--color-zinc-500);
+  --uv-cal-default-bg: var(--color-zinc-50);
+  --uv-cal-default-color: var(--color-neutral-950);
+  --uv-cal-weekend-bg: var(--color-blue-200);
+  --uv-cal-weekend-color: var(--color-neutral-950);
+  --uv-cal-public-holiday-bg: var(--color-slate-300);
+  --uv-cal-public-holiday-color: var(--color-neutral-950);
+  --uv-chart-container-background: var(--color-gray-50);
+  --uv-chart-background: var(--color-white);
+  --uv-chart-border: var(--color-gray-100);
+
+  /* 500 */
+  --absence-color-GRAY: #6b7280;
+  --absence-color-ORANGE: #f97316;
+  --absence-color-YELLOW: #eab308;
+  --absence-color-EMERALD: #10b981;
+  --absence-color-CYAN: #06b6d4;
+  --absence-color-BLUE: #3b82f6;
+  --absence-color-VIOLET: #8b5cf6;
+  --absence-color-PINK: #ec4899;
+  --sick-note-color: var(--color-red-500);
+  --sick-note-child-color: var(--color-red-700);
+}
+
+@variant dark {
+  :root {
+    --uv-header-height: 3.438rem;
+    --uv-cal-border-color: var(--color-neutral-900);
+    --uv-cal-today-border-color: var(--color-gray-500);
+    --uv-cal-default-bg: var(--color-neutral-800);
+    --uv-cal-default-color: var(--color-neutral-300);
+    --uv-cal-weekend-bg: var(--color-sky-500);
+    --uv-cal-weekend-color: var(--color-neutral-900);
+    --uv-cal-public-holiday-bg: var(--color-slate-800);
+    --uv-cal-public-holiday-color: var(--color-neutral-900);
+    --uv-chart-container-background: var(--color-zinc-800);
+    --uv-chart-background: var(--color-zinc-800);
+    --uv-chart-border: var(--color-zinc-700);
+
+    /* 400 */
+    --absence-color-GRAY: #9ca3af;
+    --absence-color-ORANGE: #fb923c;
+    --absence-color-YELLOW: #facc15;
+    --absence-color-EMERALD: #34d399;
+    --absence-color-CYAN: #22d3ee;
+    --absence-color-BLUE: #60a5fa;
+    --absence-color-VIOLET: #a78bfa;
+    --absence-color-PINK: #f472b6;
+    --sick-note-color: var(--color-red-800);
+    --sick-note-child-color: var(--color-red-950);
+  }
+
+  @layer base {
+    * {
+      color-scheme: dark;
+    }
+  }
+}
+
+/* TODO prefix? */
+@utility leading-normal {
+  line-height: normal;
+}
+
+/* TODO what shall we do with this? */
+/**
+ * 1. Prevent padding and border from affecting element width.
+ *
+ *    We used to set this in the html element and inherit from
+ *    the parent element for everything else. This caused issues
+ *    in shadow-dom-enhanced elements like <details> where the content
+ *    is wrapped by a div with box-sizing set to `content-box`.
+ *
+ *    https://github.com/mozdevs/cssremedy/issues/4
+ *
+ *
+ * 2. Allow adding a border to an element by just adding a border-width.
+ *
+ *    By default, the way the browser specifies that an element should have no
+ *    border is by setting it's border-style to `none` in the user-agent
+ *    stylesheet.
+ *
+ *    In order to easily add borders to elements by just setting the `border-width`
+ *    property, we change the default border-style for all elements to `solid`, and
+ *    use border-width to hide them instead. This way our `border` utilities only
+ *    need to set the `border-width` property instead of the entire `border`
+ *    shorthand, making our border utilities much more straightforward to compose.
+ *
+ *    https://github.com/tailwindcss/tailwindcss/pull/116
+ */
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e5e7eb; /* 2 */
+  @apply tw:dark:border-neutral-600;
+}
+
+/**
+ * 1. Use the user's configured `sans` font-family (with Tailwind's default
+ *    sans-serif font stack as a fallback) as a sane default.
+ * 2. Use Tailwind's default "normal" line-height so the user isn't forced
+ *    to override it to ensure consistency even when using the default theme.
+ */
+html {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji"; /* 1 */
+  /* 2 */
+  line-height: 1.5;
+  /* override bootstrap 10px font-size */
+  /* to match 1rem to the user configured font size */
+  font-size: 100%;
+
+  --scroll-padding-top: 5rem;
+  scroll-padding-top: var(--scroll-padding-top);
+}

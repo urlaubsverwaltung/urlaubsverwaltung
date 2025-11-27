@@ -1,3 +1,5 @@
+@reference "../config.css";
+
 th.vacationOverview-cal-head.today {
   --vacation-overview-rows: 0;
   position: relative;
@@ -5,8 +7,8 @@ th.vacationOverview-cal-head.today {
 th.vacationOverview-cal-head.today::after {
   content: "";
   @apply tw:border-3;
-  @apply tw:border-calendar-today/40;
-  @apply tw:dark:border-calendar-today/80;
+  @apply tw:border-(--uv-cal-today-border-color)/40;
+  @apply tw:dark:border-(--uv-cal-today-border-color)/80;
   position: absolute;
   top: 0;
   left: 0;
@@ -25,9 +27,9 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th,
 .vacationOverview-table td {
-  @apply tw:text-zinc-600 !important;
-  @apply tw:dark:text-zinc-200 !important;
-  border: 1px solid var(--border-color-calendar-default);
+  @apply tw:text-zinc-600!;
+  @apply tw:dark:text-zinc-200!;
+  border: 1px solid var(--uv-cal-border-color);
   font-weight: normal;
 }
 
@@ -36,7 +38,7 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .vacationOverview-table th.weekend {
-  @apply tw:text-zinc-400 !important;
+  @apply tw:text-zinc-400!;
 }
 
 .vacationOverview-table td {
@@ -48,7 +50,7 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .vacationOverview-legend-colorbox {
-  border: 3pt solid var(--border-color-calendar-default);
+  border: 3pt solid var(--uv-cal-border-color);
   width: 1.5rem;
 }
 
@@ -61,12 +63,12 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .cal-day {
-  --absence-bar-color-morning: var(--background-color-calendar-default);
-  --absence-bar-color-noon: var(--background-color-calendar-default);
-  --absence-bar-color: var(--background-color-calendar-default);
-  --background-color-left: var(--background-color-calendar-default);
-  --background-color-right: var(--background-color-calendar-default);
-  --font-color: var(--text-color-calendar-default);
+  --absence-bar-color-morning: var(--uv-cal-default-bg);
+  --absence-bar-color-noon: var(--uv-cal-default-bg);
+  --absence-bar-color: var(--uv-cal-default-bg);
+  --background-color-left: var(--uv-cal-default-bg);
+  --background-color-right: var(--uv-cal-default-bg);
+  --font-color: var(--uv-cal-default-color);
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   overflow: hidden;
@@ -208,21 +210,21 @@ svg.no-workday-icon {
 }
 
 .public-holiday-morning {
-  --background-color-left: var(--background-color-calendar-public-holiday);
+  --background-color-left: var(--uv-cal-public-holiday-bg);
 }
 .public-holiday-noon {
-  --background-color-right: var(--background-color-calendar-public-holiday);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
 }
 .public-holiday-full {
-  --background-color-left: var(--background-color-calendar-public-holiday);
-  --background-color-right: var(--background-color-calendar-public-holiday);
-  --font-color: var(--text-color-public-holiday);
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
+  --font-color: var(--uv-cal-public-holiday-color);
 }
 
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
-  --background-color-left: var(--background-color-calendar-public-holiday);
-  --background-color-right: var(--background-color-calendar-public-holiday);
-  --font-color: var(--text-color-public-holiday);
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
+  --font-color: var(--uv-cal-public-holiday-color);
 }
 
 .vacationOverview-tbody tr:hover th:first-child {

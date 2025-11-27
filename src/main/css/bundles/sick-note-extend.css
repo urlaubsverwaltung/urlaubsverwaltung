@@ -1,4 +1,5 @@
-@import "../components/sick-note-extension-preview.css";
+@import "../components/sick-note-extension-preview.css" layer(components);
+@reference "../config.css";
 
 .extend-action-grid {
   display: flex;

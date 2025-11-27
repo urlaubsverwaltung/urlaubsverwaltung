@@ -1,3 +1,5 @@
+@reference "../config.css";
+
 /*
 don't know why there is a horizontal scrolling...
 table container is a block element with max-width 100% and overflow-x auto.

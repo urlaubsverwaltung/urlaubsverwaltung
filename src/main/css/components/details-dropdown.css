@@ -19,7 +19,7 @@
   right: 0;
   width: 100%;
   min-width: fit-content;
-  @apply -tw:bottom-1;
+  @apply tw:-bottom-1;
   @apply tw:translate-y-full;
   @apply tw:bg-white;
   @apply tw:shadow-lg;
