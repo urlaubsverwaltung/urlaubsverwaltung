@@ -234,7 +234,7 @@
                             <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
                               <button type="submit" class="nav-popup-menu_link tw-rounded-b-2xl" data-test-id="logout">
                                 <span class="tw-flex tw-items-center">
-                                  <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                  <span class="tw-px-2 tw-py-1 tw-rounded-sm tw-flex tw-items-center tw-ml-2.5">
                                     <svg th:replace="~{icon/logout::svg(className='tw-w-6 tw-h-6')}"></svg>
                                   </span>
                                   <span class="tw-ml-4" th:text="#{nav.signout.title}"></span>
@@ -267,7 +267,7 @@
       class="nav-popup-menu_link"
       th:data-test-id="${dataTestId}"
     >
-      <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+      <span class="tw-px-2 tw-py-1 tw-rounded-sm tw-flex tw-items-center tw-ml-2.5">
         <svg th:replace="${icon}"></svg>
       </span>
       <span
@@ -285,7 +285,7 @@
       rel="noopener"
       th:data-test-id="${dataTestId}"
     >
-      <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+      <span class="tw-px-2 tw-py-1 tw-rounded-sm tw-flex tw-items-center tw-ml-2.5">
         <svg th:replace="${icon}"></svg>
       </span>
       <span

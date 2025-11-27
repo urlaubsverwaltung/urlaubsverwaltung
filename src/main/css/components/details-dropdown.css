@@ -29,7 +29,7 @@
   @apply dark:tw-border-zinc-500;
   @apply tw-px-4;
   @apply tw-py-3;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
 }
 
 .details-dropdown_content.details-dropdown_content--align-right {

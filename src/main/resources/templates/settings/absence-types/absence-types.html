@@ -64,7 +64,7 @@
               <li
                 th:fragment="item-absence-type(absenceType,index)"
                 th:with="index=${index ?: loop.index}, isCustomVacationType=${not #lists.isEmpty(absenceType.labels)}"
-                class="absence-type-card tw-border tw-rounded tw-p-4 md:tw-border-none md:tw-py-2"
+                class="absence-type-card tw-border tw-rounded-sm tw-p-4 md:tw-border-none md:tw-py-2"
                 th:data-enabled="${absenceType.active}"
                 data-test-id="vacation-type"
               >

@@ -8,7 +8,7 @@
   }
 
   .list-selectable__item {
-    @apply tw-rounded;
+    @apply tw-rounded-sm;
     @apply tw-border;
     @apply tw-p-2;
     @apply tw-transition-colors;
@@ -29,7 +29,7 @@
   .list-selectable__item {
     @apply tw-py-1;
     @apply tw-px-2;
-    @apply tw-rounded;
+    @apply tw-rounded-sm;
     @apply tw-transition-colors;
   }
 

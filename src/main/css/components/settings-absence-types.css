@@ -80,7 +80,7 @@
   @apply tw-px-3;
   @apply tw-py-2;
   @apply md:tw-max-w-sm;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
   @apply tw-border;
 }
 

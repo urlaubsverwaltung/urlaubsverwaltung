@@ -12,7 +12,7 @@
   @apply tw-py-2;
   @apply tw-w-12;
   @apply tw-h-4;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
   @apply tw-ring-1;
   @apply tw-ring-inset;
   @apply tw-ring-zinc-300;
@@ -32,7 +32,7 @@
   width: 10rem;
   z-index: 1;
   display: flex;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
   @apply tw-p-4;
   @apply tw-bg-white;
   @apply tw-shadow-2xl;
@@ -89,7 +89,7 @@
 [is="uv-color-picker"] .color-picker-option {
   transition: opacity 150ms ease-in-out;
   opacity: 1;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
 }
 
 [is="uv-color-picker"] .color-picker-option.active {

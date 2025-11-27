@@ -4,7 +4,7 @@
   appearance: none;
   @apply tw-border;
   @apply tw-border-zinc-400;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
   @apply tw-transition-colors;
 }
 
