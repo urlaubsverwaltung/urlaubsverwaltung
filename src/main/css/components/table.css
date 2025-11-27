@@ -224,8 +224,7 @@ table.absence-type-settings-table thead {
         @apply tw-transition-colors;
         @apply tw-bg-white;
         @apply dark:tw-border-zinc-800;
-        @apply dark:tw-bg-zinc-800;
-        @apply dark:tw-bg-opacity-20;
+        @apply dark:tw-bg-zinc-800/20;
       }
 
       tr:not(:last-child) {
@@ -234,11 +233,9 @@ table.absence-type-settings-table thead {
 
       tr[data-enabled="true"] {
         @apply tw-border-blue-100;
-        @apply tw-bg-blue-50;
-        @apply tw-bg-opacity-20;
+        @apply tw-bg-blue-50/20;
         @apply dark:tw-border-zinc-800;
-        @apply dark:tw-bg-zinc-800;
-        @apply dark:tw-bg-opacity-20;
+        @apply dark:tw-bg-zinc-800/20;
       }
 
       td {
@@ -295,16 +292,14 @@ table.absence-type-settings-table thead {
 
   table.absence-type-settings-table tr[data-enabled="true"] {
     @apply tw-text-blue-900;
-    @apply tw-bg-blue-50;
+    @apply tw-bg-blue-50/75;
     @apply dark:tw-text-zinc-300;
-    @apply dark:tw-bg-zinc-800;
-    @apply tw-bg-opacity-75;
+    @apply dark:tw-bg-zinc-800/75;
   }
 
   table.absence-type-settings-table tr[data-enabled="true"]:hover {
-    @apply tw-bg-blue-100;
-    @apply dark:tw-bg-zinc-700;
-    @apply tw-bg-opacity-70;
+    @apply tw-bg-blue-100/70;
+    @apply dark:tw-bg-zinc-700/70;
   }
 
   table.absence-type-settings-table {

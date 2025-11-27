@@ -175,17 +175,14 @@
 
   .absence-type-card[data-enabled="true"] {
     @apply tw-text-blue-900;
-    @apply tw-bg-blue-50;
+    @apply tw-bg-blue-50/75;
     @apply dark:tw-text-zinc-300;
-    @apply dark:tw-bg-zinc-800;
-    @apply tw-bg-opacity-75;
+    @apply dark:tw-bg-zinc-800/75;
   }
 
   .absence-type-card[data-enabled="true"]:hover {
-    @apply tw-bg-blue-100;
-    @apply tw-bg-opacity-70;
-    @apply dark:tw-bg-zinc-800;
-    @apply dark:tw-bg-opacity-60;
+    @apply tw-bg-blue-100/70;
+    @apply dark:tw-bg-zinc-800/60;
   }
 
   .absence-type-card-cell_title {
