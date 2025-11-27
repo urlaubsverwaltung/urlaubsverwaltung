@@ -256,7 +256,7 @@ body:has(.nav-popup-menu.visible) {
   @apply tw:dark:focus:bg-slate-800;
 }
 
-@screen xs {
+@variant xs {
   #menu-toggle-checkbox ~ label ~ div .navigation-items {
     @apply tw:bg-transparent;
     @apply tw:dark:bg-transparent;
@@ -335,7 +335,7 @@ body:has(.nav-popup-menu.visible) {
   }
 }
 
-@screen lg {
+@variant lg {
   #menu-toggle-checkbox ~ label ~ div .navigation-items {
     overflow: hidden;
     position: static;

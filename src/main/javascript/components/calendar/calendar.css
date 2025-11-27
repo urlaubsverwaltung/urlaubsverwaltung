@@ -70,7 +70,7 @@
 }
 
 /* 1024px */
-@screen lg {
+@variant lg {
   .calendar-container {
     /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
     @apply tw:-mx-6;
@@ -95,14 +95,14 @@
   display: block;
 }
 
-@screen sm {
+@variant sm {
   .calendar-month-container:nth-child(5) {
     --width: 80vw;
     left: 5vw;
   }
 }
 
-@screen md {
+@variant md {
   .calendar-month-container {
     --width: 43% !important; /* `important` to also override :nth-child(5) from above */
     --gap: 5rem;
@@ -154,7 +154,7 @@
 }
 
 /* 1024px */
-@screen lg {
+@variant lg {
   .calendar-container {
     /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
     @apply tw:-mx-6;
@@ -218,7 +218,7 @@
   @apply tw:tabular-nums;
 }
 
-@screen xs {
+@variant xs {
   .datepicker-day {
     @apply tw:pl-2;
     @apply tw:pr-1.5;

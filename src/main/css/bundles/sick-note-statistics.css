@@ -59,7 +59,7 @@
   }
 }
 
-@screen sm {
+@variant sm {
   .sicknote-statistics-chart-container {
     padding: 1rem;
     border: 1px solid var(--uv-chart-border);
@@ -76,7 +76,7 @@
   }
 }
 
-@screen md {
+@variant md {
   .sicknote-statistics-chart-container {
     padding: 1.25rem;
   }

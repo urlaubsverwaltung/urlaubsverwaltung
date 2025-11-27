@@ -97,7 +97,7 @@
     margin: auto;
   }
 
-  @screen lg {
+  @variant lg {
     :root {
       --uv-header-height: 3.25rem;
     }
