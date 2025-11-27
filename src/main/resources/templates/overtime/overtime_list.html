@@ -145,7 +145,7 @@
               </span>
               <span data-grid-ref="action-buttons">
                 <a th:if="${record.allowedToEdit}" class="button tw-w-full" th:href="|@{__${recordDetailsUrl}__/edit}|">
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-flex-shrink-0')}"></svg>
+                  <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-shrink-0')}"></svg>
                   <span
                     th:text="#{action.edit}"
                     class="tw-ml-2 xs:tw-ml-0 xs:tw-sr-only sm:tw-not-sr-only sm:tw-ml-2 md:tw-sr-only md:tw-ml-0 lg:tw-not-sr-only lg:tw-ml-2"
