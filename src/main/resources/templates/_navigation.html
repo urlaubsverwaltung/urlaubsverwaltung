@@ -47,7 +47,7 @@
                     th:title="${#messages.msg(navigationItem.messageKey)}"
                   >
                     <th:block
-                      th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
+                      th:with="className='tw-shrink-0 tw-text-zinc-900/50 tw-transition-colors dark:tw-text-zinc-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
                     >
                       <svg th:replace="~{__${'icon/' + navigationItem.iconName + '::svg'}__}"></svg>
                     </th:block>

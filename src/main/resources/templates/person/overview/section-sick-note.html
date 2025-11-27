@@ -41,7 +41,7 @@
               </th:block>
               <th:block th:ref="sick-days-box-body">
                 <span
-                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   th:text="#{overview.sicknotes.sickdays.1}"
                 >
                   Es bestehen
@@ -52,9 +52,7 @@
                 >
                   5,5 Krankheitstage
                 </span>
-                <span
-                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                >
+                <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
                   <span class="tw-flex tw-items-center">
                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                       <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
@@ -82,7 +80,7 @@
               </th:block>
               <th:block th:ref="child-sick-days-box-body">
                 <span
-                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   th:text="#{overview.sicknotes.sickdays.child.1}"
                 >
                   Es bestehen
@@ -93,9 +91,7 @@
                 >
                   3.0 Kind-Krankheitstage
                 </span>
-                <span
-                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                >
+                <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
                   <span class="tw-flex tw-items-center">
                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                       <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
@@ -164,10 +160,7 @@
                   )}"
                   ></th:block>
                 </span>
-                <span
-                  th:if="${sickNote.aubPresent}"
-                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                >
+                <span th:if="${sickNote.aubPresent}" class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
                   <span class="tw-flex tw-items-center">
                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                       <svg th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4')}"></svg>

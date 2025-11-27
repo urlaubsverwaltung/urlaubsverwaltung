@@ -57,7 +57,7 @@
                   ></a>
                   <th:block th:if="${person.isInactive}">
                     <span
-                      class="tw-flex tw-items-center tw-text-zinc-700 dark:tw-text-zinc-50 dark:tw-text-opacity-75"
+                      class="tw-flex tw-items-center tw-text-zinc-700 dark:tw-text-zinc-50/75"
                       th:data-title="#{person.data.inactive}"
                     >
                       &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" />
@@ -309,7 +309,7 @@
                 <th:block th:if="${account != null}">
                   <span
                     th:text="#{person.account.vacation.entitlement.1}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   >
                   </span>
                   <span
@@ -319,17 +319,17 @@
                   </span>
                   <span
                     th:text="#{person.account.vacation.entitlement.remaining(${account.remainingVacationDays})}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   >
                   </span>
                   <span
                     th:if="${not account.doRemainingVacationDaysExpire}"
                     th:text="#{person.account.vacation.entitlement.remaining.doNotExpire}"
-                    class="tw-mt-2 tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="tw-mt-2 tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   ></span>
                   <span
                     th:if="${account.doRemainingVacationDaysExpire}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   >
                     <th:block
                       th:text="#{person.account.vacation.entitlement.remaining.notExpiring.one(${account.remainingVacationDaysNotExpiring})}"

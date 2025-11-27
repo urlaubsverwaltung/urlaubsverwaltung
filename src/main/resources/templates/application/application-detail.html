@@ -157,7 +157,7 @@
                 <th:block th:ref="application-detail-entitlement-box-body">
                   <th:block th:if="${account != null}">
                     <span
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                       th:text="#{person.account.vacation.entitlement.1}"
                     >
                       Anspruch auf
@@ -169,7 +169,7 @@
                       32,5 Urlaubstage
                     </span>
                     <span
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                       th:text="#{person.account.vacation.entitlement.remaining(${account.remainingVacationDays})}"
                     >
                       davon 5 Tage Resturlaub
@@ -200,7 +200,7 @@
                     th:with="remainingVacationDays=${!doRemainingVacationDaysExpire || isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
                   >
                     <span
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                       th:text="#{person.account.vacation.left.1}"
                     >
                       Es verbleiben
@@ -212,7 +212,7 @@
                       14 Urlaubstage
                     </span>
                     <span
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                       th:text="#{person.account.vacation.left.remaining(${remainingVacationDays})}"
                     >
                       davon 0 Tage Resturlaub
@@ -220,12 +220,12 @@
                     <span
                       th:if="${doRemainingVacationDaysExpire && not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
                       th:text="#{person.account.vacation.left.remainingExpired(${expiredRemainingVacationDays})}"
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                     ></span>
                     <span
                       th:if="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}"
                       th:text="#{person.account.vacation.left.alreadyUsedNextYear(${vacationDaysLeft.vacationDaysUsedNextYear})}"
-                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                     >
                     </span>
                   </th:block>

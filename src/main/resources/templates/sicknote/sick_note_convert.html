@@ -123,14 +123,12 @@
                 <th:block th:ref="sicknote-box-body">
                   <span
                     th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300"
                   >
                   </span>
                   <span th:text="#{__${sickNote.sickNoteType.messageKey}__}" class="tw-my-1 tw-text-lg tw-font-medium">
                   </span>
-                  <span
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                  >
+                  <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
                     <th:block th:text="#{absence.period.for}" />
                     <th:block
                       th:replace="~{fragments/date-range::date-range-all(

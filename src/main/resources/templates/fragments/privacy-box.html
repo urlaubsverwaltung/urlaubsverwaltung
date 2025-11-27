@@ -14,14 +14,14 @@
           th:replace="~{icon/info::svg(className='tw-text-amber-300 dark:tw-text-yellow-500 tw-w-6 tw-h-6 tw-mr-2')}"
         ></svg>
         <span
-          class="tw-text-black tw-text-opacity-75 dark:tw-text-opacity-100 tw-font-bold tw-text-sm sm:tw-mt-px"
+          class="tw-text-black/75 dark:tw-text-black tw-font-bold tw-text-sm sm:tw-mt-px"
           th:text="#{privacy-box.title}"
         >
           Privacy Box Title
         </span>
       </div>
       <div
-        class="tw-max-w-xl tw-flex-1 tw-text-sm lg:tw-text-base tw-text-black tw-text-opacity-80 dark:tw-text-opacity-100 dark:tw-font-medium"
+        class="tw-max-w-xl tw-flex-1 tw-text-sm lg:tw-text-base tw-text-black/80 dark:tw-text-black dark:tw-font-medium"
         th:insert="${body}"
       >
         Content Body
