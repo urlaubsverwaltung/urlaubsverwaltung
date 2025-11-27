@@ -8,7 +8,6 @@ th.vacationOverview-cal-head.today::after {
   content: "";
   @apply tw:border-3;
   @apply tw:border-(--uv-cal-today-border-color)/40;
-  @apply tw:dark:border-(--uv-cal-today-border-color)/80;
   position: absolute;
   top: 0;
   left: 0;
@@ -16,6 +15,12 @@ th.vacationOverview-cal-head.today::after {
   /* head row height + (x * person height)  */
   height: calc(100% + (var(--vacation-overview-rows) * 2.8125rem));
   z-index: 1;
+}
+
+@variant dark {
+  th.vacationOverview-cal-head.today::after {
+    @apply tw:border-(--uv-cal-today-border-color)/80;
+  }
 }
 
 @media print {

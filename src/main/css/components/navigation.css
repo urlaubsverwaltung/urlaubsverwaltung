@@ -11,11 +11,16 @@
   @apply tw:absolute;
   @apply tw:inset-0;
   @apply tw:bg-zinc-100;
-  @apply tw:dark:bg-zinc-900;
-  @apply tw:dark:backdrop-blur-sm;
-  @apply tw:supports-backdrop-blur:dark:bg-zinc-900/[0.85];
-  @apply tw:lg:dark:border-b;
-  @apply tw:lg:dark:border-b-zinc-800;
+}
+
+@variant dark {
+  .navigation::before {
+    @apply tw:bg-zinc-900;
+    @apply tw:backdrop-blur-sm;
+    @apply tw:supports-backdrop-blur:bg-zinc-900/[0.85];
+    @apply tw:lg:border-b;
+    @apply tw:lg:border-b-zinc-800;
+  }
 }
 
 .navigation-inner {
@@ -51,13 +56,25 @@
 .navigation-content-spacer--left::before,
 .navigation-content-spacer--right::before {
   @apply tw:bg-zinc-100;
-  @apply tw:dark:bg-zinc-800;
+}
+
+@variant dark {
+  .navigation-content-spacer--left::before,
+  .navigation-content-spacer--right::before {
+    @apply tw:bg-zinc-800;
+  }
 }
 
 .navigation-content-spacer--left::after,
 .navigation-content-spacer--right::after {
   @apply tw:bg-white;
-  @apply tw:dark:bg-zinc-900;
+}
+
+@variant dark {
+  .navigation-content-spacer--left::after,
+  .navigation-content-spacer--right::after {
+    @apply tw:bg-zinc-900;
+  }
 }
 
 .navigation-content-spacer--left::after {
@@ -279,7 +296,12 @@ body:has(.nav-popup-menu.visible) {
     position: absolute;
     top: -17px;
     @apply tw:right-6;
-    @apply tw:dark:border-b-neutral-600;
+  }
+
+  @variant dark {
+    .nav-popup-menu::before {
+      @apply tw:border-b-neutral-600;
+    }
   }
 
   .nav-popup-menu {
