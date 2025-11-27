@@ -228,57 +228,57 @@ svg.no-workday-icon {
 }
 
 .vacationOverview-tbody tr:hover th:first-child {
-  border-right-color: var(--color-zinc-100);
+  border-right-color: var(--tw-color-zinc-100);
 }
 .vacationOverview-tbody
   tr:hover
   td
   .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
-  --background-color-left: var(--color-zinc-100);
-  --background-color-right: var(--color-zinc-100);
+  --background-color-left: var(--tw-color-zinc-100);
+  --background-color-right: var(--tw-color-zinc-100);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
-  --background-color-left: var(--color-slate-300);
-  --background-color-right: var(--color-zinc-100);
+  --background-color-left: var(--tw-color-slate-300);
+  --background-color-right: var(--tw-color-zinc-100);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
-  --background-color-left: var(--color-zinc-100);
-  --background-color-right: var(--color-slate-300);
+  --background-color-left: var(--tw-color-zinc-100);
+  --background-color-right: var(--tw-color-slate-300);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
-  --background-color-left: var(--color-slate-300);
-  --background-color-right: var(--color-slate-300);
+  --background-color-left: var(--tw-color-slate-300);
+  --background-color-right: var(--tw-color-slate-300);
 }
 .vacationOverview-tbody tr:hover th {
-  background-color: var(--color-gray-100);
+  background-color: var(--tw-color-gray-100);
 }
 
 @variant dark {
   .vacationOverview-tbody tr:hover th:first-child {
-    border-right-color: var(--color-zinc-800);
+    border-right-color: var(--tw-color-zinc-800);
   }
   .vacationOverview-tbody
     tr:hover
     td
     .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
-    --background-color-left: var(--color-neutral-700);
-    --background-color-right: var(--color-neutral-700);
+    --background-color-left: var(--tw-color-neutral-700);
+    --background-color-right: var(--tw-color-neutral-700);
   }
 
   .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
-    --background-color-left: var(--color-sky-600);
-    --background-color-right: var(--color-neutral-700);
+    --background-color-left: var(--tw-color-sky-600);
+    --background-color-right: var(--tw-color-neutral-700);
   }
   .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
-    --background-color-left: var(--color-neutral-700);
-    --background-color-right: var(--color-sky-600);
+    --background-color-left: var(--tw-color-neutral-700);
+    --background-color-right: var(--tw-color-sky-600);
   }
   .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
-    --background-color-left: var(--color-sky-600);
-    --background-color-right: var(--color-sky-600);
+    --background-color-left: var(--tw-color-sky-600);
+    --background-color-right: var(--tw-color-sky-600);
   }
   .vacationOverview-tbody tr:hover th {
-    background-color: var(--color-zinc-800);
+    background-color: var(--tw-color-zinc-800);
   }
 
   .vacationOverview-tbody tr:hover svg.no-workday-icon {
