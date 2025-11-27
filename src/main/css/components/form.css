@@ -3,7 +3,7 @@ legend {
   @apply tw:dark:font-normal;
 }
 
-.tw:form-control,
+.tw-form-control,
 .details-dropdown-input .details-dropdown_summary {
   @apply tw:outline-0;
   @apply tw:block;
@@ -16,7 +16,7 @@ legend {
 }
 
 .form-control,
-.tw:form-control,
+.tw-form-control,
 .details-dropdown-input .details-dropdown_summary {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
   @apply tw:ring-0;
@@ -40,10 +40,10 @@ legend {
 
 input[disabled],
 .form-control[disabled],
-.tw:form-control[disabled],
+.tw-form-control[disabled],
 fieldset[disabled] input,
 fieldset[disabled] .form-control,
-fieldset[disabled] .tw:form-control {
+fieldset[disabled] .tw-form-control {
   @apply tw:dark:text-neutral-700 !important;
   @apply tw:dark:bg-neutral-800 !important;
   @apply tw:border-0 !important;
@@ -58,7 +58,7 @@ fieldset[disabled] .tw:form-control {
 }
 
 .form-control:focus,
-.tw:form-control:focus,
+.tw-form-control:focus,
 .details-dropdown-input .details-dropdown_summary:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
