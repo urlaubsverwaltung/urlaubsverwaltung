@@ -26,8 +26,8 @@
 }
 
 .absence-type-card-cell_title {
-  @apply tw-text-base;
-  @apply tw-font-normal;
+  @apply tw:text-base;
+  @apply tw:font-normal;
 }
 
 .absence-type-card label {
@@ -45,13 +45,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  @apply tw-overflow-hidden;
+  @apply tw:overflow-hidden;
 }
 
 .absence-type-card__label {
   grid-row: label;
-  @apply tw-font-bold;
-  @apply tw-text-lg;
+  @apply tw:font-bold;
+  @apply tw:text-lg;
 }
 
 .absence-type-card__label-translation {
@@ -59,7 +59,7 @@
 }
 
 .absence-type-card__label .absence-type-card-cell_title {
-  @apply tw-sr-only;
+  @apply tw:sr-only;
 }
 
 .absence-type-translation-inputs {
@@ -72,20 +72,20 @@
   display: flex;
   flex-direction: column-reverse;
   gap: 0.5rem;
-  @apply md:tw-flex-row;
+  @apply tw:md:flex-row;
 }
 
 .absence-type-translation-inputs__element__input {
-  @apply tw-flex-1;
-  @apply tw-px-3;
-  @apply tw-py-2;
-  @apply md:tw-max-w-sm;
-  @apply tw-rounded-sm;
-  @apply tw-border;
+  @apply tw:flex-1;
+  @apply tw:px-3;
+  @apply tw:py-2;
+  @apply tw:md:max-w-sm;
+  @apply tw:rounded-sm;
+  @apply tw:border;
 }
 
 .absence-type-translation-inputs__element__label {
-  @apply tw-whitespace-nowrap;
+  @apply tw:whitespace-nowrap;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -141,10 +141,10 @@
     position: sticky;
     top: var(--uv-header-height);
     padding: 0 1rem;
-    @apply tw-bg-white;
-    @apply dark:tw-bg-zinc-900;
-    @apply tw-font-bold;
-    @apply tw-text-sm;
+    @apply tw:bg-white;
+    @apply tw:dark:bg-zinc-900;
+    @apply tw:font-bold;
+    @apply tw:text-sm;
   }
 
   .absence-type-list-head,
@@ -156,7 +156,7 @@
   }
 
   .absence-type-card {
-    @apply tw-transition-colors;
+    @apply tw:transition-colors;
   }
 
   .absence-type-card:not(:first-child) {
@@ -164,29 +164,29 @@
   }
 
   .absence-type-card[data-enabled="false"] {
-    @apply tw-text-zinc-500;
-    @apply dark:tw-text-zinc-300;
+    @apply tw:text-zinc-500;
+    @apply tw:dark:text-zinc-300;
   }
 
   .absence-type-card[data-enabled="false"]:hover {
-    @apply tw-bg-zinc-100;
-    @apply dark:tw-bg-zinc-800;
+    @apply tw:bg-zinc-100;
+    @apply tw:dark:bg-zinc-800;
   }
 
   .absence-type-card[data-enabled="true"] {
-    @apply tw-text-blue-900;
-    @apply tw-bg-blue-50/75;
-    @apply dark:tw-text-zinc-300;
-    @apply dark:tw-bg-zinc-800/75;
+    @apply tw:text-blue-900;
+    @apply tw:bg-blue-50/75;
+    @apply tw:dark:text-zinc-300;
+    @apply tw:dark:bg-zinc-800/75;
   }
 
   .absence-type-card[data-enabled="true"]:hover {
-    @apply tw-bg-blue-100/70;
-    @apply dark:tw-bg-zinc-800/60;
+    @apply tw:bg-blue-100/70;
+    @apply tw:dark:bg-zinc-800/60;
   }
 
   .absence-type-card-cell_title {
-    @apply tw-sr-only;
+    @apply tw:sr-only;
   }
 
   .absence-type-card__status {
@@ -203,8 +203,8 @@
   .absence-type-card__label-translation {
     grid-column: 2;
     grid-row: 1;
-    @apply tw-font-normal;
-    @apply tw-text-base;
+    @apply tw:font-normal;
+    @apply tw:text-base;
   }
 
   .absence-type-card__label-translation {
@@ -213,7 +213,7 @@
   }
 
   .absence-type-card__label .absence-type-card-cell_title {
-    @apply tw-not-sr-only;
+    @apply tw:not-sr-only;
   }
 
   .absence-type-translation-inputs {
@@ -225,9 +225,9 @@
   }
 
   .absence-type-translation-inputs__element__input {
-    @apply tw-transition-colors;
-    @apply tw-px-2;
-    @apply tw-py-1;
+    @apply tw:transition-colors;
+    @apply tw:px-2;
+    @apply tw:py-1;
   }
 
   .absence-type-card__approve-to-apply {

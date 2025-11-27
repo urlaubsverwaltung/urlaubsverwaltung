@@ -10,14 +10,14 @@
   border-right-color: transparent;
   border-bottom-color: transparent;
   border-left-color: transparent;
-  @apply dark:tw-border-t-neutral-100;
+  @apply tw:dark:border-t-neutral-100;
 
-  @apply tw-ml-0.5;
-  @apply tw-mt-0.5;
+  @apply tw:ml-0.5;
+  @apply tw:mt-0.5;
 }
 
 a:hover .dropdown-caret,
 a:focus .dropdown-caret {
   border-top-color: black;
-  @apply dark:tw-border-t-neutral-400;
+  @apply tw:dark:border-t-neutral-400;
 }

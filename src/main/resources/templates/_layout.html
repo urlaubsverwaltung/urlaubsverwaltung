@@ -2,7 +2,7 @@
 <html
   lang="en"
   th:lang="${language}"
-  th:class="|tw-${theme}|"
+  th:class="|tw:${theme}|"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:asset="http://www.w3.org/1999/xhtml"
 >
@@ -45,9 +45,9 @@
           if (!(!r || typeof document == "undefined")) {
             var d = document.head || document.getElementsByTagName("head")[0],
               a = document.createElement("style");
-            (a.type = "text/css"),
+            ((a.type = "text/css"),
               e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
-              a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r));
+              a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r)));
           }
         }
         injectStyle("[data-js-hidden] { display: none !important; }");
@@ -78,18 +78,18 @@
           }
         }
         function toggleStuff() {
-          if (htmlElement.classList.contains("tw-dark")) {
+          if (htmlElement.classList.contains("tw:dark")) {
             setLightStuff();
           } else {
             setDarkStuff();
           }
         }
         function setDarkStuff() {
-          htmlElement.classList.add("tw-dark");
+          htmlElement.classList.add("tw:dark");
           document.querySelector("meta[name='theme-color']").setAttribute("content", "#18181b");
         }
         function setLightStuff() {
-          htmlElement.classList.remove("tw-dark");
+          htmlElement.classList.remove("tw:dark");
           document.querySelector("meta[name='theme-color']").setAttribute("content", "#fafafa");
         }
       })();

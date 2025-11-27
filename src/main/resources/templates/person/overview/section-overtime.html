@@ -12,34 +12,34 @@
           <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
         </th:block>
         <th:block th:ref="overtime-heading-actions">
-          <div class="tw-flex tw-flex-col sm:tw-flex-row">
+          <div class="tw:flex tw:flex-col tw:sm:flex-row">
             <a
               th:if="${userIsAllowedToCreateOvertime}"
-              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+              class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
               href="#"
               th:href="@{/web/overtime/new (person=${person.id})}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
               <span th:text="#{action.overtime.new}"></span>
             </a>
             <a
-              class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              class="tw:ml-2 icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row"
               href="#"
               th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
             >
-              <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/clock::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
               <span th:text="#{action.overtime.list}"></span>
             </a>
           </div>
         </th:block>
       </div>
 
-      <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
-        <div class="tw-w-full lg:tw-w-1/3"></div>
-        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+      <div class="tw:flex tw:flex-wrap tw:space-y-8 tw:lg:space-y-0">
+        <div class="tw:w-full tw:lg:w-1/3"></div>
+        <div class="tw:w-full tw:sm:w-1/2 tw:lg:w-1/3">
           <div th:replace="~{overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})}"></div>
         </div>
-        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+        <div class="tw:w-full tw:sm:w-1/2 tw:lg:w-1/3">
           <div th:replace="~{overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})}"></div>
         </div>
       </div>

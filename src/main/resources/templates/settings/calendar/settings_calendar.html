@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{settings.header.title}"></title>
     <th:block th:fragment="preload">
@@ -11,8 +11,8 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-        <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
+      <main class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
+        <h1 th:text="#{settings.header.title}" class="tw:sr-only">Einstellungen</h1>
 
         <form method="post" th:action="@{/web/settings/calendar}" th:object="${settings}" class="form-horizontal">
           <input type="hidden" th:field="*{id}" />
@@ -22,8 +22,8 @@
 
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='calendar')}" />
 
-          <div id="calendar" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
+          <div id="calendar" class="tw:mt-6">
+            <div class="form-section tw:mb-8">
               <div th:replace="~{settings/calendar/time::section}"></div>
               <th:block th:replace="~{settings/fragments::save-button}" />
             </div>

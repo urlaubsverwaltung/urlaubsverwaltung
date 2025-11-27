@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
     <th:block th:fragment="preload">
@@ -10,8 +10,8 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-      <div class="tw-mb-12">
+    <main th:fragment="main" class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
+      <div class="tw:mb-12">
         <div th:replace="~{fragments/section-heading::section-heading(~{::overview-heading-body}, ~{})}">
           <th:block th:ref="overview-heading-body">
             <h1>
@@ -23,7 +23,7 @@
           th:replace="~{person/box::person-box-with-departments(person=${person}, departments=${departmentsOfPerson})}"
         ></div>
       </div>
-      <p class="tw-text-sm" th:text="#{overview.reduced.info(${person.niceName})}" />
+      <p class="tw:text-sm" th:text="#{overview.reduced.info(${person.niceName})}" />
     </main>
   </body>
 </html>

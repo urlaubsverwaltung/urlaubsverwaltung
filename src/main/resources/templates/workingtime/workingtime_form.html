@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -24,7 +24,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
         <form
           method="post"
           th:action="@{/web/person/__${person.id}__/workingtime}"
@@ -40,27 +40,27 @@
               </th:block>
             </div>
 
-            <div th:if="${#fields.hasErrors('workingDays')}" class="row tw-mb-8">
+            <div th:if="${#fields.hasErrors('workingDays')}" class="row tw:mb-8">
               <div class="col-xs-12 alert alert-danger">
                 <th:block th:errors="*{workingDays}"> workingDays errors </th:block>
               </div>
             </div>
 
             <div
-              class="row tw-mb-16"
+              class="row tw:mb-16"
               th:with="defaultFederalStateName=|federalState.${defaultFederalState}|, countryMessageKey=|country.${defaultFederalState.country}|, fedStat=|#{${countryMessageKey}} - #{${defaultFederalStateName}}|, defaultFederalCountryAndStateName=${defaultFederalState == 'NONE' ? defaultFederalStateName : fedStat}"
             >
               <div class="col-md-4 col-md-push-8">
-                <span class="help-block tw-text-sm">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <span class="help-block tw:text-sm">
+                  <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                   &nbsp;
                   <th:block
                     th:text="#{person.form.workingTime.federalState.description(${defaultFederalCountryAndStateName})}"
                     >Baden-Württemberg</th:block
                   >
                 </span>
-                <span class="help-block tw-text-sm">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <span class="help-block tw:text-sm">
+                  <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
                   &nbsp;<th:block th:text="#{person.form.workingTime.description}">Description</th:block>
                 </span>
               </div>
@@ -130,7 +130,7 @@
                     <span
                       th:if="${#fields.hasErrors('validFrom')}"
                       th:errors="*{validFrom}"
-                      class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                     ></span>
                   </div>
                 </div>
@@ -158,20 +158,20 @@
                   <label th:text="|#{person.form.workingTime.existent}:|" class="col-md-3">Arbeitszeiten</label>
 
                   <div class="col-md-9">
-                    <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
+                    <ul class="tw:list-none tw:m-0 tw:p-0 tw:space-y-2 tw:text-sm">
                       <li th:each="workingTimeHistory, status : ${workingTimeHistories}">
                         <span
                           th:if="${status.first}"
-                          class="tw-block"
-                          th:classappend="${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}"
+                          class="tw:block"
+                          th:classappend="${workingTimeHistory.valid ? 'tw:text-emerald-500' : ''}"
                         >
                           <span th:text="#{person.form.workingTime.valid-from}"></span>
                           <span th:text="${{workingTimeHistory.validFrom}}"></span>
                         </span>
                         <span
                           th:if="${not status.first}"
-                          class="tw-block"
-                          th:classappend="${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}"
+                          class="tw:block"
+                          th:classappend="${workingTimeHistory.valid ? 'tw:text-emerald-500' : ''}"
                         >
                           <span
                             th:text="#{person.form.workingTime.valid-from-to(${{workingTimeHistory.validFrom}}, ${{workingTimeHistory.validTo}})}"
@@ -199,10 +199,10 @@
             </div>
           </div>
 
-          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+          <hr class="tw:w-full tw:m-0 tw:mt-6" />
 
-          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
-            <button type="submit" class="button-main-green tw-w-56" th:text="#{action.save}">Speichern</button>
+          <div class="tw:mt-6 tw:flex tw:justify-between tw:gap-4">
+            <button type="submit" class="button-main-green tw:w-56" th:text="#{action.save}">Speichern</button>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
         </form>

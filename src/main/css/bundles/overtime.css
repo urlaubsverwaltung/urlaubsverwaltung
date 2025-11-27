@@ -29,8 +29,8 @@
   /* only separator (neither head-row nor overtime-entry-row) */
   > li[role="separator"] {
     height: 1px;
-    @apply tw-bg-gray-200;
-    @apply dark:tw-bg-gray-700;
+    @apply tw:bg-gray-200;
+    @apply tw:dark:bg-gray-700;
   }
 
   /* only overtime-entry-element (neither head-row nor separator) */
@@ -43,10 +43,10 @@
     padding: 0.75rem 0.25rem;
     transition: background-color 150ms ease-in-out;
 
-    @apply dark:tw-bg-neutral-900;
+    @apply tw:dark:bg-neutral-900;
 
     &:not([role="presentation"]):hover {
-      @apply dark:tw-bg-neutral-800;
+      @apply tw:dark:bg-neutral-800;
     }
 
     /* use isolated rows within this li. */
@@ -200,7 +200,7 @@
         grid-row: 1 / span 2;
         grid-column: 8;
         align-self: center;
-        @apply tw-text-sm;
+        @apply tw:text-sm;
         display: flex;
         flex-direction: column;
         align-items: end;
@@ -234,9 +234,9 @@
       @screen md {
         grid-row: 1 / span 2;
         grid-column: 10;
-        @apply dark:tw-text-zinc-100;
+        @apply tw:dark:text-zinc-100;
         align-self: center;
-        @apply tw-text-sm;
+        @apply tw:text-sm;
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
@@ -246,7 +246,7 @@
       @screen lg {
         grid-row: 1 / span 2;
         grid-column: 10;
-        @apply tw-text-sm;
+        @apply tw:text-sm;
         > span:first-of-type {
           padding-left: 2rem;
         }

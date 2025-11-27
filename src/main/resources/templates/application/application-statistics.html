@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -15,8 +15,8 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-pb-32" data-turbo="true">
-      <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-8">
+    <main th:fragment="main" class="tw:pb-32" data-turbo="true">
+      <div class="tw:max-w-[93.75rem] tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-8">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
         >
@@ -24,7 +24,7 @@
             <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
-            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <div class="tw:flex tw:flex-col tw:sm:flex-row">
               <div
                 th:replace="~{fragments/details-dropdown::details-dropdown(
                   summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
@@ -32,25 +32,25 @@
               >
                 <th:block th:ref="download-dropdown-summary">
                   <span
-                    class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                    class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
                   >
-                    <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                    <svg th:replace="~{icon/download::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                     <span id="statistics-download-label" th:text="#{applications.export.button}"></span>
                   </span>
                 </th:block>
                 <th:block th:ref="download-dropdown-content">
-                  <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{applications.statistics}"
+                  <span class="tw:inline-block tw:mb-2 tw:font-bold" th:text="#{applications.statistics}"
                     >Abwesenheitsstatistik</span
                   >
-                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
+                  <ul class="tw:list-none tw:m-0 tw:p-0 tw:space-y-2" aria-labelledby="statistics-download-label">
                     <li>
                       <a
                         id="statistics-csv-download-link-all"
                         th:href="@{/web/application/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
-                        class="icon-link tw-px-1"
+                        class="icon-link tw:px-1"
                         download
                       >
-                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.statistics.all.button}"></span>
                       </a>
                     </li>
@@ -58,28 +58,28 @@
                       <a
                         id="statistics-csv-download-link"
                         th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                        class="icon-link tw-px-1"
+                        class="icon-link tw:px-1"
                         download
                       >
-                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.statistics.visible.button}"></span>
                       </a>
                     </li>
                   </ul>
                   <span
-                    class="tw-inline-block tw-mt-4 tw-mb-2 tw-font-bold"
+                    class="tw:inline-block tw:mt-4 tw:mb-2 tw:font-bold"
                     th:text="#{applications.export.absences.title}"
                     >Abwesenheiten</span
                   >
-                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
+                  <ul class="tw:list-none tw:m-0 tw:p-0 tw:space-y-2" aria-labelledby="statistics-download-label">
                     <li>
                       <a
                         id="export-csv-download-link-all"
                         th:href="@{/web/application/export (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
-                        class="icon-link tw-px-1"
+                        class="icon-link tw:px-1"
                         download
                       >
-                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.export.absences.all.button}"></span>
                       </a>
                     </li>
@@ -87,10 +87,10 @@
                       <a
                         id="export-csv-download-link"
                         th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                        class="icon-link tw-px-1"
+                        class="icon-link tw:px-1"
                         download
                       >
-                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.export.absences.visible.button}"></span>
                       </a>
                     </li>
@@ -102,9 +102,9 @@
           </th:block>
         </div>
 
-        <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
+        <div class="tw:flex tw:flex-col tw:md:flex-row tw:gap-4">
           <div
-            class="tw-flex tw-flex-col md:tw-grid md:tw-grid-rows-2 lg:tw-flex lg:tw-flex-row tw-gap-4 md:tw-gap-2 print:tw-hidden"
+            class="tw:flex tw:flex-col tw:md:grid tw:md:grid-rows-2 tw:lg:flex tw:lg:flex-row tw:gap-4 tw:md:gap-2 tw:print:hidden"
           >
             <form
               method="get"
@@ -118,9 +118,9 @@
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
                 <input type="hidden" name="query" th:value="${query}" />
               </div>
-              <div class="tw-flex tw-flex-col tw-gap-1">
+              <div class="tw:flex tw:flex-col tw:gap-1">
                 <fieldset>
-                  <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
+                  <legend class="tw:sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
                   <div
                     th:replace="~{fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)}"
                   >
@@ -133,17 +133,17 @@
                       ></span>
                     </th:block>
                     <th:block th:ref="period-dropdown-content">
-                      <div class="tw-flex tw-flex-col">
-                        <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                      <div class="tw:flex tw:flex-col">
+                        <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw:m-0" />
                         <input
                           id="from-date-input"
                           name="from"
                           th:value="${{period.startDate}}"
                           th:data-iso-value="${period.startDateIsoValue}"
                           th:placeholder="#{pattern.date}"
-                          class="form-control tw-mt-0.5"
+                          class="form-control tw:mt-0.5"
                         />
-                        <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4"
+                        <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw:m-0 tw:mt-4"
                           >Bis</label
                         >
                         <input
@@ -152,13 +152,13 @@
                           th:value="${{period.endDate}}"
                           th:data-iso-value="${period.endDateIsoValue}"
                           th:placeholder="#{pattern.date}"
-                          class="form-control tw-mt-0.5"
+                          class="form-control tw:mt-0.5"
                         />
                       </div>
-                      <div class="tw-mt-6">
+                      <div class="tw:mt-6">
                         <button
                           th:text="#{action.confirm}"
-                          class="button-main tw-py-1.5 tw-px-3 tw-w-full"
+                          class="button-main tw:py-1.5 tw:px-3 tw:w-full"
                           type="submit"
                         />
                       </div>
@@ -173,7 +173,7 @@
               method="get"
               data-turbo-frame="frame-statistics"
               data-turbo-action="advance"
-              class="tw-flex"
+              class="tw:flex"
             >
               <div id="statistics-form-query-inputs">
                 <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
@@ -181,19 +181,19 @@
                 <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
               </div>
-              <div class="tw-flex-1 tw-flex tw-flex-col md:tw-flex-row">
-                <label for="search" class="md:tw-sr-only tw-m-0">
+              <div class="tw:flex-1 tw:flex tw:flex-col tw:md:flex-row">
+                <label for="search" class="tw:md:sr-only tw:m-0">
                   <th:block th:text="#{action.search}">Suchen</th:block>:
                 </label>
                 <span
-                  class="tw-flex-1 tw-flex tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
+                  class="tw:flex-1 tw:flex tw:border tw:border-neutral-300 tw:dark:border-neutral-600 tw:rounded-md tw:focus-within:ring-2 tw:focus-within:ring-blue-300"
                 >
                   <input
                     type="text"
                     id="search"
                     name="query"
                     th:value="${query}"
-                    class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                    class="form-control tw:md:h-full tw:border-none tw:text-ellipsis tw:focus:ring-0 tw:rounded-r-none"
                     th:placeholder="#{action.search.placeholder.firstname-lastname}"
                     data-auto-submit="search-submit"
                     data-auto-submit-delay="100"
@@ -201,16 +201,16 @@
                   <button
                     type="submit"
                     id="search-submit"
-                    class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+                    class="tw:dark:bg-zinc-800 tw:px-2 tw:rounded-r-md tw:h-full tw:flex tw:items-center"
                   >
-                    <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
-                    <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                    <svg th:replace="~{icon/search::svg(className='tw:w-5 tw:h-5 tw:stroke-2')}"></svg>
+                    <span class="tw:sr-only" th:text="#{action.search}">Suche</span>
                   </button>
                 </span>
               </div>
             </form>
           </div>
-          <div class="md:tw-ml-auto">
+          <div class="tw:md:ml-auto">
             <form
               action="#"
               th:action="@{/web/application/statistics}"
@@ -224,8 +224,8 @@
                 <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
                 <input type="hidden" name="query" th:value="${query}" />
               </div>
-              <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
-                <label for="sort-select" class="tw-m-0 tw-mr-2">
+              <div class="tw:flex tw:flex-col tw:md:flex-row tw:md:items-center">
+                <label for="sort-select" class="tw:m-0 tw:mr-2">
                   <th:block th:text="#{action.sort}">Sortieren</th:block>:
                 </label>
                 <select
@@ -250,7 +250,7 @@
                 <button
                   type="submit"
                   id="sort-submit"
-                  class="tw-ml-2 button-main"
+                  class="tw:ml-2 button-main"
                   th:text="#{action.sort}"
                   data-js-hidden
                 >
@@ -298,61 +298,61 @@
             </turbo-stream>
           </th:block>
 
-          <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
+          <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw:mt-8 alert alert-danger"></div>
 
           <table
             th:unless="${errors}"
             id="application-statistic-table"
-            class="tw-mt-8 md:tw-mt-16 list-table tw-text-sm"
+            class="tw:mt-8 tw:md:mt-16 list-table tw:text-sm"
           >
-            <thead class="tw-hidden lg:tw-table-header-group">
+            <thead class="tw:hidden tw:lg:table-header-group">
               <tr>
                 <th scope="col"></th>
                 <th
                   th:if="${showPersonnelNumberColumn}"
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:lg:table-cell tw:print:table-cell"
                   th:text="#{person.account.basedata.personnelNumber.abbreviation}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:lg:table-cell tw:print:table-cell"
                   th:text="#{person.data.firstName}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:lg:table-cell tw:print:table-cell"
                   th:text="#{person.data.lastName}"
                 ></th>
-                <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
-                <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
-                <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
+                <th scope="col" class="tw:lg:hidden tw:print:hidden"></th>
+                <th scope="col" class="tw:md:hidden tw:print:hidden"></th>
+                <th scope="col" class="tw:hidden tw:md:table-cell tw:print:table-cell"></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:md:table-cell tw:print:table-cell"
                   th:text="#{applications.statistics.allowed}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:md:table-cell tw:print:table-cell"
                   th:text="#{applications.statistics.waiting}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:md:table-cell tw:print:table-cell"
                   th:text="#{applications.statistics.left}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  class="tw:hidden tw:md:table-cell tw:print:table-cell"
                   th:text="|#{applications.statistics.left} (${from.year})|"
                 ></th>
               </tr>
             </thead>
             <tbody>
               <tr th:each="statistic : ${statisticsPagination.page.content}">
-                <td class="tw-text-center">
-                  <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
+                <td class="tw:text-center">
+                  <div class="tw:print:hidden tw:text-blue-50 tw:dark:text-sky-800">
                     <img
                       th:replace="~{fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},initials=${statistic.initials},width='60',height='60',personId=${statistic.id})}"
                       alt=""
@@ -363,9 +363,9 @@
                 <td
                   th:if="${showPersonnelNumberColumn}"
                   th:text="${statistic.personnelNumber}"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
+                  class="tw:hidden tw:lg:table-cell tw:print:table-cell tw:text-ellipsis tw:overflow-hidden tw:max-w-xs tw:text-center"
                 ></td>
-                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell">
+                <td class="tw:hidden tw:lg:table-cell tw:print:table-cell">
                   <a
                     th:text="${statistic.firstName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -373,7 +373,7 @@
                     data-turbo="false"
                   ></a>
                 </td>
-                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell">
+                <td class="tw:hidden tw:lg:table-cell tw:print:table-cell">
                   <a
                     th:text="${statistic.lastName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -381,7 +381,7 @@
                     data-turbo="false"
                   ></a>
                 </td>
-                <td class="lg:tw-hidden print:tw-hidden">
+                <td class="tw:lg:hidden tw:print:hidden">
                   <a
                     th:text="${statistic.niceName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
@@ -389,121 +389,121 @@
                     data-turbo="false"
                   ></a>
                 </td>
-                <td class="md:tw-hidden print:tw-hidden">
-                  <div class="tw-flex tw-items-center">
-                    <span class="tw-w-6">
-                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
+                <td class="tw:md:hidden tw:print:hidden">
+                  <div class="tw:flex tw:items-center">
+                    <span class="tw:w-6">
+                      <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
                     </span>
                     <span th:text="#{applications.statistics.days(${statistic.totalAllowedVacationDays})}"></span>
                   </div>
-                  <div class="tw-flex tw-items-center">
-                    <span class="tw-w-6">
-                      <svg th:replace="~{icon/help-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <div class="tw:flex tw:items-center">
+                    <span class="tw:w-6">
+                      <svg th:replace="~{icon/help-circle::svg(className='tw:w-4 tw:h-4')}"></svg>
                     </span>
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.days(${statistic.totalWaitingVacationDays})}"
                     ></span>
                   </div>
                 </td>
 
-                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                  <span th:text="|#{applications.statistics.total}:|" class="tw-inline-block"></span>
+                <td class="tw:hidden tw:md:table-cell tw:print:table-cell">
+                  <span th:text="|#{applications.statistics.total}:|" class="tw:inline-block"></span>
                   <div
-                    class="tw-whitespace-nowrap"
+                    class="tw:whitespace-nowrap"
                     th:each="type : ${vacationTypes}"
                     th:if="${statistic.hasVacationType(type)}"
                   >
-                    <span class="tw-text-xs" th:text="|${type.label}:|"></span>
+                    <span class="tw:text-xs" th:text="|${type.label}:|"></span>
                   </div>
                 </td>
 
-                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                  <div class="tw-whitespace-nowrap">
+                <td class="tw:hidden tw:md:table-cell tw:print:table-cell">
+                  <div class="tw:whitespace-nowrap">
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.days.value(${statistic.totalAllowedVacationDays})}"
                     ></span>
                     <span th:text="#{applications.statistics.days.unit(${statistic.totalAllowedVacationDays})}"></span>
                   </div>
                   <div
-                    class="tw-whitespace-nowrap"
+                    class="tw:whitespace-nowrap"
                     th:if="${statistic.hasVacationType(type)}"
                     th:each="type : ${vacationTypes}"
                   >
                     <span
-                      class="tw-text-xs"
+                      class="tw:text-xs"
                       th:text="#{applications.statistics.days.value(${statistic.getAllowedVacationDays(type)})}"
                     ></span>
                   </div>
                 </td>
 
-                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                  <div class="tw-whitespace-nowrap">
+                <td class="tw:hidden tw:md:table-cell tw:print:table-cell">
+                  <div class="tw:whitespace-nowrap">
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.days.value(${statistic.totalWaitingVacationDays})}"
                     ></span>
                     <span th:text="#{applications.statistics.days.unit(${statistic.totalWaitingVacationDays})}"></span>
                   </div>
                   <div
-                    class="tw-whitespace-nowrap"
+                    class="tw:whitespace-nowrap"
                     th:if="${statistic.hasVacationType(type)}"
                     th:each="type : ${vacationTypes}"
                   >
                     <span
-                      class="tw-text-xs"
+                      class="tw:text-xs"
                       th:text="#{applications.statistics.days.value(${statistic.getWaitingVacationDays(type)})}"
                     ></span>
                   </div>
                 </td>
 
-                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                <td class="tw:hidden tw:md:table-cell tw:print:table-cell">
                   <div>
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.vacationdays.value(${statistic.leftVacationDaysForPeriod})}"
                     ></span>
                     <span
                       th:text="#{applications.statistics.vacationdays.unit(${statistic.leftVacationDaysForPeriod})}"
                     ></span>
                   </div>
-                  <div class="tw-text-xs">
+                  <div class="tw:text-xs">
                     <span th:text="#{applications.statistics.remainingvacationdays.description.first}"></span>
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.remainingvacationdays.value(${statistic.remainingLeftVacationDaysForPeriod})}"
                     ></span>
                     <span
                       th:text="#{applications.statistics.remainingvacationdays.unit(${statistic.remainingLeftVacationDaysForPeriod})}"
                     ></span>
                   </div>
-                  <div th:class="tw-mt-2">
-                    <span class="tw-font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
+                  <div th:class="tw:mt-2">
+                    <span class="tw:font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
                     <span th:text="#{applications.statistics.overtime.unit}"></span>
                   </div>
                 </td>
 
-                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                <td class="tw:hidden tw:md:table-cell tw:print:table-cell">
                   <div>
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.vacationdays.value(${statistic.leftVacationDays})}"
                     ></span>
                     <span th:text="#{applications.statistics.vacationdays.unit(${statistic.leftVacationDays})}"></span>
                   </div>
-                  <div class="tw-text-xs">
+                  <div class="tw:text-xs">
                     <span th:text="#{applications.statistics.remainingvacationdays.description.first}"></span>
                     <span
-                      class="tw-font-bold"
+                      class="tw:font-bold"
                       th:text="#{applications.statistics.remainingvacationdays.value(${statistic.remainingLeftVacationDays})}"
                     ></span>
                     <span
                       th:text="#{applications.statistics.remainingvacationdays.unit(${statistic.remainingLeftVacationDays})}"
                     ></span>
                   </div>
-                  <div th:class="tw-mt-2">
-                    <span class="tw-font-bold" th:text="${statistic.leftOvertime}"></span>
+                  <div th:class="tw:mt-2">
+                    <span class="tw:font-bold" th:text="${statistic.leftOvertime}"></span>
                     <span th:text="#{applications.statistics.overtime.unit}"></span>
                   </div>
                 </td>
@@ -512,7 +512,7 @@
           </table>
         </turbo-frame>
 
-        <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
+        <div class="tw:mt-8 tw:md:mt-16 tw:flex tw:flex-col tw:md:flex-row tw:md:items-center tw:gap-8">
           <div id="pagination">
             <nav
               th:replace="~{fragments/pagination::pagination(${statisticsPagination}, #{applications.statistics.pagination.navigation.aria-label}, 'frame-statistics')}"
@@ -522,7 +522,7 @@
             action="#"
             th:action="@{/web/application/statistics}"
             method="get"
-            class="md:tw-ml-auto tw-flex tw-items-center"
+            class="tw:md:ml-auto tw:flex tw:items-center"
             data-turbo-frame="frame-statistics"
             data-turbo-action="advance"
           >
@@ -532,8 +532,8 @@
               <input type="hidden" name="sort" th:value="${sortQuery}" />
               <input type="hidden" name="query" th:value="${query}" />
             </div>
-            <div class="tw-flex tw-items-center tw-gap-2">
-              <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+            <div class="tw:flex tw:items-center tw:gap-2">
+              <label for="pagination-size-select" class="tw:m-0" th:text="#{pagination.page.size.label.text}">
                 Zeige
               </label>
               <span>
@@ -545,7 +545,7 @@
               </span>
               <span
                 id="pagination-size-hint"
-                class="tw-whitespace-nowrap"
+                class="tw:whitespace-nowrap"
                 th:text="#{pagination.page.size.total.text(${statisticsPagination.page.totalElements}, ${#messages.msg('applications.statistics.pagination.total.text')})}"
               >
                 von 42 Personen
@@ -554,7 +554,7 @@
             <button
               id="size-submit"
               th:text="#{pagination.page.size.button.text}"
-              class="tw-ml-2 button-main"
+              class="tw:ml-2 button-main"
               data-js-hidden
             >
               Aktualisieren

@@ -13,8 +13,8 @@
 
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <p class="help-block tw:text-sm">
+            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
             <th:block th:text="#{settings.sickDays.description}" />
           </p>
         </aside>
@@ -37,7 +37,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('sickNoteSettings.maximumSickPayDays')}"
               >
                 <th:block th:errors="*{sickNoteSettings.maximumSickPayDays}">
@@ -64,7 +64,7 @@
               />
 
               <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
                 th:if="${#fields.hasErrors('sickNoteSettings.daysBeforeEndOfSickPayNotification')}"
               >
                 <th:block th:errors="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}">
@@ -75,9 +75,9 @@
           </div>
         </div>
         <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
+          <p class="help-block tw:text-sm">
             <span
-              class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
+              class="tw:px-1.5 tw:no-underline tw:rounded-full tw:bg-blue-100 tw:text-blue-800 tw:dark:border tw:dark:border-blue-600 tw:dark:text-blue-600 tw:dark:bg-transparent print:no-link"
               th:text="#{settings.betaTag}"
               >BETA</span
             >

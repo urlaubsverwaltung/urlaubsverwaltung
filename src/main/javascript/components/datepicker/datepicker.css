@@ -2,7 +2,7 @@ duet-date-picker {
   --duet-color-button: #eee;
 }
 
-.tw-dark duet-date-picker {
+.tw:dark duet-date-picker {
   --duet-color-primary: #005fcc;
   --duet-color-text: theme("colors.neutral.50");
   --duet-color-text-active: theme("colors.neutral.50");
@@ -22,12 +22,12 @@ duet-date-picker {
 
 fieldset[disabled] duet-date-picker,
 duet-date-picker[disabled] {
-  @apply dark:tw-border-0 !important;
+  @apply tw:dark:border-0 !important;
 }
 
-.tw-dark fieldset[disabled] duet-date-picker input,
-.tw-dark duet-date-picker[disabled] input {
-  @apply tw-text-neutral-700 !important; /* color of `input:read-only` */
+.tw:dark fieldset[disabled] duet-date-picker input,
+.tw:dark duet-date-picker[disabled] input {
+  @apply tw:text-neutral-700 !important; /* color of `input:read-only` */
   background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
 }
 
@@ -37,7 +37,7 @@ duet-date-picker[disabled] input {
 }
 
 .duet-date__dialog-content {
-  @apply dark:tw-border-zinc-600;
+  @apply tw:dark:border-zinc-600;
 }
 
 duet-date-picker.form-control {
@@ -53,7 +53,7 @@ duet-date-picker.form-control {
 }
 
 duet-date-picker.error {
-  @apply tw-border-red-700;
+  @apply tw:border-red-700;
 }
 
 .duet-date__input {
@@ -128,11 +128,11 @@ duet-date-picker.error {
 }
 
 .duet-date__day.datepicker-day-today {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw-shadow-cyan-600;
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw: shadow-color);
+  @apply tw:shadow-cyan-600;
 }
-.tw-dark .duet-date__day.datepicker-day-today {
-  @apply tw-shadow-sky-400;
+.tw:dark .duet-date__day.datepicker-day-today {
+  @apply tw:shadow-sky-400;
 }
 
 /* override styling for selected or currently focused day */
@@ -153,7 +153,7 @@ duet-date-picker.error {
   width: 100%;
 }
 
-.duet-date__day:hover::before,
+.duet-date__day:hover:before,
 .duet-date__day.is-today::before {
   border-radius: 0;
 }
@@ -178,21 +178,21 @@ duet-date-picker.error {
 .duet-date__input,
 .duet-date__toggle {
   /* ring-0 is required to enable transition to ring-x of the focused element */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
+  @apply tw:ring-0;
+  @apply tw:transition;
+  @apply tw:duration-150;
+  @apply tw:ease-in-out;
 }
 
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   box-shadow: none !important;
-  @apply tw-ring-2 !important;
-  @apply tw-ring-blue-300 !important;
+  @apply tw:ring-2 !important;
+  @apply tw:ring-blue-300 !important;
 }
 
 /* override @duetds styling to not hide the absence-bars */
-.duet-date__day:hover::before,
+.duet-date__day:hover:before,
 .duet-date__day.is-today::before {
   opacity: 1; /* would be nearly opaque */
   top: auto; /* absence-bar should be shown at the bottom */

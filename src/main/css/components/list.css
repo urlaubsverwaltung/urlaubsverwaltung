@@ -1,76 +1,76 @@
 .list-selectable {
-  @apply tw-space-y-1;
+  @apply tw:space-y-1;
 }
 
 @media only screen and (max-width: 639px) {
   .list-selectable {
-    @apply tw-space-y-4;
+    @apply tw:space-y-4;
   }
 
   .list-selectable__item {
-    @apply tw-rounded-sm;
-    @apply tw-border;
-    @apply tw-p-2;
-    @apply tw-transition-colors;
-    @apply tw-bg-white;
-    @apply dark:tw-border-zinc-800;
-    @apply dark:tw-bg-zinc-800/20;
+    @apply tw:rounded-sm;
+    @apply tw:border;
+    @apply tw:p-2;
+    @apply tw:transition-colors;
+    @apply tw:bg-white;
+    @apply tw:dark:border-zinc-800;
+    @apply tw:dark:bg-zinc-800/20;
   }
 
   .list-selectable__item[data-enabled="true"] {
-    @apply tw-border-blue-100;
-    @apply tw-bg-blue-50/20;
-    @apply dark:tw-border-zinc-800;
-    @apply dark:tw-bg-zinc-800/20;
+    @apply tw:border-blue-100;
+    @apply tw:bg-blue-50/20;
+    @apply tw:dark:border-zinc-800;
+    @apply tw:dark:bg-zinc-800/20;
   }
 }
 
 @screen sm {
   .list-selectable__item {
-    @apply tw-py-1;
-    @apply tw-px-2;
-    @apply tw-rounded-sm;
-    @apply tw-transition-colors;
+    @apply tw:py-1;
+    @apply tw:px-2;
+    @apply tw:rounded-sm;
+    @apply tw:transition-colors;
   }
 
   .list-selectable__item[data-enabled="false"] {
-    @apply tw-text-zinc-500;
-    @apply dark:tw-text-zinc-300;
+    @apply tw:text-zinc-500;
+    @apply tw:dark:text-zinc-300;
   }
 
   .list-selectable__item[data-enabled="false"]:hover {
-    @apply tw-bg-zinc-100;
-    @apply dark:tw-bg-zinc-800;
+    @apply tw:bg-zinc-100;
+    @apply tw:dark:bg-zinc-800;
   }
 
   .list-selectable__item[data-enabled="true"] {
-    @apply tw-text-blue-900;
-    @apply tw-bg-blue-50/75;
-    @apply dark:tw-text-zinc-300;
-    @apply dark:tw-bg-zinc-800/75;
+    @apply tw:text-blue-900;
+    @apply tw:bg-blue-50/75;
+    @apply tw:dark:text-zinc-300;
+    @apply tw:dark:bg-zinc-800/75;
   }
 
   .list-selectable__item[data-enabled="true"]:hover {
-    @apply tw-bg-blue-100/70;
-    @apply dark:tw-bg-zinc-700/70;
+    @apply tw:bg-blue-100/70;
+    @apply tw:dark:bg-zinc-700/70;
   }
 }
 
 /* bootstrap view breakpoint. list is stretched to full width now */
 @media only screen and (min-width: 992px) {
   .list-selectable__item {
-    @apply tw-py-1;
-    @apply tw-px-4;
+    @apply tw:py-1;
+    @apply tw:px-4;
   }
 }
 
 @screen lg {
   ul.lg\:list--hover > li {
-    @apply tw-transition-colors;
+    @apply tw:transition-colors;
   }
 
   ul.lg\:list--hover > li:hover {
-    @apply tw-bg-zinc-50;
-    @apply dark:tw-bg-zinc-800;
+    @apply tw:bg-zinc-50;
+    @apply tw:dark:bg-zinc-800;
   }
 }
