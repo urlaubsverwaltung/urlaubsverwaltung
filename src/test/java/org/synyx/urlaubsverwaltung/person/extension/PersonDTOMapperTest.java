@@ -31,14 +31,14 @@ class PersonDTOMapperTest {
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
 
             assertThat(dto).isNotNull();
-            assertThat(dto.getId()).isEqualTo(1);
-            assertThat(dto.getUsername()).isEqualTo("muster");
-            assertThat(dto.getLastName()).isEqualTo("Muster");
-            assertThat(dto.getFirstName()).isEqualTo("Marlene");
-            assertThat(dto.getEmail()).isEqualTo("muster@example.org");
-            assertThat(dto.getPermissions()).containsOnly(RoleDTO.USER);
-            assertThat(dto.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-            assertThat(dto.isEnabled()).isTrue();
+            assertThat(dto.id()).isEqualTo(1);
+            assertThat(dto.username()).isEqualTo("muster");
+            assertThat(dto.lastName()).isEqualTo("Muster");
+            assertThat(dto.firstName()).isEqualTo("Marlene");
+            assertThat(dto.email()).isEqualTo("muster@example.org");
+            assertThat(dto.permissions()).containsOnly(RoleDTO.USER);
+            assertThat(dto.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+            assertThat(dto.enabled()).isTrue();
         }
 
         @Test
@@ -52,14 +52,14 @@ class PersonDTOMapperTest {
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
 
             assertThat(dto).isNotNull();
-            assertThat(dto.getId()).isEqualTo(1);
-            assertThat(dto.getUsername()).isEqualTo("muster");
-            assertThat(dto.getLastName()).isEqualTo("Muster");
-            assertThat(dto.getFirstName()).isEqualTo("Marlene");
-            assertThat(dto.getEmail()).isEqualTo("muster@example.org");
-            assertThat(dto.getPermissions()).isEmpty();
-            assertThat(dto.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-            assertThat(dto.isEnabled()).isFalse();
+            assertThat(dto.id()).isEqualTo(1);
+            assertThat(dto.username()).isEqualTo("muster");
+            assertThat(dto.lastName()).isEqualTo("Muster");
+            assertThat(dto.firstName()).isEqualTo("Marlene");
+            assertThat(dto.email()).isEqualTo("muster@example.org");
+            assertThat(dto.permissions()).isEmpty();
+            assertThat(dto.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+            assertThat(dto.enabled()).isFalse();
         }
     }
 
