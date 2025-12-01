@@ -31,52 +31,47 @@
           th:fragment="persons-overview-heading-body"
           th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
         >
-          <div class="dropdown tw-inline-block">
+          <div class="tw-inline-block">
             <button
-              id="active-state"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              class="tw-bg-transparent tw-text-current tw-m-0 tw-p-0"
+              id="person-group-popover-button"
+              class="popover-button tw-inline-flex tw-items-center tw-gap-0.5"
+              popovertarget="person-group-selection-popover"
             >
               <th:block th:text="${visiblePersonsDropdownText}"></th:block>
-              <svg th:replace="~{icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
+              <svg th:replace="~{icon/chevron-down::svg(className='tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
             </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
-              <li>
-                <a
-                  th:href="@{/web/person (active=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
-                  class="tw-flex tw-items-center"
-                >
-                  <span class="tw-w-5 tw-flex tw-items-center">
+            <nav
+              popover
+              data-position-anchor="person-group-popover-button"
+              id="person-group-selection-popover"
+              class="popover-menu popover-menu-person-group"
+              aria-label="Abteilung"
+            >
+              <ul>
+                <li>
+                  <a th:href="@{/web/person (active=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}">
                     <svg th:replace="~{icon/user::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  </span>
-                  <th:block th:text="#{persons.active}"></th:block>
-                </a>
-              </li>
-              <th:block th:if="${not #lists.isEmpty(departments)}">
-                <li th:each="department : ${departments}">
-                  <a
-                    th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id}, sort=${sortQuery}, query=${query})}"
-                  >
-                    <span class="tw-w-5 tw-inline-block"></span>
-                    <th:block th:text="${department.name}"></th:block>
+                    <span th:text="#{persons.active}"></span>
                   </a>
                 </li>
-                <li role="separator" class="divider"></li>
-              </th:block>
-              <li>
-                <a
-                  th:href="@{/web/person (active=false, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
-                  class="tw-flex tw-items-center"
-                >
-                  <span class="tw-w-5 tw-flex tw-items-center">
+                <th:block th:if="${not #lists.isEmpty(departments)}">
+                  <li th:each="department : ${departments}">
+                    <a
+                      th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id}, sort=${sortQuery}, query=${query})}"
+                    >
+                      <span th:text="${department.name}"></span>
+                    </a>
+                  </li>
+                  <li role="separator"></li>
+                </th:block>
+                <li>
+                  <a th:href="@{/web/person (active=false, year=${selectedYear}, sort=${sortQuery}, query=${query})}">
                     <svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  </span>
-                  <th:block th:text="#{persons.inactive}"></th:block>
-                </a>
-              </li>
-            </ul>
+                    <span th:text="#{persons.inactive}"></span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
           <th:block
             th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personsPagination.page.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
