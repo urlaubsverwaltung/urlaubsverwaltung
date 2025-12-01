@@ -15,7 +15,13 @@
         <span th:text="${selectedYear}" aria-hidden="true"></span>
         <svg th:replace="~{icon/chevron-down::svg(className='tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
       </button>
-      <nav popover data-position-anchor="year-selector-popover-button" id="year-selection-popover" class="popover-menu">
+      <nav
+        popover
+        data-anchor="year-selector-popover-button"
+        data-anchor-placement="bottom-start"
+        id="year-selection-popover"
+        class="popover-menu"
+      >
         <ul>
           <li
             th:each="i, status: ${#numbers.sequence(0, 10)}"

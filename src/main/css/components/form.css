@@ -4,11 +4,10 @@ legend {
 }
 
 .tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply tw-outline-0;
   @apply tw-block;
   @apply tw-text-sm;
-  @apply tw-w-full;
   @apply tw-py-1;
   @apply tw-px-2.5;
   @apply tw-border;
@@ -17,7 +16,7 @@ legend {
 
 .form-control,
 .tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
   @apply tw-ring-0;
   @apply tw-transition;
@@ -32,7 +31,7 @@ legend {
   }
 }
 
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply tw-px-3;
   @apply tw-py-2;
   @apply tw-rounded-md;
@@ -59,7 +58,7 @@ fieldset[disabled] .tw-form-control {
 
 .form-control:focus,
 .tw-form-control:focus,
-.details-dropdown-input .details-dropdown_summary:focus,
+.popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   @apply tw-ring-2 !important;
@@ -154,7 +153,7 @@ label.is-required:after,
 input,
 select,
 textarea,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply dark:tw-border-zinc-600 !important;
   @apply dark:tw-bg-zinc-700 !important;
   @apply dark:tw-text-zinc-50 !important;
