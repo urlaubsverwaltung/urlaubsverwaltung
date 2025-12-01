@@ -137,49 +137,55 @@
                 </th:block>
               </td>
               <td th:text="${{department.lastModification}}" class="tw-hidden md:tw-table-cell"></td>
-              <td th:if="${canCreateAndModifyDepartment}">
-                <form method="post" th:action="@{/web/department/__${department.id}__/delete}">
-                  <div
-                    th:id="|modal-cancel-${department.id}|"
-                    class="modal fade"
-                    tabindex="-1"
-                    role="dialog"
-                    th:aria-labelledby="${'modal-label-' + department.id}"
-                    aria-hidden="true"
-                  >
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                            <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
-                          </button>
-                          <h4
-                            th:text="#{action.department.delete}"
-                            th:id="${'modal-label-' + department.id}"
-                            class="modal-title"
-                          >
-                            Löschen
-                          </h4>
-                        </div>
-                        <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal-body"></div>
-                        <div class="modal-footer tw-flex tw-justify-between">
-                          <button th:text="#{action.department.delete}" class="button-danger" type="submit"></button>
-                          <button th:text="#{action.cancel}" class="button" data-dismiss="modal"></button>
-                        </div>
-                      </div>
+              <td th:if="${canCreateAndModifyDepartment}" th:with="dialogId=|modal-cancel-${department.id}|">
+                <dialog
+                  th:id="${dialogId}"
+                  th:aria-labelledby="${'modal-label-' + department.id}"
+                  class="modal"
+                  closedBy="any"
+                >
+                  <form method="post" th:action="@{/web/department/__${department.id}__/delete}" class="modal__content">
+                    <div class="modal__header">
+                      <h4
+                        th:text="#{action.department.delete}"
+                        th:id="${'modal-label-' + department.id}"
+                        class="modal__header__title"
+                      >
+                        Löschen
+                      </h4>
+                      <button
+                        type="button"
+                        class="modal__close-button"
+                        aria-hidden="true"
+                        th:commandfor="${dialogId}"
+                        command="close"
+                      >
+                        <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
+                      </button>
                     </div>
-                  </div>
-                </form>
+                    <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal__body"></div>
+                    <div class="modal__footer tw-flex tw-justify-around">
+                      <button th:text="#{action.department.delete}" class="button-danger" type="submit"></button>
+                      <button
+                        th:text="#{action.cancel}"
+                        class="button"
+                        type="button"
+                        th:commandfor="${dialogId}"
+                        command="close"
+                      ></button>
+                    </div>
+                  </form>
+                </dialog>
 
                 <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
                   <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
                     <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                     <th:block th:text="#{action.edit}" />
                   </a>
-                  <a class="button" data-toggle="modal" th:href="@{/web/department#modal-cancel-__${department.id}__}">
+                  <button class="button" th:commandfor="${dialogId}" command="show-modal">
                     <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                     <th:block th:text="#{action.department.delete}" />
-                  </a>
+                  </button>
                 </div>
               </td>
             </tr>

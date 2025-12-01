@@ -1,4 +1,5 @@
 import "../lib/bootstrap";
+import "../components/modal";
 import "../components/navigation";
 import "../components/popover";
 import "../components/textarea";
