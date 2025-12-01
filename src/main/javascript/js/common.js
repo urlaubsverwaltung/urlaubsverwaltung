@@ -1,5 +1,6 @@
 import "../lib/bootstrap";
 import "../components/navigation";
+import "../components/popover";
 import "../components/textarea";
 import "../components/feedback";
 import tooltip from "../components/tooltip";
