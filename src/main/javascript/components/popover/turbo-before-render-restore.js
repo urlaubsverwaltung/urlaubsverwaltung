@@ -18,8 +18,9 @@ import { onTurboBeforeRenderRestore } from "../../js/turbo";
 // -> however, navigating backwards we want to render the initial element. the closed one.
 //
 onTurboBeforeRenderRestore(function (event) {
-  // close all dropdowns
-  for (let dropdown of event.detail.newBody.querySelectorAll("[is=uv-details-dropdown]")) {
-    dropdown.open = false;
+  // TODO is this still relevant?
+  // close all popovers but not dialogs (modals)
+  for (let popover of event.detail.newBody.querySelectorAll("[popover]:not(dialog)")) {
+    popover.hidePopover();
   }
 });

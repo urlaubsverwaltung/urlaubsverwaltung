@@ -12,10 +12,10 @@ onTurboBeforeRenderRestore(function (event) {
   event.detail.newBody.querySelector("form#form-date-from-to button[type='submit']").removeAttribute("disabled");
 });
 
-// close `<details-dropdown>` on advancing client side navigation.
+// close `popover` on advancing client side navigation.
 // (it's visible as long as response is loading)
 document.addEventListener("turbo:submit-end", function (event) {
   if (event.target.matches("#form-date-from-to")) {
-    event.target.querySelector("[is=uv-details-dropdown]").open = false;
+    event.target.closest("[popover]").hidePopover();
   }
 });

@@ -7,9 +7,23 @@
       /* can be removed when bootstrap is obsolete */
       display: none;
     }
+    /* by default, popover does not overflow. */
+    /* as long as datepicker doesn't use popovers, we have to change this behaviour. */
+    &:has(duet-date-picker) {
+      overflow: visible;
+    }
   }
 
-  .popover-button {
+  .popover,
+  .popover-menu {
+    /* ensure popover attribute */
+    &:not([popover]) {
+      outline: 3px solid lime;
+    }
+  }
+
+  .popover-button,
+  .popover-button-select {
     margin: 0;
     padding: 0;
     color: currentColor;
@@ -17,9 +31,8 @@
     font-size: inherit;
   }
 
-  .popover-menu:not([popover]) {
-    /* ensure popover attribute */
-    outline: 3px solid lime;
+  .popover-button-select {
+    border: 1px solid lime;
   }
 
   .popover-menu {
@@ -28,6 +41,7 @@
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 4px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    font-size: 1rem;
     @apply dark:tw-shadow-none;
     @apply dark:tw-border;
     @apply dark:tw-border-zinc-700;
@@ -54,9 +68,8 @@
       li {
         a {
           display: block;
-          padding: 3px 20px;
+          padding: 3px 1rem;
           font-weight: 400;
-          font-size: 14px;
           line-height: 1.42857143;
           color: #333333;
           white-space: nowrap;

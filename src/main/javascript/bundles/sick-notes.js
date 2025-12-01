@@ -1,6 +1,5 @@
 import "../js/common";
 import * as Turbo from "@hotwired/turbo";
-import "../components/details-dropdown";
 import "../js/sick-notes/sick-days";
 import "../js/hotwire-turbo-progressbar";
 import { initAutosubmit } from "../components/form";
