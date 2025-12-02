@@ -1,3 +1,300 @@
+/* ------------------------- */
+/* start bootstrap migration */
+
+fieldset {
+  /* Chrome and Firefox set a `min-width: min-content;` on fieldsets, */
+  /* so we reset that to ensure it behaves more like a standard block element. */
+  /* See https://github.com/twbs/bootstrap/issues/12359. */
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: calc(14px * 1.5);
+  line-height: inherit;
+  color: #333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+label {
+  display: inline-block;
+  max-width: 100%; /* Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141) */
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+input[type="search"] {
+  /* Search inputs in iOS */
+  /* This overrides the extra rounded corners on search inputs in iOS so that our */
+  /* `.form-control` class can properly style them. Note that this cannot simply */
+  /* be added to `.form-control` as it's not specific enough. For details, see */
+  /* https://github.com/twbs/bootstrap/issues/11586. */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Position radios and checkboxes better */
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 4px 0 0;
+  margin-top: 1px \9; /* IE8-9 */
+  line-height: normal;
+
+  /* Apply same disabled cursor tweak as for inputs*/
+  /* Some special care is needed because <label>s don't inherit their parent's `cursor`.*/
+  /* Note: Neither radios nor checkboxes can be readonly.*/
+  &[disabled],
+  &.disabled,
+  fieldset[disabled] & {
+    cursor: not-allowed;
+  }
+}
+
+input[type="file"] {
+  display: block;
+}
+
+/* Make range inputs behave like textual form controls */
+input[type="range"] {
+  display: block;
+  width: 100%;
+}
+
+/* Make multiple select elements height not fixed */
+select[multiple],
+select[size] {
+  height: auto;
+}
+
+/* Focus for file, radio, and checkbox */
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: calc(
+    20px + (6px * 2) + 2
+  ); /* Make inputs at least the height of their button counterpart (base line-height + padding + border) */
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  background-color: #fff;
+  background-image: none; /* Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214 */
+  border: 1px solid #ccc;
+  border-radius: 4px; /* Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS. */
+
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+
+  &:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow:
+      inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
+  &::placeholder {
+    color: #999;
+  }
+
+  /* Disabled and read-only inputs*/
+  /* HTML5 says that controls under a fieldset > legend:first-child won't be*/
+  /* disabled if the fieldset is disabled. Due to implementation difficulty, we*/
+  /* don't honor that edge case; we style them as disabled anyway.*/
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    background-color: #eee;
+    opacity: 1; /* iOS fix for unreadable disabled content; see https://github.com/twbs/bootstrap/issues/11655 */
+  }
+
+  &[disabled],
+  fieldset[disabled] & {
+    cursor: not-allowed;
+  }
+
+  /*Reset height for `textarea`s*/
+  textarea {
+    height: auto;
+  }
+}
+
+/* Special styles for iOS temporal inputs*/
+/* In Mobile Safari, setting `display: block` on temporal inputs causes the*/
+/* text within the input to become vertically misaligned. As a workaround, we*/
+/* set a pixel line-height that matches the given height of the input, but only*/
+/* for Safari. See https:/*bugs.webkit.org/show_bug.cgi?id=139848*/
+/* Note that as of 9.3, iOS doesn't support `week`.*/
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    &.form-control {
+      line-height: calc((20px + (6px * 2) + 2));
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-control-static {
+  min-height: calc(20px + 15px);
+  /*Size it appropriately next to real form controls*/
+  padding-top: 7px;
+  padding-bottom: 7px;
+  /*Remove default margin from `p`*/
+  margin-bottom: 0;
+}
+
+.has-error {
+  /*Color the label and help text*/
+  .help-block,
+  .control-label {
+    color: #a94442;
+  }
+  /*Set the border and box shadow on specific inputs to match*/
+  .form-control {
+    border-color: #a94442;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); /* Redeclare so transitions work */
+    &:focus {
+      border-color: #843534;
+      box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.075),
+        0 0 6px #ce8483;
+    }
+  }
+  /*Set validation states also for addons*/
+  .input-group-addon {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
+  }
+  /*Optional feedback icon*/
+  .form-control-feedback {
+    color: #a94442;
+  }
+}
+
+.help-block {
+  display: block; /* account for any element using help-block */
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #737373;
+}
+
+.form-horizontal {
+  /* Make form groups behave like rows*/
+  .form-group {
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+
+  /* Reset spacing and right align labels, but scope to media queries so that*/
+  /* labels on narrow viewports stack the same as a default form example.*/
+  @media (min-width: 768px) {
+    .control-label {
+      padding-top: calc(6px + 1px); /*Default padding plus a border*/
+      margin-bottom: 0;
+      text-align: right;
+    }
+  }
+}
+
+/* boostrap input-group */
+
+.input-group {
+  position: relative; /* For dropdowns*/
+  display: table;
+  border-collapse: separate; /*prevent input groups from inheriting border styles from table cells when placed within a table*/
+
+  .form-control {
+    /*Ensure that the input is always above the *appended* addon button for*/
+    /*proper border colors.*/
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    margin-bottom: 0;
+
+    &:focus {
+      z-index: 3;
+    }
+  }
+}
+
+.input-group-addon,
+.input-group .form-control {
+  display: table-cell;
+  &:not(:first-child):not(:last-child) {
+    border-radius: 0;
+  }
+}
+/*Addon and addon wrapper for buttons*/
+.input-group-addon {
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle; /*Match the inputs*/
+}
+
+.input-group-addon {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  /*Nuke default margins from checkboxes and radios to vertically center within.*/
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-top: 0;
+  }
+}
+
+/*Reset rounded corners*/
+.input-group .form-control:first-child,
+.input-group-addon:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.input-group-addon:first-child {
+  border-right: 0;
+}
+.input-group .form-control:last-child,
+.input-group-addon:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.input-group-addon:last-child {
+  border-left: 0;
+}
+
+/* end bootstrap migration */
+/* ----------------------- */
+
 legend {
   @apply dark:tw-text-zinc-200;
   @apply dark:tw-font-normal;
