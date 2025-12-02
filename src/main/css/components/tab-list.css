@@ -1,0 +1,78 @@
+.tab-list,
+[role="tablist"] {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+
+  border-bottom: 1px solid #eee;
+
+  > li {
+    position: relative; /* for after element positioning */
+    border: 1px solid transparent; /* active element has a border */
+    border-bottom-width: 0; /* border-bottom is handled by after element */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    .tab,
+    button,
+    a {
+      cursor: pointer; /* TODO should be default? */
+      font-size: 1rem;
+
+      display: block;
+      padding: 10px 15px;
+      color: #555;
+      text-decoration: none;
+      background-color: transparent;
+
+      /* overflow hidden cannot be used on container because of the after element hiding the bottom border */
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+
+      &:hover,
+      &:focus {
+        background-color: #eee;
+      }
+
+      /* after hover/focus to override styles */
+      /* active element should no change style */
+      &.tab--active {
+        cursor: default;
+        background-color: transparent;
+      }
+    }
+  }
+
+  > li::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    width: 100%;
+    height: 1px;
+  }
+
+  > li:has(.tab--active) {
+    border-color: #ddd;
+    border-bottom-width: 0; /* border-bottom is handled by after element */
+    &::after {
+      background-color: #fff;
+    }
+  }
+}
+
+.tab-panel,
+[role="tabpanel"] {
+  margin-top: 1rem;
+
+  /* hide tabPanel, show when active  */
+  display: none;
+
+  &.tab-panel--active {
+    display: block;
+  }
+}

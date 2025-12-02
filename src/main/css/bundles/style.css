@@ -22,11 +22,10 @@
 @import "../components/navigation.css";
 @import "../components/multi-select.css";
 @import "../components/modal.css";
-@import "../components/nav-tabs.css";
 @import "../components/popover.css";
 @import "../components/select.css";
 @import "../components/table.css";
-@import "../components/tabs.css";
+@import "../components/tab-list.css";
 @import "../components/states.css";
 @import "../components/print.css";
 @import "../components/section-heading.css";

@@ -2,6 +2,7 @@ import "../lib/bootstrap";
 import "../components/modal";
 import "../components/navigation";
 import "../components/popover";
+import "../components/tablist";
 import "../components/textarea";
 import "../components/feedback";
 import tooltip from "../components/tooltip";
