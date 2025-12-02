@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.settings;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,14 +24,17 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;
     private final SettingsPublicHolidayValidator settingsValidator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public SettingsPublicHolidayViewController(
         SettingsService settingsService,
-        SettingsPublicHolidayValidator settingsValidator
+        SettingsPublicHolidayValidator settingsValidator,
+        ApplicationEventPublisher applicationEventPublisher
     ) {
         this.settingsService = settingsService;
         this.settingsValidator = settingsValidator;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @GetMapping
@@ -62,6 +66,8 @@ public class SettingsPublicHolidayViewController implements HasLaunchpad {
 
         final Settings settings = settingsDtoToSettings(settingsDto);
         settingsService.save(settings);
+        applicationEventPublisher.publishEvent(new WorkingDurationForChristmasEveUpdatedEvent(settings.getPublicHolidaysSettings().getWorkingDurationForChristmasEve()));
+        applicationEventPublisher.publishEvent(new WorkingDurationForNewYearsEveUpdatedEvent(settings.getPublicHolidaysSettings().getWorkingDurationForNewYearsEve()));
 
         redirectAttributes.addFlashAttribute("success", true);
 
