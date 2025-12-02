@@ -1,4 +1,3 @@
-import "../lib/bootstrap";
 import "../components/modal";
 import "../components/navigation";
 import "../components/popover";
