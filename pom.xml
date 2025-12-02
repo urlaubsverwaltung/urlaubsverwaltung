@@ -417,7 +417,7 @@
       <plugin>
         <groupId>org.ec4j.maven</groupId>
         <artifactId>editorconfig-maven-plugin</artifactId>
-        <version>0.1.3</version>
+        <version>0.1.17</version>
         <executions>
           <execution>
             <id>check</id>
