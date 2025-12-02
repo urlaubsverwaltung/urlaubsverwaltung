@@ -8,6 +8,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
+import org.synyx.urlaubsverwaltung.extension.companyvacation.SettingsEventRepublisher;
 
 import java.util.List;
 
@@ -35,7 +36,8 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
 
         final AccountProperties properties = new AccountProperties();
         final TurnOfTheYearAccountUpdaterService service = mock(TurnOfTheYearAccountUpdaterService.class);
-        final TurnOfTheYearAccountUpdaterConfiguration sut = new TurnOfTheYearAccountUpdaterConfiguration(properties, service, scheduleLocking, taskScheduler);
+        final SettingsEventRepublisher settingsEventRepublisher = mock(SettingsEventRepublisher.class);
+        final TurnOfTheYearAccountUpdaterConfiguration sut = new TurnOfTheYearAccountUpdaterConfiguration(properties, service, settingsEventRepublisher, scheduleLocking, taskScheduler);
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);
@@ -50,5 +52,6 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
 
         cronTask.getRunnable().run();
         verify(service).updateAccountsForNextPeriod();
+        verify(settingsEventRepublisher).republishEvents();
     }
 }
