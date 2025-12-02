@@ -63,7 +63,7 @@ class LoginHintAwareResolverTest {
 
         assertThat(response.getRedirectedUrl())
             .matches("https://provider.com/oauth2/authorize\\?response_type=code&client_id=client&scope=user&state=.{15,}" +
-                "&redirect_uri=http://localhost/login/oauth2/code/registration&login_hint=office");
+                "&redirect_uri=http://localhost/login/oauth2/code/registration&code_challenge=.{15,}&code_challenge_method=S256&login_hint=office");
     }
 
     @Test
@@ -83,7 +83,7 @@ class LoginHintAwareResolverTest {
 
         assertThat(response.getRedirectedUrl())
             .matches("https://provider.com/oauth2/authorize\\?response_type=code" +
-                "&client_id=client&scope=user&state=.{15,}&redirect_uri=http://localhost/login/oauth2/code/registration");
+                "&client_id=client&scope=user&state=.{15,}&redirect_uri=http://localhost/login/oauth2/code/registration&code_challenge=.{15,}&code_challenge_method=S256");
     }
 
     @Test
@@ -106,7 +106,7 @@ class LoginHintAwareResolverTest {
 
         assertThat(response.getRedirectedUrl())
             .matches("https://provider.com/oauth2/authorize\\?response_type=code&client_id=client&scope=user" +
-                "&state=.{15,}&redirect_uri=http://localhost/login/oauth2/code/registration");
+                "&state=.{15,}&redirect_uri=http://localhost/login/oauth2/code/registration&code_challenge=.{15,}&code_challenge_method=S256");
     }
 }
 

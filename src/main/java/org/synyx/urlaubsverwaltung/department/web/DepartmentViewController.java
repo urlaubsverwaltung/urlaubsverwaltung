@@ -33,7 +33,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
@@ -106,7 +106,7 @@ public class DepartmentViewController implements HasLaunchpad {
                                           Model model, RedirectAttributes redirectAttributes) {
 
         return createNewDepartment(departmentForm, errors, model,
-            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
+            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_CONTENT),
             department -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
                 return new ModelAndView("redirect:/web/department");
@@ -152,7 +152,7 @@ public class DepartmentViewController implements HasLaunchpad {
                                              Model model, RedirectAttributes redirectAttributes) {
 
         return editDepartment(departmentForm, errors, model,
-            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_ENTITY),
+            () -> new ModelAndView("department/department_form", model.asMap(), UNPROCESSABLE_CONTENT),
             department -> {
                 redirectAttributes.addFlashAttribute("createdDepartmentName", department.getName());
                 return new ModelAndView("redirect:/web/department");
