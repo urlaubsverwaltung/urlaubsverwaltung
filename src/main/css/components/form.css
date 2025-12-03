@@ -490,20 +490,7 @@ textarea.error {
   margin-top: 2px;
 }
 
-/**************************************************************************
-
-  SEARCH FIELD
-
-**************************************************************************/
-
-.search-field {
-  margin-bottom: 21px;
-}
-
 .select-caret {
   @apply tw-text-zinc-700;
-}
-
-.select-caret {
   @apply dark:tw-text-zinc-50;
 }
