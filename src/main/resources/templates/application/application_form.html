@@ -235,25 +235,33 @@
                 <th:block th:if="${showHalfDayOption}">
                   <label th:text="|#{absence.period}:|" class="is-required tw-w-full lg:tw-w-1/4">Zeitraum</label>
                   <div class="tw-w-full lg:tw-w-3/4">
-                    <label class="thirds tw-font-normal" data-test-id="day-length-full">
-                      <input
-                        type="radio"
-                        id="fullDay"
-                        class="dayLength-full"
-                        th:field="*{dayLength}"
-                        value="FULL"
-                        th:checked="${applicationForLeaveForm.dayLength == null}"
-                      />
-                      <th:block th:text="#{FULL}">ganztätig</th:block>
-                    </label>
-                    <label class="thirds tw-font-normal" data-test-id="day-length-morning">
-                      <input type="radio" id="morning" class="dayLength-half" th:field="*{dayLength}" value="MORNING" />
-                      <th:block th:text="#{MORNING}">vormittags</th:block>
-                    </label>
-                    <label class="thirds tw-font-normal" data-test-id="day-length-noon">
-                      <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
-                      <th:block th:text="#{NOON}">nachmittags</th:block>
-                    </label>
+                    <div class="tw-flex">
+                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-full">
+                        <input
+                          type="radio"
+                          id="fullDay"
+                          class="dayLength-full"
+                          th:field="*{dayLength}"
+                          value="FULL"
+                          th:checked="${applicationForLeaveForm.dayLength == null}"
+                        />
+                        <th:block th:text="#{FULL}">ganztätig</th:block>
+                      </label>
+                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-morning">
+                        <input
+                          type="radio"
+                          id="morning"
+                          class="dayLength-half"
+                          th:field="*{dayLength}"
+                          value="MORNING"
+                        />
+                        <th:block th:text="#{MORNING}">vormittags</th:block>
+                      </label>
+                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-noon">
+                        <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
+                        <th:block th:text="#{NOON}">nachmittags</th:block>
+                      </label>
+                    </div>
                     <p
                       class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                       th:if="${#fields.hasErrors('dayLength')}"
@@ -342,15 +350,17 @@
                     Mit Team abgesprochen
                   </label>
                   <div class="tw-w-full lg:tw-w-3/4">
-                    <label class="thirds tw-font-normal">
-                      <input type="radio" id="teamInformed" th:field="*{teamInformed}" value="true" />
-                      <th:block th:text="#{application.data.teamInformed.true}">Ja</th:block>
-                    </label>
-                    <label class="thirds tw-font-normal">
-                      <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
-                      <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
-                    </label>
-                    <label class="thirds"></label>
+                    <div class="tw-flex">
+                      <label class="tw-flex-1 tw-font-normal">
+                        <input type="radio" id="teamInformed" th:field="*{teamInformed}" value="true" />
+                        <th:block th:text="#{application.data.teamInformed.true}">Ja</th:block>
+                      </label>
+                      <label class="tw-flex-1 tw-font-normal">
+                        <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
+                        <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
+                      </label>
+                      <span class="tw-flex-1"></span>
+                    </div>
                     <p
                       class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                       th:if="${#fields.hasErrors('teamInformed')}"
