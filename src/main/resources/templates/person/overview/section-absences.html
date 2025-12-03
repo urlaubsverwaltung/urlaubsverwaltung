@@ -165,7 +165,7 @@
                   ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
                   |"
                   th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
-                  th:title="${#messages.msg(app.status)}"
+                  th:data-title="${#messages.msg(app.status)}"
                 >
                   &nbsp;
                 </div>

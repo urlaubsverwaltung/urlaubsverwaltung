@@ -132,7 +132,7 @@
                   ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
                   |"
                 th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
-                th:title="${sickNoteStatusNameI18n}"
+                th:data-title="${sickNoteStatusNameI18n}"
               >
                 &nbsp;
               </div>

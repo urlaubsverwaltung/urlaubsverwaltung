@@ -89,7 +89,7 @@
                     class="absence-type_color-box tw-w-3 tw-inline-block"
                     th:classappend="|${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''} ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''} ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''} ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''} ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''} ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}|"
                     th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
-                    th:title="${#messages.msg(record.status)}"
+                    th:data-title="${#messages.msg(record.status)}"
                   ></span>
                 </th:block>
               </span>
