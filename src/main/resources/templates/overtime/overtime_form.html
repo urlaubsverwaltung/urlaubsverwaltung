@@ -76,7 +76,7 @@
               </div>
 
               <div class="tw-w-full lg:tw-w-2/3">
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-4">
+                <div class="tw-flex tw-flex-col tw-items-center lg:tw-flex-row tw-gap-x-4 tw-mb-4">
                   <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
                     <th:block th:if="${overtime.id == null}">
                       <label
@@ -103,9 +103,7 @@
                     </th:block>
 
                     <th:block th:if="${overtime.id != null}">
-                      <label th:text="|#{overtime.data.person}:|" class="control-label tw-w-full lg:tw-w-1/4"
-                        >Mitarbeiter</label
-                      >
+                      <label th:text="|#{overtime.data.person}:|" class="tw-w-full lg:tw-w-1/4"> Mitarbeiter </label>
                       <div class="tw-w-full lg:tw-w-3/4">
                         <p th:text="${overtime.person.niceName}" class="form-control-static"></p>
                         <input type="hidden" name="person" th:value="${person.id}" />

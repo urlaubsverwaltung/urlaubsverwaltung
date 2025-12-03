@@ -151,9 +151,6 @@ input[type="checkbox"]:focus {
 .has-error {
   /*Color the label and help text*/
   .help-block,
-  .control-label {
-    color: #a94442;
-  }
   /*Set the border and box shadow on specific inputs to match*/
   .form-control {
     border-color: #a94442;
@@ -189,16 +186,6 @@ input[type="checkbox"]:focus {
   .form-group {
     margin-right: -15px;
     margin-left: -15px;
-  }
-
-  /* Reset spacing and right align labels, but scope to media queries so that*/
-  /* labels on narrow viewports stack the same as a default form example.*/
-  @media (min-width: 768px) {
-    .control-label {
-      padding-top: calc(6px + 1px); /*Default padding plus a border*/
-      margin-bottom: 0;
-      text-align: right;
-    }
   }
 }
 
@@ -398,16 +385,6 @@ fieldset[disabled] .tw-form-control {
 label.is-required:after,
 .form-group.is-required > label:after {
   content: "*";
-}
-
-/**************************************************************************
-
-  HORIZONTAL FORM
-
-**************************************************************************/
-
-.form-horizontal .control-label {
-  text-align: left;
 }
 
 /**************************************************************************
