@@ -23,7 +23,8 @@ public class CompanyVacationService {
     // In first place we do not have another source then public holiday settings
     // later with fully implemented company vacation management this might be used by a source id like source id of
     // application or sick note to determine origin
-    private static final String SOURCE_ID_FOR_SETTINGS = "settings";
+    private static final String SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE = "settings-christmas-eve";
+    private static final String SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE = "settings-new-years-eve";
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -38,10 +39,8 @@ public class CompanyVacationService {
         DayLength companyVacationLength = event.workingDurationForChristmasEve().getInverse();
         final LocalDate christmasEve = LocalDate.of(LocalDate.now().getYear(), 12, 24);
 
-        final CompanyVacationPublishedEvent companyVacationPublishedEvent = new CompanyVacationPublishedEvent(SOURCE_ID_FOR_SETTINGS, UUID.randomUUID(), Instant.now(), companyVacationLength, christmasEve, christmasEve);
-        applicationEventPublisher.publishEvent(companyVacationPublishedEvent);
+        publish(companyVacationLength, christmasEve, SOURCE_ID_FOR_SETTINGS_CHRISTMAS_EVE);
 
-        LOG.info("Published CompanyVacationPublishedEvent {}", companyVacationPublishedEvent);
     }
 
     @EventListener
@@ -51,9 +50,18 @@ public class CompanyVacationService {
         DayLength companyVacationLength = event.workingDurationForNewYearsEve().getInverse();
         final LocalDate newYearsEve = LocalDate.of(LocalDate.now().getYear(), 12, 31);
 
-        final CompanyVacationPublishedEvent companyVacationPublishedEvent = new CompanyVacationPublishedEvent(SOURCE_ID_FOR_SETTINGS, UUID.randomUUID(), Instant.now(), companyVacationLength, newYearsEve, newYearsEve);
-        applicationEventPublisher.publishEvent(companyVacationPublishedEvent);
+        publish(companyVacationLength, newYearsEve, SOURCE_ID_FOR_SETTINGS_NEW_YEARS_EVE);
+    }
 
-        LOG.info("Published CompanyVacationPublishedEvent {}", companyVacationPublishedEvent);
+    private void publish(DayLength companyVacationLength, LocalDate date, String sourceId) {
+        if (!companyVacationLength.isZero()) {
+            final CompanyVacationPublishedEvent companyVacationPublishedEvent = new CompanyVacationPublishedEvent(sourceId, UUID.randomUUID(), Instant.now(), companyVacationLength, date, date);
+            applicationEventPublisher.publishEvent(companyVacationPublishedEvent);
+            LOG.info("Published CompanyVacationPublishedEvent {}", companyVacationPublishedEvent);
+        } else {
+            final CompanyVacationDeletedEvent companyVacationDeletedEvent = new CompanyVacationDeletedEvent(sourceId, UUID.randomUUID(), Instant.now());
+            applicationEventPublisher.publishEvent(companyVacationDeletedEvent);
+            LOG.info("Published CompanyVacationDeletedEvent {}", companyVacationDeletedEvent);
+        }
     }
 }
