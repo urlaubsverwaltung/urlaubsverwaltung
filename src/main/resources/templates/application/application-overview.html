@@ -155,7 +155,7 @@
                     ${absence.status.name == 'REJECTED' || absence.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
                     |"
                   th:styleappend="|${'--absence-bar-color:var(--absence-color-' + absence.vacationType.color + ');'}|"
-                  th:title="${#messages.msg(absence.status)}"
+                  th:data-title="${#messages.msg(absence.status)}"
                 >
                   &nbsp;
                 </div>
@@ -591,7 +591,7 @@
                       ${otherSickNote.status == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
                       |"
                     th:styleappend="|${'--absence-bar-color:var(--absence-color-PINK);'}|"
-                    th:title="#{sicknote.progress.SUBMITTED.withoutDate}"
+                    th:data-title="#{sicknote.progress.SUBMITTED.withoutDate}"
                   >
                     &nbsp;
                   </div>
