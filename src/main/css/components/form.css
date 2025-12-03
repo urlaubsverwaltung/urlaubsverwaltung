@@ -428,10 +428,6 @@ label.is-required:after,
   text-align: left;
 }
 
-.form-horizontal .halves {
-  width: 45%;
-}
-
 /**************************************************************************
 
   FORM VALIDATION ERRORS
