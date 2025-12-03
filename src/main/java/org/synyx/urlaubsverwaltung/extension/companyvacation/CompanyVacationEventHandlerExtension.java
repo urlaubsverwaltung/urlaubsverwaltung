@@ -1,14 +1,16 @@
 package org.synyx.urlaubsverwaltung.extension.companyvacation;
 
-import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.DayLength;
+import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.CompanyVacationDeletedEventDto;
 import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.CompanyVacationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.CompanyVacationPublishedEventDto;
+import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationDeletedEvent;
 import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationPublishedEvent;
 
 import java.time.Instant;
@@ -40,6 +42,13 @@ class CompanyVacationEventHandlerExtension {
         LOG.info("Published CompanyVacationPublishedEventDto for {}", companyVacationPublishedEventDto);
     }
 
+    @EventListener
+    void on(CompanyVacationDeletedEvent event) {
+        final CompanyVacationDeletedEventDto companyVacationDeletedEventDto = toCompanyVacationDeletedEventDto(tenantSupplier.get(), event);
+        applicationEventPublisher.publishEvent(companyVacationDeletedEventDto);
+        LOG.info("Published CompanyVacationDeletedEventDto for {}", companyVacationDeletedEventDto);
+    }
+
     private CompanyVacationPublishedEventDto toCompanyVacationPublishedEventDto(String tenantId, CompanyVacationPublishedEvent event) {
         return CompanyVacationPublishedEventDto.builder()
             .id(event.id())
@@ -60,5 +69,14 @@ class CompanyVacationEventHandlerExtension {
 
     private static Instant localDateToInstant(LocalDate localDate) {
         return localDate.atStartOfDay(DEFAULT_TIME_ZONE).toInstant();
+    }
+
+    private CompanyVacationDeletedEventDto toCompanyVacationDeletedEventDto(String tenantId, CompanyVacationDeletedEvent event) {
+        return CompanyVacationDeletedEventDto.builder()
+            .id(event.id())
+            .sourceId(event.sourceId())
+            .deletedAt(event.deletedAt())
+            .tenantId(tenantId)
+            .build();
     }
 }
