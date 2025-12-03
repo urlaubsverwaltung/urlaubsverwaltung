@@ -47,12 +47,6 @@ input[type="checkbox"] {
   }
 }
 
-/* Make multiple select elements height not fixed */
-select[multiple],
-select[size] {
-  height: auto;
-}
-
 /* Focus for file, radio, and checkbox */
 input[type="file"]:focus,
 input[type="radio"]:focus,
