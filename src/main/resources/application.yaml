@@ -4,7 +4,11 @@ uv:
     replyToDisplayName: Urlaubsverwaltung
   tenant:
     mode: single
-
+  extensions:
+    enabled: true
+    settings:
+      republish:
+        enabled: true
 spring:
   web:
     resources:

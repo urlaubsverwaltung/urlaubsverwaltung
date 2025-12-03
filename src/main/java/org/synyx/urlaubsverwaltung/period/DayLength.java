@@ -50,4 +50,6 @@ public enum DayLength {
     public boolean isFull() {
         return FULL.equals(this);
     }
+
+    public boolean isZero() { return ZERO.equals(this); }
 }
