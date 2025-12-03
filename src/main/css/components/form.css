@@ -413,10 +413,6 @@ textarea.error {
   @apply dark:tw-border-red-500 !important;
 }
 
-.info {
-  color: #3a87ad;
-}
-
 /**************************************************************************
 
   SINGLE COLUMN FORM
