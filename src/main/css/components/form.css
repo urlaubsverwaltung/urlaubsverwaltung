@@ -86,11 +86,6 @@ input[type="checkbox"]:focus {
   &::placeholder {
     color: #999;
   }
-
-  /*Reset height for `textarea`s*/
-  textarea {
-    height: auto;
-  }
 }
 
 .form-group {
