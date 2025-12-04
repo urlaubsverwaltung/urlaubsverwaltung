@@ -52,55 +52,55 @@
               ></div>
             </div>
 
-            <p class="uv-form__info help-block tw-text-sm">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-              <span th:text="#{person.form.annualVacation.description}"></span>
-            </p>
-
-            <div class="uv-form__input-row">
-              <label
-                for="holidaysAccountValidFrom"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.period.start}:|"
-              >
-                Von
-              </label>
-              <input
-                id="holidaysAccountValidFrom"
-                th:field="*{holidaysAccountValidFrom}"
-                th:data-iso-value="${account.holidaysAccountValidFromIsoValue}"
-                th:data-min="|${year}-01-01|"
-                th:data-max="|${year}-12-31|"
-                th:placeholder="#{pattern.date}"
-                class="form-control"
-                th:errorclass="error"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
-                <th:block th:errors="*{holidaysAccountValidFrom}"> holidaysAccountValidFrom Error </th:block>
+            <div class="uv-form__group">
+              <p class="uv-form__info help-block tw-text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <span th:text="#{person.form.annualVacation.description}"></span>
               </p>
-            </div>
-
-            <div class="uv-form__input-row">
-              <label
-                for="holidaysAccountValidTo"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.period.end}:|"
-              >
-                Bis
-              </label>
-              <input
-                id="holidaysAccountValidTo"
-                th:field="*{holidaysAccountValidTo}"
-                th:data-iso-value="${account.holidaysAccountValidToIsoValue}"
-                th:data-min="|${year}-01-01|"
-                th:data-max="|${year}-12-31|"
-                th:placeholder="#{pattern.date}"
-                class="form-control"
-                th:errorclass="error"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
-                <th:block th:errors="*{holidaysAccountValidTo}"> holidaysAccountValidTo Error </th:block>
-              </p>
+              <div class="uv-form__input-row">
+                <label
+                  for="holidaysAccountValidFrom"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.period.start}:|"
+                >
+                  Von
+                </label>
+                <input
+                  id="holidaysAccountValidFrom"
+                  th:field="*{holidaysAccountValidFrom}"
+                  th:data-iso-value="${account.holidaysAccountValidFromIsoValue}"
+                  th:data-min="|${year}-01-01|"
+                  th:data-max="|${year}-12-31|"
+                  th:placeholder="#{pattern.date}"
+                  class="form-control"
+                  th:errorclass="error"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
+                  <th:block th:errors="*{holidaysAccountValidFrom}"> holidaysAccountValidFrom Error </th:block>
+                </p>
+              </div>
+              <div class="uv-form__input-row">
+                <label
+                  for="holidaysAccountValidTo"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.period.end}:|"
+                >
+                  Bis
+                </label>
+                <input
+                  id="holidaysAccountValidTo"
+                  th:field="*{holidaysAccountValidTo}"
+                  th:data-iso-value="${account.holidaysAccountValidToIsoValue}"
+                  th:data-min="|${year}-01-01|"
+                  th:data-max="|${year}-12-31|"
+                  th:placeholder="#{pattern.date}"
+                  class="form-control"
+                  th:errorclass="error"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
+                  <th:block th:errors="*{holidaysAccountValidTo}"> holidaysAccountValidTo Error </th:block>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -113,48 +113,49 @@
               Urlaubsanspruch
             </h2>
 
-            <div class="uv-form__input-row">
-              <label
-                for="annualVacationDays"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.annualVacation}:|"
-              >
-                Jährlicher Urlaubsanspruch
-              </label>
-              <input
-                id="annualVacationDays"
-                type="number"
-                th:field="*{annualVacationDays}"
-                class="form-control"
-                th:errorclass="error"
-                step="0.5"
-                th:value="${account.annualVacationDays}"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('annualVacationDays')}">
-                <th:block th:errors="*{annualVacationDays}"> annualVacationDays Error </th:block>
-              </p>
-            </div>
-
-            <div class="uv-form__input-row">
-              <label
-                class="is-required"
-                for="actualVacationDays"
-                th:text="|#{person.form.annualVacation.actualVacation}:|"
-              >
-                Anteiliger Urlaubsanspruch
-              </label>
-              <input
-                id="actualVacationDays"
-                type="number"
-                th:field="*{actualVacationDays}"
-                class="form-control"
-                th:errorclass="error"
-                step="0.5"
-                th:value="${account.actualVacationDays}"
-              />
-              <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('actualVacationDays')}">
-                <th:block th:errors="*{actualVacationDays}"> actualVacationDays Error </th:block>
-              </p>
+            <div class="uv-form__group">
+              <div class="uv-form__input-row">
+                <label
+                  for="annualVacationDays"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.annualVacation}:|"
+                >
+                  Jährlicher Urlaubsanspruch
+                </label>
+                <input
+                  id="annualVacationDays"
+                  type="number"
+                  th:field="*{annualVacationDays}"
+                  class="form-control"
+                  th:errorclass="error"
+                  step="0.5"
+                  th:value="${account.annualVacationDays}"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('annualVacationDays')}">
+                  <th:block th:errors="*{annualVacationDays}"> annualVacationDays Error </th:block>
+                </p>
+              </div>
+              <div class="uv-form__input-row">
+                <label
+                  class="is-required"
+                  for="actualVacationDays"
+                  th:text="|#{person.form.annualVacation.actualVacation}:|"
+                >
+                  Anteiliger Urlaubsanspruch
+                </label>
+                <input
+                  id="actualVacationDays"
+                  type="number"
+                  th:field="*{actualVacationDays}"
+                  class="form-control"
+                  th:errorclass="error"
+                  step="0.5"
+                  th:value="${account.actualVacationDays}"
+                />
+                <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('actualVacationDays')}">
+                  <th:block th:errors="*{actualVacationDays}"> actualVacationDays Error </th:block>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -167,96 +168,97 @@
               Resturlaub
             </h2>
 
-            <div class="uv-form__input-row">
-              <label
-                for="remainingVacationDays"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.remainingVacation}:|"
-              >
-                Resturlaub
-              </label>
-              <input
-                id="remainingVacationDays"
-                type="number"
-                th:field="*{remainingVacationDays}"
-                class="form-control"
-                th:errorclass="error"
-                step="0.5"
-                th:value="${account.remainingVacationDays}"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDays')}">
-                <th:block th:errors="*{remainingVacationDays}"> remainingVacationDays Error </th:block>
-              </p>
-            </div>
-
-            <div class="uv-form__input-row">
-              <span
-                class="uv-form__label uv-form__label--required"
-                th:text="|#{person.form.annualVacation.remainingVacation.expire}:|"
-              >
-                Verfall von Resturlaub:
-              </span>
-              <p
-                class="account-form-expire-description tw-m-0"
-                th:with="
+            <div class="uv-form__group">
+              <div class="uv-form__input-row">
+                <label
+                  for="remainingVacationDays"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.remainingVacation}:|"
+                >
+                  Resturlaub
+                </label>
+                <input
+                  id="remainingVacationDays"
+                  type="number"
+                  th:field="*{remainingVacationDays}"
+                  class="form-control"
+                  th:errorclass="error"
+                  step="0.5"
+                  th:value="${account.remainingVacationDays}"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDays')}">
+                  <th:block th:errors="*{remainingVacationDays}"> remainingVacationDays Error </th:block>
+                </p>
+              </div>
+              <div class="uv-form__input-row">
+                <span
+                  class="uv-form__label uv-form__label--required"
+                  th:text="|#{person.form.annualVacation.remainingVacation.expire}:|"
+                >
+                  Verfall von Resturlaub:
+                </span>
+                <p
+                  class="account-form-expire-description tw-m-0"
+                  th:with="
                   settingsLink=@{/web/settings},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
                   messageKey=${account.doRemainingVacationDaysExpireGlobally ? 'person.form.annualVacation.remainingVacation.expire.global-info.true' : 'person.form.annualVacation.remainingVacation.expire.global-info.false'}
                 "
-                th:utext="${#messages.msg(messageKey, settingsMessage)}"
-              >
-                Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
-              </p>
-              <div class="tw-mt-4 tw-flex tw-flex-row tw-items-start tw-gap-8">
-                <span class="checkbox-switch tw-flex tw-items-center tw-gap-2">
-                  <input
-                    type="checkbox"
-                    id="vacation-expiration-checkbox"
-                    th:field="*{overrideVacationDaysExpire}"
-                    class="tw-m-0"
-                  />
-                  <label
-                    for="vacation-expiration-checkbox"
-                    class="tw-m-0 tw-text-base tw-font-normal"
-                    th:text="#{person.form.annualVacation.remainingVacation.expire.override.checkbox}"
-                  >
-                    Individuell
-                  </label>
-                </span>
-                <div class="tw-flex tw-flex-col tw-gap-2">
-                  <label class="tw-font-normal tw-text-base tw-m-0">
+                  th:utext="${#messages.msg(messageKey, settingsMessage)}"
+                >
+                  Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
+                </p>
+                <div class="tw-mt-4 tw-flex tw-flex-row tw-items-start tw-gap-8">
+                  <span class="checkbox-switch tw-flex tw-items-center tw-gap-2">
                     <input
-                      type="radio"
-                      id="doRemainingVacationDaysExpire.true"
-                      name="doRemainingVacationDaysExpireLocally"
-                      value="true"
-                      data-value="true"
-                      th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
+                      type="checkbox"
+                      id="vacation-expiration-checkbox"
+                      th:field="*{overrideVacationDaysExpire}"
+                      class="tw-m-0"
                     />
-                    <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}">
-                      Resturlaub verfällt
-                    </th:block>
-                  </label>
-                  <label class="tw-font-normal tw-text-base tw-m-0">
-                    <input
-                      type="radio"
-                      id="doRemainingVacationDaysExpire.false"
-                      name="doRemainingVacationDaysExpireLocally"
-                      value="false"
-                      data-value="false"
-                      th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
-                    />
-                    <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}">
-                      Resturlaub verfällt nicht
-                    </th:block>
-                  </label>
+                    <label
+                      for="vacation-expiration-checkbox"
+                      class="tw-m-0 tw-text-base tw-font-normal"
+                      th:text="#{person.form.annualVacation.remainingVacation.expire.override.checkbox}"
+                    >
+                      Individuell
+                    </label>
+                  </span>
+                  <div class="tw-flex tw-flex-col tw-gap-2">
+                    <label class="tw-font-normal tw-text-base tw-m-0">
+                      <input
+                        type="radio"
+                        id="doRemainingVacationDaysExpire.true"
+                        name="doRemainingVacationDaysExpireLocally"
+                        value="true"
+                        data-value="true"
+                        th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
+                      />
+                      <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}">
+                        Resturlaub verfällt
+                      </th:block>
+                    </label>
+                    <label class="tw-font-normal tw-text-base tw-m-0">
+                      <input
+                        type="radio"
+                        id="doRemainingVacationDaysExpire.false"
+                        name="doRemainingVacationDaysExpireLocally"
+                        value="false"
+                        data-value="false"
+                        th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
+                      />
+                      <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}">
+                        Resturlaub verfällt nicht
+                      </th:block>
+                    </label>
+                  </div>
                 </div>
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}">
+                  <th:block th:errors="*{doRemainingVacationDaysExpireLocally}">
+                    doRemainingVacationDaysExpire Error
+                  </th:block>
+                </p>
               </div>
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}">
-                <th:block th:errors="*{doRemainingVacationDaysExpireLocally}">
-                  doRemainingVacationDaysExpire Error
-                </th:block>
-              </p>
             </div>
           </div>
 
@@ -275,82 +277,82 @@
               Verfall von Resturlaub
             </h2>
 
-            <div class="uv-form__input-row">
-              <label
-                for="expiryDate"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
-              >
-                Verfallsdatum des Resturlaubs:
-              </label>
-              <p
-                class="account-form-expire-description tw-m-0"
-                th:with="
+            <div class="uv-form__group">
+              <div class="uv-form__input-row">
+                <label
+                  for="expiryDate"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
+                >
+                  Verfallsdatum des Resturlaubs:
+                </label>
+                <p
+                  class="account-form-expire-description tw-m-0"
+                  th:with="
                   settingsLink=@{/web/settings},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expiryDate.global-info.settings') + '</a>'},
                   date=${account.expiryDateGlobally == null ? null : '<span class=&quot;tw-font-bold&quot;>' + #temporals.format(account.expiryDateGlobally, #messages.msg('pattern.date')) + '</span>'},
                   messageKey=${account.expiryDateGlobally == null ? 'person.form.annualVacation.remainingVacation.expiryDate.global-info.none' : 'person.form.annualVacation.remainingVacation.expiryDate.global-info'}
                 "
-                th:utext="${#messages.msg(messageKey, settingsMessage, date)}"
-              >
-                In den <a href="#">Einstellungen</a> ist der 1. April 2024 konfiguriert. Du kannst das Datum
-                überschreiben oder leer lassen und die globale Einstellung nutzen.
-              </p>
-              <input
-                id="expiryDate"
-                th:field="*{expiryDateLocally}"
-                th:data-iso-value="${account.expiryDateToIsoValue}"
-                th:data-min="|${year}-01-01|"
-                th:data-max="|${year}-12-31|"
-                th:placeholder="#{pattern.date}"
-                class="form-control tw-mt-2"
-                th:errorclass="error"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('expiryDateLocally')}">
-                <th:block th:errors="*{expiryDateLocally}"> expiryDate Error </th:block>
-              </p>
-            </div>
-
-            <div class="uv-form__input-row">
-              <label
-                for="remainingVacationDaysNotExpiring"
-                class="is-required"
-                th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
-              >
-                Anteil des Resturlaubs, welcher zum Verfallsdatum nicht verfällt
-              </label>
-              <input
-                id="remainingVacationDaysNotExpiring"
-                type="number"
-                th:field="*{remainingVacationDaysNotExpiring}"
-                class="form-control"
-                th:errorclass="error"
-                step="0.5"
-                th:value="${account.remainingVacationDaysNotExpiring}"
-              />
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDaysNotExpiring')}">
-                <th:block th:errors="*{remainingVacationDaysNotExpiring}">
-                  remainingVacationDaysNotExpiring Error
-                </th:block>
-              </p>
-            </div>
-
-            <div class="uv-form__input-row">
-              <label for="comment" th:text="|#{person.form.annualVacation.comment}:|">
-                Kommentar zur Änderung des Urlaubsanspruchs
-              </label>
-              <textarea
-                id="comment"
-                rows="3"
-                th:field="*{comment}"
-                class="form-control"
-                th:errorclass="error"
-                th:placeholder="#{person.form.annualVacation.comment.placeholder}"
-              >
-              </textarea>
-              <p class="error tw-text-sm" th:if="${#fields.hasErrors('comment')}">
-                <th:block th:errors="*{comment}"> comment Error </th:block>
-              </p>
+                  th:utext="${#messages.msg(messageKey, settingsMessage, date)}"
+                >
+                  In den <a href="#">Einstellungen</a> ist der 1. April 2024 konfiguriert. Du kannst das Datum
+                  überschreiben oder leer lassen und die globale Einstellung nutzen.
+                </p>
+                <input
+                  id="expiryDate"
+                  th:field="*{expiryDateLocally}"
+                  th:data-iso-value="${account.expiryDateToIsoValue}"
+                  th:data-min="|${year}-01-01|"
+                  th:data-max="|${year}-12-31|"
+                  th:placeholder="#{pattern.date}"
+                  class="form-control tw-mt-2"
+                  th:errorclass="error"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('expiryDateLocally')}">
+                  <th:block th:errors="*{expiryDateLocally}"> expiryDate Error </th:block>
+                </p>
+              </div>
+              <div class="uv-form__input-row">
+                <label
+                  for="remainingVacationDaysNotExpiring"
+                  class="is-required"
+                  th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
+                >
+                  Anteil des Resturlaubs, welcher zum Verfallsdatum nicht verfällt
+                </label>
+                <input
+                  id="remainingVacationDaysNotExpiring"
+                  type="number"
+                  th:field="*{remainingVacationDaysNotExpiring}"
+                  class="form-control"
+                  th:errorclass="error"
+                  step="0.5"
+                  th:value="${account.remainingVacationDaysNotExpiring}"
+                />
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDaysNotExpiring')}">
+                  <th:block th:errors="*{remainingVacationDaysNotExpiring}">
+                    remainingVacationDaysNotExpiring Error
+                  </th:block>
+                </p>
+              </div>
+              <div class="uv-form__input-row">
+                <label for="comment" th:text="|#{person.form.annualVacation.comment}:|">
+                  Kommentar zur Änderung des Urlaubsanspruchs
+                </label>
+                <textarea
+                  id="comment"
+                  rows="3"
+                  th:field="*{comment}"
+                  class="form-control"
+                  th:errorclass="error"
+                  th:placeholder="#{person.form.annualVacation.comment.placeholder}"
+                >
+                </textarea>
+                <p class="error tw-text-sm" th:if="${#fields.hasErrors('comment')}">
+                  <th:block th:errors="*{comment}"> comment Error </th:block>
+                </p>
+              </div>
             </div>
           </div>
 

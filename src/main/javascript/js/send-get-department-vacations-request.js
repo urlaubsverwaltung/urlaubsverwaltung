@@ -32,7 +32,7 @@ export default async function sendGetDepartmentVacationsRequest(
   const vacations = data.vacations;
 
   const element = document.querySelector(elementSelector);
-  element.innerHTML = `${vacations.length} ${globalThis.uv.i18n["application.applier.applicationsOfColleagues"]}`;
+  element.innerHTML = `<p>${vacations.length} ${globalThis.uv.i18n["application.applier.applicationsOfColleagues"]}</p>`;
 
   if (vacations.length > 0) {
     let lastPersonName = -1;
