@@ -32,193 +32,155 @@
           th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
           th:action="@{__${actionUrl}__}"
           th:object="${overtime}"
-          class="form-horizontal"
+          class="uv-form uv-form-grid"
         >
           <input type="hidden" th:field="*{id}" />
-          <div class="form-section">
-            <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
 
-            <div
-              th:replace="~{fragments/section-heading::section-heading(~{::overtime-form-body}, ~{::overtime-form-actions})}"
-            >
-              <th:block th:ref="overtime-form-body">
-                <h2
-                  th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
-                  th:text="#{__${overtimeHeadingSectionMessagekey}__}"
+          <p
+            class="uv-form__global-error alert alert-danger"
+            th:if="${#fields.hasGlobalErrors()}"
+            th:errors="*{global}"
+          ></p>
+
+          <div role="group" aria-describedby="group-overtime-description">
+            <div class="uv-form-legend">
+              <h2
+                id="group-overtime-description"
+                th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
+                th:text="#{__${overtimeHeadingSectionMessagekey}__}"
+              >
+                Überstunden eintragen
+              </h2>
+              <div class="tw-ml-auto tw-flex tw-flex-col sm:tw-flex-row">
+                <a
+                  th:href="@{/web/overtime?person=__${person.id}__}"
+                  class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  aria-hidden="true"
                 >
-                  Überstunden eintragen
-                </h2>
-              </th:block>
-              <th:block th:ref="overtime-form-actions">
-                <div class="tw-flex tw-flex-col sm:tw-flex-row">
-                  <a
-                    th:href="@{/web/overtime?person=__${person.id}__}"
-                    class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-                    aria-hidden="true"
-                  >
-                    <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
-                    <span th:text="#{action.overtime.list}"></span>
-                  </a>
-                </div>
-              </th:block>
+                  <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <span th:text="#{action.overtime.list}"></span>
+                </a>
+              </div>
             </div>
 
-            <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-4 tw-mb-8">
-              <div class="tw-w-full lg:tw-w-1/3">
-                <aside class="help-block tw-text-sm">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  <th:block th:text="#{overtime.data.description.general}"></th:block>
-                  <th:block
-                    th:if="${overtimeReductionPossible}"
-                    th:text="| #{overtime.data.description.overtimeReductionPossible}|"
-                  ></th:block>
-                </aside>
-              </div>
+            <div class="uv-form__group">
+              <p class="uv-form__info help-block tw-text-sm">
+                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <th:block th:text="#{overtime.data.description.general}"></th:block>
+                <th:block
+                  th:if="${overtimeReductionPossible}"
+                  th:text="| #{overtime.data.description.overtimeReductionPossible}|"
+                ></th:block>
+              </p>
 
-              <div class="tw-w-full lg:tw-w-2/3">
-                <div class="tw-flex tw-flex-col tw-items-center lg:tw-flex-row tw-gap-x-4 tw-mb-4">
-                  <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
-                    <th:block th:if="${overtime.id == null}">
-                      <label
-                        th:text="|#{overtime.data.person}:|"
-                        class="is-required tw-w-full lg:tw-w-1/4"
-                        for="person-select"
+              <div class="uv-form__input-row">
+                <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
+                  <th:block th:if="${overtime.id == null}">
+                    <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
+                    <div>
+                      <select
+                        th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
+                        id="person-select"
                       >
-                      </label>
-                      <div class="tw-w-full lg:tw-w-3/4">
-                        <select
-                          th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
-                          id="person-select"
-                        >
-                          <th:block th:fragment="person-select-options">
-                            <option
-                              th:each="p : ${persons}"
-                              th:text="${p.niceName}"
-                              th:value="${p.id}"
-                              th:selected="${person.id == p.id}"
-                            ></option>
-                          </th:block>
-                        </select>
-                      </div>
-                    </th:block>
-
-                    <th:block th:if="${overtime.id != null}">
-                      <label th:text="|#{overtime.data.person}:|" class="tw-w-full lg:tw-w-1/4"> Mitarbeiter </label>
-                      <div class="tw-w-full lg:tw-w-3/4">
-                        <p th:text="${overtime.person.niceName}" class="form-control-static"></p>
-                        <input type="hidden" name="person" th:value="${person.id}" />
-                      </div>
-                    </th:block>
+                        <th:block th:fragment="person-select-options">
+                          <option
+                            th:each="p : ${persons}"
+                            th:text="${p.niceName}"
+                            th:value="${p.id}"
+                            th:selected="${person.id == p.id}"
+                          ></option>
+                        </th:block>
+                      </select>
+                    </div>
                   </th:block>
-                  <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
+
+                  <th:block th:if="${overtime.id != null}">
+                    <p class="uv-form__label" th:text="|#{overtime.data.person}:|">Mitarbeiter</p>
+                    <p th:text="${overtime.person.niceName}">Person Nice Name</p>
                     <input type="hidden" name="person" th:value="${person.id}" />
                   </th:block>
-                </div>
+                </th:block>
+                <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
+                  <input type="hidden" name="person" th:value="${person.id}" />
+                </th:block>
+              </div>
 
-                <!-- Start Date -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-4">
-                  <label
-                    th:text="|#{overtime.data.startDate}:|"
-                    class="is-required tw-w-full lg:tw-w-1/4"
-                    for="startDate"
-                    >Von</label
-                  >
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <input
-                      id="startDate"
-                      type="text"
-                      th:field="*{startDate}"
-                      th:data-iso-value="${overtime.startDateIsoValue}"
-                      class="form-control"
-                      th:errorclass="error"
-                      autocomplete="off"
-                      th:placeholder="#{pattern.date}"
-                      data-test-id="overtime-start-date"
-                    />
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('startDate')}"
-                    >
-                      <th:block th:errors="*{startDate}"> startDate Error</th:block>
-                    </p>
-                  </div>
-                </div>
+              <div class="uv-form__input-row">
+                <label for="startDate" class="is-required" th:text="|#{overtime.data.startDate}:|"> Von </label>
+                <input
+                  id="startDate"
+                  type="text"
+                  th:field="*{startDate}"
+                  th:data-iso-value="${overtime.startDateIsoValue}"
+                  class="form-control"
+                  th:errorclass="error"
+                  autocomplete="off"
+                  th:placeholder="#{pattern.date}"
+                  data-test-id="overtime-start-date"
+                />
+                <p
+                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  th:if="${#fields.hasErrors('startDate')}"
+                >
+                  <th:block th:errors="*{startDate}"> startDate Error</th:block>
+                </p>
+              </div>
 
-                <!-- End Date -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-4">
-                  <label th:text="|#{overtime.data.endDate}:|" class="is-required tw-w-full lg:tw-w-1/4" for="endDate"
-                    >Bis</label
-                  >
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <input
-                      id="endDate"
-                      type="text"
-                      th:field="*{endDate}"
-                      th:data-iso-value="${overtime.endDateIsoValue}"
-                      class="form-control"
-                      th:errorclass="error"
-                      autocomplete="off"
-                      th:placeholder="#{pattern.date}"
-                      data-test-id="overtime-end-date"
-                    />
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('endDate')}"
-                    >
-                      <th:block th:errors="*{endDate}"> endDate Error</th:block>
-                    </p>
-                  </div>
-                </div>
+              <div class="uv-form__input-row">
+                <label for="endDate" class="is-required" th:text="|#{overtime.data.endDate}:|"> Bis </label>
+                <input
+                  id="endDate"
+                  type="text"
+                  th:field="*{endDate}"
+                  th:data-iso-value="${overtime.endDateIsoValue}"
+                  class="form-control"
+                  th:errorclass="error"
+                  autocomplete="off"
+                  th:placeholder="#{pattern.date}"
+                  data-test-id="overtime-end-date"
+                />
+                <p
+                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  th:if="${#fields.hasErrors('endDate')}"
+                >
+                  <th:block th:errors="*{endDate}"> endDate Error</th:block>
+                </p>
+              </div>
 
-                <!-- Number of hours -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-4">
-                  <label
-                    th:text="|#{overtime.data.numberOfHours}:|"
-                    class="is-required tw-w-full lg:tw-w-1/4"
-                    for="hours"
-                    >Anzahl der Überstunden</label
-                  >
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <th:block
-                      th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
-                    ></th:block>
-                    <div th:if="${overtimeReductionPossible}" class="tw-mt-2">
-                      <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
-                      <label th:text="#{overtime.data.reduceOvertime}" for="overtime-reduce" class="tw-font-normal"
-                        >Überstunden abbauen statt hinzufügen</label
-                      >
-                    </div>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('reduce')}"
-                    >
-                      <th:block th:errors="*{reduce}">reduce Error</th:block>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Comment -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-x-4 tw-mb-4">
-                  <label th:text="|#{overtime.data.comment}:|" class="tw-w-full lg:tw-w-1/4" for="comment">
-                    Mit Kommentar zum Verlauf hinzufügen
+              <div class="uv-form__input-row">
+                <label for="hours" class="is-required" th:text="|#{overtime.data.numberOfHours}:|">
+                  Anzahl der Überstunden
+                </label>
+                <th:block
+                  th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
+                ></th:block>
+                <div th:if="${overtimeReductionPossible}">
+                  <label for="overtime-reduce">
+                    <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
+                    <th:block th:text="#{overtime.data.reduceOvertime}">Überstunden abbauen statt hinzufügen</th:block>
                   </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('comment')}"
-                    >
-                      <th:block th:errors="*{comment}"> comment Error</th:block>
-                    </p>
-                  </div>
                 </div>
+                <p class="tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('reduce')}">
+                  <th:block th:errors="*{reduce}">reduce Error</th:block>
+                </p>
+              </div>
+
+              <div class="uv-form__input-row">
+                <label for="comment" th:text="|#{overtime.data.comment}:|">
+                  Mit Kommentar zum Verlauf hinzufügen
+                </label>
+                <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
+                <p
+                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  th:if="${#fields.hasErrors('comment')}"
+                >
+                  <th:block th:errors="*{comment}"> comment Error</th:block>
+                </p>
               </div>
             </div>
           </div>
 
-          <hr class="tw-w-full tw-m-0 tw-mt-6" />
-
-          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+          <div class="uv-form__actions">
             <button
               type="submit"
               class="button-main-green tw-w-56"
