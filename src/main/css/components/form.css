@@ -1,14 +1,232 @@
+/* ------------------------- */
+/* start bootstrap migration */
+
+fieldset {
+  /* Chrome and Firefox set a `min-width: min-content;` on fieldsets, */
+  /* so we reset that to ensure it behaves more like a standard block element. */
+  /* See https://github.com/twbs/bootstrap/issues/12359. */
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: calc(14px * 1.5);
+  line-height: inherit;
+  color: #333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+label {
+  display: inline-block;
+  max-width: 100%; /* Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141) */
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+/* Position radios and checkboxes better */
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 4px 0 0;
+  margin-top: 1px \9; /* IE8-9 */
+  line-height: normal;
+
+  /* Apply same disabled cursor tweak as for inputs*/
+  /* Some special care is needed because <label>s don't inherit their parent's `cursor`.*/
+  /* Note: Neither radios nor checkboxes can be readonly.*/
+  &[disabled],
+  &.disabled,
+  fieldset[disabled] & {
+    cursor: not-allowed;
+  }
+}
+
+/* Focus for file, radio, and checkbox */
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: calc(
+    20px + (6px * 2) + 2
+  ); /* Make inputs at least the height of their button counterpart (base line-height + padding + border) */
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  background-color: #fff;
+  background-image: none; /* Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214 */
+  border: 1px solid #ccc;
+  border-radius: 4px; /* Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS. */
+
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+
+  &:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow:
+      inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-control-static {
+  min-height: calc(20px + 15px);
+  /*Size it appropriately next to real form controls*/
+  padding-top: 7px;
+  padding-bottom: 7px;
+  /*Remove default margin from `p`*/
+  margin-bottom: 0;
+}
+
+.has-error {
+  /*Color the label and help text*/
+  .help-block,
+  /*Set the border and box shadow on specific inputs to match*/
+  .form-control {
+    border-color: #a94442;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); /* Redeclare so transitions work */
+    &:focus {
+      border-color: #843534;
+      box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.075),
+        0 0 6px #ce8483;
+    }
+  }
+  /*Set validation states also for addons*/
+  .input-group-addon {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
+  }
+  /*Optional feedback icon*/
+  .form-control-feedback {
+    color: #a94442;
+  }
+}
+
+.help-block {
+  display: block;
+  /*margin-top: 5px;*/
+  /*margin-bottom: 10px;*/
+  color: #737373;
+}
+
+.form-horizontal {
+  /* Make form groups behave like rows*/
+  .form-group {
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+}
+
+/* boostrap input-group */
+
+.input-group {
+  position: relative; /* For dropdowns*/
+  display: table;
+  border-collapse: separate; /*prevent input groups from inheriting border styles from table cells when placed within a table*/
+
+  .form-control {
+    /*Ensure that the input is always above the *appended* addon button for*/
+    /*proper border colors.*/
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    margin-bottom: 0;
+
+    &:focus {
+      z-index: 3;
+    }
+  }
+}
+
+.input-group-addon,
+.input-group .form-control {
+  display: table-cell;
+  &:not(:first-child):not(:last-child) {
+    border-radius: 0;
+  }
+}
+/*Addon and addon wrapper for buttons*/
+.input-group-addon {
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle; /*Match the inputs*/
+}
+
+.input-group-addon {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  /*Nuke default margins from checkboxes and radios to vertically center within.*/
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-top: 0;
+  }
+}
+
+/*Reset rounded corners*/
+.input-group .form-control:first-child,
+.input-group-addon:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.input-group-addon:first-child {
+  border-right: 0;
+}
+.input-group .form-control:last-child,
+.input-group-addon:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.input-group-addon:last-child {
+  border-left: 0;
+}
+
+/* end bootstrap migration */
+/* ----------------------- */
+
 legend {
   @apply dark:tw-text-zinc-200;
   @apply dark:tw-font-normal;
 }
 
 .tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply tw-outline-0;
   @apply tw-block;
   @apply tw-text-sm;
-  @apply tw-w-full;
   @apply tw-py-1;
   @apply tw-px-2.5;
   @apply tw-border;
@@ -17,7 +235,7 @@ legend {
 
 .form-control,
 .tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
   @apply tw-ring-0;
   @apply tw-transition;
@@ -32,7 +250,7 @@ legend {
   }
 }
 
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply tw-px-3;
   @apply tw-py-2;
   @apply tw-rounded-md;
@@ -59,7 +277,7 @@ fieldset[disabled] .tw-form-control {
 
 .form-control:focus,
 .tw-form-control:focus,
-.details-dropdown-input .details-dropdown_summary:focus,
+.popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   @apply tw-ring-2 !important;
@@ -124,24 +342,6 @@ label.is-required:after,
 
 /**************************************************************************
 
-  HORIZONTAL FORM
-
-**************************************************************************/
-
-.form-horizontal .control-label {
-  text-align: left;
-}
-
-.form-horizontal .halves {
-  width: 45%;
-}
-
-.form-horizontal .thirds {
-  width: 30%;
-}
-
-/**************************************************************************
-
   FORM VALIDATION ERRORS
 
 **************************************************************************/
@@ -154,7 +354,7 @@ label.is-required:after,
 input,
 select,
 textarea,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply dark:tw-border-zinc-600 !important;
   @apply dark:tw-bg-zinc-700 !important;
   @apply dark:tw-text-zinc-50 !important;
@@ -164,10 +364,6 @@ input.error,
 textarea.error {
   @apply tw-border-red-700 !important;
   @apply dark:tw-border-red-500 !important;
-}
-
-.info {
-  color: #3a87ad;
 }
 
 /**************************************************************************
@@ -243,20 +439,306 @@ textarea.error {
   margin-top: 2px;
 }
 
-/**************************************************************************
-
-  SEARCH FIELD
-
-**************************************************************************/
-
-.search-field {
-  margin-bottom: 21px;
-}
-
 .select-caret {
   @apply tw-text-zinc-700;
+  @apply dark:tw-text-zinc-50;
 }
 
-.select-caret {
-  @apply dark:tw-text-zinc-50;
+.uv-form {
+  p {
+    margin: 0; /* override bootstrap margin bottom */
+  }
+
+  .uv-form-legend {
+    :where(h1, h2, h3, h4, h5, h6),
+    &:is(h1, h2, h3, h4, h5, h6) {
+      margin: 0 !important; /* bootstrap or other preflight? */
+    }
+  }
+
+  label:has(input[type="radio"], input[type="checkbox"]) {
+    font-weight: normal !important;
+  }
+
+  .uv-form__label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin: 0;
+
+    &.uv-form__label--required::after {
+      content: "*";
+      display: inline-block;
+    }
+  }
+}
+
+.uv-form-grid {
+  --uv-form-col-gap: 1rem;
+  --uv-form-row-gap: 1rem;
+  --uv-form-label-col-width: 11.25rem; /* 180px */
+  --uv-form-input-col-width: 1fr;
+  --uv-form-info-col-width: 33%;
+
+  display: flex;
+  flex-direction: column;
+
+  label,
+  input {
+    /* unset margin-bottom of bootstrap, grid aligns items */
+    margin: 0 !important;
+  }
+
+  /* align text with input */
+  label:has(input[type="radio"], input[type="checkbox"]) {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+
+  /* no legend element since we cannot use fieldset */
+  .uv-form-legend {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #ddd;
+    font-size: 1.5rem;
+  }
+
+  /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
+  /* note that this div cannot be disabled like a fieldset... */
+  div[role="group"] + div[role="group"],
+  .uv-form__global-error ~ div[role="group"] {
+    margin-top: 2rem;
+  }
+
+  .uv-form__group {
+    display: flex;
+    flex-direction: column;
+    /*gap: 1rem;*/
+
+    .uv-form__info {
+      font-size: 0.875rem;
+      line-height: 1.42;
+      margin-top: var(--uv-form-row-gap);
+
+      p {
+        margin: 0;
+        + p {
+          margin-top: 1rem;
+        }
+      }
+    }
+
+    .uv-form__input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+      margin-top: var(--uv-form-row-gap);
+
+      /* if following item is not an interactive element -> it should be a row, just like any other input */
+      > :is(label, .uv-form__label) + :is(div, span) {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .uv-form__actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
+  @media screen and (width >= 1024px) {
+    display: grid;
+    /* column-gap defined as column, as we don't want a gap for first and last col */
+    grid-template-columns:
+      [start]var(--uv-form-col-gap)
+      [label]var(--uv-form-label-col-width)
+      var(--uv-form-col-gap)
+      [input]var(--uv-form-input-col-width)
+      var(--uv-form-col-gap)
+      [info]var(--uv-form-info-col-width)
+      [end]var(--uv-form-col-gap);
+    grid-row-gap: 1rem;
+
+    .uv-form__global-error {
+      grid-column: start / end;
+    }
+
+    div[role="group"] + div[role="group"],
+    .uv-form__global-error ~ div[role="group"] {
+      /* override small screen margin */
+      margin-top: 0;
+    }
+
+    .uv-form-legend {
+      grid-row: 1;
+      grid-column: label / end;
+    }
+
+    div[role="group"] {
+      margin-top: var(--uv-form-row-gap);
+      grid-column: label / end;
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+
+    /* uv-form__group allows adding more side notes in one "fieldset" (role=group) */
+    /* note that the "info" elements are spanning multiple grid rows */
+    /* you have to ensure yourself that nothing overlaps... */
+    .uv-form__group {
+      grid-column: 1 / -1;
+
+      display: grid;
+      grid-template-columns: subgrid;
+      /* override flex gap from small screen. gap is defined with margin-top below */
+      gap: 0;
+
+      .uv-form__group-error {
+        margin-top: var(--uv-form-row-gap);
+        grid-row: 1;
+        grid-column: label / end;
+      }
+
+      .uv-form__info {
+        margin-top: var(--uv-form-row-gap);
+        /* span ALL rows. using $ since -1 does not work */
+        /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
+        /* note that a HIGH value breaks devtools grid highlighting */
+        --uv-form-grid-row-span: 25;
+        grid-row: 1 / var(--uv-form-grid-row-span);
+        grid-column: info;
+
+        p:first-child {
+          /* align paragraph in ~baseline  */
+          margin-top: 0.5rem;
+        }
+      }
+
+      .uv-form__input-row {
+        /* first row is the group-title/legend */
+        /* second row starts with input-rows */
+        grid-row: 1;
+        /* cannot use :first-of-type or :first-child since there could be other div's or elements... */
+        & + .uv-form__input-row {
+          /* next input-rows are auto flowing */
+          grid-row: auto;
+        }
+
+        grid-column: label / info;
+        /* auto flow each input-row to next row */
+        grid-auto-flow: row;
+
+        display: grid;
+        grid-template-columns: subgrid;
+        /* align label with input */
+        align-items: center;
+
+        & + :is(textarea, :has(textarea)) {
+          /* textarea can be expanded in height, therefore baseline to have a fixed label position */
+          /* overrides center from above */
+          align-items: baseline;
+        }
+
+        > label,
+        > .uv-form__label {
+          grid-column: label;
+
+          /* next elements should fill the input column */
+          /*~ :is(div, span, p) {*/
+          ~ * {
+            grid-column: input;
+          }
+        }
+      }
+
+      &:has(.uv-form__group-error) {
+        /* info and inputs are one row below the group-error */
+        .uv-form__info,
+        .uv-form__input-row {
+          grid-row: 2;
+        }
+      }
+    }
+
+    /* allow placing elements within a row in the info column. */
+    /* this is only possible when the form does NOT have a info due to row span complications. */
+    /*&:not(:has(.uv-form__info)) {*/
+    /*  div[role="group"] {*/
+    /*    .uv-form__input-row {*/
+    /*      !* use full width ('end' instead of 'info') when there is no info block *!*/
+    /*      !* note: this must override the default uv-form__input-row grid-column *!*/
+    /*      grid-column: label / end;*/
+
+    /*      !* now you can use this class to place an element in the info column in the same input-row *!*/
+    /*      !* used in application-form for instance to show overlapping applications of colleagues *!*/
+    /*      .uv-form__col-info {*/
+    /*        grid-column: info;*/
+    /*        !* place the info in the same row like label and input *!*/
+    /*        grid-row: 1;*/
+    /*        !* row span no possible in this case! *!*/
+    /*        !* maybe use an info icon with a popover instead? *!*/
+    /*        !* current behaviour: row height increases to match the content *!*/
+    /*      }*/
+    /*    }*/
+    /*  }*/
+    /*}*/
+
+    .uv-form__actions {
+      grid-column: label / end;
+    }
+  }
+
+  @media screen and (width >= 1280px) {
+    /* no left and right padding, form is centered by the container currently */
+    grid-template-columns:
+      [start]0
+      [label]var(--uv-form-label-col-width)
+      var(--uv-form-col-gap)
+      [input]var(--uv-form-input-col-width)
+      var(--uv-form-col-gap)
+      [info]var(--uv-form-info-col-width)
+      [end]0;
+  }
+}
+
+/* ======================== */
+/* debug helpers */
+
+div[role="group"]:not([aria-describedby]) {
+  outline: 2px solid magenta;
+  &::after {
+    content: "Form Group ohne aria-describedby";
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: magenta;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    z-index: 999999;
+  }
+}
+
+.uv-form__info:not(p):not(:has(p)) {
+  outline: 2px solid magenta;
+  &::after {
+    content: "Paragraph fehlt bei uv-form__info";
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: magenta;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    z-index: 999999;
+  }
 }

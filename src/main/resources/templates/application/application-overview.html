@@ -155,7 +155,7 @@
                     ${absence.status.name == 'REJECTED' || absence.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
                     |"
                   th:styleappend="|${'--absence-bar-color:var(--absence-color-' + absence.vacationType.color + ');'}|"
-                  th:title="${#messages.msg(absence.status)}"
+                  th:data-title="${#messages.msg(absence.status)}"
                 >
                   &nbsp;
                 </div>
@@ -190,7 +190,7 @@
                   th:if="${userRequestForLeave.editAllowed}"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
-                  <span class="sr-only xs:tw-not-sr-only">
+                  <span class="tw-sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.edit}"></th:block>
                   </span>
                 </a>
@@ -200,7 +200,7 @@
                   th:if="${userRequestForLeave.approveAllowed}"
                 >
                   <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
-                  <span class="sr-only xs:tw-not-sr-only">
+                  <span class="tw-sr-only xs:tw-not-sr-only">
                     <th:block
                       th:text="${userRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}"
                     />
@@ -212,7 +212,7 @@
                   th:if="${userRequestForLeave.rejectAllowed}"
                 >
                   <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
-                  <span class="sr-only xs:tw-not-sr-only">
+                  <span class="tw-sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.reject}"></th:block>
                   </span>
                 </a>
@@ -224,7 +224,7 @@
                   <svg
                     th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"
                   ></svg>
-                  <span class="sr-only xs:tw-not-sr-only">
+                  <span class="tw-sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.delete}"></th:block>
                   </span>
                 </a>
@@ -513,7 +513,7 @@
                         <svg
                           th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"
                         ></svg>
-                        <span class="sr-only xs:tw-not-sr-only">
+                        <span class="tw-sr-only xs:tw-not-sr-only">
                           <th:block th:text="#{action.delete}"></th:block>
                         </span>
                       </a>
@@ -591,7 +591,7 @@
                       ${otherSickNote.status == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
                       |"
                     th:styleappend="|${'--absence-bar-color:var(--absence-color-PINK);'}|"
-                    th:title="#{sicknote.progress.SUBMITTED.withoutDate}"
+                    th:data-title="#{sicknote.progress.SUBMITTED.withoutDate}"
                   >
                     &nbsp;
                   </div>

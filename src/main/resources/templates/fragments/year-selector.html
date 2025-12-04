@@ -5,32 +5,39 @@
     <title>year-selector</title>
   </head>
   <body>
-    <div
-      th:fragment="year-selector(id, currentYear, hrefPrefix, selectedYear)"
-      th:id="${id}"
-      class="tw-leading-6 dropdown tw-inline-block"
-    >
+    <div th:fragment="year-selector(id, currentYear, hrefPrefix, selectedYear)" th:id="${id}" class="tw-inline-block">
       <button
-        id="year-selector-dropdown-button"
-        data-toggle="dropdown"
-        aria-expanded="false"
-        class="tw-text-current tw-bg-transparent tw-p-0"
+        type="button"
+        id="year-selector-popover-button"
+        class="popover-button tw-inline-flex tw-items-center tw-gap-0.5"
+        popovertarget="year-selection-popover"
       >
         <span th:text="#{overview.year.selection.button(${selectedYear})}" class="tw-sr-only"></span>
         <span th:text="${selectedYear}" aria-hidden="true"></span>
-        <svg th:replace="~{icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
+        <svg th:replace="~{icon/chevron-down::svg(className='tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
       </button>
-      <ul class="dropdown-menu">
-        <li th:each="i, status: ${#numbers.sequence(0, 10)}" th:with="selectableYear=${currentYear + 2 - status.count}">
-          <a
-            th:href="|${hrefPrefix}${selectableYear}|"
-            th:attr="aria-current=${selectableYear == selectedYear ? 'page' : ''}"
+      <nav
+        popover
+        data-anchor="year-selector-popover-button"
+        data-anchor-placement="bottom-start"
+        id="year-selection-popover"
+        class="popover-menu"
+      >
+        <ul>
+          <li
+            th:each="i, status: ${#numbers.sequence(0, 10)}"
+            th:with="selectableYear=${currentYear + 2 - status.count}"
           >
-            <span th:text="#{overview.year.selection.item.link(${selectableYear})}" class="tw-sr-only"></span>
-            <span th:text="${selectableYear}" aria-hidden="true"></span>
-          </a>
-        </li>
-      </ul>
+            <a
+              th:href="|${hrefPrefix}${selectableYear}|"
+              th:attr="aria-current=${selectableYear == selectedYear ? 'page' : ''}"
+            >
+              <span th:text="#{overview.year.selection.item.link(${selectableYear})}" class="tw-sr-only"></span>
+              <span th:text="${selectableYear}" aria-hidden="true"></span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </body>
 </html>

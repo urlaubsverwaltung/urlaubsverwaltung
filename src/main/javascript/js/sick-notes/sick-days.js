@@ -8,6 +8,6 @@ createDatepicker("#to-date-input", { urlPrefix, getPersonId });
 
 document.addEventListener("turbo:submit-end", function (event) {
   if (event.target.matches("#form-date-from-to")) {
-    event.target.querySelector("[is=uv-details-dropdown]").open = false;
+    event.target.closest("[popover]").hidePopover();
   }
 });

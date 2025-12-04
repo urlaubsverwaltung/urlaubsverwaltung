@@ -1,4 +1,21 @@
 .alert {
+  --alert-padding: 15px;
+  --alert-border-radius: 4px;
+
+  padding: var(--alert-padding);
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: var(--alert-border-radius);
+
+  > p,
+  > ul {
+    margin-bottom: 0;
+  }
+
+  > p + p {
+    margin-top: 5px;
+  }
+
   @apply dark:tw-font-medium;
   @apply dark:tw-bg-opacity-95;
   /* `border-transparent` is relevant to override default :is(dark *) {border-color} */
@@ -7,8 +24,21 @@
   @apply tw-border-transparent;
 }
 
+.alert-dismissible {
+  padding-right: calc(var(--alert-padding) + 20px);
+
+  .close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    color: inherit;
+  }
+}
+
 .alert-danger {
   @apply tw-text-red-800;
+  background-color: #f2dede;
+  border-color: #f2dedeff;
   @apply dark:tw-bg-red-500;
   @apply dark:tw-text-zinc-900;
   @apply dark:tw-border-transparent;
@@ -20,13 +50,28 @@ form.alert-danger {
   @apply dark:tw-text-zinc-200;
 }
 
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #d9edf7ff;
+}
+
 form.alert-info {
   @apply dark:tw-bg-zinc-800;
   @apply dark:tw-border-sky-600;
   @apply dark:tw-text-zinc-200;
 }
 
+.alert-warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #fcf8e3ff;
+}
+
 .alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #dff0d8ff;
   @apply dark:tw-bg-green-500;
   @apply dark:tw-text-zinc-900;
   @apply dark:tw-border-transparent;
