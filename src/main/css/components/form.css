@@ -128,9 +128,9 @@ input[type="checkbox"]:focus {
 }
 
 .help-block {
-  display: block; /* account for any element using help-block */
-  margin-top: 5px;
-  margin-bottom: 10px;
+  display: block;
+  /*margin-top: 5px;*/
+  /*margin-bottom: 10px;*/
   color: #737373;
 }
 
@@ -445,6 +445,10 @@ textarea.error {
 }
 
 .uv-form {
+  p {
+    margin: 0; /* override bootstrap margin bottom */
+  }
+
   .uv-form-legend {
     :where(h1, h2, h3, h4, h5, h6),
     &:is(h1, h2, h3, h4, h5, h6) {
@@ -469,18 +473,20 @@ textarea.error {
 }
 
 .uv-form-grid {
+  --uv-form-col-gap: 1rem;
+  --uv-form-row-gap: 1rem;
+  --uv-form-label-col-width: 11.25rem; /* 180px */
+  --uv-form-input-col-width: 1fr;
+  --uv-form-info-col-width: 33%;
+
   display: flex;
   flex-direction: column;
 
-  /* ======================== */
-  /* override bootstrap stuff */
   label,
   input {
     /* unset margin-bottom of bootstrap, grid aligns items */
     margin: 0 !important;
   }
-  /* end override */
-  /* ======================== */
 
   /* align text with input */
   label:has(input[type="radio"], input[type="checkbox"]) {
@@ -490,31 +496,33 @@ textarea.error {
     gap: 0.25rem;
   }
 
+  /* no legend element since we cannot use fieldset */
+  .uv-form-legend {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #ddd;
+    font-size: 1.5rem;
+  }
+
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
-  div[role="group"] {
+  div[role="group"] + div[role="group"],
+  .uv-form__global-error ~ div[role="group"] {
+    margin-top: 2rem;
+  }
+
+  .uv-form__group {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-
-    + div[role="group"] {
-      margin-top: 2rem;
-    }
-
-    /* no legend element since we cannot use fieldset */
-    .uv-form-legend {
-      display: flex;
-      flex-direction: row;
-      gap: 0.25rem;
-      align-items: center;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #ddd;
-      font-size: 1.5rem;
-    }
+    /*gap: 1rem;*/
 
     .uv-form__info {
       font-size: 0.875rem;
       line-height: 1.42;
+      margin-top: var(--uv-form-row-gap);
 
       p {
         margin: 0;
@@ -528,6 +536,7 @@ textarea.error {
       display: flex;
       flex-direction: column;
       gap: 0.125rem;
+      margin-top: var(--uv-form-row-gap);
 
       /* if following item is not an interactive element -> it should be a row, just like any other input */
       > :is(label, .uv-form__label) + :is(div, span) {
@@ -548,11 +557,6 @@ textarea.error {
   }
 
   @media screen and (width >= 1024px) {
-    --uv-form-col-gap: 1rem;
-    --uv-form-label-col-width: 11.25rem; /* 180px */
-    --uv-form-input-col-width: 1fr;
-    --uv-form-info-col-width: 33%;
-
     display: grid;
     /* column-gap defined as column, as we don't want a gap for first and last col */
     grid-template-columns:
@@ -569,37 +573,60 @@ textarea.error {
       grid-column: start / end;
     }
 
-    div[role="group"] {
+    div[role="group"] + div[role="group"],
+    .uv-form__global-error ~ div[role="group"] {
+      /* override small screen margin */
+      margin-top: 0;
+    }
+
+    .uv-form-legend {
+      grid-row: 1;
       grid-column: label / end;
+    }
+
+    div[role="group"] {
+      margin-top: var(--uv-form-row-gap);
+      grid-column: label / end;
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+
+    /* uv-form__group allows adding more side notes in one "fieldset" (role=group) */
+    /* note that the "info" elements are spanning multiple grid rows */
+    /* you have to ensure yourself that nothing overlaps... */
+    .uv-form__group {
+      grid-column: 1 / -1;
 
       display: grid;
       grid-template-columns: subgrid;
       /* override flex gap from small screen. gap is defined with margin-top below */
       gap: 0;
 
-      /* cannot use grid-row-gap since info element spans multiple rows */
-      > *:not(:first-child) {
-        margin-top: 1rem;
-      }
-
-      .uv-form-legend {
+      .uv-form__group-error {
+        margin-top: var(--uv-form-row-gap);
         grid-row: 1;
         grid-column: label / end;
       }
 
       .uv-form__info {
+        margin-top: var(--uv-form-row-gap);
         /* span ALL rows. using $ since -1 does not work */
         /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
         /* note that a HIGH value breaks devtools grid highlighting */
         --uv-form-grid-row-span: 25;
-        grid-row: 2 / var(--uv-form-grid-row-span);
+        grid-row: 1 / var(--uv-form-grid-row-span);
         grid-column: info;
+
+        p:first-child {
+          /* align paragraph in ~baseline  */
+          margin-top: 0.5rem;
+        }
       }
 
       .uv-form__input-row {
         /* first row is the group-title/legend */
         /* second row starts with input-rows */
-        grid-row: 2;
+        grid-row: 1;
         /* cannot use :first-of-type or :first-child since there could be other div's or elements... */
         & + .uv-form__input-row {
           /* next input-rows are auto flowing */
@@ -632,30 +659,38 @@ textarea.error {
           }
         }
       }
+
+      &:has(.uv-form__group-error) {
+        /* info and inputs are one row below the group-error */
+        .uv-form__info,
+        .uv-form__input-row {
+          grid-row: 2;
+        }
+      }
     }
 
     /* allow placing elements within a row in the info column. */
     /* this is only possible when the form does NOT have a info due to row span complications. */
-    &:not(:has(.uv-form__info)) {
-      div[role="group"] {
-        .uv-form__input-row {
-          /* use full width ('end' instead of 'info') when there is no info block */
-          /* note: this must override the default uv-form__input-row grid-column */
-          grid-column: label / end;
+    /*&:not(:has(.uv-form__info)) {*/
+    /*  div[role="group"] {*/
+    /*    .uv-form__input-row {*/
+    /*      !* use full width ('end' instead of 'info') when there is no info block *!*/
+    /*      !* note: this must override the default uv-form__input-row grid-column *!*/
+    /*      grid-column: label / end;*/
 
-          /* now you can use this class to place an element in the info column in the same input-row */
-          /* used in application-form for instance to show overlapping applications of colleagues */
-          .uv-form__col-info {
-            grid-column: info;
-            /* place the info in the same row like label and input */
-            grid-row: 1;
-            /* row span no possible in this case! */
-            /* maybe use an info icon with a popover instead? */
-            /* current behaviour: row height increases to match the content */
-          }
-        }
-      }
-    }
+    /*      !* now you can use this class to place an element in the info column in the same input-row *!*/
+    /*      !* used in application-form for instance to show overlapping applications of colleagues *!*/
+    /*      .uv-form__col-info {*/
+    /*        grid-column: info;*/
+    /*        !* place the info in the same row like label and input *!*/
+    /*        grid-row: 1;*/
+    /*        !* row span no possible in this case! *!*/
+    /*        !* maybe use an info icon with a popover instead? *!*/
+    /*        !* current behaviour: row height increases to match the content *!*/
+    /*      }*/
+    /*    }*/
+    /*  }*/
+    /*}*/
 
     .uv-form__actions {
       grid-column: label / end;
