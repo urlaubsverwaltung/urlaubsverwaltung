@@ -446,6 +446,7 @@ textarea.error {
 
 .uv-form {
   .uv-form-legend {
+    :where(h1, h2, h3, h4, h5, h6),
     &:is(h1, h2, h3, h4, h5, h6) {
       margin: 0 !important; /* bootstrap or other preflight? */
     }
@@ -453,13 +454,17 @@ textarea.error {
 
   label:has(input[type="radio"], input[type="checkbox"]) {
     font-weight: normal !important;
-    font-size: 0.875rem !important;
   }
 
   .uv-form__label {
     font-weight: 700;
     font-size: 0.875rem;
     margin: 0;
+
+    &.uv-form__label--required::after {
+      content: "*";
+      display: inline-block;
+    }
   }
 }
 
@@ -498,7 +503,10 @@ textarea.error {
 
     /* no legend element since we cannot use fieldset */
     .uv-form-legend {
-      display: block;
+      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
+      align-items: center;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #ddd;
       font-size: 1.5rem;
@@ -685,7 +693,7 @@ div[role="group"]:not([aria-describedby]) {
   }
 }
 
-.uv-form__info:not(:has(p)) {
+.uv-form__info:not(p):not(:has(p)) {
   outline: 2px solid magenta;
   &::after {
     content: "Paragraph fehlt bei uv-form__info";
