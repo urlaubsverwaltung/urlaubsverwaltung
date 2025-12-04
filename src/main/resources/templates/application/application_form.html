@@ -50,56 +50,49 @@
           th:with="actionUrl=${applicationForLeaveForm.id == null ? '/web/application' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
           th:action="@{__${actionUrl}__}"
           th:object="${applicationForLeaveForm}"
-          class="form-horizontal"
+          class="uv-form uv-form-grid"
         >
           <button type="submit" hidden></button>
 
-          <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
+          <p
+            class="uv-form__global-error alert alert-danger"
+            th:if="${#fields.hasGlobalErrors()}"
+            th:errors="*{global}"
+          ></p>
 
-          <div class="form-section tw-mb-8">
-            <div th:replace="~{fragments/section-heading::section-heading(~{::application-form-heading-body}, ~{})}">
-              <th:block th:ref="application-form-heading-body">
-                <h2
-                  th:text="${applicationForLeaveForm.id == null} ? #{application.data.title.new}: #{application.data.title.edit}"
-                >
-                  Neue Abwesenheit
-                </h2>
-              </th:block>
-            </div>
+          <div role="group" aria-describedby="group-new-description">
+            <h2
+              id="group-new-description"
+              class="uv-form-legend"
+              th:text="${applicationForLeaveForm.id == null} ? #{application.data.title.new}: #{application.data.title.edit}"
+            >
+              Neue Abwesenheit
+            </h2>
 
-            <div class="tw-flex tw-flex-col lg:tw-flex-row tw-gap-4">
-              <div class="tw-w-full lg:tw-w-2/3">
-                <!-- Person-->
-                <th:block th:if="${canAddApplicationForLeaveForAnotherUser}">
-                  <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                    <label
-                      for="person-select"
-                      th:text="#{application.data.person}"
-                      class="is-required tw-w-full lg:tw-w-1/4"
-                    ></label>
-                    <div class="tw-w-full lg:tw-w-3/4">
-                      <th:block th:if="${applicationForLeaveForm.id == null}">
-                        <select
-                          th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
-                          id="person-select"
-                        >
-                          <th:block th:fragment="application-person-select-options">
-                            <option
-                              th:each="p: ${persons}"
-                              th:text="${p.niceName}"
-                              th:value="${p.id}"
-                              th:selected="${(applicationForLeaveForm.person != null && applicationForLeaveForm.person.id == p.id) || (p.id == person.id)}"
-                            ></option>
-                          </th:block>
-                        </select>
+            <th:block th:if="${canAddApplicationForLeaveForAnotherUser}">
+              <div class="uv-form__input-row">
+                <label for="person-select" class="is-required" th:text="#{application.data.person}"></label>
+                <th:block th:if="${applicationForLeaveForm.id == null}">
+                  <div>
+                    <select
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
+                      id="person-select"
+                    >
+                      <th:block th:fragment="application-person-select-options">
+                        <option
+                          th:each="p: ${persons}"
+                          th:text="${p.niceName}"
+                          th:value="${p.id}"
+                          th:selected="${(applicationForLeaveForm.person != null && applicationForLeaveForm.person.id == p.id) || (p.id == person.id)}"
+                        ></option>
                       </th:block>
-                      <th:block th:if="${applicationForLeaveForm.id != null}">
-                        <input type="hidden" th:field="*{id}" />
-                        <input type="hidden" th:field="*{person}" th:value="${applicationForLeaveForm.person.id}" />
-                        <p th:text="${applicationForLeaveForm.person.niceName}" class="form-control-static"></p>
-                      </th:block>
-                    </div>
+                    </select>
                   </div>
+                </th:block>
+                <th:block th:if="${applicationForLeaveForm.id != null}">
+                  <input type="hidden" th:field="*{id}" />
+                  <input type="hidden" th:field="*{person}" th:value="${applicationForLeaveForm.person.id}" />
+                  <p th:text="${applicationForLeaveForm.person.niceName}"></p>
                 </th:block>
                 <th:block th:if="${not canAddApplicationForLeaveForAnotherUser}">
                   <th:block th:if="${applicationForLeaveForm.id != null}">
@@ -107,472 +100,399 @@
                   </th:block>
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
-
-                <!-- Vacation Type-->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label
-                    th:text="|#{application.data.vacationType}:|"
-                    class="is-required tw-w-full lg:tw-w-1/4"
-                    for="vacationType"
-                    >Art der Abwesenheit</label
-                  >
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <select
-                      th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
-                      id="vacationType"
-                    >
-                      <th:block th:fragment="application-vacationtype-select-options">
-                        <option
-                          th:each="vacationType: ${vacationTypes}"
-                          th:text="${vacationType.label}"
-                          th:value="${vacationType.id}"
-                          th:selected="${applicationForLeaveForm.vacationType?.id == vacationType.id}"
-                          th:data-vacationtype-category="${vacationType.category.name}"
-                        ></option>
-                      </th:block>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- start and end date-->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label th:text="|#{absence.period.startDate}:|" class="is-required tw-w-full lg:tw-w-1/4" for="from">
-                    Von
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <div class="tw-flex tw-gap-4">
-                      <input
-                        id="from"
-                        name="startDate"
-                        class="form-control tw-w-2/3"
-                        th:errorclass="error"
-                        th:placeholder="#{pattern.date}"
-                        autocomplete="off"
-                        th:data-iso-value="${applicationForLeaveForm.startDateIsoValue}"
-                      />
-                      <p
-                        class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                        th:if="${#fields.hasErrors('startDate')}"
-                        data-test-id="from-error"
-                      >
-                        <th:block th:errors="*{startDate}">startDate Error</th:block>
-                      </p>
-
-                      <input
-                        id="startTime"
-                        name="startTime"
-                        class="form-control tw-w-1/3"
-                        th:errorclass="error"
-                        th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
-                        autocomplete="off"
-                      />
-                      <p
-                        class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                        th:if="${#fields.hasErrors('startTime')}"
-                      >
-                        <th:block th:errors="*{startTime}">startTime Error</th:block>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label th:text="|#{absence.period.endDate}:|" class="is-required tw-w-full lg:tw-w-1/4" for="to">
-                    Bis
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <div class="tw-flex tw-gap-4">
-                      <input
-                        id="to"
-                        name="endDate"
-                        class="form-control tw-w-2/3"
-                        th:errorclass="error"
-                        th:placeholder="#{pattern.date}"
-                        autocomplete="off"
-                        th:data-iso-value="${applicationForLeaveForm.endDateIsoValue}"
-                      />
-                      <p
-                        class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                        th:if="${#fields.hasErrors('endDate')}"
-                        data-test-id="to-error"
-                      >
-                        <th:block th:errors="*{endDate}">endDate Error</th:block>
-                      </p>
-
-                      <input
-                        id="endTime"
-                        name="endTime"
-                        class="form-control tw-w-1/3"
-                        th:errorclass="error"
-                        th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
-                        autocomplete="off"
-                      />
-                      <p
-                        class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                        th:if="${#fields.hasErrors('endTime')}"
-                      >
-                        <th:block th:errors="*{endTime}">endTime Error</th:block>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="days-count" class="tw-hidden">
-                  <div class="tw-flex lg:tw-flex-row-reverse tw-mb-4">
-                    <span class="tw-text-sky-700 dark:tw-text-zinc-200 days tw-w-full lg:tw-w-3/4 tw-text-sm"></span>
-                  </div>
-                </div>
               </div>
+            </th:block>
+            <th:block th:if="${not canAddApplicationForLeaveForAnotherUser}">
+              <th:block th:if="${applicationForLeaveForm.id != null}">
+                <input type="hidden" th:field="*{id}" />
+              </th:block>
+              <input type="hidden" name="person" th:value="${person.id}" />
+            </th:block>
 
-              <div class="tw-w-full lg:tw-w-1/3">
-                <span
-                  id="departmentVacations"
-                  class="help-block tw-text-sky-700 dark:tw-text-zinc-200 tw-text-sm"
-                ></span>
+            <div class="uv-form__input-row">
+              <label for="vacationType" class="is-required" th:text="|#{application.data.vacationType}:|">
+                Art der Abwesenheit
+              </label>
+              <div>
+                <select
+                  th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
+                  id="vacationType"
+                >
+                  <th:block th:fragment="application-vacationtype-select-options">
+                    <option
+                      th:each="vacationType: ${vacationTypes}"
+                      th:text="${vacationType.label}"
+                      th:value="${vacationType.id}"
+                      th:selected="${applicationForLeaveForm.vacationType?.id == vacationType.id}"
+                      th:data-vacationtype-category="${vacationType.category.name}"
+                    ></option>
+                  </th:block>
+                </select>
               </div>
             </div>
 
-            <div class="tw-w-full lg:tw-w-2/3">
-              <!-- Absence Period -->
-              <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-8">
-                <th:block th:if="${showHalfDayOption}">
-                  <label th:text="|#{absence.period}:|" class="is-required tw-w-full lg:tw-w-1/4">Zeitraum</label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <div class="tw-flex">
-                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-full">
-                        <input
-                          type="radio"
-                          id="fullDay"
-                          class="dayLength-full"
-                          th:field="*{dayLength}"
-                          value="FULL"
-                          th:checked="${applicationForLeaveForm.dayLength == null}"
-                        />
-                        <th:block th:text="#{FULL}">ganztätig</th:block>
-                      </label>
-                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-morning">
-                        <input
-                          type="radio"
-                          id="morning"
-                          class="dayLength-half"
-                          th:field="*{dayLength}"
-                          value="MORNING"
-                        />
-                        <th:block th:text="#{MORNING}">vormittags</th:block>
-                      </label>
-                      <label class="tw-flex-1 tw-font-normal" data-test-id="day-length-noon">
-                        <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
-                        <th:block th:text="#{NOON}">nachmittags</th:block>
-                      </label>
-                    </div>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('dayLength')}"
-                    >
-                      <th:block th:errors="*{dayLength}">dayLength Error</th:block>
-                    </p>
-                  </div>
-                </th:block>
-                <th:block th:if="${showHalfDayOption == false}">
-                  <input type="hidden" name="dayLength" value="FULL" />
-                </th:block>
+            <div class="uv-form__input-row">
+              <label for="from" class="is-required" th:text="|#{absence.period.startDate}:|"> Von </label>
+              <div>
+                <input
+                  id="from"
+                  name="startDate"
+                  class="form-control tw-w-2/3"
+                  th:errorclass="error"
+                  th:placeholder="#{pattern.date}"
+                  autocomplete="off"
+                  th:data-iso-value="${applicationForLeaveForm.startDateIsoValue}"
+                />
+                <input
+                  id="startTime"
+                  name="startTime"
+                  class="form-control tw-w-1/3"
+                  th:errorclass="error"
+                  th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
+                  autocomplete="off"
+                />
               </div>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('startDate')}"
+                data-test-id="from-error"
+              >
+                <th:block th:errors="*{startDate}">startDate Error</th:block>
+              </p>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('startTime')}"
+              >
+                <th:block th:errors="*{startTime}">startTime Error</th:block>
+              </p>
+            </div>
 
-              <!-- Overtime Information-->
+            <div class="uv-form__input-row">
+              <label for="to" class="is-required" th:text="|#{absence.period.endDate}:|"> Bis </label>
+              <div>
+                <input
+                  id="to"
+                  name="endDate"
+                  class="form-control tw-w-2/3"
+                  th:errorclass="error"
+                  th:placeholder="#{pattern.date}"
+                  autocomplete="off"
+                  th:data-iso-value="${applicationForLeaveForm.endDateIsoValue}"
+                />
+                <input
+                  id="endTime"
+                  name="endTime"
+                  class="form-control tw-w-1/3"
+                  th:errorclass="error"
+                  th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
+                  autocomplete="off"
+                />
+              </div>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('endDate')}"
+                data-test-id="to-error"
+              >
+                <th:block th:errors="*{endDate}">endDate Error</th:block>
+              </p>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('endTime')}"
+              >
+                <th:block th:errors="*{endTime}">endTime Error</th:block>
+              </p>
+              <div id="days-count" class="tw-hidden tw-mt-4">
+                <span class="days tw-text-sky-700 dark:tw-text-zinc-200 tw-text-sm"></span>
+              </div>
+              <div id="departmentVacations" class="uv-form__col-info help-block info tw-m-0 tw-text-sm"></div>
+            </div>
+
+            <th:block th:if="${showHalfDayOption}">
+              <div class="uv-form__input-row">
+                <p class="is-required uv-form__label" th:text="|#{absence.period}:|">Zeitraum</p>
+                <div>
+                  <label data-test-id="day-length-full">
+                    <input
+                      type="radio"
+                      id="fullDay"
+                      class="dayLength-full"
+                      th:field="*{dayLength}"
+                      value="FULL"
+                      th:checked="${applicationForLeaveForm.dayLength == null}"
+                    />
+                    <th:block th:text="#{FULL}">ganztägig</th:block>
+                  </label>
+                  <label data-test-id="day-length-morning">
+                    <input type="radio" id="morning" class="dayLength-half" th:field="*{dayLength}" value="MORNING" />
+                    <th:block th:text="#{MORNING}">vormittags</th:block>
+                  </label>
+                  <label data-test-id="day-length-noon">
+                    <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
+                    <th:block th:text="#{NOON}">nachmittags</th:block>
+                  </label>
+                </div>
+                <p
+                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  th:if="${#fields.hasErrors('dayLength')}"
+                >
+                  <th:block th:errors="*{dayLength}">dayLength Error</th:block>
+                </p>
+              </div>
+            </th:block>
+            <th:block th:if="${showHalfDayOption == false}">
+              <input type="hidden" name="dayLength" value="FULL" />
+            </th:block>
+
+            <th:block th:if="${overtimeActive}">
               <div
-                th:if="${overtimeActive}"
-                class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-8"
+                class="uv-form__input-row"
                 th:classappend="${applicationForLeaveForm.vacationType?.category?.name == 'OVERTIME' ? '' : 'tw-hidden'}"
                 id="overtime"
               >
-                <label th:text="|#{application.data.hours}:|" class="is-required tw-w-full lg:tw-w-1/4" for="hours">
+                <label th:text="|#{application.data.hours}:|" class="is-required" for="hours">
                   Anzahl der abgebauten Stunden
                 </label>
-                <div class="tw-w-full lg:tw-w-3/4">
-                  <th:block
-                    th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
-                  ></th:block>
-                </div>
+                <th:block
+                  th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
+                ></th:block>
               </div>
+            </th:block>
 
-              <!-- Special Leave Information -->
-              <div
-                class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-8"
-                th:classappend="${applicationForLeaveForm.vacationType?.category?.name == 'SPECIALLEAVE' ? '' : 'tw-hidden'}"
-                id="special-leave"
+            <div
+              class="uv-form__input-row"
+              th:classappend="${applicationForLeaveForm.vacationType?.category?.name == 'SPECIALLEAVE' ? '' : 'tw-hidden'}"
+              id="special-leave"
+            >
+              <label th:text="|#{application.data.reason}:|" class="is-required" for="reason"> Grund </label>
+              <textarea
+                id="reason"
+                rows="1"
+                name="reason"
+                th:text="${applicationForLeaveForm.reason}"
+                class="form-control"
+                th:errorclass="error"
+                data-test-id="reason"
+              ></textarea>
+              <p
+                class="tw-m-0 tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('reason')}"
+                data-test-id="reason-error"
               >
-                <label th:text="|#{application.data.reason}:|" class="is-required tw-w-full lg:tw-w-1/4" for="reason">
-                  Grund
-                </label>
-                <div class="tw-w-full lg:tw-w-3/4">
-                  <textarea
-                    id="reason"
-                    rows="1"
-                    name="reason"
-                    th:text="${applicationForLeaveForm.reason}"
-                    class="form-control"
-                    th:errorclass="error"
-                    data-test-id="reason"
-                  ></textarea>
-
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('reason')}"
-                    data-test-id="reason-error"
-                  >
-                    <th:block th:errors="*{reason}">reason Error</th:block>
-                  </p>
-
-                  <span class="help-block tw-text-sm tw-mt-4">
-                    <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                    <th:block th:text="#{application.data.specialleave.description}"></th:block>
-                    <ul>
-                      <li
-                        th:each="specialLeaveItem : ${specialLeave.specialLeaveItems}"
-                        th:text="#{__${specialLeaveItem.messageKey}__.info(${specialLeaveItem.days})}"
-                      ></li>
-                    </ul>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section tw-mb-16">
-              <div
-                th:replace="~{fragments/section-heading::section-heading(~{::application-further-information-heading-body}, ~{})}"
-              >
-                <th:block th:ref="application-further-information-heading-body">
-                  <h2 th:text="#{application.data.furtherInformation.title}">Weitere Informationen</h2>
-                </th:block>
-              </div>
-
-              <div class="tw-w-full lg:tw-w-2/3">
-                <!-- agreed with team -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label th:text="|#{application.data.teamInformed}:|" class="tw-w-full lg:tw-w-1/4">
-                    Mit Team abgesprochen
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <div class="tw-flex">
-                      <label class="tw-flex-1 tw-font-normal">
-                        <input type="radio" id="teamInformed" th:field="*{teamInformed}" value="true" />
-                        <th:block th:text="#{application.data.teamInformed.true}">Ja</th:block>
-                      </label>
-                      <label class="tw-flex-1 tw-font-normal">
-                        <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
-                        <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
-                      </label>
-                      <span class="tw-flex-1"></span>
-                    </div>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('teamInformed')}"
-                    >
-                      <th:block th:errors="*{teamInformed}">teamInformed Error</th:block>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- replacement-->
-                <div
-                  th:if="${not #lists.isEmpty(selectableHolidayReplacements)}"
-                  class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4"
-                >
-                  <label
-                    for="holiday-replacement-select"
-                    th:text="#{application.data.holidayReplacement}"
-                    class="tw-w-full lg:tw-w-1/4"
-                  >
-                    Vertretung
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <div class="tw-flex">
-                      <select
-                        th:replace="~{fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')}"
-                        id="holiday-replacement-select"
-                      >
-                        <th:block th:fragment="application-holidayreplacement-select-options">
-                          <option value=""></option>
-                          <option
-                            th:each="person: ${selectableHolidayReplacements}"
-                            th:text="${person.displayName}"
-                            th:value="${person.personId}"
-                          ></option>
-                        </th:block>
-                        <th:block th:ref="application-holidayreplacement-select-addon">
-                          <button
-                            th:text="#{application.data.holidayReplacement.add-button.text}"
-                            type="submit"
-                            class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
-                            name="add-holiday-replacement"
-                            formmethod="post"
-                            th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
-                          ></button>
-                        </th:block>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div id="replacement-section-container">
-                  <ul class="tw-list-none tw-m-0 tw-mb-12 tw-p-0">
-                    <li
-                      th:if="${not #lists.isEmpty(applicationForLeaveForm.holidayReplacements)}"
-                      th:each="index : ${#numbers.sequence(applicationForLeaveForm.holidayReplacements.size() - 1, 0, -1)}"
-                      th:with="holidayReplacement=${applicationForLeaveForm.holidayReplacements[index]}"
-                      class="tw-mb-6"
-                      data-test-id="holiday-replacement-row"
-                    >
-                      <input
-                        type="hidden"
-                        th:name="'holidayReplacements['+ ${index} +'].person'"
-                        th:value="${holidayReplacement.person.id}"
-                      />
-                      <div class="tw-w-full lg:tw-w-3/4 lg:tw-ml-auto">
-                        <div>
-                          <div class="tw-flex">
-                            <span class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-2 tw-mt-1">
-                              <img
-                                th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},initials=${holidayReplacement.person.initials},width='40',height='40',personId=${holidayReplacement.person.id})}"
-                                alt=""
-                              />
-                            </span>
-                            <div>
-                              <div class="tw-flex tw-items-center tw-flex-wrap">
-                                <a
-                                  th:text="${holidayReplacement.person.niceName}"
-                                  th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
-                                  class="icon-link"
-                                  data-turbo="false"
-                                ></a>
-                                <ul
-                                  th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
-                                  class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
-                                >
-                                  <li
-                                    th:each="department : ${holidayReplacement.departments}"
-                                    class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
-                                    th:text="${department}"
-                                  ></li>
-                                </ul>
-                              </div>
-                              <div class="tw-flex tw-mt-2">
-                                <button
-                                  type="submit"
-                                  class="tw-p-0 tw-bg-transparent"
-                                  name="remove-holiday-replacement"
-                                  th:value="${holidayReplacement.person.id}"
-                                  formmethod="post"
-                                  th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
-                                >
-                                  <span
-                                    class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
-                                  >
-                                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-0.5')}"></svg>
-                                    <th:block
-                                      th:text="#{application.data.holidayReplacement.remove-button.text}"
-                                    ></th:block>
-                                  </span>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="tw-mt-2 md:tw-pl-14">
-                            <div class="tw-flex tw-justify-between tw-items-center">
-                              <label
-                                for="replacement-note"
-                                th:for="${'replacement-note-' + index}"
-                                th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
-                                class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
-                              >
-                              </label>
-                            </div>
-                            <div>
-                              <textarea
-                                id="replacement-note"
-                                th:id="${'replacement-note-' + index}"
-                                rows="1"
-                                th:name="${'holidayReplacements[' + index + '].note'}"
-                                th:text="${__${'applicationForLeaveForm.holidayReplacements[' + index + '].note'}__}"
-                                class="form-control"
-                                th:errorclass="error"
-                              ></textarea>
-                            </div>
-                          </div>
-                        </div>
-                        <p
-                          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                          th:if="${#fields.hasErrors('holidayReplacements[' + index + '].note')}"
-                        >
-                          <th:block th:errors="*{holidayReplacements[__${index}__].note}"
-                            >holidayReplacements.note Error
-                          </th:block>
-                        </p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <!-- Address and phone number-->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label
-                    th:text="|#{application.data.furtherInformation.address}:|"
-                    class="tw-w-full lg:tw-w-1/4"
-                    for="address"
-                  >
-                    Anschrift/Telefon
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <textarea
-                      id="address"
-                      rows="1"
-                      name="address"
-                      th:text="${applicationForLeaveForm.address}"
-                      class="form-control"
-                      th:errorclass="error"
-                    ></textarea>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('address')}"
-                    >
-                      <th:block th:errors="*{address}">address Error</th:block>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Comment -->
-                <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4">
-                  <label
-                    th:text="|#{application.data.furtherInformation.comment}:|"
-                    class="tw-w-full lg:tw-w-1/4"
-                    for="comment"
-                  >
-                    Mit Kommentar zum Verlauf hinzufügen
-                  </label>
-                  <div class="tw-w-full lg:tw-w-3/4">
-                    <textarea
-                      id="comment"
-                      rows="2"
-                      name="comment"
-                      th:text="${applicationForLeaveForm.comment}"
-                      class="form-control"
-                      th:errorclass="error"
-                    ></textarea>
-                    <p
-                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                      th:if="${#fields.hasErrors('comment')}"
-                    >
-                      <th:block th:errors="*{comment}">comment Error</th:block>
-                    </p>
-                  </div>
-                </div>
+                <th:block th:errors="*{reason}">reason Error</th:block>
+              </p>
+              <div class="help-block tw-text-sm tw-mt-4">
+                <p>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <th:block th:text="#{application.data.specialleave.description}"></th:block>
+                </p>
+                <ul>
+                  <li
+                    th:each="specialLeaveItem : ${specialLeave.specialLeaveItems}"
+                    th:text="#{__${specialLeaveItem.messageKey}__.info(${specialLeaveItem.days})}"
+                  ></li>
+                </ul>
               </div>
             </div>
           </div>
 
-          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+          <div role="group" aria-describedby="group-more-info-description">
+            <h2
+              id="group-more-info-description"
+              class="uv-form-legend"
+              th:text="#{application.data.furtherInformation.title}"
+            >
+              Weitere Informationen
+            </h2>
 
-          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+            <div class="uv-form__input-row">
+              <p class="uv-form__label" th:text="|#{application.data.teamInformed}:|">Mit Team abgesprochen</p>
+              <div>
+                <label>
+                  <input type="radio" id="teamInformed" th:field="*{teamInformed}" value="true" />
+                  <th:block th:text="#{application.data.teamInformed.true}">Ja</th:block>
+                </label>
+                <label>
+                  <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
+                  <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
+                </label>
+              </div>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('teamInformed')}"
+              >
+                <th:block th:errors="*{teamInformed}">teamInformed Error</th:block>
+              </p>
+            </div>
+
+            <div th:if="${not #lists.isEmpty(selectableHolidayReplacements)}" class="uv-form__input-row">
+              <label for="holiday-replacement-select" th:text="#{application.data.holidayReplacement}">
+                Vertretung
+              </label>
+              <div>
+                <select
+                  th:replace="~{fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')}"
+                  id="holiday-replacement-select"
+                >
+                  <th:block th:fragment="application-holidayreplacement-select-options">
+                    <option value=""></option>
+                    <option
+                      th:each="person: ${selectableHolidayReplacements}"
+                      th:text="${person.displayName}"
+                      th:value="${person.personId}"
+                    ></option>
+                  </th:block>
+                  <th:block th:ref="application-holidayreplacement-select-addon">
+                    <button
+                      th:text="#{application.data.holidayReplacement.add-button.text}"
+                      type="submit"
+                      class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
+                      name="add-holiday-replacement"
+                      formmethod="post"
+                      th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
+                    ></button>
+                  </th:block>
+                </select>
+              </div>
+              <div id="replacement-section-container">
+                <ul class="tw-list-none tw-m-0 tw-p-0 tw-mb-12">
+                  <li
+                    th:if="${not #lists.isEmpty(applicationForLeaveForm.holidayReplacements)}"
+                    th:each="index : ${#numbers.sequence(applicationForLeaveForm.holidayReplacements.size() - 1, 0, -1)}"
+                    th:with="holidayReplacement=${applicationForLeaveForm.holidayReplacements[index]}"
+                    class="tw-mt-4 [&:not(:first-child)]:tw-mt-6"
+                    data-test-id="holiday-replacement-row"
+                  >
+                    <input
+                      type="hidden"
+                      th:name="'holidayReplacements['+ ${index} +'].person'"
+                      th:value="${holidayReplacement.person.id}"
+                    />
+                    <div>
+                      <div class="tw-flex">
+                        <span class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-2 tw-mt-1">
+                          <img
+                            th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},initials=${holidayReplacement.person.initials},width='40',height='40',personId=${holidayReplacement.person.id})}"
+                            alt=""
+                          />
+                        </span>
+                        <div>
+                          <div class="tw-flex tw-items-center tw-flex-wrap">
+                            <a
+                              th:text="${holidayReplacement.person.niceName}"
+                              th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
+                              class="icon-link"
+                              data-turbo="false"
+                            ></a>
+                            <ul
+                              th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
+                              class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                            >
+                              <li
+                                th:each="department : ${holidayReplacement.departments}"
+                                class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+                                th:text="${department}"
+                              ></li>
+                            </ul>
+                          </div>
+                          <div class="tw-flex tw-mt-2">
+                            <button
+                              type="submit"
+                              class="tw-p-0 tw-bg-transparent"
+                              name="remove-holiday-replacement"
+                              th:value="${holidayReplacement.person.id}"
+                              formmethod="post"
+                              th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__/edit'}"
+                            >
+                              <span
+                                class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
+                              >
+                                <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-0.5')}"></svg>
+                                <th:block
+                                  th:text="#{application.data.holidayReplacement.remove-button.text}"
+                                ></th:block>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tw-mt-2 md:tw-pl-14">
+                        <div class="tw-flex tw-justify-between tw-items-center">
+                          <label
+                            for="replacement-note"
+                            th:for="${'replacement-note-' + index}"
+                            th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
+                            class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
+                          >
+                          </label>
+                        </div>
+                        <div>
+                          <textarea
+                            id="replacement-note"
+                            th:id="${'replacement-note-' + index}"
+                            rows="1"
+                            th:name="${'holidayReplacements[' + index + '].note'}"
+                            th:text="${__${'applicationForLeaveForm.holidayReplacements[' + index + '].note'}__}"
+                            class="form-control"
+                            th:errorclass="error"
+                          ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <p
+                      class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                      th:if="${#fields.hasErrors('holidayReplacements[' + index + '].note')}"
+                    >
+                      <th:block th:errors="*{holidayReplacements[__${index}__].note}">
+                        holidayReplacements.note Error
+                      </th:block>
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="address" th:text="|#{application.data.furtherInformation.address}:|">
+                Anschrift/Telefon
+              </label>
+              <textarea
+                id="address"
+                rows="1"
+                name="address"
+                th:text="${applicationForLeaveForm.address}"
+                class="form-control"
+                th:errorclass="error"
+              ></textarea>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('address')}"
+              >
+                <th:block th:errors="*{address}">address Error</th:block>
+              </p>
+            </div>
+
+            <div class="uv-form__input-row">
+              <label for="comment" th:text="|#{application.data.furtherInformation.comment}:|">
+                Mit Kommentar zum Verlauf hinzufügen
+              </label>
+              <textarea
+                id="comment"
+                rows="2"
+                name="comment"
+                th:text="${applicationForLeaveForm.comment}"
+                class="form-control"
+                th:errorclass="error"
+              ></textarea>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('comment')}"
+              >
+                <th:block th:errors="*{comment}">comment Error</th:block>
+              </p>
+            </div>
+          </div>
+
+          <div class="uv-form__actions">
             <button
               id="apply-application"
               type="submit"
