@@ -102,7 +102,7 @@ class RolesFromResourceAccessClaimMapperTest {
 
         assertThatThrownBy(() -> sut.mapClaimToRoles(claims))
             .isInstanceOf(MissingClaimAuthorityException.class)
-            .hasMessageContaining("User has not required permission 'urlaubsverwaltung_user' to access urlaubsverwaltung!");
+            .hasMessageContaining("User with sub 'uniqueID' has not required permission 'urlaubsverwaltung_user' in '[urlaubsverwaltung_office]' to access urlaubsverwaltung!");
     }
 
     @Test
