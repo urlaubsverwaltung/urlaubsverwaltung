@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
+import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +12,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toMap;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
@@ -46,14 +50,19 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ConditionalOnProperty(value = "uv.security.oidc.claim-mappers.full-resource-access-claim.enabled", havingValue = "true")
 class RolesFromFullResourceAccessClaimMapper implements RolesFromClaimMapper {
 
-    public static final SimpleGrantedAuthority NEEDED_RESOURCE_ACCESS_ROLE = new SimpleGrantedAuthority(USER.name().toUpperCase());
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private static final SimpleGrantedAuthority NEEDED_RESOURCE_ACCESS_ROLE = new SimpleGrantedAuthority(USER.name().toUpperCase());
     private static final String CLAIM_RESOURCE_ACCESS = "resource_access";
     private static final String ROLES = "roles";
+
     private final RolesFromClaimMapperConverter converter;
     private final RolesFromClaimMappersProperties properties;
 
-    RolesFromFullResourceAccessClaimMapper(RolesFromClaimMapperConverter converter,
-                                           RolesFromClaimMappersProperties properties) {
+    RolesFromFullResourceAccessClaimMapper(
+        RolesFromClaimMapperConverter converter,
+        RolesFromClaimMappersProperties properties
+    ) {
         this.converter = converter;
         this.properties = properties;
     }
@@ -65,7 +74,7 @@ class RolesFromFullResourceAccessClaimMapper implements RolesFromClaimMapper {
 
         final Map<String, Object> resourceAccess = extractFromMap(claims, CLAIM_RESOURCE_ACCESS);
 
-        List<GrantedAuthority> grantedAuthorities = resourceAccess.keySet().stream().map(appIdentifier -> {
+        final List<GrantedAuthority> grantedAuthorities = resourceAccess.keySet().stream().map(appIdentifier -> {
             final Map<String, Object> resourceApp = extractFromMap(resourceAccess, appIdentifier);
             final List<String> resourceAccessRoles = extractRolesFromResourceApp(resourceApp);
 
@@ -79,7 +88,8 @@ class RolesFromFullResourceAccessClaimMapper implements RolesFromClaimMapper {
 
         if (properties.isAuthorityCheckEnabled() && grantedAuthorities.stream().noneMatch(NEEDED_RESOURCE_ACCESS_ROLE::equals)) {
             final String prefixedNeededRole = properties.getRolePrefix().concat(NEEDED_RESOURCE_ACCESS_ROLE.toString().toLowerCase());
-            throw new MissingClaimAuthorityException(format("User has not required permission '%s' to access urlaubsverwaltung!", prefixedNeededRole));
+            LOG.error("User with sub '{}' has not required permission '{}' in '{}' to access urlaubsverwaltung!", claims.get(SUB), prefixedNeededRole, grantedAuthorities);
+            throw new MissingClaimAuthorityException(format("User has not required permission '%s' in '%s' to access urlaubsverwaltung!", prefixedNeededRole, grantedAuthorities));
         }
 
         return grantedAuthorities;
