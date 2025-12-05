@@ -30,7 +30,7 @@ spring:
             provider: default
             scope: openid,profile,email,roles
             authorization-grant-type: authorization_code
-            redirect-uri: http://{baseHost}{basePort}/login/oauth2/code/{registrationId}
+            redirect-uri: http://{baseHost}{basePort}{basePath}/login/oauth2/code/{registrationId}
         provider:
           default:
             issuer-uri: http://localhost:8090/realms/urlaubsverwaltung
