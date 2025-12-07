@@ -326,7 +326,7 @@ textarea.error {
       label,
       .uv-form__label {
         margin: 0;
-        font-weight: 700;
+        font-weight: 600;
         font-size: 0.875rem;
         line-height: 1.42;
         &.uv-form__label--required::after {
