@@ -455,6 +455,10 @@ textarea.error {
     margin: 0; /* override bootstrap margin bottom */
   }
 
+  input[readonly] {
+    background-color: theme("colors.gray.200");
+  }
+
   /* no legend element since we cannot use fieldset */
   .uv-form-legend {
     :where(h1, h2, h3, h4, h5, h6),
@@ -610,6 +614,9 @@ textarea.error {
       grid-column: label / end;
       display: grid;
       grid-template-columns: subgrid;
+      &[hidden] {
+        display: none;
+      }
     }
 
     /* uv-form__group allows adding more side notes in one "fieldset" (role=group) */

@@ -14,25 +14,37 @@
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
 
-        <form method="post" th:action="@{/web/settings/calendar-sync}" th:object="${settings}" class="form-horizontal">
+        <form
+          method="post"
+          th:action="@{/web/settings/calendar-sync}"
+          th:object="${settings}"
+          class="uv-form uv-form-grid"
+        >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='calendar-sync')}" />
 
-          <div id="calendar" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
-              <div class="form-section">
-                <div th:replace="~{settings/calendar-sync/integration::section}"></div>
-              </div>
-              <div class="form-section" id="google-calendar">
-                <div th:replace="~{settings/calendar-sync/google::section}"></div>
-              </div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
+          <div role="group" aria-describedby="group-calendar-sync-description">
+            <h2 id="group-calendar-sync-description" class="uv-form-legend" th:text="#{settings.calendar.title}">
+              Anbindung an Kalender
+            </h2>
+            <div th:replace="~{settings/calendar-sync/integration::section}"></div>
           </div>
+
+          <div role="group" aria-describedby="group-calendar-sync-google-description" id="google-calendar">
+            <h2
+              id="group-calendar-sync-google-description"
+              class="uv-form-legend"
+              th:text="#{settings.calendar.google.title}"
+            >
+              Anbindung an Google Kalender
+            </h2>
+            <div th:replace="~{settings/calendar-sync/google::section}"></div>
+          </div>
+
+          <th:block th:replace="~{settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>
