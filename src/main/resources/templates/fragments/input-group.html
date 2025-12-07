@@ -8,7 +8,7 @@
     <span
       th:fragment="input-group(body, addon, hasError)"
       th:class="uv-input-group"
-      th:classappend="${hasError == true ? 'has-error' : ''}"
+      th:classappend="${hasError == true ? 'uv-has-error' : ''}"
     >
       <th:block th:replace="${body}"></th:block>
       <span class="uv-input-group-addon">

@@ -47,8 +47,7 @@ input[type="checkbox"] {
   }
 }
 
-input:not([type]),
-input:is([type=text], [type=number]), /* TODO all but radio and checkbox? */
+input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
 select {
   display: block;
@@ -75,7 +74,16 @@ select {
   }
 }
 
-input:focus,
+.help-block {
+  display: block;
+  color: #737373;
+}
+
+/* end bootstrap migration */
+/* ----------------------- */
+
+/* radiobutton and checkbox should not be highlighted on click, but on tab (:focus-visible) */
+input:not(:is([type="radio"], [type="checkbox"])):focus,
 select:focus,
 textarea:focus {
   border-color: transparent;
@@ -85,41 +93,6 @@ textarea:focus {
     inset 0 1px 1px rgba(0, 0, 0, 0.075),
     0 0 8px rgba(102, 175, 233, 0.6);
 }
-
-.has-error {
-  /*Color the label and help text*/
-  .help-block,
-  /*Set the border and box shadow on specific inputs to match*/
-  input:not([type]),
-  input:is([type=text], [type=number]), /* TODO */
-  select,
-  textarea {
-    border-color: #a94442;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); /* Redeclare so transitions work */
-    &:focus {
-      border-color: #843534;
-      box-shadow:
-        inset 0 1px 1px rgba(0, 0, 0, 0.075),
-        0 0 6px #ce8483;
-    }
-  }
-  /*Set validation states also for addons*/
-  .input-group-addon {
-    color: #a94442;
-    background-color: #f2dede;
-    border-color: #a94442;
-  }
-}
-
-.help-block {
-  display: block;
-  /*margin-top: 5px;*/
-  /*margin-bottom: 10px;*/
-  color: #737373;
-}
-
-/* end bootstrap migration */
-/* ----------------------- */
 
 .uv-input-group {
   display: flex;
@@ -643,6 +616,23 @@ textarea.error {
       var(--uv-form-col-gap)
       [info]var(--uv-form-info-col-width)
       [end]0;
+  }
+}
+
+.error,
+.uv-has-error {
+  &:where(.uv-input-group, input, select, textarea),
+  .uv-input-group,
+  input,
+  select,
+  textarea {
+    border-color: #a94442;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); /* Redeclare so transitions work */
+  }
+
+  .uv-input-group-addon {
+    color: #a94442;
+    background-color: #f2dede;
   }
 }
 
