@@ -37,7 +37,7 @@
           <input type="hidden" th:field="*{doRemainingVacationDaysExpireGlobally}" />
 
           <p
-            class="uv-form__global-error alert alert-danger"
+            class="uv-form__global-feedback alert alert-danger"
             th:if="${#fields.hasErrors('*')}"
             th:text="#{error.info.message}"
           ></p>

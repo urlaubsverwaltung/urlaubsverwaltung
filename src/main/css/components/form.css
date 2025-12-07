@@ -528,7 +528,7 @@ textarea.error {
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] + div[role="group"],
-  .uv-form__global-error ~ div[role="group"] {
+  .uv-form__global-feedback ~ div[role="group"] {
     margin-top: 2rem;
   }
 
@@ -589,12 +589,12 @@ textarea.error {
     /* this gap only affects [role=group] elements */
     grid-row-gap: 3rem;
 
-    .uv-form__global-error {
+    .uv-form__global-feedback {
       grid-column: start / end;
     }
 
     div[role="group"] + div[role="group"],
-    .uv-form__global-error ~ div[role="group"] {
+    .uv-form__global-feedback ~ div[role="group"] {
       /* override small screen margin */
       margin-top: 0;
     }

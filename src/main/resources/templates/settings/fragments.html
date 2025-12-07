@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="save-feedback">
-      <div class="tw-mb-4">
+      <div class="uv-form__global-feedback">
         <div class="feedback">
           <div
             th:if="${not #strings.isEmpty(errors)}"
@@ -18,7 +18,7 @@
     </th:block>
 
     <th:block th:fragment="tab-navigation(activeElement)">
-      <ul class="tab-list">
+      <ul class="tab-list" style="grid-column: label / end">
         <li
           th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
         >
@@ -108,16 +108,14 @@
     </th:block>
 
     <th:block th:fragment="save-button" th:with="testId=${#strings.isEmpty(testId) ? 'settings-save-button' : testId}">
-      <div class="form-section tw-mt-8">
-        <div class="tw-mb-16">
-          <button
-            th:text="#{action.save}"
-            type="submit"
-            class="button-main-green"
-            th:data-test-id="${testId}"
-            data-turbo="false"
-          ></button>
-        </div>
+      <div style="grid-column: label / end; margin-top: 2rem">
+        <button
+          th:text="#{action.save}"
+          type="submit"
+          class="button-main-green"
+          th:data-test-id="${testId}"
+          data-turbo="false"
+        ></button>
       </div>
     </th:block>
   </body>

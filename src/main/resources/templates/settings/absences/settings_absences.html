@@ -14,35 +14,64 @@
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
 
-        <form method="post" th:action="@{/web/settings/absences}" th:object="${settings}" class="form-horizontal">
+        <form method="post" th:action="@{/web/settings/absences}" th:object="${settings}" class="uv-form uv-form-grid">
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absences')}" />
 
-          <div id="absence" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/vacation::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/sick-days::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
-            <div class="form-section">
-              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
+          <div role="group" aria-describedby="group-vacation-description">
+            <h2 id="group-vacation-description" class="uv-form-legend" th:text="#{settings.vacation.title}">
+              Einstellungen zu Urlaub
+            </h2>
+            <div th:replace="~{settings/absences/vacation::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
+          </div>
+
+          <div role="group" aria-describedby="group-sick-note-description">
+            <h2 id="group-sick-note-description" class="uv-form-legend" th:text="#{settings.sickDays.title}">
+              Einstellungen zu Krankmeldungen
+            </h2>
+            <div th:replace="~{settings/absences/sick-days::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
+          </div>
+
+          <div role="group" aria-describedby="group-reminder-absence-description">
+            <h2
+              id="group-reminder-absence-description"
+              class="uv-form-legend"
+              th:text="#{settings.vacation.remindForWaitingApplications.title}"
+            >
+              Automatische Erinnerung für wartende zu genehmigende Abwesenheiten
+            </h2>
+            <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
+          </div>
+
+          <div role="group" aria-describedby="group-reminder-replacement-description">
+            <h2
+              id="group-reminder-replacement-description"
+              class="uv-form-legend"
+              th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.title}"
+            >
+              Automatische Erinnerung für bevorstehende Vertretungen
+            </h2>
+            <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
+          </div>
+
+          <div role="group" aria-describedby="group-reminder-upcoming-absences-description">
+            <h2
+              id="group-reminder-upcoming-absences-description"
+              class="uv-form-legend"
+              th:text="#{settings.vacation.remindForUpcomingApplications.title}"
+            >
+              Automatische Erinnerung für bevorstehende Abwesenheiten
+            </h2>
+
+            <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
         </form>
       </main>

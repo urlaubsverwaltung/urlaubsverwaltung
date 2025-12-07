@@ -32,7 +32,7 @@
         <input type="hidden" th:field="*{gravatarURL}" th:value="${person.gravatarURL}" />
         <input type="hidden" th:field="*{email}" th:value="${person.email}" />
 
-        <p class="uv-form__global-error alert alert-danger" th:if="${#fields.hasErrors('permissions')}">
+        <p class="uv-form__global-feedback alert alert-danger" th:if="${#fields.hasErrors('permissions')}">
           <th:block th:errors="*{permissions}">permissions Error</th:block>
         </p>
 
