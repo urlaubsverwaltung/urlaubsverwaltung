@@ -31,7 +31,7 @@
           </h2>
 
           <div class="uv-form__group">
-            <p class="uv-form__info help-block tw-text-sm">
+            <p class="uv-form__info uv-help-block">
               <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
               <span th:text="#{department.data.description}"></span>
             </p>
@@ -57,11 +57,11 @@
 
           <div class="uv-form__group">
             <div class="uv-form__info">
-              <p class="help-block tw-text-sm">
+              <p class="uv-help-block">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <th:block th:text="#{department.data.twoStageApproval.help.members}" />
               </p>
-              <p class="help-block tw-text-sm">
+              <p class="uv-help-block">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <th:block th:text="#{department.data.twoStageApproval.help.departmentHead}" />
               </p>
@@ -110,11 +110,11 @@
             </p>
 
             <div class="uv-form__info">
-              <p class="help-block tw-text-sm">
+              <p class="uv-help-block">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <span th:text="#{department.members.description}"></span>
               </p>
-              <p class="help-block tw-text-sm">
+              <p class="uv-help-block">
                 <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <span th:text="#{department.members.secondStageAuthority.description}"></span>
               </p>

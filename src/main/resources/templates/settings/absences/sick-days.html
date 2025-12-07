@@ -7,7 +7,7 @@
     <th:block th:fragment="section">
       <div class="uv-form__group">
         <div class="uv-form__info">
-          <p class="help-block tw-text-sm">
+          <p class="uv-help-block">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.sickDays.description}" />
           </p>
@@ -72,7 +72,7 @@
 
       <div class="uv-form__group">
         <div class="uv-form__info">
-          <p class="help-block tw-text-sm">
+          <p class="uv-help-block">
             <span
               class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
               th:text="#{settings.betaTag}"

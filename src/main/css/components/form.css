@@ -23,13 +23,16 @@ legend {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.help-block {
-  display: block;
-  color: #737373;
-}
-
 /* end bootstrap migration */
 /* ----------------------- */
+
+.uv-help-block {
+  display: block;
+  color: #737373;
+  @apply tw-text-sm;
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-text-opacity-75;
+}
 
 input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
@@ -179,19 +182,6 @@ input.error,
 textarea.error {
   @apply tw-border-red-700 !important;
   @apply dark:tw-border-red-500 !important;
-}
-
-/**************************************************************************
-
-  SINGLE COLUMN FORM
-
-**************************************************************************/
-
-.form-section .help-block {
-  margin-top: 0;
-  line-height: 1.375;
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-text-opacity-75;
 }
 
 /**************************************************************************
