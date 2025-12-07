@@ -445,77 +445,23 @@ textarea.error {
 }
 
 .uv-form {
-  p {
-    margin: 0; /* override bootstrap margin bottom */
-  }
-
-  .uv-form-legend {
-    :where(h1, h2, h3, h4, h5, h6),
-    &:is(h1, h2, h3, h4, h5, h6) {
-      margin: 0 !important; /* bootstrap or other preflight? */
-    }
-  }
-
-  label:has(input[type="radio"], input[type="checkbox"]) {
-    font-weight: normal !important;
-  }
-
-  .uv-form__label {
-    font-weight: 700;
-    font-size: 0.875rem;
-    margin: 0;
-
-    &.uv-form__label--required::after {
-      content: "*";
-      display: inline-block;
-    }
-  }
-
-  .uv-form__input-col {
-    .uv-form__label {
-      font-size: 1rem;
-    }
-  }
-}
-
-.uv-form-grid {
   --uv-form-col-gap: 1rem;
   --uv-form-row-gap: 1rem;
   --uv-form-label-col-width: 11.25rem; /* 180px */
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
 
-  display: flex;
-  flex-direction: column;
-
-  label,
-  input {
-    /* unset margin-bottom of bootstrap, grid aligns items */
-    margin: 0 !important;
-    /* in a col, the label has a gap to the following element */
-    &:where(.uv-form__input-col .uv-form__label + label) {
-      margin-top: 0.5rem !important; /* ! due to above important override... */
-    }
-  }
-
-  /* align text with input */
-  label:has(input[type="radio"], input[type="checkbox"]) {
-    display: inline-flex;
-    flex-wrap: nowrap;
-    gap: 0.25rem;
-    /* multiline label text: */
-    /* align input on the "first" line (baseline) */
-    align-items: baseline;
-    /* adjust line heigt of labels */
-    line-height: 1.42;
-    /* align the input with text */
-    input {
-      transform: translateY(1px);
-    }
+  p {
+    margin: 0; /* override bootstrap margin bottom */
   }
 
   /* no legend element since we cannot use fieldset */
   .uv-form-legend {
+    :where(h1, h2, h3, h4, h5, h6),
+    &:is(h1, h2, h3, h4, h5, h6) {
+      margin: 0 !important; /* bootstrap or other preflight? */
+    }
+
     display: flex;
     flex-direction: row;
     gap: 0.25rem;
@@ -527,19 +473,23 @@ textarea.error {
 
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
-  div[role="group"] + div[role="group"],
-  .uv-form__global-feedback ~ div[role="group"] {
-    margin-top: 2rem;
+  div[role="group"] {
+    &:where(.uv-form__global-feedback + *, .uv-form__info + *, div[role="group"] + *) {
+      margin-top: 2rem;
+    }
   }
 
   .uv-form__group {
-    display: flex;
-    flex-direction: column;
+    margin-top: var(--uv-form-row-gap);
+
+    .uv-form__group-error,
+    .uv-form__info {
+      margin-bottom: var(--uv-form-row-gap);
+    }
 
     .uv-form__info {
       font-size: 0.875rem;
       line-height: 1.42;
-      margin-top: var(--uv-form-row-gap);
 
       p {
         margin: 0;
@@ -553,7 +503,7 @@ textarea.error {
     .uv-form__input-row {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: 0.25rem;
       margin-top: var(--uv-form-row-gap);
 
       /* if following item is not an interactive element -> it should be a row, just like any other input */
@@ -562,6 +512,58 @@ textarea.error {
         flex-direction: row;
         gap: 1rem;
       }
+
+      label,
+      .uv-form__label {
+        margin: 0;
+        font-weight: 700;
+        font-size: 0.875rem;
+        line-height: 1.42;
+        &.uv-form__label--required::after {
+          content: "*";
+          display: inline-block;
+        }
+      }
+
+      input {
+        /* unset margin-bottom of bootstrap, grid aligns items */
+        margin: 0 !important;
+      }
+
+      /* align text with input */
+      label:has(input[type="radio"], input[type="checkbox"]) {
+        font-weight: normal !important;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        gap: 0.25rem;
+        /* multiline label text: */
+        /* align input on the "first" line (baseline) */
+        align-items: baseline;
+
+        /* align the input with text */
+        input {
+          transform: translateY(1px);
+        }
+      }
+    }
+
+    .uv-form__input-col {
+      .uv-form__label {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+.uv-form-grid {
+  display: flex;
+  flex-direction: column;
+
+  label,
+  input {
+    /* in a col, the label has a gap to the following element */
+    &:where(.uv-form__input-col .uv-form__label + label) {
+      margin-top: 0.5rem !important; /* ! due to above important override... */
     }
   }
 
@@ -586,17 +588,14 @@ textarea.error {
       [info]var(--uv-form-info-col-width)
       [end]var(--uv-form-col-gap);
 
-    /* this gap only affects [role=group] elements */
-    grid-row-gap: 3rem;
-
     .uv-form__global-feedback {
       grid-column: start / end;
     }
 
-    div[role="group"] + div[role="group"],
-    .uv-form__global-feedback ~ div[role="group"] {
-      /* override small screen margin */
-      margin-top: 0;
+    div[role="group"] {
+      &:where(.uv-form__global-feedback + *, .uv-form__info + *, div[role="group"] + *) {
+        margin-top: 3rem;
+      }
     }
 
     .uv-form-legend {
@@ -625,13 +624,11 @@ textarea.error {
       gap: 0;
 
       .uv-form__group-error {
-        margin-top: var(--uv-form-row-gap);
         grid-row: 1;
         grid-column: label / end;
       }
 
       .uv-form__info {
-        margin-top: 0; /* override small screen. only adjacent elements have margin-top */
         /* span ALL rows. using $ since -1 does not work */
         /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
         /* note that a HIGH value breaks devtools grid highlighting */
@@ -639,13 +636,11 @@ textarea.error {
         grid-row: 1 / var(--uv-form-grid-row-span);
         grid-column: info;
 
-        + .uv-form__info {
-          margin-top: var(--uv-form-row-gap);
-        }
-
-        p:first-child {
-          /* align paragraph in ~baseline  */
-          margin-top: 0.5rem;
+        /* override small screen. TODO maybe -top on next element? */
+        margin-bottom: 0;
+        /* but not for next elements */
+        &:has (~ .uv-form__info) {
+          margin-bottom: var(--uv-form-row-gap);
         }
       }
 
@@ -663,10 +658,11 @@ textarea.error {
         grid-column: label / info;
         /* auto flow each input-row to next row */
         grid-auto-flow: row;
-      }
 
-      .uv-form__input-col {
+        /* override small screen */
         margin-top: 0;
+        /* but not for next elements */
+        ~ .uv-form__input-row,
         ~ .uv-form__input-col {
           margin-top: var(--uv-form-row-gap);
         }
@@ -695,39 +691,14 @@ textarea.error {
         .uv-form__info,
         .uv-form__input-row {
           grid-row: 2;
-          margin-top: 0;
         }
         /* adjust following elements */
         .uv-form__info ~ .uv-form__info,
         .uv-form__input-row ~ .uv-form__input-row {
           grid-row: auto;
-          margin-top: var(--uv-form-row-gap);
         }
       }
     }
-
-    /* allow placing elements within a row in the info column. */
-    /* this is only possible when the form does NOT have a info due to row span complications. */
-    /*&:not(:has(.uv-form__info)) {*/
-    /*  div[role="group"] {*/
-    /*    .uv-form__input-row {*/
-    /*      !* use full width ('end' instead of 'info') when there is no info block *!*/
-    /*      !* note: this must override the default uv-form__input-row grid-column *!*/
-    /*      grid-column: label / end;*/
-
-    /*      !* now you can use this class to place an element in the info column in the same input-row *!*/
-    /*      !* used in application-form for instance to show overlapping applications of colleagues *!*/
-    /*      .uv-form__col-info {*/
-    /*        grid-column: info;*/
-    /*        !* place the info in the same row like label and input *!*/
-    /*        grid-row: 1;*/
-    /*        !* row span no possible in this case! *!*/
-    /*        !* maybe use an info icon with a popover instead? *!*/
-    /*        !* current behaviour: row height increases to match the content *!*/
-    /*      }*/
-    /*    }*/
-    /*  }*/
-    /*}*/
 
     .uv-form__actions {
       grid-column: label / end;

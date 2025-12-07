@@ -6,14 +6,12 @@
   <body>
     <th:block th:fragment="section">
       <div class="uv-form__group">
-        <div class="uv-form__group-error">
-          <p
-            class="tw-mb-8 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-            th:if="${#fields.hasErrors('workingTimeSettings.workingDays')}"
-          >
-            <th:block th:errors="*{workingTimeSettings.workingDays}">workingTimeSettings.workingDays Error</th:block>
-          </p>
-        </div>
+        <p
+          class="uv-form__group-error tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+          th:if="${#fields.hasErrors('workingTimeSettings.workingDays')}"
+        >
+          <th:block th:errors="*{workingTimeSettings.workingDays}">workingTimeSettings.workingDays Error</th:block>
+        </p>
 
         <div class="uv-form__info">
           <p class="help-block tw-text-sm">

@@ -14,19 +14,23 @@
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
 
-        <form method="post" th:action="@{/web/settings/avatar}" th:object="${settings}" class="form-horizontal">
+        <form method="post" th:action="@{/web/settings/avatar}" th:object="${settings}" class="uv-form">
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='avatar')}" />
 
-          <div id="avatar" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/avatar/avatar::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
+          <div role="group" aria-describedby="group-avatar-description">
+            <h2
+              id="group-avatar-description"
+              class="uv-form-legend"
+              th:text="#{settings.avatar.gravatarEnabled.activation.title}"
+            >
+              Avatare
+            </h2>
+            <div th:replace="~{settings/avatar/avatar::section}"></div>
+            <th:block th:replace="~{settings/fragments::save-button}" />
           </div>
         </form>
       </main>

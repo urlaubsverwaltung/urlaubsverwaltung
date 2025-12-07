@@ -18,7 +18,7 @@
     </th:block>
 
     <th:block th:fragment="tab-navigation(activeElement)">
-      <ul class="tab-list" style="grid-column: label / end">
+      <ul class="tab-list tw-mb-6" style="grid-column: label / end">
         <li
           th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
         >
