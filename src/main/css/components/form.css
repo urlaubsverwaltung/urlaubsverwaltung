@@ -23,46 +23,27 @@ legend {
   border-bottom: 1px solid #e5e5e5;
 }
 
-label {
-  display: inline-block;
-  max-width: 100%; /* Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141) */
-  margin-bottom: 5px;
-  font-weight: 700;
+.help-block {
+  display: block;
+  color: #737373;
 }
 
-/* Position radios and checkboxes better */
-input[type="radio"],
-input[type="checkbox"] {
-  margin: 4px 0 0;
-  margin-top: 1px \9; /* IE8-9 */
-  line-height: normal;
-
-  /* Apply same disabled cursor tweak as for inputs*/
-  /* Some special care is needed because <label>s don't inherit their parent's `cursor`.*/
-  /* Note: Neither radios nor checkboxes can be readonly.*/
-  &[disabled],
-  &.disabled,
-  fieldset[disabled] & {
-    cursor: not-allowed;
-  }
-}
+/* end bootstrap migration */
+/* ----------------------- */
 
 input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
-select {
-  display: block;
+select,
+.popover-button-select {
+  display: inline-block;
   width: 100%;
-  height: calc(
-    20px + (6px * 2) + 2
-  ); /* Make inputs at least the height of their button counterpart (base line-height + padding + border) */
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.428571429;
   color: #555;
   background-color: #fff;
-  background-image: none; /* Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214 */
   border: 1px solid #ccc;
-  border-radius: 4px; /* Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS. */
+  border-radius: 4px;
 
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   transition:
@@ -74,26 +55,8 @@ select {
   }
 }
 
-.help-block {
-  display: block;
-  color: #737373;
-}
-
-/* end bootstrap migration */
-/* ----------------------- */
-
 .popover-button-select {
-  /* no transition for :focus outline since it looks ugly */
-  /* (outline color or something it dark at starting style) */
-
-  @apply tw-block;
-  @apply tw-px-3;
-  @apply tw-py-2;
-  @apply tw-text-sm;
-  @apply tw-border;
-  @apply tw-border-neutral-300;
-  @apply tw-rounded-md;
-
+  width: auto; /* override common input styling */
   :not([class*="tw-border-"]) {
     /* actually colors are meant here, like tw-border-blue-400 */
     /* however tw-border-*-* is not a valid selector */
@@ -153,12 +116,6 @@ textarea:focus {
     background-color: #eee;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-
-    /*Nuke default margins from checkboxes and radios to vertically center within.*/
-    input[type="radio"],
-    input[type="checkbox"] {
-      margin-top: 0;
-    }
   }
 }
 
@@ -387,14 +344,9 @@ textarea.error {
         }
       }
 
-      input {
-        /* unset margin-bottom of bootstrap, grid aligns items */
-        margin: 0 !important;
-      }
-
       /* align text with input */
       label:has(input[type="radio"], input[type="checkbox"]) {
-        font-weight: normal !important;
+        font-weight: normal;
         display: inline-flex;
         flex-wrap: nowrap;
         gap: 0.25rem;
@@ -440,8 +392,8 @@ textarea.error {
   label,
   input {
     /* in a col, the label has a gap to the following element */
-    &:where(.uv-form__input-col .uv-form__label + label) {
-      margin-top: 0.5rem !important; /* ! due to above important override... */
+    &:is(.uv-form__input-col .uv-form__label + label) {
+      margin-top: 0.5rem;
     }
   }
 
