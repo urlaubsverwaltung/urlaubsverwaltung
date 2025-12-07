@@ -549,6 +549,22 @@ textarea.error {
           transform: translateY(1px);
         }
       }
+
+      /* multiline labels should span all inline-grid-rows */
+      /* when there is a direct error element shown (in the next line) */
+      &:has(> .uv-form__input-error) {
+        grid-template-rows: 1fr 1fr;
+        label,
+        .uv-form__label {
+          grid-row: 1/-1;
+        }
+      }
+
+      .uv-form__input-error {
+        @apply tw-text-sm;
+        @apply tw-text-red-800;
+        @apply dark:tw-text-red-400;
+      }
     }
 
     .uv-form__input-col {
@@ -689,6 +705,13 @@ textarea.error {
           /*~ :is(div, span, p) {*/
           ~ * {
             grid-column: input;
+          }
+        }
+
+        &:has(.uv-form__input-error) {
+          > label,
+          > .uv-form__label {
+            row-span: 2;
           }
         }
       }
