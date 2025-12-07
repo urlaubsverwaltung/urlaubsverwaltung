@@ -85,7 +85,7 @@
                 <th:block th:if="${editMode}">
                   <input type="hidden" th:field="*{id}" />
                   <input type="hidden" th:field="*{person}" th:value="${sickNote.person.id}" />
-                  <th:block th:text="${sickNote.person.niceName}" />
+                  <p th:text="${sickNote.person.niceName}" />
                 </th:block>
               </div>
             </div>

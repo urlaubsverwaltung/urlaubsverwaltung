@@ -76,7 +76,7 @@
             <div class="uv-form__input-row">
               <label for="personnelNumber" th:text="#{person.form.basedata.personnelNumber}"> Personnel Number </label>
               <input type="text" id="personnelNumber" th:field="*{personnelNumber}" th:errorclass="error" />
-              <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('personnelNumber')}">
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('personnelNumber')}">
                 <th:block th:errors="*{personnelNumber}"> Personnel Number Error </th:block>
               </p>
             </div>
@@ -85,7 +85,7 @@
                 Additional Information
               </label>
               <textarea id="additionalInfo" th:errorclass="error" rows="4" th:field="*{additionalInfo}"></textarea>
-              <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('additionalInfo')}">
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('additionalInfo')}">
                 <th:block th:errors="*{additionalInfo}"> Additional Information Error </th:block>
               </p>
             </div>

@@ -15,13 +15,12 @@
 
         <!-- Activation of the reminder for waiting applications -->
         <div class="uv-form__input-row">
-          <label
+          <p
             th:text="|#{settings.vacation.remindForWaitingApplications}:|"
-            class="is-required"
-            for="applicationSettings.remindForWaitingApplications.true"
+            class="uv-form__label uv-form__label--required"
           >
             Automatische Erinnerungsfunktion
-          </label>
+          </p>
           <div>
             <label>
               <input
@@ -52,23 +51,21 @@
           >
             Wie viele Tage im Voraus sollen Chefs bzw. Abteilungsleiter benachrichtigt werden
           </label>
-          <div>
-            <input
-              id="applicationSettings.daysBeforeRemindForWaitingApplications"
-              th:field="*{applicationSettings.daysBeforeRemindForWaitingApplications}"
-              th:errorclass="error"
-              type="number"
-              step="1"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForWaitingApplications')}"
-            >
-              <th:block th:errors="*{applicationSettings.daysBeforeRemindForWaitingApplications}">
-                applicationSettings.daysBeforeRemindForWaitingApplications Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="applicationSettings.daysBeforeRemindForWaitingApplications"
+            th:field="*{applicationSettings.daysBeforeRemindForWaitingApplications}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForWaitingApplications')}"
+          >
+            <th:block th:errors="*{applicationSettings.daysBeforeRemindForWaitingApplications}">
+              applicationSettings.daysBeforeRemindForWaitingApplications Error
+            </th:block>
+          </p>
         </div>
       </div>
     </th:block>

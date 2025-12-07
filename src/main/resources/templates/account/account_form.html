@@ -74,7 +74,7 @@
                   th:placeholder="#{pattern.date}"
                   th:errorclass="error"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
                   <th:block th:errors="*{holidaysAccountValidFrom}"> holidaysAccountValidFrom Error </th:block>
                 </p>
               </div>
@@ -95,7 +95,7 @@
                   th:placeholder="#{pattern.date}"
                   th:errorclass="error"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
                   <th:block th:errors="*{holidaysAccountValidTo}"> holidaysAccountValidTo Error </th:block>
                 </p>
               </div>
@@ -128,7 +128,7 @@
                   step="0.5"
                   th:value="${account.annualVacationDays}"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('annualVacationDays')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('annualVacationDays')}">
                   <th:block th:errors="*{annualVacationDays}"> annualVacationDays Error </th:block>
                 </p>
               </div>
@@ -148,7 +148,7 @@
                   step="0.5"
                   th:value="${account.actualVacationDays}"
                 />
-                <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('actualVacationDays')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('actualVacationDays')}">
                   <th:block th:errors="*{actualVacationDays}"> actualVacationDays Error </th:block>
                 </p>
               </div>
@@ -181,7 +181,7 @@
                   step="0.5"
                   th:value="${account.remainingVacationDays}"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDays')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('remainingVacationDays')}">
                   <th:block th:errors="*{remainingVacationDays}"> remainingVacationDays Error </th:block>
                 </p>
               </div>
@@ -248,7 +248,7 @@
                     </label>
                   </div>
                 </div>
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}">
                   <th:block th:errors="*{doRemainingVacationDaysExpireLocally}">
                     doRemainingVacationDaysExpire Error
                   </th:block>
@@ -304,7 +304,7 @@
                   class="tw-mt-2"
                   th:errorclass="error"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('expiryDateLocally')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('expiryDateLocally')}">
                   <th:block th:errors="*{expiryDateLocally}"> expiryDate Error </th:block>
                 </p>
               </div>
@@ -324,7 +324,7 @@
                   step="0.5"
                   th:value="${account.remainingVacationDaysNotExpiring}"
                 />
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDaysNotExpiring')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('remainingVacationDaysNotExpiring')}">
                   <th:block th:errors="*{remainingVacationDaysNotExpiring}">
                     remainingVacationDaysNotExpiring Error
                   </th:block>
@@ -342,7 +342,7 @@
                   th:placeholder="#{person.form.annualVacation.comment.placeholder}"
                 >
                 </textarea>
-                <p class="error tw-text-sm" th:if="${#fields.hasErrors('comment')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
                   <th:block th:errors="*{comment}"> comment Error </th:block>
                 </p>
               </div>

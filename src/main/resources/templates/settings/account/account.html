@@ -28,10 +28,7 @@
               type="number"
               step="1"
             />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('accountSettings.defaultVacationDays')}"
-            >
+            <p class="uv-form__input-error" th:if="${#fields.hasErrors('accountSettings.defaultVacationDays')}">
               <th:block th:errors="*{accountSettings.defaultVacationDays}">
                 accountSettings.defaultVacationDays Error
               </th:block>
@@ -47,33 +44,30 @@
           >
             Maximale Anzahl der Urlaubstage pro Jahr
           </label>
-          <div class="tw-flex tw-flex-col tw-gap-1">
-            <input
-              id="accountSettings.maximumAnnualVacationDays"
-              th:field="*{accountSettings.maximumAnnualVacationDays}"
-              th:errorclass="error"
-              type="number"
-              step="1"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('accountSettings.maximumAnnualVacationDays')}"
-            >
-              <th:block th:errors="*{accountSettings.maximumAnnualVacationDays}">
-                accountSettings.maximumAnnualVacationDays Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="accountSettings.maximumAnnualVacationDays"
+            th:field="*{accountSettings.maximumAnnualVacationDays}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p
+            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+            th:if="${#fields.hasErrors('accountSettings.maximumAnnualVacationDays')}"
+          >
+            <th:block th:errors="*{accountSettings.maximumAnnualVacationDays}">
+              accountSettings.maximumAnnualVacationDays Error
+            </th:block>
+          </p>
         </div>
 
         <div class="uv-form__input-row">
-          <label
+          <p
+            class="uv-form__label uv-form__label--required"
             th:text="|#{settings.vacation.remainingVacationDaysExpire}:|"
-            class="is-required"
-            for="accountSettings.doRemainingVacationDaysExpireGlobally.true"
           >
             Globaler Verfall von Resturlaub
-          </label>
+          </p>
           <div>
             <label>
               <input
@@ -169,7 +163,7 @@
                 </th:block>
               </select>
             </div>
-            <div class="error tw-text-sm" th:if="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth')}">
+            <div class="uv-form__input-error" th:if="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth')}">
               <p th:errors="*{accountSettings.expiryDateDayOfMonth}" class="tw-m-0">expiryDate Error</p>
             </div>
           </div>

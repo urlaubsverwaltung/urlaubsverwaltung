@@ -387,6 +387,20 @@ textarea.error {
     }
   }
 
+  .uv-form__group {
+    .uv-form__input-row {
+      &:has(.error) {
+        /* error is on second row, column:input */
+        grid-template-rows: auto 1fr;
+        /* and labels with text has to span both rows */
+        > label,
+        .uv-form__label {
+          grid-row: 1 / -1;
+        }
+      }
+    }
+  }
+
   .uv-form__actions {
     margin-top: 2rem;
     padding-top: 1rem;

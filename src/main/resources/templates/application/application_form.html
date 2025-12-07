@@ -74,21 +74,19 @@
                 <div class="uv-form__input-row">
                   <label for="person-select" class="is-required" th:text="#{application.data.person}"></label>
                   <th:block th:if="${applicationForLeaveForm.id == null}">
-                    <div>
-                      <select
-                        th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
-                        id="person-select"
-                      >
-                        <th:block th:fragment="application-person-select-options">
-                          <option
-                            th:each="p: ${persons}"
-                            th:text="${p.niceName}"
-                            th:value="${p.id}"
-                            th:selected="${(applicationForLeaveForm.person != null && applicationForLeaveForm.person.id == p.id) || (p.id == person.id)}"
-                          ></option>
-                        </th:block>
-                      </select>
-                    </div>
+                    <select
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
+                      id="person-select"
+                    >
+                      <th:block th:fragment="application-person-select-options">
+                        <option
+                          th:each="p: ${persons}"
+                          th:text="${p.niceName}"
+                          th:value="${p.id}"
+                          th:selected="${(applicationForLeaveForm.person != null && applicationForLeaveForm.person.id == p.id) || (p.id == person.id)}"
+                        ></option>
+                      </th:block>
+                    </select>
                   </th:block>
                   <th:block th:if="${applicationForLeaveForm.id != null}">
                     <input type="hidden" th:field="*{id}" />
@@ -114,22 +112,20 @@
                 <label for="vacationType" class="is-required" th:text="|#{application.data.vacationType}:|">
                   Art der Abwesenheit
                 </label>
-                <div>
-                  <select
-                    th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
-                    id="vacationType"
-                  >
-                    <th:block th:fragment="application-vacationtype-select-options">
-                      <option
-                        th:each="vacationType: ${vacationTypes}"
-                        th:text="${vacationType.label}"
-                        th:value="${vacationType.id}"
-                        th:selected="${applicationForLeaveForm.vacationType?.id == vacationType.id}"
-                        th:data-vacationtype-category="${vacationType.category.name}"
-                      ></option>
-                    </th:block>
-                  </select>
-                </div>
+                <select
+                  th:replace="~{fragments/select::one(id='vacationType', name='vacationType.id', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
+                  id="vacationType"
+                >
+                  <th:block th:fragment="application-vacationtype-select-options">
+                    <option
+                      th:each="vacationType: ${vacationTypes}"
+                      th:text="${vacationType.label}"
+                      th:value="${vacationType.id}"
+                      th:selected="${applicationForLeaveForm.vacationType?.id == vacationType.id}"
+                      th:data-vacationtype-category="${vacationType.category.name}"
+                    ></option>
+                  </th:block>
+                </select>
               </div>
 
               <div class="uv-form__input-row">
@@ -153,17 +149,10 @@
                     autocomplete="off"
                   />
                 </div>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('startDate')}"
-                  data-test-id="from-error"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}" data-test-id="from-error">
                   <th:block th:errors="*{startDate}">startDate Error</th:block>
                 </p>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('startTime')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('startTime')}">
                   <th:block th:errors="*{startTime}">startTime Error</th:block>
                 </p>
               </div>
@@ -191,17 +180,10 @@
                     autocomplete="off"
                   />
                 </div>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('endDate')}"
-                  data-test-id="to-error"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}" data-test-id="to-error">
                   <th:block th:errors="*{endDate}">endDate Error</th:block>
                 </p>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('endTime')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('endTime')}">
                   <th:block th:errors="*{endTime}">endTime Error</th:block>
                 </p>
                 <div id="days-count" class="tw-hidden tw-mt-4">
@@ -236,10 +218,7 @@
                       <th:block th:text="#{NOON}">nachmittags</th:block>
                     </label>
                   </div>
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('dayLength')}"
-                  >
+                  <p class="uv-form__input-error" th:if="${#fields.hasErrors('dayLength')}">
                     <th:block th:errors="*{dayLength}">dayLength Error</th:block>
                   </p>
                 </div>
@@ -277,11 +256,7 @@
                   th:errorclass="error"
                   data-test-id="reason"
                 ></textarea>
-                <p
-                  class="tw-m-0 tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('reason')}"
-                  data-test-id="reason-error"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('reason')}" data-test-id="reason-error">
                   <th:block th:errors="*{reason}">reason Error</th:block>
                 </p>
                 <div class="uv-help-block tw-mt-4">
@@ -322,10 +297,7 @@
                     <th:block th:text="#{application.data.teamInformed.false}">Nein</th:block>
                   </label>
                 </div>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('teamInformed')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('teamInformed')}">
                   <th:block th:errors="*{teamInformed}">teamInformed Error</th:block>
                 </p>
               </div>
@@ -467,10 +439,7 @@
                   th:text="${applicationForLeaveForm.address}"
                   th:errorclass="error"
                 ></textarea>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('address')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('address')}">
                   <th:block th:errors="*{address}">address Error</th:block>
                 </p>
               </div>
@@ -486,10 +455,7 @@
                   th:text="${applicationForLeaveForm.comment}"
                   th:errorclass="error"
                 ></textarea>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('comment')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
                   <th:block th:errors="*{comment}">comment Error</th:block>
                 </p>
               </div>

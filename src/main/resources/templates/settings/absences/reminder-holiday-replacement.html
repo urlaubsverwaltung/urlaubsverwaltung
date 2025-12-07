@@ -15,11 +15,12 @@
 
         <!-- Activation of the reminder for upcoming holiday replacements -->
         <div class="uv-form__input-row">
-          <label class="is-required" for="applicationSettings.remindForUpcomingHolidayReplacement.activation.true">
-            <th:block th:text="|#{settings.vacation.remindForUpcomingHolidayReplacement.activation}:|">
-              Automatische Erinnerungsfunktion
-            </th:block>
-          </label>
+          <p
+            class="uv-form__label uv-form__label--required"
+            th:text="|#{settings.vacation.remindForUpcomingHolidayReplacement.activation}:|"
+          >
+            Automatische Erinnerungsfunktion
+          </p>
           <div>
             <label>
               <input
@@ -53,23 +54,21 @@
               Wie viele Tage im Voraus soll die Vertretung über eine bevorstehende Vertretung benachrichtigt werden
             </th:block>
           </label>
-          <div>
-            <input
-              id="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement"
-              th:field="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}"
-              th:errorclass="error"
-              type="number"
-              step="1"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement')}"
-            >
-              <th:block th:errors="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}">
-                applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement"
+            th:field="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement')}"
+          >
+            <th:block th:errors="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}">
+              applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement Error
+            </th:block>
+          </p>
         </div>
       </div>
     </th:block>

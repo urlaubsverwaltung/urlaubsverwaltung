@@ -53,21 +53,19 @@
           >
             OAuth2 Client ID
           </label>
-          <div>
-            <input
-              id="calendarSettings.googleCalendarSettings.clientId"
-              th:field="*{calendarSettings.googleCalendarSettings.clientId}"
-              th:errorclass="error"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientId')}"
-            >
-              <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientId}">
-                calendarSettings.googleCalendarSettings.clientId Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="calendarSettings.googleCalendarSettings.clientId"
+            th:field="*{calendarSettings.googleCalendarSettings.clientId}"
+            th:errorclass="error"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientId')}"
+          >
+            <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientId}">
+              calendarSettings.googleCalendarSettings.clientId Error
+            </th:block>
+          </p>
         </div>
 
         <!-- Client Secret Settings -->
@@ -78,21 +76,19 @@
           >
             OAuth2 Client Secret
           </label>
-          <div>
-            <input
-              id="calendarSettings.googleCalendarSettings.clientSecret"
-              th:field="*{calendarSettings.googleCalendarSettings.clientSecret}"
-              th:errorclass="error"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientSecret')}"
-            >
-              <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientSecret}">
-                calendarSettings.googleCalendarSettings.clientSecret Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="calendarSettings.googleCalendarSettings.clientSecret"
+            th:field="*{calendarSettings.googleCalendarSettings.clientSecret}"
+            th:errorclass="error"
+          />
+          <p
+            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+            th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientSecret')}"
+          >
+            <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientSecret}">
+              calendarSettings.googleCalendarSettings.clientSecret Error
+            </th:block>
+          </p>
         </div>
 
         <!-- Calendar ID Settings -->
@@ -103,21 +99,19 @@
           >
             Kalender ID
           </label>
-          <div>
-            <input
-              id="calendarSettings.googleCalendarSettings.calendarId"
-              th:field="*{calendarSettings.googleCalendarSettings.calendarId}"
-              th:errorclass="error"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.calendarId')}"
-            >
-              <th:block th:errors="*{calendarSettings.googleCalendarSettings.calendarId}">
-                calendarSettings.googleCalendarSettings.calendarId Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="calendarSettings.googleCalendarSettings.calendarId"
+            th:field="*{calendarSettings.googleCalendarSettings.calendarId}"
+            th:errorclass="error"
+          />
+          <p
+            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+            th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.calendarId')}"
+          >
+            <th:block th:errors="*{calendarSettings.googleCalendarSettings.calendarId}">
+              calendarSettings.googleCalendarSettings.calendarId Error
+            </th:block>
+          </p>
         </div>
 
         <!-- Redirect URL (readonly) -->
@@ -140,13 +134,13 @@
             <p
               th:if="${not #strings.isEmpty(oautherrors)}"
               th:text="${oautherrors}"
-              class="tw-text-red-600 tw-mb-4"
+              class="tw-text-red-800 tw-mb-4 dark:tw-text-red-400"
             ></p>
             <th:block th:if="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
               <div class="tw-flex tw-flex-row">
                 <p
                   th:text="#{settings.calendar.google.action.authenticate.description}"
-                  class="tw-text-red-600 tw-w-2/3"
+                  class="tw-text-red-800 tw-w-2/3 dark:tw-text-red-400"
                 ></p>
                 <button
                   th:text="#{settings.calendar.google.action.authenticate}"

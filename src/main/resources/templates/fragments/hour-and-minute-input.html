@@ -30,7 +30,7 @@
         </th:block>
         <span
           th:if="${#fields.hasErrors(hourFieldName)}"
-          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+          class="uv-form__input-error"
           th:data-test-id="${hoursTestId} + '-error'"
         >
           <th:block th:errors="*{__${hourFieldName}__}">hours Error</th:block>
@@ -57,7 +57,7 @@
         </th:block>
         <span
           th:if="${#fields.hasErrors(minuteFieldName)}"
-          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+          class="uv-form__input-error"
           th:data-test-id="${minutesTestId} + '-error'"
         >
           <th:block th:errors="*{__${minuteFieldName}__}">minutes Error</th:block>

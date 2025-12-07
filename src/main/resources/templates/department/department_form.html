@@ -39,7 +39,7 @@
             <div class="uv-form__input-row">
               <label for="name" class="is-required" th:text="|#{department.data.name}:|"> Abteilungsname </label>
               <input id="name" type="text" th:field="*{name}" th:errorclass="error" />
-              <p class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('name')}">
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('name')}">
                 <th:block th:errors="*{name}"> name Error</th:block>
               </p>
             </div>
@@ -49,7 +49,7 @@
                 Beschreibung
               </label>
               <textarea id="description" rows="3" th:field="*{description}" th:errorclass="error"></textarea>
-              <p class="tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('description')}">
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('description')}">
                 <th:block th:errors="*{description}"> description Error</th:block>
               </p>
             </div>
@@ -67,23 +67,16 @@
               </p>
             </div>
             <div class="uv-form__input-row">
-              <label
-                for="twoStageApproval"
-                class="tw-w-full lg:tw-w-1/4"
-                th:text="|#{department.data.twoStageApproval}:|"
-              >
+              <p class="uv-form__label" th:text="|#{department.data.twoStageApproval}:|">
                 Zweistufiger Genehmigungsprozess
-              </label>
+              </p>
               <label>
                 <input id="twoStageApproval" type="checkbox" th:field="*{twoStageApproval}" th:errorclass="error" />
                 <th:block th:text="#{department.data.twoStageApproval.activate}">
                   Zweistufigen Genehmigungsprozess aktivieren
                 </th:block>
               </label>
-              <p
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('twoStageApproval')}"
-              >
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('twoStageApproval')}">
                 <th:block th:errors="*{twoStageApproval}"> twoStageApproval Error</th:block>
               </p>
             </div>

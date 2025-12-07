@@ -22,23 +22,18 @@
           >
             Dauer der Lohnfortzahlung im Krankheitsfall (in Tagen)
           </label>
-          <div>
-            <input
-              id="sickNoteSettings.maximumSickPayDays"
-              th:field="*{sickNoteSettings.maximumSickPayDays}"
-              th:errorclass="error"
-              type="number"
-              step="1"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('sickNoteSettings.maximumSickPayDays')}"
-            >
-              <th:block th:errors="*{sickNoteSettings.maximumSickPayDays}">
-                sickNoteSettings.maximumSickPayDays Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="sickNoteSettings.maximumSickPayDays"
+            th:field="*{sickNoteSettings.maximumSickPayDays}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p class="uv-form__input-error" th:if="${#fields.hasErrors('sickNoteSettings.maximumSickPayDays')}">
+            <th:block th:errors="*{sickNoteSettings.maximumSickPayDays}">
+              sickNoteSettings.maximumSickPayDays Error
+            </th:block>
+          </p>
         </div>
 
         <!-- Days before end of sick pay notification -->
@@ -50,23 +45,21 @@
           >
             Wie viele Tage im Voraus soll der Arbeitnehmer über Lohnfortzahlungsende benachrichtigt werden
           </label>
-          <div>
-            <input
-              id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
-              th:field="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}"
-              th:errorclass="error"
-              type="number"
-              step="1"
-            />
-            <p
-              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-              th:if="${#fields.hasErrors('sickNoteSettings.daysBeforeEndOfSickPayNotification')}"
-            >
-              <th:block th:errors="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}">
-                sickNoteSettings.daysBeforeEndOfSickPayNotification Error
-              </th:block>
-            </p>
-          </div>
+          <input
+            id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
+            th:field="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('sickNoteSettings.daysBeforeEndOfSickPayNotification')}"
+          >
+            <th:block th:errors="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}">
+              sickNoteSettings.daysBeforeEndOfSickPayNotification Error
+            </th:block>
+          </p>
         </div>
       </div>
 
@@ -85,13 +78,12 @@
 
         <!-- Allow users to submit their own sick notes -->
         <div class="uv-form__input-row">
-          <label
-            class="is-required"
-            for="sickDays.userIsAllowedToSubmitSickNotes.true"
+          <p
+            class="uv-form__label uv-form__label--required"
             th:text="|#{settings.sickDays.userIsAllowedToSubmitSickNotes}:|"
           >
             Benutzer können Krankmeldungen selbst eintragen
-          </label>
+          </p>
           <div>
             <label>
               <input

@@ -77,21 +77,19 @@
                 <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
                   <th:block th:if="${overtime.id == null}">
                     <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
-                    <div>
-                      <select
-                        th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
-                        id="person-select"
-                      >
-                        <th:block th:fragment="person-select-options">
-                          <option
-                            th:each="p : ${persons}"
-                            th:text="${p.niceName}"
-                            th:value="${p.id}"
-                            th:selected="${person.id == p.id}"
-                          ></option>
-                        </th:block>
-                      </select>
-                    </div>
+                    <select
+                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
+                      id="person-select"
+                    >
+                      <th:block th:fragment="person-select-options">
+                        <option
+                          th:each="p : ${persons}"
+                          th:text="${p.niceName}"
+                          th:value="${p.id}"
+                          th:selected="${person.id == p.id}"
+                        ></option>
+                      </th:block>
+                    </select>
                   </th:block>
 
                   <th:block th:if="${overtime.id != null}">
@@ -117,10 +115,7 @@
                   th:placeholder="#{pattern.date}"
                   data-test-id="overtime-start-date"
                 />
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('startDate')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
                   <th:block th:errors="*{startDate}"> startDate Error</th:block>
                 </p>
               </div>
@@ -137,10 +132,7 @@
                   th:placeholder="#{pattern.date}"
                   data-test-id="overtime-end-date"
                 />
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('endDate')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
                   <th:block th:errors="*{endDate}"> endDate Error</th:block>
                 </p>
               </div>
@@ -158,7 +150,7 @@
                     <th:block th:text="#{overtime.data.reduceOvertime}">Überstunden abbauen statt hinzufügen</th:block>
                   </label>
                 </div>
-                <p class="tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('reduce')}">
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('reduce')}">
                   <th:block th:errors="*{reduce}">reduce Error</th:block>
                 </p>
               </div>
@@ -168,10 +160,7 @@
                   Mit Kommentar zum Verlauf hinzufügen
                 </label>
                 <textarea id="comment" th:field="*{comment}" rows="2"></textarea>
-                <p
-                  class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                  th:if="${#fields.hasErrors('comment')}"
-                >
+                <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
                   <th:block th:errors="*{comment}"> comment Error</th:block>
                 </p>
               </div>

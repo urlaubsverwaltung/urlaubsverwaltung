@@ -14,23 +14,21 @@
         >
           Wie viele Monate im Voraus dürfen Mitarbeitende eine neue Abwesenheit erstellen?
         </label>
-        <div>
-          <input
-            id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
-            th:field="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}"
-            th:errorclass="error"
-            type="number"
-            step="1"
-          />
-          <p
-            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-            th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveInAdvance')}"
-          >
-            <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}">
-              applicationSettings.maximumMonthsToApplyForLeaveInAdvance Error
-            </th:block>
-          </p>
-        </div>
+        <input
+          id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+          th:field="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}"
+          th:errorclass="error"
+          type="number"
+          step="1"
+        />
+        <p
+          class="uv-form__input-error"
+          th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveInAdvance')}"
+        >
+          <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}">
+            applicationSettings.maximumMonthsToApplyForLeaveInAdvance Error
+          </th:block>
+        </p>
       </div>
 
       <!-- Maximum months to apply for leave afterward -->
@@ -42,34 +40,28 @@
         >
           Wie viele Monate im Nachhinein dürfen Mitarbeitende eine neue Abwesenheit erstellen?
         </label>
-        <div>
-          <input
-            id="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
-            th:field="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}"
-            th:errorclass="error"
-            type="number"
-            step="1"
-          />
-          <p
-            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-            th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveAfterwards')}"
-          >
-            <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}">
-              applicationSettings.maximumMonthsToApplyForLeaveAfterwards Error
-            </th:block>
-          </p>
-        </div>
+        <input
+          id="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
+          th:field="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}"
+          th:errorclass="error"
+          type="number"
+          step="1"
+        />
+        <p
+          class="uv-form__input-error"
+          th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveAfterwards')}"
+        >
+          <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}">
+            applicationSettings.maximumMonthsToApplyForLeaveAfterwards Error
+          </th:block>
+        </p>
       </div>
 
       <!-- Allow half days for vacation -->
       <div class="uv-form__input-row">
-        <label
-          th:text="|#{settings.vacation.allowHalfDays}:|"
-          class="is-required"
-          for="applicationSettings.allowHalfDays.true"
-        >
+        <p class="uv-form__label uv-form__label--required" th:text="|#{settings.vacation.allowHalfDays}:|">
           Halbe Tage
-        </label>
+        </p>
         <div>
           <label data-test-id="vacation-half-day-enable">
             <input
