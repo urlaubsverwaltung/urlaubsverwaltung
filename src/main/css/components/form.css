@@ -82,6 +82,26 @@ select {
 /* end bootstrap migration */
 /* ----------------------- */
 
+.popover-button-select {
+  /* no transition for :focus outline since it looks ugly */
+  /* (outline color or something it dark at starting style) */
+
+  @apply tw-block;
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-text-sm;
+  @apply tw-border;
+  @apply tw-border-neutral-300;
+  @apply tw-rounded-md;
+
+  :not([class*="tw-border-"]) {
+    /* actually colors are meant here, like tw-border-blue-400 */
+    /* however tw-border-*-* is not a valid selector */
+    @apply dark:tw-border-neutral-600 !important;
+  }
+}
+
+.popover-button-select:focus,
 /* radiobutton and checkbox should not be highlighted on click, but on tab (:focus-visible) */
 input:not(:is([type="radio"], [type="checkbox"])):focus,
 select:focus,
@@ -145,37 +165,6 @@ textarea:focus {
 legend {
   @apply dark:tw-text-zinc-200;
   @apply dark:tw-font-normal;
-}
-
-.popover-button-select {
-  @apply tw-outline-0;
-  @apply tw-block;
-  @apply tw-text-sm;
-  @apply tw-py-1;
-  @apply tw-px-2.5;
-  @apply tw-border;
-  @apply tw-border-neutral-300;
-}
-
-.popover-button-select {
-  /* ring-0 is required to enable transition to ring-x of the focused form-control */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
-  @apply tw-rounded-md;
-
-  :not([class*="tw-border-"]) {
-    /* actually colors are meant here, like tw-border-blue-400 */
-    /* however tw-border-*-* is not a valid selector */
-    @apply dark:tw-border-neutral-600 !important;
-  }
-}
-
-.popover-button-select {
-  @apply tw-px-3;
-  @apply tw-py-2;
-  @apply tw-rounded-md;
 }
 
 input[disabled],
