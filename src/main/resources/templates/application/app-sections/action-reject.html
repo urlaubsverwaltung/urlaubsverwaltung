@@ -9,11 +9,13 @@
       <th:block th:if="${isAllowedToRejectApplication}">
         <button
           class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
-          onclick="document.querySelector('#refer')?.classList.add('tw-hidden');
-          document.querySelector('#allow')?.classList.add('tw-hidden');
-          document.querySelector('#cancel')?.classList.add('tw-hidden');
-          document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
-          document.querySelector('#reject')?.classList.remove('tw-hidden');"
+          onclick="
+            document.querySelector('#refer')?.classList.add('tw-hidden');
+            document.querySelector('#allow')?.classList.add('tw-hidden');
+            document.querySelector('#cancel')?.classList.add('tw-hidden');
+            document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
+            document.querySelector('#reject')?.classList.remove('tw-hidden');
+          "
           th:data-title="#{action.reject}"
         >
           <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5')}"></svg>
@@ -25,29 +27,29 @@
     <th:block th:fragment="form">
       <form
         id="reject"
-        class="form confirm alert alert-danger"
+        class="alert alert-danger"
         th:classappend="${action eq 'reject' ? '' : 'tw-hidden'}"
         method="post"
         th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/reject?redirect=/web/application' : '/web/application/__${app.id}__/reject'}"
         th:action="@{__${actionUrl}__}"
         th:object="${comment}"
       >
-        <div class="form-group">
+        <div class="tw-mb-0">
           <strong class="tw-font-medium" th:text="#{action.reject.confirm}"></strong>
         </div>
 
-        <div class="form-group">
+        <div class="tw-mb-0">
           <label th:text="|#{action.comment.mandatory}:|" for="text-reject">Kommentar, obligatorisch</label>
           <textarea id="text-reject" rows="2" name="text" class="form-control" th:errorclass="error"></textarea>
         </div>
 
-        <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+        <div class="tw-flex tw-justify-between tw-gap-4">
           <button type="submit" class="button-danger tw-w-56" th:text="#{action.reject}"></button>
           <button
             type="button"
             class="button"
             th:text="#{action.cancel}"
-            onclick="document.querySelector('#reject')?.classList.add('tw-hidden');"
+            onclick="document.querySelector('#reject')?.classList.add('tw-hidden')"
           ></button>
         </div>
       </form>

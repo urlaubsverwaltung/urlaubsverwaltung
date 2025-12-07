@@ -106,7 +106,7 @@
           <th:block th:if="${canAcceptSickNote}">
             <form
               id="allow"
-              class="form confirm alert alert-success"
+              class="alert alert-success"
               th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
               method="post"
               th:with="isShortcut=${param.shortcut != null && #lists.contains(param.shortcut, 'true')},
@@ -119,7 +119,7 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <strong class="tw-font-medium">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
                     Soll diese Krankmeldung wirklich angenommen werden?
@@ -130,12 +130,12 @@
                 </strong>
               </div>
 
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
                 <textarea id="text-allow" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
               </div>
 
-              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+              <div class="tw-mb-0 tw-flex tw-justify-between tw-gap-4">
                 <button type="submit" class="button-main-green tw-w-56">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.acceptSicknote}">Annehmen</th:block>
                   <th:block th:if="${extensionRequested}">Verlängerung Annehmen</th:block>
@@ -154,7 +154,7 @@
           <th:block th:if="${canDeleteSickNote}">
             <form
               id="cancel"
-              class="form confirm alert alert-danger"
+              class="alert alert-danger"
               th:classappend="${(action == 'cancel') ? '' : 'tw-hidden'}"
               method="post"
               th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/cancel?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/cancel'}"
@@ -163,13 +163,13 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <strong class="tw-font-medium" th:text="#{action.sicknote.delete.request.confirm}">
                   Soll diese Krankmeldung wirklich storniert werden?
                 </strong>
               </div>
 
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <label th:text="|#{action.comment.mandatory}:|" for="text-cancel"></label>
                 <textarea
                   id="text-cancel"
@@ -181,7 +181,7 @@
                 ></textarea>
               </div>
 
-              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+              <div class="tw-flex tw-justify-between tw-gap-4">
                 <button type="submit" class="button-danger tw-w-56" th:text="#{action.delete}">Stornieren</button>
                 <button
                   type="button"
