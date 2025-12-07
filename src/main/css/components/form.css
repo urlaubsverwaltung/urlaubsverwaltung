@@ -470,6 +470,12 @@ textarea.error {
       display: inline-block;
     }
   }
+
+  .uv-form__input-col {
+    .uv-form__label {
+      font-size: 1rem;
+    }
+  }
 }
 
 .uv-form-grid {
@@ -486,14 +492,26 @@ textarea.error {
   input {
     /* unset margin-bottom of bootstrap, grid aligns items */
     margin: 0 !important;
+    /* in a col, the label has a gap to the following element */
+    &:where(.uv-form__input-col .uv-form__label + label) {
+      margin-top: 0.5rem !important; /* ! due to above important override... */
+    }
   }
 
   /* align text with input */
   label:has(input[type="radio"], input[type="checkbox"]) {
     display: inline-flex;
-    align-items: center;
     flex-wrap: nowrap;
     gap: 0.25rem;
+    /* multiline label text: */
+    /* align input on the "first" line (baseline) */
+    align-items: baseline;
+    /* adjust line heigt of labels */
+    line-height: 1.42;
+    /* align the input with text */
+    input {
+      transform: translateY(1px);
+    }
   }
 
   /* no legend element since we cannot use fieldset */
@@ -517,7 +535,6 @@ textarea.error {
   .uv-form__group {
     display: flex;
     flex-direction: column;
-    /*gap: 1rem;*/
 
     .uv-form__info {
       font-size: 0.875rem;
@@ -532,6 +549,7 @@ textarea.error {
       }
     }
 
+    .uv-form__input-col,
     .uv-form__input-row {
       display: flex;
       flex-direction: column;
@@ -567,7 +585,9 @@ textarea.error {
       var(--uv-form-col-gap)
       [info]var(--uv-form-info-col-width)
       [end]var(--uv-form-col-gap);
-    grid-row-gap: 1rem;
+
+    /* this gap only affects [role=group] elements */
+    grid-row-gap: 3rem;
 
     .uv-form__global-error {
       grid-column: start / end;
@@ -582,10 +602,12 @@ textarea.error {
     .uv-form-legend {
       grid-row: 1;
       grid-column: label / end;
+      + :is(.uv-form__group, .uv-form__input-row, .uv-form__input-col) {
+        margin-top: var(--uv-form-row-gap);
+      }
     }
 
     div[role="group"] {
-      margin-top: var(--uv-form-row-gap);
       grid-column: label / end;
       display: grid;
       grid-template-columns: subgrid;
@@ -609,7 +631,7 @@ textarea.error {
       }
 
       .uv-form__info {
-        margin-top: var(--uv-form-row-gap);
+        margin-top: 0; /* override small screen. only adjacent elements have margin-top */
         /* span ALL rows. using $ since -1 does not work */
         /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
         /* note that a HIGH value breaks devtools grid highlighting */
@@ -617,18 +639,23 @@ textarea.error {
         grid-row: 1 / var(--uv-form-grid-row-span);
         grid-column: info;
 
+        + .uv-form__info {
+          margin-top: var(--uv-form-row-gap);
+        }
+
         p:first-child {
           /* align paragraph in ~baseline  */
           margin-top: 0.5rem;
         }
       }
 
-      .uv-form__input-row {
+      .uv-form__input-row,
+      .uv-form__input-col {
         /* first row is the group-title/legend */
         /* second row starts with input-rows */
         grid-row: 1;
         /* cannot use :first-of-type or :first-child since there could be other div's or elements... */
-        & + .uv-form__input-row {
+        & + :is(.uv-form__input-row, .uv-form__input-col) {
           /* next input-rows are auto flowing */
           grid-row: auto;
         }
@@ -636,7 +663,16 @@ textarea.error {
         grid-column: label / info;
         /* auto flow each input-row to next row */
         grid-auto-flow: row;
+      }
 
+      .uv-form__input-col {
+        margin-top: 0;
+        ~ .uv-form__input-col {
+          margin-top: var(--uv-form-row-gap);
+        }
+      }
+
+      .uv-form__input-row {
         display: grid;
         grid-template-columns: subgrid;
         /* align label with input */
