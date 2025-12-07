@@ -5,75 +5,45 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="~{fragments/section-heading::section-heading(~{::time-heading-body}, ~{})}">
-        <th:block th:fragment="time-heading-body">
-          <h2 th:text="#{settings.time.title}">Einstellungen für Zeitangaben</h2>
-        </th:block>
-      </div>
-
-      <div class="tw-flex tw-flex-col lg:tw-flex-row-reverse tw-gap-y-4 tw-gap-x-8">
-        <div class="tw-w-full lg:tw-w-1/3">
-          <span class="help-block tw-text-sm"> </span>
+      <div class="uv-form__group">
+        <!-- Selection of the time zone -->
+        <div class="uv-form__input-row">
+          <label th:text="|#{settings.time.timezone}:|" class="is-required" for="timeSettings.timeZoneId">
+            Zeitzone
+          </label>
+          <select
+            th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})}"
+            id="yearSelect"
+          >
+            <th:block th:fragment="settings-time-timezoneid">
+              <option
+                th:each="timeZoneId : ${availableTimezones}"
+                th:text="${timeZoneId}"
+                th:value="${timeZoneId}"
+                th:selected="${settings.timeSettings.timeZoneId == timeZoneId}"
+              ></option>
+            </th:block>
+          </select>
         </div>
 
-        <div class="tw-w-full lg:tw-w-2/3">
-          <!-- Selection of the time zone -->
-          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
-            <label
-              th:text="|#{settings.time.timezone}:|"
-              class="is-required tw-w-full lg:tw-w-2/6"
-              for="timeSettings.timeZoneId"
-            >
-              Zeitzone
-            </label>
-            <div class="tw-w-full lg:tw-w-4/6">
-              <select
-                th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})}"
-                id="yearSelect"
-              >
-                <th:block th:fragment="settings-time-timezoneid">
-                  <option
-                    th:each="timeZoneId : ${availableTimezones}"
-                    th:text="${timeZoneId}"
-                    th:value="${timeZoneId}"
-                    th:selected="${settings.timeSettings.timeZoneId == timeZoneId}"
-                  ></option>
-                </th:block>
-              </select>
-            </div>
-          </div>
+        <!-- Start of working hours settings for a work day -->
+        <div class="uv-form__input-row">
+          <label th:text="|#{settings.time.workDay.begin}:|" class="is-required" for="timeSettings.workDayBeginHour">
+            Beginn eines Arbeitstags
+          </label>
+          <th:block
+            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayBeginHour', 'settings-time-hours', 'timeSettings.workDayBeginMinute', 'settings-time-minutes')}"
+          ></th:block>
+        </div>
 
-          <!-- Start of working hours settings for a work day -->
-          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
-            <label
-              th:text="|#{settings.time.workDay.begin}:|"
-              class="is-required tw-w-full lg:tw-w-2/6"
-              for="timeSettings.workDayBeginHour"
-            >
-              Beginn eines Arbeitstags
-            </label>
-            <div class="tw-w-full lg:tw-w-4/6">
-              <th:block
-                th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayBeginHour', 'settings-time-hours', 'timeSettings.workDayBeginMinute', 'settings-time-minutes')}"
-              ></th:block>
-            </div>
-          </div>
-
-          <!-- End of working hours settings for a work day -->
-          <div class="tw-flex tw-flex-col lg:tw-flex-row tw-mb-4 tw-gap-x-4">
-            <label
-              th:text="|#{settings.time.workDay.end}:|"
-              class="is-required tw-w-full lg:tw-w-2/6"
-              for="timeSettings.workDayEndHour"
-            >
-              Ende eines Arbeitstags
-            </label>
-            <div class="tw-w-full lg:tw-w-4/6">
-              <th:block
-                th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayEndHour', 'settings-time-hours', 'timeSettings.workDayEndMinute', 'settings-time-minutes')}"
-              ></th:block>
-            </div>
-          </div>
+        <!-- End of working hours settings for a work day -->
+        <div class="uv-form__input-row">
+          <label th:text="|#{settings.time.workDay.end}:|" class="is-required" for="timeSettings.workDayEndHour">
+            Ende eines Arbeitstags
+          </label>
+          <th:block
+            th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('timeSettings.workDayEndHour', 'settings-time-hours', 'timeSettings.workDayEndMinute', 'settings-time-minutes')}"
+          ></th:block>
         </div>
       </div>
     </th:block>
