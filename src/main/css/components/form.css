@@ -718,7 +718,9 @@ textarea.error {
 
       &:has(.uv-form__group-error) {
         /* info and inputs are one row below the group-error */
-        .uv-form__info,
+        .uv-form__info {
+          grid-row: 2 / var(--uv-form-grid-row-span);
+        }
         .uv-form__input-row {
           grid-row: 2;
         }
