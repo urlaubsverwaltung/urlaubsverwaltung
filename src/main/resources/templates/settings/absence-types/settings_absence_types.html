@@ -14,45 +14,51 @@
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only">Einstellungen</h1>
 
-        <form method="post" th:action="@{/web/settings/absence-types}" th:object="${settings}" data-turbo="true">
+        <form
+          method="post"
+          th:action="@{/web/settings/absence-types}"
+          th:object="${settings}"
+          class="uv-form"
+          data-turbo="true"
+        >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='absence-types')}" />
 
-          <div id="absenceTypes" class="tw-mt-6">
-            <div class="tw-mb-12 tw-relative tw-z-10">
-              <div th:replace="~{settings/absence-types/absence-types::section}"></div>
-              <div class="tw-mb-12 tw-relative tw-z-10">
-                <div class="tw-mt-8">
-                  <div class="tw-mb-16 tw-flex tw-flex-col-reverse tw-gap-4 xs:tw-flex-row xs:tw-gap-4">
-                    <button
-                      th:text="#{action.save}"
-                      type="submit"
-                      class="button-main-green"
-                      data-test-id="submit-custom-absence-types-button"
-                      data-turbo="false"
-                    ></button>
-                    <button
-                      type="submit"
-                      name="add-absence-type"
-                      class="button"
-                      data-test-id="add-absence-type-button"
-                      data-turbo-frame="frame-absence-type"
-                      data-turbo-action="replace"
-                    >
-                      Neue Abwesenheitsart hinzufügen
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div role="group" aria-describedby="group-absence-types-description">
+            <h2 id="group-absence-types-description" class="uv-form-legend" th:text="#{settings.absenceTypes.title}">
+              Einstellungen zu Abwesenheitsarten
+            </h2>
+            <div th:replace="~{settings/absence-types/absence-types::section}"></div>
+            <div class="tw-mt-8 tw-flex tw-flex-col-reverse tw-gap-4 xs:tw-flex-row xs:tw-gap-4">
+              <button
+                th:text="#{action.save}"
+                type="submit"
+                class="button-main-green"
+                data-test-id="submit-custom-absence-types-button"
+                data-turbo="false"
+              ></button>
+              <button
+                type="submit"
+                name="add-absence-type"
+                class="button"
+                data-test-id="add-absence-type-button"
+                data-turbo-frame="frame-absence-type"
+                data-turbo-action="replace"
+              >
+                Neue Abwesenheitsart hinzufügen
+              </button>
             </div>
-            <div>
-              <div th:replace="~{settings/absence-types/special-leave::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
+          </div>
+
+          <div role="group" aria-describedby="group-special-leave-description" class="tw-mt-16">
+            <h2 id="group-special-leave-description" class="uv-form-legend" th:text="#{settings.specialleave.title}">
+              Einstellungen zu Sonderurlaub
+            </h2>
+            <div th:replace="~{settings/absence-types/special-leave::section}"></div>
+            <th:block th:replace="~{settings/fragments::save-button}" />
           </div>
         </form>
       </main>

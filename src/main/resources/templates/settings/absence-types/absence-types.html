@@ -13,14 +13,8 @@
         </turbo-stream>
       </turbo-frame>
 
-      <div th:replace="~{fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})}">
-        <th:block th:fragment="absence-types-heading-body">
-          <h2 th:text="#{settings.absenceTypes.title}">Einstellungen zu Abwesenheitsarten</h2>
-        </th:block>
-      </div>
-
-      <div>
-        <aside
+      <div class="uv-form__group">
+        <div
           class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0"
         >
           <div>
@@ -40,8 +34,8 @@
               </a>
             </p>
           </div>
-        </aside>
-        <div class="tw-w-full tw-sticky tw-top-0">
+        </div>
+        <div class="tw-mt-4 tw-w-full tw-sticky tw-top-0">
           <ul id="absence-type-list" class="tw-relative tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
             <li role="none" class="absence-type-list-head">
               <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-list-head__status"></span>
