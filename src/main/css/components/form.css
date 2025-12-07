@@ -250,8 +250,9 @@ textarea.error {
 }
 
 .uv-form {
-  --uv-form-col-gap: 1rem;
-  --uv-form-row-gap: 1rem;
+  --uv-form-padding-x: 0;
+  --uv-form-col-gap: 1.25rem;
+  --uv-form-row-gap: 1.25rem;
   --uv-form-label-col-width: 11.25rem; /* 180px */
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
@@ -411,16 +412,18 @@ textarea.error {
   }
 
   @media screen and (width >= 1024px) {
+    --uv-form-label-col-width: 200px;
+
     display: grid;
     /* column-gap defined as column, as we don't want a gap for first and last col */
     grid-template-columns:
-      [start]var(--uv-form-col-gap)
+      [start]var(--uv-form-padding-x)
       [label]var(--uv-form-label-col-width)
       var(--uv-form-col-gap)
       [input]var(--uv-form-input-col-width)
       var(--uv-form-col-gap)
       [info]var(--uv-form-info-col-width)
-      [end]var(--uv-form-col-gap);
+      [end]var(--uv-form-padding-x);
 
     .uv-form__global-feedback {
       grid-column: start / end;
@@ -552,15 +555,7 @@ textarea.error {
   }
 
   @media screen and (width >= 1280px) {
-    /* no left and right padding, form is centered by the container currently */
-    grid-template-columns:
-      [start]0
-      [label]var(--uv-form-label-col-width)
-      var(--uv-form-col-gap)
-      [input]var(--uv-form-input-col-width)
-      var(--uv-form-col-gap)
-      [info]var(--uv-form-info-col-width)
-      [end]0;
+    --uv-form-padding-x: 0;
   }
 }
 
