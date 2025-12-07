@@ -76,7 +76,7 @@
               <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
                 <input
                   th:id="|specialLeave-days-${loop.index}|"
-                  class="form-control tw-w-1/2 sm:tw-w-full"
+                  class="tw-w-1/2 sm:tw-w-full"
                   th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}"
                   th:errorclass="error"
                   type="number"

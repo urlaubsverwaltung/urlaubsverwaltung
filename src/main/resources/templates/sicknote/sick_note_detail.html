@@ -132,7 +132,7 @@
 
               <div class="tw-mb-4">
                 <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
-                <textarea id="text-allow" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
+                <textarea id="text-allow" rows="2" th:errorclass="error" name="text"></textarea>
               </div>
 
               <div class="tw-mb-0 tw-flex tw-justify-between tw-gap-4">
@@ -171,14 +171,7 @@
 
               <div class="tw-mb-4">
                 <label th:text="|#{action.comment.mandatory}:|" for="text-cancel"></label>
-                <textarea
-                  id="text-cancel"
-                  rows="2"
-                  class="form-control"
-                  th:field="*{text}"
-                  th:errorclass="error"
-                  name="text"
-                ></textarea>
+                <textarea id="text-cancel" rows="2" th:field="*{text}" th:errorclass="error" name="text"></textarea>
               </div>
 
               <div class="tw-flex tw-justify-between tw-gap-4">
@@ -432,7 +425,7 @@
               <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
             </div>
 
-            <textarea th:field="*{text}" class="form-control" th:errorclass="error" rows="2"></textarea>
+            <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
             <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
               <button
                 th:text="#{action.cancel}"

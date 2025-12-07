@@ -42,13 +42,7 @@
             th:text="|${commentMandatory == true ? #messages.msg('action.comment.mandatory') : #messages.msg('action.comment.optional')}:|"
             for="text-decline-cancellation-request"
           ></label>
-          <textarea
-            id="text-decline-cancellation-request"
-            rows="2"
-            name="text"
-            class="form-control"
-            th:errorclass="error"
-          ></textarea>
+          <textarea id="text-decline-cancellation-request" rows="2" name="text" th:errorclass="error"></textarea>
         </div>
 
         <div class="tw-flex tw-justify-between tw-gap-4">

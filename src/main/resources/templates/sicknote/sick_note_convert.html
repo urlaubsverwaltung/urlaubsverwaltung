@@ -80,13 +80,7 @@
                   >Grund</label
                 >
                 <div class="tw-flex-1">
-                  <textarea
-                    id="reason"
-                    th:field="*{reason}"
-                    class="form-control"
-                    th:errorclass="error"
-                    rows="2"
-                  ></textarea>
+                  <textarea id="reason" th:field="*{reason}" th:errorclass="error" rows="2"></textarea>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                     th:if="${#fields.hasErrors('reason')}"

@@ -72,7 +72,6 @@
                   th:data-min="|${year}-01-01|"
                   th:data-max="|${year}-12-31|"
                   th:placeholder="#{pattern.date}"
-                  class="form-control"
                   th:errorclass="error"
                 />
                 <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
@@ -94,7 +93,6 @@
                   th:data-min="|${year}-01-01|"
                   th:data-max="|${year}-12-31|"
                   th:placeholder="#{pattern.date}"
-                  class="form-control"
                   th:errorclass="error"
                 />
                 <p class="error tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
@@ -126,7 +124,6 @@
                   id="annualVacationDays"
                   type="number"
                   th:field="*{annualVacationDays}"
-                  class="form-control"
                   th:errorclass="error"
                   step="0.5"
                   th:value="${account.annualVacationDays}"
@@ -147,7 +144,6 @@
                   id="actualVacationDays"
                   type="number"
                   th:field="*{actualVacationDays}"
-                  class="form-control"
                   th:errorclass="error"
                   step="0.5"
                   th:value="${account.actualVacationDays}"
@@ -181,7 +177,6 @@
                   id="remainingVacationDays"
                   type="number"
                   th:field="*{remainingVacationDays}"
-                  class="form-control"
                   th:errorclass="error"
                   step="0.5"
                   th:value="${account.remainingVacationDays}"
@@ -306,7 +301,7 @@
                   th:data-min="|${year}-01-01|"
                   th:data-max="|${year}-12-31|"
                   th:placeholder="#{pattern.date}"
-                  class="form-control tw-mt-2"
+                  class="tw-mt-2"
                   th:errorclass="error"
                 />
                 <p class="error tw-text-sm" th:if="${#fields.hasErrors('expiryDateLocally')}">
@@ -325,7 +320,6 @@
                   id="remainingVacationDaysNotExpiring"
                   type="number"
                   th:field="*{remainingVacationDaysNotExpiring}"
-                  class="form-control"
                   th:errorclass="error"
                   step="0.5"
                   th:value="${account.remainingVacationDaysNotExpiring}"
@@ -344,7 +338,6 @@
                   id="comment"
                   rows="3"
                   th:field="*{comment}"
-                  class="form-control"
                   th:errorclass="error"
                   th:placeholder="#{person.form.annualVacation.comment.placeholder}"
                 >

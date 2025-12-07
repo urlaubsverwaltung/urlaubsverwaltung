@@ -38,7 +38,7 @@
 
             <div class="uv-form__input-row">
               <label for="name" class="is-required" th:text="|#{department.data.name}:|"> Abteilungsname </label>
-              <input id="name" type="text" th:field="*{name}" class="form-control" th:errorclass="error" />
+              <input id="name" type="text" th:field="*{name}" th:errorclass="error" />
               <p class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('name')}">
                 <th:block th:errors="*{name}"> name Error</th:block>
               </p>
@@ -48,13 +48,7 @@
               <label for="description" class="tw-w-full lg:tw-w-1/4" th:text="|#{department.data.info}:|">
                 Beschreibung
               </label>
-              <textarea
-                id="description"
-                rows="3"
-                th:field="*{description}"
-                class="form-control"
-                th:errorclass="error"
-              ></textarea>
+              <textarea id="description" rows="3" th:field="*{description}" th:errorclass="error"></textarea>
               <p class="tw-text-sm tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('description')}">
                 <th:block th:errors="*{description}"> description Error</th:block>
               </p>
@@ -135,7 +129,7 @@
                 <input
                   id="member-search-input"
                   type="text"
-                  class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                  class="tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
                   name="memberQuery"
                   th:placeholder="#{action.search.placeholder.firstname-lastname}"
                   th:value="${memberQuery}"

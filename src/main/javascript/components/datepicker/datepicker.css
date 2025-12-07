@@ -40,10 +40,6 @@ duet-date-picker[disabled] input {
   @apply dark:tw-border-zinc-600;
 }
 
-duet-date-picker.form-control {
-  padding: 0;
-}
-
 .duet-date {
   height: 100%;
 }
@@ -58,9 +54,6 @@ duet-date-picker.error {
 
 .duet-date__input {
   border: none;
-  /* padding of bootstrap form-control */
-  padding: 6px 12px;
-  height: 100%;
 }
 
 .duet-date__dialog-content {
@@ -163,9 +156,10 @@ duet-date-picker.error {
   min-width: 3.25rem;
   /* disable duet box-shadow */
   box-shadow: none;
-  height: 100%;
-  top: 0;
-  right: 0;
+  /* position within the "input" */
+  height: calc(100% - 2px);
+  top: 1px;
+  right: 1px;
 }
 
 .duet-date__input-wrapper:focus-within .duet-date__toggle {

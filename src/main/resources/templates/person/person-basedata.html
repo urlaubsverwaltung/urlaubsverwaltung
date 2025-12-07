@@ -74,41 +74,17 @@
 
           <div class="uv-form__group">
             <div class="uv-form__input-row">
-              <label
-                class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
-                for="personnelNumber"
-                th:for="${#ids.next('personnelNumber')}"
-                th:text="#{person.form.basedata.personnelNumber}"
-              >
-                Personnel Number
-              </label>
-              <input
-                type="text"
-                id="personnelNumber"
-                th:field="*{personnelNumber}"
-                class="tw-form-control tw-w-full"
-                th:errorclass="error"
-              />
+              <label for="personnelNumber" th:text="#{person.form.basedata.personnelNumber}"> Personnel Number </label>
+              <input type="text" id="personnelNumber" th:field="*{personnelNumber}" th:errorclass="error" />
               <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('personnelNumber')}">
                 <th:block th:errors="*{personnelNumber}"> Personnel Number Error </th:block>
               </p>
             </div>
             <div class="uv-form__input-row">
-              <label
-                class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
-                for="additionalInfo"
-                th:for="${#ids.next('additionalInfo')}"
-                th:text="#{person.form.basedata.additionalInformation}"
-              >
+              <label for="additionalInfo" th:text="#{person.form.basedata.additionalInformation}">
                 Additional Information
               </label>
-              <textarea
-                id="additionalInfo"
-                class="tw-form-control tw-w-full"
-                th:errorclass="error"
-                rows="4"
-                th:field="*{additionalInfo}"
-              ></textarea>
+              <textarea id="additionalInfo" th:errorclass="error" rows="4" th:field="*{additionalInfo}"></textarea>
               <p class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('additionalInfo')}">
                 <th:block th:errors="*{additionalInfo}"> Additional Information Error </th:block>
               </p>

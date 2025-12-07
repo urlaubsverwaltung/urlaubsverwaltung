@@ -135,7 +135,7 @@
                         th:value="${{period.startDate}}"
                         th:data-iso-value="${period.startDateIsoValue}"
                         th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
+                        class="tw-mt-0.5"
                       />
                       <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4">
                         Bis
@@ -146,7 +146,7 @@
                         th:value="${{period.endDate}}"
                         th:data-iso-value="${period.endDateIsoValue}"
                         th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
+                        class="tw-mt-0.5"
                       />
                     </div>
                     <div class="tw-mt-6">
@@ -187,7 +187,7 @@
                   id="search"
                   name="query"
                   th:value="${query}"
-                  class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                  class="tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
                   th:placeholder="#{action.search.placeholder.firstname-lastname}"
                   data-auto-submit="search-submit"
                   data-auto-submit-delay="100"

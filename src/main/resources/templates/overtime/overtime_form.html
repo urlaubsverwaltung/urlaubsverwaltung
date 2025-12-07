@@ -112,7 +112,6 @@
                   type="text"
                   th:field="*{startDate}"
                   th:data-iso-value="${overtime.startDateIsoValue}"
-                  class="form-control"
                   th:errorclass="error"
                   autocomplete="off"
                   th:placeholder="#{pattern.date}"
@@ -133,7 +132,6 @@
                   type="text"
                   th:field="*{endDate}"
                   th:data-iso-value="${overtime.endDateIsoValue}"
-                  class="form-control"
                   th:errorclass="error"
                   autocomplete="off"
                   th:placeholder="#{pattern.date}"
@@ -169,7 +167,7 @@
                 <label for="comment" th:text="|#{overtime.data.comment}:|">
                   Mit Kommentar zum Verlauf hinzufügen
                 </label>
-                <textarea id="comment" th:field="*{comment}" class="form-control" rows="2"></textarea>
+                <textarea id="comment" th:field="*{comment}" rows="2"></textarea>
                 <p
                   class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                   th:if="${#fields.hasErrors('comment')}"

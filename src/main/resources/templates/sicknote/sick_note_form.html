@@ -164,7 +164,6 @@
                 id="from"
                 th:field="*{startDate}"
                 th:data-iso-value="${sickNote.startDateIsoValue}"
-                class="form-control"
                 th:errorclass="error"
                 autocomplete="off"
                 th:placeholder="#{pattern.date}"
@@ -182,7 +181,6 @@
                 id="to"
                 th:field="*{endDate}"
                 th:data-iso-value="${sickNote.endDateIsoValue}"
-                class="form-control"
                 th:errorclass="error"
                 autocomplete="off"
                 th:placeholder="#{pattern.date}"
@@ -214,7 +212,6 @@
                 id="aubFrom"
                 th:field="*{aubStartDate}"
                 th:data-iso-value="${sickNote.aubStartDateIsoValue}"
-                class="form-control"
                 th:errorclass="error"
                 autocomplete="off"
                 th:placeholder="#{pattern.date}"
@@ -232,7 +229,6 @@
                 id="aubTo"
                 th:field="*{aubEndDate}"
                 th:data-iso-value="${sickNote.aubEndDateIsoValue}"
-                class="form-control"
                 th:errorclass="error"
                 autocomplete="off"
                 th:placeholder="#{pattern.date}"
@@ -265,13 +261,7 @@
               <label for="comment" th:text="|#{sicknote.data.furtherInformation.comment}:|">
                 Mit Kommentar zum Verlauf hinzufügen
               </label>
-              <textarea
-                id="comment"
-                rows="2"
-                th:field="*{comment}"
-                class="form-control"
-                th:errorclass="error"
-              ></textarea>
+              <textarea id="comment" rows="2" th:field="*{comment}" th:errorclass="error"></textarea>
               <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
                 <th:block th:errors="*{comment}">comment Error</th:block>
               </p>

@@ -138,7 +138,7 @@
                   <input
                     id="from"
                     name="startDate"
-                    class="form-control tw-w-2/3"
+                    class="tw-w-2/3"
                     th:errorclass="error"
                     th:placeholder="#{pattern.date}"
                     autocomplete="off"
@@ -147,7 +147,7 @@
                   <input
                     id="startTime"
                     name="startTime"
-                    class="form-control tw-w-1/3"
+                    class="tw-w-1/3"
                     th:errorclass="error"
                     th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
                     autocomplete="off"
@@ -176,7 +176,7 @@
                   <input
                     id="to"
                     name="endDate"
-                    class="form-control tw-w-2/3"
+                    class="tw-w-2/3"
                     th:errorclass="error"
                     th:placeholder="#{pattern.date}"
                     autocomplete="off"
@@ -185,7 +185,7 @@
                   <input
                     id="endTime"
                     name="endTime"
-                    class="form-control tw-w-1/3"
+                    class="tw-w-1/3"
                     th:errorclass="error"
                     th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
                     autocomplete="off"
@@ -274,7 +274,6 @@
                   rows="1"
                   name="reason"
                   th:text="${applicationForLeaveForm.reason}"
-                  class="form-control"
                   th:errorclass="error"
                   data-test-id="reason"
                 ></textarea>
@@ -439,7 +438,6 @@
                               rows="1"
                               th:name="${'holidayReplacements[' + index + '].note'}"
                               th:text="${__${'applicationForLeaveForm.holidayReplacements[' + index + '].note'}__}"
-                              class="form-control"
                               th:errorclass="error"
                             ></textarea>
                           </div>
@@ -467,7 +465,6 @@
                   rows="1"
                   name="address"
                   th:text="${applicationForLeaveForm.address}"
-                  class="form-control"
                   th:errorclass="error"
                 ></textarea>
                 <p
@@ -487,7 +484,6 @@
                   rows="2"
                   name="comment"
                   th:text="${applicationForLeaveForm.comment}"
-                  class="form-control"
                   th:errorclass="error"
                 ></textarea>
                 <p

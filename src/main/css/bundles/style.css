@@ -52,6 +52,7 @@
     --uv-chart-container-background: theme("colors.gray.50");
     --uv-chart-background: theme("colors.white");
     --uv-chart-border: theme("colors.gray.100");
+    --uv-focus-ring-color: theme("colors.blue.300");
   }
 
   .tw-dark {
