@@ -18,20 +18,20 @@
           method="post"
           th:action="@{/web/settings/public-holidays}"
           th:object="${settings}"
-          class="form-horizontal"
+          class="uv-form uv-form-grid"
         >
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-
           <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='public-holidays')}" />
 
-          <div id="public-holidays" class="tw-mt-6">
-            <div class="form-section tw-mb-8">
-              <div th:replace="~{settings/public-holidays/public_holidays::section}"></div>
-              <th:block th:replace="~{settings/fragments::save-button}" />
-            </div>
+          <div role="group" aria-describedby="group-public-holiday-description">
+            <h2 id="group-public-holiday-description" class="uv-form-legend" th:text="#{settings.publicHolidays.title}">
+              Einstellungen zu Feiertagen
+            </h2>
+            <div th:replace="~{settings/public-holidays/public_holidays::section}"></div>
+            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
         </form>
       </main>
