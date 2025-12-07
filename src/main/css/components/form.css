@@ -695,6 +695,13 @@ textarea.error {
         .uv-form__info,
         .uv-form__input-row {
           grid-row: 2;
+          margin-top: 0;
+        }
+        /* adjust following elements */
+        .uv-form__info ~ .uv-form__info,
+        .uv-form__input-row ~ .uv-form__input-row {
+          grid-row: auto;
+          margin-top: var(--uv-form-row-gap);
         }
       }
     }

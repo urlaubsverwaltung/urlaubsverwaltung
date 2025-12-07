@@ -5,188 +5,174 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="~{fragments/section-heading::section-heading(~{::vacation-heading-body}, ~{})}">
-        <th:block th:fragment="vacation-heading-body">
-          <h2 th:text="#{settings.vacation.title}">Einstellungen zu Urlaub</h2>
-        </th:block>
-      </div>
-
-      <div class="tw-flex tw-flex-col md:tw-flex-row-reverse tw-gap-4">
-        <aside class="tw-w-full md:tw-w-1/3">
+      <div class="uv-form__group">
+        <div class="uv-form__info">
           <p class="help-block tw-text-sm">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.vacation.description}" />
           </p>
-        </aside>
-        <div class="tw-w-full md:tw-w-2/3">
-          <div class="tw-flex tw-flex-col md:tw-flex-row tw-mb-4">
-            <label
-              th:text="|#{settings.vacation.defaultVacationDays}:|"
-              class="is-required tw-w-full md:tw-w-1/3"
-              for="accountSettings.defaultVacationDays"
+        </div>
+
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.vacation.defaultVacationDays}:|"
+            class="is-required"
+            for="accountSettings.defaultVacationDays"
+          >
+          </label>
+          <div class="tw-flex tw-flex-col tw-gap-1">
+            <input
+              id="accountSettings.defaultVacationDays"
+              th:field="*{accountSettings.defaultVacationDays}"
+              class="form-control"
+              th:errorclass="error"
+              type="number"
+              step="1"
+            />
+            <p
+              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+              th:if="${#fields.hasErrors('accountSettings.defaultVacationDays')}"
             >
-            </label>
-            <div class="tw-w-full md:tw-w-2/3">
+              <th:block th:errors="*{accountSettings.defaultVacationDays}">
+                accountSettings.defaultVacationDays Error
+              </th:block>
+            </p>
+          </div>
+        </div>
+
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.vacation.maximumAnnualVacationDays}:|"
+            class="is-required"
+            for="accountSettings.maximumAnnualVacationDays"
+          >
+            Maximale Anzahl der Urlaubstage pro Jahr
+          </label>
+          <div class="tw-flex tw-flex-col tw-gap-1">
+            <input
+              id="accountSettings.maximumAnnualVacationDays"
+              th:field="*{accountSettings.maximumAnnualVacationDays}"
+              class="form-control"
+              th:errorclass="error"
+              type="number"
+              step="1"
+            />
+            <p
+              class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+              th:if="${#fields.hasErrors('accountSettings.maximumAnnualVacationDays')}"
+            >
+              <th:block th:errors="*{accountSettings.maximumAnnualVacationDays}">
+                accountSettings.maximumAnnualVacationDays Error
+              </th:block>
+            </p>
+          </div>
+        </div>
+
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.vacation.remainingVacationDaysExpire}:|"
+            class="is-required"
+            for="accountSettings.doRemainingVacationDaysExpireGlobally.true"
+          >
+            Globaler Verfall von Resturlaub
+          </label>
+          <div>
+            <label>
               <input
-                id="accountSettings.defaultVacationDays"
-                th:field="*{accountSettings.defaultVacationDays}"
-                class="form-control"
-                th:errorclass="error"
-                type="number"
-                step="1"
+                type="radio"
+                id="accountSettings.doRemainingVacationDaysExpireGlobally.true"
+                th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
+                value="true"
               />
-
-              <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('accountSettings.defaultVacationDays')}"
-              >
-                <th:block th:errors="*{accountSettings.defaultVacationDays}">
-                  accountSettings.defaultVacationDays Error
-                </th:block>
-              </div>
-            </div>
-          </div>
-
-          <div class="tw-flex tw-flex-col md:tw-flex-row tw-mb-4">
-            <label
-              th:text="|#{settings.vacation.maximumAnnualVacationDays}:|"
-              class="is-required tw-w-full md:tw-w-1/3"
-              for="accountSettings.maximumAnnualVacationDays"
-            >
-              Maximale Anzahl der Urlaubstage pro Jahr
+              <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.true}">aktivieren</th:block>
             </label>
-            <div class="tw-w-full md:tw-w-2/3">
+            <label>
               <input
-                id="accountSettings.maximumAnnualVacationDays"
-                th:field="*{accountSettings.maximumAnnualVacationDays}"
-                class="form-control"
-                th:errorclass="error"
-                type="number"
-                step="1"
+                type="radio"
+                id="accountSettings.doRemainingVacationDaysExpireGlobally.false"
+                th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
+                value="false"
               />
+              <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.false}">deaktivieren</th:block>
+            </label>
+          </div>
+        </div>
 
-              <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('accountSettings.maximumAnnualVacationDays')}"
+        <div class="uv-form__input-row">
+          <p
+            class="uv-form__label uv-form__label--required"
+            th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
+          >
+            Verfallsdatum des Resturlaubs:
+          </p>
+          <div class="tw-flex tw-flex-col tw-gap-1">
+            <div class="tw-flex tw-gap-2">
+              <label
+                for="accountSettings.expiryDateDayOfMonth"
+                th:text="#{settings.vacation.expiryDateDayOfMonth}"
+                class="tw-sr-only"
+                th:classappend="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth') ? 'error' : ''}"
               >
-                <th:block th:errors="*{accountSettings.maximumAnnualVacationDays}">
-                  accountSettings.maximumAnnualVacationDays Error
+                Tag
+              </label>
+              <input
+                type="text"
+                inputmode="numeric"
+                id="accountSettings.expiryDateDayOfMonth"
+                th:field="*{accountSettings.expiryDateDayOfMonth}"
+                class="form-control tw-w-1/3"
+                th:errorclass="error"
+              />
+              <label
+                for="accountSettings.expiryDateMonth"
+                th:text="#{settings.vacation.expiryDateMonth}"
+                class="tw-sr-only"
+              >
+                Monat
+              </label>
+              <select
+                th:replace="~{fragments/select::one(id='accountSettings.expiryDateMonth', name='accountSettings.expiryDateMonth', options=~{::expiry-date-month-select-options})}"
+              >
+                <th:block th:fragment="expiry-date-month-select-options">
+                  <option value="JANUARY" th:selected="${settings.accountSettings.expiryDateMonth.value == 1}">
+                    Januar
+                  </option>
+                  <option value="FEBRUARY" th:selected="${settings.accountSettings.expiryDateMonth.value == 2}">
+                    Februar
+                  </option>
+                  <option value="MARCH" th:selected="${settings.accountSettings.expiryDateMonth.value == 3}">
+                    März
+                  </option>
+                  <option value="APRIL" th:selected="${settings.accountSettings.expiryDateMonth.value == 4}">
+                    April
+                  </option>
+                  <option value="MAY" th:selected="${settings.accountSettings.expiryDateMonth.value == 5}">Mai</option>
+                  <option value="JUNE" th:selected="${settings.accountSettings.expiryDateMonth.value == 6}">
+                    Juni
+                  </option>
+                  <option value="JULY" th:selected="${settings.accountSettings.expiryDateMonth.value == 7}">
+                    Juli
+                  </option>
+                  <option value="AUGUST" th:selected="${settings.accountSettings.expiryDateMonth.value == 8}">
+                    August
+                  </option>
+                  <option value="SEPTEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 9}">
+                    September
+                  </option>
+                  <option value="OCTOBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 10}">
+                    Oktober
+                  </option>
+                  <option value="NOVEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 11}">
+                    November
+                  </option>
+                  <option value="DECEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 12}">
+                    Dezember
+                  </option>
                 </th:block>
-              </div>
+              </select>
             </div>
-          </div>
-
-          <div class="tw-flex tw-flex-col md:tw-flex-row tw-mb-4">
-            <label
-              th:text="|#{settings.vacation.remainingVacationDaysExpire}:|"
-              class="is-required tw-w-full md:tw-w-1/3"
-              for="accountSettings.doRemainingVacationDaysExpireGlobally.true"
-            >
-              Globaler Verfall von Resturlaub
-            </label>
-            <div class="tw-w-full tw-flex md:tw-w-2/3">
-              <label class="tw-flex-1 tw-font-normal">
-                <input
-                  type="radio"
-                  id="accountSettings.doRemainingVacationDaysExpireGlobally.true"
-                  th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
-                  value="true"
-                />
-                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.true}">aktivieren</th:block>
-              </label>
-              <label class="tw-flex-1 tw-font-normal">
-                <input
-                  type="radio"
-                  id="accountSettings.doRemainingVacationDaysExpireGlobally.false"
-                  th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
-                  value="false"
-                />
-                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.false}">deaktivieren</th:block>
-              </label>
-            </div>
-          </div>
-
-          <div class="tw-flex tw-flex-col md:tw-flex-row tw-mb-4">
-            <label
-              class="is-required tw-w-full md:tw-w-1/3"
-              th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
-              for="accountSettings.expiryDateDayOfMonth"
-            >
-              Verfallsdatum des Resturlaubs:
-            </label>
-            <div class="tw-w-full md:tw-w-2/3">
-              <div class="tw-flex tw-gap-2">
-                <label
-                  for="accountSettings.expiryDateDayOfMonth"
-                  th:text="#{settings.vacation.expiryDateDayOfMonth}"
-                  class="tw-sr-only"
-                  th:classappend="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth') ? 'error' : ''}"
-                >
-                  Tag
-                </label>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  id="accountSettings.expiryDateDayOfMonth"
-                  th:field="*{accountSettings.expiryDateDayOfMonth}"
-                  class="form-control tw-w-1/3"
-                  th:errorclass="error"
-                />
-                <label
-                  for="accountSettings.expiryDateMonth"
-                  th:text="#{settings.vacation.expiryDateMonth}"
-                  class="tw-sr-only"
-                  >Monat</label
-                >
-                <select
-                  th:replace="~{fragments/select::one(id='accountSettings.expiryDateMonth', name='accountSettings.expiryDateMonth', options=~{::expiry-date-month-select-options}, className = 'tw-flex-1')}"
-                >
-                  <th:block th:fragment="expiry-date-month-select-options">
-                    <option value="JANUARY" th:selected="${settings.accountSettings.expiryDateMonth.value == 1}">
-                      Januar
-                    </option>
-                    <option value="FEBRUARY" th:selected="${settings.accountSettings.expiryDateMonth.value == 2}">
-                      Februar
-                    </option>
-                    <option value="MARCH" th:selected="${settings.accountSettings.expiryDateMonth.value == 3}">
-                      März
-                    </option>
-                    <option value="APRIL" th:selected="${settings.accountSettings.expiryDateMonth.value == 4}">
-                      April
-                    </option>
-                    <option value="MAY" th:selected="${settings.accountSettings.expiryDateMonth.value == 5}">
-                      Mai
-                    </option>
-                    <option value="JUNE" th:selected="${settings.accountSettings.expiryDateMonth.value == 6}">
-                      Juni
-                    </option>
-                    <option value="JULY" th:selected="${settings.accountSettings.expiryDateMonth.value == 7}">
-                      Juli
-                    </option>
-                    <option value="AUGUST" th:selected="${settings.accountSettings.expiryDateMonth.value == 8}">
-                      August
-                    </option>
-                    <option value="SEPTEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 9}">
-                      September
-                    </option>
-                    <option value="OCTOBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 10}">
-                      Oktober
-                    </option>
-                    <option value="NOVEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 11}">
-                      November
-                    </option>
-                    <option value="DECEMBER" th:selected="${settings.accountSettings.expiryDateMonth.value == 12}">
-                      Dezember
-                    </option>
-                  </th:block>
-                </select>
-              </div>
-              <div
-                class="error tw-mt-1 tw-text-sm"
-                th:if="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth')}"
-              >
-                <p th:errors="*{accountSettings.expiryDateDayOfMonth}" class="tw-m-0">expiryDate Error</p>
-              </div>
+            <div class="error tw-text-sm" th:if="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth')}">
+              <p th:errors="*{accountSettings.expiryDateDayOfMonth}" class="tw-m-0">expiryDate Error</p>
             </div>
           </div>
         </div>
