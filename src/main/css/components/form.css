@@ -675,14 +675,8 @@ textarea.error {
       .uv-form__input-row {
         display: grid;
         grid-template-columns: subgrid;
-        /* align label with input */
-        align-items: center;
-
-        & + :is(textarea, :has(textarea)) {
-          /* textarea can be expanded in height, therefore baseline to have a fixed label position */
-          /* overrides center from above */
-          align-items: baseline;
-        }
+        /* align label with input while allowing multiline input (e.g. textarea, or a div with more elements) */
+        align-items: baseline;
 
         > label,
         > .uv-form__label {
