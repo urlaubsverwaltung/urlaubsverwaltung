@@ -24,28 +24,12 @@
           <p class="uv-form__label uv-form__label--required" th:text="|#{settings.workingTime.weekdays}:|">
             Wochentage
           </p>
-          <div class="tw-flex tw-flex-col tw-gap-1">
-            <div th:each="weekDay : ${weekDays}" class="tw-flex tw-gap-3">
-              <div class="tw-flex tw-h-6 tw-shrink-0 tw-items-center">
-                <div class="tw-group tw-grid tw-size-4 tw-grid-cols-1">
-                  <input
-                    type="checkbox"
-                    th:id="${weekDay}"
-                    th:field="*{workingTimeSettings.workingDays}"
-                    th:value="${weekDay.value}"
-                    class="tw-col-start-1 tw-row-start-1"
-                  />
-                </div>
-              </div>
-              <div class="tw-text-sm/6">
-                <label
-                  th:for="${weekDay}"
-                  th:text="#{__${weekDay}__}"
-                  class="tw-font-medium tw-text-gray-900 dark:tw-text-white"
-                >
-                  Monday
-                </label>
-              </div>
+          <div class="tw-flex tw-flex-col tw-gap-2">
+            <div th:each="weekDay : ${weekDays}">
+              <label>
+                <input type="checkbox" th:field="*{workingTimeSettings.workingDays}" th:value="${weekDay.value}" />
+                &nbsp;<th:block th:text="#{__${weekDay}__}">Monday</th:block>
+              </label>
             </div>
           </div>
         </div>
