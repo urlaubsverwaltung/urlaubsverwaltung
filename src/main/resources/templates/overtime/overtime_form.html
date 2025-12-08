@@ -25,161 +25,157 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-        <form
-          method="post"
-          th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
-          th:action="@{__${actionUrl}__}"
-          th:object="${overtime}"
-          class="uv-form uv-form-grid"
-        >
-          <input type="hidden" th:field="*{id}" />
+    <main th:fragment="main" class="tw-max-w-2xl tw-mx-auto tw-px-4 lg:tw-px-12 lg:tw-max-w-6xl xl:tw-px-0">
+      <form
+        method="post"
+        th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
+        th:action="@{__${actionUrl}__}"
+        th:object="${overtime}"
+        class="uv-form uv-form-grid"
+      >
+        <input type="hidden" th:field="*{id}" />
 
-          <p
-            class="uv-form__global-feedback alert alert-danger"
-            th:if="${#fields.hasGlobalErrors()}"
-            th:errors="*{global}"
-          ></p>
+        <p
+          class="uv-form__global-feedback alert alert-danger"
+          th:if="${#fields.hasGlobalErrors()}"
+          th:errors="*{global}"
+        ></p>
 
-          <div role="group" aria-describedby="group-overtime-description">
-            <div class="uv-form-legend">
-              <h2
-                id="group-overtime-description"
-                th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
-                th:text="#{__${overtimeHeadingSectionMessagekey}__}"
+        <div role="group" aria-describedby="group-overtime-description">
+          <div class="uv-form-legend">
+            <h2
+              id="group-overtime-description"
+              th:with="overtimeHeadingSectionMessagekey=${overtime.id == null ? 'overtime.record.new' : 'overtime.record.edit'}"
+              th:text="#{__${overtimeHeadingSectionMessagekey}__}"
+            >
+              Überstunden eintragen
+            </h2>
+            <div class="tw-ml-auto tw-flex tw-flex-col sm:tw-flex-row">
+              <a
+                th:href="@{/web/overtime?person=__${person.id}__}"
+                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                aria-hidden="true"
               >
-                Überstunden eintragen
-              </h2>
-              <div class="tw-ml-auto tw-flex tw-flex-col sm:tw-flex-row">
-                <a
-                  th:href="@{/web/overtime?person=__${person.id}__}"
-                  class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-                  aria-hidden="true"
-                >
-                  <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
-                  <span th:text="#{action.overtime.list}"></span>
-                </a>
-              </div>
+                <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                <span th:text="#{action.overtime.list}"></span>
+              </a>
             </div>
+          </div>
 
-            <div class="uv-form__group">
-              <p class="uv-form__group-info uv-help-block">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                <th:block th:text="#{overtime.data.description.general}"></th:block>
-                <th:block
-                  th:if="${overtimeReductionPossible}"
-                  th:text="| #{overtime.data.description.overtimeReductionPossible}|"
-                ></th:block>
-              </p>
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <th:block th:text="#{overtime.data.description.general}"></th:block>
+              <th:block
+                th:if="${overtimeReductionPossible}"
+                th:text="| #{overtime.data.description.overtimeReductionPossible}|"
+              ></th:block>
+            </p>
 
-              <div class="uv-form__input-row">
-                <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
-                  <th:block th:if="${overtime.id == null}">
-                    <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
-                    <select
-                      th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
-                      id="person-select"
-                    >
-                      <th:block th:fragment="person-select-options">
-                        <option
-                          th:each="p : ${persons}"
-                          th:text="${p.niceName}"
-                          th:value="${p.id}"
-                          th:selected="${person.id == p.id}"
-                        ></option>
-                      </th:block>
-                    </select>
-                  </th:block>
-
-                  <th:block th:if="${overtime.id != null}">
-                    <p class="uv-form__label" th:text="|#{overtime.data.person}:|">Mitarbeiter</p>
-                    <p th:text="${overtime.person.niceName}">Person Nice Name</p>
-                    <input type="hidden" name="person" th:value="${person.id}" />
-                  </th:block>
+            <div class="uv-form__input-row">
+              <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
+                <th:block th:if="${overtime.id == null}">
+                  <label for="person-select" class="is-required" th:text="|#{overtime.data.person}:|"> </label>
+                  <select
+                    th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::person-select-options})}"
+                    id="person-select"
+                  >
+                    <th:block th:fragment="person-select-options">
+                      <option
+                        th:each="p : ${persons}"
+                        th:text="${p.niceName}"
+                        th:value="${p.id}"
+                        th:selected="${person.id == p.id}"
+                      ></option>
+                    </th:block>
+                  </select>
                 </th:block>
-                <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
+
+                <th:block th:if="${overtime.id != null}">
+                  <p class="uv-form__label" th:text="|#{overtime.data.person}:|">Mitarbeiter</p>
+                  <p th:text="${overtime.person.niceName}">Person Nice Name</p>
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
-              </div>
+              </th:block>
+              <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
+                <input type="hidden" name="person" th:value="${person.id}" />
+              </th:block>
+            </div>
 
-              <div class="uv-form__input-row">
-                <label for="startDate" class="is-required" th:text="|#{overtime.data.startDate}:|"> Von </label>
-                <input
-                  id="startDate"
-                  type="text"
-                  th:field="*{startDate}"
-                  th:data-iso-value="${overtime.startDateIsoValue}"
-                  th:errorclass="error"
-                  autocomplete="off"
-                  th:placeholder="#{pattern.date}"
-                  data-test-id="overtime-start-date"
-                />
-                <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
-                  <th:block th:errors="*{startDate}"> startDate Error</th:block>
-                </p>
-              </div>
+            <div class="uv-form__input-row">
+              <label for="startDate" class="is-required" th:text="|#{overtime.data.startDate}:|"> Von </label>
+              <input
+                id="startDate"
+                type="text"
+                th:field="*{startDate}"
+                th:data-iso-value="${overtime.startDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="overtime-start-date"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
+                <th:block th:errors="*{startDate}"> startDate Error</th:block>
+              </p>
+            </div>
 
-              <div class="uv-form__input-row">
-                <label for="endDate" class="is-required" th:text="|#{overtime.data.endDate}:|"> Bis </label>
-                <input
-                  id="endDate"
-                  type="text"
-                  th:field="*{endDate}"
-                  th:data-iso-value="${overtime.endDateIsoValue}"
-                  th:errorclass="error"
-                  autocomplete="off"
-                  th:placeholder="#{pattern.date}"
-                  data-test-id="overtime-end-date"
-                />
-                <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
-                  <th:block th:errors="*{endDate}"> endDate Error</th:block>
-                </p>
-              </div>
+            <div class="uv-form__input-row">
+              <label for="endDate" class="is-required" th:text="|#{overtime.data.endDate}:|"> Bis </label>
+              <input
+                id="endDate"
+                type="text"
+                th:field="*{endDate}"
+                th:data-iso-value="${overtime.endDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="overtime-end-date"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
+                <th:block th:errors="*{endDate}"> endDate Error</th:block>
+              </p>
+            </div>
 
-              <div class="uv-form__input-row">
-                <label for="hours" class="is-required" th:text="|#{overtime.data.numberOfHours}:|">
-                  Anzahl der Überstunden
+            <div class="uv-form__input-row">
+              <label for="hours" class="is-required" th:text="|#{overtime.data.numberOfHours}:|">
+                Anzahl der Überstunden
+              </label>
+              <th:block
+                th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
+              ></th:block>
+              <div th:if="${overtimeReductionPossible}">
+                <label for="overtime-reduce">
+                  <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
+                  <th:block th:text="#{overtime.data.reduceOvertime}">Überstunden abbauen statt hinzufügen</th:block>
                 </label>
-                <th:block
-                  th:replace="~{fragments/hour-and-minute-input::hour-and-minute-input('hours','overtime-hours', 'minutes', 'overtime-minutes')}"
-                ></th:block>
-                <div th:if="${overtimeReductionPossible}">
-                  <label for="overtime-reduce">
-                    <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
-                    <th:block th:text="#{overtime.data.reduceOvertime}">Überstunden abbauen statt hinzufügen</th:block>
-                  </label>
-                </div>
-                <p class="uv-form__input-error" th:if="${#fields.hasErrors('reduce')}">
-                  <th:block th:errors="*{reduce}">reduce Error</th:block>
-                </p>
               </div>
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('reduce')}">
+                <th:block th:errors="*{reduce}">reduce Error</th:block>
+              </p>
+            </div>
 
-              <div class="uv-form__input-row">
-                <label for="comment" th:text="|#{overtime.data.comment}:|">
-                  Mit Kommentar zum Verlauf hinzufügen
-                </label>
-                <textarea id="comment" th:field="*{comment}" rows="2"></textarea>
-                <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
-                  <th:block th:errors="*{comment}"> comment Error</th:block>
-                </p>
-              </div>
+            <div class="uv-form__input-row">
+              <label for="comment" th:text="|#{overtime.data.comment}:|"> Mit Kommentar zum Verlauf hinzufügen </label>
+              <textarea id="comment" th:field="*{comment}" rows="2"></textarea>
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
+                <th:block th:errors="*{comment}"> comment Error</th:block>
+              </p>
             </div>
           </div>
+        </div>
 
-          <div class="uv-form__actions">
-            <button
-              type="submit"
-              class="button-main-green tw-w-56"
-              th:text="#{action.save}"
-              data-test-id="overtime-submit-button"
-            >
-              Speichern
-            </button>
-            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
-          </div>
-        </form>
-      </div>
+        <div class="uv-form__actions">
+          <button
+            type="submit"
+            class="button-main-green tw-w-56"
+            th:text="#{action.save}"
+            data-test-id="overtime-submit-button"
+          >
+            Speichern
+          </button>
+          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+        </div>
+      </form>
     </main>
   </body>
 </html>
