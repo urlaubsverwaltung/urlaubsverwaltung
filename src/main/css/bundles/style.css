@@ -53,6 +53,9 @@
     --uv-chart-background: theme("colors.white");
     --uv-chart-border: theme("colors.gray.100");
     --uv-focus-ring-color: theme("colors.blue.300");
+    --uv-error-color: theme("colors.red.800");
+    --uv-error-border-color: theme("colors.red.800");
+    --uv-input-border-radius: 6px;
   }
 
   .tw-dark {
@@ -68,6 +71,8 @@
     --uv-chart-container-background: theme("colors.zinc.800");
     --uv-chart-background: theme("colors.zinc.800");
     --uv-chart-border: theme("colors.zinc.700");
+    --uv-error-color: theme("colors.red.400");
+    --uv-error-border-color: theme("colors.red.400");
 
     * {
       color-scheme: dark;

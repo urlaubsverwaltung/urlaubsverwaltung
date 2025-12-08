@@ -48,10 +48,6 @@ duet-date-picker[disabled] input {
   height: 100%;
 }
 
-duet-date-picker.error {
-  @apply tw-border-red-700;
-}
-
 .duet-date__input {
   border: none;
 }
