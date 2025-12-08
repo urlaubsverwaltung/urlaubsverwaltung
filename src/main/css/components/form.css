@@ -134,13 +134,6 @@ fieldset[disabled] input {
   @apply tw-border-0 !important;
 }
 
-.duet-date__input:focus,
-.duet-date__toggle:focus {
-  /* reset bootstrap stuff TODO required? */
-  border-color: inherit !important;
-  box-shadow: none;
-}
-
 .popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
