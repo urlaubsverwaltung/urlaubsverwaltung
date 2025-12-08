@@ -289,18 +289,22 @@ textarea.error {
       align-items: center;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid theme("colors.gray.200");
+      margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
       &:is(h1, h2, h3, h4, h5, h6),
       > :is(h1, h2, h3, h4, h5, h6) {
-        margin: 0;
+        margin: 0; /* override bootstrap(?) default for headings */
+        margin-bottom: var(--uv-form-row-gap);
         font-size: var(--uv-form-legend-font-size);
       }
     }
   }
 
   .uv-form__group {
-    margin-top: var(--uv-form-row-gap);
+    ~ .uv-form__group {
+      margin-top: var(--uv-form-row-gap);
+    }
 
     .uv-form__group-error,
     .uv-form__group-info {
