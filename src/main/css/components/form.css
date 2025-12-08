@@ -292,6 +292,9 @@ textarea.error {
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
+      @apply dark:tw-border-b;
+      @apply dark:tw-border-zinc-600;
+
       &:is(h1, h2, h3, h4, h5, h6) {
         margin: 0; /* override bootstrap(?) default for headings */
         margin-bottom: var(--uv-form-row-gap);
@@ -428,6 +431,8 @@ textarea.error {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
+    @apply dark:tw-border-t;
+    @apply dark:tw-border-zinc-600;
   }
 
   @media screen and (width >= 1024px) {
