@@ -199,7 +199,7 @@
         </turbo-stream>
         <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personsPagination.page.content)}">
-          <p class="tw-text-right print:tw-block">
+          <p class="tw-hidden print:tw-block">
             <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
               th:replace="~{fragments/date::date(${now})}"
             ></span>
