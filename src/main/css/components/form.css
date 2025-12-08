@@ -292,17 +292,11 @@ textarea.error {
         margin: 0;
         font-size: var(--uv-form-legend-font-size);
       }
-
-      + .uv-form__group {
-        margin-top: var(--uv-form-row-gap);
-      }
     }
   }
 
   .uv-form__group {
-    + .uv-form__group {
-      margin-top: var(--uv-form-row-gap);
-    }
+    margin-top: var(--uv-form-row-gap);
 
     .uv-form__group-error,
     .uv-form__group-info {
@@ -444,9 +438,6 @@ textarea.error {
     .uv-form-legend {
       grid-row: 1;
       grid-column: label / end;
-      + :is(.uv-form__group, .uv-form__input-row, .uv-form__input-col) {
-        margin-top: var(--uv-form-row-gap);
-      }
     }
 
     div[role="group"] {
