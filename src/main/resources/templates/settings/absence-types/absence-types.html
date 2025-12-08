@@ -14,23 +14,25 @@
       </turbo-frame>
 
       <div class="uv-form__group">
-        <div class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none">
-          <div>
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
-          </div>
-          <div class="tw-flex tw-flex-col">
-            <p>
-              <th:block th:text="#{settings.absenceTypes.help.1}" />
-              <a
-                class="tw-inline-flex tw-items-center"
-                target="_blank"
-                rel="noopener"
-                href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
-              >
-                <th:block th:text="#{settings.absenceTypes.help.2}" />
-                <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
-              </a>
-            </p>
+        <div class="uv-form__group-info">
+          <div class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none">
+            <div>
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+            </div>
+            <div class="tw-flex tw-flex-col">
+              <p>
+                <th:block th:text="#{settings.absenceTypes.help.1}" />
+                <a
+                  class="tw-inline-flex tw-items-center"
+                  target="_blank"
+                  rel="noopener"
+                  href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
+                >
+                  <th:block th:text="#{settings.absenceTypes.help.2}" />
+                  <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
+                </a>
+              </p>
+            </div>
           </div>
         </div>
         <div class="tw-mt-4 tw-w-full tw-sticky tw-top-0">
