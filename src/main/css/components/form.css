@@ -265,27 +265,29 @@ textarea.error {
     background-color: theme("colors.gray.200");
   }
 
-  /* no legend element since we cannot use fieldset */
-  .uv-form-legend {
-    :where(h1, h2, h3, h4, h5, h6),
-    &:is(h1, h2, h3, h4, h5, h6) {
-      margin: 0 !important; /* bootstrap or other preflight? */
-    }
-
-    display: flex;
-    flex-direction: row;
-    gap: 0.25rem;
-    align-items: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #ddd;
-    font-size: 1.5rem;
-  }
-
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
     &:where(.uv-form__global-feedback + *, .uv-form__info + *, div[role="group"] + *) {
       margin-top: 2rem;
+    }
+
+    .uv-form-legend {
+      --uv-form-legend-font-size: 1.5rem;
+
+      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
+      align-items: center;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid theme("colors.gray.200");
+      font-size: var(--uv-form-legend-font-size);
+
+      &:is(h1, h2, h3, h4, h5, h6),
+      > :is(h1, h2, h3, h4, h5, h6) {
+        margin: 0;
+        font-size: var(--uv-form-legend-font-size);
+      }
     }
   }
 
@@ -519,7 +521,6 @@ textarea.error {
           grid-column: label;
 
           /* next elements should fill the input column */
-          /*~ :is(div, span, p) {*/
           ~ * {
             grid-column: input;
           }
