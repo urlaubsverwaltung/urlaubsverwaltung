@@ -312,11 +312,11 @@ textarea.error {
     }
 
     .uv-form__group-error,
-    .uv-form__info {
+    .uv-form__group-info {
       margin-bottom: var(--uv-form-row-gap);
     }
 
-    .uv-form__info {
+    .uv-form__group-info {
       font-size: 0.875rem;
       line-height: 1.42;
 
@@ -481,7 +481,7 @@ textarea.error {
         grid-column: label / end;
       }
 
-      .uv-form__info {
+      .uv-form__group-info {
         /* span ALL rows. using $ since -1 does not work */
         /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
         /* note that a HIGH value breaks devtools grid highlighting */
@@ -489,10 +489,10 @@ textarea.error {
         grid-row: 1 / var(--uv-form-grid-row-span);
         grid-column: info;
 
-        /* override small screen. TODO maybe -top on next element? */
+        /* override small screen */
         margin-bottom: 0;
         /* but not for next elements */
-        &:has (~ .uv-form__info) {
+        &:has (~ .uv-form__group-info) {
           margin-bottom: var(--uv-form-row-gap);
         }
       }
@@ -547,14 +547,14 @@ textarea.error {
 
       &:has(.uv-form__group-error) {
         /* info and inputs are one row below the group-error */
-        .uv-form__info {
+        .uv-form__group-info {
           grid-row: 2 / var(--uv-form-grid-row-span);
         }
         .uv-form__input-row {
           grid-row: 2;
         }
         /* adjust following elements */
-        .uv-form__info ~ .uv-form__info,
+        .uv-form__group-info ~ .uv-form__group-info,
         .uv-form__input-row ~ .uv-form__input-row {
           grid-row: auto;
         }
@@ -606,7 +606,7 @@ div[role="group"]:not([aria-describedby]) {
   }
 }
 
-.uv-form__info:not(p):not(:has(p)) {
+.uv-form__group-info:not(p):not(:has(p)) {
   outline: 2px solid magenta;
   &::after {
     content: "Paragraph fehlt bei uv-form__info";
