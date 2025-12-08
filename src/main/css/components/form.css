@@ -338,7 +338,8 @@ textarea.error {
         margin: 0;
         font-weight: 600;
         font-size: 0.875rem;
-        line-height: 1.42;
+        line-height: 1.375;
+        max-width: 60ch;
         &.uv-form__label--required::after {
           content: "*";
           display: inline-block;
