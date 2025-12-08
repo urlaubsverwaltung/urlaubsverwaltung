@@ -250,6 +250,16 @@ textarea.error {
 }
 
 .uv-form {
+  /*
+   * some rules to consider:
+   * - try to use `margin-top`
+   *   row-gap cannot be used due to spanning grid-row workaround for info blocks on the right
+   * - use `margin-bottom` for elements that may be visible, like error blocks for instance
+   * - the form MUST have a `div[role=group]` followed by a `uv-form-legend` and `uv-form__group`
+   *   fieldset cannot be used since it doesn't support subgrid :-(
+   * - use either `input-row` OR `input-col` in the form, not both -> consistent ui
+   */
+
   --uv-form-padding-x: 0;
   --uv-form-col-gap: 1.25rem;
   --uv-form-row-gap: 1.25rem;
@@ -268,8 +278,9 @@ textarea.error {
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
-    &:where(.uv-form__global-feedback + *, .uv-form__info + *, div[role="group"] + *) {
-      margin-top: 2rem;
+    /* margin-top for role=group when it is adjacent to a feedback or other group  */
+    &:where(.uv-form__global-feedback + *, div[role="group"] + *) {
+      margin-top: 1.5rem;
     }
 
     .uv-form-legend {
@@ -288,11 +299,17 @@ textarea.error {
         margin: 0;
         font-size: var(--uv-form-legend-font-size);
       }
+
+      + .uv-form__group {
+        margin-top: var(--uv-form-row-gap);
+      }
     }
   }
 
   .uv-form__group {
-    margin-top: var(--uv-form-row-gap);
+    + .uv-form__group {
+      margin-top: var(--uv-form-row-gap);
+    }
 
     .uv-form__group-error,
     .uv-form__info {
@@ -429,12 +446,6 @@ textarea.error {
 
     .uv-form__global-feedback {
       grid-column: start / end;
-    }
-
-    div[role="group"] {
-      &:where(.uv-form__global-feedback + *, .uv-form__info + *, div[role="group"] + *) {
-        margin-top: 3rem;
-      }
     }
 
     .uv-form-legend {
