@@ -96,11 +96,11 @@ class RolesFromGroupsClaimMapperTest {
 
         assertThatThrownBy(() -> sut.mapClaimToRoles(claims))
             .isInstanceOf(MissingClaimAuthorityException.class)
-            .hasMessageContaining("User has not required permission 'urlaubsverwaltung_user' to access urlaubsverwaltung!");
+            .hasMessageContaining("User with sub 'uniqueID' has not required permission 'urlaubsverwaltung_user' in '[urlaubsverwaltung_office]' to access urlaubsverwaltung!");
     }
 
     @Test
-    void ensureToThrowExceptionIfNeededRoleIsNotGiven() {
+    void ensureToThrowExceptionIfNeededGroupClaimIsNotDefined() {
 
         final RolesFromClaimMappersProperties properties = new RolesFromClaimMappersProperties();
         final RolesFromClaimMapperConverter converter = new RolesFromClaimMapperConverter(properties);
@@ -115,6 +115,7 @@ class RolesFromGroupsClaimMapperTest {
 
         assertThatThrownBy(() -> sut.mapClaimToRoles(claims))
             .isInstanceOf(MissingClaimAuthorityException.class)
-            .hasMessageContaining("User has not required permission 'urlaubsverwaltung_user' to access urlaubsverwaltung! The claim 'groups' is missing!");
+            .hasMessageContaining("User with sub 'uniqueID' has not required permission 'urlaubsverwaltung_user' in 'groups' to access urlaubsverwaltung! The claim 'groups' is missing!");
     }
+
 }
