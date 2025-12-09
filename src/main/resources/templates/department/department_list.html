@@ -142,7 +142,7 @@
                   th:id="${dialogId}"
                   th:aria-labelledby="${'modal-label-' + department.id}"
                   class="modal"
-                  closedBy="any"
+                  closedby="any"
                 >
                   <form method="post" th:action="@{/web/department/__${department.id}__/delete}" class="modal__content">
                     <div class="modal__header">
@@ -165,7 +165,9 @@
                     </div>
                     <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal__body"></div>
                     <div class="modal__footer tw-flex tw-justify-around">
-                      <button th:text="#{action.department.delete}" class="button-danger" type="submit"></button>
+                      <button autofocus class="button-danger" type="submit" th:text="#{action.department.delete}">
+                        Delete
+                      </button>
                       <button
                         th:text="#{action.cancel}"
                         class="button"
