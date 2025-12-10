@@ -10,14 +10,6 @@ import { cleanup, setup, waitForFinishedJQueryReadyCallbacks } from "../../../..
 import fetchMock from "fetch-mock";
 import { parseISO } from "date-fns";
 
-jest.mock("../../tooltip/id-factory", function () {
-  const originalModule = jest.requireActual("../../tooltip/id-factory");
-  return {
-    ...originalModule,
-    generateId: jest.fn(() => "%random-value%"),
-  };
-});
-
 describe("calendar", () => {
   const RealDate = Date;
   const dateInstanceIdentifier = Symbol("date-identifier");
