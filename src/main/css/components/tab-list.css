@@ -1,0 +1,86 @@
+.tab-list,
+[role="tablist"] {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+
+  border-bottom: 1px solid #eee;
+  @apply dark:tw-border-b-zinc-600;
+
+  > li {
+    position: relative; /* for after element positioning */
+    border: 1px solid transparent; /* active element has a border */
+    border-bottom-width: 0; /* border-bottom is handled by after element */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    .tab,
+    button,
+    a {
+      cursor: pointer;
+      font-size: 1rem;
+
+      display: block;
+      padding: 10px 15px;
+      color: inherit;
+      text-decoration: none;
+      background-color: transparent;
+
+      /* overflow hidden cannot be used on container because of the after element hiding the bottom border */
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+
+      &.tab--active {
+        cursor: default;
+        background-color: transparent;
+      }
+    }
+
+    &:hover,
+    &:focus-within {
+      background-color: #eee;
+      @apply dark:tw-bg-zinc-800;
+      @apply dark:tw-border;
+      @apply dark:tw-border-b-0;
+      @apply dark:tw-border-zinc-600;
+    }
+  }
+
+  > li::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    width: 100%;
+    height: 1px;
+  }
+
+  > li:has(.tab--active) {
+    border-color: #ddd;
+    border-bottom-width: 0; /* border-bottom is handled by after element */
+
+    @apply dark:tw-bg-zinc-700;
+    @apply dark:tw-border-zinc-600;
+
+    &::after {
+      background-color: #fff;
+      @apply dark:tw-bg-zinc-600;
+    }
+  }
+}
+
+.tab-panel,
+[role="tabpanel"] {
+  margin-top: 1rem;
+
+  /* hide tabPanel, show when active  */
+  display: none;
+
+  &.tab-panel--active {
+    display: block;
+  }
+}

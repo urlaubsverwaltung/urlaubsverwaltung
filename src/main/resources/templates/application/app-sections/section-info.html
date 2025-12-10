@@ -46,7 +46,7 @@
                   ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
                   |"
                   th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
-                  th:title="${#messages.msg(app.status.name)}"
+                  th:data-title="${#messages.msg(app.status.name)}"
                 >
                   &nbsp;
                 </span>
@@ -74,13 +74,13 @@
               <th:block th:text="#{application.data.days(${app.workDays})}" />
             </strong>
             <th:block th:if="${app.startDate.year != app.endDate.year}">
-              <span class="text-muted days">
+              <span class="tw-text-gray-500 days">
                 <!--filled by javascript-->
                 <!--see app_info.js-->
               </span>
             </th:block>
             <th:block th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}">
-              <span class="text-muted">
+              <span class="tw-text-gray-500">
                 <br />
                 <th:block th:text="${{app.hours}}" />
                 <th:block th:text="#{application.data.hours.number}" />
@@ -88,7 +88,7 @@
             </th:block>
           </td>
         </tr>
-        <tr class="visible-print">
+        <tr class="print:tw-table-row">
           <td th:text="#{application.data.status}"></td>
           <td th:text="#{__${app.status.name}__}"></td>
         </tr>

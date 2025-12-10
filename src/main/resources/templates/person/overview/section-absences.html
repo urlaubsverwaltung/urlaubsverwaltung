@@ -126,7 +126,7 @@
             Abwesenheiten
           </caption>
           <tbody>
-            <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}" class="active">
+            <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}">
               <td></td>
               <td class="tw-py-4">
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>
@@ -137,7 +137,7 @@
               <td class="is-centered">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="hidden-xs print:tw-hidden">
+              <td class="tw-hidden md:tw-table-cell print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
@@ -165,7 +165,7 @@
                   ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
                   |"
                   th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
-                  th:title="${#messages.msg(app.status)}"
+                  th:data-title="${#messages.msg(app.status)}"
                 >
                   &nbsp;
                 </div>
@@ -208,7 +208,7 @@
               <td class="is-centered">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
-                  <span th:class="|text-muted days-${loopStatus.index}|">
+                  <span th:class="|tw-text-gray-500 days-${loopStatus.index}|">
                     <!-- is filled by javascript-->
                   </span>
                   <script type="text/javascript" th:inline="javascript">
@@ -229,13 +229,16 @@
                     });
                   </script>
                 </th:block>
-                <span th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}" class="text-muted">
+                <span
+                  th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}"
+                  class="tw-text-gray-500"
+                >
                   <br />
                   <th:block th:text="${{app.hours}}" />
                   <th:block th:text="#{application.data.hours.number}" />
                 </span>
               </td>
-              <td class="hidden-xs print:tw-hidden">
+              <td class="tw-hidden md:tw-table-cell print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <span>

@@ -5,79 +5,67 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div
-        th:replace="~{fragments/section-heading::section-heading(~{::reminder-waiting-application-heading-body}, ~{})}"
-      >
-        <th:block th:fragment="reminder-waiting-application-heading-body">
-          <h2 th:text="#{settings.vacation.remindForWaitingApplications.title}">
-            Automatische Erinnerung für wartende zu genehmigende Abwesenheiten
-          </h2>
-        </th:block>
-      </div>
-
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
+      <div class="uv-form__group">
+        <div class="uv-form__group-info">
+          <p class="uv-help-block">
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.vacation.daysBeforeRemindForWaitingApplications.description}" />
           </p>
-        </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
-            <label
-              th:text="|#{settings.vacation.remindForWaitingApplications}:|"
-              class="control-label col-md-4"
-              for="applicationSettings.remindForWaitingApplications.true"
-              >Automatische Erinnerungsfunktion</label
-            >
-            <div class="col-md-8 radio">
-              <label class="halves">
-                <input
-                  type="radio"
-                  id="applicationSettings.remindForWaitingApplications.true"
-                  th:field="*{applicationSettings.remindForWaitingApplications}"
-                  value="true"
-                />
-                <th:block th:text="#{settings.vacation.remindForWaitingApplications.true}">aktivieren</th:block>
-              </label>
-              <label class="halves">
-                <input
-                  type="radio"
-                  id="applicationSettings.remindForWaitingApplications.false"
-                  th:field="*{applicationSettings.remindForWaitingApplications}"
-                  value="false"
-                />
-                <th:block th:text="#{settings.vacation.remindForWaitingApplications.false}">deaktivieren</th:block>
-              </label>
-            </div>
-          </div>
+        </div>
 
-          <div class="form-group is-required">
-            <label
-              th:text="|#{settings.vacation.daysBeforeRemindForWaitingApplications}:|"
-              class="control-label col-md-4"
-              for="applicationSettings.daysBeforeRemindForWaitingApplications"
-              >Wie viele Tage im Voraus sollen Chefs bzw. Abteilungsleiter benachrichtigt werden</label
-            >
-            <div class="col-md-8">
+        <!-- Activation of the reminder for waiting applications -->
+        <div class="uv-form__input-row">
+          <p
+            th:text="|#{settings.vacation.remindForWaitingApplications}:|"
+            class="uv-form__label uv-form__label--required"
+          >
+            Automatische Erinnerungsfunktion
+          </p>
+          <div>
+            <label>
               <input
-                id="applicationSettings.daysBeforeRemindForWaitingApplications"
-                th:field="*{applicationSettings.daysBeforeRemindForWaitingApplications}"
-                class="form-control"
-                th:errorclass="error"
-                type="number"
-                step="1"
+                type="radio"
+                id="applicationSettings.remindForWaitingApplications.true"
+                th:field="*{applicationSettings.remindForWaitingApplications}"
+                value="true"
               />
-              <div
-                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForWaitingApplications')}"
-              >
-                <th:block th:errors="*{applicationSettings.daysBeforeRemindForWaitingApplications}">
-                  applicationSettings.daysBeforeRemindForWaitingApplications Error
-                </th:block>
-              </div>
-            </div>
+              <th:block th:text="#{settings.vacation.remindForWaitingApplications.true}">aktivieren</th:block>
+            </label>
+            <label>
+              <input
+                type="radio"
+                id="applicationSettings.remindForWaitingApplications.false"
+                th:field="*{applicationSettings.remindForWaitingApplications}"
+                value="false"
+              />
+              <th:block th:text="#{settings.vacation.remindForWaitingApplications.false}">deaktivieren</th:block>
+            </label>
           </div>
+        </div>
+
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.vacation.daysBeforeRemindForWaitingApplications}:|"
+            class="is-required"
+            for="applicationSettings.daysBeforeRemindForWaitingApplications"
+          >
+            Wie viele Tage im Voraus sollen Chefs bzw. Abteilungsleiter benachrichtigt werden
+          </label>
+          <input
+            id="applicationSettings.daysBeforeRemindForWaitingApplications"
+            th:field="*{applicationSettings.daysBeforeRemindForWaitingApplications}"
+            th:errorclass="error"
+            type="number"
+            step="1"
+          />
+          <p
+            class="uv-form__input-error"
+            th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForWaitingApplications')}"
+          >
+            <th:block th:errors="*{applicationSettings.daysBeforeRemindForWaitingApplications}">
+              applicationSettings.daysBeforeRemindForWaitingApplications Error
+            </th:block>
+          </p>
         </div>
       </div>
     </th:block>

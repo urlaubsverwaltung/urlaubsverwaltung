@@ -1,11 +1,12 @@
-import "../lib/bootstrap";
+import "../components/modal";
 import "../components/navigation";
+import "../components/popover";
+import "../components/tablist";
 import "../components/textarea";
 import "../components/feedback";
-import tooltip from "../components/tooltip";
+import "../components/tooltip";
 import "@ungap/custom-elements";
 import "./date-fns-localized";
 import { updateHtmlElementAttributes } from "./html-element";
 
-tooltip();
 updateHtmlElementAttributes(document);

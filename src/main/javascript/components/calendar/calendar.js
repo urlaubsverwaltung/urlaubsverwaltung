@@ -16,7 +16,6 @@ import {
 } from "date-fns";
 import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
-import tooltip from "../tooltip";
 import "./calendar.css";
 
 const numberOfMonths = 10;
@@ -124,7 +123,7 @@ const View = (function () {
 
     weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header print:tw-hidden">{{text}}</li>`,
 
-    day: '<li class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900" style="{{cellStyle}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900" style="{{cellStyle}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
     iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -337,7 +336,6 @@ const View = (function () {
     display: function (date) {
       rootElement.innerHTML = renderCalendar(date);
       rootElement.classList.add("unselectable");
-      tooltip();
     },
 
     getRootElement() {
@@ -358,7 +356,6 @@ const View = (function () {
       nextMonthParentElement.innerHTML = nextMonthHtml;
 
       lastMonthElement.insertAdjacentElement("afterend", nextMonthParentElement.firstElementChild);
-      tooltip();
     },
 
     displayPrevious: function () {
@@ -375,7 +372,6 @@ const View = (function () {
       previousMonthParentElement.innerHTML = previousMonthHtml;
 
       firstMonthElement.insertAdjacentElement("beforebegin", previousMonthParentElement.firstElementChild);
-      tooltip();
     },
   };
 

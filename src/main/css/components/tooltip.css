@@ -1,4 +1,9 @@
-.tooltip-arrow {
-  border-color: transparent !important;
-  border-bottom-color: #000000 !important;
+[role="tooltip"] {
+  padding: 3px 8px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #000;
+  text-align: center;
+  border-radius: 6px;
+  z-index: 999999;
 }

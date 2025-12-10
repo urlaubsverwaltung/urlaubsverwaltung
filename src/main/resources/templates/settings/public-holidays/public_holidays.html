@@ -5,100 +5,86 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="~{fragments/section-heading::section-heading(~{::public-holidays-heading-body}, ~{})}">
-        <th:block th:fragment="public-holidays-heading-body">
-          <h2 th:text="#{settings.publicHolidays.title}">Einstellungen zu Feiertagen</h2>
-        </th:block>
-      </div>
+      <div class="uv-form__group">
+        <p class="uv-form__group-info uv-help-block">
+          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <th:block th:text="#{settings.publicHolidays.description}" />
+        </p>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-            <th:block th:text="#{settings.publicHolidays.description}" />
-          </p>
-        </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
-            <label
-              th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
-              class="control-label col-md-4"
-              for="publicHolidaysSettings.workingDurationForChristmasEve"
-            >
-            </label>
-            <div class="col-md-8">
-              <select
-                th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForChristmasEve', name='publicHolidaysSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve})}"
+        <!-- Working duration settings for Christmas Eve -->
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.publicHolidays.workingDuration.christmasEve}:|"
+            class="is-required"
+            for="publicHolidaysSettings.workingDurationForChristmasEve"
+          >
+          </label>
+          <select
+            th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForChristmasEve', name='publicHolidaysSettings.workingDurationForChristmasEve', options=~{::settings-workingtimes-workingDurationForChristmasEve})}"
+          >
+            <th:block th:fragment="settings-workingtimes-workingDurationForChristmasEve">
+              <option
+                th:each="dayLengthType : ${dayLengthTypes}"
+                th:text="#{__${dayLengthType}__}"
+                th:value="${dayLengthType}"
+                th:selected="${settings.publicHolidaysSettings.workingDurationForChristmasEve == dayLengthType}"
+              ></option>
+            </th:block>
+          </select>
+        </div>
+
+        <!-- Working duration settings for New Year's Eve -->
+        <div class="uv-form__input-row">
+          <label
+            th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
+            class="is-required"
+            for="publicHolidaysSettings.workingDurationForNewYearsEve"
+          >
+            Arbeitsdauer an Silvester
+          </label>
+          <select
+            th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForNewYearsEve', name='publicHolidaysSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve})}"
+          >
+            <th:block th:fragment="settings-workingtimes-workingDurationForNewYearsEve">
+              <option
+                th:each="dayLengthType : ${dayLengthTypes}"
+                th:text="#{__${dayLengthType}__}"
+                th:value="${dayLengthType}"
+                th:selected="${settings.publicHolidaysSettings.workingDurationForNewYearsEve == dayLengthType}"
+              ></option>
+            </th:block>
+          </select>
+        </div>
+
+        <!-- Federal state settings for public holidays -->
+        <div class="uv-form__input-row">
+          <label th:text="|#{settings.publicHolidays.federalState}:|" class="is-required" for="federalStateType">
+            Globale Feiertagsregelung
+          </label>
+          <select
+            th:replace="~{fragments/select::one(id='federalStateType', name='publicHolidaysSettings.federalState', options=~{::settings-workingtimes-federalStateType})}"
+          >
+            <th:block th:fragment="settings-workingtimes-federalStateType">
+              <optgroup th:label="#{country.general}">
+                <option
+                  th:text="#{federalState.NONE}"
+                  value="NONE"
+                  th:selected="${settings.publicHolidaysSettings.federalState == 'NONE'}"
+                ></option>
+              </optgroup>
+              <optgroup
+                th:each="federalStatesByCountry : ${federalStateTypes}"
+                th:label="#{country.__${federalStatesByCountry.key}__}"
               >
-                <th:block th:fragment="settings-workingtimes-workingDurationForChristmasEve">
-                  <option
-                    th:each="dayLengthType : ${dayLengthTypes}"
-                    th:text="#{__${dayLengthType}__}"
-                    th:value="${dayLengthType}"
-                    th:selected="${settings.publicHolidaysSettings.workingDurationForChristmasEve == dayLengthType}"
-                  ></option>
-                </th:block>
-              </select>
-            </div>
-          </div>
-          <div class="form-group is-required">
-            <label
-              th:text="|#{settings.publicHolidays.workingDuration.newYearsEve}:|"
-              class="control-label col-md-4"
-              for="publicHolidaysSettings.workingDurationForNewYearsEve"
-            >
-              Arbeitsdauer an Silvester
-            </label>
-            <div class="col-md-8">
-              <select
-                th:replace="~{fragments/select::one(id='publicHolidaysSettings.workingDurationForNewYearsEve', name='publicHolidaysSettings.workingDurationForNewYearsEve', options=~{::settings-workingtimes-workingDurationForNewYearsEve})}"
-              >
-                <th:block th:fragment="settings-workingtimes-workingDurationForNewYearsEve">
-                  <option
-                    th:each="dayLengthType : ${dayLengthTypes}"
-                    th:text="#{__${dayLengthType}__}"
-                    th:value="${dayLengthType}"
-                    th:selected="${settings.publicHolidaysSettings.workingDurationForNewYearsEve == dayLengthType}"
-                  ></option>
-                </th:block>
-              </select>
-            </div>
-          </div>
-          <div class="form-group is-required">
-            <label
-              th:text="|#{settings.publicHolidays.federalState}:|"
-              class="control-label col-md-4"
-              for="federalStateType"
-            >
-              Globale Feiertagsregelung
-            </label>
-            <div class="col-md-8">
-              <select
-                th:replace="~{fragments/select::one(id='federalStateType', name='publicHolidaysSettings.federalState', options=~{::settings-workingtimes-federalStateType})}"
-              >
-                <th:block th:fragment="settings-workingtimes-federalStateType">
-                  <optgroup th:label="#{country.general}">
-                    <option
-                      th:text="#{federalState.NONE}"
-                      value="NONE"
-                      th:selected="${settings.publicHolidaysSettings.federalState == 'NONE'}"
-                    ></option>
-                  </optgroup>
-                  <optgroup
-                    th:each="federalStatesByCountry : ${federalStateTypes}"
-                    th:label="#{country.__${federalStatesByCountry.key}__}"
-                  >
-                    <option
-                      th:each="federalStateType : ${federalStatesByCountry.value}"
-                      th:text="#{federalState.__${federalStateType}__}"
-                      th:value="${federalStateType}"
-                      th:selected="${settings.publicHolidaysSettings.federalState == federalStateType}"
-                    ></option>
-                  </optgroup>
-                </th:block>
-              </select>
-            </div>
-          </div>
+                <option
+                  th:each="federalStateType : ${federalStatesByCountry.value}"
+                  th:text="#{federalState.__${federalStateType}__}"
+                  th:value="${federalStateType}"
+                  th:selected="${settings.publicHolidaysSettings.federalState == federalStateType}"
+                ></option>
+              </optgroup>
+            </th:block>
+          </select>
         </div>
       </div>
     </th:block>

@@ -13,35 +13,29 @@
         </turbo-stream>
       </turbo-frame>
 
-      <div th:replace="~{fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})}">
-        <th:block th:fragment="absence-types-heading-body">
-          <h2 th:text="#{settings.absenceTypes.title}">Einstellungen zu Abwesenheitsarten</h2>
-        </th:block>
-      </div>
-
-      <div>
-        <aside
-          class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
-        >
-          <div>
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+      <div class="uv-form__group">
+        <div class="uv-form__group-info">
+          <div class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none">
+            <div>
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+            </div>
+            <div class="tw-flex tw-flex-col">
+              <p>
+                <th:block th:text="#{settings.absenceTypes.help.1}" />
+                <a
+                  class="tw-inline-flex tw-items-center"
+                  target="_blank"
+                  rel="noopener"
+                  href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
+                >
+                  <th:block th:text="#{settings.absenceTypes.help.2}" />
+                  <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
+                </a>
+              </p>
+            </div>
           </div>
-          <div class="tw-flex tw-flex-col">
-            <p>
-              <th:block th:text="#{settings.absenceTypes.help.1}" />
-              <a
-                class="tw-inline-flex tw-items-center"
-                target="_blank"
-                rel="noopener"
-                href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
-              >
-                <th:block th:text="#{settings.absenceTypes.help.2}" />
-                <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
-              </a>
-            </p>
-          </div>
-        </aside>
-        <div class="tw-w-full tw-sticky tw-top-0">
+        </div>
+        <div class="tw-mt-4 tw-w-full tw-sticky tw-top-0">
           <ul id="absence-type-list" class="tw-relative tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
             <li role="none" class="absence-type-list-head">
               <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-list-head__status"></span>

@@ -47,8 +47,8 @@
               <span th:text="#{action.sicknotes.statistics}"></span>
             </a>
             <div
-              th:replace="~{fragments/details-dropdown::details-dropdown(
-                summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
+              th:replace="~{fragments/popover::popover-menu(
+                summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, placement='bottom-end'
               )}"
             >
               <th:block th:ref="download-dropdown-summary">
@@ -60,18 +60,18 @@
                 </span>
               </th:block>
               <th:block th:ref="download-dropdown-content">
-                <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{action.sicknotes.download.title}"
-                  >Krankmeldungen</span
-                >
+                <span class="tw-block tw-mb-2 tw-px-4 tw-font-bold" th:text="#{action.sicknotes.download.title}">
+                  Krankmeldungen
+                </span>
                 <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                   <li>
                     <a
                       id="statistics-csv-download-link-all"
                       th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
-                      class="icon-link tw-px-1 tw-flex tw-gap-2"
+                      class="icon-link"
                       download
                     >
-                      <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>
+                      <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                       <th:block th:text="#{action.sicknotes.download.all.persons}"></th:block>
                     </a>
                   </li>
@@ -79,10 +79,10 @@
                     <a
                       id="statistics-csv-download-link"
                       th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                      class="icon-link tw-px-1 tw-flex tw-gap-2"
+                      class="icon-link"
                       download
                     >
-                      <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>
+                      <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                       <th:block th:text="#{action.sicknotes.download.visible.persons}"></th:block>
                     </a>
                   </li>
@@ -98,33 +98,35 @@
         <div
           class="tw-flex tw-flex-col md:tw-grid md:tw-grid-rows-2 lg:tw-flex lg:tw-flex-row tw-gap-4 md:tw-gap-2 print:tw-hidden"
         >
-          <form
-            method="get"
-            action="#"
-            th:action="@{/web/sickdays}"
-            data-turbo-frame="frame-statistics"
-            data-turbo-action="advance"
-            id="form-date-from-to"
+          <div
+            th:replace="~{fragments/popover::popover-select(
+              summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, placement='bottom-start'
+            )}"
           >
-            <div id="statistics-filter-inputs">
-              <input type="hidden" name="sort" th:value="${sortQuery}" />
-              <input type="hidden" name="query" th:value="${query}" />
-            </div>
-            <div class="tw-flex tw-flex-col tw-gap-1">
-              <fieldset>
-                <legend class="tw-sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
-                <div
-                  th:replace="~{fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)}"
-                >
-                  <th:block th:ref="period-dropdown-summary">
-                    <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
-                    <span
-                      id="period-text"
-                      th:with="start=${{period.startDate}}, end=${{period.endDate}}"
-                      th:text="#{sicknotes.statistics.period.selected(${start}, ${end})}"
-                    ></span>
-                  </th:block>
-                  <th:block th:ref="period-dropdown-content">
+            <th:block th:ref="period-dropdown-summary">
+              <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
+              <span
+                id="period-text"
+                th:with="start=${{period.startDate}}, end=${{period.endDate}}"
+                th:text="#{sicknotes.statistics.period.selected(${start}, ${end})}"
+              ></span>
+            </th:block>
+            <th:block th:ref="period-dropdown-content">
+              <form
+                method="get"
+                action="#"
+                th:action="@{/web/sickdays}"
+                data-turbo-frame="frame-statistics"
+                data-turbo-action="advance"
+                id="form-date-from-to"
+              >
+                <div id="statistics-filter-inputs">
+                  <input type="hidden" name="sort" th:value="${sortQuery}" />
+                  <input type="hidden" name="query" th:value="${query}" />
+                </div>
+                <div class="tw-flex tw-flex-col tw-gap-1">
+                  <fieldset>
+                    <legend class="tw-sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
                     <div class="tw-flex tw-flex-col">
                       <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0">Von</label>
                       <input
@@ -133,16 +135,18 @@
                         th:value="${{period.startDate}}"
                         th:data-iso-value="${period.startDateIsoValue}"
                         th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
+                        class="tw-mt-0.5"
                       />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4">Bis</label>
+                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4">
+                        Bis
+                      </label>
                       <input
                         id="to-date-input"
                         name="to"
                         th:value="${{period.endDate}}"
                         th:data-iso-value="${period.endDateIsoValue}"
                         th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
+                        class="tw-mt-0.5"
                       />
                     </div>
                     <div class="tw-mt-6">
@@ -152,11 +156,11 @@
                         type="submit"
                       />
                     </div>
-                  </th:block>
+                  </fieldset>
                 </div>
-              </fieldset>
-            </div>
-          </form>
+              </form>
+            </th:block>
+          </div>
           <form
             action="#"
             th:action="@{/web/sickdays}"
@@ -183,7 +187,7 @@
                   id="search"
                   name="query"
                   th:value="${query}"
-                  class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                  class="tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
                   th:placeholder="#{action.search.placeholder.firstname-lastname}"
                   data-auto-submit="search-submit"
                   data-auto-submit-delay="100"
@@ -289,7 +293,7 @@
           <caption class="tw-sr-only" th:text="#{sicknotes.title}">
             Krankmeldungen
           </caption>
-          <thead class="hidden-xs hidden-sm">
+          <thead class="tw-hidden lg:tw-table-header-group">
             <tr>
               <th scope="col" class="print:tw-hidden"></th>
               <th
@@ -300,12 +304,12 @@
               ></th>
               <th scope="col" th:text="#{person.data.firstName}"></th>
               <th scope="col" th:text="#{person.data.lastName}"></th>
-              <th scope="col" class="hidden">
+              <th scope="col" class="tw-hidden">
                 <!-- placeholder for first name and last name column in xs screen-->
               </th>
               <th scope="col" th:text="#{sicknotes.daysOverview.sickDays.title}"></th>
               <th scope="col" th:text="#{sicknotes.daysOverview.sickDays.child.title}"></th>
-              <th scope="col" class="hidden"><!-- placeholder for sick days column in xs screen--></th>
+              <th scope="col" class="tw-hidden"><!-- placeholder for sick days column in xs screen--></th>
             </tr>
           </thead>
           <tbody>
@@ -321,7 +325,7 @@
                 th:text="${sickDaysStatistic.personnelNumber}"
                 class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
               ></td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:text="${sickDaysStatistic.personFirstName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -329,7 +333,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:text="${sickDaysStatistic.personLastName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -337,7 +341,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="visible-xs">
+              <td class="md:tw-hidden">
                 <a
                   th:text="${sickDaysStatistic.personNiceName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -345,7 +349,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link print:no-link"
@@ -371,7 +375,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="hidden-xs">
+              <td class="tw-hidden md:tw-table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link print:no-link"
@@ -397,7 +401,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="visible-xs">
+              <td class="md:tw-hidden">
                 <div class="tw-flex tw-items-center">
                   <svg th:replace="~{icon/medkit::svg(className='tw-w-3 tw-h-3')}"></svg>
                   &nbsp;<th:block

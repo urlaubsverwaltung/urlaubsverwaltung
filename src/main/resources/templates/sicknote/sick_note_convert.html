@@ -16,7 +16,7 @@
         method="post"
         th:action="@{/web/sicknote/__${sickNote.id}__/convert}"
         th:object="${sickNoteConvertForm}"
-        class="form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
+        class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
       >
         <div class="tw-grid tw-gap-4 lg:tw-grid-cols-2 lg:tw-gap-8">
           <div>
@@ -80,13 +80,7 @@
                   >Grund</label
                 >
                 <div class="tw-flex-1">
-                  <textarea
-                    id="reason"
-                    th:field="*{reason}"
-                    class="form-control"
-                    th:errorclass="error"
-                    rows="2"
-                  ></textarea>
+                  <textarea id="reason" th:field="*{reason}" th:errorclass="error" rows="2"></textarea>
                   <p
                     class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                     th:if="${#fields.hasErrors('reason')}"

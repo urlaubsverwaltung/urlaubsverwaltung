@@ -7,11 +7,11 @@
   <body>
     <span
       th:fragment="input-group(body, addon, hasError)"
-      th:class="input-group"
-      th:classappend="${hasError == true ? 'has-error' : ''}"
+      th:class="uv-input-group"
+      th:classappend="${hasError == true ? 'uv-has-error' : ''}"
     >
       <th:block th:replace="${body}"></th:block>
-      <span class="input-group-addon">
+      <span class="uv-input-group-addon">
         <th:block th:replace="${addon}"></th:block>
       </span>
     </span>

@@ -40,7 +40,8 @@
                   class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                   onclick="
                     document.querySelector('#allow')?.classList.remove('tw-hidden');
-                    document.querySelector('#cancel')?.classList.add('tw-hidden');"
+                    document.querySelector('#cancel')?.classList.add('tw-hidden');
+                  "
                   th:data-title="#{action.acceptSicknote}"
                 >
                   <svg th:replace="~{icon/check::svg}"></svg>
@@ -73,8 +74,9 @@
                     type="button"
                     class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
                     onclick="
-                    document.querySelector('#cancel')?.classList.remove('tw-hidden');
-                    document.querySelector('#allow')?.classList.add('tw-hidden');"
+                      document.querySelector('#cancel')?.classList.remove('tw-hidden');
+                      document.querySelector('#allow')?.classList.add('tw-hidden');
+                    "
                     th:data-title="#{action.delete.request}"
                   >
                     <svg th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
@@ -104,7 +106,7 @@
           <th:block th:if="${canAcceptSickNote}">
             <form
               id="allow"
-              class="form confirm alert alert-success"
+              class="alert alert-success"
               th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
               method="post"
               th:with="isShortcut=${param.shortcut != null && #lists.contains(param.shortcut, 'true')},
@@ -117,7 +119,7 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <strong class="tw-font-medium">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
                     Soll diese Krankmeldung wirklich angenommen werden?
@@ -128,12 +130,12 @@
                 </strong>
               </div>
 
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
-                <textarea id="text-allow" rows="2" class="form-control" th:errorclass="error" name="text"></textarea>
+                <textarea id="text-allow" rows="2" th:errorclass="error" name="text"></textarea>
               </div>
 
-              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+              <div class="tw-mb-0 tw-flex tw-justify-between tw-gap-4">
                 <button type="submit" class="button-main-green tw-w-56">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.acceptSicknote}">Annehmen</th:block>
                   <th:block th:if="${extensionRequested}">Verlängerung Annehmen</th:block>
@@ -142,7 +144,7 @@
                   type="button"
                   th:text="#{action.cancel}"
                   class="button"
-                  onclick="document.querySelector('#allow')?.classList.add('tw-hidden');"
+                  onclick="document.querySelector('#allow')?.classList.add('tw-hidden')"
                 >
                   Abbrechen
                 </button>
@@ -152,7 +154,7 @@
           <th:block th:if="${canDeleteSickNote}">
             <form
               id="cancel"
-              class="form confirm alert alert-danger"
+              class="alert alert-danger"
               th:classappend="${(action == 'cancel') ? '' : 'tw-hidden'}"
               method="post"
               th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/cancel?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/cancel'}"
@@ -161,31 +163,24 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <strong class="tw-font-medium" th:text="#{action.sicknote.delete.request.confirm}">
                   Soll diese Krankmeldung wirklich storniert werden?
                 </strong>
               </div>
 
-              <div class="form-group">
+              <div class="tw-mb-4">
                 <label th:text="|#{action.comment.mandatory}:|" for="text-cancel"></label>
-                <textarea
-                  id="text-cancel"
-                  rows="2"
-                  class="form-control"
-                  th:field="*{text}"
-                  th:errorclass="error"
-                  name="text"
-                ></textarea>
+                <textarea id="text-cancel" rows="2" th:field="*{text}" th:errorclass="error" name="text"></textarea>
               </div>
 
-              <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+              <div class="tw-flex tw-justify-between tw-gap-4">
                 <button type="submit" class="button-danger tw-w-56" th:text="#{action.delete}">Stornieren</button>
                 <button
                   type="button"
                   th:text="#{action.cancel}"
                   class="button"
-                  onclick="document.querySelector('#cancel')?.classList.add('tw-hidden');"
+                  onclick="document.querySelector('#cancel')?.classList.add('tw-hidden')"
                 >
                   Abbrechen
                 </button>
@@ -233,7 +228,7 @@
                     ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
                     |"
                   th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
-                  th:title="${sickNoteStatusNameI18n}"
+                  th:data-title="${sickNoteStatusNameI18n}"
                 >
                   &nbsp;
                 </span>
@@ -365,7 +360,7 @@
               <th:block th:if="${canCommentSickNote}">
                 <button
                   class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
-                  onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
+                  onclick="document.getElementById('comment-form').classList.remove('tw-hidden')"
                 >
                   <svg th:replace="~{icon/message-square::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                   <span th:text="#{action.comment.new}"></span>
@@ -430,13 +425,13 @@
               <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
             </div>
 
-            <textarea th:field="*{text}" class="form-control" th:errorclass="error" rows="2"></textarea>
+            <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
             <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
               <button
                 th:text="#{action.cancel}"
                 class="button"
                 type="button"
-                onclick="document.getElementById('comment-form').classList.add('tw-hidden');"
+                onclick="document.getElementById('comment-form').classList.add('tw-hidden')"
               ></button>
               <button th:text="#{action.save}" class="button-main-green tw-w-56" type="submit"></button>
             </div>

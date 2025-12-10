@@ -32,293 +32,244 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
+    <main th:fragment="main" class="tw-max-w-2xl tw-mx-auto tw-px-4 lg:tw-px-12 lg:tw-max-w-6xl xl:tw-px-0">
       <form
         method="post"
         th:with="actionUrl=${editMode ? '/web/sicknote/__${sickNote.id}__/edit' : '/web/sicknote'}"
         th:action="@{__${actionUrl}__}"
         th:object="${sickNote}"
-        class="form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
+        class="uv-form uv-form-grid"
       >
-        <div class="row">
-          <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
-        </div>
-
-        <div class="form-section tw-mb-4 lg:tw-mb-6">
-          <div th:replace="~{fragments/section-heading::section-heading(~{::sicknote-heading-body}, ~{})}">
-            <th:block th:ref="sicknote-heading-body">
-              <th:block th:if="${editMode}">
-                <h2 th:text="#{sicknote.edit.title}">Krankmeldung bearbeiten</h2>
-              </th:block>
-              <th:block th:if="${not editMode}">
-                <h2 th:text="${canAddSickNote} ? #{sicknote.create.title} : #{sicknote.submit.title}">
-                  Krankmeldung einreichen/erstellen
-                </h2>
-              </th:block>
+        <div role="group" aria-describedby="group-sicknote-description">
+          <h2 id="group-sicknote-description" class="uv-form-legend">
+            <th:block th:if="${editMode}" th:text="#{sicknote.edit.title}"> Krankmeldung bearbeiten </th:block>
+            <th:block
+              th:if="${not editMode}"
+              th:text="${canAddSickNote} ? #{sicknote.create.title} : #{sicknote.submit.title}"
+            >
+              Krankmeldung einreichen/erstellen
             </th:block>
-          </div>
+          </h2>
 
-          <div class="row">
-            <div class="col-md-4 col-md-push-8">
-              <span class="help-block help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                <th:block th:text="#{sicknote.data.description}"></th:block>
-              </span>
-            </div>
+          <div class="uv-form__group">
+            <p
+              class="uv-form__group-error alert alert-danger"
+              th:if="${#fields.hasGlobalErrors()}"
+              th:errors="*{global}"
+            ></p>
 
-            <div class="col-md-8 col-md-pull-4">
-              <div th:if="${canAddSickNote}" class="form-group is-required">
-                <label th:text="|#{sicknote.data.person}:|" class="control-label col-md-3" for="employee"> </label>
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <th:block th:text="#{sicknote.data.description}"></th:block>
+            </p>
 
-                <div class="col-md-9">
-                  <th:block th:if="${not editMode}">
-                    <select
-                      th:replace="~{fragments/select::one(id='employee', name='person', options=~{::sicknote-person-select-options}, testId='person-select')}"
-                      id="employee"
-                    >
-                      <th:block th:fragment="sicknote-person-select-options">
-                        <option
-                          th:each="p: ${persons}"
-                          th:text="${p.niceName}"
-                          th:value="${p.id}"
-                          th:selected="${person.id == p.id}"
-                        ></option>
-                      </th:block>
-                    </select>
-                  </th:block>
-                  <th:block th:if="${editMode}">
-                    <input type="hidden" th:field="*{id}" />
-                    <input type="hidden" th:field="*{person}" th:value="${sickNote.person.id}" />
-                    <th:block th:text="${sickNote.person.niceName}" />
-                  </th:block>
-                </div>
-              </div>
-              <th:block th:if="${!canAddSickNote}">
-                <input type="hidden" name="person" th:value="${person.id}" />
-              </th:block>
-
-              <div class="form-group is-required">
-                <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType">Typ</label>
-
-                <div class="col-md-9">
+            <!-- Employee -->
+            <div th:if="${canAddSickNote}" class="uv-form__input-row">
+              <label th:text="|#{sicknote.data.person}:|" class="is-required" for="employee"></label>
+              <div>
+                <th:block th:if="${not editMode}">
                   <select
-                    th:replace="~{fragments/select::one(id='sickNoteType', name='sickNoteType', options=~{::sicknotetype-select-options}, testId='sicknote-type-select')}"
-                    id="sickNoteType"
+                    th:replace="~{fragments/select::one(id='employee', name='person', options=~{::sicknote-person-select-options}, testId='person-select')}"
+                    id="employee"
                   >
-                    <th:block th:fragment="sicknotetype-select-options">
+                    <th:block th:fragment="sicknote-person-select-options">
                       <option
-                        th:each="sickNoteType: ${sickNoteTypes}"
-                        th:text="#{__${sickNoteType.messageKey}__}"
-                        th:value="${sickNoteType.id}"
-                        th:selected="${sickNoteType == sickNote.sickNoteType}"
-                      />
+                        th:each="p: ${persons}"
+                        th:text="${p.niceName}"
+                        th:value="${p.id}"
+                        th:selected="${person.id == p.id}"
+                      ></option>
                     </th:block>
                   </select>
-                </div>
-              </div>
-
-              <div class="form-group is-required">
-                <label th:text="|#{absence.period}:|" class="control-label col-md-3" for="dayLength">Zeitraum</label>
-                <div class="col-md-9">
-                  <div class="radio">
-                    <label class="thirds">
-                      <input
-                        id="dayLength"
-                        type="radio"
-                        th:field="*{dayLength}"
-                        value="FULL"
-                        th:selected="true"
-                        data-test-id="day-type-full"
-                      />
-                      <th:block th:text="#{FULL}">ganztägig</th:block>
-                    </label>
-                    <label class="thirds">
-                      <input
-                        type="radio"
-                        th:field="*{dayLength}"
-                        value="MORNING"
-                        checked="checked"
-                        data-test-id="day-type-morning"
-                      />
-                      <th:block th:text="#{MORNING}">vormittags</th:block>
-                    </label>
-                    <label class="thirds">
-                      <input
-                        type="radio"
-                        th:field="*{dayLength}"
-                        value="NOON"
-                        checked="checked"
-                        data-test-id="day-type-noon"
-                      />
-                      <th:block th:text="#{NOON}">nachmittags</th:block>
-                    </label>
-                  </div>
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('dayLength')}"
-                  >
-                    <th:block th:errors="*{dayLength}">dayLength Error</th:block>
-                  </p>
-                </div>
-              </div>
-
-              <div class="form-group is-required">
-                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="from">Von</label>
-                <div class="col-md-9">
-                  <input
-                    id="from"
-                    th:field="*{startDate}"
-                    th:data-iso-value="${sickNote.startDateIsoValue}"
-                    class="form-control"
-                    th:errorclass="error"
-                    autocomplete="off"
-                    th:placeholder="#{pattern.date}"
-                    data-test-id="sicknote-from-date"
-                  />
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('startDate')}"
-                  >
-                    <th:block th:errors="*{startDate}">startDate Error</th:block>
-                  </p>
-                </div>
-              </div>
-
-              <div class="form-group is-required">
-                <label th:text="|#{absence.period.endDate}:|" class="control-label col-md-3" for="to">Bis</label>
-                <div class="col-md-9">
-                  <input
-                    id="to"
-                    th:field="*{endDate}"
-                    th:data-iso-value="${sickNote.endDateIsoValue}"
-                    class="form-control"
-                    th:errorclass="error"
-                    autocomplete="off"
-                    th:placeholder="#{pattern.date}"
-                    data-test-id="sicknote-to-date"
-                  />
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('endDate')}"
-                  >
-                    <th:block th:errors="*{endDate}">endDate Error</th:block>
-                  </p>
-                </div>
+                </th:block>
+                <th:block th:if="${editMode}">
+                  <input type="hidden" th:field="*{id}" />
+                  <input type="hidden" th:field="*{person}" th:value="${sickNote.person.id}" />
+                  <p th:text="${sickNote.person.niceName}" />
+                </th:block>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="form-section tw-mb-4 lg:tw-mb-6">
-          <div th:replace="~{fragments/section-heading::section-heading(~{::sicknote-au-heading-body}, ~{})}">
-            <th:block th:ref="sicknote-au-heading-body">
-              <h2 th:text="#{sicknote.data.aub.short}">AU-Bescheinigung</h2>
+            <th:block th:if="${!canAddSickNote}">
+              <input type="hidden" name="person" th:value="${person.id}" />
             </th:block>
-          </div>
 
-          <div class="row">
-            <div class="col-md-4 col-md-push-8">
-              <span class="help-block help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                &nbsp<th:block th:text="#{sicknote.data.aub.description}"></th:block>
-              </span>
+            <!-- Sick Note Type -->
+            <div class="uv-form__input-row">
+              <label for="sickNoteType" class="is-required" th:text="|#{sicknote.data.type}:|"> Typ </label>
+              <select
+                th:replace="~{fragments/select::one(id='sickNoteType', name='sickNoteType', options=~{::sicknotetype-select-options}, testId='sicknote-type-select')}"
+                id="sickNoteType"
+              >
+                <th:block th:fragment="sicknotetype-select-options">
+                  <option
+                    th:each="sickNoteType: ${sickNoteTypes}"
+                    th:text="#{__${sickNoteType.messageKey}__}"
+                    th:value="${sickNoteType.id}"
+                    th:selected="${sickNoteType == sickNote.sickNoteType}"
+                  />
+                </th:block>
+              </select>
             </div>
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group AU">
-                <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="aubFrom">Von</label>
 
-                <div class="col-md-9">
+            <!-- Day Length -->
+            <div class="uv-form__input-row">
+              <p class="uv-form__label uv-form__label--required" th:text="|#{absence.period}:|">Zeitraum</p>
+              <div>
+                <label>
                   <input
-                    id="aubFrom"
-                    th:field="*{aubStartDate}"
-                    th:data-iso-value="${sickNote.aubStartDateIsoValue}"
-                    class="form-control"
-                    th:errorclass="error"
-                    autocomplete="off"
-                    th:placeholder="#{pattern.date}"
-                    data-test-id="sicknote-aub-from"
+                    class="tw-mr-1"
+                    id="dayLength"
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="FULL"
+                    th:selected="true"
+                    data-test-id="day-type-full"
                   />
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('aubStartDate')}"
-                  >
-                    <th:block th:errors="*{aubStartDate}">aubStartDate Error</th:block>
-                  </p>
-                </div>
+                  <th:block th:text="#{FULL}">ganztägig</th:block>
+                </label>
+                <label>
+                  <input
+                    class="tw-mr-1"
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="MORNING"
+                    checked="checked"
+                    data-test-id="day-type-morning"
+                  />
+                  <span th:text="#{MORNING}">vormittags</span>
+                </label>
+                <label>
+                  <input
+                    class="tw-mr-1"
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="NOON"
+                    checked="checked"
+                    data-test-id="day-type-noon"
+                  />
+                  <span th:text="#{NOON}">nachmittags</span>
+                </label>
               </div>
-              <div class="form-group AU">
-                <label th:text="|#{absence.period.endDate}|" class="control-label col-md-3" for="aubTo">Bis</label>
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('dayLength')}">
+                <th:block th:errors="*{dayLength}">dayLength Error</th:block>
+              </p>
+            </div>
 
-                <div class="col-md-9">
-                  <input
-                    id="aubTo"
-                    th:field="*{aubEndDate}"
-                    th:data-iso-value="${sickNote.aubEndDateIsoValue}"
-                    class="form-control"
-                    th:errorclass="error"
-                    autocomplete="off"
-                    th:placeholder="#{pattern.date}"
-                    data-test-id="sicknote-aub-to"
-                  />
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('aubEndDate')}"
-                  >
-                    <th:block th:errors="*{aubEndDate}">aubEndDate Error</th:block>
-                  </p>
-                </div>
-              </div>
+            <!-- From -->
+            <div class="uv-form__input-row">
+              <label for="from" class="is-required tw-w-full lg:tw-w-1/4" th:text="|#{absence.period.startDate}:|">
+                Von
+              </label>
+              <input
+                id="from"
+                th:field="*{startDate}"
+                th:data-iso-value="${sickNote.startDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-from-date"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}">
+                <th:block th:errors="*{startDate}">startDate Error</th:block>
+              </p>
+            </div>
+
+            <!-- To -->
+            <div class="uv-form__input-row">
+              <label for="to" class="is-required" th:text="|#{absence.period.endDate}:|"> Bis </label>
+              <input
+                id="to"
+                th:field="*{endDate}"
+                th:data-iso-value="${sickNote.endDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-to-date"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('endDate')}">
+                <th:block th:errors="*{endDate}">endDate Error</th:block>
+              </p>
             </div>
           </div>
         </div>
 
-        <div class="form-section tw-mb-16">
-          <div
-            th:replace="~{fragments/section-heading::section-heading(~{::sicknote-further-information-heading-body}, ~{})}"
+        <!-- AU -->
+        <div role="group" aria-describedby="group-sicknote-au-description">
+          <h2 id="group-sicknote-au-description" class="uv-form-legend" th:text="#{sicknote.data.aub.short}">
+            AU-Bescheinigung
+          </h2>
+
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              &nbsp<th:block th:text="#{sicknote.data.aub.description}"></th:block>
+            </p>
+
+            <!-- AU From -->
+            <div class="uv-form__input-row">
+              <label for="aubFrom" th:text="|#{absence.period.startDate}:|"> Von </label>
+              <input
+                id="aubFrom"
+                th:field="*{aubStartDate}"
+                th:data-iso-value="${sickNote.aubStartDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-aub-from"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('aubStartDate')}">
+                <th:block th:errors="*{aubStartDate}">aubStartDate Error</th:block>
+              </p>
+            </div>
+
+            <!-- AU To -->
+            <div class="uv-form__input-row">
+              <label for="aubTo" th:text="|#{absence.period.endDate}|">Bis</label>
+              <input
+                id="aubTo"
+                th:field="*{aubEndDate}"
+                th:data-iso-value="${sickNote.aubEndDateIsoValue}"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-aub-to"
+              />
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('aubEndDate')}">
+                <th:block th:errors="*{aubEndDate}">aubEndDate Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div role="group" aria-describedby="group-further-info-description">
+          <h2
+            id="group-further-info-description"
+            class="uv-form-legend"
+            th:text="#{sicknote.data.furtherInformation.title}"
           >
-            <th:block th:ref="sicknote-further-information-heading-body">
-              <h2 th:text="#{sicknote.data.furtherInformation.title}">Weitere Informationen</h2>
-            </th:block>
-          </div>
+            Weitere Informationen
+          </h2>
 
-          <div class="row">
-            <div class="col-md-4 col-md-push-8">
-              <span class="help-block help-block tw-text-sm">
-                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                &nbsp;<th:block th:text="#{sicknote.data.furtherInformation.description}"></th:block>
-              </span>
-            </div>
-            <div class="col-md-8 col-md-pull-4">
-              <div class="form-group">
-                <label
-                  th:text="|#{sicknote.data.furtherInformation.comment}:|"
-                  class="control-label col-md-3"
-                  for="comment"
-                  >Mit Kommentar zum Verlauf hinzufügen</label
-                >
-                <div class="col-md-9">
-                  <textarea
-                    id="comment"
-                    rows="2"
-                    th:field="*{comment}"
-                    class="form-control"
-                    th:errorclass="error"
-                  ></textarea>
-                  <p
-                    class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
-                    th:if="${#fields.hasErrors('comment')}"
-                  >
-                    <th:block th:errors="*{comment}">comment Error</th:block>
-                  </p>
-                </div>
-              </div>
+          <div class="uv-form__group">
+            <p class="uv-form__group-info uv-help-block">
+              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              &nbsp;<th:block th:text="#{sicknote.data.furtherInformation.description}"></th:block>
+            </p>
+
+            <!-- Comment -->
+            <div class="uv-form__input-row">
+              <label for="comment" th:text="|#{sicknote.data.furtherInformation.comment}:|">
+                Mit Kommentar zum Verlauf hinzufügen
+              </label>
+              <textarea id="comment" rows="2" th:field="*{comment}" th:errorclass="error"></textarea>
+              <p class="uv-form__input-error" th:if="${#fields.hasErrors('comment')}">
+                <th:block th:errors="*{comment}">comment Error</th:block>
+              </p>
             </div>
           </div>
         </div>
 
-        <hr class="tw-w-full tw-m-0 tw-mt-6" />
-
-        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+        <div class="uv-form__actions">
           <th:block th:if="${editMode}">
             <button
               type="submit"

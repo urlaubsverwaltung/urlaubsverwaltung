@@ -5,14 +5,8 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="~{fragments/section-heading::section-heading(~{::special-leave-heading-body}, ~{})}">
-        <th:block th:fragment="special-leave-heading-body">
-          <h2 th:text="#{settings.specialleave.title}">Einstellungen zu Abwesenheitsarten</h2>
-        </th:block>
-      </div>
-
-      <div>
-        <aside class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2 tw-text-sm">
+      <div class="uv-form__group">
+        <div class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2">
           <div>
             <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
           </div>
@@ -29,7 +23,7 @@
               </a>
             </p>
           </div>
-        </aside>
+        </div>
         <table id="special-leave-table" class="tw-w-full absence-type-settings-table">
           <caption th:text="#{settings.specialleave.title}" class="tw-sr-only"></caption>
           <thead>
@@ -76,7 +70,7 @@
               <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
                 <input
                   th:id="|specialLeave-days-${loop.index}|"
-                  class="form-control tw-w-1/2 sm:tw-w-full"
+                  class="tw-w-1/2 sm:tw-w-full"
                   th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}"
                   th:errorclass="error"
                   type="number"

@@ -1,30 +1,65 @@
+/* ------------------------- */
+/* start bootstrap migration */
+
+fieldset {
+  /* Chrome and Firefox set a `min-width: min-content;` on fieldsets, */
+  /* so we reset that to ensure it behaves more like a standard block element. */
+  /* See https://github.com/twbs/bootstrap/issues/12359. */
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
 legend {
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-font-normal;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: calc(14px * 1.5);
+  line-height: inherit;
+  color: #333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
 }
 
-.tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
-  @apply tw-outline-0;
-  @apply tw-block;
+/* end bootstrap migration */
+/* ----------------------- */
+
+.uv-help-block {
+  display: block;
+  color: #737373;
   @apply tw-text-sm;
-  @apply tw-w-full;
-  @apply tw-py-1;
-  @apply tw-px-2.5;
-  @apply tw-border;
-  @apply tw-border-neutral-300;
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-text-opacity-75;
 }
 
-.form-control,
-.tw-form-control,
-.details-dropdown-input .details-dropdown_summary {
-  /* ring-0 is required to enable transition to ring-x of the focused form-control */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
-  @apply tw-rounded-md;
+input:not(:is([type="radio"], [type="checkbox"])),
+textarea,
+select,
+.popover-button-select {
+  display: inline-block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.popover-button-select {
+  width: auto; /* override common input styling */
   :not([class*="tw-border-"]) {
     /* actually colors are meant here, like tw-border-blue-400 */
     /* however tw-border-*-* is not a valid selector */
@@ -32,83 +67,86 @@ legend {
   }
 }
 
-.details-dropdown-input .details-dropdown_summary {
-  @apply tw-px-3;
-  @apply tw-py-2;
-  @apply tw-rounded-md;
+.popover-button-select:focus,
+/* radiobutton and checkbox should not be highlighted on click, but on tab (:focus-visible) */
+input:not(:is([type="radio"], [type="checkbox"])):focus,
+select:focus,
+textarea:focus {
+  border-color: transparent;
+  outline: 2px solid var(--uv-focus-ring-color);
+  outline-offset: 1px;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.uv-input-group {
+  display: flex;
+
+  /* input */
+  border: 1px solid #ccc;
+  border-radius: var(--uv-input-border-radius);
+  @apply dark:tw-border-neutral-600;
+
+  &.uv-has-error {
+    border-color: var(--uv-error-border-color);
+  }
+
+  &:focus-within {
+    border-color: transparent;
+    outline: 2px solid var(--uv-focus-ring-color);
+    outline-offset: 1px;
+    box-shadow:
+      inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6);
+
+    input {
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+
+  input {
+    border: none;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  .uv-input-group-addon {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0 0.75rem;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    background-color: #eee;
+    border-top-right-radius: var(--uv-input-border-radius);
+    border-bottom-right-radius: var(--uv-input-border-radius);
+
+    @apply dark:tw-bg-zinc-800;
+    @apply dark:tw-text-zinc-200;
+  }
+}
+
+legend {
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-font-normal;
 }
 
 input[disabled],
-.form-control[disabled],
-.tw-form-control[disabled],
-fieldset[disabled] input,
-fieldset[disabled] .form-control,
-fieldset[disabled] .tw-form-control {
+fieldset[disabled] input {
   @apply dark:tw-text-neutral-700 !important;
   @apply dark:tw-bg-neutral-800 !important;
   @apply tw-border-0 !important;
 }
 
-.form-control:focus,
-.duet-date__input:focus,
-.duet-date__toggle:focus {
-  /* reset bootstrap stuff */
-  border-color: inherit !important;
-  box-shadow: none;
-}
-
-.form-control:focus,
-.tw-form-control:focus,
-.details-dropdown-input .details-dropdown_summary:focus,
+.popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   @apply tw-ring-2 !important;
   @apply tw-ring-blue-300 !important;
-}
-
-.input-group {
-  @apply tw-rounded-md !important;
-  @apply tw-border;
-  @apply tw-transition;
-  border-color: #ccc;
-  @apply dark:tw-border-neutral-600;
-}
-
-.input-group.has-error {
-  @apply tw-border-red-700;
-}
-
-.input-group .form-control {
-  /* remove border of form-control since the input-group defines it */
-  @apply tw-border-0 !important;
-  /* no right rounded corners since there is an input-group-addon attached to the right */
-  @apply tw-rounded-r-none !important;
-}
-
-.input-group-addon {
-  @apply dark:tw-bg-zinc-800;
-  @apply dark:tw-text-zinc-200;
-}
-
-.input-group .input-group-addon {
-  /* remove border of input-group-addon since the input-group defines it */
-  @apply tw-border-0 !important;
-  /* however, left border should still be visible */
-  @apply tw-border-l-2 !important;
-  border-color: #ccc;
-  @apply dark:tw-border-neutral-600;
-}
-
-.input-group:focus-within {
-  @apply tw-ring-2;
-  @apply tw-ring-blue-300;
-  @apply tw-border-transparent;
-}
-
-.input-group .form-control:focus {
-  /* reset ring since input-group defines it already */
-  @apply tw-ring-0 !important;
-  @apply tw-border-transparent;
 }
 
 /**************************************************************************
@@ -117,27 +155,8 @@ fieldset[disabled] .tw-form-control {
 
 **************************************************************************/
 
-label.is-required:after,
-.form-group.is-required > label:after {
+label.is-required:after {
   content: "*";
-}
-
-/**************************************************************************
-
-  HORIZONTAL FORM
-
-**************************************************************************/
-
-.form-horizontal .control-label {
-  text-align: left;
-}
-
-.form-horizontal .halves {
-  width: 45%;
-}
-
-.form-horizontal .thirds {
-  width: 30%;
 }
 
 /**************************************************************************
@@ -147,14 +166,13 @@ label.is-required:after,
 **************************************************************************/
 
 .error {
-  @apply tw-text-red-800;
-  @apply dark:tw-text-red-400;
+  color: var(--uv-error-color);
 }
 
 input,
 select,
 textarea,
-.details-dropdown-input .details-dropdown_summary {
+.popover-button-select {
   @apply dark:tw-border-zinc-600 !important;
   @apply dark:tw-bg-zinc-700 !important;
   @apply dark:tw-text-zinc-50 !important;
@@ -162,25 +180,7 @@ textarea,
 
 input.error,
 textarea.error {
-  @apply tw-border-red-700 !important;
-  @apply dark:tw-border-red-500 !important;
-}
-
-.info {
-  color: #3a87ad;
-}
-
-/**************************************************************************
-
-  SINGLE COLUMN FORM
-
-**************************************************************************/
-
-.form-section .help-block {
-  margin-top: 0;
-  line-height: 1.375;
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-text-opacity-75;
+  border-color: var(--uv-error-border-color) !important;
 }
 
 /**************************************************************************
@@ -243,20 +243,382 @@ textarea.error {
   margin-top: 2px;
 }
 
-/**************************************************************************
-
-  SEARCH FIELD
-
-**************************************************************************/
-
-.search-field {
-  margin-bottom: 21px;
-}
-
 .select-caret {
   @apply tw-text-zinc-700;
+  @apply dark:tw-text-zinc-50;
 }
 
-.select-caret {
-  @apply dark:tw-text-zinc-50;
+.uv-form {
+  /*
+   * some rules to consider:
+   * - try to use `margin-top`
+   *   row-gap cannot be used due to spanning grid-row workaround for info blocks on the right
+   * - use `margin-bottom` for elements that may be visible, like error blocks for instance
+   * - the form MUST have a `div[role=group]` followed by a `uv-form-legend` and `uv-form__group`
+   *   fieldset cannot be used since it doesn't support subgrid :-(
+   * - use either `input-row` OR `input-col` in the form, not both -> consistent ui
+   */
+
+  --uv-form-padding-x: 0;
+  --uv-form-col-gap: 1.25rem;
+  --uv-form-row-gap: 1.25rem;
+  --uv-form-label-col-width: 11.25rem; /* 180px */
+  --uv-form-input-col-width: 1fr;
+  --uv-form-info-col-width: 33%;
+
+  p {
+    margin: 0; /* override bootstrap margin bottom */
+  }
+
+  input[readonly] {
+    background-color: theme("colors.gray.200");
+  }
+
+  /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
+  /* note that this div cannot be disabled like a fieldset... */
+  div[role="group"] {
+    /* margin-top for role=group when it is adjacent to global-feedback */
+    &:where(.uv-form__global-feedback + *) {
+      margin-top: 1.5rem;
+    }
+    /* or other group  */
+    ~ div[role="group"] {
+      margin-top: 2.5rem;
+    }
+
+    .uv-form-legend {
+      --uv-form-legend-font-size: 1.5rem;
+
+      display: flex;
+      flex-direction: row;
+      gap: 0.25rem;
+      align-items: center;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid theme("colors.gray.200");
+      margin-bottom: var(--uv-form-row-gap);
+      font-size: var(--uv-form-legend-font-size);
+
+      @apply dark:tw-border-b;
+      @apply dark:tw-border-zinc-600;
+
+      &:is(h1, h2, h3, h4, h5, h6) {
+        margin: 0; /* override bootstrap(?) default for headings */
+        margin-bottom: var(--uv-form-row-gap);
+        font-size: var(--uv-form-legend-font-size);
+      }
+
+      > :is(h1, h2, h3, h4, h5, h6) {
+        margin: 0; /* override bootstrap(?) default for headings */
+        font-size: var(--uv-form-legend-font-size);
+      }
+    }
+  }
+
+  .uv-form__group {
+    ~ .uv-form__group {
+      margin-top: var(--uv-form-row-gap);
+    }
+
+    .uv-form__group-error,
+    .uv-form__group-info {
+      margin-bottom: var(--uv-form-row-gap);
+    }
+
+    .uv-form__group-info {
+      font-size: 0.875rem;
+      line-height: 1.42;
+
+      p {
+        margin: 0;
+        + p {
+          margin-top: 1rem;
+        }
+      }
+    }
+
+    .uv-form__input-col,
+    .uv-form__input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-top: var(--uv-form-row-gap);
+
+      /* if following item is not an interactive element -> it should be a row, just like any other input */
+      > :is(label, .uv-form__label) + :is(div, span) {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
+
+      label,
+      .uv-form__label {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.375;
+        max-width: 60ch;
+        &.uv-form__label--required::after {
+          content: "*";
+          display: inline-block;
+        }
+      }
+
+      /* align text with input */
+      label:has(input[type="radio"], input[type="checkbox"]) {
+        font-weight: normal;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        gap: 0.25rem;
+        /* multiline label text: */
+        /* align input on the "first" line (baseline) */
+        align-items: baseline;
+
+        /* align the input with text */
+        input {
+          transform: translateY(1px);
+        }
+      }
+
+      /* multiline labels should span all inline-grid-rows */
+      /* when there is a direct error element shown (in the next line) */
+      &:has(> .uv-form__input-error) {
+        grid-template-rows: 1fr 1fr;
+        label,
+        .uv-form__label {
+          grid-row: 1/-1;
+        }
+      }
+
+      .uv-form__input-error {
+        @apply tw-text-sm;
+        color: var(--uv-error-color);
+      }
+    }
+
+    .uv-form__input-col {
+      .uv-form__label {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+.uv-form-grid {
+  display: flex;
+  flex-direction: column;
+
+  label,
+  input {
+    /* in a col, the label has a gap to the following element */
+    &:is(.uv-form__input-col .uv-form__label + label) {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .uv-form__group {
+    .uv-form__input-row {
+      &:has(.error) {
+        /* error is on second row, column:input */
+        grid-template-rows: auto 1fr;
+        /* and labels with text has to span both rows */
+        > label,
+        .uv-form__label {
+          grid-row: 1 / -1;
+        }
+      }
+    }
+  }
+
+  .uv-form__actions {
+    margin-top: 4rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    @apply dark:tw-border-t;
+    @apply dark:tw-border-zinc-600;
+  }
+
+  @media screen and (width >= 1024px) {
+    --uv-form-label-col-width: 200px;
+
+    display: grid;
+    /* column-gap defined as column, as we don't want a gap for first and last col */
+    grid-template-columns:
+      [start]var(--uv-form-padding-x)
+      [label]var(--uv-form-label-col-width)
+      var(--uv-form-col-gap)
+      [input]var(--uv-form-input-col-width)
+      var(--uv-form-col-gap)
+      [info]var(--uv-form-info-col-width)
+      [end]var(--uv-form-padding-x);
+
+    .uv-form__global-feedback {
+      grid-column: start / end;
+    }
+
+    .uv-form-legend {
+      grid-row: 1;
+      grid-column: label / end;
+    }
+
+    div[role="group"] {
+      grid-column: label / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    /* uv-form__group allows adding more side notes in one "fieldset" (role=group) */
+    /* note that the "info" elements are spanning multiple grid rows */
+    /* you have to ensure yourself that nothing overlaps... */
+    .uv-form__group {
+      grid-column: 1 / -1;
+
+      display: grid;
+      grid-template-columns: subgrid;
+      /* override flex gap from small screen. gap is defined with margin-top below */
+      gap: 0;
+
+      .uv-form__group-error {
+        grid-row: 1;
+        grid-column: label / end;
+      }
+
+      .uv-form__group-info {
+        /* span ALL rows. using $ since -1 does not work */
+        /* and we should never(tm) have fieldsets with more than $ rows? if so -> increase value */
+        /* note that a HIGH value breaks devtools grid highlighting */
+        --uv-form-grid-row-span: 25;
+        grid-row: 1 / var(--uv-form-grid-row-span);
+        grid-column: info;
+
+        /* override small screen */
+        margin-bottom: 0;
+        /* but not for next elements */
+        &:has (~ .uv-form__group-info) {
+          margin-bottom: var(--uv-form-row-gap);
+        }
+      }
+
+      .uv-form__input-row,
+      .uv-form__input-col {
+        /* first row is the group-title/legend */
+        /* second row starts with input-rows */
+        grid-row: 1;
+        /* cannot use :first-of-type or :first-child since there could be other div's or elements... */
+        & + :is(.uv-form__input-row, .uv-form__input-col) {
+          /* next input-rows are auto flowing */
+          grid-row: auto;
+        }
+
+        grid-column: label / info;
+        /* auto flow each input-row to next row */
+        grid-auto-flow: row;
+
+        /* override small screen */
+        margin-top: 0;
+        /* but not for next elements */
+        ~ .uv-form__input-row,
+        ~ .uv-form__input-col {
+          margin-top: var(--uv-form-row-gap);
+        }
+      }
+
+      .uv-form__input-row {
+        display: grid;
+        grid-template-columns: subgrid;
+        /* align label with input while allowing multiline input (e.g. textarea, or a div with more elements) */
+        align-items: baseline;
+
+        > label,
+        > .uv-form__label {
+          grid-column: label;
+
+          /* next elements should fill the input column */
+          ~ * {
+            grid-column: input;
+          }
+        }
+      }
+
+      &:has(.uv-form__group-error) {
+        /* info and inputs are one row below the group-error */
+        .uv-form__group-info {
+          grid-row: 2 / var(--uv-form-grid-row-span);
+        }
+        .uv-form__input-row {
+          grid-row: 2;
+        }
+        /* adjust following elements */
+        .uv-form__group-info ~ .uv-form__group-info,
+        .uv-form__input-row ~ .uv-form__input-row {
+          grid-row: auto;
+        }
+      }
+    }
+
+    .uv-form__actions {
+      grid-column: label / end;
+    }
+  }
+
+  @media screen and (width >= 1280px) {
+    --uv-form-padding-x: 0;
+  }
+}
+
+.error,
+.uv-has-error {
+  &:where(.uv-input-group, input, select, textarea, duet-date-picker),
+  .uv-input-group,
+  input,
+  select,
+  textarea {
+    border: 1px solid var(--uv-error-border-color);
+    border-radius: var(--uv-input-border-radius);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); /* Redeclare so transitions work */
+  }
+
+  .uv-input-group-addon {
+    color: var(--uv-error-color);
+    border-color: var(--uv-error-border-color);
+    background-color: #f2dede;
+  }
+}
+
+/* ======================== */
+/* debug helpers */
+
+div[role="group"]:not([aria-describedby]) {
+  outline: 2px solid magenta;
+  &::after {
+    content: "Form Group ohne aria-describedby";
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: magenta;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    z-index: 999999;
+  }
+}
+
+.uv-form__group-info:not(p):not(:has(p)) {
+  outline: 2px solid magenta;
+  &::after {
+    content: "Paragraph fehlt bei uv-form__info";
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: magenta;
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    z-index: 999999;
+  }
 }

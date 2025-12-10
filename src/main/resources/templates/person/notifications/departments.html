@@ -9,7 +9,7 @@
       method="post"
       th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications/departments}"
       th:object="${personNotificationsDto}"
-      class="tw-mt-8 form-horizontal"
+      class="tw-mt-8"
       data-turbo="true"
       data-turbo-frame="frame-feedback"
     >
@@ -116,7 +116,7 @@
         />
       </div>
 
-      <div class="form-section tw-mt-8 tw-mb-16">
+      <div class="tw-mt-8 tw-mb-16">
         <div class="tw-space-y-8">
           <section
             th:if="${

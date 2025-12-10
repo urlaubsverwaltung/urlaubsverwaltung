@@ -130,7 +130,7 @@
               <th:block th:if="${userIsAllowedToAddOvertimeComment}">
                 <button
                   class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
-                  onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
+                  onclick="document.getElementById('comment-form').classList.remove('tw-hidden')"
                 >
                   <svg th:replace="~{icon/message-square::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                   <span th:text="#{action.comment.new}"></span>
@@ -186,13 +186,13 @@
               <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
             </div>
 
-            <textarea th:field="*{text}" class="form-control" th:errorclass="error" rows="2"></textarea>
+            <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
             <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
               <button
                 th:text="#{action.cancel}"
                 class="button"
                 type="button"
-                onclick="document.getElementById('comment-form').classList.add('tw-hidden');"
+                onclick="document.getElementById('comment-form').classList.add('tw-hidden')"
               ></button>
               <button th:text="#{action.save}" class="button-main-green tw-w-56" type="submit"></button>
             </div>
