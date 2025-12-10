@@ -543,13 +543,6 @@ textarea.error {
             grid-column: input;
           }
         }
-
-        &:has(.uv-form__input-error) {
-          > label,
-          > .uv-form__label {
-            grid-row: span 2;
-          }
-        }
       }
 
       &:has(.uv-form__group-error) {
