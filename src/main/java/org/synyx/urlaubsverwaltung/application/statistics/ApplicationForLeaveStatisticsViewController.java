@@ -98,10 +98,17 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         model.addAttribute("sortSelect", sortSelectDto);
         model.addAttribute("query", query);
 
+        final List<String> errors = new ArrayList<>();
         if (period.startDate().getYear() != period.endDate().getYear()) {
+            errors.add("applications.statistics.error.differentYear");
+        }
+        if (period.endDate().isBefore(period.startDate())) {
+            errors.add("applications.statistics.error.endDateBeforeStartDate");
+        }
+        if (!errors.isEmpty()) {
             model.addAttribute("period", period);
-            model.addAttribute("errors", "INVALID_PERIOD");
             model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix));
+            model.addAttribute("errors", errors);
             return "application/application-statistics";
         }
 
@@ -156,8 +163,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
-        // NOTE: Not supported at the moment
-        if (period.startDate().getYear() != period.endDate().getYear()) {
+        // NOTE: Different years are not supported at the moment
+        if (period.startDate().getYear() != period.endDate().getYear() || period.endDate().isBefore(period.startDate())) {
             return ResponseEntity.badRequest().build();
         }
 

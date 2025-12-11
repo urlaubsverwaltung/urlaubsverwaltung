@@ -303,7 +303,11 @@
             </turbo-stream>
           </th:block>
 
-          <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
+          <div th:if="${errors}" class="tw-mt-8 alert alert-danger">
+            <ul class="tw-list-none tw-m-0 tw-p-0">
+              <li th:each="err : ${errors}" th:text="#{__${err}__}">Error message</li>
+            </ul>
+          </div>
 
           <table
             th:unless="${errors}"
