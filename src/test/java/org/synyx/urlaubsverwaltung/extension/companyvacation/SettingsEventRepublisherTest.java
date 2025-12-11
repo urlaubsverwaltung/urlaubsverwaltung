@@ -33,11 +33,11 @@ class SettingsEventRepublisherTest {
     @Captor
     private ArgumentCaptor<Object> eventCaptor;
 
-    private SettingsEventRepublisher sut;
+    private CompanyVacationEventRepublisher sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsEventRepublisher(settingsService, applicationEventPublisher);
+        sut = new CompanyVacationEventRepublisher(settingsService, applicationEventPublisher);
     }
 
     @Test

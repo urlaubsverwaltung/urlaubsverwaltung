@@ -12,17 +12,17 @@ import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSin
 @ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
 @ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 @ConditionalOnSingleTenantMode
-class SettingsEventRepublisherSingleTenant {
+class CompanyVacationEventRepublisherSingleTenant {
 
-    private final SettingsEventRepublisher settingsEventRepublisher;
+    private final CompanyVacationEventRepublisher companyVacationEventRepublisher;
 
-    SettingsEventRepublisherSingleTenant(SettingsEventRepublisher settingsEventRepublisher) {
-        this.settingsEventRepublisher = settingsEventRepublisher;
+    CompanyVacationEventRepublisherSingleTenant(CompanyVacationEventRepublisher companyVacationEventRepublisher) {
+        this.companyVacationEventRepublisher = companyVacationEventRepublisher;
     }
 
     @Async
     @EventListener(ApplicationStartedEvent.class)
     public void republishEvents() {
-        settingsEventRepublisher.republishEvents();
+        companyVacationEventRepublisher.republishEvents();
     }
 }

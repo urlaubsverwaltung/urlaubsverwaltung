@@ -21,14 +21,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 @ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
 @ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
-public class SettingsEventRepublisher {
+public class CompanyVacationEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    SettingsEventRepublisher(
+    CompanyVacationEventRepublisher(
         SettingsService settingsService,
         ApplicationEventPublisher applicationEventPublisher
     ) {

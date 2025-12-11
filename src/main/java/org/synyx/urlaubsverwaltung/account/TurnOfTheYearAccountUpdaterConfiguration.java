@@ -6,7 +6,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
-import org.synyx.urlaubsverwaltung.extension.companyvacation.SettingsEventRepublisher;
+import org.synyx.urlaubsverwaltung.extension.companyvacation.CompanyVacationEventRepublisher;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
@@ -17,18 +17,18 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
     private final TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService;
     private final ScheduleLocking scheduleLocking;
     private final TaskScheduler taskScheduler;
-    private final SettingsEventRepublisher settingsEventRepublisher;
+    private final CompanyVacationEventRepublisher companyVacationEventRepublisher;
 
     @Autowired
     TurnOfTheYearAccountUpdaterConfiguration(
         AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService,
-        SettingsEventRepublisher settingsEventRepublisher, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
+        CompanyVacationEventRepublisher companyVacationEventRepublisher, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
     ) {
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
         this.scheduleLocking = scheduleLocking;
         this.taskScheduler = taskScheduler;
-        this.settingsEventRepublisher = settingsEventRepublisher;
+        this.companyVacationEventRepublisher = companyVacationEventRepublisher;
     }
 
     @Override
@@ -37,7 +37,7 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
         taskRegistrar.addCronTask(
             scheduleLocking.withLock("UpdateAccountsForNextPeriod", () -> {
                 turnOfTheYearAccountUpdaterService.updateAccountsForNextPeriod();
-                settingsEventRepublisher.republishEvents();
+                companyVacationEventRepublisher.republishEvents();
             }),
             accountProperties.getUpdate().getCron()
         );
