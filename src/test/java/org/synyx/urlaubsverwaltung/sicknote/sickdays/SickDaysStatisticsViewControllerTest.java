@@ -201,6 +201,30 @@ class SickDaysStatisticsViewControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void ensureThatCreatingAExportWithAStartDateAfterTheEndDateFailsWithBadRequest() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final String startDateString = "2022-12-12";
+        final String endDateString = "2022-01-01";
+        final LocalDate startDate = LocalDate.parse(startDateString);
+        final LocalDate endDate = LocalDate.parse(endDateString);
+
+        when(dateFormatAware.parse(startDateString, locale)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(endDateString, locale)).thenReturn(Optional.of(endDate));
+
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
+            .param("from", startDateString)
+            .param("to", endDateString)
+            .param("page", "2")
+            .param("size", "50")
+            .param("query", "")
+        )
+            .andExpect(status().isBadRequest());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())

@@ -80,6 +80,15 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
+        if (period.endDate().isBefore(period.startDate())) {
+            model.addAttribute("period", period);
+            model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
+            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()))));
+            final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
+            model.addAttribute("sortSelect", sortSelectDto);
+            return "sicknote/sick_days";
+        }
+
         final Person signedInUser = personService.getSignedInUser();
 
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
