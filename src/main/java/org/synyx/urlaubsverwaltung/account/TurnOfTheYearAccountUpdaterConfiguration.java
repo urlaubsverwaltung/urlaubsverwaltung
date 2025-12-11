@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationService;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
-import org.synyx.urlaubsverwaltung.extension.companyvacation.CompanyVacationEventRepublisher;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Configuration
@@ -17,18 +17,18 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
     private final TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService;
     private final ScheduleLocking scheduleLocking;
     private final TaskScheduler taskScheduler;
-    private final CompanyVacationEventRepublisher companyVacationEventRepublisher;
+    private final CompanyVacationService companyVacationService;
 
     @Autowired
     TurnOfTheYearAccountUpdaterConfiguration(
         AccountProperties accountProperties, TurnOfTheYearAccountUpdaterService turnOfTheYearAccountUpdaterService,
-        CompanyVacationEventRepublisher companyVacationEventRepublisher, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
+        CompanyVacationService companyVacationService, ScheduleLocking scheduleLocking, TaskScheduler taskScheduler
     ) {
         this.accountProperties = accountProperties;
         this.turnOfTheYearAccountUpdaterService = turnOfTheYearAccountUpdaterService;
         this.scheduleLocking = scheduleLocking;
         this.taskScheduler = taskScheduler;
-        this.companyVacationEventRepublisher = companyVacationEventRepublisher;
+        this.companyVacationService = companyVacationService;
     }
 
     @Override
@@ -37,7 +37,7 @@ class TurnOfTheYearAccountUpdaterConfiguration implements SchedulingConfigurer {
         taskRegistrar.addCronTask(
             scheduleLocking.withLock("UpdateAccountsForNextPeriod", () -> {
                 turnOfTheYearAccountUpdaterService.updateAccountsForNextPeriod();
-                companyVacationEventRepublisher.republishEvents();
+                companyVacationService.publishCompanyEvents();
             }),
             accountProperties.getUpdate().getCron()
         );

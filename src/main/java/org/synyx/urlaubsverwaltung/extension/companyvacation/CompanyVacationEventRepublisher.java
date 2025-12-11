@@ -1,17 +1,9 @@
 package org.synyx.urlaubsverwaltung.extension.companyvacation;
 
-import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.WorkingDurationForChristmasEveUpdatedEvent;
-import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdatedEvent;
-
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
+import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationService;
 
 /**
  * Used for different use cases
@@ -23,26 +15,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 @ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 public class CompanyVacationEventRepublisher {
 
-    private static final Logger LOG = getLogger(lookup().lookupClass());
-
-    private final SettingsService settingsService;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final CompanyVacationService companyVacationService;
 
     CompanyVacationEventRepublisher(
-        SettingsService settingsService,
-        ApplicationEventPublisher applicationEventPublisher
+        CompanyVacationService companyVacationService
     ) {
-        this.settingsService = settingsService;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.companyVacationService = companyVacationService;
     }
 
     public void republishEvents() {
-        LOG.info("Republishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
-
-        final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
-        applicationEventPublisher.publishEvent(new WorkingDurationForChristmasEveUpdatedEvent(publicHolidaysSettings.getWorkingDurationForChristmasEve()));
-        applicationEventPublisher.publishEvent(new WorkingDurationForNewYearsEveUpdatedEvent(publicHolidaysSettings.getWorkingDurationForNewYearsEve()));
-
-        LOG.info("Republished all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
+        companyVacationService.publishCompanyEvents();
     }
 }

@@ -4,32 +4,47 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForChristmasEveUpdatedEvent;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdatedEvent;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CompanyVacationServiceTest {
+class CompanyVacationServiceImplTest {
+
+    private CompanyVacationServiceImpl sut;
+
+    @Captor
+    private ArgumentCaptor<CompanyVacationPublishedEvent> companyVacationPublishedEventArgumentCaptor;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
-    private CompanyVacationService sut;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new CompanyVacationService(applicationEventPublisher);
+        sut = new CompanyVacationServiceImpl(settingsService, Clock.systemUTC(), applicationEventPublisher);
     }
 
     @Test
-    void publishesCompanyVacationForChristmasEveWhenWorkingDurationIsNotFull() {
+    void publishesCompanyVacationForConvertChristmasEveToCompanyVacationEventWhenWorkingDurationIsNotFull() {
         final WorkingDurationForChristmasEveUpdatedEvent event = new WorkingDurationForChristmasEveUpdatedEvent(DayLength.MORNING);
 
         sut.handleWorkingDurationForChristmasEveUpdatedEvent(event);
@@ -50,7 +65,7 @@ class CompanyVacationServiceTest {
     }
 
     @Test
-    void deletesCompanyVacationForChristmasEveFullWorkingDay() {
+    void deletesCompanyVacationForConvertChristmasEveToCompanyVacationEventFullWorkingDay() {
         final WorkingDurationForChristmasEveUpdatedEvent event = new WorkingDurationForChristmasEveUpdatedEvent(DayLength.FULL);
 
         sut.handleWorkingDurationForChristmasEveUpdatedEvent(event);
@@ -64,7 +79,7 @@ class CompanyVacationServiceTest {
     }
 
     @Test
-    void publishesCompanyVacationForNewYearsEveWhenWorkingDurationIsNotFull() {
+    void publishesCompanyVacationForConvertNewYearsEveToCompanyVacationEventWhenWorkingDurationIsNotFull() {
         final WorkingDurationForNewYearsEveUpdatedEvent event = new WorkingDurationForNewYearsEveUpdatedEvent(DayLength.NOON);
 
         sut.handleWorkingDurationForNewYearsEveUpdatedEvent(event);
@@ -85,7 +100,7 @@ class CompanyVacationServiceTest {
     }
 
     @Test
-    void deletesCompanyVacationForNewYearsEveWhenFullWorkingDay() {
+    void deletesCompanyVacationForConvertNewYearsEveToCompanyVacationEventWhenFullWorkingDay() {
         final WorkingDurationForNewYearsEveUpdatedEvent event = new WorkingDurationForNewYearsEveUpdatedEvent(DayLength.FULL);
 
         sut.handleWorkingDurationForNewYearsEveUpdatedEvent(event);
@@ -96,5 +111,42 @@ class CompanyVacationServiceTest {
         assertThat(captor.getValue()).isInstanceOf(CompanyVacationDeletedEvent.class);
         final CompanyVacationDeletedEvent deletedEvent = (CompanyVacationDeletedEvent) captor.getValue();
         assertThat(deletedEvent.sourceId()).isEqualTo("settings-new-years-eve");
+    }
+
+    @Test
+    void republishEvents_publishesEventsBasedOnPublicHolidaySettings() {
+        final Settings settings = mock(Settings.class);
+        final PublicHolidaysSettings publicHolidaysSettings = mock(PublicHolidaysSettings.class);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(settings.getPublicHolidaysSettings()).thenReturn(publicHolidaysSettings);
+        when(publicHolidaysSettings.getWorkingDurationForChristmasEve()).thenReturn(DayLength.MORNING);
+        when(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).thenReturn(DayLength.NOON);
+
+        sut.publishCompanyEvents();
+
+        verify(settingsService).getSettings();
+        verify(applicationEventPublisher, times(2)).publishEvent(companyVacationPublishedEventArgumentCaptor.capture());
+
+        assertThat(companyVacationPublishedEventArgumentCaptor.getAllValues()).hasSize(2);
+        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(0);
+        assertThat(newYearsEvent.dayLength()).isEqualTo(DayLength.NOON);
+        final CompanyVacationPublishedEvent christmasEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(1);
+        assertThat(christmasEvent.dayLength()).isEqualTo(DayLength.MORNING);
+    }
+
+    @Test
+    void republishEvents_ensureToNotPublishesEventsIfDayLengthIsZero() {
+        final Settings settings = mock(Settings.class);
+        final PublicHolidaysSettings publicHolidaysSettings = mock(PublicHolidaysSettings.class);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(settings.getPublicHolidaysSettings()).thenReturn(publicHolidaysSettings);
+        when(publicHolidaysSettings.getWorkingDurationForChristmasEve()).thenReturn(DayLength.ZERO);
+        when(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).thenReturn(DayLength.ZERO);
+
+        sut.publishCompanyEvents();
+
+        verify(settingsService).getSettings();
+        verifyNoInteractions(applicationEventPublisher);
+
     }
 }
