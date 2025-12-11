@@ -73,6 +73,11 @@ class SickDaysStatisticsViewController {
     ) {
 
         final FilterPeriod period = toFilterPeriod(from, to, locale);
+
+        if (period.endDate().isBefore(period.startDate())) {
+            return ResponseEntity.badRequest().build();
+        }
+
         final Person signedInUser = personService.getSignedInUser();
 
         final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;

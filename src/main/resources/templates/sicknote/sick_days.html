@@ -285,7 +285,15 @@
             <template th:insert="~{::#pagination-size-hint}"></template>
           </turbo-stream>
         </th:block>
+
+        <div
+          th:if="${errorEndDateBeforeStartDate}"
+          th:text="#{__${errorEndDateBeforeStartDate}__}"
+          class="tw-mt-8 alert alert-danger"
+        ></div>
+
         <table
+          th:unless="${errorEndDateBeforeStartDate}"
           id="sick-note-table"
           class="tw-mt-8 md:tw-mt-16 list-table hoverable-table tw-text-sm"
           data-test-id="sick-notes-table"
