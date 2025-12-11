@@ -31,6 +31,7 @@
         <input type="hidden" th:field="*{niceName}" th:value="${person.niceName}" />
         <input type="hidden" th:field="*{gravatarURL}" th:value="${person.gravatarURL}" />
         <input type="hidden" th:field="*{email}" th:value="${person.email}" />
+        <input type="hidden" th:field="*{initials}" th:value="${person.initials}" />
 
         <p class="uv-form__global-feedback alert alert-danger" th:if="${#fields.hasErrors('permissions')}">
           <th:block th:errors="*{permissions}">permissions Error</th:block>
