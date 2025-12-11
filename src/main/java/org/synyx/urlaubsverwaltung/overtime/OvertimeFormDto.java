@@ -1,13 +1,18 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static java.lang.Long.MAX_VALUE;
+import static java.lang.Long.MIN_VALUE;
+import static java.math.BigInteger.valueOf;
 import static java.util.Objects.requireNonNullElse;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
@@ -131,8 +136,19 @@ public class OvertimeFormDto {
         final BigDecimal originalHours = requireNonNullElse(hours, BigDecimal.ZERO);
         final int originalMinutes = requireNonNullElse(minutes, 0);
 
-        final Duration duration = Duration.ofMinutes(originalHours.multiply(BigDecimal.valueOf(60)).longValue() + originalMinutes);
+        final BigInteger totalSeconds = getTotalSeconds(originalHours, originalMinutes);
+        final Duration duration = Duration.ofSeconds(totalSeconds.longValue());
 
         return reduce ? duration.negated() : duration;
+    }
+
+    private static @NonNull BigInteger getTotalSeconds(final BigDecimal originalHours, final int originalMinutes) {
+        final BigInteger totalMinutes = originalHours.multiply(BigDecimal.valueOf(60))
+            .toBigIntegerExact()
+            .add(valueOf(originalMinutes));
+
+        return totalMinutes.multiply(valueOf(60))
+            .min(valueOf(MAX_VALUE))
+            .max(valueOf(MIN_VALUE));
     }
 }
