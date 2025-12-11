@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.extension.companyvacation;
 
 import org.slf4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
@@ -17,6 +19,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * - republishing events on turn of year
  */
 @Component
+@ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
+@ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 public class SettingsEventRepublisher {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
