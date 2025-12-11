@@ -6,12 +6,11 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.extension.application.ApplicationEventHandlerExtension;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Component
 @ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
-@ConditionalOnBean(ApplicationEventHandlerExtension.class)
+@ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 @ConditionalOnSingleTenantMode
 class SettingsEventRepublisherSingleTenant {
 
