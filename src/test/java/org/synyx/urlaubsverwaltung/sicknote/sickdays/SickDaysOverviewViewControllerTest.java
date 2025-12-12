@@ -23,6 +23,9 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
@@ -103,7 +106,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", givenDate)
-            .containsEntry("to", LocalDate.of(year, 12, 31));
+            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @ParameterizedTest
@@ -132,7 +136,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", fromDate)
-            .containsEntry("to", givenDate);
+            .containsEntry("to", givenDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
@@ -152,7 +157,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", LocalDate.of(year, 1, 1))
-            .containsEntry("to", LocalDate.of(year, 12, 31));
+            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
@@ -251,6 +257,7 @@ class SickDaysOverviewViewControllerTest {
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", requestStartDate)
             .containsEntry("to", requestEndDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect())
             .containsEntry("period", new FilterPeriod(requestStartDate, requestEndDate))
             .extractingByKey("statisticsPagination")
             .extracting("page")
@@ -293,7 +300,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("from", startDate)
             .containsEntry("to", endDate)
-            .containsEntry("period", new FilterPeriod(startDate, endDate));
+            .containsEntry("period", new FilterPeriod(startDate, endDate))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
@@ -333,6 +341,17 @@ class SickDaysOverviewViewControllerTest {
             .hasViewName("sicknote/sick_days")
             .model()
             .containsEntry("showPersonnelNumberColumn", false);
+    }
+
+    private HtmlSelectDto expectedPersonSortSelect() {
+        return new HtmlSelectDto(List.of(
+            new HtmlOptgroupDto("sicknotes.sort.optgroup.person.label", List.of(
+                new HtmlOptionDto("sicknotes.statistics.sort.firstName.asc", "person.firstName,asc", true),
+                new HtmlOptionDto("sicknotes.statistics.sort.firstName.desc", "person.firstName,desc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.lastName.asc", "person.lastName,asc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.lastName.desc", "person.lastName,desc", false)
+            ))
+        ));
     }
 
     private static int clockYear() {

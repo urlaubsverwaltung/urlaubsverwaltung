@@ -80,12 +80,13 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
+        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
+        model.addAttribute("sortSelect", sortSelectDto);
+
         if (period.endDate().isBefore(period.startDate())) {
             model.addAttribute("period", period);
             model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
             model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()))));
-            final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
-            model.addAttribute("sortSelect", sortSelectDto);
             return "sicknote/sick_days";
         }
 
@@ -106,8 +107,6 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
 
-        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
-        model.addAttribute("sortSelect", sortSelectDto);
         model.addAttribute("query", query);
 
         model.addAttribute("today", LocalDate.now(clock));
