@@ -14,7 +14,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -62,14 +61,8 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
         LOG.info("Republishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
 
         final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
-
-        Optional.of(publicHolidaysSettings.getWorkingDurationForChristmasEve())
-            .filter(duration -> !duration.isZero())
-            .ifPresent(this::convertChristmasEveToCompanyVacationEvent);
-
-        Optional.of(publicHolidaysSettings.getWorkingDurationForNewYearsEve())
-            .filter(duration -> !duration.isZero())
-            .ifPresent(this::convertNewYearsEveToCompanyVacationEvent);
+        convertChristmasEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForChristmasEve());
+        convertNewYearsEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForNewYearsEve());
 
         LOG.info("Republished all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
     }

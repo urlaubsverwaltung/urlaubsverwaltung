@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +31,8 @@ class CompanyVacationServiceImplTest {
 
     @Captor
     private ArgumentCaptor<CompanyVacationPublishedEvent> companyVacationPublishedEventArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<CompanyVacationDeletedEvent> companyVacationDeletedEventArgumentCaptor;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
@@ -135,18 +136,24 @@ class CompanyVacationServiceImplTest {
     }
 
     @Test
-    void republishEvents_ensureToNotPublishesEventsIfDayLengthIsZero() {
+    void republishEvents_ensureToPublisheDeleteEventsIfDayLengthIsZero() {
         final Settings settings = mock(Settings.class);
         final PublicHolidaysSettings publicHolidaysSettings = mock(PublicHolidaysSettings.class);
         when(settingsService.getSettings()).thenReturn(settings);
         when(settings.getPublicHolidaysSettings()).thenReturn(publicHolidaysSettings);
-        when(publicHolidaysSettings.getWorkingDurationForChristmasEve()).thenReturn(DayLength.ZERO);
-        when(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).thenReturn(DayLength.ZERO);
+        when(publicHolidaysSettings.getWorkingDurationForChristmasEve()).thenReturn(DayLength.FULL);
+        when(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).thenReturn(DayLength.FULL);
 
         sut.publishCompanyEvents();
 
         verify(settingsService).getSettings();
-        verifyNoInteractions(applicationEventPublisher);
+        verify(applicationEventPublisher, times(2)).publishEvent(companyVacationDeletedEventArgumentCaptor.capture());
+
+        assertThat(companyVacationDeletedEventArgumentCaptor.getAllValues()).hasSize(2);
+        final CompanyVacationDeletedEvent christmasEvent = companyVacationDeletedEventArgumentCaptor.getAllValues().get(0);
+        assertThat(christmasEvent.sourceId()).isEqualTo("settings-christmas-eve");
+        final CompanyVacationDeletedEvent newYearsEvent = companyVacationDeletedEventArgumentCaptor.getAllValues().get(1);
+        assertThat(newYearsEvent.sourceId()).isEqualTo("settings-new-years-eve");
 
     }
 }
