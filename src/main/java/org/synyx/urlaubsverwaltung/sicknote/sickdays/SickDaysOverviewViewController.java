@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.QueryParam;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -29,7 +30,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -87,10 +87,10 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
             final PaginationDto<SickDaysOverviewDto> paginationDto = new PaginationDto<>(
                 new PageImpl<>(List.of(), pageable, 0),
-                buildPageLinkPrefix(pageable, Map.of(
-                    "from", period.getStartDateIsoValue(),
-                    "to", period.getEndDateIsoValue())
-                )
+                buildPageLinkPrefix(pageable, List.of(
+                    new QueryParam("from", period.getStartDateIsoValue()),
+                    new QueryParam("to", period.getEndDateIsoValue())
+                ))
             );
             model.addAttribute("statisticsPagination", paginationDto);
 
@@ -108,7 +108,11 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
             .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
             .toList();
         final PageImpl<SickDaysOverviewDto> statisticsPage = new PageImpl<>(sickDaysOverviewDtos, pageable, sickDaysStatisticsPage.getTotalElements());
-        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), Map.of("from", from, "to", to, "query", query));
+        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), List.of(
+            new QueryParam("from", from),
+            new QueryParam("to", to),
+            new QueryParam("query", query)
+        ));
 
         model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix));
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
