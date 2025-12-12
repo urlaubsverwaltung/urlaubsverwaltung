@@ -86,7 +86,16 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         if (period.endDate().isBefore(period.startDate())) {
             model.addAttribute("period", period);
             model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
-            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()))));
+
+            final PaginationDto<SickDaysOverviewDto> paginationDto = new PaginationDto<>(
+                new PageImpl<>(List.of(), pageable, 0),
+                buildPageLinkPrefix(pageable, Map.of(
+                    "from", period.getStartDateIsoValue(),
+                    "to", period.getEndDateIsoValue())
+                )
+            );
+            model.addAttribute("statisticsPagination", paginationDto);
+
             return "sicknote/sick_days";
         }
 
