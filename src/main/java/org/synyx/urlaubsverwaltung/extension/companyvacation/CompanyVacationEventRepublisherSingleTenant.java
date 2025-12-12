@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.tenancy.configuration.single.ConditionalOnSingleTenantMode;
 
 @Component
-@ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "uv.extensions.companyvacation.republish.enabled", havingValue = "true")
 @ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 @ConditionalOnSingleTenantMode
 class CompanyVacationEventRepublisherSingleTenant {

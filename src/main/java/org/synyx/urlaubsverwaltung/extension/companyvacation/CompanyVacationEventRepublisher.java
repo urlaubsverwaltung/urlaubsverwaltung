@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationService;
  * - republishing events on turn of year
  */
 @Component
-@ConditionalOnProperty(value = "uv.extensions.settings.republish.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "uv.extensions.companyvacation.republish.enabled", havingValue = "true")
 @ConditionalOnBean(CompanyVacationEventHandlerExtension.class)
 public class CompanyVacationEventRepublisher {
 
