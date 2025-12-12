@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationService;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 
 import java.util.List;
@@ -35,7 +36,8 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
 
         final AccountProperties properties = new AccountProperties();
         final TurnOfTheYearAccountUpdaterService service = mock(TurnOfTheYearAccountUpdaterService.class);
-        final TurnOfTheYearAccountUpdaterConfiguration sut = new TurnOfTheYearAccountUpdaterConfiguration(properties, service, scheduleLocking, taskScheduler);
+        final CompanyVacationService companyVacationService = mock(CompanyVacationService.class);
+        final TurnOfTheYearAccountUpdaterConfiguration sut = new TurnOfTheYearAccountUpdaterConfiguration(properties, service, companyVacationService, scheduleLocking, taskScheduler);
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);
@@ -43,12 +45,13 @@ class TurnOfTheYearAccountUpdaterConfigurationTest {
         final List<CronTask> cronTaskList = taskRegistrar.getCronTaskList();
         assertThat(cronTaskList).hasSize(1);
 
-        final CronTask cronTask = cronTaskList.get(0);
+        final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 5 1 1 *");
 
         verifyNoInteractions(service);
 
         cronTask.getRunnable().run();
         verify(service).updateAccountsForNextPeriod();
+        verify(companyVacationService).publishCompanyEvents();
     }
 }
