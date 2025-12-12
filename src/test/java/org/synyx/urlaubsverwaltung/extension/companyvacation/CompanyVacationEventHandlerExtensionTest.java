@@ -107,7 +107,7 @@ class CompanyVacationEventHandlerExtensionTest {
         assertThat(dto.tenantId()).isEqualTo("default");
         assertThat(dto.id()).isEqualTo(event.id());
         assertThat(dto.sourceId()).isEqualTo(expectedSourceId);
-        assertThat(dto.deletedAt()).isEqualTo(event.deletedAt());
+        assertThat(dto.createdAt()).isEqualTo(event.createdAt());
     }
 
     private static Stream<Arguments> deleteEvents() {

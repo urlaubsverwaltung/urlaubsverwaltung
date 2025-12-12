@@ -75,7 +75,7 @@ class CompanyVacationEventHandlerExtension {
         return CompanyVacationDeletedEventDto.builder()
             .id(event.id())
             .sourceId(event.sourceId())
-            .deletedAt(event.deletedAt())
+            .createdAt(event.createdAt())
             .tenantId(tenantId)
             .build();
     }
