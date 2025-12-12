@@ -74,7 +74,7 @@ class SickDaysOverviewViewControllerTest {
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
-        final int year = Year.now(clock).getValue();
+        final int year = clockYear();
         return Stream.of(
             Arguments.of(String.format("25.03.%s", year), LocalDate.of(year, 3, 25)),
             Arguments.of(String.format("25.03.%s", year - 2000), LocalDate.of(year, 3, 25)),
@@ -86,7 +86,7 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) {
+    void correctlyMapsCustomFormatOfFromDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
         final int year = clockYear();
@@ -112,7 +112,7 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) {
+    void correctlyMapsCustomFormatOfToDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
 
@@ -141,7 +141,7 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    void filterSickNotesWithNullDates() {
+    void correctlySetsDefaultFilterInViewModel() {
 
         final int year = Year.now(clock).getValue();
 
@@ -268,7 +268,7 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    void periodsSickNotesWithDateWithoutRange() {
+    void ensureSickNotesAreFetchedWithCorrectFilterQuery() {
 
         final Person office = new Person();
         office.setId(1L);
@@ -284,7 +284,6 @@ class SickDaysOverviewViewControllerTest {
 
         when(sickDaysStatisticsService.getAll(office, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
-
 
         final MvcTestResult result = mockmvc().get()
             .uri("/web/sickdays")
