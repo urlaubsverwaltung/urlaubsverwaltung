@@ -32,6 +32,7 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.QueryParam;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -39,7 +40,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -92,7 +92,10 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         Model model, Locale locale
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
-        final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
+        final String pageLinkPrefix = buildPageLinkPrefix(pageable, List.of(
+            new QueryParam("from", period.getStartDateIsoValue()),
+            new QueryParam("to", period.getEndDateIsoValue())
+        ));
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
         model.addAttribute("sortSelect", sortSelectDto);

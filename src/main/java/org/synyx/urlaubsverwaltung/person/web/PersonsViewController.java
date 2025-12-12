@@ -31,13 +31,13 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.QueryParam;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -145,11 +145,11 @@ public class PersonsViewController implements HasLaunchpad {
 
         final String sortQuery = pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&"));
 
-        final Map<String, String> paginationLinkParameters = new HashMap<>();
-        paginationLinkParameters.put("active", String.valueOf(active));
-        paginationLinkParameters.put("query", query);
-        requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.put("department", String.valueOf(departmentId)));
-        requestedYear.ifPresent(year -> paginationLinkParameters.put("year", String.valueOf(year)));
+        final List<QueryParam> paginationLinkParameters = new ArrayList<>();
+        paginationLinkParameters.add(new QueryParam("active", String.valueOf(active)));
+        paginationLinkParameters.add(new QueryParam("query", query));
+        requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.add(new QueryParam("department", String.valueOf(departmentId))));
+        requestedYear.ifPresent(year -> paginationLinkParameters.add(new QueryParam("year", String.valueOf(year))));
 
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
         final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);

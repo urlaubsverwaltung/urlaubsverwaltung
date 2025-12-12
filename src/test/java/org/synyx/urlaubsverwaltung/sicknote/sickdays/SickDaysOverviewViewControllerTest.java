@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -46,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -228,7 +230,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");
 
         final SickDaysDetailedStatistics statisticsPersonOne = new SickDaysDetailedStatistics("0000001337", person, List.of(sickNote), List.of());
         final SickDaysDetailedStatistics statisticsPersonTwo = new SickDaysDetailedStatistics("0000000042", person2, List.of(childSickNote), List.of());
@@ -280,7 +282,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(1, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(1, 50, Sort.by(ASC, "person.firstName")), "");
 
         when(sickDaysStatisticsService.getAll(office, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
@@ -317,7 +319,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");
 
         final SickDaysDetailedStatistics statistics = new SickDaysDetailedStatistics("", signedInUser, List.of(), List.of());
         when(sickDaysStatisticsService.getAll(signedInUser, requestStartDate, requestEndDate, pageableSearchQuery))
@@ -340,6 +342,10 @@ class SickDaysOverviewViewControllerTest {
             .hasViewName("sicknote/sick_days")
             .model()
             .containsEntry("showPersonnelNumberColumn", false);
+    }
+
+    private Pageable defaultSickDaysPageable() {
+        return PageRequest.of(0, 20, Sort.by(ASC, "person.firstName"));
     }
 
     private HtmlSelectDto expectedPersonSortSelect() {

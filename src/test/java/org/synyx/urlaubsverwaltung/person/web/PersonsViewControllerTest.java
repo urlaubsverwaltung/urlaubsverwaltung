@@ -105,7 +105,10 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of());
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
-        final PaginationDto<Person> expectedPagination = new PaginationDto<>(new PageImpl<>(List.of()), "?query=&active=true&sort=person.firstName,ASC&size=20");
+        final PaginationDto<Person> expectedPagination = new PaginationDto<>(
+            new PageImpl<>(List.of()),
+            "?active=true&query=&sort=person.firstName,ASC&size=20"
+        );
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", is(expectedPagination)));

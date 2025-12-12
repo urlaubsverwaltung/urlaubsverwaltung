@@ -35,4 +35,12 @@ public class PaginationDto<T> {
     public int hashCode() {
         return Objects.hash(page, pageLinkPrefix);
     }
+
+    @Override
+    public String toString() {
+        return "PaginationDto{" +
+            "page=" + page +
+            ", pageLinkPrefix='" + pageLinkPrefix + '\'' +
+            '}';
+    }
 }
