@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
@@ -84,6 +85,45 @@ class SickDaysOverviewViewControllerTest {
             Arguments.of(String.format("25.3.%s", year - 2000), LocalDate.of(year, 3, 25)),
             Arguments.of(String.format("1.4.%s", year - 2000), LocalDate.of(year, 4, 1))
         );
+    }
+
+    @Test
+    void ensureErrorHandlingWhenStartDateIsAfterToDate() {
+
+        final Locale locale = Locale.GERMAN;
+        final int year = clockYear();
+
+        final String fromDateIsoString = year + "-03-01";
+        final LocalDate fromDate = LocalDate.parse(fromDateIsoString);
+
+        final String toDateIsoString = year + "-01-01";
+        final LocalDate toDate = LocalDate.parse(toDateIsoString);
+
+        when(dateFormatAware.parse(fromDateIsoString, locale)).thenReturn(Optional.of(fromDate));
+        when(dateFormatAware.parse(toDateIsoString, locale)).thenReturn(Optional.of(toDate));
+
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("from", fromDateIsoString)
+            .param("to", toDateIsoString)
+            .exchange();
+
+        final PageImpl<SickDaysOverviewDto> page = new PageImpl<>(List.of(), defaultSickDaysPageable(), 0);
+        final String filterQuery = "?from=%s&to=%s&query=&sort=person.firstName,ASC&size=20".formatted(fromDateIsoString, toDateIsoString);
+        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery);
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", fromDate)
+            .containsEntry("to", toDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect())
+            .containsEntry("period", new FilterPeriod(fromDate, toDate))
+            .containsEntry("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate")
+            .containsEntry("statisticsPagination", pagination);
     }
 
     @ParameterizedTest

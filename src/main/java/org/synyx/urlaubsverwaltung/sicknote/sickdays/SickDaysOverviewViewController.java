@@ -78,35 +78,26 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
-        model.addAttribute("sortSelect", sortSelectDto);
-
-        if (period.endDate().isBefore(period.startDate())) {
-            model.addAttribute("period", period);
-            model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
-
-            final PaginationDto<SickDaysOverviewDto> paginationDto = new PaginationDto<>(
-                new PageImpl<>(List.of(), pageable, 0),
-                buildPageLinkPrefix(pageable, List.of(
-                    new QueryParam("from", period.getStartDateIsoValue()),
-                    new QueryParam("to", period.getEndDateIsoValue())
-                ))
-            );
-            model.addAttribute("statisticsPagination", paginationDto);
-
-            return "sicknote/sick_days";
-        }
-
         final Person signedInUser = personService.getSignedInUser();
 
-        final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
-            sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), new PageableSearchQuery(pageable, query));
+        final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage;
+        final List<SickDaysOverviewDto> sickDaysOverviewDtos;
 
-        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
+        boolean hasErrors = period.endDate().isBefore(period.startDate());
+        if (hasErrors) {
+            sickDaysStatisticsPage = Page.empty(pageable);
+            sickDaysOverviewDtos = List.of();
+            model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
+        } else {
 
-        final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
-            .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
-            .toList();
+            final PageableSearchQuery searchQuery = new PageableSearchQuery(pageable, query);
+            sickDaysStatisticsPage = sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), searchQuery);
+
+            sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
+                .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
+                .toList();
+        }
+
         final PageImpl<SickDaysOverviewDto> statisticsPage = new PageImpl<>(sickDaysOverviewDtos, pageable, sickDaysStatisticsPage.getTotalElements());
         final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), List.of(
             new QueryParam("from", from),
@@ -118,6 +109,9 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
 
+        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
+        model.addAttribute("sortSelect", sortSelectDto);
+
         model.addAttribute("query", query);
 
         model.addAttribute("today", LocalDate.now(clock));
@@ -125,10 +119,11 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("to", period.endDate());
         model.addAttribute("period", period);
 
-        final boolean turboFrameRequested = hasText(turboFrame);
-        model.addAttribute("turboFrameRequested", turboFrameRequested);
+        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
 
+        final boolean turboFrameRequested = hasText(turboFrame);
         if (turboFrameRequested) {
+            model.addAttribute("turboFrameRequested", true);
             return "sicknote/sick_days::#" + turboFrame;
         } else {
             return "sicknote/sick_days";
