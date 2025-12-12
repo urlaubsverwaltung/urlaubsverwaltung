@@ -8,6 +8,7 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -116,15 +117,21 @@ public class OvertimeFormValidator implements Validator {
                 }
             }
 
+            final BigInteger leftOvertimeInSeconds = BigInteger.valueOf(leftOvertime.getSeconds());
+            final BigInteger numberOfHoursInSeconds = BigInteger.valueOf(numberOfHours.getSeconds());
+            final BigInteger totalSeconds = leftOvertimeInSeconds.add(numberOfHoursInSeconds);
+
             // left overtime + overtime record must not be greater than maximum overtime
-            if (leftOvertime.plus(numberOfHours).compareTo(maximumOvertime) > 0) {
+            final BigInteger maxSeconds = BigInteger.valueOf(maximumOvertime.getSeconds());
+            if (totalSeconds.compareTo(maxSeconds) > 0) {
                 // maxOvertime is an Integer -> save to extract hours here
                 errors.reject(ERROR_MAX_OVERTIME, new Object[]{maximumOvertime.toHours()}, null);
             }
 
             // left overtime + overtime record must be greater than minimum overtime
             // are missing hours (means negative)
-            if (leftOvertime.plus(numberOfHours).compareTo(minimumOvertime.negated()) < 0) {
+            final BigInteger minNegatedSeconds = BigInteger.valueOf(minimumOvertime.negated().getSeconds());
+            if (totalSeconds.compareTo(minNegatedSeconds) < 0) {
                 // minimumOvertime is an Integer -> save to extract hours here
                 errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime.toHours()}, null);
             }

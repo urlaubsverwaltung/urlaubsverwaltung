@@ -81,7 +81,30 @@ class OvertimeFormDtoTest {
         assertThat(overtimeForm(null, 75).getDuration()).isEqualTo(Duration.ofMinutes(75));
         assertThat(overtimeForm(null, null).getDuration()).isNull();
         assertThat(overtimeForm(ONE, 75).getDuration()).isEqualTo(Duration.ofMinutes(135));
+    }
 
+    @Test
+    void ensureThatLongOverflowWillBeCappedByMax() {
+        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
+        overtimeFormDto.setHours(new BigDecimal("2562047788015216"));
+        overtimeFormDto.setMinutes(0);
+        overtimeFormDto.setReduce(false);
+
+        final Duration duration = overtimeFormDto.getDuration();
+        assertThat(duration.toHours()).isEqualTo(2562047788015215L);
+        assertThat(duration.isNegative()).isFalse();
+    }
+
+    @Test
+    void ensureThatLongOverflowWillBeCappedByMin() {
+        final OvertimeFormDto overtimeFormDto = new OvertimeFormDto();
+        overtimeFormDto.setHours(new BigDecimal("2562047788015216"));
+        overtimeFormDto.setMinutes(0);
+        overtimeFormDto.setReduce(true);
+
+        final Duration duration = overtimeFormDto.getDuration();
+        assertThat(duration.toHours()).isEqualTo(-2562047788015215L);
+        assertThat(duration.isNegative()).isTrue();
     }
 
     private OvertimeFormDto overtimeForm(BigDecimal hours, Integer minutes) {
