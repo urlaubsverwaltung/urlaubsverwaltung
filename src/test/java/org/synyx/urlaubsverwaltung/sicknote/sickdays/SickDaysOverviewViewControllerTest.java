@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -23,6 +24,10 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
@@ -43,6 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -71,7 +77,7 @@ class SickDaysOverviewViewControllerTest {
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
-        final int year = Year.now(clock).getValue();
+        final int year = clockYear();
         return Stream.of(
             Arguments.of(String.format("25.03.%s", year), LocalDate.of(year, 3, 25)),
             Arguments.of(String.format("25.03.%s", year - 2000), LocalDate.of(year, 3, 25)),
@@ -81,9 +87,48 @@ class SickDaysOverviewViewControllerTest {
         );
     }
 
+    @Test
+    void ensureErrorHandlingWhenStartDateIsAfterToDate() {
+
+        final Locale locale = Locale.GERMAN;
+        final int year = clockYear();
+
+        final String fromDateIsoString = year + "-03-01";
+        final LocalDate fromDate = LocalDate.parse(fromDateIsoString);
+
+        final String toDateIsoString = year + "-01-01";
+        final LocalDate toDate = LocalDate.parse(toDateIsoString);
+
+        when(dateFormatAware.parse(fromDateIsoString, locale)).thenReturn(Optional.of(fromDate));
+        when(dateFormatAware.parse(toDateIsoString, locale)).thenReturn(Optional.of(toDate));
+
+        final MvcTestResult result = mockmvc().get()
+            .uri("/web/sickdays")
+            .locale(locale)
+            .param("from", fromDateIsoString)
+            .param("to", toDateIsoString)
+            .exchange();
+
+        final PageImpl<SickDaysOverviewDto> page = new PageImpl<>(List.of(), defaultSickDaysPageable(), 0);
+        final String filterQuery = "?from=%s&to=%s&query=&sort=person.firstName,ASC&size=20".formatted(fromDateIsoString, toDateIsoString);
+        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery);
+
+        assertThat(result)
+            .hasStatusOk()
+            .hasViewName("sicknote/sick_days")
+            .model()
+            .containsEntry("today", LocalDate.now(clock))
+            .containsEntry("from", fromDate)
+            .containsEntry("to", toDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect())
+            .containsEntry("period", new FilterPeriod(fromDate, toDate))
+            .containsEntry("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate")
+            .containsEntry("statisticsPagination", pagination);
+    }
+
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) {
+    void correctlyMapsCustomFormatOfFromDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
         final int year = clockYear();
@@ -103,12 +148,13 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", givenDate)
-            .containsEntry("to", LocalDate.of(year, 12, 31));
+            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) {
+    void correctlyMapsCustomFormatOfToDate(String givenDateString, LocalDate givenDate) {
 
         final Locale locale = Locale.GERMAN;
 
@@ -132,11 +178,12 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", fromDate)
-            .containsEntry("to", givenDate);
+            .containsEntry("to", givenDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
-    void filterSickNotesWithNullDates() {
+    void correctlySetsDefaultFilterInViewModel() {
 
         final int year = Year.now(clock).getValue();
 
@@ -152,7 +199,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", LocalDate.of(year, 1, 1))
-            .containsEntry("to", LocalDate.of(year, 12, 31));
+            .containsEntry("to", LocalDate.of(year, 12, 31))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
@@ -222,7 +270,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");
 
         final SickDaysDetailedStatistics statisticsPersonOne = new SickDaysDetailedStatistics("0000001337", person, List.of(sickNote), List.of());
         final SickDaysDetailedStatistics statisticsPersonTwo = new SickDaysDetailedStatistics("0000000042", person2, List.of(childSickNote), List.of());
@@ -251,6 +299,7 @@ class SickDaysOverviewViewControllerTest {
             .containsEntry("today", LocalDate.now(clock))
             .containsEntry("from", requestStartDate)
             .containsEntry("to", requestEndDate)
+            .containsEntry("sortSelect", expectedPersonSortSelect())
             .containsEntry("period", new FilterPeriod(requestStartDate, requestEndDate))
             .extractingByKey("statisticsPagination")
             .extracting("page")
@@ -261,7 +310,7 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    void periodsSickNotesWithDateWithoutRange() {
+    void ensureSickNotesAreFetchedWithCorrectFilterQuery() {
 
         final Person office = new Person();
         office.setId(1L);
@@ -273,11 +322,10 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(1, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(1, 50, Sort.by(ASC, "person.firstName")), "");
 
         when(sickDaysStatisticsService.getAll(office, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
-
 
         final MvcTestResult result = mockmvc().get()
             .uri("/web/sickdays")
@@ -293,7 +341,8 @@ class SickDaysOverviewViewControllerTest {
             .model()
             .containsEntry("from", startDate)
             .containsEntry("to", endDate)
-            .containsEntry("period", new FilterPeriod(startDate, endDate));
+            .containsEntry("period", new FilterPeriod(startDate, endDate))
+            .containsEntry("sortSelect", expectedPersonSortSelect());
     }
 
     @Test
@@ -310,7 +359,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
         final PageableSearchQuery pageableSearchQuery =
-            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(ASC, "person.firstName")), "");
 
         final SickDaysDetailedStatistics statistics = new SickDaysDetailedStatistics("", signedInUser, List.of(), List.of());
         when(sickDaysStatisticsService.getAll(signedInUser, requestStartDate, requestEndDate, pageableSearchQuery))
@@ -333,6 +382,21 @@ class SickDaysOverviewViewControllerTest {
             .hasViewName("sicknote/sick_days")
             .model()
             .containsEntry("showPersonnelNumberColumn", false);
+    }
+
+    private Pageable defaultSickDaysPageable() {
+        return PageRequest.of(0, 20, Sort.by(ASC, "person.firstName"));
+    }
+
+    private HtmlSelectDto expectedPersonSortSelect() {
+        return new HtmlSelectDto(List.of(
+            new HtmlOptgroupDto("sicknotes.sort.optgroup.person.label", List.of(
+                new HtmlOptionDto("sicknotes.statistics.sort.firstName.asc", "person.firstName,asc", true),
+                new HtmlOptionDto("sicknotes.statistics.sort.firstName.desc", "person.firstName,desc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.lastName.asc", "person.lastName,asc", false),
+                new HtmlOptionDto("sicknotes.statistics.sort.lastName.desc", "person.lastName,desc", false)
+            ))
+        ));
     }
 
     private static int clockYear() {

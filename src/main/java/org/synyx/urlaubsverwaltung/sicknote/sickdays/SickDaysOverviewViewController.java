@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.QueryParam;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -30,7 +30,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -52,8 +51,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
-    @Autowired
-    public SickDaysOverviewViewController(
+    SickDaysOverviewViewController(
         SickDaysStatisticsService sickDaysStatisticsService,
         PersonService personService,
         DateFormatAware dateFormatAware,
@@ -82,16 +80,30 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
-            sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), new PageableSearchQuery(pageable, query));
+        final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage;
+        final List<SickDaysOverviewDto> sickDaysOverviewDtos;
 
-        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
+        boolean hasErrors = period.endDate().isBefore(period.startDate());
+        if (hasErrors) {
+            sickDaysStatisticsPage = Page.empty(pageable);
+            sickDaysOverviewDtos = List.of();
+            model.addAttribute("errorEndDateBeforeStartDate", "sicknotes.daysOverview.sickDays.error.endDateBeforeStartDate");
+        } else {
 
-        final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
-            .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
-            .toList();
+            final PageableSearchQuery searchQuery = new PageableSearchQuery(pageable, query);
+            sickDaysStatisticsPage = sickDaysStatisticsService.getAll(signedInUser, period.startDate(), period.endDate(), searchQuery);
+
+            sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
+                .map(statistic -> toSickDaysOverviewDto(statistic, period.startDate(), period.endDate()))
+                .toList();
+        }
+
         final PageImpl<SickDaysOverviewDto> statisticsPage = new PageImpl<>(sickDaysOverviewDtos, pageable, sickDaysStatisticsPage.getTotalElements());
-        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), Map.of("from", from, "to", to, "query", query));
+        final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), List.of(
+            new QueryParam("from", from),
+            new QueryParam("to", to),
+            new QueryParam("query", query)
+        ));
 
         model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix));
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
@@ -99,6 +111,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
         model.addAttribute("sortSelect", sortSelectDto);
+
         model.addAttribute("query", query);
 
         model.addAttribute("today", LocalDate.now(clock));
@@ -106,11 +119,12 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("to", period.endDate());
         model.addAttribute("period", period);
 
-        final boolean turboFrameRequested = hasText(turboFrame);
-        model.addAttribute("turboFrameRequested", turboFrameRequested);
+        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
 
+        final boolean turboFrameRequested = "frame-statistics".equals(turboFrame);
         if (turboFrameRequested) {
-            return "sicknote/sick_days::#" + turboFrame;
+            model.addAttribute("turboFrameRequested", true);
+            return "sicknote/sick_days::#frame-statistics";
         } else {
             return "sicknote/sick_days";
         }
