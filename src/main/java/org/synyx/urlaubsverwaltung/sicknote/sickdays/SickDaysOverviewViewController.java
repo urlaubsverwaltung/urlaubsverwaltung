@@ -121,10 +121,10 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
 
         model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
 
-        final boolean turboFrameRequested = hasText(turboFrame);
+        final boolean turboFrameRequested = "frame-statistics".equals(turboFrame);
         if (turboFrameRequested) {
             model.addAttribute("turboFrameRequested", true);
-            return "sicknote/sick_days::#" + turboFrame;
+            return "sicknote/sick_days::#frame-statistics";
         } else {
             return "sicknote/sick_days";
         }
