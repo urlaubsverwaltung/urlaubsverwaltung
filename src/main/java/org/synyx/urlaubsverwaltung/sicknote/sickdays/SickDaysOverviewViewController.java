@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -52,8 +51,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
-    @Autowired
-    public SickDaysOverviewViewController(
+    SickDaysOverviewViewController(
         SickDaysStatisticsService sickDaysStatisticsService,
         PersonService personService,
         DateFormatAware dateFormatAware,
