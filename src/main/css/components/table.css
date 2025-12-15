@@ -111,11 +111,11 @@ tr.inactive td > * {
 
 .hoverable-table tr:hover .action-link,
 .selectable-table tr:hover .action-link {
-  /*TODO @apply tw:text-opacity-75 !important;*/
+  /*TODO @apply tw:text-opacity-75!;*/
 }
 .hoverable-table tr:hover .action-link:hover,
 .selectable-table tr:hover .action-link:hover {
-  /*TODO @apply tw:text-opacity-100 !important;*/
+  /*TODO @apply tw:text-opacity-100!;*/
 }
 
 /**************************************************************************

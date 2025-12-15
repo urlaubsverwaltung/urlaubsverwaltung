@@ -1,14 +1,14 @@
 .action-link {
   @apply tw:whitespace-nowrap;
-  @apply tw:no-underline !important;
-  @apply tw:flex !important;
-  @apply tw:items-center !important;
-  @apply tw:transition-opacity !important;
-  @apply tw:duration-100 !important;
-  @apply tw:text-zinc-900/50 !important;
-  @apply tw:hover:text-zinc-900/100 !important;
-  @apply tw:focus:text-zinc-900/100 !important;
-  @apply tw:dark:text-zinc-50/75 !important;
-  @apply tw:dark:hover:text-zinc-50/75 !important;
-  @apply tw:dark:focus:text-zinc-50/75 !important;
+  @apply tw:no-underline!;
+  @apply tw:flex!;
+  @apply tw:items-center!;
+  @apply tw:transition-opacity!;
+  @apply tw:duration-100!;
+  @apply tw:text-zinc-900/50!;
+  @apply tw:hover:text-zinc-900/100!;
+  @apply tw:focus:text-zinc-900/100!;
+  @apply tw:dark:text-zinc-50/75!;
+  @apply tw:dark:hover:text-zinc-50/75!;
+  @apply tw:dark:focus:text-zinc-50/75!;
 }

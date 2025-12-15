@@ -62,7 +62,7 @@ select,
   :not([class*="tw:border-"]) {
     /* actually colors are meant here, like tw:border-blue-400 */
     /* however tw:border-*-* is not a valid selector */
-    @apply tw:dark:border-neutral-600 !important;
+    @apply tw:dark:border-neutral-600!;
   }
 }
 
@@ -136,16 +136,16 @@ legend {
 
 input[disabled],
 fieldset[disabled] input {
-  @apply tw:dark:text-neutral-700 !important;
-  @apply tw:dark:bg-neutral-800 !important;
-  @apply tw:border-0 !important;
+  @apply tw:dark:text-neutral-700!;
+  @apply tw:dark:bg-neutral-800!;
+  @apply tw:border-0!;
 }
 
 .popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
-  @apply tw:ring-2 !important;
-  @apply tw:ring-blue-300 !important;
+  @apply tw:ring-2!;
+  @apply tw:ring-blue-300!;
 }
 
 /**************************************************************************
@@ -172,9 +172,9 @@ input,
 select,
 textarea,
 .popover-button-select {
-  @apply tw:dark:border-zinc-600 !important;
-  @apply tw:dark:bg-zinc-700 !important;
-  @apply tw:dark:text-zinc-50 !important;
+  @apply tw:dark:border-zinc-600!;
+  @apply tw:dark:bg-zinc-700!;
+  @apply tw:dark:text-zinc-50!;
 }
 
 input.error,

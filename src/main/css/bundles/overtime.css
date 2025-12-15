@@ -1,3 +1,5 @@
+@reference "../config.css";
+
 .overtime-list {
   list-style: none;
   margin: 0;
