@@ -69,7 +69,7 @@
     --uv-cal-default-color: var(--color-neutral-300);
     --uv-cal-weekend-bg: var(--color-sky-500);
     --uv-cal-weekend-color: var(--color-neutral-900);
-    --uv-cal-public-holiday-bg: var(--color-slate-800);
+    --uv-cal-public-holiday-bg: #0369a1;
     --uv-cal-public-holiday-color: var(--color-neutral-900);
     --uv-chart-container-background: var(--color-zinc-800);
     --uv-chart-background: var(--color-zinc-800);

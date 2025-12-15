@@ -45,15 +45,30 @@ select,
   color: #555;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: var(--uv-input-border-radius);
 
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   transition:
     border-color ease-in-out 0.15s,
     box-shadow ease-in-out 0.15s;
 
+  &:focus {
+    border-color: transparent;
+    outline: 2px solid var(--uv-focus-ring-color);
+    outline-offset: 1px;
+    box-shadow:
+      inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
   &::placeholder {
     color: #999;
+  }
+
+  @variant dark {
+    border-color: var(--color-zinc-600);
+    background-color: var(--color-zinc-700);
+    color: var(--color-zinc-50);
   }
 }
 
@@ -64,19 +79,6 @@ select,
     /* however border-*-* is not a valid selector */
     @apply dark:border-neutral-600!;
   }
-}
-
-.popover-button-select:focus,
-/* radiobutton and checkbox should not be highlighted on click, but on tab (:focus-visible) */
-input:not(:is([type="radio"], [type="checkbox"])):focus,
-select:focus,
-textarea:focus {
-  border-color: transparent;
-  outline: 2px solid var(--uv-focus-ring-color);
-  outline-offset: 1px;
-  box-shadow:
-    inset 0 1px 1px rgba(0, 0, 0, 0.075),
-    0 0 8px rgba(102, 175, 233, 0.6);
 }
 
 .uv-input-group {
@@ -141,13 +143,6 @@ fieldset[disabled] input {
   @apply border-0!;
 }
 
-.popover-button-select:focus,
-.duet-date__input:focus,
-.duet-date__toggle:focus {
-  @apply ring-2!;
-  @apply ring-blue-300!;
-}
-
 /**************************************************************************
 
   REQUIRED FORM FIELDS
@@ -166,15 +161,6 @@ label.is-required:after {
 
 .error {
   color: var(--uv-error-color);
-}
-
-input,
-select,
-textarea,
-.popover-button-select {
-  @apply dark:border-zinc-600!;
-  @apply dark:bg-zinc-700!;
-  @apply dark:text-zinc-50!;
 }
 
 input.error,

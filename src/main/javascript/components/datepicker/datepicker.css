@@ -1,25 +1,32 @@
 @reference "../../../css/config.css";
 
 duet-date-picker {
+  /* --duet-color-surface is used by duet for input-bg as well as button-bg  */
+  /* however, we want it different (in dark theme) ... therefore don't use this variable and style element instead */
+
   --duet-color-button: #eee;
+  --duet-color-border: #ccc;
+  --duet-radius: var(--uv-input-border-radius);
 
   @variant dark {
     --duet-color-primary: #005fcc;
-    --duet-color-text: var(--color-neutral-50);
-    --duet-color-text-active: var(--color-neutral-50);
-    --duet-color-placeholder: var(--color-neutral-50);
-    --duet-color-button: var(--color-neutral-800);
-    --duet-color-surface: var(--color-neutral-800);
+    --duet-color-text: var(--color-zinc-50);
+    --duet-color-text-active: var(--color-zinc-50);
+    --duet-color-placeholder: var(--color-zinc-50);
+    --duet-color-button: var(--color-zinc-800);
     --duet-color-overlay: rgba(0, 0, 0, 0.8);
-    --duet-color-border: #fff;
+    --duet-color-border: var(--color-zinc-600);
 
     --duet-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --duet-font-normal: 400;
     --duet-font-bold: 600;
 
-    --duet-radius: 4px;
     --duet-z-index: 600;
   }
+}
+
+duet-date-picker.error {
+  @apply border-red-700;
 }
 
 fieldset[disabled] duet-date-picker duet-date-picker[disabled] {
@@ -31,17 +38,9 @@ duet-date-picker[disabled] input {
   background-color: #eee !important; /* bootstrap .form-input[readonly] forms.less:L170 */
 
   @variant dark {
-    @apply text-neutral-700!; /* color of `input:read-only` */
+    color: var(--color-neutral-700) !important; /* color of `input:read-only` */
     background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
   }
-}
-
-.duet-date__dialog-content {
-  @apply dark:border-zinc-600;
-}
-
-duet-date-picker.form-control {
-  padding: 0;
 }
 
 .duet-date {
@@ -49,22 +48,52 @@ duet-date-picker.form-control {
 }
 
 .duet-date__input-wrapper {
-  height: 100%;
-}
+  /* !important used everywhere to override duet-date style */
+  --uv-duet-toggle-width: 48px;
 
-duet-date-picker.error {
-  @apply border-red-700;
-}
-
-.duet-date__input {
-  border: none;
-  /* padding of bootstrap form-control */
-  padding: 6px 12px;
   height: 100%;
+
+  .duet-date__input {
+    padding: 6px 12px !important;
+    font-size: var(--uv-form-control-text-size) !important;
+    line-height: 1.428571429 !important;
+    @variant dark {
+      background-color: var(--color-zinc-700) !important;
+    }
+  }
+
+  .duet-date__toggle {
+    box-shadow: none !important;
+    height: calc(100% - 2px) !important;
+    width: var(--uv-duet-toggle-width) !important;
+    top: 1px !important;
+    right: 1px !important;
+  }
+
+  .duet-date__input:focus,
+  .duet-date__toggle:focus {
+    border-color: transparent !important;
+    outline: 2px solid var(--uv-focus-ring-color) !important;
+    box-shadow:
+      inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(102, 175, 233, 0.6) !important;
+  }
+
+  &:focus-within {
+    .duet-date__toggle {
+      min-width: var(--uv-duet-toggle-width) !important;
+    }
+  }
 }
 
 .duet-date__dialog-content {
   max-width: none;
+  background-color: var(--color-white) !important;
+
+  @variant dark {
+    border-color: var(--color-zinc-600) !important;
+    background-color: var(--color-zinc-800) !important;
+  }
 }
 
 @media screen and (min-width: 576px) {
@@ -154,39 +183,6 @@ duet-date-picker.error {
 .duet-date__day:hover:before,
 .duet-date__day.is-today::before {
   border-radius: 0;
-}
-
-.duet-date__toggle {
-  /* use (nearly) same width like 'overtime minute input' */
-  min-width: 3.25rem;
-  /* disable duet box-shadow */
-  box-shadow: none;
-  height: 100%;
-  top: 0;
-  right: 0;
-}
-
-.duet-date__input-wrapper:focus-within .duet-date__toggle {
-  top: 1px;
-  right: 1px;
-  height: calc(100% - 2px);
-  min-width: calc(3.25rem - 1px);
-}
-
-.duet-date__input,
-.duet-date__toggle {
-  /* ring-0 is required to enable transition to ring-x of the focused element */
-  @apply ring-0;
-  @apply transition;
-  @apply duration-150;
-  @apply ease-in-out;
-}
-
-.duet-date__input:focus,
-.duet-date__toggle:focus {
-  box-shadow: none !important;
-  @apply ring-2!;
-  @apply ring-blue-300!;
 }
 
 /* override @duetds styling to not hide the absence-bars */
