@@ -105,3 +105,17 @@
 @utility leading-normal {
   line-height: normal;
 }
+
+@layer base {
+  /*Improve readability of focused elements when they are also in an*/
+  /*active/hover state.*/
+  a:active,
+  a:hover {
+    outline: 0;
+  }
+
+  /*Address inconsistent and variable font size in all browsers.*/
+  small {
+    font-size: 80%;
+  }
+}
