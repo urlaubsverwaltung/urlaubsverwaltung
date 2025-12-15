@@ -5,11 +5,11 @@ duet-date-picker {
 
   @variant dark {
     --duet-color-primary: #005fcc;
-    --duet-color-text: var(--color-neutral-50);
-    --duet-color-text-active: var(--color-neutral-50);
-    --duet-color-placeholder: var(--color-neutral-50);
-    --duet-color-button: var(--color-neutral-800);
-    --duet-color-surface: var(--color-neutral-800);
+    --duet-color-text: var(--tw-color-neutral-50);
+    --duet-color-text-active: var(--tw-color-neutral-50);
+    --duet-color-placeholder: var(--tw-color-neutral-50);
+    --duet-color-button: var(--tw-color-neutral-800);
+    --duet-color-surface: var(--tw-color-neutral-800);
     --duet-color-overlay: rgba(0, 0, 0, 0.8);
     --duet-color-border: #fff;
 

@@ -270,7 +270,7 @@ textarea.error {
   }
 
   input[readonly] {
-    background-color: var(--color-gray-200);
+    background-color: var(--tw-color-gray-200);
   }
 
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
@@ -293,7 +293,7 @@ textarea.error {
       gap: 0.25rem;
       align-items: center;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--color-gray-200);
+      border-bottom: 2px solid var(--tw-color-gray-200);
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
