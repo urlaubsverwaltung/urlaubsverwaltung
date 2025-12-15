@@ -93,7 +93,6 @@
 }
 
 [is="uv-color-picker"] .color-picker-option.active {
-  @apply tw-outline;
   @apply tw-outline-2;
   @apply tw-outline-blue-500;
 }
