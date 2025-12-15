@@ -48,6 +48,7 @@
   --uv-input-border-radius: 6px;
   /* form-control e.g. input and button */
   --uv-form-control-text-size: 0.875rem;
+  --uv-placeholder-color: #999;
 
   /* 500 */
   --absence-color-GRAY: #6b7280;

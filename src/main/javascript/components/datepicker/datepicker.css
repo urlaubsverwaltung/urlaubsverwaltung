@@ -7,12 +7,12 @@ duet-date-picker {
   --duet-color-button: #eee;
   --duet-color-border: #ccc;
   --duet-radius: var(--uv-input-border-radius);
+  --duet-color-placeholder: var(--uv-placeholder-color);
 
   @variant dark {
     --duet-color-primary: #005fcc;
     --duet-color-text: var(--color-zinc-50);
     --duet-color-text-active: var(--color-zinc-50);
-    --duet-color-placeholder: var(--color-zinc-50);
     --duet-color-button: var(--color-zinc-800);
     --duet-color-overlay: rgba(0, 0, 0, 0.8);
     --duet-color-border: var(--color-zinc-600);

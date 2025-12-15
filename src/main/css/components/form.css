@@ -59,7 +59,7 @@ select,
   }
 
   &::placeholder {
-    color: #999;
+    color: var(--uv-placeholder-color);
   }
 
   @variant dark {
