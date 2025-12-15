@@ -10,7 +10,7 @@ class CopyToClipboardInputElement extends HTMLDivElement {
       "button",
       "tw-m-0",
       "tw-border-0",
-      "tw-outline-none",
+      "tw-outline-hidden",
       "button--no-hover",
     );
     button.setAttribute("title", this.dataset.messageButtonTitle);
