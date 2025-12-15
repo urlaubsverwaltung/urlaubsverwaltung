@@ -185,7 +185,7 @@ table.absence-type-settings-table thead {
   @apply tw:dark:bg-zinc-900;
 }
 
-@screen sm {
+@variant sm {
   table.absence-type-settings-table thead {
     top: 3rem; /* header height */
   }
@@ -273,7 +273,7 @@ table.absence-type-settings-table thead {
   }
 }
 
-@screen sm {
+@variant sm {
   table.absence-type-settings-table tr {
     @apply tw:transition-colors;
   }
@@ -340,7 +340,7 @@ table.absence-type-settings-table thead {
   }
 }
 
-@screen md {
+@variant md {
   table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
     @apply tw:pr-16;
   }

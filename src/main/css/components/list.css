@@ -25,7 +25,7 @@
   }
 }
 
-@screen sm {
+@variant sm {
   .list-selectable__item {
     @apply tw:py-1;
     @apply tw:px-2;
@@ -64,7 +64,7 @@
   }
 }
 
-@screen lg {
+@variant lg {
   ul.lg\:list--hover > li {
     @apply tw:transition-colors;
   }

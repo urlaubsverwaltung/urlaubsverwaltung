@@ -9,13 +9,13 @@
   /* column template for every li element (using subgrid). overridden for bigger screens */
   grid-template-columns: auto 0.75rem auto 0.75rem 1fr auto;
 
-  @screen xs {
+  @variant xs {
     grid-template-columns: 0.75rem auto 1rem auto 1rem 1fr 1rem auto 1rem auto;
   }
-  @screen md {
+  @variant md {
     grid-template-columns: 0.75rem auto 3rem auto 0.75rem 1fr 2rem auto 2rem auto 2rem auto;
   }
-  @screen lg {
+  @variant lg {
     grid-template-columns: 1.75rem auto 1.75rem auto 0.75rem 1fr 3rem auto 3rem auto 3rem auto;
   }
 
@@ -54,13 +54,13 @@
     /* use isolated rows within this li. */
     grid-template-rows: auto auto 0.5rem auto 0.5rem auto 1rem auto;
 
-    @screen xs {
+    @variant xs {
       grid-template-rows: auto auto auto 1rem auto;
     }
-    @screen md {
+    @variant md {
       grid-template-rows: auto auto;
     }
-    @screen lg {
+    @variant lg {
       grid-template-rows: auto auto;
     }
 
@@ -70,16 +70,16 @@
       align-self: center;
       display: flex;
 
-      @screen xs {
+      @variant xs {
         grid-row: 1;
         grid-column: 2;
       }
 
-      @screen md {
+      @variant md {
         grid-row: 1;
         grid-column: 2;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1;
         grid-column: 2;
       }
@@ -95,18 +95,18 @@
         height: 90%;
       }
 
-      @screen xs {
+      @variant xs {
         grid-row: 1 / span 2;
         grid-column: 4;
       }
-      @screen md {
+      @variant md {
         grid-row: 1 / span 2;
         grid-column: 4;
         > span {
           height: 70%;
         }
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1 / span 2;
         grid-column: 4;
         > span {
@@ -119,15 +119,15 @@
       grid-row: 1;
       grid-column: 5 / span 3;
 
-      @screen xs {
+      @variant xs {
         grid-row: 1;
         grid-column: 6;
       }
-      @screen md {
+      @variant md {
         grid-row: 1;
         grid-column: 6;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1;
         grid-column: 6;
       }
@@ -138,11 +138,11 @@
       grid-column: 5 / span 3;
       font-size: 0.95rem;
 
-      @screen xs {
+      @variant xs {
         grid-row: 2 / span 2;
         grid-column: 6;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 2;
         grid-column: 6;
       }
@@ -150,13 +150,13 @@
 
     /* span date-range over full width when there is no edit-button */
     &:not(:has([data-grid-ref="action-buttons"] a)) {
-      @screen xs {
+      @variant xs {
         [data-grid-ref="date-range"] {
           grid-row: 2 / span 2;
           grid-column: 6 / span 5;
         }
       }
-      @screen md {
+      @variant md {
         /* no span anymore, other layout */
         [data-grid-ref="date-range"] {
           grid-row: 2;
@@ -166,13 +166,13 @@
     }
     /* otherwise */
     &:has([data-grid-ref="action-buttons"] a) {
-      @screen xs {
+      @variant xs {
         [data-grid-ref="date-range"] {
           grid-row: 2 / span 2;
           grid-column: 6 / span 3;
         }
       }
-      @screen md {
+      @variant md {
         /* no span anymore, other layout */
         [data-grid-ref="date-range"] {
           grid-row: 2;
@@ -194,11 +194,11 @@
         white-space: nowrap;
       }
 
-      @screen xs {
+      @variant xs {
         grid-row: 5;
         grid-column: 6;
       }
-      @screen md {
+      @variant md {
         grid-row: 1 / span 2;
         grid-column: 8;
         align-self: center;
@@ -207,7 +207,7 @@
         flex-direction: column;
         align-items: end;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1 / span 2;
         grid-column: 8;
         align-self: center;
@@ -228,12 +228,12 @@
         white-space: nowrap;
       }
 
-      @screen xs {
+      @variant xs {
         grid-row: 5;
         grid-column: 8 / span 3;
         text-align: right;
       }
-      @screen md {
+      @variant md {
         grid-row: 1 / span 2;
         grid-column: 10;
         @apply tw:dark:text-zinc-100;
@@ -245,7 +245,7 @@
         width: 100%;
         justify-content: flex-end;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1 / span 2;
         grid-column: 10;
         @apply tw:text-sm;
@@ -264,17 +264,17 @@
       grid-column: 5;
       align-self: center;
 
-      @screen xs {
+      @variant xs {
         grid-row: 1 / span 2;
         grid-column: 10;
       }
-      @screen md {
+      @variant md {
         grid-row: 1 / span 2;
         grid-column: 12;
         padding-right: 0.5rem;
         align-self: center;
       }
-      @screen lg {
+      @variant lg {
         grid-row: 1 / span 2;
         grid-column: 12;
         padding-right: 0.5rem;
@@ -293,14 +293,14 @@
       align-self: end;
     }
 
-    @screen xs {
+    @variant xs {
       [data-grid-ref="sum"] {
         /* grid-col 6 overflows info-split-year, but text is aligned right -> should be ok :shrug: */
         grid-column: 6 / span 5;
         text-align: right;
       }
     }
-    @screen md {
+    @variant md {
       /* only one row for header */
       grid-template-rows: auto;
 

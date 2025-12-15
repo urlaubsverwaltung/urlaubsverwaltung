@@ -53,7 +53,7 @@
   @apply tw:dark:hover:dark:border-blue-400; /* override button hover selector for dark theme */
 }
 
-@screen xs {
+@variant xs {
   .extend-action-grid {
     display: grid;
     grid-column-gap: 1rem;
@@ -112,7 +112,7 @@
   }
 }
 
-@screen md {
+@variant md {
   .extend-action-grid {
     display: grid;
     grid-column-gap: 1rem;

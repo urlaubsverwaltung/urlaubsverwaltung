@@ -77,7 +77,7 @@ duet-date-picker.error {
   }
 }
 
-@screen sm {
+@variant sm {
   .duet-date__dialog {
     /* stretch dialog content container */
     /* dialog-content has `margin-left: auto` which aligns it on the right */

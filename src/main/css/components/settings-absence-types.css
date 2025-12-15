@@ -135,7 +135,7 @@
   justify-content: flex-end;
 }
 
-@screen md {
+@variant md {
   .absence-type-list-head {
     z-index: 1; /* place above color picker */
     position: sticky;
@@ -259,7 +259,7 @@
   }
 }
 
-@screen lg {
+@variant lg {
   .absence-type-list-head,
   .absence-type-card {
     column-gap: 2rem;
