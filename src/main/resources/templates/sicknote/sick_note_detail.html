@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}, styles=~{::styles})}"
   >
@@ -23,7 +23,7 @@
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main
       th:fragment="main"
-      class="tw:max-w-2xl tw:lg:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0 tw:lg:grid tw:lg:grid-cols-2 tw:lg:gap-8"
+      class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0 lg:grid lg:grid-cols-2 lg:gap-8"
     >
       <div>
         <div
@@ -33,54 +33,54 @@
             <h2 th:text="#{sicknote.title}">Krankmeldung</h2>
           </th:block>
           <th:block th:ref="sicknote-heading-actions">
-            <div class="tw:flex tw:flex-row">
+            <div class="flex flex-row">
               <th:block th:if="${canAcceptSickNote && (extensionRequested || sickNote.status.name == 'SUBMITTED')}">
                 <button
                   type="button"
-                  class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+                  class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0"
                   onclick="
-                    document.querySelector('#allow')?.classList.remove('tw:hidden');
-                    document.querySelector('#cancel')?.classList.add('tw:hidden');
+                    document.querySelector('#allow')?.classList.remove('hidden');
+                    document.querySelector('#cancel')?.classList.add('hidden');
                   "
                   th:data-title="#{action.acceptSicknote}"
                 >
                   <svg th:replace="~{icon/check::svg}"></svg>
-                  <span th:text="#{action.acceptSicknote}" class="tw:sr-only"></span>
+                  <span th:text="#{action.acceptSicknote}" class="sr-only"></span>
                 </button>
               </th:block>
               <th:block th:if="${sickNote.active}">
                 <th:block th:if="${canEditSickNote}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/edit}"
-                    class="icon-link tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+                    class="icon-link text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0"
                     th:data-title="#{action.edit}"
                   >
-                    <svg th:replace="~{icon/pencil::svg(className='tw:w-5 tw:h-5')}"></svg>
-                    <span th:text="#{action.edit}" class="tw:sr-only"></span>
+                    <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>
+                    <span th:text="#{action.edit}" class="sr-only"></span>
                   </a>
                 </th:block>
                 <th:block th:if="${canConvertSickNote && sickNote.status.name == 'ACTIVE'}">
                   <a
                     th:href="@{/web/sicknote/__${sickNote.id}__/convert}"
-                    class="tw:ml-2 icon-link tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+                    class="ml-2 icon-link text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0"
                     th:data-title="#{action.convert}"
                   >
-                    <svg th:replace="~{icon/refresh-ccw::svg(className='tw:w-5 tw:h-5')}"></svg>
-                    <span th:text="#{action.convert}" class="tw:sr-only"></span>
+                    <svg th:replace="~{icon/refresh-ccw::svg(className='w-5 h-5')}"></svg>
+                    <span th:text="#{action.convert}" class="sr-only"></span>
                   </a>
                 </th:block>
                 <th:block th:if="${canDeleteSickNote}">
                   <button
                     type="button"
-                    class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0 tw:hover:text-red-500"
+                    class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0 hover:text-red-500"
                     onclick="
-                      document.querySelector('#cancel')?.classList.remove('tw:hidden');
-                      document.querySelector('#allow')?.classList.add('tw:hidden');
+                      document.querySelector('#cancel')?.classList.remove('hidden');
+                      document.querySelector('#allow')?.classList.add('hidden');
                     "
                     th:data-title="#{action.delete.request}"
                   >
-                    <svg th:replace="~{icon/trash-2::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
-                    <span class="tw:sr-only" th:text="#{action.delete.request}"></span>
+                    <svg th:replace="~{icon/trash-2::svg(className='w-5 h-5')}"></svg>&nbsp;
+                    <span class="sr-only" th:text="#{action.delete.request}"></span>
                   </button>
                 </th:block>
               </th:block>
@@ -107,7 +107,7 @@
             <form
               id="allow"
               class="alert alert-success"
-              th:classappend="${action eq 'allow' ? '' : 'tw:hidden'}"
+              th:classappend="${action eq 'allow' ? '' : 'hidden'}"
               method="post"
               th:with="isShortcut=${param.shortcut != null && #lists.contains(param.shortcut, 'true')},
                        redirectTo=@{/web/sicknote/submitted},
@@ -119,8 +119,8 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="tw:mb-4">
-                <strong class="tw:font-medium">
+              <div class="mb-4">
+                <strong class="font-medium">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.sicknote.allow}">
                     Soll diese Krankmeldung wirklich angenommen werden?
                   </th:block>
@@ -130,13 +130,13 @@
                 </strong>
               </div>
 
-              <div class="tw:mb-4">
+              <div class="mb-4">
                 <label th:text="|#{action.comment.optional}:|" for="text-allow"></label>
                 <textarea id="text-allow" rows="2" th:errorclass="error" name="text"></textarea>
               </div>
 
-              <div class="tw:mb-0 tw:flex tw:justify-between tw:gap-4">
-                <button type="submit" class="button-main-green tw:w-56">
+              <div class="mb-0 flex justify-between gap-4">
+                <button type="submit" class="button-main-green w-56">
                   <th:block th:if="${not extensionRequested}" th:text="#{action.acceptSicknote}">Annehmen</th:block>
                   <th:block th:if="${extensionRequested}">Verlängerung Annehmen</th:block>
                 </button>
@@ -144,7 +144,7 @@
                   type="button"
                   th:text="#{action.cancel}"
                   class="button"
-                  onclick="document.querySelector('#allow')?.classList.add('tw:hidden')"
+                  onclick="document.querySelector('#allow')?.classList.add('hidden')"
                 >
                   Abbrechen
                 </button>
@@ -155,7 +155,7 @@
             <form
               id="cancel"
               class="alert alert-danger"
-              th:classappend="${(action == 'cancel') ? '' : 'tw:hidden'}"
+              th:classappend="${(action == 'cancel') ? '' : 'hidden'}"
               method="post"
               th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/sicknote/__${sickNote.id}__/cancel?redirect=/web/sicknote/submitted' : '/web/sicknote/__${sickNote.id}__/cancel'}"
               th:action="@{__${actionUrl}__}"
@@ -163,24 +163,24 @@
             >
               <input th:if="${shortcut}" type="hidden" name="shortcut" th:value="${shortcut}" />
               <input th:if="${not #strings.isEmpty(redirect)}" type="hidden" name="redirect" th:value="${redirect}" />
-              <div class="tw:mb-4">
-                <strong class="tw:font-medium" th:text="#{action.sicknote.delete.request.confirm}">
+              <div class="mb-4">
+                <strong class="font-medium" th:text="#{action.sicknote.delete.request.confirm}">
                   Soll diese Krankmeldung wirklich storniert werden?
                 </strong>
               </div>
 
-              <div class="tw:mb-4">
+              <div class="mb-4">
                 <label th:text="|#{action.comment.mandatory}:|" for="text-cancel"></label>
                 <textarea id="text-cancel" rows="2" th:field="*{text}" th:errorclass="error" name="text"></textarea>
               </div>
 
-              <div class="tw:flex tw:justify-between tw:gap-4">
-                <button type="submit" class="button-danger tw:w-56" th:text="#{action.delete}">Stornieren</button>
+              <div class="flex justify-between gap-4">
+                <button type="submit" class="button-danger w-56" th:text="#{action.delete}">Stornieren</button>
                 <button
                   type="button"
                   th:text="#{action.cancel}"
                   class="button"
-                  onclick="document.querySelector('#cancel')?.classList.add('tw:hidden')"
+                  onclick="document.querySelector('#cancel')?.classList.add('hidden')"
                 >
                   Abbrechen
                 </button>
@@ -189,34 +189,34 @@
           </th:block>
         </div>
 
-        <div class="box tw:mb-5 tw:p-5">
+        <div class="box mb-5 p-5">
           <div th:replace="~{fragments/box::box-with-icon(~{::sicknote-box-icon}, ~{::sicknote-box-body})}">
             <th:block th:ref="sicknote-box-icon">
               <div
-                th:replace="~{fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='tw:bg-red-500 tw:text-white tw:dark:bg-red-600 tw:dark:text-zinc-900')}"
+                th:replace="~{fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
               >
                 <th:block th:ref="sicknote-box-icon-rounded">
                   <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
-                    <svg th:replace="~{icon/child::svg(className='tw:w-8 tw:h-8')}"></svg>
+                    <svg th:replace="~{icon/child::svg(className='w-8 h-8')}"></svg>
                   </th:block>
                   <th:block th:if="${sickNote.sickNoteType.category.name != 'SICK_NOTE_CHILD'}">
-                    <svg th:replace="~{icon/medkit::svg(className='tw:w-8 tw:h-8')}"></svg>
+                    <svg th:replace="~{icon/medkit::svg(className='w-8 h-8')}"></svg>
                   </th:block>
                 </th:block>
               </div>
             </th:block>
             <th:block th:ref="sicknote-box-body">
-              <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300" data-test-id="sicknote-person">
+              <span class="text-sm text-black/75 dark:text-zinc-300" data-test-id="sicknote-person">
                 <th:block th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}">
                   Klaus Müller hat eine
                 </th:block>
               </span>
-              <span class="tw:flex tw:justify-between tw:gap-4 tw:items-center tw:my-1 tw:text-lg tw:font-medium">
+              <span class="flex justify-between gap-4 items-center my-1 text-lg font-medium">
                 <span th:text="#{__${sickNote.sickNoteType.messageKey}__}" data-test-id="sicknote-type">
                   Kind-Krankmeldung
                 </span>
                 <span
-                  class="absence-type_color-box tw:print:hidden tw:mr-5"
+                  class="absence-type_color-box print:hidden mr-5"
                   th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
                   th:classappend="|
                     ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
@@ -230,7 +230,7 @@
                   &nbsp;
                 </span>
               </span>
-              <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300" data-test-id="sicknote-date">
+              <span class="text-sm text-black/75 dark:text-zinc-300" data-test-id="sicknote-date">
                 <th:block th:text="#{absence.period.for}" />
                 <th:block
                   th:replace="~{fragments/date-range::date-range-all(
@@ -244,7 +244,7 @@
           </div>
         </div>
 
-        <table class="list-table striped-table bordered-table tw:text-sm">
+        <table class="list-table striped-table bordered-table text-sm">
           <tbody>
             <tr>
               <td th:text="#{absence.period.duration}"></td>
@@ -260,7 +260,7 @@
               <td th:text="#{sicknote.data.aub.short}"></td>
               <td>
                 <th:block th:if="${sickNote.aubPresent}">
-                  <div class="tw:flex tw:items-center" data-test-id="sicknote-aub-date">
+                  <div class="flex items-center" data-test-id="sicknote-aub-date">
                     <th:block th:text="#{absence.period.for}" />
                     <th:block
                       th:replace="~{fragments/date-range::date-range-all(from=${sickNote.aubStartDate},to=${sickNote.aubEndDate})}"
@@ -270,8 +270,8 @@
                   <div th:text="#{sicknote.data.days(${sickNote.workDaysWithAub})}"></div>
                 </th:block>
                 <th:block th:if="${not sickNote.aubPresent}">
-                  <div class="tw:flex tw:items-center" data-test-id="sicknote-aub-date">
-                    <svg th:replace="~{icon/x-circle::svg(className='tw:w-4 tw:h-4')}"></svg>
+                  <div class="flex items-center" data-test-id="sicknote-aub-date">
+                    <svg th:replace="~{icon/x-circle::svg(className='w-4 h-4')}"></svg>
                     &nbsp;<th:block th:text="#{sicknote.data.aub.notPresent}"></th:block>
                   </div>
                 </th:block>
@@ -287,29 +287,29 @@
             </tr>
           </tbody>
         </table>
-        <div th:if="${sickNotePreviewCurrent != null}" class="tw:mt-8">
+        <div th:if="${sickNotePreviewCurrent != null}" class="mt-8">
           <div class="section-heading">
-            <div class="tw:flex tw:items-baseline tw:pb-2 tw:border-b-2 tw:dark:border-b tw:dark:border-zinc-600">
+            <div class="flex items-baseline pb-2 border-b-2 dark:border-b dark:border-zinc-600">
               <h2 th:text="#{sicknote.extend.submitted.extension-title}">Krankmeldung verlängern</h2>
             </div>
           </div>
           <th:block th:if="${#bools.isTrue(canAcceptSubmittedExtension)}">
-            <p class="tw:mt-4" th:text="#{sicknote.extend.submitted.wants-to-extend.hint(${sickNote.person.niceName})}">
+            <p class="mt-4" th:text="#{sicknote.extend.submitted.wants-to-extend.hint(${sickNote.person.niceName})}">
               Max Muster möchte die Krankmeldung erweitern.
             </p>
           </th:block>
           <th:block th:if="${#bools.isFalse(canAcceptSubmittedExtension)}">
-            <p class="tw:mt-4" th:text="#{sicknote.extend.submitted.has-to-be-accepted.hint}">
+            <p class="mt-4" th:text="#{sicknote.extend.submitted.has-to-be-accepted.hint}">
               Eine berechtigte Person muss die geänderte Krankmeldung akzeptieren.
             </p>
           </th:block>
-          <div class="tw:mt-4">
-            <details class="tw:[&>summary>svg]:open:rotate-90">
-              <summary class="tw:cursor-pointer tw:flex tw:items-center tw:gap-1">
-                <svg th:replace="~{icon/chevron-right::svg(className='tw:w-4 tw:h-4 tw:transition-transform')}"></svg>
+          <div class="mt-4">
+            <details class="[&>summary>svg]:open:rotate-90">
+              <summary class="cursor-pointer flex items-center gap-1">
+                <svg th:replace="~{icon/chevron-right::svg(className='w-4 h-4 transition-transform')}"></svg>
                 Vorschau der Verlängerung
               </summary>
-              <div class="tw:mt-4">
+              <div class="mt-4">
                 <th:block
                   th:replace="~{sicknote/sick_note_extend::sick-note-extension-preview(${sickNotePreviewCurrent}, ${sickNotePreviewNext})}"
                 ></th:block>
@@ -321,7 +321,7 @@
               action="#"
               th:action="@{/web/sicknote/__${sickNote.id}__/extension/accept}"
               method="post"
-              class="tw:mt-8"
+              class="mt-8"
             >
               <button type="submit" class="button-main-green" th:text="#{sicknote.extend.accept.button.text}">
                 Verlängerung Akzeptieren
@@ -332,7 +332,7 @@
       </div>
 
       <div>
-        <div class="tw:print:hidden">
+        <div class="print:hidden">
           <div th:replace="~{fragments/section-heading::section-heading(~{::sicknote-data-person-heading-body}, ~{})}">
             <th:block th:ref="sicknote-data-person-heading-body">
               <h2 th:text="#{sicknote.data.person}">Mitarbeiter</h2>
@@ -343,7 +343,7 @@
           ></div>
         </div>
 
-        <div class="tw:mt-8">
+        <div class="mt-8">
           <div
             th:replace="~{fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})}"
           >
@@ -353,23 +353,23 @@
             <th:block th:ref="sicknote-progress-heading-actions">
               <th:block th:if="${canCommentSickNote}">
                 <button
-                  class="icon-link tw:bg-transparent tw:px-1 tw:py-0"
-                  onclick="document.getElementById('comment-form').classList.remove('tw:hidden')"
+                  class="icon-link bg-transparent px-1 py-0"
+                  onclick="document.getElementById('comment-form').classList.remove('hidden')"
                 >
-                  <svg th:replace="~{icon/message-square::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/message-square::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.comment.new}"></span>
                 </button>
               </th:block>
             </th:block>
           </div>
 
-          <table class="list-table striped-table bordered-table tw:text-sm">
-            <caption class="tw:sr-only" th:text="#{sicknote.progress.title}">
+          <table class="list-table striped-table bordered-table text-sm">
+            <caption class="sr-only" th:text="#{sicknote.progress.title}">
               Verlauf
             </caption>
             <tbody>
               <tr th:each="comment, loopStatus : ${comments}">
-                <td class="tw:print:hidden tw:text-blue-50 tw:dark:text-sky-800">
+                <td class="print:hidden text-blue-50 dark:text-sky-800">
                   <img
                     th:replace="~{fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},initials=${comment.person != null ? comment.person.initials : null},width='40',height='40',personId=${comment.person != null ? comment.person.id : null})}"
                     alt=""
@@ -413,21 +413,21 @@
             method="post"
             th:action="@{/web/sicknote/__${sickNote.id}__/comment}"
             th:object="${comment}"
-            class="tw:hidden"
+            class="hidden"
           >
             <div th:if="${#fields.hasGlobalErrors()}" class="feedback">
               <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
             </div>
 
             <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
-            <div class="tw:flex tw:justify-between tw:mt-2 tw:mb-6">
+            <div class="flex justify-between mt-2 mb-6">
               <button
                 th:text="#{action.cancel}"
                 class="button"
                 type="button"
-                onclick="document.getElementById('comment-form').classList.add('tw:hidden')"
+                onclick="document.getElementById('comment-form').classList.add('hidden')"
               ></button>
-              <button th:text="#{action.save}" class="button-main-green tw:w-56" type="submit"></button>
+              <button th:text="#{action.save}" class="button-main-green w-56" type="submit"></button>
             </div>
           </form>
         </div>

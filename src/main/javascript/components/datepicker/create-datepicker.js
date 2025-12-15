@@ -159,11 +159,11 @@ function hydrateDatepicker(duetDateElement, options) {
 
         if (isNoWorkday(absencesForDate)) {
           const temporary = document.createElement("span");
-          temporary.innerHTML = `<svg viewBox="0 0 20 20" class="tw:w-3 tw:h-3 tw:opacity-50 tw:stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
+          temporary.innerHTML = `<svg viewBox="0 0 20 20" class="w-3 h-3 opacity-50 stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
           icon = temporary.firstChild;
         } else {
           icon = document.createElement("span");
-          icon.classList.add("tw:w-3", "tw:h-3", "tw:inline-block");
+          icon.classList.add("w-3", "h-3", "inline-block");
         }
 
         icon.dataset.uvIcon = "";

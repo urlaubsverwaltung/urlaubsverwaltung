@@ -2,7 +2,7 @@
 <html
   lang="en"
   th:lang="${language}"
-  th:class="|tw:${theme}|"
+  th:class="|theme-${theme}|"
   xmlns:th="http://www.thymeleaf.org"
   th:with="editMode=${sickNote.id != null}"
 >
@@ -32,7 +32,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw:max-w-2xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:lg:max-w-6xl tw:xl:px-0">
+    <main th:fragment="main" class="max-w-2xl mx-auto px-4 lg:px-12 lg:max-w-6xl xl:px-0">
       <form
         method="post"
         th:with="actionUrl=${editMode ? '/web/sicknote/__${sickNote.id}__/edit' : '/web/sicknote'}"
@@ -59,7 +59,7 @@
             ></p>
 
             <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+              <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
               <th:block th:text="#{sicknote.data.description}"></th:block>
             </p>
 
@@ -117,7 +117,7 @@
               <div>
                 <label>
                   <input
-                    class="tw:mr-1"
+                    class="mr-1"
                     id="dayLength"
                     type="radio"
                     th:field="*{dayLength}"
@@ -129,7 +129,7 @@
                 </label>
                 <label>
                   <input
-                    class="tw:mr-1"
+                    class="mr-1"
                     type="radio"
                     th:field="*{dayLength}"
                     value="MORNING"
@@ -140,7 +140,7 @@
                 </label>
                 <label>
                   <input
-                    class="tw:mr-1"
+                    class="mr-1"
                     type="radio"
                     th:field="*{dayLength}"
                     value="NOON"
@@ -157,7 +157,7 @@
 
             <!-- From -->
             <div class="uv-form__input-row">
-              <label for="from" class="is-required tw:w-full tw:lg:w-1/4" th:text="|#{absence.period.startDate}:|">
+              <label for="from" class="is-required w-full lg:w-1/4" th:text="|#{absence.period.startDate}:|">
                 Von
               </label>
               <input
@@ -201,7 +201,7 @@
 
           <div class="uv-form__group">
             <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+              <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
               &nbsp<th:block th:text="#{sicknote.data.aub.description}"></th:block>
             </p>
 
@@ -252,7 +252,7 @@
 
           <div class="uv-form__group">
             <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+              <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
               &nbsp;<th:block th:text="#{sicknote.data.furtherInformation.description}"></th:block>
             </p>
 
@@ -273,7 +273,7 @@
           <th:block th:if="${editMode}">
             <button
               type="submit"
-              class="button-main-green tw:w-56"
+              class="button-main-green w-56"
               th:text="#{action.apply.sicknote.edit}"
               data-test-id="sicknote-submit-button"
             >
@@ -283,7 +283,7 @@
           <th:block th:if="${not editMode}">
             <button
               type="submit"
-              class="button-main-green tw:w-56"
+              class="button-main-green w-56"
               th:text="${canAddSickNote} ? #{action.apply.sicknote} : #{action.apply.sicknote.submit}"
               data-test-id="sicknote-submit-button"
             >

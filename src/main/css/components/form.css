@@ -29,8 +29,8 @@ legend {
 .uv-help-block {
   display: block;
   color: #737373;
-  @apply tw:text-sm;
-  @apply tw:dark:text-zinc-200/75;
+  @apply text-sm;
+  @apply dark:text-zinc-200/75;
 }
 
 input:not(:is([type="radio"], [type="checkbox"])),
@@ -59,10 +59,10 @@ select,
 
 .popover-button-select {
   width: auto; /* override common input styling */
-  :not([class*="tw:border-"]) {
-    /* actually colors are meant here, like tw:border-blue-400 */
-    /* however tw:border-*-* is not a valid selector */
-    @apply tw:dark:border-neutral-600!;
+  :not([class*="border-"]) {
+    /* actually colors are meant here, like border-blue-400 */
+    /* however border-*-* is not a valid selector */
+    @apply dark:border-neutral-600!;
   }
 }
 
@@ -85,7 +85,7 @@ textarea:focus {
   /* input */
   border: 1px solid #ccc;
   border-radius: var(--uv-input-border-radius);
-  @apply tw:dark:border-neutral-600;
+  @apply dark:border-neutral-600;
 
   &.uv-has-error {
     border-color: var(--uv-error-border-color);
@@ -124,28 +124,28 @@ textarea:focus {
     border-top-right-radius: var(--uv-input-border-radius);
     border-bottom-right-radius: var(--uv-input-border-radius);
 
-    @apply tw:dark:bg-zinc-800;
-    @apply tw:dark:text-zinc-200;
+    @apply dark:bg-zinc-800;
+    @apply dark:text-zinc-200;
   }
 }
 
 legend {
-  @apply tw:dark:text-zinc-200;
-  @apply tw:dark:font-normal;
+  @apply dark:text-zinc-200;
+  @apply dark:font-normal;
 }
 
 input[disabled],
 fieldset[disabled] input {
-  @apply tw:dark:text-neutral-700!;
-  @apply tw:dark:bg-neutral-800!;
-  @apply tw:border-0!;
+  @apply dark:text-neutral-700!;
+  @apply dark:bg-neutral-800!;
+  @apply border-0!;
 }
 
 .popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
-  @apply tw:ring-2!;
-  @apply tw:ring-blue-300!;
+  @apply ring-2!;
+  @apply ring-blue-300!;
 }
 
 /**************************************************************************
@@ -172,9 +172,9 @@ input,
 select,
 textarea,
 .popover-button-select {
-  @apply tw:dark:border-zinc-600!;
-  @apply tw:dark:bg-zinc-700!;
-  @apply tw:dark:text-zinc-50!;
+  @apply dark:border-zinc-600!;
+  @apply dark:bg-zinc-700!;
+  @apply dark:text-zinc-50!;
 }
 
 input.error,
@@ -194,24 +194,24 @@ textarea.error {
   overflow: auto;
   height: 400px;
   width: 100%;
-  @apply tw:dark:border-zinc-600;
+  @apply dark:border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
-  @apply tw:dark:border-zinc-600;
+  @apply dark:border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
-  @apply tw:dark:bg-zinc-800;
+  @apply dark:bg-zinc-800;
 }
 
 .department--member.is-inactive {
   background-color: #fff4ea;
-  @apply tw:dark:bg-transparent;
+  @apply dark:bg-transparent;
 }
 
 .department--member:last-child {
@@ -243,8 +243,8 @@ textarea.error {
 }
 
 .select-caret {
-  @apply tw:text-zinc-700;
-  @apply tw:dark:text-zinc-50;
+  @apply text-zinc-700;
+  @apply dark:text-zinc-50;
 }
 
 .uv-form {
@@ -270,7 +270,7 @@ textarea.error {
   }
 
   input[readonly] {
-    background-color: var(--tw-color-gray-200);
+    background-color: var(--color-gray-200);
   }
 
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
@@ -293,12 +293,12 @@ textarea.error {
       gap: 0.25rem;
       align-items: center;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--tw-color-gray-200);
+      border-bottom: 2px solid var(--color-gray-200);
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
-      @apply tw:dark:border-b;
-      @apply tw:dark:border-zinc-600;
+      @apply dark:border-b;
+      @apply dark:border-zinc-600;
 
       &:is(h1, h2, h3, h4, h5, h6) {
         margin: 0; /* override bootstrap(?) default for headings */
@@ -389,7 +389,7 @@ textarea.error {
       }
 
       .uv-form__input-error {
-        @apply tw:text-sm;
+        @apply text-sm;
         color: var(--uv-error-color);
       }
     }
@@ -435,8 +435,8 @@ textarea.error {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
-    @apply tw:dark:border-t;
-    @apply tw:dark:border-zinc-600;
+    @apply dark:border-t;
+    @apply dark:border-zinc-600;
   }
 
   @media screen and (width >= 1024px) {

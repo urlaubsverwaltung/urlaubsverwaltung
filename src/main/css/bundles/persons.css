@@ -11,10 +11,10 @@ body:has(.person-table) {
 
 .person-table {
   th {
-    @apply tw:p-2;
+    @apply p-2;
   }
 
   td {
-    @apply tw:p-2;
+    @apply p-2;
   }
 }

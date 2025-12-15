@@ -1,23 +1,23 @@
 .dropdown-menu {
-  @apply tw:dark:shadow-none;
-  @apply tw:dark:border;
-  @apply tw:dark:border-zinc-700;
-  @apply tw:dark:bg-zinc-900;
-  @apply tw:dark:backdrop-filter;
-  @apply tw:dark:backdrop-blur-xl;
-  @apply tw:dark:supports-backdrop-blur:bg-zinc-900/70;
+  @apply dark:shadow-none;
+  @apply dark:border;
+  @apply dark:border-zinc-700;
+  @apply dark:bg-zinc-900;
+  @apply dark:backdrop-filter;
+  @apply dark:backdrop-blur-xl;
+  @apply dark:supports-backdrop-blur:bg-zinc-900/70;
 }
 
 .dropdown-menu > li > a {
-  @apply tw:dark:text-zinc-200;
+  @apply dark:text-zinc-200;
 }
 
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
-  @apply tw:dark:bg-zinc-700;
-  @apply tw:dark:text-zinc-200;
+  @apply dark:bg-zinc-700;
+  @apply dark:text-zinc-200;
 }
 
 .dropdown-menu .divider {
-  @apply tw:dark:bg-zinc-700;
+  @apply dark:bg-zinc-700;
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -30,20 +30,20 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
-      <div class="tw:mb-12">
+    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <div class="mb-12">
         <div th:replace="~{person/overview/section-vacation-days::section}"></div>
       </div>
 
-      <div th:if="${settings.overtimeSettings.overtimeActive}" class="tw:mb-12">
+      <div th:if="${settings.overtimeSettings.overtimeActive}" class="mb-12">
         <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>
 
-      <div class="tw:mb-4 tw:lg:mb-12">
+      <div class="mb-4 lg:mb-12">
         <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
 
-      <div class="tw:mb-12">
+      <div class="mb-12">
         <div th:replace="~{person/overview/section-absences::section}"></div>
       </div>
 

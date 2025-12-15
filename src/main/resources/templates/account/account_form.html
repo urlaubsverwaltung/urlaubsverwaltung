@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -25,7 +25,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-1.5">
+      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
         <form
           id="holiday-account-settings-form"
           method="post"
@@ -54,7 +54,7 @@
 
             <div class="uv-form__group">
               <p class="uv-form__group-info uv-help-block">
-                <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+                <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
                 <span th:text="#{person.form.annualVacation.description}"></span>
               </p>
               <div class="uv-form__input-row">
@@ -193,7 +193,7 @@
                   Verfall von Resturlaub:
                 </span>
                 <p
-                  class="account-form-expire-description tw:m-0"
+                  class="account-form-expire-description m-0"
                   th:with="
                   settingsLink=@{/web/settings},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
@@ -203,24 +203,24 @@
                 >
                   Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
                 </p>
-                <div class="tw:mt-4 tw:flex tw:flex-row tw:items-start tw:gap-8">
-                  <span class="checkbox-switch tw:flex tw:items-center tw:gap-2">
+                <div class="mt-4 flex flex-row items-start gap-8">
+                  <span class="checkbox-switch flex items-center gap-2">
                     <input
                       type="checkbox"
                       id="vacation-expiration-checkbox"
                       th:field="*{overrideVacationDaysExpire}"
-                      class="tw:m-0"
+                      class="m-0"
                     />
                     <label
                       for="vacation-expiration-checkbox"
-                      class="tw:m-0 tw:text-base tw:font-normal"
+                      class="m-0 text-base font-normal"
                       th:text="#{person.form.annualVacation.remainingVacation.expire.override.checkbox}"
                     >
                       Individuell
                     </label>
                   </span>
-                  <div class="tw:flex tw:flex-col tw:gap-2">
-                    <label class="tw:font-normal tw:text-base tw:m-0">
+                  <div class="flex flex-col gap-2">
+                    <label class="font-normal text-base m-0">
                       <input
                         type="radio"
                         id="doRemainingVacationDaysExpire.true"
@@ -233,7 +233,7 @@
                         Resturlaub verfällt
                       </th:block>
                     </label>
-                    <label class="tw:font-normal tw:text-base tw:m-0">
+                    <label class="font-normal text-base m-0">
                       <input
                         type="radio"
                         id="doRemainingVacationDaysExpire.false"
@@ -282,11 +282,11 @@
                   Verfallsdatum des Resturlaubs:
                 </label>
                 <p
-                  class="account-form-expire-description tw:m-0"
+                  class="account-form-expire-description m-0"
                   th:with="
                   settingsLink=@{/web/settings},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expiryDate.global-info.settings') + '</a>'},
-                  date=${account.expiryDateGlobally == null ? null : '<span class=&quot;tw:font-bold&quot;>' + #temporals.format(account.expiryDateGlobally, #messages.msg('pattern.date')) + '</span>'},
+                  date=${account.expiryDateGlobally == null ? null : '<span class=&quot;font-bold&quot;>' + #temporals.format(account.expiryDateGlobally, #messages.msg('pattern.date')) + '</span>'},
                   messageKey=${account.expiryDateGlobally == null ? 'person.form.annualVacation.remainingVacation.expiryDate.global-info.none' : 'person.form.annualVacation.remainingVacation.expiryDate.global-info'}
                 "
                   th:utext="${#messages.msg(messageKey, settingsMessage, date)}"
@@ -301,7 +301,7 @@
                   th:data-min="|${year}-01-01|"
                   th:data-max="|${year}-12-31|"
                   th:placeholder="#{pattern.date}"
-                  class="tw:mt-2"
+                  class="mt-2"
                   th:errorclass="error"
                 />
                 <p class="uv-form__input-error" th:if="${#fields.hasErrors('expiryDateLocally')}">
@@ -350,7 +350,7 @@
           </div>
 
           <div class="uv-form__actions">
-            <button type="submit" class="button-main-green tw:w-56" th:text="#{action.save}">Speichern</button>
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
         </form>

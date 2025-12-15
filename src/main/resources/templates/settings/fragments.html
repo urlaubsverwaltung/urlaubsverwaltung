@@ -18,14 +18,14 @@
     </th:block>
 
     <th:block th:fragment="tab-navigation(activeElement)">
-      <ul class="tab-list tw:mb-6" style="grid-column: label / end">
+      <ul class="tab-list mb-6" style="grid-column: label / end">
         <li
           th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
         >
           <a
             href="#"
             th:href="@{/web/settings/absences}"
-            th:class="|tab${activeElement == 'absences' ? ' tab--active' : ''}${hasErrors ? ' tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'absences' ? ' tab--active' : ''}${hasErrors ? ' text-red-800' : ''}|"
           >
             <th:block th:text="#{settings.tabs.absence}" />
             <th:block th:if="${hasErrors}">*</th:block>
@@ -46,7 +46,7 @@
           <a
             href="#"
             th:href="@{/web/settings/overtime}"
-            th:class="|tab${activeElement == 'overtime' ? ' tab--active' : ''}${hasErrors ? 'tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'overtime' ? ' tab--active' : ''}${hasErrors ? 'text-red-800' : ''}|"
             data-test-id="settings-tab-overtime"
           >
             <th:block th:text="#{settings.tabs.overtime}" />
@@ -57,7 +57,7 @@
           <a
             href="#"
             th:href="@{/web/settings/public-holidays}"
-            th:class="|tab${activeElement == 'public-holidays' ? ' tab--active' : ''}${hasErrors ? ' tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'public-holidays' ? ' tab--active' : ''}${hasErrors ? ' text-red-800' : ''}|"
             data-test-id="settings-tab-public-holidays"
           >
             <th:block th:text="#{settings.tabs.publicHolidays}" />
@@ -68,7 +68,7 @@
           <a
             href="#"
             th:href="@{/web/settings/account}"
-            th:class="|tab${activeElement == 'account' ? ' tab--active' : ''}${hasErrors ? ' tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'account' ? ' tab--active' : ''}${hasErrors ? ' text-red-800' : ''}|"
             data-test-id="settings-tab-account"
           >
             <th:block th:text="#{settings.tabs.account}" />
@@ -88,7 +88,7 @@
           <a
             href="#"
             th:href="@{/web/settings/calendar}"
-            th:class="|tab${activeElement == 'calendar' ? ' tab--active' : ''}${hasErrors ? ' tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'calendar' ? ' tab--active' : ''}${hasErrors ? ' text-red-800' : ''}|"
           >
             <th:block th:text="#{settings.tabs.calendar}" />
             <th:block th:if="${hasErrors}">*</th:block>
@@ -98,7 +98,7 @@
           <a
             href="#"
             th:href="@{/web/settings/calendar-sync}"
-            th:class="|tab${activeElement == 'calendar-sync' ? ' tab--active' : ''}${hasErrors ? ' tw:text-red-800' : ''}|"
+            th:class="|tab${activeElement == 'calendar-sync' ? ' tab--active' : ''}${hasErrors ? ' text-red-800' : ''}|"
           >
             <th:block th:text="#{settings.tabs.calendarSync}" />
             <th:block th:if="${hasErrors}">*</th:block>

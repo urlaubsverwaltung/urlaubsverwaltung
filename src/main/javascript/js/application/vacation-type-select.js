@@ -9,14 +9,14 @@ class VacationTypeSelect extends HTMLSelectElement {
       const specialLeave = document.querySelector("#special-leave");
 
       if (value === "SPECIALLEAVE") {
-        overtime?.classList.add("tw:hidden");
-        specialLeave?.classList.remove("tw:hidden");
+        overtime?.classList.add("hidden");
+        specialLeave?.classList.remove("hidden");
       } else if (value === "OVERTIME") {
-        overtime?.classList.remove("tw:hidden");
-        specialLeave?.classList.add("tw:hidden");
+        overtime?.classList.remove("hidden");
+        specialLeave?.classList.add("hidden");
       } else {
-        overtime?.classList.add("tw:hidden");
-        specialLeave?.classList.add("tw:hidden");
+        overtime?.classList.add("hidden");
+        specialLeave?.classList.add("hidden");
       }
     };
 

@@ -2,7 +2,7 @@
 <html
   lang="en"
   th:lang="${language}"
-  th:class="|tw:${theme}|"
+  th:class="|theme-${theme}|"
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
@@ -16,7 +16,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-0">
+    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
       >
@@ -25,7 +25,7 @@
         </th:block>
       </div>
 
-      <div class="tw:mt-8">
+      <div class="mt-8">
         <form
           id="user-settings-form"
           action="#"
@@ -36,16 +36,16 @@
           <fieldset id="fieldset-language">
             <legend
               id="language-description"
-              class="tw:dark:text-zinc-100 tw:border-none"
+              class="dark:text-zinc-100 border-none"
               th:text="#{user-settings.language.title}"
             >
               Sprache
             </legend>
             <ul
               aria-describedby="language-description"
-              class="tw:list-none tw:m-0 tw:p-0 tw:flex tw:flex-col tw:md:grid tw:md:auto-cols-fr tw:md:grid-flow-col tw:gap-2 tw:md:gap-8"
+              class="list-none m-0 p-0 flex flex-col md:grid md:auto-cols-fr md:grid-flow-col gap-2 md:gap-8"
             >
-              <li class="tw:relative tw:flex tw:md:block tw:items-center tw:gap-4 tw:md:flex-row tw:md:justify-center">
+              <li class="relative flex md:block items-center gap-4 md:flex-row md:justify-center">
                 <input
                   required
                   type="radio"
@@ -54,21 +54,19 @@
                   name="locale"
                   value=""
                   th:checked="${null eq userSettings.locale}"
-                  class="tw:peer tw:md:absolute tw:bottom-5 tw:left-4"
+                  class="peer md:absolute bottom-5 left-4"
                 />
                 <span
-                  class="tw:block tw:w-full tw:h-full tw:px-4 tw:py-3 tw:rounded-lg tw:border-2 tw:border-zinc-200 tw:dark:border-zinc-800 tw:peer-checked:border-blue-400"
+                  class="block w-full h-full px-4 py-3 rounded-lg border-2 border-zinc-200 dark:border-zinc-800 peer-checked:border-blue-400"
                 >
                   <label
                     for="user-locale-system"
-                    class="tw:flex tw:md:flex-col tw:items-center tw:gap-4 tw:m-0 tw:cursor-pointer tw:md:text-center"
+                    class="flex md:flex-col items-center gap-4 m-0 cursor-pointer md:text-center"
                   >
-                    <svg
-                      th:replace="~{icon/globe-2::svg(className='tw:w-9 tw:h-9 tw:md:w-16 tw:md:h-16 tw:stroke-1')}"
-                    ></svg>
+                    <svg th:replace="~{icon/globe-2::svg(className='w-9 h-9 md:w-16 md:h-16 stroke-1')}"></svg>
                     <span
                       th:text="#{user-settings.language.locale.system}"
-                      class="tw:min-w-0 tw:md:w-4/5 tw:whitespace-nowrap tw:text-ellipsis tw:overflow-hidden tw:md:ml-5"
+                      class="min-w-0 md:w-4/5 whitespace-nowrap text-ellipsis overflow-hidden md:ml-5"
                       th:data-title="#{user-settings.language.locale.system}"
                     >
                       Browsersprache
@@ -78,7 +76,7 @@
               </li>
               <li
                 th:each="supportedLocale : ${supportedLocales}"
-                class="tw:relative tw:flex tw:md:block tw:items-center tw:gap-4 tw:md:flex-row tw:md:justify-center"
+                class="relative flex md:block items-center gap-4 md:flex-row md:justify-center"
               >
                 <input
                   required
@@ -88,31 +86,29 @@
                   name="locale"
                   th:value="${supportedLocale.locale}"
                   th:checked="${supportedLocale.locale eq userSettings.locale}"
-                  class="tw:peer tw:md:absolute tw:bottom-5 tw:left-4"
+                  class="peer md:absolute bottom-5 left-4"
                 />
                 <span
-                  class="tw:block tw:w-full tw:h-full tw:px-4 tw:py-3 tw:rounded-lg tw:border-2 tw:border-zinc-200 tw:dark:border-zinc-800 tw:peer-checked:border-blue-400"
+                  class="block w-full h-full px-4 py-3 rounded-lg border-2 border-zinc-200 dark:border-zinc-800 peer-checked:border-blue-400"
                 >
                   <label
                     for="user-locale"
                     th:for="${'user-locale-' + supportedLocale.locale}"
-                    class="tw:flex tw:md:flex-col tw:items-center tw:gap-4 tw:m-0 tw:cursor-pointer tw:md:text-center"
+                    class="flex md:flex-col items-center gap-4 m-0 cursor-pointer md:text-center"
                   >
-                    <span
-                      class="tw:h-8 tw:w-8 tw:md:h-16 tw:md:w-16 tw:inline-block tw:overflow-hidden tw:rounded-full"
-                    >
+                    <span class="h-8 w-8 md:h-16 md:w-16 inline-block overflow-hidden rounded-full">
                       <img
                         th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}"
                         alt=""
                         width="25"
                         height="15"
-                        class="tw:scale-[1.75] tw:w-full tw:h-full"
+                        class="scale-[1.75] w-full h-full"
                       />
                     </span>
                     <span
                       th:text="${supportedLocale.displayName}"
-                      class="tw:min-w-0 tw:md:w-4/5 tw:whitespace-nowrap tw:text-ellipsis tw:overflow-hidden"
-                      th:classappend="${supportedLocale.displayNameOverflow ? 'tw:md:ml-5' : ''}"
+                      class="min-w-0 md:w-4/5 whitespace-nowrap text-ellipsis overflow-hidden"
+                      th:classappend="${supportedLocale.displayNameOverflow ? 'md:ml-5' : ''}"
                       th:data-title="${supportedLocale.displayName}"
                     >
                       Sprache
@@ -122,31 +118,28 @@
               </li>
             </ul>
           </fieldset>
-          <fieldset class="tw:mt-16">
+          <fieldset class="mt-16">
             <legend
               id="theme-description"
               th:text="#{user-settings.theme.title}"
-              class="tw:dark:text-zinc-100 tw:border-none"
+              class="dark:text-zinc-100 border-none"
             >
               Theme
             </legend>
-            <ul
-              aria-describedby="theme-description"
-              class="tw:list-none tw:m-0 tw:p-0 tw:grid tw:grid-cols-2 tw:xs:grid-cols-3 tw:gap-4"
-            >
+            <ul aria-describedby="theme-description" class="list-none m-0 p-0 grid grid-cols-2 xs:grid-cols-3 gap-4">
               <li th:each="selectableTheme : ${supportedThemes}">
                 <label
-                  class="tw:overflow-hidden tw:flex tw:flex-col tw:cursor-pointer tw:rounded-lg tw:md:rounded-xl tw:border-2 tw:border-zinc-200 tw:dark:border-zinc-800 tw:[&:has(:checked)]:border-blue-400"
+                  class="overflow-hidden flex flex-col cursor-pointer rounded-lg md:rounded-xl border-2 border-zinc-200 dark:border-zinc-800 [&:has(:checked)]:border-blue-400"
                 >
                   <img
                     src="#"
                     th:src="|/images/user-settings-theme-${#strings.toLowerCase(selectableTheme.value)}.png|"
                     width="323"
                     height="200"
-                    class="tw:w-full tw:h-auto tw:block"
+                    class="w-full h-auto block"
                     alt=""
                   />
-                  <span class="tw:inline-flex tw:items-center tw:gap-4 tw:p-4">
+                  <span class="inline-flex items-center gap-4 p-4">
                     <input
                       type="radio"
                       name="theme"
@@ -160,8 +153,8 @@
             </ul>
           </fieldset>
           <noscript>
-            <div class="tw:mt-8">
-              <button type="submit" class="button-main-green tw:w-56" th:text="#{user-settings.form.submit}">
+            <div class="mt-8">
+              <button type="submit" class="button-main-green w-56" th:text="#{user-settings.form.submit}">
                 Speichern
               </button>
             </div>

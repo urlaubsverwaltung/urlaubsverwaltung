@@ -16,12 +16,12 @@
     margin-top: 5px;
   }
 
-  @apply tw:dark:font-medium;
-  /* TODO @apply tw:dark:bg-opacity-95;*/
+  @apply dark:font-medium;
+  /* TODO @apply dark:bg-opacity-95;*/
   /* `border-transparent` is relevant to override default :is(dark *) {border-color} */
   /* otherwise light-theme has no border-color and dark-theme has one (due to the default) */
   /* therefore border color should be explicitly at the html element for instance */
-  @apply tw:border-transparent;
+  @apply border-transparent;
 }
 
 .alert-dismissible {
@@ -36,18 +36,18 @@
 }
 
 .alert-danger {
-  @apply tw:text-red-800;
+  @apply text-red-800;
   background-color: #f2dede;
   border-color: #f2dedeff;
-  @apply tw:dark:bg-red-500;
-  @apply tw:dark:text-zinc-900;
-  @apply tw:dark:border-transparent;
+  @apply dark:bg-red-500;
+  @apply dark:text-zinc-900;
+  @apply dark:border-transparent;
 }
 
 form.alert-danger {
-  @apply tw:dark:bg-zinc-800;
-  @apply tw:dark:border-red-500;
-  @apply tw:dark:text-zinc-200;
+  @apply dark:bg-zinc-800;
+  @apply dark:border-red-500;
+  @apply dark:text-zinc-200;
 }
 
 .alert-info {
@@ -57,9 +57,9 @@ form.alert-danger {
 }
 
 form.alert-info {
-  @apply tw:dark:bg-zinc-800;
-  @apply tw:dark:border-sky-600;
-  @apply tw:dark:text-zinc-200;
+  @apply dark:bg-zinc-800;
+  @apply dark:border-sky-600;
+  @apply dark:text-zinc-200;
 }
 
 .alert-warning {
@@ -72,27 +72,27 @@ form.alert-info {
   color: #3c763d;
   background-color: #dff0d8;
   border-color: #dff0d8ff;
-  @apply tw:dark:bg-green-500;
-  @apply tw:dark:text-zinc-900;
-  @apply tw:dark:border-transparent;
+  @apply dark:bg-green-500;
+  @apply dark:text-zinc-900;
+  @apply dark:border-transparent;
 }
 
 form.alert-success {
-  @apply tw:dark:bg-zinc-800;
-  @apply tw:dark:border-green-500;
-  @apply tw:dark:text-zinc-200;
+  @apply dark:bg-zinc-800;
+  @apply dark:border-green-500;
+  @apply dark:text-zinc-200;
 }
 
 .alert--outline {
-  @apply tw:bg-transparent;
-  @apply tw:border-zinc-200;
-  @apply tw:dark:bg-transparent;
-  @apply tw:dark:border-zinc-300;
+  @apply bg-transparent;
+  @apply border-zinc-200;
+  @apply dark:bg-transparent;
+  @apply dark:border-zinc-300;
 }
 
 .alert-danger.alert--outline {
-  @apply tw:border-red-700;
-  @apply tw:text-red-800;
-  @apply tw:dark:border-red-500;
-  @apply tw:dark:text-red-600;
+  @apply border-red-700;
+  @apply text-red-800;
+  @apply dark:border-red-500;
+  @apply dark:text-red-600;
 }

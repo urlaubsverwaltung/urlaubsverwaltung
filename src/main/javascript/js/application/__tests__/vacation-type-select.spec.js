@@ -20,25 +20,25 @@ describe("vacation-type-select", function () {
   });
 
   describe("SPECIAL_LEAVE", function () {
-    it("adds 'tw:hidden' class to 'overtime' element", function () {
+    it("adds 'hidden' class to 'overtime' element", function () {
       const overtimeElement = document.createElement("div");
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
       setVacationType("SPECIALLEAVE");
 
-      expect(overtimeElement.classList.contains("tw:hidden")).toBeTruthy();
+      expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
 
-    it("removes 'tw:hidden' class from 'special-leave' element", function () {
+    it("removes 'hidden' class from 'special-leave' element", function () {
       const specialLeaveElement = document.createElement("div");
       specialLeaveElement.setAttribute("id", "special-leave");
-      specialLeaveElement.classList.add("tw:hidden");
+      specialLeaveElement.classList.add("hidden");
       document.body.append(specialLeaveElement);
 
       setVacationType("SPECIALLEAVE");
 
-      expect(specialLeaveElement.classList.contains("tw:hidden")).toBeFalsy();
+      expect(specialLeaveElement.classList.contains("hidden")).toBeFalsy();
     });
 
     it("does not throw when no element exists", function () {
@@ -49,25 +49,25 @@ describe("vacation-type-select", function () {
   });
 
   describe("OVERTIME", function () {
-    it("removes 'tw:hidden' class from 'overtime' element", function () {
+    it("removes 'hidden' class from 'overtime' element", function () {
       const overtimeElement = document.createElement("div");
       overtimeElement.setAttribute("id", "overtime");
-      overtimeElement.classList.add("tw:hidden");
+      overtimeElement.classList.add("hidden");
       document.body.append(overtimeElement);
 
       setVacationType("OVERTIME");
 
-      expect(overtimeElement.classList.contains("tw:hidden")).toBeFalsy();
+      expect(overtimeElement.classList.contains("hidden")).toBeFalsy();
     });
 
-    it("adds 'tw:hidden' class to 'special-leave' element", function () {
+    it("adds 'hidden' class to 'special-leave' element", function () {
       const specialLeaveElement = document.createElement("div");
       specialLeaveElement.setAttribute("id", "special-leave");
       document.body.append(specialLeaveElement);
 
       setVacationType("OVERTIME");
 
-      expect(specialLeaveElement.classList.contains("tw:hidden")).toBeTruthy();
+      expect(specialLeaveElement.classList.contains("hidden")).toBeTruthy();
     });
 
     it("does not throw when no element exists", function () {
@@ -78,24 +78,24 @@ describe("vacation-type-select", function () {
   });
 
   describe.each(["HOLIDAY", "UNPAIDLEAVE"])("%s", function (vacationType) {
-    it("adds 'tw:hidden' class to 'overtime' element", function () {
+    it("adds 'hidden' class to 'overtime' element", function () {
       const overtimeElement = document.createElement("div");
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
       setVacationType(vacationType);
 
-      expect(overtimeElement.classList.contains("tw:hidden")).toBeTruthy();
+      expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
 
-    it("adds 'tw:hidden' class to 'special-leave' element", function () {
+    it("adds 'hidden' class to 'special-leave' element", function () {
       const specialLeaveElement = document.createElement("div");
       specialLeaveElement.setAttribute("id", "special-leave");
       document.body.append(specialLeaveElement);
 
       setVacationType(vacationType);
 
-      expect(specialLeaveElement.classList.contains("tw:hidden")).toBeTruthy();
+      expect(specialLeaveElement.classList.contains("hidden")).toBeTruthy();
     });
 
     it("does not throw when no element exists", function () {

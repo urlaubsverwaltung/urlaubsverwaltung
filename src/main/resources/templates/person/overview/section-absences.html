@@ -12,59 +12,56 @@
           <h2 id="vacation" th:text="#{applications.title}">Abwesenheiten</h2>
         </th:block>
         <th:block th:ref="absences-heading-actions">
-          <div class="tw:flex tw:flex-col tw:sm:flex-row">
+          <div class="flex flex-col sm:flex-row">
             <a
               th:if="${person.id == signedInUser.id}"
-              class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+              class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
               href="#"
               th:href="@{/web/application/new}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
             <a
               th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
-              class="tw:ml-2 icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row"
+              class="ml-2 icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row"
               href="#"
               th:href="@{/web/application/new (personId=${person.id})}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
           </div>
         </th:block>
       </div>
 
-      <div class="tw:mb-4 tw:lg:mb-6">
-        <div class="tw:flex tw:flex-wrap tw:space-y-8 tw:sm:space-y-0">
-          <div class="tw:w-full tw:sm:w-1/2">
+      <div class="mb-4 lg:mb-6">
+        <div class="flex flex-wrap space-y-8 sm:space-y-0">
+          <div class="w-full sm:w-1/2">
             <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
               <th:block th:ref="holidays-sum-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='tw:bg-amber-300 tw:text-white tw:dark:bg-amber-400 tw:dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="holidays-sum-box-icon-rounded">
-                    <svg th:replace="~{icon/sun::svg(className='tw:w-8 tw:h-8')}" />
+                    <svg th:replace="~{icon/sun::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="holidays-sum-box-body">
-                <span
-                  class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300"
-                  th:text="#{overview.vacations.holidayLeave.1}"
-                >
+                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.holidayLeave.1}">
                   Es wurden beantragt
                 </span>
                 <span
-                  class="tw:my-1 tw:text-lg tw:font-medium"
+                  class="my-1 text-lg font-medium"
                   th:text="#{overview.vacations.holidayLeave.2(${usedDaysOverview.holidayDays.sum})}"
                 >
                   18,5 Tage Erholungsurlaub
                 </span>
-                <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
-                  <span class="tw:flex tw:items-center">
-                    <span class="tw:text-emerald-500 tw:flex tw:items-center">
-                      <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+                <span class="text-sm text-black/75 dark:text-zinc-300">
+                  <span class="flex items-center">
+                    <span class="text-emerald-500 flex items-center">
+                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
@@ -74,36 +71,33 @@
               </th:block>
             </div>
           </div>
-          <div class="tw:w-full tw:sm:w-1/2">
+          <div class="w-full sm:w-1/2">
             <div
               th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
             >
               <th:block th:ref="other-days-sum-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='tw:bg-amber-300 tw:text-white tw:dark:bg-amber-400 tw:dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="other-days-sum-box-icon-rounded">
-                    <svg th:replace="~{icon/flag::svg(className='tw:w-8 tw:h-8')}" />
+                    <svg th:replace="~{icon/flag::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="other-days-sum-box-body">
-                <span
-                  class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300"
-                  th:text="#{overview.vacations.otherLeave.1}"
-                >
+                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.otherLeave.1}">
                   Es wurden beantragt
                 </span>
                 <span
-                  class="tw:my-1 tw:text-lg tw:font-medium"
+                  class="my-1 text-lg font-medium"
                   th:text="#{overview.vacations.otherLeave.2(${usedDaysOverview.otherDays.sum})}"
                 >
                   2,5 Tage andere Abwesenheiten
                 </span>
-                <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
-                  <span class="tw:flex tw:items-center">
-                    <span class="tw:text-emerald-500 tw:flex tw:items-center">
-                      <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+                <span class="text-sm text-black/75 dark:text-zinc-300">
+                  <span class="flex items-center">
+                    <span class="text-emerald-500 flex items-center">
+                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
@@ -116,16 +110,16 @@
         </div>
       </div>
 
-      <div class="tw:mb-4 tw:lg:mb-12">
-        <table class="list-table selectable-table tw:text-sm">
-          <caption class="tw:sr-only" th:text="#{applications.title}">
+      <div class="mb-4 lg:mb-12">
+        <table class="list-table selectable-table text-sm">
+          <caption class="sr-only" th:text="#{applications.title}">
             Abwesenheiten
           </caption>
           <tbody>
             <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}">
               <td></td>
-              <td class="tw:py-4">
-                <span class="tw:block tw:mb-1 tw:text-lg" th:text="#{overview.vacations.expired}"></span>
+              <td class="py-4">
+                <span class="block mb-1 text-lg" th:text="#{overview.vacations.expired}"></span>
                 <th:block
                   th:text="#{overview.vacations.expired.description(${expiredRemainingVacationDays}, ${vacationDaysLeft.remainingVacationDays})}"
                 ></th:block>
@@ -133,9 +127,9 @@
               <td class="is-centered">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="tw:hidden tw:md:table-cell tw:print:hidden">
-                <div class="tw:flex tw:items-center tw:justify-center">
-                  <svg th:replace="~{icon/clock::svg(className='tw:w-4 tw:h-4')}"></svg>&nbsp;
+              <td class="hidden md:table-cell print:hidden">
+                <div class="flex items-center justify-center">
+                  <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
                   <th:block th:replace="~{fragments/date::date(${expiryDate})}"></th:block>
                 </div>
@@ -146,10 +140,10 @@
               th:class="${app.status.name == 'CANCELLED' || app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'inactive' : 'active'}"
               th:onclick="|navigate('/web/application/${app.id}');|"
             >
-              <td class="tw:hidden tw:print:table-cell">
+              <td class="hidden print:table-cell">
                 <th:block th:text="${#messages.msg(app.status)}"></th:block>
               </td>
-              <td class="tw:py-6 absence-type_color-box-parent">
+              <td class="py-6 absence-type_color-box-parent">
                 <div
                   class="absence-type_color-box"
                   th:classappend="|
@@ -166,17 +160,17 @@
                   &nbsp;
                 </div>
               </td>
-              <td class="tw:py-6">
+              <td class="py-6">
                 <a
                   href="#"
                   th:href="@{/web/application/{app} (app=${app.id})}"
-                  class="print:no-link tw:hover:no-underline tw:group"
+                  class="print:no-link hover:no-underline group"
                 >
                   <span
-                    class="tw:block tw:mb-0.5 tw:text-lg tw:group-hover:underline tw:group-focus:underline"
+                    class="block mb-0.5 text-lg group-hover:underline group-focus:underline"
                     th:text="${app.vacationType.label}"
                   ></span>
-                  <span class="tw:block tw:text-[#444444] tw:dark:text-zinc-200">
+                  <span class="block text-[#444444] dark:text-zinc-200">
                     <th:block th:text="#{absence.period.for}" />
                     <th:block th:if="${app.startDate == app.endDate}">
                       <th:block
@@ -204,7 +198,7 @@
               <td class="is-centered">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
-                  <span th:class="|tw:text-gray-500 days-${loopStatus.index}|">
+                  <span th:class="|text-gray-500 days-${loopStatus.index}|">
                     <!-- is filled by javascript-->
                   </span>
                   <script type="text/javascript" th:inline="javascript">
@@ -227,16 +221,16 @@
                 </th:block>
                 <span
                   th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}"
-                  class="tw:text-gray-500"
+                  class="text-gray-500"
                 >
                   <br />
                   <th:block th:text="${{app.hours}}" />
                   <th:block th:text="#{application.data.hours.number}" />
                 </span>
               </td>
-              <td class="tw:hidden tw:md:table-cell tw:print:hidden">
-                <div class="tw:flex tw:items-center tw:justify-center">
-                  <svg th:replace="~{icon/clock::svg(className='tw:w-4 tw:h-4')}"></svg>&nbsp;
+              <td class="hidden md:table-cell print:hidden">
+                <div class="flex items-center justify-center">
+                  <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                   <span>
                     <th:block th:if="${app.status.name == 'WAITING'}">
                       <th:block th:text="#{application.progress.APPLIED}"></th:block>

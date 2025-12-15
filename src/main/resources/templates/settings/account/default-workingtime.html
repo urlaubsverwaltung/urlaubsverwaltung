@@ -7,7 +7,7 @@
     <th:block th:fragment="section">
       <div class="uv-form__group">
         <p
-          class="uv-form__group-error tw:text-sm tw:text-red-800 tw:dark:text-red-400"
+          class="uv-form__group-error text-sm text-red-800 dark:text-red-400"
           th:if="${#fields.hasErrors('workingTimeSettings.workingDays')}"
         >
           <th:block th:errors="*{workingTimeSettings.workingDays}">workingTimeSettings.workingDays Error</th:block>
@@ -15,7 +15,7 @@
 
         <div class="uv-form__group-info">
           <p class="uv-help-block">
-            <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+            <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
             <th:block th:text="#{settings.workingTime.description}" />
           </p>
         </div>
@@ -24,7 +24,7 @@
           <p class="uv-form__label uv-form__label--required" th:text="|#{settings.workingTime.weekdays}:|">
             Wochentage
           </p>
-          <div class="tw:flex tw:flex-col tw:gap-2">
+          <div class="flex flex-col gap-2">
             <div th:each="weekDay : ${weekDays}">
               <label>
                 <input type="checkbox" th:field="*{workingTimeSettings.workingDays}" th:value="${weekDay.value}" />

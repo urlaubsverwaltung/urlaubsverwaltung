@@ -7,31 +7,31 @@
     <th:block th:fragment="section">
       <div class="uv-form__group">
         <div class="uv-form__group-info">
-          <div class="uv-help-block tw:flex tw:items-start tw:gap-1">
-            <span class="tw:shrink-0 tw:inline-flex tw:translate-y-px">
-              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
+          <div class="uv-help-block flex items-start gap-1">
+            <span class="shrink-0 inline-flex translate-y-px">
+              <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
             </span>
             <p>
               <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
               <a
-                class="tw:inline-flex tw:items-center"
+                class="inline-flex items-center"
                 target="_blank"
                 rel="noopener"
                 href="https://urlaubsverwaltung.cloud/hilfe/benutzer/#gibt-es-die-moeglichkeit-gravatar-global-zu-deaktivieren"
               >
                 <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.two}" />
-                <svg th:replace="~{icon/external-link::svg(className='tw:w-4 tw:h-4 tw:ml-1')}"></svg>
+                <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
               </a>
             </p>
           </div>
         </div>
 
         <div class="uv-form__input-row" th:data-enabled="${settings.avatarSettings.gravatarEnabled}">
-          <div class="tw:flex tw:items-center tw:gap-2 checkbox-switch">
+          <div class="flex items-center gap-2 checkbox-switch">
             <input type="checkbox" th:field="*{avatarSettings.gravatarEnabled}" id="avatarSettings-gravatarEnabled" />
             <label
               for="avatarSettings-gravatarEnabled"
-              class="tw:text-base tw:font-normal"
+              class="text-base font-normal"
               th:text="#{settings.avatar.gravatarEnabled.activation}"
             ></label>
           </div>

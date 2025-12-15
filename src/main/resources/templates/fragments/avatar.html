@@ -10,7 +10,7 @@
         <a
           th:href="@{/web/person/__${personId}__/overview}"
           th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
-          class="tw:text-inherit print:no-link"
+          class="text-inherit print:no-link"
           data-turbo="false"
         >
           <th:block th:ref="avatar-images">
@@ -18,15 +18,15 @@
               <img
                 src=""
                 th:src="${url}"
-                class="tw:rounded-full tw:hidden"
+                class="rounded-full hidden"
                 th:classappend="${className}"
                 th:height="${height == null ? '42' : height}"
                 th:width="${width == null ? '42' : width}"
                 th:data-id="${randomId}"
                 onload="
-                  document.getElementById(this.dataset.id).classList.add('tw:hidden');
-                  this.classList.remove('tw:hidden');
-                  this.classList.add('tw:block');
+                  document.getElementById(this.dataset.id).classList.add('hidden');
+                  this.classList.remove('hidden');
+                  this.classList.add('block');
                 "
               />
               <div th:id="${randomId}">
@@ -52,7 +52,7 @@
 
     <span
       th:fragment="avatar-bordered(url,niceName,initials,width,height,personId)"
-      class="tw:bg-gradient-to-br tw:from-blue-50 tw:to-blue-200 tw:dark:from-sky-800 tw:dark:to-zinc-800 tw:rounded-full tw:p-1 tw:inline-flex"
+      class="bg-gradient-to-br from-blue-50 to-blue-200 dark:from-sky-800 dark:to-zinc-800 rounded-full p-1 inline-flex"
     >
       <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${initials},${width},${height},${personId})}" />
     </span>

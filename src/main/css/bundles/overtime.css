@@ -31,8 +31,8 @@
   /* only separator (neither head-row nor overtime-entry-row) */
   > li[role="separator"] {
     height: 1px;
-    @apply tw:bg-gray-200;
-    @apply tw:dark:bg-gray-700;
+    @apply bg-gray-200;
+    @apply dark:bg-gray-700;
   }
 
   /* only overtime-entry-element (neither head-row nor separator) */
@@ -45,10 +45,10 @@
     padding: 0.75rem 0.25rem;
     transition: background-color 150ms ease-in-out;
 
-    @apply tw:dark:bg-neutral-900;
+    @apply dark:bg-neutral-900;
 
     &:not([role="presentation"]):hover {
-      @apply tw:dark:bg-neutral-800;
+      @apply dark:bg-neutral-800;
     }
 
     /* use isolated rows within this li. */
@@ -202,7 +202,7 @@
         grid-row: 1 / span 2;
         grid-column: 8;
         align-self: center;
-        @apply tw:text-sm;
+        @apply text-sm;
         display: flex;
         flex-direction: column;
         align-items: end;
@@ -236,9 +236,9 @@
       @variant md {
         grid-row: 1 / span 2;
         grid-column: 10;
-        @apply tw:dark:text-zinc-100;
+        @apply dark:text-zinc-100;
         align-self: center;
-        @apply tw:text-sm;
+        @apply text-sm;
         display: flex;
         flex-direction: row;
         gap: 0.5rem;
@@ -248,7 +248,7 @@
       @variant lg {
         grid-row: 1 / span 2;
         grid-column: 10;
-        @apply tw:text-sm;
+        @apply text-sm;
         > span:first-of-type {
           padding-left: 2rem;
         }

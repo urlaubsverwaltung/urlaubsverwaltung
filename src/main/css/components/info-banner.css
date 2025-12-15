@@ -1,15 +1,15 @@
 .info-banner {
-  @apply tw:py-2;
-  @apply tw:px-4;
-  @apply tw:bg-sky-900;
-  @apply tw:text-white;
+  @apply py-2;
+  @apply px-4;
+  @apply bg-sky-900;
+  @apply text-white;
 }
 
 .info-banner-text {
   width: 100%;
   margin: 0; /* override bootstrap paragraph margin */
   text-align: center;
-  @apply tw:text-sm;
+  @apply text-sm;
 }
 
 .info-banner a {

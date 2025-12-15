@@ -5,11 +5,11 @@ duet-date-picker {
 
   @variant dark {
     --duet-color-primary: #005fcc;
-    --duet-color-text: var(--tw-color-neutral-50);
-    --duet-color-text-active: var(--tw-color-neutral-50);
-    --duet-color-placeholder: var(--tw-color-neutral-50);
-    --duet-color-button: var(--tw-color-neutral-800);
-    --duet-color-surface: var(--tw-color-neutral-800);
+    --duet-color-text: var(--color-neutral-50);
+    --duet-color-text-active: var(--color-neutral-50);
+    --duet-color-placeholder: var(--color-neutral-50);
+    --duet-color-button: var(--color-neutral-800);
+    --duet-color-surface: var(--color-neutral-800);
     --duet-color-overlay: rgba(0, 0, 0, 0.8);
     --duet-color-border: #fff;
 
@@ -23,7 +23,7 @@ duet-date-picker {
 }
 
 fieldset[disabled] duet-date-picker duet-date-picker[disabled] {
-  @apply tw:dark:border-0!;
+  @apply dark:border-0!;
 }
 
 fieldset[disabled] duet-date-picker input,
@@ -31,13 +31,13 @@ duet-date-picker[disabled] input {
   background-color: #eee !important; /* bootstrap .form-input[readonly] forms.less:L170 */
 
   @variant dark {
-    @apply tw:text-neutral-700!; /* color of `input:read-only` */
+    @apply text-neutral-700!; /* color of `input:read-only` */
     background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
   }
 }
 
 .duet-date__dialog-content {
-  @apply tw:dark:border-zinc-600;
+  @apply dark:border-zinc-600;
 }
 
 duet-date-picker.form-control {
@@ -53,7 +53,7 @@ duet-date-picker.form-control {
 }
 
 duet-date-picker.error {
-  @apply tw:border-red-700;
+  @apply border-red-700;
 }
 
 .duet-date__input {
@@ -129,8 +129,8 @@ duet-date-picker.error {
 
 .duet-date__day.datepicker-day-today {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow);
-  @apply tw:shadow-cyan-600;
-  @apply tw:dark:shadow-sky-400;
+  @apply shadow-cyan-600;
+  @apply dark:shadow-sky-400;
 }
 
 /* override styling for selected or currently focused day */
@@ -176,17 +176,17 @@ duet-date-picker.error {
 .duet-date__input,
 .duet-date__toggle {
   /* ring-0 is required to enable transition to ring-x of the focused element */
-  @apply tw:ring-0;
-  @apply tw:transition;
-  @apply tw:duration-150;
-  @apply tw:ease-in-out;
+  @apply ring-0;
+  @apply transition;
+  @apply duration-150;
+  @apply ease-in-out;
 }
 
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   box-shadow: none !important;
-  @apply tw:ring-2!;
-  @apply tw:ring-blue-300!;
+  @apply ring-2!;
+  @apply ring-blue-300!;
 }
 
 /* override @duetds styling to not hide the absence-bars */

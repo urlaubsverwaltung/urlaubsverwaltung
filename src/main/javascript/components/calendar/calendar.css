@@ -17,8 +17,8 @@
 
 #datepicker {
   min-height: 19.688rem;
-  @apply tw:flex-wrap;
-  @apply tw:sm:flex-nowrap;
+  @apply flex-wrap;
+  @apply sm:flex-nowrap;
 }
 
 /* BUTTONS */
@@ -33,36 +33,36 @@
 .datepicker-prev {
   order: 1;
   flex-basis: 40%;
-  @apply tw:mb-4;
-  @apply tw:sm:mb-0;
-  @apply tw:sm:order-none;
-  @apply tw:sm:basis-0;
-  @apply tw:sm:-ml-2;
-  @apply tw:flex;
-  @apply tw:items-center;
-  @apply tw:lg:-translate-x-full;
+  @apply mb-4;
+  @apply sm:mb-0;
+  @apply sm:order-none;
+  @apply sm:basis-0;
+  @apply sm:-ml-2;
+  @apply flex;
+  @apply items-center;
+  @apply lg:-translate-x-full;
 }
 
 .datepicker-next {
   order: 2;
   flex-basis: 40%;
-  @apply tw:ml-auto;
-  @apply tw:mb-4;
-  @apply tw:sm:mb-0;
-  @apply tw:sm:order-none;
-  @apply tw:sm:basis-0;
-  @apply tw:sm:-mr-2;
-  @apply tw:flex;
-  @apply tw:items-center;
-  @apply tw:flex-row-reverse;
-  @apply tw:lg:translate-x-full;
+  @apply ml-auto;
+  @apply mb-4;
+  @apply sm:mb-0;
+  @apply sm:order-none;
+  @apply sm:basis-0;
+  @apply sm:-mr-2;
+  @apply flex;
+  @apply items-center;
+  @apply flex-row-reverse;
+  @apply lg:translate-x-full;
 }
 
 /* MONTHS */
 
 .calendar-container {
   order: 0;
-  @apply tw:sm:order-none;
+  @apply sm:order-none;
   position: relative;
   /* months outside this div should not be visible */
   overflow: hidden;
@@ -74,7 +74,7 @@
 @variant lg {
   .calendar-container {
     /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
-    @apply tw:-mx-6;
+    @apply -mx-6;
   }
 }
 
@@ -158,7 +158,7 @@
 @variant lg {
   .calendar-container {
     /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
-    @apply tw:-mx-6;
+    @apply -mx-6;
   }
   .calendar-month-container {
     --gap: 2.6rem;
@@ -177,7 +177,7 @@
   color: var(--uv-cal-default-color);
   font-size: 0.875rem;
   font-weight: 400;
-  @apply tw:dark:font-semibold;
+  @apply dark:font-semibold;
   text-align: center;
 }
 
@@ -192,8 +192,8 @@
   margin: 0;
   padding: 0.5em;
   color: var(--uv-cal-default-color);
-  @apply tw:dark:text-center;
-  @apply tw:dark:font-semibold;
+  @apply dark:text-center;
+  @apply dark:font-semibold;
 }
 
 .datepicker-day {
@@ -207,29 +207,29 @@
   --font-color: var(--uv-cal-default-color);
   display: flex;
   align-items: center;
-  @apply tw:pt-2;
-  @apply tw:pb-3.5;
-  @apply tw:pl-2;
-  @apply tw:pr-0.5;
+  @apply pt-2;
+  @apply pb-3.5;
+  @apply pl-2;
+  @apply pr-0.5;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
-  @apply tw:dark:font-semibold;
-  @apply tw:space-x-0.5;
-  @apply tw:tabular-nums;
+  @apply dark:font-semibold;
+  @apply space-x-0.5;
+  @apply tabular-nums;
 }
 
 @variant xs {
   .datepicker-day {
-    @apply tw:pl-2;
-    @apply tw:pr-1.5;
-    @apply tw:space-x-1;
+    @apply pl-2;
+    @apply pr-1.5;
+    @apply space-x-1;
   }
 }
 
 @media (min-width: 992px) {
   .datepicker-day {
-    @apply tw:space-x-0.5;
+    @apply space-x-0.5;
   }
 }
 
@@ -340,8 +340,8 @@ td.datepicker-day {
   /* define selection-box-width after `.datepicker-day` to override value */
   --uv-cal-selection-box-width: 2px;
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw:shadow-cyan-700;
-  @apply tw:dark:shadow-sky-400;
+  @apply shadow-cyan-700;
+  @apply dark:shadow-sky-400;
 }
 
 .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(
@@ -352,8 +352,8 @@ td.datepicker-day {
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw:shadow-cyan-600;
-  @apply tw:dark:shadow-sky-400;
+  @apply shadow-cyan-600;
+  @apply dark:shadow-sky-400;
 }
 
 .datepicker-day-sick-note-morning {
@@ -376,8 +376,8 @@ td.datepicker-day {
 .datepicker-day-weekend.datepicker-day-today,
 .datepicker-day-weekend.datepicker-day-selected {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw:shadow-cyan-600;
-  @apply tw:dark:shadow-sky-400/80;
+  @apply shadow-cyan-600;
+  @apply dark:shadow-sky-400/80;
   --background-color-left: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-weekend-bg) 85%, white);
 }
@@ -399,8 +399,8 @@ td.datepicker-day {
 .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
 .datepicker-day-public-holiday-full.datepicker-day-selected {
   box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
-  @apply tw:shadow-cyan-600;
-  @apply tw:dark:shadow-sky-400/80;
+  @apply shadow-cyan-600;
+  @apply dark:shadow-sky-400/80;
   --background-color-left: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
   --background-color-right: color-mix(in oklab, var(--uv-cal-public-holiday-bg) 85%, white);
 }

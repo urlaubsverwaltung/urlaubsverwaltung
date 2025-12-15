@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title></title>
   </head>
@@ -16,36 +16,30 @@
       "
     >
       <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
-        <uv-checkbox-card
-          class="tw:flex tw:flex-col tw:gap-2 tw:md:flex-row tw:md:items-center tw:md:gap-4 tw:xl:gap-16"
-        >
-          <div class="tw:md:w-64 tw:lg:w-72">
-            <span data-list-item-selection-toggle class="checkbox-switch tw:flex tw:items-center tw:gap-2 tw:md:gap-3">
+        <uv-checkbox-card class="flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
+          <div class="md:w-64 lg:w-72">
+            <span data-list-item-selection-toggle class="checkbox-switch flex items-center gap-2 md:gap-3">
               <input
                 type="checkbox"
                 id="input"
                 th:id="${id}"
                 th:name="${name}"
                 th:checked="${active}"
-                class="tw:m-0 tw:shrink-0"
+                class="m-0 shrink-0"
                 th:aria-describedby="${'info-' + id}"
                 data-auto-submit
               />
               <label
                 for="input"
                 th:for="${id}"
-                class="tw:m-0 tw:text-base tw:font-normal"
+                class="m-0 text-base font-normal"
                 th:text="${#messages.msg(label)}"
               ></label>
             </span>
           </div>
-          <div
-            class="tw:flex-1 tw:flex tw:items-start tw:gap-2 tw:dark:text-zinc-400 tw:dark:md:text-inherit tw:md:items-center"
-          >
-            <svg
-              th:replace="~{icon/info::svg(className='tw:hidden tw:shrink-0 tw:w-4 tw:h-4 tw:md:inline-block')}"
-            ></svg>
-            <p th:id="${'info-' + id}" class="tw:leading-normal tw:text-sm tw:m-0" th:text="${#messages.msg(info)}"></p>
+          <div class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:md:text-inherit md:items-center">
+            <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 md:inline-block')}"></svg>
+            <p th:id="${'info-' + id}" class="leading-normal text-sm m-0" th:text="${#messages.msg(info)}"></p>
           </div>
         </uv-checkbox-card>
       </li>

@@ -1,14 +1,14 @@
 .action-link {
-  @apply tw:whitespace-nowrap;
-  @apply tw:no-underline!;
-  @apply tw:flex!;
-  @apply tw:items-center!;
-  @apply tw:transition-opacity!;
-  @apply tw:duration-100!;
-  @apply tw:text-zinc-900/50!;
-  @apply tw:hover:text-zinc-900/100!;
-  @apply tw:focus:text-zinc-900/100!;
-  @apply tw:dark:text-zinc-50/75!;
-  @apply tw:dark:hover:text-zinc-50/75!;
-  @apply tw:dark:focus:text-zinc-50/75!;
+  @apply whitespace-nowrap;
+  @apply no-underline!;
+  @apply flex!;
+  @apply items-center!;
+  @apply transition-opacity!;
+  @apply duration-100!;
+  @apply text-zinc-900/50!;
+  @apply hover:text-zinc-900/100!;
+  @apply focus:text-zinc-900/100!;
+  @apply dark:text-zinc-50/75!;
+  @apply dark:hover:text-zinc-50/75!;
+  @apply dark:focus:text-zinc-50/75!;
 }

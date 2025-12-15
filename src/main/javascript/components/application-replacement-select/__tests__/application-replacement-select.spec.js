@@ -65,14 +65,14 @@ describe("application-replacement-select", function () {
   });
 
   it("shows loading indicator when 'select' value has changed", function () {
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeFalsy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeFalsy();
 
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeTruthy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeTruthy();
   });
 
   it("hides loading indicator when POST response is 'ok'", async function () {
@@ -86,8 +86,8 @@ describe("application-replacement-select", function () {
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeTruthy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeTruthy();
 
     jest.advanceTimersToNextTimer();
     // await allSettled POST
@@ -96,8 +96,8 @@ describe("application-replacement-select", function () {
     // await response.text
     await Promise.resolve();
 
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeFalsy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeFalsy();
   });
 
   it("hides loading indicator when POST response is 'not ok'", async function () {
@@ -110,8 +110,8 @@ describe("application-replacement-select", function () {
     selectElement.value = "3";
     selectElement.dispatchEvent(new Event("change"));
 
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeTruthy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeTruthy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeTruthy();
 
     jest.advanceTimersToNextTimer();
     // await allSettled POST
@@ -120,8 +120,8 @@ describe("application-replacement-select", function () {
     // await response.text
     await Promise.resolve();
 
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:w-4")).toBeFalsy();
-    expect(submitButtonElement.querySelector("svg").classList.contains("tw:mr-2")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("w-4")).toBeFalsy();
+    expect(submitButtonElement.querySelector("svg").classList.contains("mr-2")).toBeFalsy();
   });
 
   it("removes selected person from 'select' when response is 'ok'", async function () {

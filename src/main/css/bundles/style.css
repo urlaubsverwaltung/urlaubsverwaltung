@@ -57,8 +57,8 @@
     font-size: 100%;
     margin: 0;
     color: #444444;
-    @apply tw:dark:bg-zinc-900;
-    @apply tw:dark:text-zinc-200;
+    @apply dark:bg-zinc-900;
+    @apply dark:text-zinc-200;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     display: flex;
@@ -87,7 +87,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--tw-color-gray-200, currentColor);
+    border-color: var(--color-gray-200, currentColor);
   }
 
   button:not(:disabled),
@@ -110,44 +110,44 @@
 
   hr {
     border-color: #d5d5d5;
-    @apply tw:dark:border-zinc-600;
+    @apply dark:border-zinc-600;
   }
 
   h1 {
-    @apply tw:text-2xl;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-2xl;
+    @apply font-normal;
+    @apply leading-6;
   }
   h2 {
-    @apply tw:text-xl;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-xl;
+    @apply font-normal;
+    @apply leading-6;
   }
   h3 {
-    @apply tw:text-base;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
   }
   h4 {
-    @apply tw:text-base;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
   }
   h5 {
-    @apply tw:text-base;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
   }
   h6 {
-    @apply tw:text-base;
-    @apply tw:font-normal;
-    @apply tw:leading-6;
+    @apply text-base;
+    @apply font-normal;
+    @apply leading-6;
   }
 
   label {
-    @apply tw:font-semibold;
-    @apply tw:text-sm;
-    @apply tw:leading-6;
+    @apply font-semibold;
+    @apply text-sm;
+    @apply leading-6;
   }
 
   button,
@@ -179,20 +179,20 @@
 
 @layer components {
   .account-form-expire-description {
-    @apply tw:text-base;
-    @apply tw:dark:text-zinc-100;
+    @apply text-base;
+    @apply dark:text-zinc-100;
   }
 
   .account-form-expire-description a {
-    @apply tw:underline;
-    @apply tw:text-current!;
-    @apply tw:hover:text-gray-900!;
-    @apply tw:dark:hover:text-zinc-100!;
+    @apply underline;
+    @apply text-current!;
+    @apply hover:text-gray-900!;
+    @apply dark:hover:text-zinc-100!;
   }
 
   .account-form-expire-description em {
-    @apply tw:not-italic;
-    @apply tw:font-bold;
+    @apply not-italic;
+    @apply font-bold;
   }
 
   .content {

@@ -12,50 +12,47 @@
           <h2 id="anchorSickNotes" th:text="#{sicknotes.title}">Krankmeldungen</h2>
         </th:block>
         <th:block th:ref="absences-heading-actions">
-          <div class="tw:flex tw:flex-col tw:sm:flex-row">
+          <div class="flex flex-col sm:flex-row">
             <a
               th:if="${canAddSickNoteAnotherUser}"
-              class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+              class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
               href="#"
               th:href="@{/web/sicknote/new (person=${person.id})}"
             >
-              <svg th:replace="~{icon/plus-circle::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.sicknote}"></span>
             </a>
           </div>
         </th:block>
       </div>
 
-      <div class="tw:mb-4 tw:lg:mb-6">
-        <div class="tw:flex tw:flex-wrap tw:space-y-8 tw:sm:space-y-0">
-          <div class="tw:w-full tw:sm:w-1/2">
+      <div class="mb-4 lg:mb-6">
+        <div class="flex flex-wrap space-y-8 sm:space-y-0">
+          <div class="w-full sm:w-1/2">
             <div th:replace="~{fragments/box::box-with-icon(~{::sick-days-box-icon}, ~{::sick-days-box-body})}">
               <th:block th:ref="sick-days-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='tw:bg-red-500 tw:text-white tw:dark:bg-red-600 tw:dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="sick-days-box-icon-rounded">
-                    <svg th:replace="~{icon/medkit::svg(className='tw:w-8 tw:h-8')}" />
+                    <svg th:replace="~{icon/medkit::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="sick-days-box-body">
-                <span
-                  class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300"
-                  th:text="#{overview.sicknotes.sickdays.1}"
-                >
+                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.sicknotes.sickdays.1}">
                   Es bestehen
                 </span>
                 <span
-                  class="tw:my-1 tw:text-lg tw:font-medium"
+                  class="my-1 text-lg font-medium"
                   th:text="#{overview.sicknotes.sickdays.2(${sickDaysOverview.sickDays.days['TOTAL']})}"
                 >
                   5,5 Krankheitstage
                 </span>
-                <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
-                  <span class="tw:flex tw:items-center">
-                    <span class="tw:text-emerald-500 tw:flex tw:items-center">
-                      <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+                <span class="text-sm text-black/75 dark:text-zinc-300">
+                  <span class="flex items-center">
+                    <span class="text-emerald-500 flex items-center">
+                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.sickDays.days['WITH_AUB']})}"
@@ -65,36 +62,33 @@
               </th:block>
             </div>
           </div>
-          <div class="tw:w-full tw:sm:w-1/2">
+          <div class="w-full sm:w-1/2">
             <div
               th:replace="~{fragments/box::box-with-icon(~{::child-sick-days-box-icon}, ~{::child-sick-days-box-body})}"
             >
               <th:block th:ref="child-sick-days-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='tw:bg-red-500 tw:text-white tw:dark:bg-red-600 tw:dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="child-sick-days-box-icon-rounded">
-                    <svg th:replace="~{icon/child::svg(className='tw:w-8 tw:h-8')}"></svg>
+                    <svg th:replace="~{icon/child::svg(className='w-8 h-8')}"></svg>
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="child-sick-days-box-body">
-                <span
-                  class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300"
-                  th:text="#{overview.sicknotes.sickdays.child.1}"
-                >
+                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.sicknotes.sickdays.child.1}">
                   Es bestehen
                 </span>
                 <span
-                  class="tw:my-1 tw:text-lg tw:font-medium"
+                  class="my-1 text-lg font-medium"
                   th:text="#{overview.sicknotes.sickdays.child.2(${sickDaysOverview.childSickDays.days['TOTAL']})}"
                 >
                   3.0 Kind-Krankheitstage
                 </span>
-                <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
-                  <span class="tw:flex tw:items-center">
-                    <span class="tw:text-emerald-500 tw:flex tw:items-center">
-                      <svg th:replace="~{icon/check::svg(className='tw:w-5 tw:h-5')}"></svg>
+                <span class="text-sm text-black/75 dark:text-zinc-300">
+                  <span class="flex items-center">
+                    <span class="text-emerald-500 flex items-center">
+                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.childSickDays.days['WITH_AUB']})}"
@@ -107,7 +101,7 @@
         </div>
       </div>
 
-      <table class="list-table selectable-table tw:text-sm">
+      <table class="list-table selectable-table text-sm">
         <tbody>
           <tr
             th:each="sickNote,loopStatus : ${sickNotes}"
@@ -115,10 +109,10 @@
             th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
             th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
           >
-            <td class="tw:hidden tw:print:table-cell">
+            <td class="hidden print:table-cell">
               <th:block th:text="${sickNoteStatusNameI18n}"></th:block>
             </td>
-            <td class="tw:py-6 absence-type_color-box-parent">
+            <td class="py-6 absence-type_color-box-parent">
               <div
                 class="absence-type_color-box"
                 th:classappend="|
@@ -133,24 +127,24 @@
                 &nbsp;
               </div>
             </td>
-            <td class="is-centered tw:print:hidden state ${sickNote.status}">
+            <td class="is-centered print:hidden state ${sickNote.status}">
               <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
-                <svg th:replace="~{icon/child::svg(className='tw:w-6 tw:h-6')}"></svg>
+                <svg th:replace="~{icon/child::svg(className='w-6 h-6')}"></svg>
               </th:block>
               <th:block th:if="${sickNote.sickNoteType.category.name != 'SICK_NOTE_CHILD'}">
-                <svg th:replace="~{icon/medkit::svg(className='tw:w-6 tw:h-6')}"></svg>
+                <svg th:replace="~{icon/medkit::svg(className='w-6 h-6')}"></svg>
               </th:block>
             </td>
-            <td class="tw:py-6">
+            <td class="py-6">
               <a
                 th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}"
-                class="print:no-link tw:hover:no-underline tw:group"
+                class="print:no-link hover:no-underline group"
               >
                 <span
-                  class="tw:block tw:mb-1 tw:text-lg tw:group-hover:underline tw:group-focus:underline"
+                  class="block mb-1 text-lg group-hover:underline group-focus:underline"
                   th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
                 ></span>
-                <span class="tw:flex tw:flex-col tw:lg:flex-row tw:text-[#444444] tw:dark:text-zinc-200">
+                <span class="flex flex-col lg:flex-row text-[#444444] dark:text-zinc-200">
                   <th:block th:text="#{absence.period.for}" />
                   <th:block
                     th:replace="~{fragments/date-range::date-range-all(
@@ -160,10 +154,10 @@
                   )}"
                   ></th:block>
                 </span>
-                <span th:if="${sickNote.aubPresent}" class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
-                  <span class="tw:flex tw:items-center">
-                    <span class="tw:text-emerald-500 tw:flex tw:items-center">
-                      <svg th:replace="~{icon/check::svg(className='tw:w-4 tw:h-4')}"></svg>
+                <span th:if="${sickNote.aubPresent}" class="text-sm text-black/75 dark:text-zinc-300">
+                  <span class="flex items-center">
+                    <span class="text-emerald-500 flex items-center">
+                      <svg th:replace="~{icon/check::svg(className='w-4 h-4')}"></svg>
                     </span>
                     &nbsp;
                     <span th:text="#{overview.sicknotes.sickdays.aub(${sickNote.workDaysWithAub})}"></span>
@@ -174,9 +168,9 @@
             <td class="is-centered">
               <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
             </td>
-            <td class="tw:print:hidden tw:hidden tw:md:table-cell">
-              <div class="tw:flex tw:items-center tw:justify-center">
-                <svg th:replace="~{icon/clock::svg(className='tw:w-4 tw:h-4')}"></svg>&nbsp;
+            <td class="print:hidden hidden md:table-cell">
+              <div class="flex items-center justify-center">
+                <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                 <span>
                   <th:block th:text="#{sicknote.progress.lastEdited}"></th:block>
                   <th:block th:replace="~{fragments/date::date(${sickNote.lastEdited})}"></th:block>

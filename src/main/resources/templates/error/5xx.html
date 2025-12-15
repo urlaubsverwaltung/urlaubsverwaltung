@@ -1,45 +1,45 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title})}">
     <title th:text="#{error-page.common.meta.title}"></title>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw:grow tw:flex tw:flex-col tw:items-center">
-        <div class="tw:w-full tw:max-w-screen-xl">
-          <div class="tw:px-8 tw:xs:px-16">
+      <div class="grow flex flex-col items-center">
+        <div class="w-full max-w-screen-xl">
+          <div class="px-8 xs:px-16">
             <h1
-              class="tw:mt-4 tw:flex tw:flex-col tw:font-medium tw:text-3xl tw:sm:space-x-2 tw:sm:items-baseline tw:sm:text-4xl tw:xs:mt-8 tw:lg:mt-24 tw:lg:space-x-0 tw:lg:text-5xl"
+              class="mt-4 flex flex-col font-medium text-3xl sm:space-x-2 sm:items-baseline sm:text-4xl xs:mt-8 lg:mt-24 lg:space-x-0 lg:text-5xl"
             >
               <th:block th:text="${status}">500</th:block>&nbsp;
-              <span class="tw:sm:mt-2" th:text="#{error-page.server-error.title}"></span>
+              <span class="sm:mt-2" th:text="#{error-page.server-error.title}"></span>
             </h1>
-            <p class="tw:mt-8 tw:text-xl tw:max-w-prose" th:text="#{error-page.server-error.paragraph}"></p>
+            <p class="mt-8 text-xl max-w-prose" th:text="#{error-page.server-error.paragraph}"></p>
             <div
-              class="tw:mt-8 tw:text-lg tw:flex tw:flex-col tw:space-y-4 tw:sm:flex-row tw:sm:mt-8 tw:sm:space-y-0 tw:sm:space-x-2"
+              class="mt-8 text-lg flex flex-col space-y-4 sm:flex-row sm:mt-8 sm:space-y-0 sm:space-x-2"
               th:with="previousPageLink=${header_referer}"
             >
               <a
                 th:if="${not #strings.isEmpty(previousPageLink)}"
                 href="#"
                 th:href="${previousPageLink}"
-                class="button tw:text-base tw:px-4 tw:py-2"
+                class="button text-base px-4 py-2"
                 th:text="#{error-page.goto.previous}"
               ></a>
-              <a href="/" class="button tw:text-base tw:px-4 tw:py-2" th:text="#{error-page.goto.start}"></a>
+              <a href="/" class="button text-base px-4 py-2" th:text="#{error-page.goto.start}"></a>
             </div>
           </div>
         </div>
-        <div class="tw:px-4 tw:xs:px-8">
+        <div class="px-4 xs:px-8">
           <picture th:if="${theme == 'system'}">
             <source th:srcset="@{/images/5xx_bear_dark.png}" media="(prefers-color-scheme: dark)" />
-            <img src="#" th:src="@{/images/5xx_bear.svg}" alt="" class="tw:mt-8 tw:max-w-full" />
+            <img src="#" th:src="@{/images/5xx_bear.svg}" alt="" class="mt-8 max-w-full" />
           </picture>
           <th:block
             th:if="${theme != 'system'}"
             th:with="src=${theme == 'dark' ? '/images/5xx_bear_dark.png' : '/images/5xx_bear.svg'}"
           >
-            <img src="#" th:src="@{${src}}" alt="" class="tw:mt-8 tw:max-w-full" />
+            <img src="#" th:src="@{${src}}" alt="" class="mt-8 max-w-full" />
           </th:block>
         </div>
       </div>

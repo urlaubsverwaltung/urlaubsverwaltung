@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div class="tw:print:hidden">
+      <div class="print:hidden">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::calendar-heading-body}, ~{::calendar-heading-actions})}"
         >
@@ -13,30 +13,30 @@
             <h2 id="calendar" th:text="#{overview.calendar.title}">Kalender</h2>
           </th:block>
           <th:block th:ref="calendar-heading-actions">
-            <div class="tw:flex tw:flex-col tw:sm:flex-row">
+            <div class="flex flex-col sm:flex-row">
               <a
                 th:if="${canAccessAbsenceOverview}"
-                class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+                class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
                 href="#"
                 th:href="@{/web/absences}"
               >
-                <svg th:replace="~{icon/calendar::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+                <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
                 <span th:text="#{overview.absences.overview.link.text}"></span>
               </a>
               <a
                 th:if="${canAccessCalendarShare}"
-                class="tw:ml-2 icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row"
+                class="ml-2 icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row"
                 href="#"
                 th:href="@{/web/calendars/share/persons/{personId} (personId=${person.id})}"
               >
-                <svg th:replace="~{icon/share-2::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
+                <svg th:replace="~{icon/share-2::svg(className='w-5 h-5')}"></svg>&nbsp;
                 <span th:text="#{overview.calendar.share.link.text}"></span>
               </a>
             </div>
           </th:block>
         </div>
 
-        <div id="datepicker" class="tw:flex tw:justify-center tw:items-center">
+        <div id="datepicker" class="flex justify-center items-center">
           <div class="lds-ellipsis">
             <div></div>
             <div></div>
