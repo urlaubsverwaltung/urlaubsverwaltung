@@ -29,7 +29,7 @@ a.button-info {
   text-decoration: none !important; /* important to override bootstrap */
   @apply tw-px-3;
   @apply tw-py-2;
-  @apply tw-rounded;
+  @apply tw-rounded-sm;
   @apply tw-font-medium;
   @apply dark:tw-font-semibold;
   @apply tw-border;

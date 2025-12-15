@@ -218,7 +218,7 @@ table.absence-type-settings-table thead {
 
     tbody {
       tr {
-        @apply tw-rounded;
+        @apply tw-rounded-sm;
         @apply tw-border;
         @apply tw-p-2;
         @apply tw-transition-colors;
