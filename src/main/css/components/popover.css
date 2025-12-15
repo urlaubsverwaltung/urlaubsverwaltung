@@ -26,6 +26,10 @@
   color: currentColor;
   background-color: transparent;
   font-size: var(--uv-form-control-text-size);
+
+  &.popover-button--inherit {
+    font-size: inherit;
+  }
 }
 
 .popover-menu {
