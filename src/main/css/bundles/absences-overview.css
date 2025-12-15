@@ -5,9 +5,8 @@ th.vacationOverview-cal-head.today {
 th.vacationOverview-cal-head.today::after {
   content: "";
   @apply tw-border-3;
-  @apply tw-border-calendar-today;
-  @apply tw-border-opacity-40;
-  @apply dark:tw-border-opacity-80;
+  @apply tw-border-calendar-today/40;
+  @apply dark:tw-border-calendar-today/80;
   position: absolute;
   top: 0;
   left: 0;
