@@ -498,7 +498,7 @@ textarea.error {
         /* override small screen */
         margin-bottom: 0;
         /* but not for next elements */
-        &:has (~ .uv-form__group-info) {
+        &:has(~ .uv-form__group-info) {
           margin-bottom: var(--uv-form-row-gap);
         }
       }
