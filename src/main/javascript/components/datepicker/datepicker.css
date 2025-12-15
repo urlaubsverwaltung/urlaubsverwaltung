@@ -74,9 +74,7 @@ duet-date-picker[disabled] input {
   .duet-date__toggle:focus {
     border-color: transparent !important;
     outline: 2px solid var(--uv-focus-ring-color) !important;
-    box-shadow:
-      inset 0 1px 1px rgba(0, 0, 0, 0.075),
-      0 0 8px rgba(102, 175, 233, 0.6) !important;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6) !important;
   }
 
   &:focus-within {
