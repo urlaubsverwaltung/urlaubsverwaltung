@@ -57,14 +57,13 @@ button.modal__close-button {
   text-shadow: 0 1px 0 #fff;
 
   @apply tw-text-black;
-  @apply tw-bg-white;
-  @apply tw-bg-opacity-20;
-  @apply hover:tw-bg-opacity-50;
+  @apply tw-bg-white/20;
+  @apply hover:tw-bg-white/20;
 
   @apply dark:tw-text-zinc-200;
   @apply dark:hover:tw-text-zinc-100;
-  @apply dark:tw-bg-zinc-800;
-  @apply dark:hover:tw-bg-opacity-50;
+  @apply dark:tw-bg-zinc-800/20;
+  @apply hover:dark:tw-bg-zinc-800/50;
 }
 
 .modal__body {

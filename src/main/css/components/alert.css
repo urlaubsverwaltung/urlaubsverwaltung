@@ -17,7 +17,7 @@
   }
 
   @apply dark:tw-font-medium;
-  @apply dark:tw-bg-opacity-95;
+  @apply dark:tw-bg-opacity-95; /* TODO */
   /* `border-transparent` is relevant to override default :is(dark *) {border-color} */
   /* otherwise light-theme has no border-color and dark-theme has one (due to the default) */
   /* therefore border color should be explicitly at the html element for instance */
