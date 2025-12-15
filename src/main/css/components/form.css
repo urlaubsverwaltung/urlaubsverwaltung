@@ -62,10 +62,18 @@ select,
     color: var(--uv-placeholder-color);
   }
 
+  &[readonly] {
+    background-color: var(--color-gray-200);
+  }
+
   @variant dark {
     border-color: var(--color-zinc-600);
     background-color: var(--color-zinc-700);
     color: var(--color-zinc-50);
+
+    &[readonly] {
+      background-color: var(--color-zinc-800);
+    }
   }
 }
 
@@ -247,10 +255,6 @@ textarea.error {
 
   p {
     margin: 0; /* override bootstrap margin bottom */
-  }
-
-  input[readonly] {
-    background-color: var(--color-gray-200);
   }
 
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
