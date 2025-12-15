@@ -112,33 +112,39 @@
 
             <div class="uv-form__input-row">
               <p class="uv-form__label" th:text="|#{department.members.person}:|"></p>
-              <div
-                class="flex items-stretch border border-neutral-300 dark:border-neutral-600 rounded-md focus-within:ring-2 focus-within:ring-blue-300"
-              >
-                <label for="member-search-input" class="sr-only"> Mitarbeiter Suche </label>
-                <input
-                  id="member-search-input"
-                  type="text"
-                  class="border-none text-ellipsis focus:ring-0 rounded-r-none"
-                  name="memberQuery"
-                  th:placeholder="#{action.search.placeholder.firstname-lastname}"
-                  th:value="${memberQuery}"
-                  data-auto-submit="member-search-submit"
-                  data-auto-submit-delay="100"
-                />
-                <button
-                  type="submit"
-                  id="member-search-submit"
-                  class="dark:bg-zinc-800 px-2 rounded-r-md flex items-center"
-                  name="do-member-search"
-                  th:formaction="${department.id == null ? '/web/department/new' : '/web/department/' + department.id + '/edit'}"
-                  data-turbo-frame="frame-department-members"
-                  data-turbo-action="replace"
-                  data-turbo="true"
+              <div>
+                <th:block
+                  th:replace="~{fragments/input-group::input-group(~{::person-search}, ~{::person-search-addon}, ${false})}"
                 >
-                  <svg th:replace="~{icon/search::svg(className='w-5 h-5 stroke-2')}"></svg>
-                  <span class="sr-only" th:text="#{action.search}">Suche</span>
-                </button>
+                  <th:block th:ref="person-search">
+                    <label for="member-search-input" class="sr-only">Mitarbeiter Suche</label>
+                    <input
+                      id="member-search-input"
+                      type="text"
+                      class="text-ellipsis"
+                      name="memberQuery"
+                      th:placeholder="#{action.search.placeholder.firstname-lastname}"
+                      th:value="${memberQuery}"
+                      data-auto-submit="member-search-submit"
+                      data-auto-submit-delay="100"
+                    />
+                  </th:block>
+                  <th:block th:ref="person-search-addon">
+                    <button
+                      type="submit"
+                      id="member-search-submit"
+                      class="flex items-center"
+                      name="do-member-search"
+                      th:formaction="${department.id == null ? '/web/department/new' : '/web/department/' + department.id + '/edit'}"
+                      data-turbo-frame="frame-department-members"
+                      data-turbo-action="replace"
+                      data-turbo="true"
+                    >
+                      <svg th:replace="~{icon/search::svg(className='w-5 h-5 stroke-2')}"></svg>
+                      <span class="sr-only" th:text="#{action.search}">Suche</span>
+                    </button>
+                  </th:block>
+                </th:block>
               </div>
               <turbo-frame id="frame-department-members">
                 <input
