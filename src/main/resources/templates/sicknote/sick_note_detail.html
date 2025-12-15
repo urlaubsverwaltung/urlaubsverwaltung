@@ -206,10 +206,7 @@
               </div>
             </th:block>
             <th:block th:ref="sicknote-box-body">
-              <span
-                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                data-test-id="sicknote-person"
-              >
+              <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300" data-test-id="sicknote-person">
                 <th:block th:text="#{sicknotes.details.box.person.has(${sickNote.person.niceName})}">
                   Klaus Müller hat eine
                 </th:block>
@@ -233,10 +230,7 @@
                   &nbsp;
                 </span>
               </span>
-              <span
-                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                data-test-id="sicknote-date"
-              >
+              <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300" data-test-id="sicknote-date">
                 <th:block th:text="#{absence.period.for}" />
                 <th:block
                   th:replace="~{fragments/date-range::date-range-all(

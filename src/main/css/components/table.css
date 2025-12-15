@@ -111,11 +111,11 @@ tr.inactive td > * {
 
 .hoverable-table tr:hover .action-link,
 .selectable-table tr:hover .action-link {
-  @apply tw-text-opacity-75 !important;
+  /*TODO @apply tw-text-opacity-75 !important;*/
 }
 .hoverable-table tr:hover .action-link:hover,
 .selectable-table tr:hover .action-link:hover {
-  @apply tw-text-opacity-100 !important;
+  /*TODO @apply tw-text-opacity-100 !important;*/
 }
 
 /**************************************************************************
@@ -250,7 +250,8 @@ table.absence-type-settings-table thead {
       }
 
       tr[data-enabled="false"] td {
-        @apply tw-text-opacity-75;
+        @apply tw-text-black-almost/75;
+        @apply dark:tw-text-zinc-100/75;
       }
 
       td::before {

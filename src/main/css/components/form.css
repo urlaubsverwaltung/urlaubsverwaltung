@@ -30,8 +30,7 @@ legend {
   display: block;
   color: #737373;
   @apply tw-text-sm;
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-text-opacity-75;
+  @apply dark:tw-text-zinc-200/75;
 }
 
 input:not(:is([type="radio"], [type="checkbox"])),
