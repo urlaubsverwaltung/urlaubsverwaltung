@@ -5,27 +5,27 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div class="tw-mb-5">
-        <div class="box tw-p-5">
+      <div class="tw:mb-5">
+        <div class="box tw:p-5">
           <div
             th:replace="~{fragments/box::box-with-icon(~{::application-details-box-icon}, ~{::application-details-box-body})}"
           >
             <th:block th:ref="application-details-box-icon">
               <div
-                th:replace="~{fragments/rounded::block(content=~{::application-details-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')}"
+                th:replace="~{fragments/rounded::block(content=~{::application-details-box-icon-rounded}, className='tw:bg-amber-300 tw:text-white tw:dark:bg-amber-400 tw:dark:text-zinc-900')}"
               >
                 <th:block th:ref="application-details-box-icon-rounded">
                   <th:block th:if="${app.vacationType.category.name == 'HOLIDAY'}">
-                    <svg th:replace="~{icon/sun::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/sun::svg(className='tw:w-8 tw:h-8')}" />
                   </th:block>
                   <th:block th:if="${app.vacationType.category.name != 'HOLIDAY'}">
-                    <svg th:replace="~{icon/flag::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/flag::svg(className='tw:w-8 tw:h-8')}" />
                   </th:block>
                 </th:block>
               </div>
             </th:block>
             <th:block th:ref="application-details-box-body">
-              <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
+              <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
                 <th:block th:text="${app.person.niceName}"> Klaus Müller </th:block>
                 <th:block
                   th:text="${(app.status.name == 'ALLOWED' && app.editedDate == null) ? #messages.msg('application.applier.appliedDirectly') : #messages.msg('application.applier.applied')}"
@@ -33,10 +33,10 @@
                   beantragt
                 </th:block>
               </span>
-              <span class="tw-flex tw-justify-between tw-gap-4 tw-items-center tw-my-1 tw-text-lg tw-font-medium">
+              <span class="tw:flex tw:justify-between tw:gap-4 tw:items-center tw:my-1 tw:text-lg tw:font-medium">
                 <th:block th:text="${app.vacationType.label}"> Erholungsurlaub </th:block>
                 <span
-                  class="absence-type_color-box print:tw-hidden tw-mr-5"
+                  class="absence-type_color-box tw:print:hidden tw:mr-5"
                   th:classappend="|
                   ${app.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
                   ${app.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
@@ -51,7 +51,7 @@
                   &nbsp;
                 </span>
               </span>
-              <span class="tw-text-sm tw-text-black/75 dark:tw-text-zinc-300">
+              <span class="tw:text-sm tw:text-black/75 tw:dark:text-zinc-300">
                 <th:block th:text="#{absence.period.for}" />
                 <th:block
                   th:replace="~{fragments/date-range::date-range-all(
@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <table class="list-table striped-table bordered-table tw-text-sm tw-table-fixed">
+      <table class="list-table striped-table bordered-table tw:text-sm tw:table-fixed">
         <tr>
           <td th:text="#{absence.period.duration}"></td>
           <td>
@@ -74,13 +74,13 @@
               <th:block th:text="#{application.data.days(${app.workDays})}" />
             </strong>
             <th:block th:if="${app.startDate.year != app.endDate.year}">
-              <span class="tw-text-gray-500 days">
+              <span class="tw:text-gray-500 days">
                 <!--filled by javascript-->
                 <!--see app_info.js-->
               </span>
             </th:block>
             <th:block th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}">
-              <span class="tw-text-gray-500">
+              <span class="tw:text-gray-500">
                 <br />
                 <th:block th:text="${{app.hours}}" />
                 <th:block th:text="#{application.data.hours.number}" />
@@ -88,7 +88,7 @@
             </th:block>
           </td>
         </tr>
-        <tr class="print:tw-table-row">
+        <tr class="tw:print:table-row">
           <td th:text="#{application.data.status}"></td>
           <td th:text="#{__${app.status.name}__}"></td>
         </tr>
@@ -111,7 +111,7 @@
         </tr>
         <tr>
           <td th:text="#{application.data.reason}"></td>
-          <td class="tw-break-words">
+          <td class="tw:break-words">
             <th:block
               th:text="${not #strings.isEmpty(app.reason) ? app.reason : #messages.msg('application.data.furtherInformation.notSpecified')}"
             ></th:block>
@@ -123,7 +123,7 @@
           <td>
             <ul
               th:if="${not #lists.isEmpty(app.holidayReplacements)}"
-              class="tw-list-none tw-m-0 tw-p-0"
+              class="tw:list-none tw:m-0 tw:p-0"
               data-test-id="holiday-replacement-list"
             >
               <li
@@ -139,7 +139,7 @@
         </tr>
         <tr>
           <td th:text="#{application.data.furtherInformation.address}"></td>
-          <td class="tw-break-words">
+          <td class="tw:break-words">
             <th:block
               th:text="${not #strings.isEmpty(app.address) ? app.address : #messages.msg('application.data.furtherInformation.notSpecified')}"
             ></th:block>
@@ -148,13 +148,13 @@
         <tr>
           <td th:text="#{application.data.teamInformed}"></td>
           <td>
-            <div class="tw-flex tw-items-center">
+            <div class="tw:flex tw:items-center">
               <th:block th:if="${app.teamInformed == true}">
-                <svg th:replace="~{icon/smile::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <svg th:replace="~{icon/smile::svg(className='tw:w-4 tw:h-4')}"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.true}"></span>
               </th:block>
               <th:block th:if="${app.teamInformed == false}">
-                <svg th:replace="~{icon/frown::svg(className='tw-w-4 tw-h-4')}"></svg>
+                <svg th:replace="~{icon/frown::svg(className='tw:w-4 tw:h-4')}"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.false}"></span>
               </th:block>
             </div>

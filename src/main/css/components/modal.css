@@ -5,9 +5,9 @@
   margin-top: var(--modal-margin-top);
   padding: 0;
   background-color: #ffffff;
-  @apply tw-border;
+  @apply tw:border;
   border-radius: 6px;
-  @apply dark:tw-bg-zinc-800;
+  @apply tw:dark:bg-zinc-800;
 
   animation: modal-fade-in var(--transition-delay);
 
@@ -29,7 +29,7 @@
     width: 600px;
     margin: var(--modal-margin-top) auto 30px auto;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    @apply dark:tw-shadow-none;
+    @apply tw:dark:shadow-none;
   }
 }
 
@@ -40,7 +40,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  @apply dark:tw-border-b-neutral-900;
+  @apply tw:dark:border-b-neutral-900;
 }
 
 .modal__header__title {
@@ -56,14 +56,14 @@ button.modal__close-button {
   line-height: 1;
   text-shadow: 0 1px 0 #fff;
 
-  @apply tw-text-black;
-  @apply tw-bg-white/20;
-  @apply hover:tw-bg-white/20;
+  @apply tw:text-black;
+  @apply tw:bg-white/20;
+  @apply tw:hover:bg-white/20;
 
-  @apply dark:tw-text-zinc-200;
-  @apply dark:hover:tw-text-zinc-100;
-  @apply dark:tw-bg-zinc-800/20;
-  @apply hover:dark:tw-bg-zinc-800/50;
+  @apply tw:dark:text-zinc-200;
+  @apply tw:dark:hover:text-zinc-100;
+  @apply tw:dark:bg-zinc-800/20;
+  @apply tw:dark:hover:dark:bg-zinc-800/50;
 }
 
 .modal__body {
@@ -74,7 +74,7 @@ button.modal__close-button {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #e5e5e5;
-  @apply dark:tw-border-t-neutral-900;
+  @apply tw:dark:border-t-neutral-900;
 }
 
 @keyframes modal-fade-in {

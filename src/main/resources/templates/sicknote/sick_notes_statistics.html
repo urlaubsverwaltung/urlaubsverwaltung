@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -44,7 +44,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+      <div class="tw:max-w-6xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:xl:px-1.5">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
         >
@@ -60,26 +60,26 @@
         </div>
 
         <div>
-          <div class="tw-mt-8 tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-gap-1">
-            <h2 class="tw-m-0 tw-font-bold tw-text-base" th:text="#{sicknotes.statistics.chart.title}">
+          <div class="tw:mt-8 tw:flex tw:flex-col tw:md:flex-row tw:justify-between tw:gap-1">
+            <h2 class="tw:m-0 tw:font-bold tw:text-base" th:text="#{sicknotes.statistics.chart.title}">
               Verteilung der Krankheitstage
             </h2>
-            <div class="tw-text-sm md:tw-font-bold md:tw-text-right md:tw-px-3">
+            <div class="tw:text-sm tw:md:font-bold tw:md:text-right tw:md:px-3">
               <th:block th:text="#{filter.validity}"></th:block>
               <th:block th:text="${#temporals.format(statistics.asOfDate, 'dd.MM.yyyy')}"></th:block>
             </div>
           </div>
 
-          <div class="tw-mt-4 sicknote-statistics-chart-container">
+          <div class="tw:mt-4 sicknote-statistics-chart-container">
             <div id="sicknote-statistic-chart" class="sicknote-statistics-chart"></div>
           </div>
         </div>
 
-        <div class="tw-mt-8 statistic-summary-container">
+        <div class="tw:mt-8 statistic-summary-container">
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.days-per-year.title}">
             Krankheitstage
           </h3>
-          <p class="tw-text-sm" th:text="#{sicknotes.statistics.summary.days-per-year.description(${statistics.year})}">
+          <p class="tw:text-sm" th:text="#{sicknotes.statistics.summary.days-per-year.description(${statistics.year})}">
             Alle Krankheitstage in diesem Jahr zusammen gezählt.
           </p>
           <div class="statistic-summary-card-box">
@@ -102,7 +102,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-year.sick-note.label}">
@@ -121,7 +121,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-child-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-year.sick-note-child.label}">
@@ -140,12 +140,12 @@
           </div>
         </div>
 
-        <div class="tw-mt-8 statistic-summary-container">
+        <div class="tw:mt-8 statistic-summary-container">
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.days-per-person.title}">
             Krankheitstage pro Mitarbeitende
           </h3>
           <p
-            class="tw-text-sm tw-m-0 tw-mt-0.5"
+            class="tw:text-sm tw:m-0 tw:mt-0.5"
             th:text="#{sicknotes.statistics.summary.days-per-person.description(${statistics.year})}"
           >
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt krank sind.
@@ -159,7 +159,7 @@
                 Durchschnittliche Anzahl Tage
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPerson}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -171,7 +171,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-person.sick-note.label}">
@@ -179,7 +179,7 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPersonAndSick}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -191,7 +191,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-child-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-person.sick-note-child.label}">
@@ -199,7 +199,7 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfDiseasePerPersonAndChildSick}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -211,7 +211,7 @@
           </div>
         </div>
 
-        <div class="tw-mt-8 statistic-summary-container">
+        <div class="tw:mt-8 statistic-summary-container">
           <h3
             class="statistic-summary-container-title"
             th:text="#{sicknotes.statistics.summary.days-per-sicknote.title}"
@@ -219,7 +219,7 @@
             Krankheitstage pro Mitarbeitende Dauer einer Krankmeldung
           </h3>
           <p
-            class="tw-text-sm tw-mt-0"
+            class="tw:text-sm tw:mt-0"
             th:text="#{sicknotes.statistics.summary.days-per-sicknote.description(${statistics.year})}"
           >
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt je Krankmeldung abwesend sind.
@@ -233,7 +233,7 @@
                 Gesamt durchschnittliche Dauer
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfAllSickNotes}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -245,7 +245,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-sicknote.sick-note.label}">
@@ -253,7 +253,7 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfSickNote}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -265,7 +265,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-child-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.days-per-sicknote.sick-note-child.label}">
@@ -273,7 +273,7 @@
                 </th:block>
               </span>
               <span class="statistic-summary-card__content">
-                <span class="tw-text-lg">ø</span>
+                <span class="tw:text-lg">ø</span>
                 <span
                   th:with="value=${statistics.averageDurationOfChildSickNote}"
                   th:text="${#numbers.formatDecimal(value, 1, (value % 1 == 0 ? 0 : 2))}"
@@ -285,17 +285,17 @@
           </div>
         </div>
 
-        <div class="tw-mt-12 statistic-summary-container">
+        <div class="tw:mt-12 statistic-summary-container">
           <h3 class="statistic-summary-container-title" th:text="#{sicknotes.statistics.summary.sicknotes.title}">
             Krankmeldungen
           </h3>
-          <p class="tw-text-sm" th:text="#{sicknotes.statistics.summary.sicknotes.description}">
+          <p class="tw:text-sm" th:text="#{sicknotes.statistics.summary.sicknotes.description}">
             Detailliertere Statistiken zur Anzahl von Krankmeldungen.
           </p>
           <div class="statistic-summary-card-box">
             <p class="statistic-summary-card">
               <span
-                class="statistic-summary-card__label tw-flex"
+                class="statistic-summary-card__label tw:flex"
                 th:text="#{sicknotes.statistics.summary.sicknotes.total.label}"
               >
                 Anzahl aller Krankmeldungen
@@ -307,7 +307,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.sicknotes.sick-note.label}">
@@ -321,7 +321,7 @@
             <p class="statistic-summary-card">
               <span class="statistic-summary-card__label">
                 <span
-                  class="tw-inline-block tw-h-3 tw-w-3 tw-rounded-xs tw-mr-2"
+                  class="tw:inline-block tw:h-3 tw:w-3 tw:rounded-xs tw:mr-2"
                   style="background-color: var(--sick-note-child-color)"
                 ></span>
                 <th:block th:text="#{sicknotes.statistics.summary.sicknotes.sick-note-child.label}">
@@ -341,17 +341,17 @@
                 </div>
               </div>
               <div class="statistic-summary-card__content">
-                <div class="tw-flex tw-items-center tw-gap-4 tw-text-base tw-font-normal">
+                <div class="tw:flex tw:items-center tw:gap-4 tw:text-base tw:font-normal">
                   <div id="sicknote-statistic-verteilung"></div>
-                  <div class="tw-flex-1 tw-flex tw-flex-col tw-gap-1 tw-text-sm">
+                  <div class="tw:flex-1 tw:flex tw:flex-col tw:gap-1 tw:text-sm">
                     <p
-                      class="tw-m-0"
+                      class="tw:m-0"
                       th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${statistics.numberOfPersonsWithMinimumOneSickNote})}"
                     >
                       4 Mitarbeitende mit mindestens einer Krankmeldung
                     </p>
                     <p
-                      class="tw-m-0"
+                      class="tw:m-0"
                       th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without(${statistics.numberOfPersonsWithoutSickNote})}"
                     >
                       10 Mitarbeitende ohne Krankmeldung

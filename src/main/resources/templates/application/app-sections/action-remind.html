@@ -8,17 +8,17 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToRemindApplication}"
-        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-        onclick="document.querySelector('form#remind').submit();"
+        class="icon-link tw:bg-transparent tw:text-base tw:flex tw:items-center tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
+        onclick="document.querySelector('form#remind').submit()"
         th:data-title="#{action.remind}"
       >
-        <svg th:replace="~{icon/megaphone::svg(className='tw-w-5 tw-h-5')}"></svg>
-        <span class="tw-sr-only" th:text="#{action.remind}"></span>
+        <svg th:replace="~{icon/megaphone::svg(className='tw:w-5 tw:h-5')}"></svg>
+        <span class="tw:sr-only" th:text="#{action.remind}"></span>
       </button>
     </th:block>
 
     <th:block th:fragment="form">
-      <form method="post" id="remind" th:action="@{/web/application/__${app.id}__/remind}" class="tw-inline"></form>
+      <form method="post" id="remind" th:action="@{/web/application/__${app.id}__/remind}" class="tw:inline"></form>
     </th:block>
   </body>
 </html>

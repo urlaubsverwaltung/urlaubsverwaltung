@@ -10,7 +10,7 @@
   gap: 2px;
 
   border-bottom: 1px solid #eee;
-  @apply dark:tw-border-b-zinc-600;
+  @apply tw:dark:border-b-zinc-600;
 
   > li {
     position: relative; /* for after element positioning */
@@ -44,10 +44,10 @@
     &:hover,
     &:focus-within {
       background-color: #eee;
-      @apply dark:tw-bg-zinc-800;
-      @apply dark:tw-border;
-      @apply dark:tw-border-b-0;
-      @apply dark:tw-border-zinc-600;
+      @apply tw:dark:bg-zinc-800;
+      @apply tw:dark:border;
+      @apply tw:dark:border-b-0;
+      @apply tw:dark:border-zinc-600;
     }
   }
 
@@ -63,12 +63,12 @@
     border-color: #ddd;
     border-bottom-width: 0; /* border-bottom is handled by after element */
 
-    @apply dark:tw-bg-zinc-700;
-    @apply dark:tw-border-zinc-600;
+    @apply tw:dark:bg-zinc-700;
+    @apply tw:dark:border-zinc-600;
 
     &::after {
       background-color: #fff;
-      @apply dark:tw-bg-zinc-600;
+      @apply tw:dark:bg-zinc-600;
     }
   }
 }

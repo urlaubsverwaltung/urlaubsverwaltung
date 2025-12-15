@@ -42,13 +42,13 @@
     border-radius: 4px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     font-size: 1rem;
-    @apply dark:tw-shadow-none;
-    @apply dark:tw-border;
-    @apply dark:tw-border-zinc-700;
-    @apply dark:tw-bg-zinc-900;
-    @apply dark:tw-backdrop-filter;
-    @apply dark:tw-backdrop-blur-xl;
-    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
+    @apply tw:dark:shadow-none;
+    @apply tw:dark:border;
+    @apply tw:dark:border-zinc-700;
+    @apply tw:dark:bg-zinc-900;
+    @apply tw:dark:backdrop-filter;
+    @apply tw:dark:backdrop-blur-xl;
+    @apply tw:dark:supports-backdrop-blur:bg-zinc-900/70;
 
     a {
       color: inherit;
@@ -74,21 +74,21 @@
           color: #333333;
           white-space: nowrap;
 
-          @apply dark:tw-text-zinc-200;
+          @apply tw:dark:text-zinc-200;
 
-          @apply hover:tw-bg-neutral-100;
-          @apply focus:tw-bg-neutral-100;
+          @apply tw:hover:bg-neutral-100;
+          @apply tw:focus:bg-neutral-100;
 
-          @apply dark:hover:tw-bg-zinc-700;
-          @apply dark:hover:tw-text-zinc-200;
-          @apply dark:focus:tw-bg-zinc-700;
-          @apply dark:focus:tw-text-zinc-200;
+          @apply tw:dark:hover:bg-zinc-700;
+          @apply tw:dark:hover:text-zinc-200;
+          @apply tw:dark:focus:bg-zinc-700;
+          @apply tw:dark:focus:text-zinc-200;
         }
         &[role="separator"] {
           height: 1px;
           margin: 9px 0;
           background-color: #e5e5e5;
-          @apply dark:tw-bg-zinc-700;
+          @apply tw:dark:bg-zinc-700;
         }
       }
     }

@@ -29,8 +29,8 @@
 .extend-label {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
-  @apply tw-text-sm;
-  @apply tw-font-normal;
+  @apply tw:text-sm;
+  @apply tw:font-normal;
 }
 
 .button.sicknote-extend-button[disabled] {
@@ -43,13 +43,13 @@
 }
 
 .sicknote-extend-button {
-  @apply tw-border-2;
+  @apply tw:border-2;
 }
 
 .sicknote-extend-button[aria-pressed="true"],
 .sicknote-extend-button--selected {
-  @apply tw-border-blue-400;
-  @apply hover:dark:tw-border-blue-400; /* override button hover selector for dark theme */
+  @apply tw:border-blue-400;
+  @apply tw:dark:hover:dark:border-blue-400; /* override button hover selector for dark theme */
 }
 
 @screen xs {

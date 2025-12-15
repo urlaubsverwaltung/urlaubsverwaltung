@@ -1,15 +1,15 @@
 .icon-link {
-  @apply tw-flex !important;
+  @apply tw:flex !important;
 }
 
 .icon-link,
 .text-link {
-  @apply tw-whitespace-nowrap;
-  @apply tw-text-zinc-700 !important;
-  @apply tw-no-underline !important;
-  @apply hover:tw-text-black !important;
-  @apply focus:tw-text-black !important;
-  @apply dark:tw-text-zinc-50/75 !important;
-  @apply dark:hover:tw-text-zinc-50/75 !important;
-  @apply dark:focus:tw-text-zinc-50/75 !important;
+  @apply tw:whitespace-nowrap;
+  @apply tw:text-zinc-700 !important;
+  @apply tw:no-underline !important;
+  @apply tw:hover:text-black !important;
+  @apply tw:focus:text-black !important;
+  @apply tw:dark:text-zinc-50/75 !important;
+  @apply tw:dark:hover:text-zinc-50/75 !important;
+  @apply tw:dark:focus:text-zinc-50/75 !important;
 }

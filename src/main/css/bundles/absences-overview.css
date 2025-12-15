@@ -4,9 +4,9 @@ th.vacationOverview-cal-head.today {
 }
 th.vacationOverview-cal-head.today::after {
   content: "";
-  @apply tw-border-3;
-  @apply tw-border-calendar-today/40;
-  @apply dark:tw-border-calendar-today/80;
+  @apply tw:border-3;
+  @apply tw:border-calendar-today/40;
+  @apply tw:dark:border-calendar-today/80;
   position: absolute;
   top: 0;
   left: 0;
@@ -25,18 +25,18 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th,
 .vacationOverview-table td {
-  @apply tw-text-zinc-600 !important;
-  @apply dark:tw-text-zinc-200 !important;
+  @apply tw:text-zinc-600 !important;
+  @apply tw:dark:text-zinc-200 !important;
   border: 1px solid theme("borderColor.calendar.DEFAULT");
   font-weight: normal;
 }
 
 .vacationOverview-table thead th {
-  @apply dark:tw-font-medium;
+  @apply tw:dark:font-medium;
 }
 
 .vacationOverview-table th.weekend {
-  @apply tw-text-zinc-400 !important;
+  @apply tw:text-zinc-400 !important;
 }
 
 .vacationOverview-table td {
@@ -190,11 +190,11 @@ th.vacationOverview-cal-head.today::after {
 }
 
 svg.no-workday-icon {
-  @apply tw-stroke-neutral-200;
-  @apply dark:tw-stroke-neutral-700;
+  @apply tw:stroke-neutral-200;
+  @apply tw:dark:stroke-neutral-700;
 }
 .public-holiday-full.no-workday svg.no-workday-icon {
-  @apply tw-opacity-75;
+  @apply tw:opacity-75;
 }
 
 .sick-note-morning {
@@ -251,35 +251,36 @@ svg.no-workday-icon {
   background-color: theme("colors.gray.100");
 }
 
-.tw-dark .vacationOverview-tbody tr:hover th:first-child {
-  border-right-color: theme("colors.zinc.800");
-}
-.tw-dark
+@variant dark {
+  .vacationOverview-tbody tr:hover th:first-child {
+    border-right-color: theme("colors.zinc.800");
+  }
   .vacationOverview-tbody
-  tr:hover
-  td
-  .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
-  --background-color-left: theme("colors.neutral.700");
-  --background-color-right: theme("colors.neutral.700");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
-  --background-color-left: theme("colors.sky.600");
-  --background-color-right: theme("colors.neutral.700");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
-  --background-color-left: theme("colors.neutral.700");
-  --background-color-right: theme("colors.sky.600");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
-  --background-color-left: theme("colors.sky.600");
-  --background-color-right: theme("colors.sky.600");
-}
-.tw-dark .vacationOverview-tbody tr:hover th {
-  background-color: theme("colors.zinc.800");
-}
+    tr:hover
+    td
+    .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
+    --background-color-left: theme("colors.neutral.700");
+    --background-color-right: theme("colors.neutral.700");
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+    --background-color-left: theme("colors.sky.600");
+    --background-color-right: theme("colors.neutral.700");
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+    --background-color-left: theme("colors.neutral.700");
+    --background-color-right: theme("colors.sky.600");
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+    --background-color-left: theme("colors.sky.600");
+    --background-color-right: theme("colors.sky.600");
+  }
+  .vacationOverview-tbody tr:hover th {
+    background-color: theme("colors.zinc.800");
+  }
 
-.tw-dark .vacationOverview-tbody tr:hover svg.no-workday-icon {
-  @apply tw-stroke-zinc-600;
+  .vacationOverview-tbody tr:hover svg.no-workday-icon {
+    @apply tw:stroke-zinc-600;
+  }
 }
 
 @media print {

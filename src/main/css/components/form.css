@@ -29,8 +29,8 @@ legend {
 .uv-help-block {
   display: block;
   color: #737373;
-  @apply tw-text-sm;
-  @apply dark:tw-text-zinc-200/75;
+  @apply tw:text-sm;
+  @apply tw:dark:text-zinc-200/75;
 }
 
 input:not(:is([type="radio"], [type="checkbox"])),
@@ -59,10 +59,10 @@ select,
 
 .popover-button-select {
   width: auto; /* override common input styling */
-  :not([class*="tw-border-"]) {
-    /* actually colors are meant here, like tw-border-blue-400 */
-    /* however tw-border-*-* is not a valid selector */
-    @apply dark:tw-border-neutral-600 !important;
+  :not([class*="tw:border-"]) {
+    /* actually colors are meant here, like tw:border-blue-400 */
+    /* however tw:border-*-* is not a valid selector */
+    @apply tw:dark:border-neutral-600 !important;
   }
 }
 
@@ -85,7 +85,7 @@ textarea:focus {
   /* input */
   border: 1px solid #ccc;
   border-radius: var(--uv-input-border-radius);
-  @apply dark:tw-border-neutral-600;
+  @apply tw:dark:border-neutral-600;
 
   &.uv-has-error {
     border-color: var(--uv-error-border-color);
@@ -124,28 +124,28 @@ textarea:focus {
     border-top-right-radius: var(--uv-input-border-radius);
     border-bottom-right-radius: var(--uv-input-border-radius);
 
-    @apply dark:tw-bg-zinc-800;
-    @apply dark:tw-text-zinc-200;
+    @apply tw:dark:bg-zinc-800;
+    @apply tw:dark:text-zinc-200;
   }
 }
 
 legend {
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-font-normal;
+  @apply tw:dark:text-zinc-200;
+  @apply tw:dark:font-normal;
 }
 
 input[disabled],
 fieldset[disabled] input {
-  @apply dark:tw-text-neutral-700 !important;
-  @apply dark:tw-bg-neutral-800 !important;
-  @apply tw-border-0 !important;
+  @apply tw:dark:text-neutral-700 !important;
+  @apply tw:dark:bg-neutral-800 !important;
+  @apply tw:border-0 !important;
 }
 
 .popover-button-select:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
-  @apply tw-ring-2 !important;
-  @apply tw-ring-blue-300 !important;
+  @apply tw:ring-2 !important;
+  @apply tw:ring-blue-300 !important;
 }
 
 /**************************************************************************
@@ -172,9 +172,9 @@ input,
 select,
 textarea,
 .popover-button-select {
-  @apply dark:tw-border-zinc-600 !important;
-  @apply dark:tw-bg-zinc-700 !important;
-  @apply dark:tw-text-zinc-50 !important;
+  @apply tw:dark:border-zinc-600 !important;
+  @apply tw:dark:bg-zinc-700 !important;
+  @apply tw:dark:text-zinc-50 !important;
 }
 
 input.error,
@@ -194,24 +194,24 @@ textarea.error {
   overflow: auto;
   height: 400px;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+  @apply tw:dark:border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+  @apply tw:dark:border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
-  @apply dark:tw-bg-zinc-800;
+  @apply tw:dark:bg-zinc-800;
 }
 
 .department--member.is-inactive {
   background-color: #fff4ea;
-  @apply dark:tw-bg-transparent;
+  @apply tw:dark:bg-transparent;
 }
 
 .department--member:last-child {
@@ -243,8 +243,8 @@ textarea.error {
 }
 
 .select-caret {
-  @apply tw-text-zinc-700;
-  @apply dark:tw-text-zinc-50;
+  @apply tw:text-zinc-700;
+  @apply tw:dark:text-zinc-50;
 }
 
 .uv-form {
@@ -297,8 +297,8 @@ textarea.error {
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
-      @apply dark:tw-border-b;
-      @apply dark:tw-border-zinc-600;
+      @apply tw:dark:border-b;
+      @apply tw:dark:border-zinc-600;
 
       &:is(h1, h2, h3, h4, h5, h6) {
         margin: 0; /* override bootstrap(?) default for headings */
@@ -389,7 +389,7 @@ textarea.error {
       }
 
       .uv-form__input-error {
-        @apply tw-text-sm;
+        @apply tw:text-sm;
         color: var(--uv-error-color);
       }
     }
@@ -435,8 +435,8 @@ textarea.error {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
-    @apply dark:tw-border-t;
-    @apply dark:tw-border-zinc-600;
+    @apply tw:dark:border-t;
+    @apply tw:dark:border-zinc-600;
   }
 
   @media screen and (width >= 1024px) {

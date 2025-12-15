@@ -70,8 +70,8 @@ const DATA = {
 };
 
 const icons = {
-  chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
-  chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
+  chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw:w-6 tw:h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+  chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw:w-6 tw:h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
 };
 
 function getDateFromElement(element) {
@@ -116,19 +116,19 @@ const View = (function () {
     button: '<button class="{{css}}">{{text}}</button>',
 
     month:
-      '<div class="calendar-month-container {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><p id="calendar-month-{{month}}" class="calendar-month-caption">{{caption}}</p><ol class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid" style="grid-template-columns: repeat(7, 1fr);" aria-describedby="calendar calendar-month-{{month}}">{{weekdays}}{{weeks}}</ol></div>',
+      '<div class="calendar-month-container {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><p id="calendar-month-{{month}}" class="calendar-month-caption">{{caption}}</p><ol class="calendar-month-grid tw:m-0 tw:p-0 tw:list-none tw:grid" style="grid-template-columns: repeat(7, 1fr);" aria-describedby="calendar calendar-month-{{month}}">{{weekdays}}{{weeks}}</ol></div>',
 
     // {{0}}......{{6}}
     weekdays: `{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}`,
 
-    weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header print:tw-hidden">{{text}}</li>`,
+    weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header tw:print:hidden">{{text}}</li>`,
 
-    day: '<li class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900" style="{{cellStyle}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
+    day: '<li class="tw:border-b tw:border-r tw:border-white tw:dark:border-zinc-900" style="{{cellStyle}}"><span class="tw:sr-only tw:print:hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
-    iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
+    iconPlaceholder: '<span class="tw:w-3 tw:h-3 tw:inline-block"></span>',
 
     noWorkdayIcon:
-      '<svg viewBox="0 0 20 20" class="tw-w-3 tw-h-3 tw-opacity-50 tw-stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
+      '<svg viewBox="0 0 20 20" class="tw:w-3 tw:h-3 tw:opacity-50 tw:stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
   };
 
   function render(tmpl, data) {
@@ -148,11 +148,11 @@ const View = (function () {
     return render(TMPL.container, {
       previousButton: renderButton(
         CSS.previous,
-        `${icons.chevronLeft}<span class="sm:tw-sr-only">${i18n("overview.calendar.button.previous.label")}</span>`,
+        `${icons.chevronLeft}<span class="tw:sm:sr-only">${i18n("overview.calendar.button.previous.label")}</span>`,
       ),
       nextButton: renderButton(
         CSS.next,
-        `${icons.chevronRight}<span class="sm:tw-sr-only">${i18n("overview.calendar.button.next.label")}</span>`,
+        `${icons.chevronRight}<span class="tw:sm:sr-only">${i18n("overview.calendar.button.next.label")}</span>`,
       ),
 
       months: function () {

@@ -21,24 +21,24 @@
             </a>
           </p>
 
-          <dl class="tw-mt-4">
-            <dt class="tw-mb-0.5 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <dl class="tw:mt-4">
+            <dt class="tw:mb-0.5 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.oauth-client-id.title}"></th:block>
             </dt>
             <dd th:utext="#{settings.calendar.google.oauth-client-id.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.oauth-client-secret.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.oauth-client-secret.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.calendar-id.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.calendar-id.description}"></dd>
-            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+            <dt class="tw:mb-0.5 tw:mt-4 tw:flex tw:items-center tw:gap-2">
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{settings.calendar.google.redirect-url.title}"></th:block>
             </dt>
             <dd th:text="#{settings.calendar.google.redirect-url.description}"></dd>
@@ -82,7 +82,7 @@
             th:errorclass="error"
           />
           <p
-            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+            class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
             th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.clientSecret')}"
           >
             <th:block th:errors="*{calendarSettings.googleCalendarSettings.clientSecret}">
@@ -105,7 +105,7 @@
             th:errorclass="error"
           />
           <p
-            class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+            class="tw:text-sm tw:text-red-800 tw:dark:text-red-400"
             th:if="${#fields.hasErrors('calendarSettings.googleCalendarSettings.calendarId')}"
           >
             <th:block th:errors="*{calendarSettings.googleCalendarSettings.calendarId}">
@@ -134,13 +134,13 @@
             <p
               th:if="${not #strings.isEmpty(oautherrors)}"
               th:text="${oautherrors}"
-              class="tw-text-red-800 tw-mb-4 dark:tw-text-red-400"
+              class="tw:text-red-800 tw:mb-4 tw:dark:text-red-400"
             ></p>
             <th:block th:if="${settings.calendarSettings.googleCalendarSettings.refreshToken == null}">
-              <div class="tw-flex tw-flex-row">
+              <div class="tw:flex tw:flex-row">
                 <p
                   th:text="#{settings.calendar.google.action.authenticate.description}"
-                  class="tw-text-red-800 tw-w-2/3 dark:tw-text-red-400"
+                  class="tw:text-red-800 tw:w-2/3 tw:dark:text-red-400"
                 ></p>
                 <button
                   th:text="#{settings.calendar.google.action.authenticate}"
@@ -148,12 +148,12 @@
                   value="oauth"
                   name="googleOAuthButton"
                   type="submit"
-                  class="button-main tw-w-1/3"
+                  class="button-main tw:w-1/3"
                 ></button>
               </div>
             </th:block>
             <th:block th:if="${settings.calendarSettings.googleCalendarSettings.refreshToken != null}">
-              <p th:text="#{settings.calendar.google.action.authenticate.success}" class="tw-text-green-600"></p>
+              <p th:text="#{settings.calendar.google.action.authenticate.success}" class="tw:text-green-600"></p>
             </th:block>
           </div>
         </div>

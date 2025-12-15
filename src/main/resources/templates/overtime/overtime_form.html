@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|tw:${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -25,7 +25,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-2xl tw-mx-auto tw-px-4 lg:tw-px-12 lg:tw-max-w-6xl xl:tw-px-0">
+    <main th:fragment="main" class="tw:max-w-2xl tw:mx-auto tw:px-4 tw:lg:px-12 tw:lg:max-w-6xl tw:xl:px-0">
       <form
         method="post"
         th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
@@ -50,13 +50,13 @@
             >
               Überstunden eintragen
             </h2>
-            <div class="tw-ml-auto tw-flex tw-flex-col sm:tw-flex-row">
+            <div class="tw:ml-auto tw:flex tw:flex-col tw:sm:flex-row">
               <a
                 th:href="@{/web/overtime?person=__${person.id}__}"
-                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                class="icon-link tw:text-base tw:flex tw:items-center tw:flex-row-reverse tw:space-x-1 tw:sm:space-x-0 tw:sm:flex-row tw:mr-0"
                 aria-hidden="true"
               >
-                <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                <svg th:replace="~{icon/clock::svg(className='tw:w-5 tw:h-5')}"></svg>&nbsp;
                 <span th:text="#{action.overtime.list}"></span>
               </a>
             </div>
@@ -64,7 +64,7 @@
 
           <div class="uv-form__group">
             <p class="uv-form__group-info uv-help-block">
-              <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <svg th:replace="~{icon/info::svg(className='tw:w-4 tw:h-4')}"></svg>
               <th:block th:text="#{overtime.data.description.general}"></th:block>
               <th:block
                 th:if="${overtimeReductionPossible}"
@@ -167,7 +167,7 @@
         <div class="uv-form__actions">
           <button
             type="submit"
-            class="button-main-green tw-w-56"
+            class="button-main-green tw:w-56"
             th:text="#{action.save}"
             data-test-id="overtime-submit-button"
           >

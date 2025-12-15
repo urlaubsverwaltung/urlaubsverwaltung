@@ -13,7 +13,7 @@
     --sick-note-child-color: theme("colors.red.700");
   }
 
-  .tw-dark {
+  @variant dark {
     /* 400 */
     --absence-color-GRAY: #9ca3af;
     --absence-color-ORANGE: #fb923c;

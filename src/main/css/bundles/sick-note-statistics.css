@@ -1,11 +1,11 @@
 .sicknote-statistics-chart-container {
   padding: 0.5rem;
-  @apply tw-rounded-lg;
+  @apply tw:rounded-lg;
   background-color: var(--uv-chart-container-background);
 }
 
 .sicknote-statistics-chart {
-  @apply tw-rounded-md;
+  @apply tw:rounded-md;
   overflow: hidden;
   padding: 0.25rem;
   background-color: var(--uv-chart-background);
@@ -14,7 +14,7 @@
 .statistic-summary-container {
   .statistic-summary-container-title {
     margin: 0;
-    @apply tw-text-sm;
+    @apply tw:text-sm;
     font-weight: 600;
   }
 
@@ -37,19 +37,19 @@
       background-color: var(--uv-chart-container-background);
       padding: 0.5rem 1rem;
       margin: 0;
-      @apply tw-rounded-md;
+      @apply tw:rounded-md;
 
       .statistic-summary-card__label {
-        @apply tw-text-sm;
-        @apply tw-text-gray-500;
-        @apply dark:tw-text-zinc-200;
+        @apply tw:text-sm;
+        @apply tw:text-gray-500;
+        @apply tw:dark:text-zinc-200;
       }
 
       .statistic-summary-card__content {
-        @apply tw-text-xl;
+        @apply tw:text-xl;
         font-weight: 600;
-        @apply tw-text-black;
-        @apply dark:tw-text-zinc-100;
+        @apply tw:text-black;
+        @apply tw:dark:text-zinc-100;
         display: flex;
         gap: 0.5rem;
       }

@@ -7,7 +7,7 @@
     <th:block th:fragment="person-box(person)">
       <div th:replace="~{fragments/box::box-with-icon(~{::person-box-icon}, ~{::person-box-body})}">
         <th:block th:ref="person-box-icon">
-          <span class="tw-text-blue-50 dark:tw-text-sky-800">
+          <span class="tw:text-blue-50 tw:dark:text-sky-800">
             <img
               th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=60'},niceName=${person.niceName},initials=${person.initials},width='60',height='60',personId=${person.id})}"
               alt=""
@@ -15,15 +15,15 @@
           </span>
         </th:block>
         <th:block th:ref="person-box-body">
-          <span class="tw-flex tw-items-center">
+          <span class="tw:flex tw:items-center">
             <a
               th:text="${person.niceName}"
               th:href="@{/web/person/__${person.id}__/overview}"
-              class="tw-text-lg tw-mb-1 icon-link print:no-link"
+              class="tw:text-lg tw:mb-1 icon-link print:no-link"
             ></a>
             <th:block th:if="${person.isInactive}">
               <span th:data-title="#{person.data.inactive}">
-                &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span class="tw-sr-only"
+                &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw:w-4 tw:h-4')}" /><span class="tw:sr-only"
                   >(<th:block th:text="#{person.data.inactive}" />)</span
                 >
               </span>
@@ -33,17 +33,17 @@
             th:if="${person.email != null}"
             href="#"
             th:href="|mailto:${person.email}|"
-            class="icon-link tw-inline-block tw-text-sm print:no-link"
+            class="icon-link tw:inline-block tw:text-sm print:no-link"
           >
-            <span class="tw-flex tw-items-center">
-              <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4')}" />&nbsp;<span
+            <span class="tw:flex tw:items-center">
+              <svg th:replace="~{icon/mail::svg(className='tw:w-4 tw:h-4')}" />&nbsp;<span
                 th:text="${person.email}"
               ></span>
             </span>
           </a>
           <ul
             th:if="${departments != null && not #lists.isEmpty(departments)}"
-            class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+            class="tw:mt-1.5 tw:m-0 tw:p-0 tw:list-none tw:flex tw:flex-wrap tw:text-xs tw:gap-1"
             th:aria-label="#{overview.person.departments.list.label(${person.niceName})}"
           >
             <li th:each="department : ${departments}">
@@ -51,7 +51,7 @@
                 href="#"
                 th:href="@{/web/absences (department=${department.name})}"
                 th:text="${department.name}"
-                class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent print:no-link"
+                class="tw:px-1.5 tw:no-underline tw:rounded-full tw:bg-emerald-100 tw:text-emerald-800 tw:dark:border tw:dark:border-green-600 tw:dark:text-green-600 tw:dark:bg-transparent print:no-link"
               >
                 Geschäftsführung
               </a>
