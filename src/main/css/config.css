@@ -46,6 +46,8 @@
   --uv-error-color: var(--color-red-800);
   --uv-error-border-color: var(--color-red-800);
   --uv-input-border-radius: 6px;
+  /* form-control e.g. input and button */
+  --uv-form-control-text-size: 0.875rem;
 
   /* 500 */
   --absence-color-GRAY: #6b7280;

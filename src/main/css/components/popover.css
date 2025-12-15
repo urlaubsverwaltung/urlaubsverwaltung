@@ -23,11 +23,9 @@
 
 .popover-button,
 .popover-button-select {
-  margin: 0;
-  padding: 0;
   color: currentColor;
   background-color: transparent;
-  font-size: inherit;
+  font-size: var(--uv-form-control-text-size);
 }
 
 .popover-menu {

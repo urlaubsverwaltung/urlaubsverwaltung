@@ -34,7 +34,7 @@ a.button-info {
   @apply dark:font-semibold;
   @apply border;
   transition: 100ms all ease-in-out;
-  @apply text-sm;
+  font-size: var(--uv-form-control-text-size);
   white-space: nowrap;
 }
 
