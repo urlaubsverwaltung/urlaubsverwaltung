@@ -178,26 +178,26 @@
                   <th:block th:text="#{action.search}">Suchen</th:block>:
                 </label>
                 <span
-                  class="flex-1 flex border border-neutral-300 dark:border-neutral-600 rounded-md focus-within:ring-2 focus-within:ring-blue-300"
+                  th:replace="~{fragments/input-group::input-group(~{::search-input}, ~{::search-input-addon}, ${false})}"
                 >
-                  <input
-                    type="text"
-                    id="search"
-                    name="query"
-                    th:value="${query}"
-                    class="border-none text-ellipsis focus:ring-0 rounded-r-none"
-                    th:placeholder="#{action.search.placeholder.firstname-lastname}"
-                    data-auto-submit="search-submit"
-                    data-auto-submit-delay="100"
-                  />
-                  <button
-                    type="submit"
-                    id="search-submit"
-                    class="dark:bg-zinc-800 px-2 rounded-r-md h-full flex items-center"
-                  >
-                    <svg th:replace="~{icon/search::svg(className='w-5 h-5 stroke-2')}"></svg>
-                    <span class="sr-only" th:text="#{action.search}">Suche</span>
-                  </button>
+                  <th:block th:ref="search-input">
+                    <input
+                      type="text"
+                      id="search"
+                      name="query"
+                      th:value="${query}"
+                      class="pr-8 border-none w-full md:w-auto"
+                      th:placeholder="#{action.search.placeholder.firstname-lastname}"
+                      data-auto-submit="search-submit"
+                      data-auto-submit-delay="100"
+                    />
+                  </th:block>
+                  <th:block th:ref="search-input-addon">
+                    <button type="submit" id="search-submit" class="dark:bg-zinc-800 flex items-center">
+                      <svg th:replace="~{icon/search::svg(className='w-5 h-5 stroke-2')}"></svg>
+                      <span class="sr-only" th:text="#{action.search}">Suche</span>
+                    </button>
+                  </th:block>
                 </span>
               </div>
             </form>
