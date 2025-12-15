@@ -6,7 +6,7 @@
   content: "";
   border-style: solid;
   border-width: 6px 6px 0;
-  border-top-color: theme("colors.zinc.700");
+  border-top-color: var(--color-zinc-700);
   border-right-color: transparent;
   border-bottom-color: transparent;
   border-left-color: transparent;

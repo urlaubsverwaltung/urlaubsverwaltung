@@ -25,7 +25,7 @@
 .datepicker-next {
   cursor: pointer;
   background-color: transparent;
-  color: theme("textColor.calendar.DEFAULT");
+  color: var(--text-color-calendar-default);
 }
 
 .datepicker-prev {
@@ -172,7 +172,7 @@
 .calendar-month-caption {
   margin: 0;
   margin-bottom: 0.5rem;
-  color: theme("textColor.calendar.DEFAULT");
+  color: var(--text-color-calendar-default);
   font-size: 0.875rem;
   font-weight: 400;
   @apply tw:dark:font-semibold;
@@ -189,7 +189,7 @@
 .calendar-month-grid .calendar-month-day-header {
   margin: 0;
   padding: 0.5em;
-  color: theme("textColor.calendar.DEFAULT");
+  color: var(--text-color-calendar-default);
   @apply tw:dark:text-center;
   @apply tw:dark:font-semibold;
 }
@@ -197,12 +197,12 @@
 .datepicker-day {
   overflow: hidden;
   position: relative;
-  --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
-  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
-  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
-  --font-color: theme("textColor.calendar.DEFAULT");
+  --absence-bar-color-morning: var(--background-color-calendar-default);
+  --absence-bar-color-noon: var(--background-color-calendar-default);
+  --absence-bar-color: var(--background-color-calendar-default);
+  --background-color-left: var(--background-color-calendar-default);
+  --background-color-right: var(--background-color-calendar-default);
+  --font-color: var(--text-color-calendar-default);
   display: flex;
   align-items: center;
   @apply tw:pt-2;
@@ -378,10 +378,10 @@ td.datepicker-day {
 }
 
 .datepicker-day-weekend {
-  --background-color-left: theme("backgroundColor.calendar.weekend");
-  --background-color-right: theme("backgroundColor.calendar.weekend");
+  --background-color-left: var(--background-color-calendar-weekend);
+  --background-color-right: var(--background-color-calendar-weekend);
   /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
-  --font-color: theme("textColor.calendar.weekend") !important;
+  --font-color: var(--text-color-calendar-weekend) !important;
 }
 .datepicker-day-weekend:not(.datepicker-day-past):hover,
 .datepicker-day-weekend.datepicker-day-today,
@@ -409,7 +409,7 @@ td.datepicker-day {
 .datepicker-day-public-holiday-full {
   --background-color-left: rgb(var(--uv-cal-public-holiday-bg));
   --background-color-right: rgb(var(--uv-cal-public-holiday-bg));
-  --font-color: theme("textColor.calendar.public-holiday");
+  --font-color: var(--text-color-public-holiday);
 }
 .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
 .datepicker-day-public-holiday-full.datepicker-day-selected {

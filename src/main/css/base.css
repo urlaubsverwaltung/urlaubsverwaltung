@@ -1,3 +1,15 @@
+@theme {
+  --border-color-calendar-default: lime;
+
+  --background-color-calendar-default: lime;
+  --background-color-calendar-weekend: lime;
+  --background-color-calendar-public-holiday: lime;
+
+  --text-color-calendar-default: lime;
+  --text-color-calendar-weekend: lime;
+  --text-color-public-holiday: lime;
+}
+
 @layer base {
   html {
     height: -webkit-fill-available;
