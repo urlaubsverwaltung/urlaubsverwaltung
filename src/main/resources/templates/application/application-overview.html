@@ -31,19 +31,15 @@
         th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
       >
         <th:block th:ref="user-applications-heading-actions">
-          <div class="flex flex-col sm:flex-row">
-            <a
-              href="#"
-              th:href="@{/web/absences}"
-              class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
-            >
+          <div class="flex flex-col sm:flex-row sm:gap-2">
+            <a href="#" th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse sm:flex-row">
               <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.absences_overview}"></span>
             </a>
             <a
               href="#"
               th:href="@{/web/application/statistics}"
-              class="ml-2 icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse sm:flex-row"
             >
               <svg th:replace="~{icon/presentation-chart-bar::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.statistics}"></span>

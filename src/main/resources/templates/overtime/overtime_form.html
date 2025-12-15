@@ -50,10 +50,10 @@
             >
               Überstunden eintragen
             </h2>
-            <div class="ml-auto flex flex-col sm:flex-row">
+            <div class="ml-auto flex flex-col sm:flex-row sm:gap-2">
               <a
                 th:href="@{/web/overtime?person=__${person.id}__}"
-                class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
+                class="icon-link flex items-center flex-row-reverse sm:flex-row"
                 aria-hidden="true"
               >
                 <svg th:replace="~{icon/clock::svg(className='w-5 h-5')}"></svg>&nbsp;

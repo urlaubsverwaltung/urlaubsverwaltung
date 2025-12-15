@@ -12,10 +12,10 @@
           <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
         </th:block>
         <th:block th:ref="overtime-heading-actions">
-          <div class="flex flex-col sm:flex-row">
+          <div class="flex flex-col sm:flex-row sm:gap-2">
             <a
               th:if="${userIsAllowedToCreateOvertime}"
-              class="icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row mr-0"
+              class="icon-link flex items-center flex-row-reverse sm:flex-row"
               href="#"
               th:href="@{/web/overtime/new (person=${person.id})}"
             >
@@ -23,7 +23,7 @@
               <span th:text="#{action.overtime.new}"></span>
             </a>
             <a
-              class="ml-2 icon-link text-base flex items-center flex-row-reverse space-x-1 sm:space-x-0 sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse sm:flex-row"
               href="#"
               th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
             >

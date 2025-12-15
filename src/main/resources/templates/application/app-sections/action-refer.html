@@ -8,7 +8,7 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToReferApplication}"
-        class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0"
+        class="icon-link bg-transparent"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');
           document.querySelector('#allow')?.classList.add('hidden');

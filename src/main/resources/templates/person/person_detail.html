@@ -29,7 +29,7 @@
                 <a
                   th:if="${canEditBasedata}"
                   th:href="@{/web/person/__${person.id}__/basedata}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -68,12 +68,10 @@
                 <a
                   th:if="${person.email != null}"
                   th:href="|mailto:${person.email}|"
-                  class="icon-link inline-block text-sm print:no-link"
+                  class="icon-link text-sm print:no-link"
                 >
-                  <span class="flex items-center">
-                    <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}"></svg>&nbsp;
-                    <th:block th:text="${person.email}" />
-                  </span>
+                  <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}"></svg>&nbsp;
+                  <th:block th:text="${person.email}" />
                 </a>
                 <span
                   th:if="${person.email == null}"
@@ -196,7 +194,7 @@
                 <a
                   th:if="${canEditPermissions}"
                   th:href="@{/web/person/__${person.id}__/permissions}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -243,7 +241,7 @@
                 <a
                   th:if="${canEditNotifications}"
                   th:href="@{/web/person/__${person.id}__/notifications}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -285,7 +283,7 @@
                 <a
                   th:if="${canEditAccounts}"
                   th:href="@{/web/person/__${person.id}__/account?year=__${selectedYear}__}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -358,7 +356,7 @@
                 <a
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -488,7 +486,7 @@
                 <a
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
-                  class="icon-link px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;

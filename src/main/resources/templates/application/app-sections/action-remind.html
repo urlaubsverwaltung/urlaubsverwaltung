@@ -8,7 +8,7 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToRemindApplication}"
-        class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0"
+        class="icon-link bg-transparent"
         onclick="document.querySelector('form#remind').submit()"
         th:data-title="#{action.remind}"
       >

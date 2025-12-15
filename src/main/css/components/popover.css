@@ -64,7 +64,8 @@
 
     li {
       a {
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 3px 1rem;
         font-weight: 400;
         line-height: 1.42857143;

@@ -8,7 +8,7 @@
     <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}"
-        class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0 hover:text-red-500"
+        class="icon-link bg-transparent hover:text-red-500"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');
           document.querySelector('#allow')?.classList.add('hidden');
@@ -24,7 +24,7 @@
 
       <button
         th:if="${isAllowedToStartCancellationRequest}"
-        class="icon-link bg-transparent text-base flex items-center space-x-1 sm:space-x-0 sm:flex-row mr-0 hover:text-red-500"
+        class="icon-link bg-transparent hover:text-red-500"
         onclick="
           document.querySelector('#reject')?.classList.add('hidden');
           document.querySelector('#allow')?.classList.add('hidden');

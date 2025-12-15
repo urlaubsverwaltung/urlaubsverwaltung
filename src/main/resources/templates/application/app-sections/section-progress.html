@@ -15,7 +15,7 @@
           <th:block th:ref="app-progress-heading-actions">
             <th:block th:if="${isAllowedToCommentApplication}">
               <button
-                class="icon-link bg-transparent px-1 py-0"
+                class="icon-link bg-transparent"
                 onclick="document.getElementById('comment-form').classList.remove('hidden')"
               >
                 <svg th:replace="~{icon/message-square::svg(className='w-5 h-5')}"></svg>&nbsp;

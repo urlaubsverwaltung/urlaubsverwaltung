@@ -1,15 +1,30 @@
 .icon-link {
-  @apply flex!;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
 }
 
 .icon-link,
 .text-link {
-  @apply whitespace-nowrap;
-  @apply text-zinc-700!;
-  @apply no-underline!;
-  @apply hover:text-black!;
-  @apply focus:text-black!;
-  @apply dark:text-zinc-50/75!;
-  @apply dark:hover:text-zinc-50/75!;
-  @apply dark:focus:text-zinc-50/75!;
+  white-space: nowrap;
+  color: var(--color-zinc-700);
+
+  > svg {
+    flex-shrink: 0;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--color-black);
+    text-decoration: none;
+  }
+
+  @variant dark {
+    color: var(--color-zinc-300);
+
+    &:hover,
+    &:focus {
+      color: var(--color-zinc-50);
+    }
+  }
 }
