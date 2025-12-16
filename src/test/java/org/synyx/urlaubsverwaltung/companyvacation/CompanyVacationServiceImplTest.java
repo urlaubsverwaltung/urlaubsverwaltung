@@ -156,4 +156,25 @@ class CompanyVacationServiceImplTest {
         assertThat(newYearsEvent.sourceId()).isEqualTo("settings-new-years-eve");
 
     }
+
+    @Test
+    void handleInitialDefaultSettingsSavedEvent_publishesEventsBasedOnPublicHolidaySettings() {
+        final Settings settings = mock(Settings.class);
+        final PublicHolidaysSettings publicHolidaysSettings = mock(PublicHolidaysSettings.class);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(settings.getPublicHolidaysSettings()).thenReturn(publicHolidaysSettings);
+        when(publicHolidaysSettings.getWorkingDurationForChristmasEve()).thenReturn(DayLength.MORNING);
+        when(publicHolidaysSettings.getWorkingDurationForNewYearsEve()).thenReturn(DayLength.NOON);
+
+        sut.handleInitialDefaultSettingsSavedEvent();
+
+        verify(settingsService).getSettings();
+        verify(applicationEventPublisher, times(2)).publishEvent(companyVacationPublishedEventArgumentCaptor.capture());
+
+        assertThat(companyVacationPublishedEventArgumentCaptor.getAllValues()).hasSize(2);
+        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(0);
+        assertThat(newYearsEvent.dayLength()).isEqualTo(DayLength.NOON);
+        final CompanyVacationPublishedEvent christmasEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(1);
+        assertThat(christmasEvent.dayLength()).isEqualTo(DayLength.MORNING);
+    }
 }
