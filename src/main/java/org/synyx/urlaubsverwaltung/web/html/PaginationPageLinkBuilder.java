@@ -5,9 +5,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
 
 public class PaginationPageLinkBuilder {
 
@@ -17,27 +14,25 @@ public class PaginationPageLinkBuilder {
     /**
      * Builds a pagination link prefix without the `page` query parameter.
      *
-     * @param pageable
-     * @return
+     * @param pageable the pageable
+     * @return query to append to each pagination link
      */
     public static String buildPageLinkPrefix(Pageable pageable) {
-        return buildPageLinkPrefix(pageable, emptyMap());
+        return buildPageLinkPrefix(pageable, List.of());
     }
 
     /**
      * Builds a pagination link prefix without the `page` query parameter.
      *
-     * @param pageable
-     * @param parameters
-     * @return
+     * @param pageable the pageable
+     * @param parameters list of parameter tuples
+     * @return query to append to each pagination link
      */
-    public static String buildPageLinkPrefix(Pageable pageable, Map<String, String> parameters) {
+    public static String buildPageLinkPrefix(Pageable pageable, List<QueryParam> parameters) {
 
         final List<String> linkParameters = new ArrayList<>();
 
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            linkParameters.add(entry.getKey() + "=" + entry.getValue());
-        }
+        parameters.forEach(tuple -> linkParameters.add(tuple.name + "=" + tuple.value));
 
         for (Sort.Order order : pageable.getSort()) {
             linkParameters.add("sort=" + order.getProperty() + "," + order.getDirection());
@@ -50,4 +45,6 @@ public class PaginationPageLinkBuilder {
 
         return "?" + String.join("&", linkParameters);
     }
+
+    public record QueryParam(String name, String value) {}
 }

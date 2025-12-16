@@ -97,7 +97,26 @@ class ApplicationForLeaveStatisticsViewControllerTest {
                 .param("from", "01.01.2019")
                 .param("to", "01.08.2020")
         )
-            .andExpect(model().attribute("errors", "INVALID_PERIOD"))
+            .andExpect(model().attribute("errors", List.of("applications.statistics.error.differentYear")))
+            .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
+            .andExpect(view().name("application/application-statistics"));
+    }
+
+    @Test
+    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodInWrongOrder() throws Exception {
+
+        final Locale locale = Locale.GERMAN;
+
+        when(dateFormatAware.parse("01.12.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 12, 1)));
+        when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
+
+        perform(
+            get("/web/application/statistics")
+                .locale(locale)
+                .param("from", "01.12.2019")
+                .param("to", "01.01.2019")
+        )
+            .andExpect(model().attribute("errors", List.of("applications.statistics.error.endDateBeforeStartDate")))
             .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
             .andExpect(view().name("application/application-statistics"));
     }
