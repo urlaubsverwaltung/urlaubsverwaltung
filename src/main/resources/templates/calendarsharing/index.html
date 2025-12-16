@@ -42,7 +42,7 @@
       >
         <div class="mb-4">
           <div
-            th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{::calendarsharing-private-heading-actions})}"
+            th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{})}"
           >
             <th:block th:ref="calendarsharing-private-heading-body">
               <h2 id="calendar-private" class="text-xl">
@@ -145,7 +145,7 @@
 
       <div th:if="${departmentCalendars.size() > 0}" class="mb-8">
         <div
-          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-department-heading-body}, ~{::calendarsharing-department-heading-actions})}"
+          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-department-heading-body}, ~{})}"
         >
           <th:block th:ref="calendarsharing-department-heading-body">
             <h2 th:text="#{calendar.share.department.title}" id="calendar-department" class="text-xl">Abteilung</h2>
@@ -271,9 +271,7 @@
       </div>
 
       <div th:if="${companyCalendarAccessible != null || companyCalendarShare != null}">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-company-heading-body}, ~{::calendarsharing-company-heading-actions})}"
-        >
+        <div th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-company-heading-body}, ~{})}">
           <th:block th:ref="calendarsharing-company-heading-body">
             <h2 th:text="#{calendar.share.company.title}" id="calendar-company" class="text-xl">Firma</h2>
           </th:block>

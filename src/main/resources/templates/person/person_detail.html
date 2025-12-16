@@ -106,9 +106,7 @@
           </div>
 
           <div class="md:col-start-1 md:row-start-2">
-            <div
-              th:replace="~{fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{::person-details-departments-actions})}"
-            >
+            <div th:replace="~{fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{})}">
               <th:block th:ref="person-details-departments-body">
                 <h2 th:text="#{person.account.departments.title}">Abteilungen</h2>
               </th:block>

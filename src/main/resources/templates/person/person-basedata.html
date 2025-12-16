@@ -11,9 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
-      <div
-        th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
-      >
+      <div th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{})}">
         <th:block th:ref="person-basedata-heading-body">
           <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
         </th:block>

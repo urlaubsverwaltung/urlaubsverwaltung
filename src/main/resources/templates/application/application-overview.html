@@ -323,11 +323,8 @@
 
       <th:block th:if="${canAccessOtherApplications || canAccessSickNoteSubmissions}">
         <div
-          th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{::new-other-applications-heading-actions})}"
+          th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{})}"
         >
-          <th:block th:ref="new-other-applications-heading-actions">
-            <div class="flex flex-col sm:flex-row"></div>
-          </th:block>
           <th:block th:ref="new-other-applications-heading-body">
             <ul class="m-0 p-0 list-none flex flex-col xs:flex-row gap-2 xs:gap-8 mb-2 xs:mb-0" is="uv-nav-tabs">
               <li
@@ -617,9 +614,7 @@
       </th:block>
 
       <th:block th:if="${canAccessCancellationRequests}">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions})}"
-        >
+        <div th:replace="~{fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{})}">
           <th:block th:ref="cancellation-requests-heading-body">
             <h2 id="cancellation-requests" class="text-xl font-medium" th:text="#{applications.cancellation_request}">
               Offene Stornierungsanträge von Kolleg:innen
