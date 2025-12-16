@@ -44,4 +44,17 @@ class CustomVacationTypeTest {
 
         assertThat(vacationType.getLabel(Locale.GERMAN)).isEqualTo("fallback");
     }
+
+    @Test
+    void ensureToFallbackToGermanIfNotSupportedBrowserLanguageIsUsed() {
+
+        final StaticMessageSource messageSource = new StaticMessageSource();
+        messageSource.addMessage("vacationtype.label.fallback", Locale.JAPANESE, "ThisWillBeGermanAsFallbackInIntegrationTests");
+
+        final CustomVacationType vacationType = CustomVacationType.builder(messageSource)
+            .labels(List.of(new VacationTypeLabel(Locale.GERMAN, "")))
+            .build();
+
+        assertThat(vacationType.getLabel(Locale.JAPANESE)).isEqualTo("ThisWillBeGermanAsFallbackInIntegrationTests");
+    }
 }

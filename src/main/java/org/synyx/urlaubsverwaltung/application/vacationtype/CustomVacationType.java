@@ -54,7 +54,7 @@ public final class CustomVacationType extends VacationType<CustomVacationType> {
                     .map(VacationTypeLabel::label)
                     .filter(StringUtils::hasText)
                     // fallback to base locale (e.g. "de" for incoming "de_DE")
-                    .or(() -> Optional.of(labelByLocale.get(Locale.forLanguageTag(locale.getLanguage()))).map(VacationTypeLabel::label).filter(StringUtils::hasText))
+                    .or(() -> Optional.ofNullable(labelByLocale.get(Locale.forLanguageTag(locale.getLanguage()))).map(VacationTypeLabel::label).filter(StringUtils::hasText))
                     .orElseGet(() -> messageSource.getMessage("vacationtype.label.fallback", new Object[]{}, locale));
             };
 
