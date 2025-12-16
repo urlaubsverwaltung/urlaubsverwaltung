@@ -117,7 +117,7 @@ class ApplicationReminderMailServiceTest {
 
         final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
         verify(applicationService).save(applicationArgumentCaptor.capture());
-        assertThat(applicationArgumentCaptor.getAllValues().get(0).getUpcomingApplicationsReminderSend()).isEqualTo(now);
+        assertThat(applicationArgumentCaptor.getAllValues().getFirst().getUpcomingApplicationsReminderSend()).isEqualTo(now);
     }
 
     @Test
@@ -148,7 +148,7 @@ class ApplicationReminderMailServiceTest {
 
         final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
         verify(applicationService).save(applicationArgumentCaptor.capture());
-        assertThat(applicationArgumentCaptor.getAllValues().get(0).getUpcomingHolidayReplacementNotificationSend()).isEqualTo(now);
+        assertThat(applicationArgumentCaptor.getAllValues().getFirst().getUpcomingHolidayReplacementNotificationSend()).isEqualTo(now);
     }
 
     @Test
