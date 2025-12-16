@@ -33,11 +33,7 @@
               class="items-baseline md:grid gap-x-8 gap-y-4"
               style="grid-template-columns: min-content minmax(0, 22rem) 1fr"
             >
-              <label
-                class="mb-1 md:mb-0 m-0 col-start-1 row-start-1"
-                for="yearSelect"
-                th:text="#{absences.overview.year}"
-              >
+              <label class="mb-1 col-start-1 row-start-1 md:mb-0" for="yearSelect" th:text="#{absences.overview.year}">
                 Year
               </label>
               <span class="col-start-2 col-end-2 row-start-1">
@@ -67,7 +63,7 @@
               </span>
 
               <label
-                class="mt-4 md:mt-0 mb-1 md:mb-0 m-0 col-start-1 row-start-2"
+                class="mt-4 mb-1 col-start-1 row-start-2 md:mt-0 md:mb-0"
                 for="monthSelect"
                 th:text="#{absences.overview.month}"
               >
@@ -110,7 +106,7 @@
 
               <th:block th:if="${not #lists.isEmpty(visibleDepartments)}">
                 <label
-                  class="mt-4 md:mt-0 mb-1 md:mb-2 m-0 col-start-1 col-end-1 row-start-3"
+                  class="mt-4 mb-1 col-start-1 col-end-1 row-start-3 md:mt-0 md:mb-2"
                   for="departmentSelect"
                   th:text="#{absences.overview.department}"
                 >

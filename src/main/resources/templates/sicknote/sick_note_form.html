@@ -117,7 +117,6 @@
               <div>
                 <label>
                   <input
-                    class="mr-1"
                     id="dayLength"
                     type="radio"
                     th:field="*{dayLength}"
@@ -129,7 +128,6 @@
                 </label>
                 <label>
                   <input
-                    class="mr-1"
                     type="radio"
                     th:field="*{dayLength}"
                     value="MORNING"
@@ -140,7 +138,6 @@
                 </label>
                 <label>
                   <input
-                    class="mr-1"
                     type="radio"
                     th:field="*{dayLength}"
                     value="NOON"
@@ -157,9 +154,7 @@
 
             <!-- From -->
             <div class="uv-form__input-row">
-              <label for="from" class="is-required w-full lg:w-1/4" th:text="|#{absence.period.startDate}:|">
-                Von
-              </label>
+              <label for="from" class="is-required" th:text="|#{absence.period.startDate}:|"> Von </label>
               <input
                 id="from"
                 th:field="*{startDate}"

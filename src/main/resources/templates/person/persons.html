@@ -103,7 +103,7 @@
             <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
           </div>
           <div class="flex-1 flex flex-col md:flex-row">
-            <label for="search" class="md:sr-only m-0"> <th:block th:text="#{action.search}">Suchen</th:block>: </label>
+            <label for="search" class="md:sr-only"> <th:block th:text="#{action.search}">Suchen</th:block>: </label>
             <span
               th:replace="~{fragments/input-group::input-group(~{::search-input}, ~{::search-input-addon}, ${false})}"
             >
@@ -144,10 +144,8 @@
               <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
               <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
             </div>
-            <div class="flex flex-col md:flex-row md:items-center">
-              <label for="sort-select" class="m-0 mr-2">
-                <th:block th:text="#{action.sort}">Sortieren</th:block>:
-              </label>
+            <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+              <label for="sort-select"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
               <select
                 id="sort-select"
                 name="sort"
@@ -167,7 +165,7 @@
                   </optgroup>
                 </th:block>
               </select>
-              <button type="submit" id="sort-submit" class="ml-2 button-main" data-js-hidden th:text="#{action.sort}">
+              <button type="submit" id="sort-submit" class="button-main" data-js-hidden th:text="#{action.sort}">
                 Sortieren
               </button>
             </div>
@@ -367,9 +365,7 @@
                   <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
                 </div>
                 <div class="flex items-center gap-2">
-                  <label for="pagination-size-select" class="m-0" th:text="#{pagination.page.size.label.text}">
-                    Zeige
-                  </label>
+                  <label for="pagination-size-select" th:text="#{pagination.page.size.label.text}"> Zeige </label>
                   <span>
                     <select
                       name="size"

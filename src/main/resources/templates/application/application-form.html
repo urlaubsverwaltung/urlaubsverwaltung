@@ -70,10 +70,7 @@
         </div>
         <div class="mt-2 md:pl-14">
           <div class="flex justify-between items-center">
-            <label
-              th:for="${'replacement-note-' + index}"
-              class="text-sm text-black/50 dark:text-zinc-200 mb-0 font-normal"
-            >
+            <label th:for="${'replacement-note-' + index}" class="text-sm text-black/50 dark:text-zinc-200 font-normal">
               <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
                 >Notiz an Vertretung</th:block
               >

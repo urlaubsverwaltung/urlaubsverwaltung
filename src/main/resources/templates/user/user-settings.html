@@ -59,7 +59,7 @@
                 >
                   <label
                     for="user-locale-system"
-                    class="flex md:flex-col items-center gap-4 m-0 cursor-pointer md:text-center"
+                    class="flex items-center gap-4 cursor-pointer md:text-center md:flex-col"
                   >
                     <svg th:replace="~{icon/globe-2::svg(className='w-9 h-9 md:w-16 md:h-16 stroke-1')}"></svg>
                     <span
@@ -92,7 +92,7 @@
                   <label
                     for="user-locale"
                     th:for="${'user-locale-' + supportedLocale.locale}"
-                    class="flex md:flex-col items-center gap-4 m-0 cursor-pointer md:text-center"
+                    class="flex items-center gap-4 cursor-pointer md:text-center md:flex-col"
                   >
                     <span class="h-8 w-8 md:h-16 md:w-16 inline-block overflow-hidden rounded-full">
                       <img

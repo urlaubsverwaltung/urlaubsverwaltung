@@ -195,14 +195,13 @@
                         <th:block th:text="#{department.members.assigned.inactive}"></th:block>
                       </div>
                       <div>
-                        <label class="font-normal m-0 flex items-center">
+                        <label>
                           <input
                             type="checkbox"
                             name="members"
                             th:id="${'members' + (personStat.index + 1)}"
                             th:value="${person.id}"
                             th:checked="${#lists.contains(department.members, person)}"
-                            class="m-0 mr-2"
                           />
                           <input type="hidden" name="_members" value="on" />
                           <th:block th:text="#{department.members.assigned}"></th:block>
@@ -211,14 +210,13 @@
                       <div
                         th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).DEPARTMENT_HEAD)}"
                       >
-                        <label class="font-normal m-0 flex items-center">
+                        <label>
                           <input
                             type="checkbox"
                             name="departmentHeads"
                             th:id="${'departmentHeads' + (personStat.index + 1)}"
                             th:value="${person.id}"
                             th:checked="${#lists.contains(department.departmentHeads, person)}"
-                            class="m-0 mr-2"
                           />
                           <input type="hidden" name="_departmentHeads" value="on" />
                           <th:block th:text="#{department.members.departmentHead}"> ist Abteilungsleiter </th:block>
@@ -227,14 +225,13 @@
                       <div
                         th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).SECOND_STAGE_AUTHORITY)}"
                       >
-                        <label class="font-normal m-0 flex items-center">
+                        <label>
                           <input
                             type="checkbox"
                             name="secondStageAuthorities"
                             th:id="${'secondStageAuthorities' + (personStat.index + 1)}"
                             th:value="${person.id}"
                             th:checked="${#lists.contains(department.secondStageAuthorities, person)}"
-                            class="m-0 mr-2"
                           />
                           <input type="hidden" name="_secondStageAuthorities" value="on" />
                           <th:block th:text="#{department.members.secondStageAuthority}">

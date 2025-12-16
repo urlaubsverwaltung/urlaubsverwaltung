@@ -33,6 +33,19 @@ legend {
   @apply dark:text-zinc-200/75;
 }
 
+label {
+  font-weight: 600;
+  @apply text-sm;
+  @apply leading-6;
+
+  &:has(input[type="radio"], input[type="checkbox"]) {
+    font-weight: normal; /* override with utils if bolder text is required */
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+}
+
 input:not(:is([type="radio"], [type="checkbox"])),
 textarea,
 select,
@@ -350,13 +363,9 @@ textarea.error {
       /* align text with input */
       label:has(input[type="radio"], input[type="checkbox"]) {
         font-weight: normal;
-        display: inline-flex;
-        flex-wrap: nowrap;
-        gap: 0.25rem;
         /* multiline label text: */
         /* align input on the "first" line (baseline) */
         align-items: baseline;
-
         /* align the input with text */
         input {
           transform: translateY(1px);

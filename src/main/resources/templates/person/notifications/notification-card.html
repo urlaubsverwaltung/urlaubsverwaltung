@@ -29,12 +29,7 @@
                 th:aria-describedby="${'info-' + id}"
                 data-auto-submit
               />
-              <label
-                for="input"
-                th:for="${id}"
-                class="m-0 text-base font-normal"
-                th:text="${#messages.msg(label)}"
-              ></label>
+              <label for="input" th:for="${id}" class="text-base font-normal" th:text="${#messages.msg(label)}"></label>
             </span>
           </div>
           <div class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:md:text-inherit md:items-center">

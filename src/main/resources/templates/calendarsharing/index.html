@@ -63,17 +63,16 @@
                 th:text="#{calendar.share.me.paragraph.status.other(${personName})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.range.paragraph}"></p>
+            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
             <div class="mb-4">
               <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label th:for="${'personal-calendar-period-' + loop.index}" class="flex items-center space-x-1">
+                <label th:for="${'personal-calendar-period-' + loop.index}">
                   <input
                     th:id="${'personal-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
                     th:value="${calendarPeriod}"
                     th:checked="${privateCalendarShare.calendarPeriod == calendarPeriod}"
-                    class="m-0"
                   />
                   <span th:text="${#messages.msg('calendar.share.me.range.' + calendarPeriod)}"></span>
                 </label>
@@ -184,20 +183,16 @@
                   th:text="#{calendar.share.department.paragraph.status.other(${departmentCal.departmentName}, ${personName})}"
                 ></th:block>
               </p>
-              <p th:text="#{calendar.share.range.paragraph}"></p>
+              <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
               <div class="mb-4">
                 <div th:each="calendarPeriod, periodLoop : ${calendarPeriods}">
-                  <label
-                    th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
-                    class="flex items-center space-x-1"
-                  >
+                  <label th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|">
                     <input
                       th:id="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
                       type="radio"
                       name="calendarPeriod"
                       th:value="${calendarPeriod}"
                       th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
-                      class="m-0"
                     />
                     <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}">Jahres</span>
                   </label>
@@ -322,17 +317,16 @@
                 th:text="#{calendar.share.company.paragraph.status.other(${personName})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.range.paragraph}"></p>
+            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
             <div class="mb-4">
               <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label th:for="${'company-calendar-period-' + loop.index}" class="flex items-center space-x-1">
+                <label th:for="${'company-calendar-period-' + loop.index}">
                   <input
                     th:id="${'company-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
                     th:value="${calendarPeriod}"
                     th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
-                    class="m-0"
                   />
                   <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}">Jahres</span>
                 </label>

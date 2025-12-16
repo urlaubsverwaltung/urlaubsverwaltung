@@ -81,7 +81,7 @@
                     <label
                       th:text="#{settings.absenceTypes.action.state.label}"
                       th:for="|absenceType-active-${index}|"
-                      class="m-0 sr-only"
+                      class="sr-only"
                       >Aktiviert / Deaktiviert</label
                     >
                   </span>
@@ -177,7 +177,7 @@
                   <label
                     th:text="#{settings.absenceTypes.action.approveToApply.label}"
                     th:for="${'absenceType-approval-to-apply-' + index}"
-                    class="absence-type-card-cell_title m-0"
+                    class="absence-type-card-cell_title"
                     >Genehmigungsprozess erforderlich</label
                   >
                   <input
@@ -192,7 +192,7 @@
                   <label
                     th:text="#{settings.absenceTypes.action.approveToCancel.label}"
                     th:for="${'absenceType-approval-to-cancel-' + index}"
-                    class="absence-type-card-cell_title m-0"
+                    class="absence-type-card-cell_title"
                     >Stornierungsprozess erforderlich</label
                   >
                   <input
@@ -207,7 +207,7 @@
                   <label
                     th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
                     th:for="|absenceType-visible-to-everyone-${index}|"
-                    class="absence-type-card-cell_title m-0"
+                    class="absence-type-card-cell_title"
                     >Für alle sichtbar</label
                   >
                   <input
@@ -222,14 +222,14 @@
                   <label
                     th:text="#{settings.absenceTypes.action.color.label}"
                     th:for="|color-${index}|"
-                    class="absence-type-card-cell_title m-0"
+                    class="absence-type-card-cell_title"
                     >Farbe</label
                   >
                   <div is="uv-color-picker">
                     <label
                       th:id="|color-picker-label-${index}|"
                       th:for="|color-picker-${index}|"
-                      class="m-0 color-picker-button"
+                      class="color-picker-button"
                     >
                       <span
                         class="color-picker-button-color"
@@ -244,7 +244,7 @@
                         class="color-picker-option"
                         th:style="|background-color:var(--absence-color-__${selectableColor}__)|"
                       >
-                        <label th:for="|color-${index}-radio-${selectableColorLoop.index}|" class="m-0">
+                        <label th:for="|color-${index}-radio-${selectableColorLoop.index}|">
                           <input
                             th:checked="${absenceType.color == selectableColor}"
                             th:value="${selectableColor}"

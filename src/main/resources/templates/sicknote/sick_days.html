@@ -121,7 +121,7 @@
                   <fieldset>
                     <legend class="sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
                     <div class="flex flex-col">
-                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="m-0">Von</label>
+                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input">Von</label>
                       <input
                         id="from-date-input"
                         name="from"
@@ -130,7 +130,7 @@
                         th:placeholder="#{pattern.date}"
                         class="mt-0.5"
                       />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="m-0 mt-4"> Bis </label>
+                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="mt-4"> Bis </label>
                       <input
                         id="to-date-input"
                         name="to"
@@ -163,9 +163,7 @@
               <input type="hidden" name="sort" th:value="${sortQuery}" />
             </div>
             <div class="flex-1 flex flex-col md:flex-row">
-              <label for="search" class="md:sr-only m-0">
-                <th:block th:text="#{action.search}">Suchen</th:block>:
-              </label>
+              <label for="search" class="md:sr-only"> <th:block th:text="#{action.search}">Suchen</th:block>: </label>
               <span
                 th:replace="~{fragments/input-group::input-group(~{::search-input}, ~{::search-input-addon}, ${false})}"
               >
@@ -207,9 +205,7 @@
               <input type="hidden" name="query" th:value="${query}" />
             </div>
             <div class="flex flex-col md:flex-row md:items-center">
-              <label for="sort-select" class="m-0 mr-2">
-                <th:block th:text="#{action.sort}">Sortieren</th:block>:
-              </label>
+              <label for="sort-select" class="mr-2"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
               <select
                 id="sort-select"
                 name="sort"
@@ -445,7 +441,7 @@
             <input type="hidden" name="query" th:value="${query}" />
           </div>
           <div class="flex items-center gap-2">
-            <label for="pagination-size-select" class="m-0" th:text="#{pagination.page.size.label.text}"> Zeige </label>
+            <label for="pagination-size-select" th:text="#{pagination.page.size.label.text}"> Zeige </label>
             <span>
               <select
                 name="size"
