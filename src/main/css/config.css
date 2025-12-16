@@ -3,6 +3,7 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
+@import "./theme.css";
 
 /* html element has .dark class to enforce dark theme */
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
@@ -10,89 +11,6 @@
 @custom-variant supports-backdrop-blur {
   @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
     @slot;
-  }
-}
-
-@theme {
-  /* 30rem = 480px (16px base), tailwind uses rem, so we are */
-  --breakpoint-xs: 30rem;
-
-  --font-logo: "KaushanScript";
-
-  --color-black-almost: #444444;
-  --color-bootstrap-green: #5cb85c;
-  --color-bootstrap-green-dark: #449d44;
-}
-
-/* regular variables not required by tailwindcss toolchain */
-:root {
-  --uv-header-height: 4.625rem;
-  --uv-cal-border-color: var(--color-white);
-  --uv-cal-today-border-color: var(--color-zinc-500);
-  --uv-cal-default-bg: var(--color-zinc-50);
-  --uv-cal-default-color: var(--color-neutral-950);
-  --uv-cal-weekend-bg: #b5d0df;
-  --uv-cal-weekend-color: var(--color-neutral-950);
-  --uv-cal-public-holiday-bg: var(--color-slate-300);
-  --uv-cal-public-holiday-color: var(--color-neutral-950);
-  --uv-chart-container-background: var(--color-gray-50);
-  --uv-chart-background: var(--color-white);
-  --uv-chart-border: var(--color-gray-100);
-  --uv-focus-ring-color: var(--color-blue-300);
-  --uv-error-color: var(--color-red-800);
-  --uv-error-border-color: var(--color-red-800);
-  --uv-input-border-radius: 6px;
-  /* form-control e.g. input and button */
-  --uv-form-control-text-size: 0.875rem;
-  --uv-placeholder-color: #999;
-
-  /* 500 */
-  --absence-color-GRAY: #6b7280;
-  --absence-color-ORANGE: #f97316;
-  --absence-color-YELLOW: #eab308;
-  --absence-color-EMERALD: #10b981;
-  --absence-color-CYAN: #06b6d4;
-  --absence-color-BLUE: #3b82f6;
-  --absence-color-VIOLET: #8b5cf6;
-  --absence-color-PINK: #ec4899;
-  --sick-note-color: var(--color-red-500);
-  --sick-note-child-color: var(--color-red-700);
-
-  @variant dark {
-    --uv-header-height: 3.438rem;
-    --uv-cal-border-color: var(--color-neutral-900);
-    --uv-cal-today-border-color: var(--color-gray-500);
-    --uv-cal-default-bg: var(--color-neutral-800);
-    --uv-cal-default-color: var(--color-neutral-300);
-    --uv-cal-weekend-bg: var(--color-sky-500);
-    --uv-cal-weekend-color: var(--color-neutral-900);
-    --uv-cal-public-holiday-bg: #0369a1;
-    --uv-cal-public-holiday-color: var(--color-neutral-900);
-    --uv-chart-container-background: var(--color-zinc-800);
-    --uv-chart-background: var(--color-zinc-800);
-    --uv-chart-border: var(--color-zinc-700);
-    --uv-error-color: var(--color-red-400);
-    --uv-error-border-color: var(--color-red-400);
-
-    /* 400 */
-    --absence-color-GRAY: #9ca3af;
-    --absence-color-ORANGE: #fb923c;
-    --absence-color-YELLOW: #facc15;
-    --absence-color-EMERALD: #34d399;
-    --absence-color-CYAN: #22d3ee;
-    --absence-color-BLUE: #60a5fa;
-    --absence-color-VIOLET: #a78bfa;
-    --absence-color-PINK: #f472b6;
-    --sick-note-color: var(--color-red-800);
-    --sick-note-child-color: var(--color-red-950);
-  }
-}
-
-@variant dark {
-  @layer base {
-    * {
-      color-scheme: dark;
-    }
   }
 }
 
