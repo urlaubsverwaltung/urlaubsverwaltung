@@ -5,7 +5,7 @@ const icons = {
 class CopyToClipboardInputElement extends HTMLDivElement {
   connectedCallback() {
     const button = document.createElement("button");
-    button.classList.add("uv-input-group-addon", "button", "m-0", "border-0", "outline-hidden", "button--no-hover");
+    button.classList.add("button", "button--no-hover", "border-0", "outline-hidden", "text-current", "bg-transparent");
     button.setAttribute("title", this.dataset.messageButtonTitle);
     button.dataset.placement = "bottom";
     button.innerHTML = icons.clipboardCopy;
@@ -29,7 +29,12 @@ class CopyToClipboardInputElement extends HTMLDivElement {
     });
 
     this.classList.add("uv-input-group");
-    this.insertBefore(button, input.nextElementSibling);
+
+    const buttonContainer = document.createElement("span");
+    buttonContainer.classList.add("uv-input-group-addon");
+    buttonContainer.append(button);
+
+    this.insertBefore(buttonContainer, input.nextElementSibling);
   }
 }
 
