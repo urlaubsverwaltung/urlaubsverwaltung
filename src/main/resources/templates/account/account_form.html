@@ -205,15 +205,10 @@
                 </p>
                 <div class="mt-4 flex flex-row items-start gap-8">
                   <span class="checkbox-switch flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="vacation-expiration-checkbox"
-                      th:field="*{overrideVacationDaysExpire}"
-                      class="m-0"
-                    />
+                    <input type="checkbox" id="vacation-expiration-checkbox" th:field="*{overrideVacationDaysExpire}" />
                     <label
                       for="vacation-expiration-checkbox"
-                      class="m-0 text-base font-normal"
+                      class="text-base font-normal"
                       th:text="#{person.form.annualVacation.remainingVacation.expire.override.checkbox}"
                     >
                       Individuell

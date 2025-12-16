@@ -332,7 +332,7 @@
                   </select>
                 </div>
                 <div id="replacement-section-container">
-                  <ul class="list-none m-0 p-0 mb-12">
+                  <ul class="mb-12">
                     <li
                       th:if="${not #lists.isEmpty(applicationForLeaveForm.holidayReplacements)}"
                       th:each="index : ${#numbers.sequence(applicationForLeaveForm.holidayReplacements.size() - 1, 0, -1)}"
@@ -363,7 +363,7 @@
                               ></a>
                               <ul
                                 th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
-                                class="m-0 mt-1.5 p-0 list-none flex flex-wrap text-xs gap-1"
+                                class="mt-1.5 flex flex-wrap gap-1 text-xs"
                               >
                                 <li
                                   th:each="department : ${holidayReplacement.departments}"

@@ -10,7 +10,7 @@
       th:with="page=${pagination.page}"
       th:aria-label="${label}"
     >
-      <ul class="list-none m-0 p-0 flex flex-row gap-x-2 gap-y-4 flex-wrap">
+      <ul class="flex flex-row gap-x-2 gap-y-4 flex-wrap">
         <li th:if="${not page.first && page.totalPages > 7}">
           <a
             href="#"

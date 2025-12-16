@@ -16,15 +16,13 @@
   height: 100%;
 }
 
-/* override bootstrap stuff */
 .extend-action-grid > label {
-  margin: 0 !important;
   font-weight: normal;
 }
 
 .extend-action-grid > span,
 .extend-action-grid > label {
-  margin-top: 0.25rem !important; /* important to override label bootstrap override o.O */
+  margin-top: 0.25rem;
 }
 
 .extend-label {

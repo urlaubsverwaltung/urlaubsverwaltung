@@ -43,13 +43,13 @@
       <div id="launchpad" class="nav-popup-menu xs:-right-4">
         <div class="nav-popup-menu-inner">
           <div class="nav-popup-menu-inner__header">
-            <h2 class="text-base text-gray-700 dark:text-zinc-200 m-0" th:text="#{launchpad.core.apps.heading}">
+            <h2 class="text-base text-gray-700 dark:text-zinc-200" th:text="#{launchpad.core.apps.heading}">
               Anwendungen
             </h2>
           </div>
           <div class="nav-popup-menu-inner__content">
             <ul
-              class="grid gap-2 list-none p-0 m-0"
+              class="grid gap-2"
               style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
               th:with="size=${#lists.size(launchpad.apps)}"
               th:styleappend="${size > 3 ? ';--cols:3' : (size > 1 ? ';--cols:2' : ';--cols:1')}"

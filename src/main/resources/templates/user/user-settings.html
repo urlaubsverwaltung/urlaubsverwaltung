@@ -41,7 +41,7 @@
             </legend>
             <ul
               aria-describedby="language-description"
-              class="list-none m-0 p-0 flex flex-col md:grid md:auto-cols-fr md:grid-flow-col gap-2 md:gap-8"
+              class="flex flex-colgap-2 md:grid md:auto-cols-fr md:grid-flow-col md:gap-8"
             >
               <li class="relative flex md:block items-center gap-4 md:flex-row md:justify-center">
                 <input
@@ -124,7 +124,7 @@
             >
               Theme
             </legend>
-            <ul aria-describedby="theme-description" class="list-none m-0 p-0 grid grid-cols-2 xs:grid-cols-3 gap-4">
+            <ul aria-describedby="theme-description" class="grid grid-cols-2 gap-4 xs:grid-cols-3">
               <li th:each="selectableTheme : ${supportedThemes}">
                 <label
                   class="overflow-hidden flex flex-col cursor-pointer rounded-lg md:rounded-xl border-2 border-zinc-200 dark:border-zinc-800 [&:has(:checked)]:border-blue-400"

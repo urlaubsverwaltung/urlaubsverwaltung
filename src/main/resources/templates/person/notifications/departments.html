@@ -18,7 +18,7 @@
         class="flex items-center gap-1.5 mb-8 text-yellow-600 dark:text-amber-300"
       >
         <svg th:replace="~{icon/info::svg(className='w-5 h-5')}"></svg>
-        <p class="m-0">
+        <p>
           <th:block
             th:if="${userId eq personNotificationsDto.personId}"
             th:text="#{person.notifications.no-assigned-departments.info.myself(${personNiceName})}"
@@ -94,7 +94,7 @@
               <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 md:inline-block')}"></svg>
               <p
                 id="info-email-notification-department-restriction-input"
-                class="leading-normal text-sm m-0"
+                class="leading-normal text-sm"
                 th:text="#{person.notifications.departments.restriction.info}"
               >
                 Grenze deine aktivierten Benachrichtigungen auf den Kreis deiner Abteilungen ein. Ansonsten erhälst du
@@ -131,7 +131,7 @@
             >
               Abwesenheiten meiner Kolleg:innen
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.absenceForColleagues.visible},active=${personNotificationsDto.absenceForColleagues.active},name='absenceForColleagues.active',label='person.notifications.section.absences.colleagues.label',info='person.notifications.section.absences.colleagues.info')}"
               ></li>
@@ -173,7 +173,7 @@
             >
               Krankmeldungen meiner Kolleg:innen
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCreatedByManagementForManagement.visible},active=${personNotificationsDto.sickNoteCreatedByManagementForManagement.active},name='sickNoteCreatedByManagementForManagement.active',label='person.notifications.section.sicknote.created.management.label',info='person.notifications.section.sicknote.created.management.info')}"
               ></li>
@@ -196,7 +196,7 @@
             >
               Überstunden meiner Kolleg:innen
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeAppliedForManagement.visible},active=${personNotificationsDto.overtimeAppliedForManagement.active},name='overtimeAppliedForManagement.active',label='person.notifications.section.overtime.applied.management.label',info='person.notifications.section.overtime.applied.management.info')}"
               ></li>
@@ -206,7 +206,7 @@
       </div>
 
       <noscript>
-        <hr class="w-full m-0 mt-6" />
+        <hr class="mt-6" />
 
         <div class="mt-6 flex justify-between gap-4">
           <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>

@@ -61,7 +61,7 @@
 
         <div>
           <div class="mt-8 flex flex-col md:flex-row justify-between gap-1">
-            <h2 class="m-0 font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">
+            <h2 class="font-bold text-base" th:text="#{sicknotes.statistics.chart.title}">
               Verteilung der Krankheitstage
             </h2>
             <div class="text-sm md:font-bold md:text-right md:px-3">
@@ -145,7 +145,7 @@
             Krankheitstage pro Mitarbeitende
           </h3>
           <p
-            class="text-sm m-0 mt-0.5"
+            class="text-sm mt-0.5"
             th:text="#{sicknotes.statistics.summary.days-per-person.description(${statistics.year})}"
           >
             Anzahl der Tage die deine Mitarbeitenden im Durchschnitt krank sind.
@@ -345,13 +345,11 @@
                   <div id="sicknote-statistic-verteilung"></div>
                   <div class="flex-1 flex flex-col gap-1 text-sm">
                     <p
-                      class="m-0"
                       th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.with(${statistics.numberOfPersonsWithMinimumOneSickNote})}"
                     >
                       4 Mitarbeitende mit mindestens einer Krankmeldung
                     </p>
                     <p
-                      class="m-0"
                       th:text="#{sicknotes.statistics.summary.sicknotes.at-least-one.without(${statistics.numberOfPersonsWithoutSickNote})}"
                     >
                       10 Mitarbeitende ohne Krankmeldung

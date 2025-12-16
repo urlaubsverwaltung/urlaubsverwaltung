@@ -262,7 +262,7 @@
                       ></a>
                     </td>
                     <td th:if="${isDepartmentPresent}" class="hidden md:table-cell">
-                      <ul th:if="${person.isDepartmentHead or person.isSecondStageAuthority}" class="list-none m-0 p-0">
+                      <ul th:if="${person.isDepartmentHead or person.isSecondStageAuthority}">
                         <li
                           th:if="${person.isDepartmentHead}"
                           th:text="#{department.members.list.departmentHead}"

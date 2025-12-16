@@ -4,8 +4,6 @@
 
 .checkbox-switch input[type="checkbox"] {
   cursor: pointer;
-  margin: 0;
-  margin-top: 0.25em;
   width: 2.5rem;
   height: 1.25rem;
   appearance: none;

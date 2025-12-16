@@ -40,7 +40,7 @@
           </a>
           <ul
             th:if="${departments != null && not #lists.isEmpty(departments)}"
-            class="mt-1.5 m-0 p-0 list-none flex flex-wrap text-xs gap-1"
+            class="mt-1.5 flex flex-wrap text-xs gap-1"
             th:aria-label="#{overview.person.departments.list.label(${person.niceName})}"
           >
             <li th:each="department : ${departments}">

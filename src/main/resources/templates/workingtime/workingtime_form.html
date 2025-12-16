@@ -144,7 +144,7 @@
               <!-- working times list -->
               <div th:if="${not #lists.isEmpty(workingTimeHistories)}" class="uv-form__input-row">
                 <p class="uv-form__label" th:text="|#{person.form.workingTime.existent}:|">Arbeitszeiten</p>
-                <ul class="list-none m-0 p-0 space-y-2 text-sm">
+                <ul class="space-y-2 text-sm">
                   <li th:each="workingTimeHistory, status : ${workingTimeHistories}">
                     <span
                       th:if="${status.first}"

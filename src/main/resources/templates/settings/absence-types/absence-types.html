@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="mt-4 w-full sticky top-0">
-          <ul id="absence-type-list" class="relative list-none m-0 mt-2 p-0 w-full">
+          <ul id="absence-type-list" class="relative">
             <li role="none" class="absence-type-list-head">
               <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-list-head__status"></span>
               <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-list-head__label"></span>
@@ -75,7 +75,7 @@
                       th:name="|absenceTypeSettings.items[${index}].active|"
                       th:checked="${absenceType.active}"
                       th:id="|absenceType-active-${index}|"
-                      class="shrink-0 m-0"
+                      class="shrink-0"
                       data-test-id="vacation-type-active"
                     />
                     <label
@@ -185,7 +185,7 @@
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToApply|"
                     th:checked="${absenceType.requiresApprovalToApply}"
                     th:id="${'absenceType-approval-to-apply-' + index}"
-                    class="uv-checkbox shrink-0 m-0"
+                    class="uv-checkbox shrink-0"
                   />
                 </div>
                 <div class="absence-type-card__approve-to-cancel">
@@ -200,7 +200,7 @@
                     th:name="|absenceTypeSettings.items[${index}].requiresApprovalToCancel|"
                     th:checked="${absenceType.requiresApprovalToCancel}"
                     th:id="${'absenceType-approval-to-cancel-' + index}"
-                    class="uv-checkbox shrink-0 m-0"
+                    class="uv-checkbox shrink-0"
                   />
                 </div>
                 <div class="absence-type-card__visible-to-everyone">
@@ -215,7 +215,7 @@
                     th:name="|absenceTypeSettings.items[${index}].visibleToEveryone|"
                     th:checked="${absenceType.visibleToEveryone}"
                     th:id="|absenceType-visible-to-everyone-${index}|"
-                    class="uv-checkbox shrink-0 m-0"
+                    class="uv-checkbox shrink-0"
                   />
                 </div>
                 <div class="absence-type-card__color">
@@ -237,7 +237,7 @@
                       ></span>
                       <span th:text="#{settings.absenceTypes.action.color.label}" class="sr-only">Farbe</span>
                     </label>
-                    <input type="checkbox" th:id="|color-picker-${index}|" class="shrink-0 m-0" />
+                    <input type="checkbox" th:id="|color-picker-${index}|" class="shrink-0" />
                     <ul th:id="|color-popup-${index}|" class="color-picker-dialog list-none">
                       <li
                         th:each="selectableColor, selectableColorLoop: ${settings.absenceTypeSettings.colors}"

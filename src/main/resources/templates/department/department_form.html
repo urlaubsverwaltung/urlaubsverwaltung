@@ -168,7 +168,7 @@
                   value="1337"
                   th:value="${secondStageAuthority.id}"
                 />
-                <ul class="mt-4 department--members p-0 m-0">
+                <ul class="mt-4 department--members">
                   <li
                     th:each="person : ${persons}"
                     class="department--member"
@@ -191,7 +191,7 @@
                         ></a>
                       </p>
                       <div th:if="${isInactive}" class="flex items-center">
-                        <svg th:replace="~{icon/info::svg(className='text-amber-300 w-5 h-5 m-0 mr-1')}"></svg>
+                        <svg th:replace="~{icon/info::svg(className='text-amber-300 w-5 h-5')}"></svg>&nbsp;
                         <th:block th:text="#{department.members.assigned.inactive}"></th:block>
                       </div>
                       <div>

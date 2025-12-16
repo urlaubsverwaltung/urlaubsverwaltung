@@ -57,30 +57,27 @@
         <h2 class="mt-12" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
         <th:block th:if="${not sickNoteTypeChild}">
           <p
-            class="m-0 mt-8"
+            class="mt-8"
             th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
-          <p class="m-0 mt-4 md:mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
+          <p class="mt-4 md:mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
             Wie lange bist du vorraussichtlich noch krank?
           </p>
         </th:block>
         <th:block th:if="${sickNoteTypeChild}">
           <p
-            class="m-0 mt-8"
+            class="mt-8"
             th:text="#{sicknote.extend.child.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Kind-Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
-          <p class="m-0 mt-4 md:mt-0.5" th:text="#{sicknote.extend.child.paragraph.duration}">
+          <p class="mt-4 md:mt-0.5" th:text="#{sicknote.extend.child.paragraph.duration}">
             Wie lange ist dein Kind vorraussichtlich noch krank?
           </p>
         </th:block>
-        <p
-          class="m-0 mt-4 max-w-screen-sm flex gap-1.5 dark:text-yellow-500"
-          th:if="${existingExtensionEndDate != null}"
-        >
+        <p class="mt-4 max-w-screen-sm flex gap-1.5 dark:text-yellow-500" th:if="${existingExtensionEndDate != null}">
           <svg th:replace="~{icon/info::svg(className='w-4 h-4 shrink-0 mt-0.5')}"></svg>
           <span th:text="#{sicknote.extend.extension-exists(${#temporals.format(existingExtensionEndDate, 'SHORT')})}">
             Es existiert bereits eine Verlängerung der Krankmeldung bis zum Freitag, 23. August 2024. Diese wird hiermit

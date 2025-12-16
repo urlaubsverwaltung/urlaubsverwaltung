@@ -102,7 +102,7 @@
                   <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}" />
                   <ul
                     th:if="${departmentHeadDepartments != null && not #lists.isEmpty(departmentHeadDepartments)}"
-                    class="mt-1.5 m-0 p-0 list-none flex flex-wrap text-xs gap-1"
+                    class="mt-1.5 flex flex-wrap text-xs gap-1"
                     th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
                   >
                     <li th:each="department : ${departmentHeadDepartments}">
@@ -137,7 +137,7 @@
                   <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.description}" />
                   <ul
                     th:if="${secondStageDepartments != null && not #lists.isEmpty(secondStageDepartments)}"
-                    class="mt-1.5 m-0 p-0 list-none flex flex-wrap text-xs gap-1"
+                    class="mt-1.5 flex flex-wrap text-xs gap-1"
                     th:aria-label="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.description}"
                   >
                     <li th:each="department : ${secondStageDepartments}">

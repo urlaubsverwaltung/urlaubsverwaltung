@@ -78,7 +78,7 @@
                   class="text-sm"
                   th:text="#{person.account.basedata.email.notification(${person.niceName})}"
                 ></span>
-                <dl class="m-0 mt-4 list-none">
+                <dl class="mt-4">
                   <dt
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="#{person.account.basedata.personnelNumber}"
@@ -213,7 +213,7 @@
                 </div>
               </th:block>
               <th:block th:ref="person-details-permissions-box-body">
-                <dl th:each="role, loop : ${permissions}" class="m-0">
+                <dl th:each="role, loop : ${permissions}">
                   <dt
                     th:with="permissionMessageKey=|person.form.permissions.roles.${role}|"
                     th:text="#{__${permissionMessageKey}__}"

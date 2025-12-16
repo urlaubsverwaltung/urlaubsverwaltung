@@ -141,7 +141,7 @@
         <div th:each="month : ${absenceOverview.months}" class="mb-14 print:break-inside-avoid">
           <h2
             th:id="${'absence-table-' + month.nameOfMonth}"
-            class="text-2xl m-0"
+            class="text-2xl"
             th:classappend="${#lists.size(absenceOverview.months) == 1 ? 'hidden print:block' : ''}"
           >
             <th:block th:text="${month.nameOfMonth}" />

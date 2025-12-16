@@ -2,10 +2,6 @@
   position: relative;
 }
 
-[is="uv-color-picker"] label {
-  margin: 0 !important; /* reset bootstrap stuff */
-}
-
 [is="uv-color-picker"] .color-picker-button-color {
   @apply inline-block;
   @apply px-3;
@@ -71,7 +67,7 @@
 }
 
 [is="uv-color-picker"] .color-picker-dialog > *:not(:first-child) {
-  margin-top: 0.25rem !important; /* important because of bootstrap reset above */
+  margin-top: 0.25rem;
 }
 
 [is="uv-color-picker"] .color-picker-dialog label {

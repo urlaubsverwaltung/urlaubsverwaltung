@@ -47,7 +47,7 @@
               </td>
               <td th:if="${comment.person == null}" th:text="#{application.progress.deleted-author}"></td>
               <td>
-                <p class="m-0 mb-1">
+                <p class="mb-1">
                   <th:block th:text="#{'application.progress.' + ${comment.action}}"></th:block>
                   <th:block th:if="${comment.action.name == 'APPLIED'}">
                     <th:block th:replace="~{fragments/date::date(${app.applicationDate})}"></th:block>
@@ -75,7 +75,7 @@
                     th:text="#{application.progress.comment}"
                   ></th:block>
                 </p>
-                <p th:if="${not #strings.isEmpty(comment.text)}" th:text="${comment.text}" class="m-0 italic"></p>
+                <p th:if="${not #strings.isEmpty(comment.text)}" th:text="${comment.text}" class="italic"></p>
               </td>
             </tr>
           </tbody>

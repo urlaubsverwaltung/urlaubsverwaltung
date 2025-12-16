@@ -42,7 +42,7 @@
           th:replace="~{fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})}"
         >
           <th:block th:ref="person-notifications-navigation-body">
-            <ul class="m-0 p-0 list-none flex flex-col xs:flex-row gap-2 xs:gap-8 mb-2 xs:mb-0">
+            <ul class="mb-2 flex flex-col gap-2 xs:flex-row xs:gap-8 xs:mb-0">
               <li
                 class="border-l-4 dark:border-l-2 xs:border-l-0 dark:xs:border-l-0 xs:border-b-4 dark:xs:border-b-2 pl-2 xs:pl-0"
                 th:classappend="${activeContent == 'self' ? 'border-zinc-200' : 'border-transparent'}"

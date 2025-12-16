@@ -164,7 +164,7 @@
               </select>
             </div>
             <div class="uv-form__input-error" th:if="${#fields.hasErrors('accountSettings.expiryDateDayOfMonth')}">
-              <p th:errors="*{accountSettings.expiryDateDayOfMonth}" class="m-0">expiryDate Error</p>
+              <p th:errors="*{accountSettings.expiryDateDayOfMonth}">expiryDate Error</p>
             </div>
           </div>
         </div>

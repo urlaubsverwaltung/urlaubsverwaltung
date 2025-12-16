@@ -60,7 +60,7 @@
             >
               Meine Abwesenheiten
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAppliedAndChanges.visible},active=${personNotificationsDto.applicationAppliedAndChanges.active},name='applicationAppliedAndChanges.active',label='person.notifications.section.absences.changed.label',info='person.notifications.section.absences.changed.info')}"
               ></li>
@@ -83,7 +83,7 @@
             >
               Meine Krankmeldungen
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.ownSickNoteSubmittedCreatedEditedCancelled.visible},active=${personNotificationsDto.ownSickNoteSubmittedCreatedEditedCancelled.active},name='ownSickNoteSubmittedCreatedEditedCancelled.active',label='person.notifications.section.sicknote.createdEditedCancelled.label',info='person.notifications.section.sicknote.createdEditedCancelled.info')}"
               ></li>
@@ -97,7 +97,7 @@
             >
               Meine Überstunden
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
               ></li>
@@ -114,7 +114,7 @@
             >
               Personen
             </h2>
-            <ul class="list-selectable list-none m-0 p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.personNewManagementAll.visible},active=${personNotificationsDto.personNewManagementAll.active},name='personNewManagementAll.active',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"
               ></li>
@@ -124,7 +124,7 @@
       </div>
 
       <noscript>
-        <hr class="w-full m-0 mt-6" />
+        <hr class="mt-6" />
 
         <div class="mt-6 flex justify-between gap-4">
           <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>

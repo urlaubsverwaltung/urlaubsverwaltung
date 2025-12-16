@@ -7,7 +7,6 @@
 
 .info-banner-text {
   width: 100%;
-  margin: 0; /* override bootstrap paragraph margin */
   text-align: center;
   @apply text-sm;
 }

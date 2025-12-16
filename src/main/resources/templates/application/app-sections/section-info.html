@@ -121,11 +121,7 @@
         <tr>
           <td th:text="#{application.data.holidayReplacement}"></td>
           <td>
-            <ul
-              th:if="${not #lists.isEmpty(app.holidayReplacements)}"
-              class="list-none m-0 p-0"
-              data-test-id="holiday-replacement-list"
-            >
+            <ul th:if="${not #lists.isEmpty(app.holidayReplacements)}" data-test-id="holiday-replacement-list">
               <li
                 th:each="replacementInfo : ${app.holidayReplacements}"
                 th:text="${replacementInfo.person.niceName}"

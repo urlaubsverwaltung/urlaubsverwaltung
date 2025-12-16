@@ -32,7 +32,7 @@
               class="navigation-items grow w-full"
               th:classappend="${#lists.size(navigation.elements) > 6 ? 'max-w-7xl' : 'max-w-6xl'}"
             >
-              <ul class="navigation-list list-none m-0 px-0 py-8 lg:py-3 lg:px-2 xl:px-0">
+              <ul class="navigation-list py-8 lg:py-3 lg:px-2 xl:px-0">
                 <li th:each="navigationItem : ${navigation.elements}">
                   <a
                     th:fragment="navigation-item(id, href, text, icon)"
@@ -78,10 +78,10 @@
                   <div id="add-something-new-menu" class="nav-popup-menu" data-test-id="add-something-new-popupmenu">
                     <div class="nav-popup-menu-inner">
                       <div class="nav-popup-menu-inner__header">
-                        <h3 class="m-0 p-0 text-base" th:text="#{nav.add.title}">Etwas Neues eintragen</h3>
+                        <h3 th:text="#{nav.add.title}">Etwas Neues eintragen</h3>
                       </div>
                       <div class="nav-popup-menu-inner__content">
-                        <ul class="list-none m-0 p-0">
+                        <ul>
                           <li>
                             <a
                               href="#"
@@ -181,8 +181,8 @@
                         </a>
                       </div>
                       <div class="nav-popup-menu-inner__content">
-                        <ul class="list-none m-0 p-0">
-                          <li class="">
+                        <ul>
+                          <li>
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})}"

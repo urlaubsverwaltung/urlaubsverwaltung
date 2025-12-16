@@ -47,7 +47,7 @@
           </div>
         </th:block>
         <th:block th:ref="user-applications-heading-body">
-          <ul class="m-0 p-0 list-none flex flex-col xs:flex-row gap-2 xs:gap-8 mb-2 xs:mb-0" is="uv-nav-tabs">
+          <ul class="mb-2 flex flex-col xs:flex-row gap-2 xs:gap-8 xs:mb-0" is="uv-nav-tabs">
             <li
               class="border-l-4 dark:border-l-2 xs:border-l-0 dark:xs:border-l-0 xs:border-b-4 dark:xs:border-b-2 pl-2 xs:pl-0"
               th:classappend="${activeContent == 'application' || activeContent == 'sicknote' ? 'border-zinc-200' : 'border-transparent'}"
@@ -128,7 +128,7 @@
             </div>
           </div>
           <ul
-            class="lg:list--hover w-full list-none m-0 p-0 pl-20 md:pl-0 md:flex-1 space-y-10 lg:space-y-2 md:mt-2 lg:mt-0 md:translate-y-0.5 text-sm"
+            class="w-full pl-20 text-sm space-y-10 md:mt-2 md:pl-0 md:flex-1 md:translate-y-0.5 lg:list--hover lg:mt-0 lg:space-y-2"
           >
             <li
               class="mt-2 flex flex-col justify-between xs:mt-0 md:space-x-0 lg:p-2 lg:flex-row lg:items-end dark:rounded-sm"
@@ -259,7 +259,7 @@
               </span>
             </div>
           </div>
-          <ul class="flex-1 list-none m-0 p-0 mt-4 md:pl-0 space-y-6 lg:gap-2 md:mt-2 md:translate-y-0.5">
+          <ul class="flex-1 mt-4 space-y-6 md:mt-2 md:pl-0 md:translate-y-0.5 lg:gap-2">
             <li
               class="flex flex-col gap-4 xs:pl-20 md:pl-0"
               th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}"
@@ -326,7 +326,7 @@
           th:replace="~{fragments/section-heading::section-heading-paddingless(~{::new-other-applications-heading-body}, ~{})}"
         >
           <th:block th:ref="new-other-applications-heading-body">
-            <ul class="m-0 p-0 list-none flex flex-col xs:flex-row gap-2 xs:gap-8 mb-2 xs:mb-0" is="uv-nav-tabs">
+            <ul class="mb-2 flex flex-col gap-2 xs:flex-row xs:gap-8 xs:mb-0" is="uv-nav-tabs">
               <li
                 class="border-l-4 dark:border-l-2 xs:border-l-0 dark:xs:border-l-0 xs:border-b-4 dark:xs:border-b-2 pl-2 xs:pl-0"
                 th:classappend="${activeContent == 'application' || activeContent == 'replacement' ? 'border-zinc-200' : 'border-transparent'}"
@@ -383,7 +383,7 @@
             <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
             <ul
               th:if="${not #lists.isEmpty(otherApplications)}"
-              class="lg:list--hover w-full list-none m-0 p-0 text-sm space-y-10 lg:space-y-4"
+              class="w-full text-sm space-y-10 lg:space-y-4 lg:list--hover"
             >
               <li
                 th:each="otherRequestForLeave,loopStatus : ${otherApplications}"
@@ -506,7 +506,7 @@
           <p th:if="${#lists.isEmpty(otherSickNotes)}" th:text="#{sicknotes.submitted.none}"></p>
           <ul
             th:if="${not #lists.isEmpty(otherSickNotes)}"
-            class="lg:list--hover w-full list-none m-0 p-0 text-sm space-y-10 lg:space-y-4"
+            class="w-full text-sm space-y-10 lg:space-y-4 lg:list--hover"
           >
             <li
               th:each="otherSickNote,loopStatus : ${otherSickNotes}"
@@ -629,7 +629,7 @@
           ></p>
           <ul
             th:if="${not #lists.isEmpty(applications_cancellation_request)}"
-            class="lg:list--hover w-full list-none m-0 p-0 text-sm space-y-10 lg:space-y-4"
+            class="w-full text-sm space-y-10 lg:space-y-4 lg:list--hover"
           >
             <li
               th:each="cancellationRequest,loopStatus : ${applications_cancellation_request}"

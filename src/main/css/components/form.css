@@ -267,10 +267,6 @@ textarea.error {
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
 
-  p {
-    margin: 0; /* override bootstrap margin bottom */
-  }
-
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
@@ -299,13 +295,11 @@ textarea.error {
       @apply dark:border-zinc-600;
 
       &:is(h1, h2, h3, h4, h5, h6) {
-        margin: 0; /* override bootstrap(?) default for headings */
         margin-bottom: var(--uv-form-row-gap);
         font-size: var(--uv-form-legend-font-size);
       }
 
       > :is(h1, h2, h3, h4, h5, h6) {
-        margin: 0; /* override bootstrap(?) default for headings */
         font-size: var(--uv-form-legend-font-size);
       }
     }
