@@ -204,8 +204,8 @@
               <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
               <input type="hidden" name="query" th:value="${query}" />
             </div>
-            <div class="flex flex-col md:flex-row md:items-center">
-              <label for="sort-select" class="mr-2"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
+            <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+              <label for="sort-select"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
               <select
                 id="sort-select"
                 name="sort"
@@ -225,7 +225,7 @@
                   </optgroup>
                 </th:block>
               </select>
-              <button type="submit" id="sort-submit" class="ml-2 button-main" th:text="#{action.sort}" data-js-hidden>
+              <button type="submit" id="sort-submit" class="button-main" th:text="#{action.sort}" data-js-hidden>
                 Sortieren
               </button>
             </div>

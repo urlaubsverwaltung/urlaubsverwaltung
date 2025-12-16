@@ -216,7 +216,7 @@
                   Kind-Krankmeldung
                 </span>
                 <span
-                  class="absence-type_color-box print:hidden mr-5"
+                  class="absence-type_color-box mr-5 print:hidden"
                   th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
                   th:classappend="|
                     ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
