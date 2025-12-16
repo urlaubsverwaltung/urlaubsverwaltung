@@ -42,7 +42,13 @@
 
             <div
               class="uv-form__group"
-              th:with="defaultFederalStateName=|federalState.${defaultFederalState}|, countryMessageKey=|country.${defaultFederalState.country}|, fedStat=|#{${countryMessageKey}} - #{${defaultFederalStateName}}|, defaultFederalCountryAndStateName=${defaultFederalState == 'NONE' ? defaultFederalStateName : fedStat}"
+              th:with="
+                defaultFederalStateNameMessageKey=|federalState.${defaultFederalState}|,
+                countryMessageKey=|country.${defaultFederalState.country}|,
+                federalStateName=|#{${countryMessageKey}} - #{${defaultFederalStateNameMessageKey}}|,
+                defaultFederalStateName=#{${defaultFederalStateNameMessageKey}},
+                defaultFederalCountryAndStateName=${defaultFederalState.name == 'NONE' ? defaultFederalStateName : federalStateName}
+"
             >
               <div th:if="${#fields.hasErrors('workingDays')}" class="uv-form__group-error">
                 <p class="alert alert-danger">
