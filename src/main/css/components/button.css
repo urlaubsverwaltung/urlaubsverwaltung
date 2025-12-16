@@ -26,7 +26,7 @@ a.button-info {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none !important; /* important to override bootstrap */
+  text-decoration: none;
   @apply px-3;
   @apply py-2;
   @apply rounded-sm;

@@ -1,12 +1,8 @@
 @layer theme, base, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);
-
-/* despite having bootstrap leftovers, include preflight. first quick test shows no real difference... */
 @import "tailwindcss/preflight.css" layer(base);
-
-/* use important keyword for tailwind utility classes to override bootstrap selectors */
-@import "tailwindcss/utilities.css" layer(utilities) important;
+@import "tailwindcss/utilities.css" layer(utilities);
 
 /* html element has .dark class to enforce dark theme */
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));

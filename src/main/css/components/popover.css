@@ -1,11 +1,7 @@
 [popover] {
   /* override user-agent, content should define individual styles */
   padding: unset;
-  &:not(:popover-open) {
-    /* bootstrap defines display:block on nav elements and more */
-    /* can be removed when bootstrap is obsolete */
-    display: none;
-  }
+
   /* by default, popover does not overflow. */
   /* as long as datepicker doesn't use popovers, we have to change this behaviour. */
   &:has(duet-date-picker) {
