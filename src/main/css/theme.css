@@ -44,7 +44,7 @@
   --sick-note-child-color: var(--color-red-700);
 
   @variant dark {
-    --uv-header-height: 3.438rem;
+    --uv-header-height: 3.25rem;
     --uv-cal-border-color: var(--color-neutral-900);
     --uv-cal-today-border-color: var(--color-gray-500);
     --uv-cal-default-bg: var(--color-neutral-800);

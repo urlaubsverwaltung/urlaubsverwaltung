@@ -88,6 +88,10 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+
+    @variant dark {
+      border-color: var(--color-zinc-600, currentColor);
+    }
   }
 
   button:not(:disabled),

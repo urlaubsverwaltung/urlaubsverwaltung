@@ -1,0 +1,17 @@
+@reference "../config.css";
+
+.notification-section-title {
+  margin-bottom: 0.5rem;
+
+  position: sticky;
+  top: var(--uv-header-height);
+
+  @apply text-lg;
+  background-color: var(--color-white); /* sticky element background */
+  border-bottom-width: 1px;
+
+  @variant dark {
+    @apply py-1;
+    background-color: var(--color-zinc-900); /* sticky element background */
+  }
+}
