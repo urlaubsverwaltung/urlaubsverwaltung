@@ -17,7 +17,7 @@
   .navigation::before {
     @apply bg-zinc-900;
     @apply backdrop-blur-sm;
-    @apply supports-backdrop-blur:bg-zinc-900/[0.85];
+    @apply supports-backdrop-blur:bg-zinc-900/85;
     @apply lg:border-b;
     @apply lg:border-b-zinc-800;
   }
