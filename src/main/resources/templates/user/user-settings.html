@@ -54,9 +54,7 @@
                   th:checked="${null eq userSettings.locale}"
                   class="peer md:absolute bottom-5 left-4"
                 />
-                <span
-                  class="block w-full h-full px-4 py-3 rounded-lg border-2 border-zinc-200 dark:border-zinc-800 peer-checked:border-blue-400"
-                >
+                <span class="block w-full h-full px-4 py-3 rounded-lg border-2 peer-checked:border-blue-400">
                   <label
                     for="user-locale-system"
                     class="flex items-center gap-4 cursor-pointer md:text-center md:flex-col"
@@ -86,9 +84,7 @@
                   th:checked="${supportedLocale.locale eq userSettings.locale}"
                   class="peer md:absolute bottom-5 left-4"
                 />
-                <span
-                  class="block w-full h-full px-4 py-3 rounded-lg border-2 border-zinc-200 dark:border-zinc-800 peer-checked:border-blue-400"
-                >
+                <span class="block w-full h-full px-4 py-3 rounded-lg border-2 peer-checked:border-blue-400">
                   <label
                     for="user-locale"
                     th:for="${'user-locale-' + supportedLocale.locale}"
@@ -127,7 +123,7 @@
             <ul aria-describedby="theme-description" class="grid grid-cols-2 gap-4 xs:grid-cols-3">
               <li th:each="selectableTheme : ${supportedThemes}">
                 <label
-                  class="overflow-hidden flex flex-col cursor-pointer rounded-lg md:rounded-xl border-2 border-zinc-200 dark:border-zinc-800 [&:has(:checked)]:border-blue-400"
+                  class="overflow-hidden flex flex-col cursor-pointer rounded-lg md:rounded-xl border-2 [&:has(:checked)]:border-blue-400"
                 >
                   <img
                     src="#"
