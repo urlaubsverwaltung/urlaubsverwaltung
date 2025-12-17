@@ -91,9 +91,11 @@ public class WorkingTimeViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/workingtime")
-    public String updateWorkingTime(@PathVariable("personId") Long personId,
-                                    @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Errors errors,
-                                    Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String updateWorkingTime(
+        @PathVariable("personId") Long personId,
+        @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Errors errors,
+        Model model, RedirectAttributes redirectAttributes
+    ) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
