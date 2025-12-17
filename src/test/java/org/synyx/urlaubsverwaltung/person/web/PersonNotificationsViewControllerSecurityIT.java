@@ -92,7 +92,7 @@ class PersonNotificationsViewControllerSecurityIT extends SingleTenantTestContai
             get("/web/person/1/notifications")
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(redirectedUrl("/oauth2/authorization/default"));
     }
 
     @ParameterizedTest
