@@ -29,10 +29,11 @@ class PageableUserAwareArgumentResolver extends PageableHandlerMethodArgumentRes
     private final PersonService personService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    PageableUserAwareArgumentResolver(SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver,
-                                      UserPaginationSettingsSupplier userPaginationSettingsSupplier,
-                                      PersonService personService, ApplicationEventPublisher applicationEventPublisher) {
-
+    PageableUserAwareArgumentResolver(
+        SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver,
+        UserPaginationSettingsSupplier userPaginationSettingsSupplier,
+        PersonService personService, ApplicationEventPublisher applicationEventPublisher
+    ) {
         super(sortHandlerMethodArgumentResolver);
         this.userPaginationSettingsSupplier = userPaginationSettingsSupplier;
         this.personService = personService;
