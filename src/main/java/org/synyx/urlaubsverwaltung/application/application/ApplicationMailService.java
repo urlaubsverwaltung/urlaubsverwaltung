@@ -786,7 +786,7 @@ class ApplicationMailService {
         final List<Person> recipientsOfInterest = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(recipientsOfInterest)
-            .withSubject("subject.application.cancelled.management")
+            .withSubject("subject.application.cancelled.management", application.getCanceller().getNiceName())
             .withTemplate("application_cancelled_by_management_to_management", modelSupplier)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();

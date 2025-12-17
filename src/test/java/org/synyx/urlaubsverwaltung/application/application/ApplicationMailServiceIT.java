@@ -2094,7 +2094,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         // send mail to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final MimeMessage msg = inboxApplicant[0];
-        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
+        assertThat(msg.getSubject()).isEqualTo("Deine genehmigte Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -2117,7 +2117,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         // was email sent to relevant person?
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
         final MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
-        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vom Office storniert");
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine genehmigte Abwesenheit wurde von Marlene Muster storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
             Hallo Relevant Person,
