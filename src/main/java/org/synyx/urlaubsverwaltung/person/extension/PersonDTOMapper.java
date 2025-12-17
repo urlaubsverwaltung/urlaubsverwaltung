@@ -10,6 +10,8 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.FALSE;
+
 class PersonDTOMapper {
 
     private PersonDTOMapper() {
@@ -46,7 +48,7 @@ class PersonDTOMapper {
     }
 
     static Set<Role> toRoles(PersonDTO personDTO) {
-        if (!personDTO.enabled()) {
+        if (FALSE.equals(personDTO.enabled())) {
             return Set.of(Role.INACTIVE);
         }
         return personDTO.permissions()
