@@ -106,7 +106,7 @@ public class ApplicationReminderMailService {
 
             final LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
-                Integer daysBeforeRemindForWaitingApplications =
+                final Integer daysBeforeRemindForWaitingApplications =
                     settingsService.getSettings().getApplicationSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
