@@ -580,13 +580,12 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetEditSickNoteForInactiveThrowsSickNoteAlreadyInactiveException() {
+    void ensureGetEditSickNoteForInactiveThrowsSickNoteAlreadyInactiveException() throws Exception {
 
         when(sickNoteService.getById(0L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(CANCELLED).build()));
 
-        assertThatThrownBy(() ->
-            perform(get("/web/sicknote/0/edit"))
-        ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
+        perform(get("/web/sicknote/0/edit"))
+            .andExpect(view().name("redirect:/web/sicknote/0"));
     }
 
     @ParameterizedTest
@@ -1581,13 +1580,12 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() {
+    void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() throws Exception {
 
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(CANCELLED).build()));
 
-        assertThatThrownBy(() ->
-            perform(get("/web/sicknote/15/convert"))
-        ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
+        perform(get("/web/sicknote/15/convert"))
+            .andExpect(view().name("redirect:/web/sicknote/15"));
     }
 
     @Test
