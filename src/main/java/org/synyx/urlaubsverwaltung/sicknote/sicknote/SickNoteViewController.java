@@ -308,11 +308,11 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/{id}/edit")
-    public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
+    public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
-            throw new SickNoteAlreadyInactiveException(id);
+            return "redirect:/web/sicknote/" + id;
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -441,12 +441,11 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/{id}/convert")
-    public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model)
-        throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
+    public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
-            throw new SickNoteAlreadyInactiveException(id);
+            return "redirect:/web/sicknote/" + id;
         }
 
         model.addAttribute("sickNote", sickNote);
