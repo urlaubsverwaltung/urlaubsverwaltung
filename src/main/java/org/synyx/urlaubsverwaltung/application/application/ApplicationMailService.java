@@ -769,6 +769,7 @@ class ApplicationMailService {
 
         final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
             APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getLabel(locale),
             COMMENT, comment
         );
 
