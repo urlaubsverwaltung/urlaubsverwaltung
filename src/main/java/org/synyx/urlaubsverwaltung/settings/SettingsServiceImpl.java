@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -16,10 +17,12 @@ public class SettingsServiceImpl implements SettingsService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsRepository settingsRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public SettingsServiceImpl(SettingsRepository settingsRepository) {
+    public SettingsServiceImpl(SettingsRepository settingsRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.settingsRepository = settingsRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -43,6 +46,7 @@ public class SettingsServiceImpl implements SettingsService {
         if (count == 0) {
             final Settings settings = new Settings();
             final Settings savedSettings = settingsRepository.save(settings);
+            applicationEventPublisher.publishEvent(new InitialDefaultSettingsSavedEvent());
             LOG.info("Saved initial settings {}", savedSettings);
         }
     }

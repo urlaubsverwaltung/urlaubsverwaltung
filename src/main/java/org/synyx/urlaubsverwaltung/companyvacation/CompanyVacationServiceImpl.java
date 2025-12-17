@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForChristmasEveUpdatedEvent;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdatedEvent;
+import org.synyx.urlaubsverwaltung.settings.InitialDefaultSettingsSavedEvent;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -57,14 +58,19 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
         convertNewYearsEveToCompanyVacationEvent(event.workingDurationForNewYearsEve());
     }
 
+    @EventListener(InitialDefaultSettingsSavedEvent.class)
+    void handleInitialDefaultSettingsSavedEvent() {
+        publishCompanyEvents();
+    }
+
     public void publishCompanyEvents() {
-        LOG.info("Republishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
+        LOG.info("Publishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
 
         final PublicHolidaysSettings publicHolidaysSettings = settingsService.getSettings().getPublicHolidaysSettings();
         convertChristmasEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForChristmasEve());
         convertNewYearsEveToCompanyVacationEvent(publicHolidaysSettings.getWorkingDurationForNewYearsEve());
 
-        LOG.info("Republished all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
+        LOG.info("Published all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
     }
 
     private void convertNewYearsEveToCompanyVacationEvent(DayLength workingDurationForNewYearsEve) {
