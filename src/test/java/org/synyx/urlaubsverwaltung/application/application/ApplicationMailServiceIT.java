@@ -2094,7 +2094,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         // send mail to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         final MimeMessage msg = inboxApplicant[0];
-        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
+        assertThat(msg.getSubject()).isEqualTo("Deine genehmigte Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getReplyTo()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("""
@@ -2117,17 +2117,27 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         // was email sent to relevant person?
         final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
         final MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
-        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vom Office storniert");
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine genehmigte Abwesenheit wurde von Marlene Muster storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
         assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("""
             Hallo Relevant Person,
 
-            Marlene Muster hat die Abwesenheit von Lieschen Müller vom 29.05.2020 storniert.
+            Marlene Muster hat die Abwesenheit von Lieschen Müller storniert.
 
                 https://localhost:8080/web/application/1234
 
             Kommentar von Lieschen Müller:
             Geht leider nicht
+
+            Informationen zur Abwesenheit:
+
+                Mitarbeiter:         Lieschen Müller
+                Zeitraum:            15.06.2020, ganztägig
+                Art der Abwesenheit: Erholungsurlaub
+                Grund:              \s
+                Vertretung:         \s
+                Anschrift/Telefon:  \s
+                Erstellungsdatum:    29.05.2020
 
 
             Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.

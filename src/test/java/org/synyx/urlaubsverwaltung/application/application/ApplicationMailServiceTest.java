@@ -1152,6 +1152,9 @@ class ApplicationMailServiceTest {
     @Test
     void sendCancelledConfirmationByManagement() {
 
+        final MessageSource messageSource = mock(MessageSource.class);
+        when(messageSource.getMessage("application.data.vacationType.holiday", new Object[]{}, GERMAN)).thenReturn("vacation type label");
+
         final Settings settings = new Settings();
         settings.setTimeSettings(new TimeSettings());
         when(settingsService.getSettings()).thenReturn(settings);
@@ -1162,10 +1165,17 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource)
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
+
         final Person canceller = new Person();
 
         final Application application = new Application();
         application.setPerson(person);
+        application.setVacationType(vacationType);
         application.setCanceller(canceller);
         application.setDayLength(FULL);
         application.setStartDate(LocalDate.of(2020, 10, 2));
@@ -1176,6 +1186,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("vacationTypeLabel", "vacation type label");
         model.put("comment", comment);
 
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
