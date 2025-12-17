@@ -22,7 +22,6 @@ public class WorkingTimeForm {
     private LocalDate validFrom;
     private List<Integer> workingDays = new ArrayList<>();
     private FederalState federalState;
-    private boolean isDefaultFederalState;
 
     WorkingTimeForm() {
         // OK
@@ -38,8 +37,7 @@ public class WorkingTimeForm {
         }
 
         this.validFrom = workingTime.getValidFrom();
-        this.federalState = workingTime.getFederalState();
-        this.isDefaultFederalState = workingTime.isDefaultFederalState();
+        this.federalState = workingTime.isDefaultFederalState() ? null : workingTime.getFederalState();
     }
 
     public String getValidFromIsoValue() {
@@ -74,27 +72,18 @@ public class WorkingTimeForm {
         this.federalState = federalState;
     }
 
-    public boolean isDefaultFederalState() {
-        return isDefaultFederalState;
-    }
-
-    public void setDefaultFederalState(boolean defaultFederalState) {
-        isDefaultFederalState = defaultFederalState;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkingTimeForm that = (WorkingTimeForm) o;
-        return isDefaultFederalState == that.isDefaultFederalState
-            && Objects.equals(validFrom, that.validFrom)
+        return Objects.equals(validFrom, that.validFrom)
             && Objects.equals(workingDays, that.workingDays)
             && federalState == that.federalState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(validFrom, workingDays, federalState, isDefaultFederalState);
+        return Objects.hash(validFrom, workingDays, federalState);
     }
 }

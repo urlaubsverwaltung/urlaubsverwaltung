@@ -85,12 +85,12 @@
                       <option
                         th:text="#{person.form.workingTime.federalState.default(${defaultFederalCountryAndStateName})}"
                         value=""
-                        th:selected="${workingTime.defaultFederalState == true}"
+                        th:selected="${workingTime.federalState == null}"
                       ></option>
                       <option
                         th:text="#{federalState.NONE}"
                         value="NONE"
-                        th:selected="${workingTime.defaultFederalState == false && (workingTime.federalState == null or workingTime.federalState.name == 'NONE')}"
+                        th:selected="${workingTime.federalState != null && workingTime.federalState.name == 'NONE'}"
                       ></option>
                     </optgroup>
 
@@ -104,7 +104,7 @@
                         th:with="countryMessageKey3=|federalState.${federalStateType}|"
                         th:text="#{${countryMessageKey3}}"
                         th:value="${federalStateType}"
-                        th:selected="${workingTime.defaultFederalState== false && workingTime.federalState == federalStateType}"
+                        th:selected="${workingTime.federalState == federalStateType}"
                       ></option>
                     </optgroup>
                   </th:block>
