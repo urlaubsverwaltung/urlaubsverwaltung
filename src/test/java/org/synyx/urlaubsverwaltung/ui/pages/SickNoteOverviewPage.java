@@ -65,12 +65,13 @@ public class SickNoteOverviewPage {
             // remove tabs from textContent (don't know where tabs come from)
             .replaceAll("\\t", "")
             // and remove multiple whitespace characters
-            .replaceAll(" {2,}"," ");
+            .replaceAll(" {2,}", " ");
     }
 
     private Optional<Locator> rowWithPerson(String firstName, String lastName) {
 
         final Locator table = page.locator(TABLE_SELECTOR);
+        table.waitFor();
         final List<Locator> tableRows = table.locator("tr").all();
 
         for (Locator tableRow : tableRows) {

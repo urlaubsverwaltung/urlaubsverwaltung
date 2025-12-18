@@ -19,11 +19,11 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsWorkingTimePage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
@@ -98,9 +98,9 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         // log in as office user and disable the overtime feature
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
@@ -113,6 +113,7 @@ class ApplicationForLeaveUIIT {
         settingsWorkingTimePage.disableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
+        navigationPage.isVisible();
         navigationPage.logout();
 
         // now the quick-add button should link directly to application-for-leave page
@@ -122,7 +123,10 @@ class ApplicationForLeaveUIIT {
         assertThat(navigationPage.quickAdd.hasNoPopup()).isTrue();
 
         navigationPage.quickAdd.click();
-        page.context().waitForCondition(applicationPage::isVisible);
+        applicationFormPage.isVisible();
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -134,9 +138,9 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
@@ -146,10 +150,12 @@ class ApplicationForLeaveUIIT {
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submitOvertimeForm();
 
+        navigationPage.isVisible();
         navigationPage.logout();
 
-        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), (userPerson.getEmail())));
+        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
+        overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
@@ -158,7 +164,10 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
-        page.context().waitForCondition(applicationPage::isVisible);
+        applicationFormPage.isVisible();
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -170,7 +179,7 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
@@ -181,19 +190,20 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
-        applicationPage.from(getNextWorkday());
+        applicationFormPage.from(getNextWorkday());
 
-        applicationPage.selectReplacement(batman);
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
+        applicationFormPage.selectReplacement(batman);
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(batman, 1));
 
-        applicationPage.selectReplacement(joker);
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
+        applicationFormPage.selectReplacement(joker);
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(batman, 2));
 
-        applicationPage.setCommentForReplacement(batman, "please be gentle!");
+        applicationFormPage.setCommentForReplacement(batman, "please be gentle!");
 
-        applicationPage.submit();
+        applicationFormPage.submit();
 
+        applicationDetailPage.isVisible();
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
@@ -207,8 +217,11 @@ class ApplicationForLeaveUIIT {
         // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
 
-        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
-        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+        assertThat(applicationFormPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationFormPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -218,7 +231,7 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
@@ -229,25 +242,29 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
-        assertThat(applicationPage.showsReason()).isFalse();
+        assertThat(applicationFormPage.showsReason()).isFalse();
 
-        applicationPage.selectVacationTypeOfName(msg("application.data.vacationType.specialleave", GERMAN));
-        assertThat(applicationPage.showsReason()).isTrue();
-        assertThat(applicationPage.showsOvertimeReductionHours()).isFalse();
+        applicationFormPage.selectVacationTypeOfName(msg("application.data.vacationType.specialleave", GERMAN));
+        assertThat(applicationFormPage.showsReason()).isTrue();
+        assertThat(applicationFormPage.showsOvertimeReductionHours()).isFalse();
 
-        applicationPage.submit();
+        applicationFormPage.submit();
 
-        assertThat(applicationPage.showsFromError()).isTrue();
-        assertThat(applicationPage.showsToError()).isTrue();
-        assertThat(applicationPage.showsReasonError()).isTrue();
+        applicationFormPage.isVisible();
+        assertThat(applicationFormPage.showsFromError()).isTrue();
+        assertThat(applicationFormPage.showsToError()).isTrue();
+        assertThat(applicationFormPage.showsReasonError()).isTrue();
 
-        applicationPage.from(getNextWorkday());
-        applicationPage.reason("some reason text.");
-        applicationPage.submit();
+        applicationFormPage.from(getNextWorkday());
+        applicationFormPage.reason("some reason text.");
+        applicationFormPage.submit();
 
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -256,10 +273,10 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
@@ -276,26 +293,30 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
-        assertThat(applicationPage.showsOvertimeReductionHours()).isFalse();
+        assertThat(applicationFormPage.showsOvertimeReductionHours()).isFalse();
 
-        applicationPage.selectVacationTypeOfName(msg("application.data.vacationType.overtime", GERMAN));
-        assertThat(applicationPage.showsOvertimeReductionHours()).isTrue();
-        assertThat(applicationPage.showsReason()).isFalse();
+        applicationFormPage.selectVacationTypeOfName(msg("application.data.vacationType.overtime", GERMAN));
+        assertThat(applicationFormPage.showsOvertimeReductionHours()).isTrue();
+        assertThat(applicationFormPage.showsReason()).isFalse();
 
-        applicationPage.submit();
+        applicationFormPage.submit();
+        applicationFormPage.isVisible();
 
-        assertThat(applicationPage.showsFromError()).isTrue();
-        assertThat(applicationPage.showsToError()).isTrue();
-        assertThat(applicationPage.showsOvertimeReductionHoursError()).isTrue();
+        assertThat(applicationFormPage.showsFromError()).isTrue();
+        assertThat(applicationFormPage.showsToError()).isTrue();
+        assertThat(applicationFormPage.showsOvertimeReductionHoursError()).isTrue();
 
-        applicationPage.from(getNextWorkday());
-        applicationPage.overtimeReductionHours(1);
-        applicationPage.overtimeReductionMinutes(30);
-        applicationPage.submit();
+        applicationFormPage.from(getNextWorkday());
+        applicationFormPage.overtimeReductionHours(1);
+        applicationFormPage.overtimeReductionMinutes(30);
+        applicationFormPage.submit();
 
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -307,43 +328,45 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        // log in as office user
-        // and disable halfDay
+        // log in as office user and disable halfDay
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
+        navigationPage.isVisible();
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
         // default is: half days enabled
-        assertThat(applicationPage.showsDayLengthInputs()).isTrue();
+        assertThat(applicationFormPage.showsDayLengthInputs()).isTrue();
 
         navigationPage.clickSettings();
 
+        settingsPage.isVisible();
         settingsPage.clickDisableHalfDayAbsence();
         settingsPage.saveSettings();
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
+        applicationFormPage.isVisible();
         // we just disabled half days in the settings
-        assertThat(applicationPage.showsDayLengthInputs()).isFalse();
+        assertThat(applicationFormPage.showsDayLengthInputs()).isFalse();
 
-        applicationPage.from(getNextWorkday());
+        applicationFormPage.from(getNextWorkday());
 
-        applicationPage.selectReplacement(batman);
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
+        applicationFormPage.selectReplacement(batman);
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(batman, 1));
 
-        applicationPage.selectReplacement(joker);
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
-        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
+        applicationFormPage.selectReplacement(joker);
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationFormPage.showsAddedReplacementAtPosition(batman, 2));
 
-        applicationPage.setCommentForReplacement(batman, "please be gentle!");
+        applicationFormPage.setCommentForReplacement(batman, "please be gentle!");
 
-        applicationPage.submit();
+        applicationFormPage.submit();
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
@@ -357,8 +380,12 @@ class ApplicationForLeaveUIIT {
         // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
 
-        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
-        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+        applicationFormPage.isVisible();
+        assertThat(applicationFormPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationFormPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {

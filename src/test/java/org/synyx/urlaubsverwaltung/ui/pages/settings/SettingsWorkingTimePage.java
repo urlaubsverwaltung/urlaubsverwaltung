@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
-
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 public class SettingsWorkingTimePage {
 
@@ -28,7 +25,6 @@ public class SettingsWorkingTimePage {
      * Submits the overtime form and waits for dom-content loaded.
      */
     public void submitOvertimeForm() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=submit-overtime-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=submit-overtime-button]").click();
     }
 }

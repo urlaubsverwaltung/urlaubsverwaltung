@@ -12,6 +12,8 @@ import static java.lang.String.format;
 
 public class OverviewPage {
 
+    private static final String DATA_PAGE = "main[data-page='overview']";
+
     private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -20,6 +22,10 @@ public class OverviewPage {
         this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
+    }
+
+    public void isVisible() {
+        page.waitForSelector(DATA_PAGE);
     }
 
     public boolean isVisibleForPerson(String username, int year) {

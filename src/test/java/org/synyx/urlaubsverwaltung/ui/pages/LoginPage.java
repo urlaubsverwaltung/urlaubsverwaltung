@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
-
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 public class LoginPage {
 
@@ -19,8 +16,9 @@ public class LoginPage {
         this.port = port;
     }
 
-    public boolean isVisible() {
-        return usernameElementExists(page) && passwordElementExists(page);
+    public void isVisible() {
+        page.waitForSelector(USERNAME_SELECTOR);
+        page.waitForSelector(PASSWORD_SELECTOR);
     }
 
     /**
@@ -30,18 +28,10 @@ public class LoginPage {
      */
     public void login(Credentials credentials) {
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
+        this.isVisible();
         page.fill(USERNAME_SELECTOR, credentials.username);
         page.fill(PASSWORD_SELECTOR, credentials.password);
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
-    }
-
-    private static boolean usernameElementExists(Page page) {
-        return page.locator(USERNAME_SELECTOR) != null;
-    }
-
-    private static boolean passwordElementExists(Page page) {
-        return page.locator(PASSWORD_SELECTOR) != null;
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public record Credentials(String username, String password) {

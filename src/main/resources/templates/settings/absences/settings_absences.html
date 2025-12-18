@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0" data-page="settings-absences">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form method="post" th:action="@{/web/settings/absences}" th:object="${settings}" class="uv-form uv-form-grid">

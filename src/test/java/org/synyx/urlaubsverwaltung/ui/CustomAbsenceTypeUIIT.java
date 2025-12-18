@@ -15,11 +15,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsenceTypesPage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -83,12 +83,9 @@ class CustomAbsenceTypeUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
-
-        page.context().waitForCondition(loginPage::isVisible);
-        page.waitForLoadState();
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
@@ -120,13 +117,13 @@ class CustomAbsenceTypeUIIT {
         // ensure vacation type is selectable creating a new application for leave
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
-        page.context().waitForCondition(applicationPage::isVisible);
+        applicationFormPage.isVisible();
 
         // this throws when the name cannot be found
-        applicationPage.selectVacationTypeOfName("Biertag");
+        applicationFormPage.selectVacationTypeOfName("Biertag");
 
+        navigationPage.isVisible();
         navigationPage.logout();
-        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {

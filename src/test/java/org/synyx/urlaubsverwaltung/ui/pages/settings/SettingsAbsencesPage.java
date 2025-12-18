@@ -1,19 +1,22 @@
 package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
+public class SettingsAbsencesPage {
 
-public class SettingsPage {
+    private static final String DATA_PAGE = "main[data-page='settings-absences']";
 
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
     private static final String HALF_DAY_DISABLE_SELECTOR = "[data-test-id=vacation-half-day-disable]";
 
     private final Page page;
 
-    public SettingsPage(Page page) {
+    public SettingsAbsencesPage(Page page) {
         this.page = page;
+    }
+
+    public void isVisible() {
+        page.waitForSelector(DATA_PAGE);
     }
 
     public SettingsSubNavigation navigation() {
@@ -24,8 +27,7 @@ public class SettingsPage {
      * Submits the setting form and waits for dom-content loaded.
      */
     public void saveSettings() {
-        page.waitForResponse(Response::ok, () -> page.locator(SAVE_BUTTON_SELECTOR).first().click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SAVE_BUTTON_SELECTOR).first().click();
     }
 
     public void clickDisableHalfDayAbsence() {

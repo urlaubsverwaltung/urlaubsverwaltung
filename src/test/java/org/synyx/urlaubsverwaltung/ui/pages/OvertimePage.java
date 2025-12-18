@@ -1,11 +1,9 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
 import java.time.LocalDate;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class OvertimePage {
@@ -36,8 +34,7 @@ public class OvertimePage {
     }
 
     public void submit() {
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean showsEndDate(LocalDate endDate) {
