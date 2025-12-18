@@ -14,16 +14,15 @@
 @import "../components/form.css" layer(components);
 @import "../components/icon-link.css" layer(components);
 @import "../components/info-banner.css" layer(components);
-@import "../components/link.css" layer(components); /* TODO base instead of components? */
 @import "../components/list.css" layer(components);
 @import "../components/navigation.css" layer(components);
-@import "../components/multi-select.css" layer(components); /* TODO base instead of components? */
+@import "../components/multi-select.css" layer(base);
 @import "../components/modal.css" layer(components);
 @import "../components/popover.css" layer(components);
 @import "../components/select.css" layer(components);
 @import "../components/table.css" layer(components);
 @import "../components/tab-list.css" layer(components);
-@import "../components/states.css" layer(components); /* TODO utilitie ? */
+@import "../components/states.css" layer(utilities);
 @import "../components/section-heading.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);
@@ -158,12 +157,15 @@
 
   a {
     cursor: pointer;
-    color: #337ab7;
     text-decoration: none;
+    color: #2a6496;
+    @apply dark:text-sky-500;
 
     &:hover,
-    &:focus {
-      color: #22527b;
+    &:focus,
+    &:active {
+      color: #1896db;
+      @apply dark:text-sky-400;
       text-decoration: underline;
     }
 
