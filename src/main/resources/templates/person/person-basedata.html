@@ -31,7 +31,7 @@
                 <a
                   href="#"
                   th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
-                  class="text-link text-lg print:no-link"
+                  class="text-link text-lg"
                   th:text="${personBasedata.niceName}"
                 >
                   John Doe
@@ -49,7 +49,7 @@
               th:if="${personBasedata.email != null}"
               href="mailto:john.doe@example.org"
               th:href="${'mailto:' + personBasedata.email}"
-              class="icon-link text-sm print:no-link"
+              class="icon-link text-sm"
             >
               <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}"></svg>
               &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>

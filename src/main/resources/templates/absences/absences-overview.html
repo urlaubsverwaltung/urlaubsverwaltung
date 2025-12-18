@@ -196,11 +196,7 @@
                   </div>
                 </th>
                 <th scope="row" class="py-0.5 pl-2 pr-4 print:py-1.5">
-                  <a
-                    th:href="@{/web/person/__${person.id}__/overview}"
-                    class="icon-link print:no-link"
-                    data-turbo="false"
-                  >
+                  <a th:href="@{/web/person/__${person.id}__/overview}" class="icon-link" data-turbo="false">
                     <div class="flex flex-col justify-center leading-tight">
                       <th:block th:text="${person.firstName}" />&nbsp;
                       <span th:text="${person.lastName}"></span>

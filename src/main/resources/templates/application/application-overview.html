@@ -155,7 +155,7 @@
                 <a
                   href="#"
                   th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id})}"
-                  class="block flex-1 no-underline print:no-link"
+                  class="block flex-1 no-underline"
                   th:classappend="${userRequestForLeave.cancellationRequested ? 'text-black-almost' : ''}"
                 >
                   <span class="hover:underline mb-1 text-lg">
@@ -421,7 +421,7 @@
                     <a
                       href="#"
                       th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
-                      class="block no-underline print:no-link"
+                      class="block no-underline"
                     >
                       <span
                         class="hover:underline mb-1 text-lg"
@@ -566,7 +566,7 @@
                   <a
                     href="#"
                     th:href="@{/web/sicknote/{sicknoteId} (sicknoteId=${otherSickNote.id})}"
-                    class="block flex-1 no-underline print:no-link"
+                    class="block flex-1 no-underline"
                   >
                     <span class="hover:underline mb-1 text-lg">
                       <th:block th:text="#{overview.sicknotes.sickdays.days(${otherSickNote.workDays})}" />
@@ -667,7 +667,7 @@
                   <a
                     href="#"
                     th:href="@{/web/application/{applicationId}(applicationId=${cancellationRequest.id})}"
-                    class="block flex-1 no-underline print:no-link"
+                    class="block flex-1 no-underline"
                   >
                     <span
                       class="hover:underline mb-1 text-lg"

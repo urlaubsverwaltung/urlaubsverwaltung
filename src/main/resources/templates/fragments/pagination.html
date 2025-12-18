@@ -15,7 +15,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.number)}"
-            class="block py-1 text-current no-underline flex items-center print:no-link"
+            class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
           >
@@ -27,7 +27,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(1)}"
-            class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors print:no-link"
+            class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
             th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
             th:attr="aria-current=${isSelected ? 'page' : ''}"
             th:aria-label="#{pagination.page('1')}"
@@ -45,7 +45,7 @@
             <a
               href="#"
               th:href="${pagination.hrefForPage(pageNumber)}"
-              class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors print:no-link"
+              class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
               th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
               th:text="${pageNumber}"
               th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -64,7 +64,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.totalPages)}"
-            class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors print:no-link"
+            class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
             th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
             th:text="${page.totalPages}"
             th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -79,7 +79,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.number + 2)}"
-            class="block py-1 text-current no-underline flex items-center print:no-link"
+            class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
           >

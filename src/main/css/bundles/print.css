@@ -10,11 +10,7 @@
 
   a,
   a:visited {
-    text-decoration: underline;
-  }
-
-  a[href]:after {
-    content: " (" attr(href) ")";
+    text-decoration: none;
   }
 
   abbr[title]:after {
@@ -61,11 +57,7 @@
 
   .button,
   .navbar,
-  #datepicker,
-  tr.inactive,
-  .alert,
-  .caret,
-  form {
+  [role="tooltip"] {
     display: none !important;
   }
 
@@ -88,5 +80,10 @@
 
   th {
     font-weight: bold !important;
+  }
+
+  .cal-day::after {
+    background-color: transparent !important;
+    border-color: transparent !important;
   }
 }

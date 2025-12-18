@@ -19,7 +19,7 @@
             <a
               th:text="${person.niceName}"
               th:href="@{/web/person/__${person.id}__/overview}"
-              class="icon-link text-lg mb-1 print:no-link"
+              class="icon-link text-lg mb-1"
             ></a>
             <th:block th:if="${person.isInactive}">
               <span th:data-title="#{person.data.inactive}">
@@ -29,12 +29,7 @@
               </span>
             </th:block>
           </span>
-          <a
-            th:if="${person.email != null}"
-            href="#"
-            th:href="|mailto:${person.email}|"
-            class="icon-link text-sm print:no-link"
-          >
+          <a th:if="${person.email != null}" href="#" th:href="|mailto:${person.email}|" class="icon-link text-sm">
             <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}" />&nbsp;
             <span th:text="${person.email}"></span>
           </a>
@@ -48,7 +43,7 @@
                 href="#"
                 th:href="@{/web/absences (department=${department.name})}"
                 th:text="${department.name}"
-                class="px-1.5 no-underline rounded-full bg-emerald-100 text-emerald-800 dark:border dark:border-green-600 dark:text-green-600 dark:bg-transparent print:no-link"
+                class="px-1.5 no-underline rounded-full bg-emerald-100 text-emerald-800 dark:border dark:border-green-600 dark:text-green-600 dark:bg-transparent"
               >
                 Geschäftsführung
               </a>

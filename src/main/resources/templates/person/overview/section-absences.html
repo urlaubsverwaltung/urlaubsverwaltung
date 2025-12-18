@@ -161,11 +161,7 @@
                 </div>
               </td>
               <td class="py-6">
-                <a
-                  href="#"
-                  th:href="@{/web/application/{app} (app=${app.id})}"
-                  class="print:no-link hover:no-underline group"
-                >
+                <a href="#" th:href="@{/web/application/{app} (app=${app.id})}" class="hover:no-underline group">
                   <span
                     class="block mb-0.5 text-lg group-hover:underline group-focus:underline"
                     th:text="${app.vacationType.label}"

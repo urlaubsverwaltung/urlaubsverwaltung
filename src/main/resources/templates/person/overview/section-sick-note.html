@@ -136,10 +136,7 @@
               </th:block>
             </td>
             <td class="py-6">
-              <a
-                th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}"
-                class="print:no-link hover:no-underline group"
-              >
+              <a th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}" class="hover:no-underline group">
                 <span
                   class="block mb-1 text-lg group-hover:underline group-focus:underline"
                   th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
