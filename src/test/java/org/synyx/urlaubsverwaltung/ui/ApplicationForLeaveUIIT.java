@@ -96,13 +96,12 @@ class ApplicationForLeaveUIIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         // log in as office user and disable the overtime feature
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
@@ -115,8 +114,6 @@ class ApplicationForLeaveUIIT {
         settingsWorkingTimePage.submitOvertimeForm();
 
         navigationPage.logout();
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         // now the quick-add button should link directly to application-for-leave page
         // for the user logged in with role=USER
@@ -134,14 +131,13 @@ class ApplicationForLeaveUIIT {
         final Person officePerson = createPerson("Alfred", "Pennyworth the second", List.of(USER, OFFICE));
         final Person userPerson = createPerson("The", "Joker the second", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         navigationPage.clickSettings();
@@ -152,7 +148,6 @@ class ApplicationForLeaveUIIT {
 
         navigationPage.logout();
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), (userPerson.getEmail())));
 
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
@@ -172,13 +167,12 @@ class ApplicationForLeaveUIIT {
         final Person batman = createPerson("Bruce", "Wayne the third", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck the third", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
@@ -221,13 +215,12 @@ class ApplicationForLeaveUIIT {
     void ensureCreatingApplicationForLeaveOfTypeSpecialLeave(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth the fifth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
@@ -261,7 +254,7 @@ class ApplicationForLeaveUIIT {
     void ensureCreatingApplicationForLeaveOfTypeOvertime(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth the sixth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
@@ -269,7 +262,6 @@ class ApplicationForLeaveUIIT {
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
@@ -313,13 +305,11 @@ class ApplicationForLeaveUIIT {
         final Person batman = createPerson("Bruce", "Wayne the fourth", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck the fourth", List.of(USER));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
-
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         // log in as office user
         // and disable halfDay
