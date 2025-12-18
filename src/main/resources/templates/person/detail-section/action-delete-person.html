@@ -28,7 +28,7 @@
             <form
               id="person-delete-form"
               method="post"
-              class="flex flex-col gap-4"
+              class="space-y-4"
               th:action="@{/web/person/__${person.id}__/delete}"
               th:object="${personDeleteForm}"
             >
@@ -40,7 +40,7 @@
                 type="submit"
                 name="delete"
                 value="true"
-                class="button-danger"
+                class="button-danger whitespace-normal"
                 th:text="#{person.account.dangerzone.delete-button(${person.niceName})}"
               >
                 Benutzende löschen
@@ -72,10 +72,10 @@
                   class="error text-sm"
                 ></p>
 
-                <div class="flex justify-between gap-4">
+                <div class="flex flex-col justify-between gap-2 sm:flex-row sm:gap-4">
                   <button
                     th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
-                    class="button-danger"
+                    class="button-danger whitespace-normal w-auto"
                     type="submit"
                     data-turbo="false"
                   >
@@ -87,7 +87,7 @@
                     th:formaction="@{/web/person/__${person.id}__}"
                     formmethod="get"
                     th:text="#{action.cancel}"
-                    class="button w-24"
+                    class="button w-full sm:w-24"
                   ></button>
                 </div>
               </div>
