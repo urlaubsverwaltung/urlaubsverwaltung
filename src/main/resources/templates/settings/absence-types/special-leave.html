@@ -6,26 +6,24 @@
   <body>
     <th:block th:fragment="section">
       <div class="uv-form__group">
-        <div class="uv-help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2">
-          <div>
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-          </div>
-          <div class="tw-flex tw-flex-col">
+        <div class="uv-help-block">
+          <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+          <div class="flex flex-col gap-4">
             <p th:text="#{settings.specialleave.help}"></p>
             <p>
               <th:block th:text="#{settings.specialleave.description.1}" />
               <a
-                class="tw-flex tw-items-center"
+                class="flex items-center"
                 href="mailto:info@urlaubsverwaltung.cloud?subject=Missing%20special%20leaves"
               >
-                <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+                <svg th:replace="~{icon/mail::svg(className='w-4 h-4 mr-1')}"></svg>
                 <th:block th:text="#{settings.specialleave.description.2}" />
               </a>
             </p>
           </div>
         </div>
-        <table id="special-leave-table" class="tw-w-full absence-type-settings-table">
-          <caption th:text="#{settings.specialleave.title}" class="tw-sr-only"></caption>
+        <table id="special-leave-table" class="mt-4 w-full absence-type-settings-table">
+          <caption th:text="#{settings.specialleave.title}" class="sr-only"></caption>
           <thead>
             <tr>
               <th th:text="#{settings.specialleave.table.head.state}" scope="col"></th>
@@ -57,20 +55,20 @@
                   <label
                     th:text="#{settings.specialleave.action.state.label}"
                     th:for="|specialLeave-active-${loop.index}|"
-                    class="tw-sr-only"
+                    class="sr-only"
                     >Aktiviert / Deaktiviert</label
                   >
                 </span>
               </td>
 
               <td th:data-table-head-text="#{settings.specialleave.table.head.type}">
-                <span th:text="#{__${specialLeaveSettingsItem.messageKey}__}" class="tw-w-1/2 md:tw-w-full"> </span>
+                <span th:text="#{__${specialLeaveSettingsItem.messageKey}__}" class="w-1/2 md:w-full"> </span>
               </td>
 
               <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
                 <input
                   th:id="|specialLeave-days-${loop.index}|"
-                  class="tw-w-1/2 sm:tw-w-full"
+                  class="w-1/2 sm:w-full"
                   th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}"
                   th:errorclass="error"
                   type="number"
@@ -79,7 +77,7 @@
                 />
 
                 <div
-                  class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  class="text-sm text-red-800 dark:text-red-400"
                   th:if="${#fields.hasErrors('specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days')}"
                 >
                   <th:block th:errors="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}">

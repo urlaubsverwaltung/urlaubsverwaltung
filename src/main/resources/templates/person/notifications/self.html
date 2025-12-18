@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title></title>
   </head>
@@ -9,7 +9,7 @@
       method="post"
       th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications}"
       th:object="${personNotificationsDto}"
-      class="tw-mt-8"
+      class="mt-8"
       data-turbo="true"
       data-turbo-frame="frame-feedback"
     >
@@ -30,20 +30,18 @@
       <input type="hidden" th:field="*{overtimeAppliedForManagement.active}" />
 
       <div class="list-selectable">
-        <div
-          class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
-        >
-          <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+        <div class="list-selectable__item flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
+          <span class="checkbox-switch flex items-center gap-2 md:gap-3">
             <input
               type="checkbox"
               id="email-notification-all-input"
-              class="tw-mt-0.5 tw-shrink-0"
+              class="mt-0.5 shrink-0"
               is="uv-checkbox-all"
               th:checked="*{allPersonal}"
             />
             <label
               for="email-notification-all-input"
-              class="tw-m-0 tw-text-base tw-font-normal tw-break-all"
+              class="text-base font-normal break-all"
               th:text="#{person.notifications.all.label}"
             >
               Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
@@ -52,17 +50,13 @@
         </div>
       </div>
 
-      <div class="tw-mt-8 tw-mb-16">
-        <div class="tw-space-y-8">
+      <div class="mt-8 mb-16">
+        <div class="space-y-8">
           <section>
-            <h2
-              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-              style="top: var(--uv-header-height)"
-              th:text="#{person.notifications.section.absences.title}"
-            >
+            <h2 class="notification-section-title" th:text="#{person.notifications.section.absences.title}">
               Meine Abwesenheiten
             </h2>
-            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAppliedAndChanges.visible},active=${personNotificationsDto.applicationAppliedAndChanges.active},name='applicationAppliedAndChanges.active',label='person.notifications.section.absences.changed.label',info='person.notifications.section.absences.changed.info')}"
               ></li>
@@ -78,28 +72,20 @@
             </ul>
           </section>
           <section>
-            <h2
-              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-              style="top: var(--uv-header-height)"
-              th:text="#{person.notifications.section.sicknote.title}"
-            >
+            <h2 class="notification-section-title" th:text="#{person.notifications.section.sicknote.title}">
               Meine Krankmeldungen
             </h2>
-            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.ownSickNoteSubmittedCreatedEditedCancelled.visible},active=${personNotificationsDto.ownSickNoteSubmittedCreatedEditedCancelled.active},name='ownSickNoteSubmittedCreatedEditedCancelled.active',label='person.notifications.section.sicknote.createdEditedCancelled.label',info='person.notifications.section.sicknote.createdEditedCancelled.info')}"
               ></li>
             </ul>
           </section>
           <section>
-            <h2
-              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-              style="top: var(--uv-header-height)"
-              th:text="#{person.notifications.section.overtime.title}"
-            >
+            <h2 class="snotification-section-title" th:text="#{person.notifications.section.overtime.title}">
               Meine Überstunden
             </h2>
-            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
               ></li>
@@ -109,14 +95,8 @@
             </ul>
           </section>
           <section th:if="${personNotificationsDto.personNewManagementAll.visible}">
-            <h2
-              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-              style="top: var(--uv-header-height)"
-              th:text="#{person.notifications.section.persons.title}"
-            >
-              Personen
-            </h2>
-            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+            <h2 class="notification-section-title" th:text="#{person.notifications.section.persons.title}">Personen</h2>
+            <ul class="list-selectable">
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.personNewManagementAll.visible},active=${personNotificationsDto.personNewManagementAll.active},name='personNewManagementAll.active',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"
               ></li>
@@ -126,10 +106,10 @@
       </div>
 
       <noscript>
-        <hr class="tw-w-full tw-m-0 tw-mt-6" />
+        <hr class="mt-6" />
 
-        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
-          <button th:text="#{action.save}" class="button-main-green tw-w-56" type="submit">Speichern</button>
+        <div class="mt-6 flex justify-between gap-4">
+          <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>
           <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>
       </noscript>

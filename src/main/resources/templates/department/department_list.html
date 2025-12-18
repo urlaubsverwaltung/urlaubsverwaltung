@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -13,28 +13,25 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})}"
         >
           <th:block th:ref="department-list-heading-body">
-            <h1 th:text="#{departments.title}">Abwesenheitsstatistik</h1>
+            <h1 th:text="#{departments.title}">Abteilungen</h1>
           </th:block>
           <th:block th:ref="department-list-heading-actions">
-            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <div class="flex flex-col sm:flex-row sm:gap-2">
               <a
                 th:if="${canCreateAndModifyDepartment}"
                 th:href="@{/web/department/new}"
-                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                class="icon-link flex items-center flex-row-reverse sm:flex-row"
               >
-                <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
                 <span th:text="#{action.department.create}"></span>
               </a>
-              <a
-                th:href="@{/web/absences}"
-                class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-              >
-                <svg th:replace="~{icon/calendar::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+              <a th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse sm:flex-row">
+                <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
                 <span th:text="#{action.applications.absences_overview}"></span>
               </a>
               <button th:replace="~{fragments/print::button}"></button>
@@ -64,13 +61,13 @@
         <table
           th:if="${not #lists.isEmpty(departments)}"
           id="department-table"
-          class="list-table tw-text-sm"
+          class="list-table text-sm"
           is="uv-table-sortable"
         >
-          <caption class="tw-sr-only" th:text="#{departments.title}">
+          <caption class="sr-only" th:text="#{departments.title}">
             Departments
           </caption>
-          <thead class="tw-hidden lg:tw-table-header-group">
+          <thead class="hidden lg:table-header-group">
             <tr>
               <th
                 th:text="#{department.data.name}"
@@ -82,13 +79,13 @@
               <th th:text="#{department.members}" scope="col" data-sortable data-sort-type="numeric"></th>
               <th
                 th:text="#{department.data.twoStageApproval}"
-                class="tw-whitespace-nowrap"
+                class="whitespace-nowrap"
                 scope="col"
                 data-sortable
               ></th>
               <th
                 th:text="#{department.data.lastModification}"
-                class="tw-whitespace-nowrap"
+                class="whitespace-nowrap"
                 scope="col"
                 data-sortable
                 data-sort-type="date"
@@ -101,19 +98,19 @@
           <tbody>
             <tr th:each="department : ${departments}">
               <td>
-                <div class="tw-font-bold">
+                <div class="font-bold">
                   <th:block th:text="${department.name}"></th:block>
                 </div>
-                <div class="tw-text-xs">
+                <div class="text-xs">
                   <span th:text="${department.description}"></span>
                 </div>
               </td>
-              <td class="tw-hidden md:tw-table-cell">
+              <td class="hidden md:table-cell">
                 <a
                   th:if="${department.activeMembersCount > 0}"
                   th:href="@{/web/person?active=true&department=__${department.id}__}"
                   th:text="|${department.activeMembersCount} #{department.members.active}|"
-                  class="print:no-link"
+                  class=""
                 >
                 </a>
                 <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
@@ -122,21 +119,18 @@
                 <a
                   th:if="${department.inactiveMembersCount > 0}"
                   th:href="@{/web/person?active=false&department=__${department.id}__}"
-                  class="print:no-link"
+                  class=""
                 >
                   <th:block th:text="${department.inactiveMembersCount}" />
                   <th:block th:text="#{department.members.inactive}" />
                 </a>
               </td>
-              <td
-                class="is-centered tw-hidden md:tw-table-cell"
-                th:data-sort-value="${department.twoStageApproval ? 0 : 1}"
-              >
+              <td class="is-centered hidden md:table-cell" th:data-sort-value="${department.twoStageApproval ? 0 : 1}">
                 <th:block th:if="${department.twoStageApproval == true}">
-                  <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
+                  <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
                 </th:block>
               </td>
-              <td th:text="${{department.lastModification}}" class="tw-hidden md:tw-table-cell"></td>
+              <td th:text="${{department.lastModification}}" class="hidden md:table-cell"></td>
               <td th:if="${canCreateAndModifyDepartment}" th:with="dialogId=|modal-cancel-${department.id}|">
                 <dialog
                   th:id="${dialogId}"
@@ -154,11 +148,11 @@
                         Löschen
                       </h4>
                       <button type="button" class="modal__close-button" th:commandfor="${dialogId}" command="close">
-                        <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
+                        <svg th:replace="~{icon/x-circle::svg(className='w-8 h-8')}"></svg>
                       </button>
                     </div>
                     <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal__body"></div>
-                    <div class="modal__footer tw-flex tw-justify-around">
+                    <div class="modal__footer flex justify-around">
                       <button autofocus class="button-danger" type="submit" th:text="#{action.department.delete}">
                         Delete
                       </button>
@@ -173,13 +167,13 @@
                   </form>
                 </dialog>
 
-                <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
+                <div class="flex gap-2 justify-end print:hidden">
                   <a class="button" th:href="@{/web/department/__${department.id}__/edit}">
-                    <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+                    <svg th:replace="~{icon/pencil::svg(className='w-4 h-4 mr-1')}"></svg>
                     <th:block th:text="#{action.edit}" />
                   </a>
                   <button class="button" th:commandfor="${dialogId}" command="show-modal">
-                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
+                    <svg th:replace="~{icon/trash-2::svg(className='w-4 h-4 mr-1')}"></svg>
                     <th:block th:text="#{action.department.delete}" />
                   </button>
                 </div>

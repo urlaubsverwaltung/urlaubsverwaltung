@@ -2,8 +2,8 @@ import { observable } from "./observable";
 import { useMedia } from "./use-media";
 
 const html = document.querySelector("html");
-const initialSystem = html.classList.contains("tw-system");
-const initialDark = html.classList.contains("tw-dark");
+const initialSystem = html.classList.contains("theme-system");
+const initialDark = html.classList.contains("theme-dark");
 
 const { matches: prefersDark } = useMedia("(prefers-color-scheme: dark)");
 

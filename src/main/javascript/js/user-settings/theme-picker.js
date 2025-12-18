@@ -5,13 +5,14 @@ const themeColorMetaElement = document.querySelector("meta[name='theme-color']")
 const mediaQueryDark = globalThis.matchMedia("(prefers-color-scheme: dark)");
 const userSettingsForm = document.querySelector("#user-settings-form");
 
-let darkTheme = html.classList.contains("tw-dark") || (html.classList.contains("tw-system") && mediaQueryDark.matches);
+let darkTheme =
+  html.classList.contains("theme-dark") || (html.classList.contains("theme-system") && mediaQueryDark.matches);
 
 userSettingsForm.addEventListener("change", function (event) {
   if (event.target.name === "theme") {
     const value = event.target.value;
 
-    html.classList.toggle("tw-system", /system/i.test(value));
+    html.classList.toggle("theme-system", /system/i.test(value));
 
     darkTheme = /system/i.test(value) ? mediaQueryDark.matches : /dark/i.test(value);
     render();
@@ -44,7 +45,7 @@ try {
 }
 
 function handleMediaQueryChange() {
-  if (html.classList.contains("tw-system")) {
+  if (html.classList.contains("theme-system")) {
     darkTheme = !darkTheme;
     render();
   }
@@ -57,10 +58,10 @@ function render() {
 
   setTimeout(function () {
     if (darkTheme) {
-      html.classList.add("tw-dark");
+      html.classList.add("theme-dark");
       themeColorMetaElement.setAttribute("content", "#18181b");
     } else {
-      html.classList.remove("tw-dark");
+      html.classList.remove("theme-dark");
       themeColorMetaElement.setAttribute("content", "#fafafa");
     }
 

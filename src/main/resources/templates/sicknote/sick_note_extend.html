@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -27,79 +27,76 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 md:tw-px-0 lg:tw-px-12 xl:tw-px-0">
-        <h1 class="tw-sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
-        <div class="tw-mt-4 tw-grid tw-grid-cols-2 tw-gap-2 tw-flex-wrap sm:tw-flex lg:tw-mt-0">
+      <div class="max-w-2xl lg:max-w-6xl mx-auto px-4 md:px-0 lg:px-12 xl:px-0">
+        <h1 class="sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
+        <div class="mt-4 grid grid-cols-2 gap-2 flex-wrap sm:flex lg:mt-0">
           <a
             href="#"
             th:href="@{/web/sicknote/new (noExtensionRedirect)}"
-            class="button button-main tw-text-center tw-text-wrap tw-flex tw-flex-col tw-justify-start xs:tw-flex-row tw-flex-wrap tw-gap-1 sm:tw-gap-2"
+            class="button button-main text-center text-wrap flex flex-col justify-start xs:flex-row flex-wrap gap-1 sm:gap-2"
           >
-            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4 tw-shrink-0')}"></svg>
+            <svg th:replace="~{icon/plus::svg(className='w-4 h-4 shrink-0')}"></svg>
             <span th:text="#{sicknote.extend.create-new.button.text}">neue Krankmeldung</span>
           </a>
           <a
             href="#"
             th:href="@{/web/sicknote/new (noExtensionRedirect=${''}, category=${'SICK_NOTE_CHILD'})}"
-            class="button button-main tw-text-center tw-text-wrap tw-flex tw-flex-col tw-justify-start xs:tw-flex-row tw-flex-wrap tw-gap-1 sm:tw-gap-2"
+            class="button button-main text-center text-wrap flex flex-col justify-start xs:flex-row flex-wrap gap-1 sm:gap-2"
           >
-            <svg th:replace="~{icon/plus::svg(className='tw-w-4 tw-h-4 tw-shrink-0')}"></svg>
-            <span class="tw-text-wrap" th:text="#{sicknote.extend.create-new.child.button.text}"
+            <svg th:replace="~{icon/plus::svg(className='w-4 h-4 shrink-0')}"></svg>
+            <span class="text-wrap" th:text="#{sicknote.extend.create-new.child.button.text}"
               >neue Kind-Krankmeldung</span
             >
           </a>
         </div>
-        <div th:if="${showFillFormFeedback}" class="tw-mt-8">
+        <div th:if="${showFillFormFeedback}" class="mt-8">
           <p class="alert alert--outline alert-danger" th:text="#{sicknote.extend.fill-form-feedback}">
             Gebe bitte noch an, wie viele Tage du voraussichtlich noch krank sein wirst.
           </p>
         </div>
-        <h2 class="tw-mt-12" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
+        <h2 class="mt-12" th:text="#{sicknote.extend.title}">Weiter Krank melden</h2>
         <th:block th:if="${not sickNoteTypeChild}">
           <p
-            class="tw-m-0 tw-mt-8"
+            class="mt-8"
             th:text="#{sicknote.extend.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
-          <p class="tw-m-0 tw-mt-4 md:tw-mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
+          <p class="mt-4 md:mt-0.5" th:text="#{sicknote.extend.paragraph.duration}">
             Wie lange bist du vorraussichtlich noch krank?
           </p>
         </th:block>
         <th:block th:if="${sickNoteTypeChild}">
           <p
-            class="tw-m-0 tw-mt-8"
+            class="mt-8"
             th:text="#{sicknote.extend.child.paragraph.current(${#temporals.format(sickNoteExtension.startDate, 'FULL')}, ${sickNoteEndDateWord})}"
           >
             Du hast eine Kind-Krankmeldung von <em>xx.xx.xxxx</em> bis <em>gestern</em>.
           </p>
-          <p class="tw-m-0 tw-mt-4 md:tw-mt-0.5" th:text="#{sicknote.extend.child.paragraph.duration}">
+          <p class="mt-4 md:mt-0.5" th:text="#{sicknote.extend.child.paragraph.duration}">
             Wie lange ist dein Kind vorraussichtlich noch krank?
           </p>
         </th:block>
-        <p
-          class="tw-m-0 tw-mt-4 tw-max-w-screen-sm tw-flex tw-gap-1.5 dark:tw-text-yellow-500"
-          th:if="${existingExtensionEndDate != null}"
-        >
-          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-shrink-0 tw-mt-0.5')}"></svg>
+        <p class="mt-4 max-w-screen-sm flex gap-1.5 dark:text-yellow-500" th:if="${existingExtensionEndDate != null}">
+          <svg th:replace="~{icon/info::svg(className='w-4 h-4 shrink-0 mt-0.5')}"></svg>
           <span th:text="#{sicknote.extend.extension-exists(${#temporals.format(existingExtensionEndDate, 'SHORT')})}">
             Es existiert bereits eine Verlängerung der Krankmeldung bis zum Freitag, 23. August 2024. Diese wird hiermit
             überschrieben.
           </span>
         </p>
-        <div class="tw-mt-8">
+        <div class="mt-8">
           <form
             method="post"
             action="#"
             th:action="@{/web/sicknote/extend}"
-            class="tw-mt-8 tw-space-y-8"
+            class="mt-8 space-y-8"
             th:object="${sickNoteExtension}"
             data-turbo="true"
           >
             <input type="hidden" name="sickNoteId" th:value="${sickNoteExtension.sickNoteId}" />
             <input type="hidden" name="startDate" th:value="${sickNoteExtension.startDate}" />
             <input type="hidden" name="endDate" th:value="${sickNoteExtension.endDate}" />
-            <div class="extend-action-grid tw-max-w-3xl">
+            <div class="extend-action-grid max-w-3xl">
               <button
                 type="submit"
                 class="button sicknote-extend-button"
@@ -168,7 +165,7 @@
               <span>
                 <label
                   for="extend-to-date-input"
-                  class="tw-m-0 extend-label"
+                  class="extend-label"
                   th:text="#{sicknote.extend.duration.custom.label}"
                 >
                   Anderer Tag
@@ -178,14 +175,14 @@
                   id="submit-date-button"
                   name="custom-date-preview"
                   class="button"
-                  data-js-class="tw-sr-only"
+                  data-js-class="sr-only"
                   th:text="#{sicknote.extend.duration.custom.submit.text}"
                 >
                   Vorschau
                 </button>
               </span>
             </div>
-            <p class="tw-mt-1 tw-text-red-800 dark:tw-text-red-400" th:if="${#fields.hasErrors('endDate')}">
+            <p class="mt-1 text-red-800 dark:text-red-400" th:if="${#fields.hasErrors('endDate')}">
               <th:block th:errors="*{endDate}">endDate error message</th:block>
             </p>
             <th:block th:if="${not #fields.hasAnyErrors() && sickNotePreviewNext != null}">
@@ -195,7 +192,7 @@
               >
                 <div class="sick-note-extension-preview">
                   <div class="sick-note-extension-preview-card">
-                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.current.title}">
+                    <div class="font-bold" th:text="#{sicknote.extend.preview.current.title}">
                       Aktuelle Krankmeldung
                     </div>
                     <div class="sick-note-extension-preview-card_inner">
@@ -230,13 +227,13 @@
                     </div>
                   </div>
                   <div class="sick-note-extension-preview-arrow">
-                    <svg th:replace="~{icon/arrow-narrow-right::svg(className='tw-h-8 tw-w-16')}" />
+                    <svg th:replace="~{icon/arrow-narrow-right::svg(className='h-8 w-16')}" />
                   </div>
                   <div
                     class="sick-note-extension-preview-card sick-note-extension-preview-card--highlighted"
                     data-test-id="sick-note-extension-next-preview"
                   >
-                    <div class="tw-font-bold" th:text="#{sicknote.extend.preview.new.title}">
+                    <div class="font-bold" th:text="#{sicknote.extend.preview.new.title}">
                       Vorschau geänderte Krankmeldung
                     </div>
                     <div class="sick-note-extension-preview-card_inner">
@@ -276,7 +273,7 @@
             <div>
               <button
                 type="submit"
-                class="button-main-green tw-w-full sm:tw-w-56"
+                class="button-main-green w-full sm:w-56"
                 data-test-id="extension-submit-button"
                 th:text="#{sicknote.extend.form.submit.text}"
               >

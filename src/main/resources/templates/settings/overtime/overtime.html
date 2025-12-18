@@ -37,15 +37,17 @@
       </div>
 
       <div class="uv-form__group">
-        <p class="uv-form__group-info uv-help-block">
-          <span
-            class="tw-px-1.5 tw-no-underline tw-rounded-full tw-bg-blue-100 tw-text-blue-800 dark:tw-border dark:tw-border-blue-600 dark:tw-text-blue-600 dark:tw-bg-transparent print:no-link"
-            th:text="#{settings.betaTag}"
-          >
-            BETA
-          </span>
-          <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
-        </p>
+        <div class="uv-form__group-info uv-help-block">
+          <p>
+            <span
+              class="px-1.5 no-underline rounded-full bg-blue-100 text-blue-800 dark:border dark:border-blue-600 dark:text-blue-600 dark:bg-transparent"
+              th:text="#{settings.betaTag}"
+            >
+              BETA
+            </span>
+            <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
+          </p>
+        </div>
 
         <!-- Overtime Sync Active Settings -->
         <div class="uv-form__input-row">
@@ -149,7 +151,7 @@
 
       <div class="uv-form__group">
         <p class="uv-form__group-info uv-help-block">
-          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+          <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
           <th:block th:text="#{settings.overtime.description}" />
         </p>
 

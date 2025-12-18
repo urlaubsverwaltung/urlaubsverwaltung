@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -15,7 +15,7 @@
       <li
         th:fragment="replacement-item"
         th:if="${holidayReplacement != null}"
-        class="tw-mt-4 [&:not(:first-child)]:tw-mt-6"
+        class="mt-4 [&:not(:first-child)]:mt-6"
         data-test-id="holiday-replacement-row"
       >
         <input
@@ -23,15 +23,15 @@
           th:name="${'holidayReplacements[' + index + '].person'}"
           th:value="${holidayReplacement.person.id}"
         />
-        <div class="tw-flex">
-          <div class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-2 tw-mt-1">
+        <div class="flex">
+          <div class="text-blue-50 dark:text-sky-800 mr-2 mt-1">
             <img
               th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},initials=${holidayReplacement.person.initials},width='40',height='40',personId=${holidayReplacement.person.id})}"
               alt=""
             />
           </div>
           <div>
-            <div class="tw-flex tw-items-center tw-flex-wrap">
+            <div class="flex items-center flex-wrap">
               <a
                 th:text="${holidayReplacement.person.niceName}"
                 th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
@@ -40,40 +40,37 @@
               ></a>
               <ul
                 th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
-                class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+                class="mt-1.5 flex flex-wrap gap-1 text-xs"
               >
                 <li
                   th:each="department : ${holidayReplacement.departments}"
-                  class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+                  class="px-1.5 rounded-full bg-emerald-100 text-emerald-800 dark:border dark:border-green-600 dark:text-green-600 dark:bg-transparent"
                   th:text="${department}"
                 ></li>
               </ul>
             </div>
-            <div class="tw-flex tw-mt-2">
+            <div class="flex mt-2">
               <button
                 type="submit"
-                class="tw-p-0 tw-bg-transparent"
+                class="p-0 bg-transparent"
                 name="remove-holiday-replacement"
                 th:value="${holidayReplacement.person.id}"
                 formmethod="post"
                 th:formaction="${deleteButtonFormActionValue}"
               >
                 <span
-                  class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
+                  class="flex items-center text-sm text-black/50 hover:text-black/100 focus:text-black/100 dark:text-zinc-200/50 dark:hover:text-zinc/100 dark:focus:text-zinc/100 transition-colors"
                 >
-                  <svg th:replace="~{icon/trash-2 :: svg(className='tw-w-4 tw-h-4 tw-mr-0.5')}"></svg>
+                  <svg th:replace="~{icon/trash-2 :: svg(className='w-4 h-4 mr-0.5')}"></svg>
                   <th:block th:text="#{application.data.holidayReplacement.remove-button.text}"></th:block>
                 </span>
               </button>
             </div>
           </div>
         </div>
-        <div class="tw-mt-2 md:tw-pl-14">
-          <div class="tw-flex tw-justify-between tw-items-center">
-            <label
-              th:for="${'replacement-note-' + index}"
-              class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal"
-            >
+        <div class="mt-2 md:pl-14">
+          <div class="flex justify-between items-center">
+            <label th:for="${'replacement-note-' + index}" class="text-sm text-black/50 dark:text-zinc-200 font-normal">
               <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"
                 >Notiz an Vertretung</th:block
               >

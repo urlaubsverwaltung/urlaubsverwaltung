@@ -7,7 +7,7 @@
   <body>
     <svg
       th:fragment="svg(avatarText, height, width)"
-      class="tw-tracking-widest tw-rounded-full tw-block"
+      class="tracking-widest rounded-full block"
       th:height="${height == null ? '42' : height}"
       th:width="${width == null ? '42' : width}"
       viewBox="0 0 64 64"
@@ -17,7 +17,7 @@
       preserveAspectRatio="xMidYMid meet"
       th:classappend="${className}"
     >
-      <circle cx="32" cy="32" r="32" fill="#eff6ff" class="tw-fill-current"></circle>
+      <circle cx="32" cy="32" r="32" fill="#eff6ff" class="fill-current"></circle>
       <text
         x="32"
         y="32"
@@ -26,7 +26,7 @@
         font-size="1.625rem"
         stroke="#27272a"
         fill="#27272a"
-        class="tw-stroke-zinc-700 tw-fill-zinc-700 dark:tw-stroke-zinc-100 dark:tw-fill-zinc-100"
+        class="stroke-zinc-700 fill-zinc-700 dark:stroke-zinc-100 dark:fill-zinc-100"
         th:text="${avatarText}"
       >
         AB

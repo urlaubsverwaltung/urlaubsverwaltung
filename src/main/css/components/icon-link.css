@@ -1,16 +1,31 @@
 .icon-link {
-  @apply tw-flex !important;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .icon-link,
 .text-link {
-  @apply tw-whitespace-nowrap;
-  @apply tw-text-zinc-700 !important;
-  @apply tw-no-underline !important;
-  @apply hover:tw-text-black !important;
-  @apply focus:tw-text-black !important;
-  @apply dark:tw-text-zinc-50 !important;
-  @apply dark:hover:tw-text-zinc-50 !important;
-  @apply dark:focus:tw-text-zinc-50 !important;
-  @apply dark:tw-text-opacity-75 !important;
+  white-space: nowrap;
+  color: var(--color-zinc-700);
+
+  > svg {
+    flex-shrink: 0;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--color-black);
+    text-decoration: none;
+  }
+
+  @variant dark {
+    color: var(--color-zinc-300);
+
+    &:hover,
+    &:focus {
+      color: var(--color-zinc-50);
+    }
+  }
 }

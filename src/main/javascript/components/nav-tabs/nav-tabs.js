@@ -13,17 +13,17 @@ class NavTabs extends HTMLUListElement {
         if (this[activeSymbol] !== clickedItem) {
           const previousLink = this[activeSymbol].querySelector("a");
           delete this[activeSymbol].dataset.active;
-          this[activeSymbol].classList.add("tw-border-transparent");
-          this[activeSymbol].classList.remove("tw-border-zinc-200");
-          previousLink.classList.remove("tw-text-black-almost", "dark:tw-text-zinc-200");
-          previousLink.classList.add("tw-text-zinc-400", "dark:tw-text-zinc-500");
+          this[activeSymbol].classList.add("border-transparent");
+          this[activeSymbol].classList.remove("border-zinc-200");
+          previousLink.classList.remove("text-black-almost", "dark:text-zinc-200");
+          previousLink.classList.add("text-zinc-400", "dark:text-zinc-500");
           document.querySelector(this[activeSymbol].dataset.content).setAttribute("hidden", "");
 
           clickedItem.dataset.active = "true";
-          clickedItem.classList.remove("tw-border-transparent");
-          clickedItem.classList.add("tw-border-zinc-200");
-          event.target.classList.add("tw-text-black-almost", "dark:tw-text-zinc-200");
-          event.target.classList.remove("tw-text-zinc-400", "dark:tw-text-zinc-500");
+          clickedItem.classList.remove("border-transparent");
+          clickedItem.classList.add("border-zinc-200");
+          event.target.classList.add("text-black-almost", "dark:text-zinc-200");
+          event.target.classList.remove("text-zinc-400", "dark:text-zinc-500");
           document.querySelector(clickedItem.dataset.content).removeAttribute("hidden");
 
           this[activeSymbol] = clickedItem;

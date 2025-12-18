@@ -11,13 +11,13 @@
   width: calc(0.75rem - 4px);
   min-height: calc(2.25rem - 4px);
   height: calc(100% - 0.75rem);
-  @apply tw-rounded-lg;
+  @apply rounded-lg;
 }
 
 .absence-type_color-box::after {
   content: "";
   position: absolute;
-  @apply tw-rounded-lg;
+  @apply rounded-lg;
   top: calc(-1 * var(--border-width));
   left: calc(-1 * var(--border-width));
   right: calc(-1 * var(--border-width));

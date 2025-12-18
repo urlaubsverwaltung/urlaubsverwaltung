@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+/* html element has .dark class to enforce dark theme */
+@custom-variant dark (&:where(.theme-dark, .theme-dark *));
+
+@custom-variant supports-backdrop-blur {
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    @slot;
+  }
+}

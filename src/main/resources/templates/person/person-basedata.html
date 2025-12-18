@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{person.form.basedata.title(${personBasedata.niceName})}"></title>
     <th:block th:fragment="preload">
@@ -10,37 +10,35 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
-      <div
-        th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
-      >
+    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{})}">
         <th:block th:ref="person-basedata-heading-body">
           <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
         </th:block>
       </div>
 
-      <div class="tw-mt-4 md:tw-mt-6">
-        <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
-          <div class="tw-p-1 tw-text-blue-50 dark:tw-text-sky-800">
+      <div class="mt-4 md:mt-6">
+        <div class="flex items-center gap-4 sm:gap-6 mb-4 md:mb-12">
+          <div class="p-1 text-blue-50 dark:text-sky-800">
             <img
               th:replace="~{fragments/avatar::avatar-bordered(url=${personBasedata.gravatarURL + '?d=404&s=60'},niceName=${personBasedata.niceName},initials=${personBasedata.initials},width='60',height='60',personId=${personBasedata.personId})}"
               alt=""
             />
           </div>
           <div>
-            <div class="tw-mb-1">
-              <span class="tw-flex tw-items-center">
+            <div class="mb-1">
+              <span class="flex items-center">
                 <a
                   href="#"
                   th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
-                  class="text-link tw-text-lg print:no-link"
+                  class="text-link text-lg"
                   th:text="${personBasedata.niceName}"
                 >
                   John Doe
                 </a>
                 <th:block th:if="${personBasedata.isInactive}">
-                  <span class="tw-mt-1" th:data-title="#{person.data.inactive}">
-                    &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span class="tw-sr-only"
+                  <span class="mt-1" th:data-title="#{person.data.inactive}">
+                    &nbsp;<svg th:replace="~{icon/user-x::svg(className='w-4 h-4')}" /><span class="sr-only"
                       >(<th:block th:text="#{person.data.inactive}" />)</span
                     >
                   </span>
@@ -51,16 +49,16 @@
               th:if="${personBasedata.email != null}"
               href="mailto:john.doe@example.org"
               th:href="${'mailto:' + personBasedata.email}"
-              class="icon-link tw-text-sm print:no-link"
+              class="icon-link text-sm"
             >
-              <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4')}"></svg>
+              <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}"></svg>
               &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>
             </a>
           </div>
         </div>
       </div>
 
-      <div class="tw-mt-8">
+      <div class="mt-8">
         <form
           class="uv-form uv-form-grid"
           th:action="@{/web/person/{personId}/basedata (personId=${personBasedata.personId})}"
@@ -92,7 +90,7 @@
           </div>
 
           <div class="uv-form__actions">
-            <button type="submit" class="button-main-green tw-w-56" th:text="#{action.save}">Speichern</button>
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
         </form>

@@ -5,7 +5,7 @@ import { parseISO } from "date-fns/parseISO";
 import { getJSON } from "../js/fetch";
 
 const icons = {
-  check: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="tw-w-4 tw-h-4 tw-stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`,
+  check: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="w-4 h-4 stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`,
 };
 
 export default async function sendGetDepartmentVacationsRequest(
@@ -45,7 +45,7 @@ export default async function sendGetDepartmentVacationsRequest(
       return createHtmlForVacation(vacation, isNewPerson);
     });
 
-    element.innerHTML += `<ul class="tw-m-0 tw-p-0">${html.join("")}</ul>`;
+    element.innerHTML += `<ul class="m-0 p-0">${html.join("")}</ul>`;
   }
 }
 
@@ -56,12 +56,12 @@ function createHtmlForVacation(vacation, isNewPerson) {
 
   let html = "";
   if (isNewPerson) {
-    html += `<li class="tw-flex tw-items-center tw-pt-2">${person}:</li>`;
+    html += `<li class="flex items-center pt-2">${person}:</li>`;
   }
 
-  html += `<li class="tw-flex tw-items-center tw-pl-5">`;
+  html += `<li class="flex items-center pl-5">`;
   if (vacation.status === "ALLOWED") {
-    html += `<span class="tw-text-emerald-500 tw-absolute tw--ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
+    html += `<span class="text-emerald-500 absolute -ml-5" title="${globalThis.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
   }
 
   let dateInformation = `${startDate} - ${endDate}`;

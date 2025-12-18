@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
@@ -24,7 +24,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
         <form
           method="post"
           th:action="@{/web/person/__${person.id}__/workingtime}"
@@ -58,16 +58,16 @@
 
               <div class="uv-form__group-info">
                 <p class="uv-help-block">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  &nbsp;
+                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
                   <th:block
                     th:text="#{person.form.workingTime.federalState.description(${defaultFederalCountryAndStateName})}"
-                    >Baden-Württemberg</th:block
                   >
+                    Baden-Württemberg
+                  </th:block>
                 </p>
                 <p class="uv-help-block">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  &nbsp;<th:block th:text="#{person.form.workingTime.description}">Description</th:block>
+                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+                  <th:block th:text="#{person.form.workingTime.description}">Description</th:block>
                 </p>
               </div>
 
@@ -131,7 +131,7 @@
                 <p class="uv-form__label uv-form__label--required" th:text="|#{person.form.workingTime.weekDays}:|">
                   Wochentage
                 </p>
-                <div class="tw-flex tw-flex-col tw-gap-1">
+                <div class="flex flex-col gap-1">
                   <div th:each="weekDay : ${weekDays}">
                     <label th:for="${weekDay}">
                       <input type="checkbox" th:id="${weekDay}" th:field="*{workingDays}" th:value="${weekDay.value}" />
@@ -144,20 +144,20 @@
               <!-- working times list -->
               <div th:if="${not #lists.isEmpty(workingTimeHistories)}" class="uv-form__input-row">
                 <p class="uv-form__label" th:text="|#{person.form.workingTime.existent}:|">Arbeitszeiten</p>
-                <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
+                <ul class="space-y-2 text-sm">
                   <li th:each="workingTimeHistory, status : ${workingTimeHistories}">
                     <span
                       th:if="${status.first}"
-                      class="tw-block"
-                      th:classappend="${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}"
+                      class="block"
+                      th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
                     >
                       <span th:text="#{person.form.workingTime.valid-from}"></span>
                       <span th:text="${{workingTimeHistory.validFrom}}"></span>
                     </span>
                     <span
                       th:if="${not status.first}"
-                      class="tw-block"
-                      th:classappend="${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}"
+                      class="block"
+                      th:classappend="${workingTimeHistory.valid ? 'text-emerald-500' : ''}"
                     >
                       <span
                         th:text="#{person.form.workingTime.valid-from-to(${{workingTimeHistory.validFrom}}, ${{workingTimeHistory.validTo}})}"
@@ -184,7 +184,7 @@
           </div>
 
           <div class="uv-form__actions">
-            <button type="submit" class="button-main-green tw-w-56" th:text="#{action.save}">Speichern</button>
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
         </form>

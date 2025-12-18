@@ -1,13 +1,13 @@
+@reference "../config.css";
+
 th.vacationOverview-cal-head.today {
   --vacation-overview-rows: 0;
   position: relative;
 }
 th.vacationOverview-cal-head.today::after {
   content: "";
-  @apply tw-border-3;
-  @apply tw-border-calendar-today;
-  @apply tw-border-opacity-40;
-  @apply dark:tw-border-opacity-80;
+  @apply border-3;
+  @apply border-(--uv-cal-today-border-color)/40;
   position: absolute;
   top: 0;
   left: 0;
@@ -15,6 +15,12 @@ th.vacationOverview-cal-head.today::after {
   /* head row height + (x * person height)  */
   height: calc(100% + (var(--vacation-overview-rows) * 2.8125rem));
   z-index: 1;
+}
+
+@variant dark {
+  th.vacationOverview-cal-head.today::after {
+    @apply border-(--uv-cal-today-border-color)/80;
+  }
 }
 
 @media print {
@@ -26,18 +32,18 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th,
 .vacationOverview-table td {
-  @apply tw-text-zinc-600 !important;
-  @apply dark:tw-text-zinc-200 !important;
-  border: 1px solid theme("borderColor.calendar.DEFAULT");
+  @apply text-zinc-600!;
+  @apply dark:text-zinc-200!;
+  border: 1px solid var(--uv-cal-border-color);
   font-weight: normal;
 }
 
 .vacationOverview-table thead th {
-  @apply dark:tw-font-medium;
+  @apply dark:font-medium;
 }
 
 .vacationOverview-table th.weekend {
-  @apply tw-text-zinc-400 !important;
+  @apply text-zinc-400!;
 }
 
 .vacationOverview-table td {
@@ -49,7 +55,7 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .vacationOverview-legend-colorbox {
-  border: 3pt solid theme("borderColor.calendar.DEFAULT");
+  border: 3pt solid var(--uv-cal-border-color);
   width: 1.5rem;
 }
 
@@ -62,12 +68,12 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .cal-day {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
-  --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
-  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
-  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
-  --font-color: theme("textColor.calendar.DEFAULT");
+  --absence-bar-color-morning: var(--uv-cal-default-bg);
+  --absence-bar-color-noon: var(--uv-cal-default-bg);
+  --absence-bar-color: var(--uv-cal-default-bg);
+  --background-color-left: var(--uv-cal-default-bg);
+  --background-color-right: var(--uv-cal-default-bg);
+  --font-color: var(--uv-cal-default-color);
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   overflow: hidden;
@@ -191,11 +197,11 @@ th.vacationOverview-cal-head.today::after {
 }
 
 svg.no-workday-icon {
-  @apply tw-stroke-neutral-200;
-  @apply dark:tw-stroke-neutral-700;
+  @apply stroke-neutral-200;
+  @apply dark:stroke-neutral-700;
 }
 .public-holiday-full.no-workday svg.no-workday-icon {
-  @apply tw-opacity-75;
+  @apply opacity-75;
 }
 
 .sick-note-morning {
@@ -209,78 +215,79 @@ svg.no-workday-icon {
 }
 
 .public-holiday-morning {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: var(--uv-cal-public-holiday-bg);
 }
 .public-holiday-noon {
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: var(--uv-cal-public-holiday-bg);
 }
 .public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
-  --font-color: theme("textColor.calendar.public-holiday");
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
+  --font-color: var(--uv-cal-public-holiday-color);
 }
 
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
-  --font-color: theme("textColor.calendar.public-holiday");
+  --background-color-left: var(--uv-cal-public-holiday-bg);
+  --background-color-right: var(--uv-cal-public-holiday-bg);
+  --font-color: var(--uv-cal-public-holiday-color);
 }
 
 .vacationOverview-tbody tr:hover th:first-child {
-  border-right-color: theme("colors.zinc.100");
+  border-right-color: var(--color-zinc-100);
 }
 .vacationOverview-tbody
   tr:hover
   td
   .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
-  --background-color-left: theme("colors.zinc.100");
-  --background-color-right: theme("colors.zinc.100");
+  --background-color-left: var(--color-zinc-100);
+  --background-color-right: var(--color-zinc-100);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
-  --background-color-left: theme("colors.slate.300");
-  --background-color-right: theme("colors.zinc.100");
+  --background-color-left: var(--color-slate-300);
+  --background-color-right: var(--color-zinc-100);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
-  --background-color-left: theme("colors.zinc.100");
-  --background-color-right: theme("colors.slate.300");
+  --background-color-left: var(--color-zinc-100);
+  --background-color-right: var(--color-slate-300);
 }
 .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
-  --background-color-left: theme("colors.slate.300");
-  --background-color-right: theme("colors.slate.300");
+  --background-color-left: var(--color-slate-300);
+  --background-color-right: var(--color-slate-300);
 }
 .vacationOverview-tbody tr:hover th {
-  background-color: theme("colors.gray.100");
+  background-color: var(--color-gray-100);
 }
 
-.tw-dark .vacationOverview-tbody tr:hover th:first-child {
-  border-right-color: theme("colors.zinc.800");
-}
-.tw-dark
+@variant dark {
+  .vacationOverview-tbody tr:hover th:first-child {
+    border-right-color: var(--color-zinc-800);
+  }
   .vacationOverview-tbody
-  tr:hover
-  td
-  .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
-  --background-color-left: theme("colors.neutral.700");
-  --background-color-right: theme("colors.neutral.700");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
-  --background-color-left: theme("colors.sky.600");
-  --background-color-right: theme("colors.neutral.700");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
-  --background-color-left: theme("colors.neutral.700");
-  --background-color-right: theme("colors.sky.600");
-}
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
-  --background-color-left: theme("colors.sky.600");
-  --background-color-right: theme("colors.sky.600");
-}
-.tw-dark .vacationOverview-tbody tr:hover th {
-  background-color: theme("colors.zinc.800");
-}
+    tr:hover
+    td
+    .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
+    --background-color-left: var(--color-neutral-700);
+    --background-color-right: var(--color-neutral-700);
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+    --background-color-left: var(--color-sky-600);
+    --background-color-right: var(--color-neutral-700);
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+    --background-color-left: var(--color-neutral-700);
+    --background-color-right: var(--color-sky-600);
+  }
+  .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+    --background-color-left: var(--color-sky-600);
+    --background-color-right: var(--color-sky-600);
+  }
+  .vacationOverview-tbody tr:hover th {
+    background-color: var(--color-zinc-800);
+  }
 
-.tw-dark .vacationOverview-tbody tr:hover svg.no-workday-icon {
-  @apply tw-stroke-zinc-600;
+  .vacationOverview-tbody tr:hover svg.no-workday-icon {
+    @apply stroke-zinc-600;
+  }
 }
 
 @media print {

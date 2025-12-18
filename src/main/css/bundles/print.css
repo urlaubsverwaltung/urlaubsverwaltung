@@ -1,12 +1,3 @@
-/*stylelint-disable declaration-no-important, selector-no-qualifying-type*/
-
-/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
-
-/*==========================================================================*/
-/*Print styles.*/
-/*Inlined to avoid the additional HTTP request: h5bp.com/r*/
-/*==========================================================================*/
-
 @media print {
   *,
   *:before,
@@ -19,11 +10,7 @@
 
   a,
   a:visited {
-    text-decoration: underline;
-  }
-
-  a[href]:after {
-    content: " (" attr(href) ")";
+    text-decoration: none;
   }
 
   abbr[title]:after {
@@ -66,5 +53,37 @@
   h2,
   h3 {
     page-break-after: avoid;
+  }
+
+  .button,
+  .navbar,
+  [role="tooltip"] {
+    display: none !important;
+  }
+
+  .container {
+    width: 100% !important;
+  }
+
+  .content {
+    margin-top: 0 !important;
+  }
+
+  .fa {
+    color: black !important;
+  }
+
+  /* Do not show sort icons in tables */
+  .tablesorter-header-inner:after {
+    content: "";
+  }
+
+  th {
+    font-weight: bold !important;
+  }
+
+  .cal-day::after {
+    background-color: transparent !important;
+    border-color: transparent !important;
   }
 }

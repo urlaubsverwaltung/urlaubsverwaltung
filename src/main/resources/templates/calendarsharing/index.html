@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{calendar.share.header.title}">Kalenderfreigabe</title>
     <th:block th:fragment="preload">
@@ -10,14 +10,14 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
       <header>
-        <h1 class="tw-mb-8 tw-text-2xl tw-text-medium">
+        <h1 class="mb-8 text-2xl text-medium">
           <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.title}"></th:block>
           <th:block th:if="${not isSignedInUser}" th:text="#{calendar.share.title.other(${personName})}"></th:block>
         </h1>
       </header>
-      <p class="tw-mb-8">
+      <p class="mb-8">
         <span th:text="#{calendar.share.info}"></span>
         <a
           th:text="#{calendar.share.info.help}"
@@ -25,10 +25,10 @@
         ></a>
       </p>
 
-      <div class="tw-mb-8">
+      <div class="mb-8">
         <aside th:replace="~{fragments/privacy-box::privacy-box(~{::privacy-box-body})}">
           <th:block th:fragment="privacy-box-body">
-            <p th:text="#{calendar.share.privacy-info.paragraph}" class="tw-space-y-4"></p>
+            <p th:text="#{calendar.share.privacy-info.paragraph}" class="space-y-4"></p>
             <p th:text="#{calendar.share.privacy-info.reset}"></p>
           </th:block>
         </aside>
@@ -38,14 +38,14 @@
         method="post"
         th:action="@{/web/calendars/share/persons/{personId}/me#calendar-private (personId=${privateCalendarShare.personId})}"
         th:object="${privateCalendarShare}"
-        class="tw-mb-8"
+        class="mb-8"
       >
-        <div class="tw-mb-4">
+        <div class="mb-4">
           <div
-            th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{::calendarsharing-private-heading-actions})}"
+            th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{})}"
           >
             <th:block th:ref="calendarsharing-private-heading-body">
-              <h2 id="calendar-private" class="tw-text-xl">
+              <h2 id="calendar-private" class="text-xl">
                 <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.title}"></th:block>
                 <th:block
                   th:if="${not isSignedInUser}"
@@ -55,28 +55,24 @@
             </th:block>
           </div>
 
-          <div th:if="${#strings.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
-            <p class="tw-mb-8 tw-text-base">
+          <div th:if="${#strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-3xl">
+            <p class="mb-8 text-base">
               <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.paragraph.status}"></th:block>
               <th:block
                 th:if="${not isSignedInUser}"
                 th:text="#{calendar.share.me.paragraph.status.other(${personName})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.range.paragraph}"></p>
-            <div class="tw-mb-4">
+            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+            <div class="mb-4">
               <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label
-                  th:for="${'personal-calendar-period-' + loop.index}"
-                  class="tw-flex tw-items-center tw-space-x-1"
-                >
+                <label th:for="${'personal-calendar-period-' + loop.index}">
                   <input
                     th:id="${'personal-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
                     th:value="${calendarPeriod}"
                     th:checked="${privateCalendarShare.calendarPeriod == calendarPeriod}"
-                    class="tw-m-0"
                   />
                   <span th:text="${#messages.msg('calendar.share.me.range.' + calendarPeriod)}"></span>
                 </label>
@@ -91,8 +87,8 @@
             </button>
           </div>
 
-          <div th:if="${not #strings.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
-            <p th:if="${privateCalendarShare.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
+          <div th:if="${not #strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-4xl">
+            <p th:if="${privateCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
               <th:block
                 th:if="${isSignedInUser}"
                 th:text="#{calendar.share.me.isshared.paragraph.status.all}"
@@ -104,7 +100,7 @@
             </p>
             <p
               th:unless="${privateCalendarShare.calendarPeriod == 'ALL'}"
-              class="tw-mb-8 tw-text-base"
+              class="mb-8 text-base"
               th:with="privateCalendarPeriodText=${#messages.msg('calendar.share.me.range.' + privateCalendarShare.calendarPeriod)}"
             >
               <th:block
@@ -116,42 +112,42 @@
                 th:text="#{calendar.share.me.isshared.paragraph.status.other(${personName}, ${privateCalendarPeriodText})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.me.isshared.paragraph.info}" class="tw-mb-2 tw-text-base"></p>
+            <p th:text="#{calendar.share.me.isshared.paragraph.info}" class="mb-2 text-base"></p>
             <div
               is="uv-copy-to-clipboard-input"
-              class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-zinc-600 focus-within:tw-ring"
+              class="mb-8"
               th:data-message-button-title="#{calendar.share.me.button.clipboard.tooltip}"
             >
               <input
                 type="text"
                 th:value="${privateCalendarShare.calendarUrl}"
-                class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none"
+                class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
                 readonly
               />
             </div>
-            <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+            <div class="flex flex-col gap-2 sm:flex-row">
               <button
                 th:text="#{calendar.share.me.reset.form.submit.text}"
                 type="submit"
-                class="button tw-mb-4 sm:tw-mb-0"
+                class="button mb-4 sm:mb-0"
               ></button>
               <button
                 th:text="#{calendar.share.me.unlink.form.submit.text}"
                 type="submit"
                 name="unlink"
-                class="button sm:tw-mb-0"
+                class="button sm:mb-0"
               ></button>
             </div>
           </div>
         </div>
       </form>
 
-      <div th:if="${departmentCalendars.size() > 0}" class="tw-mb-8">
+      <div th:if="${departmentCalendars.size() > 0}" class="mb-8">
         <div
-          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-department-heading-body}, ~{::calendarsharing-department-heading-actions})}"
+          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-department-heading-body}, ~{})}"
         >
           <th:block th:ref="calendarsharing-department-heading-body">
-            <h2 th:text="#{calendar.share.department.title}" id="calendar-department" class="tw-text-xl">Abteilung</h2>
+            <h2 th:text="#{calendar.share.department.title}" id="calendar-department" class="text-xl">Abteilung</h2>
           </th:block>
         </div>
         <ul th:if="${departmentCalendars.size() > 1}" role="tablist">
@@ -176,8 +172,8 @@
             th:action="@{/web/calendars/share/persons/{personId}/departments/{departmentId}#calendar-department (personId=${privateCalendarShare.personId}, departmentId=${departmentCal.departmentId})}"
             th:id="${'department-calendar-form-' + loop.index}"
           >
-            <div th:if="${#strings.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-3xl">
-              <p class="tw-mb-8 tw-text-base">
+            <div th:if="${#strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-3xl">
+              <p class="mb-8 text-base">
                 <th:block
                   th:if="${isSignedInUser}"
                   th:text="#{calendar.share.department.paragraph.status(${departmentCal.departmentName})}"
@@ -187,20 +183,16 @@
                   th:text="#{calendar.share.department.paragraph.status.other(${departmentCal.departmentName}, ${personName})}"
                 ></th:block>
               </p>
-              <p th:text="#{calendar.share.range.paragraph}"></p>
-              <div class="tw-mb-4">
+              <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+              <div class="mb-4">
                 <div th:each="calendarPeriod, periodLoop : ${calendarPeriods}">
-                  <label
-                    th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
-                    class="tw-flex tw-items-center tw-space-x-1"
-                  >
+                  <label th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|">
                     <input
                       th:id="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
                       type="radio"
                       name="calendarPeriod"
                       th:value="${calendarPeriod}"
                       th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
-                      class="tw-m-0"
                     />
                     <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}">Jahres</span>
                   </label>
@@ -217,8 +209,8 @@
                 ></th:block>
               </button>
             </div>
-            <div th:if="${not #strings.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-4xl">
-              <p th:if="${departmentCal.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
+            <div th:if="${not #strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-4xl">
+              <p th:if="${departmentCal.calendarPeriod == 'ALL'}" class="mb-8 text-base">
                 <th:block
                   th:if="${isSignedInUser}"
                   th:text="#{calendar.share.department.isshared.paragraph.status.all(${departmentCal.departmentName})}"
@@ -230,7 +222,7 @@
               </p>
               <p
                 th:unless="${departmentCal.calendarPeriod == 'ALL'}"
-                class="tw-mb-8 tw-text-base"
+                class="mb-8 text-base"
                 th:with="departmentCalendarPeriodText=${#messages.msg('calendar.share.department.range.' + departmentCal.calendarPeriod)}"
               >
                 <th:block
@@ -242,30 +234,30 @@
                   th:text="#{calendar.share.department.isshared.paragraph.status(${departmentCal.departmentName}, ${departmentCalendarPeriodText}, ${personName})}"
                 ></th:block>
               </p>
-              <p th:text="#{calendar.share.department.isshared.paragraph.info}" class="tw-mb-2 tw-text-base"></p>
+              <p th:text="#{calendar.share.department.isshared.paragraph.info}" class="mb-2 text-base"></p>
               <div
                 is="uv-copy-to-clipboard-input"
-                class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-zinc-600 focus-within:tw-ring"
+                class="mb-8"
                 th:data-message-button-title="#{calendar.share.department.button.clipboard.tooltip}"
               >
                 <input
                   type="text"
                   th:value="${departmentCal.calendarUrl}"
-                  class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none"
+                  class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
                   readonly
                 />
               </div>
-              <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+              <div class="flex flex-col gap-2 sm:flex-row">
                 <button
                   th:text="#{calendar.share.department.reset.form.submit.text}"
                   type="submit"
-                  class="button tw-mb-4 sm:tw-mb-0"
+                  class="button mb-4 sm:mb-0"
                 ></button>
                 <button
                   th:text="#{calendar.share.department.unlink.form.submit.text}"
                   type="submit"
                   name="unlink"
-                  class="button sm:tw-mb-0"
+                  class="button sm:mb-0"
                 ></button>
               </div>
             </div>
@@ -274,11 +266,9 @@
       </div>
 
       <div th:if="${companyCalendarAccessible != null || companyCalendarShare != null}">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-company-heading-body}, ~{::calendarsharing-company-heading-actions})}"
-        >
+        <div th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-company-heading-body}, ~{})}">
           <th:block th:ref="calendarsharing-company-heading-body">
-            <h2 th:text="#{calendar.share.company.title}" id="calendar-company" class="tw-text-xl">Firma</h2>
+            <h2 th:text="#{calendar.share.company.title}" id="calendar-company" class="text-xl">Firma</h2>
           </th:block>
         </div>
         <form
@@ -287,11 +277,11 @@
           th:action="@{/web/calendars/share/persons/{personId}/company/accessible#calendar-company (personId=${personId})}"
         >
           <input type="hidden" name="accessible" th:value="${not companyCalendarAccessible.accessible}" />
-          <div class="tw-max-w-3xl tw-mb-12">
+          <div class="max-w-3xl mb-12">
             <p
               th:if="${companyCalendarAccessible.accessible}"
               th:text="#{calendar.share.company.accessible.enabled.paragraph}"
-              class="tw-mb-4 tw-text-base"
+              class="mb-4 text-base"
             ></p>
             <button
               th:if="${companyCalendarAccessible.accessible}"
@@ -302,7 +292,7 @@
             <p
               th:unless="${companyCalendarAccessible.accessible}"
               th:text="#{calendar.share.company.accessible.disabled.paragraph}"
-              class="tw-mb-4 tw-text-base"
+              class="mb-4 text-base"
             ></p>
             <button
               th:unless="${companyCalendarAccessible.accessible}"
@@ -319,25 +309,24 @@
           th:action="@{/web/calendars/share/persons/{personId}/company#calendar-company (personId=${companyCalendarShare.personId})}"
           th:object="${companyCalendarShare}"
         >
-          <div th:if="${#strings.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
-            <p class="tw-mb-8 tw-text-base">
+          <div th:if="${#strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-3xl">
+            <p class="mb-8 text-base">
               <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.paragraph.status}"></th:block>
               <th:block
                 th:if="${not isSignedInUser}"
                 th:text="#{calendar.share.company.paragraph.status.other(${personName})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.range.paragraph}"></p>
-            <div class="tw-mb-4">
+            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+            <div class="mb-4">
               <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label th:for="${'company-calendar-period-' + loop.index}" class="tw-flex tw-items-center tw-space-x-1">
+                <label th:for="${'company-calendar-period-' + loop.index}">
                   <input
                     th:id="${'company-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
                     th:value="${calendarPeriod}"
                     th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
-                    class="tw-m-0"
                   />
                   <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}">Jahres</span>
                 </label>
@@ -351,8 +340,8 @@
               ></th:block>
             </button>
           </div>
-          <div th:if="${not #strings.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
-            <p th:if="${companyCalendarShare.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
+          <div th:if="${not #strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-4xl">
+            <p th:if="${companyCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
               <th:block
                 th:if="${isSignedInUser}"
                 th:text="#{calendar.share.company.isshared.paragraph.status.all}"
@@ -364,7 +353,7 @@
             </p>
             <p
               th:unless="${companyCalendarShare.calendarPeriod == 'ALL'}"
-              class="tw-mb-8 tw-text-base"
+              class="mb-8 text-base"
               th:with="calendarPeriodText=${#messages.msg('calendar.share.company.range.' + companyCalendarShare.calendarPeriod)}"
             >
               <th:block
@@ -376,30 +365,30 @@
                 th:text="#{calendar.share.company.isshared.paragraph.status.other(${personName}, ${calendarPeriodText})}"
               ></th:block>
             </p>
-            <p th:text="#{calendar.share.company.isshared.paragraph.info}" class="tw-mb-2 tw-text-base"></p>
+            <p th:text="#{calendar.share.company.isshared.paragraph.info}" class="mb-2 text-base"></p>
             <div
               is="uv-copy-to-clipboard-input"
-              class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-zinc-600 focus-within:tw-ring"
+              class="mb-8"
               th:data-message-button-title="#{calendar.share.company.button.clipboard.tooltip}"
             >
               <input
                 type="text"
                 th:value="${companyCalendarShare.calendarUrl}"
-                class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none"
+                class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
                 readonly
               />
             </div>
-            <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+            <div class="flex flex-col gap-2 sm:flex-row">
               <button
                 th:text="#{calendar.share.company.reset.form.submit.text}"
                 type="submit"
-                class="button tw-mb-4 sm:tw-mb-0"
+                class="button mb-4 sm:mb-0"
               ></button>
               <button
                 th:text="#{calendar.share.company.unlink.form.submit.text}"
                 type="submit"
                 name="unlink"
-                class="button sm:tw-mb-0"
+                class="button sm:mb-0"
               ></button>
             </div>
           </div>

@@ -27,11 +27,37 @@ legend {
 /* ----------------------- */
 
 .uv-help-block {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
   color: #737373;
-  @apply tw-text-sm;
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-text-opacity-75;
+  @apply text-sm;
+  @apply dark:text-zinc-200/75;
+
+  &:has(.uv-help-block-icon) {
+    align-items: baseline; /* align icon with first line of multiline text */
+  }
+
+  .uv-help-block-icon {
+    flex-shrink: 0;
+    transform: translateY(3px); /* align icon with text */
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+label {
+  font-weight: 600;
+  @apply text-sm;
+  @apply leading-6;
+
+  &:has(input[type="radio"], input[type="checkbox"]) {
+    font-weight: normal; /* override with utils if bolder text is required */
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
 }
 
 input:not(:is([type="radio"], [type="checkbox"])),
@@ -41,52 +67,60 @@ select,
   display: inline-block;
   width: 100%;
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: var(--uv-form-control-text-size);
   line-height: 1.428571429;
   color: #555;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: var(--uv-input-border-radius);
 
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   transition:
     border-color ease-in-out 0.15s,
     box-shadow ease-in-out 0.15s;
 
+  &:focus {
+    border-color: transparent;
+    outline: 2px solid var(--uv-focus-ring-color);
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+  }
+
   &::placeholder {
-    color: #999;
+    color: var(--uv-placeholder-color);
+  }
+
+  &[readonly] {
+    background-color: var(--color-gray-200);
+  }
+
+  @variant dark {
+    border-color: var(--color-zinc-600);
+    background-color: var(--color-zinc-700);
+    color: var(--color-zinc-50);
+
+    &[readonly] {
+      background-color: var(--color-zinc-800);
+    }
   }
 }
 
 .popover-button-select {
   width: auto; /* override common input styling */
-  :not([class*="tw-border-"]) {
-    /* actually colors are meant here, like tw-border-blue-400 */
-    /* however tw-border-*-* is not a valid selector */
-    @apply dark:tw-border-neutral-600 !important;
+  :not([class*="border-"]) {
+    /* actually colors are meant here, like border-blue-400 */
+    /* however border-*-* is not a valid selector */
+    @apply dark:border-neutral-600!;
   }
-}
-
-.popover-button-select:focus,
-/* radiobutton and checkbox should not be highlighted on click, but on tab (:focus-visible) */
-input:not(:is([type="radio"], [type="checkbox"])):focus,
-select:focus,
-textarea:focus {
-  border-color: transparent;
-  outline: 2px solid var(--uv-focus-ring-color);
-  outline-offset: 1px;
-  box-shadow:
-    inset 0 1px 1px rgba(0, 0, 0, 0.075),
-    0 0 8px rgba(102, 175, 233, 0.6);
 }
 
 .uv-input-group {
   display: flex;
+  width: 100%;
 
   /* input */
   border: 1px solid #ccc;
   border-radius: var(--uv-input-border-radius);
-  @apply dark:tw-border-neutral-600;
+  @apply dark:border-neutral-600;
 
   &.uv-has-error {
     border-color: var(--uv-error-border-color);
@@ -95,10 +129,7 @@ textarea:focus {
   &:focus-within {
     border-color: transparent;
     outline: 2px solid var(--uv-focus-ring-color);
-    outline-offset: 1px;
-    box-shadow:
-      inset 0 1px 1px rgba(0, 0, 0, 0.075),
-      0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
 
     input {
       outline: 0;
@@ -117,7 +148,7 @@ textarea:focus {
     align-items: center;
 
     padding: 0 0.75rem;
-    font-size: 14px;
+    font-size: var(--uv-form-control-text-size);
     font-weight: 400;
     line-height: 1;
     color: #555;
@@ -125,28 +156,21 @@ textarea:focus {
     border-top-right-radius: var(--uv-input-border-radius);
     border-bottom-right-radius: var(--uv-input-border-radius);
 
-    @apply dark:tw-bg-zinc-800;
-    @apply dark:tw-text-zinc-200;
+    @apply dark:bg-zinc-800;
+    @apply dark:text-zinc-200;
   }
 }
 
 legend {
-  @apply dark:tw-text-zinc-200;
-  @apply dark:tw-font-normal;
+  @apply dark:text-zinc-200;
+  @apply dark:font-normal;
 }
 
 input[disabled],
 fieldset[disabled] input {
-  @apply dark:tw-text-neutral-700 !important;
-  @apply dark:tw-bg-neutral-800 !important;
-  @apply tw-border-0 !important;
-}
-
-.popover-button-select:focus,
-.duet-date__input:focus,
-.duet-date__toggle:focus {
-  @apply tw-ring-2 !important;
-  @apply tw-ring-blue-300 !important;
+  @apply dark:text-neutral-700!;
+  @apply dark:bg-neutral-800!;
+  @apply border-0!;
 }
 
 /**************************************************************************
@@ -169,15 +193,6 @@ label.is-required:after {
   color: var(--uv-error-color);
 }
 
-input,
-select,
-textarea,
-.popover-button-select {
-  @apply dark:tw-border-zinc-600 !important;
-  @apply dark:tw-bg-zinc-700 !important;
-  @apply dark:tw-text-zinc-50 !important;
-}
-
 input.error,
 textarea.error {
   border-color: var(--uv-error-border-color) !important;
@@ -195,24 +210,24 @@ textarea.error {
   overflow: auto;
   height: 400px;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+  @apply dark:border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
-  @apply dark:tw-border-zinc-600;
+  @apply dark:border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
-  @apply dark:tw-bg-zinc-800;
+  @apply dark:bg-zinc-800;
 }
 
 .department--member.is-inactive {
   background-color: #fff4ea;
-  @apply dark:tw-bg-transparent;
+  @apply dark:bg-transparent;
 }
 
 .department--member:last-child {
@@ -244,8 +259,8 @@ textarea.error {
 }
 
 .select-caret {
-  @apply tw-text-zinc-700;
-  @apply dark:tw-text-zinc-50;
+  @apply text-zinc-700;
+  @apply dark:text-zinc-50;
 }
 
 .uv-form {
@@ -265,14 +280,6 @@ textarea.error {
   --uv-form-label-col-width: 11.25rem; /* 180px */
   --uv-form-input-col-width: 1fr;
   --uv-form-info-col-width: 33%;
-
-  p {
-    margin: 0; /* override bootstrap margin bottom */
-  }
-
-  input[readonly] {
-    background-color: theme("colors.gray.200");
-  }
 
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
@@ -294,21 +301,19 @@ textarea.error {
       gap: 0.25rem;
       align-items: center;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid theme("colors.gray.200");
+      border-bottom: 2px solid var(--color-gray-200);
       margin-bottom: var(--uv-form-row-gap);
       font-size: var(--uv-form-legend-font-size);
 
-      @apply dark:tw-border-b;
-      @apply dark:tw-border-zinc-600;
+      @apply dark:border-b;
+      @apply dark:border-zinc-600;
 
       &:is(h1, h2, h3, h4, h5, h6) {
-        margin: 0; /* override bootstrap(?) default for headings */
         margin-bottom: var(--uv-form-row-gap);
         font-size: var(--uv-form-legend-font-size);
       }
 
       > :is(h1, h2, h3, h4, h5, h6) {
-        margin: 0; /* override bootstrap(?) default for headings */
         font-size: var(--uv-form-legend-font-size);
       }
     }
@@ -366,13 +371,9 @@ textarea.error {
       /* align text with input */
       label:has(input[type="radio"], input[type="checkbox"]) {
         font-weight: normal;
-        display: inline-flex;
-        flex-wrap: nowrap;
-        gap: 0.25rem;
         /* multiline label text: */
         /* align input on the "first" line (baseline) */
         align-items: baseline;
-
         /* align the input with text */
         input {
           transform: translateY(1px);
@@ -390,7 +391,7 @@ textarea.error {
       }
 
       .uv-form__input-error {
-        @apply tw-text-sm;
+        @apply text-sm;
         color: var(--uv-error-color);
       }
     }
@@ -436,8 +437,8 @@ textarea.error {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
-    @apply dark:tw-border-t;
-    @apply dark:tw-border-zinc-600;
+    @apply dark:border-t;
+    @apply dark:border-zinc-600;
   }
 
   @media screen and (width >= 1024px) {
@@ -499,7 +500,7 @@ textarea.error {
         /* override small screen */
         margin-bottom: 0;
         /* but not for next elements */
-        &:has (~ .uv-form__group-info) {
+        &:has(~ .uv-form__group-info) {
           margin-bottom: var(--uv-form-row-gap);
         }
       }

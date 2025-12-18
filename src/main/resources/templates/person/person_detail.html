@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{person.account.header.title(${person.niceName})}"></title>
     <th:block th:fragment="preload">
@@ -11,14 +11,14 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
         <div class="feedback">
           <p th:if="${createSuccess}" th:text="#{person.account.action.create.success}" class="alert alert-success"></p>
           <p th:if="${updateSuccess}" th:text="#{person.account.action.update.success}" class="alert alert-success"></p>
         </div>
 
-        <div class="tw-space-y-12 md:tw-space-y-0 md:tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
-          <div class="md:tw-col-start-1 md:tw-row-start-1">
+        <div class="space-y-12 md:space-y-0 md:grid gap-12 grid-cols-1 md:grid-cols-2">
+          <div class="md:col-start-1 md:row-start-1">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-basedata-body}, ~{::person-details-basedata-actions})}"
             >
@@ -29,10 +29,10 @@
                 <a
                   th:if="${canEditBasedata}"
                   th:href="@{/web/person/__${person.id}__/basedata}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -41,7 +41,7 @@
               th:replace="~{fragments/box::box-with-icon(~{::person-details-basedata-box-icon}, ~{::person-details-basedata-box-body})}"
             >
               <th:block th:ref="person-details-basedata-box-icon">
-                <span class="tw-text-blue-50 dark:tw-text-sky-800">
+                <span class="text-blue-50 dark:text-sky-800">
                   <img
                     th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=60'},niceName=${person.niceName},initials=${person.initials},width='60',height='60',personId=${person.id})}"
                     alt=""
@@ -49,68 +49,60 @@
                 </span>
               </th:block>
               <th:block th:ref="person-details-basedata-box-body">
-                <span class="tw-flex tw-items-center tw-mb-1 tw-mt-2">
+                <span class="flex items-center mb-1 mt-2">
                   <a
                     th:text="${person.niceName}"
                     th:href="@{/web/person/__${person.id}__/overview}"
-                    class="tw-text-lg text-link print:no-link"
+                    class="text-lg text-link"
                   ></a>
                   <th:block th:if="${person.isInactive}">
                     <span
-                      class="tw-flex tw-items-center tw-text-zinc-700 dark:tw-text-zinc-50 dark:tw-text-opacity-75"
+                      class="flex items-center text-zinc-700 dark:text-zinc-50/75"
                       th:data-title="#{person.data.inactive}"
                     >
-                      &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" />
-                      <span class="tw-sr-only">(<th:block th:text="#{person.data.inactive}" />)</span>
+                      &nbsp;<svg th:replace="~{icon/user-x::svg(className='w-4 h-4')}" />
+                      <span class="sr-only">(<th:block th:text="#{person.data.inactive}" />)</span>
                     </span>
                   </th:block>
                 </span>
-                <a
-                  th:if="${person.email != null}"
-                  th:href="|mailto:${person.email}|"
-                  class="icon-link tw-inline-block tw-text-sm print:no-link"
-                >
-                  <span class="tw-flex tw-items-center">
-                    <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
-                    <th:block th:text="${person.email}" />
-                  </span>
+                <a th:if="${person.email != null}" th:href="|mailto:${person.email}|" class="icon-link text-sm">
+                  <svg th:replace="~{icon/mail::svg(className='w-4 h-4')}"></svg>&nbsp;
+                  <th:block th:text="${person.email}" />
                 </a>
                 <span
                   th:if="${person.email == null}"
-                  class="tw-text-sm"
+                  class="text-sm"
                   th:text="#{person.account.basedata.email.notification(${person.niceName})}"
                 ></span>
-                <dl class="tw-m-0 tw-mt-4 tw-list-none">
+                <dl class="mt-4">
                   <dt
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="#{person.account.basedata.personnelNumber}"
-                    class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400"
+                    class="mb-2 font-medium dark:text-zinc-400"
                   ></dt>
                   <dd
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="${personBasedata.personnelNumber}"
-                    class="tw-text-sm tw-text-ellipsis tw-overflow-hidden"
+                    class="text-sm text-ellipsis overflow-hidden"
                   ></dd>
                   <dt
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
                     th:text="#{person.account.basedata.additionalInformation}"
-                    class="tw-mb-2 tw-mt-4 tw-font-medium dark:tw-text-zinc-400"
+                    class="mb-2 mt-4 font-medium dark:text-zinc-400"
                   ></dt>
                   <dd
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
-                    class="tw-text-sm tw-text-ellipsis tw-overflow-hidden"
+                    class="text-sm text-ellipsis overflow-hidden"
                   >
-                    <span th:text="${personBasedata.additionalInformation}" class="tw-whitespace-pre-line"></span>
+                    <span th:text="${personBasedata.additionalInformation}" class="whitespace-pre-line"></span>
                   </dd>
                 </dl>
               </th:block>
             </div>
           </div>
 
-          <div class="md:tw-col-start-1 md:tw-row-start-2">
-            <div
-              th:replace="~{fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{::person-details-departments-actions})}"
-            >
+          <div class="md:col-start-1 md:row-start-2">
+            <div th:replace="~{fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{})}">
               <th:block th:ref="person-details-departments-body">
                 <h2 th:text="#{person.account.departments.title}">Abteilungen</h2>
               </th:block>
@@ -120,10 +112,10 @@
             >
               <th:block th:ref="person-details-departments-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-departments-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-departments-box-icon-rounded}, className='bg-blue-400 text-white dark:bg-sky-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-departments-box-icon-rounded">
-                    <svg th:replace="~{icon/users::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/users::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -135,7 +127,7 @@
                 <ul
                   th:if="${not #lists.isEmpty(departments)}"
                   th:each="department : ${departments}"
-                  class="tw-space-y-0.5 tw-text-sm"
+                  class="space-y-0.5 text-sm"
                 >
                   <li
                     th:if="${#lists.contains(departmentHeadOfDepartments, department) && #lists.contains(secondStageAuthorityOfDepartments, department)}"
@@ -185,7 +177,7 @@
             </div>
           </div>
 
-          <div class="md:tw-col-start-1 md:tw-row-start-3">
+          <div class="md:col-start-1 md:row-start-3">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-permissions-body}, ~{::person-details-permissions-actions})}"
             >
@@ -196,10 +188,10 @@
                 <a
                   th:if="${canEditPermissions}"
                   th:href="@{/web/person/__${person.id}__/permissions}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -209,30 +201,30 @@
             >
               <th:block th:ref="person-details-permissions-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-permissions-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-permissions-box-icon-rounded}, className='bg-blue-400 text-white dark:bg-sky-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-permissions-box-icon-rounded">
-                    <svg th:replace="~{icon/key::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/key::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="person-details-permissions-box-body">
-                <dl th:each="role, loop : ${permissions}" class="tw-m-0">
+                <dl th:each="role, loop : ${permissions}">
                   <dt
                     th:with="permissionMessageKey=|person.form.permissions.roles.${role}|"
                     th:text="#{__${permissionMessageKey}__}"
-                    class="tw-mb-2 tw-font-medium"
+                    class="mb-2 font-medium"
                   ></dt>
                   <dd
                     th:text="#{'person.form.permissions.roles.' + ${role} + '.description'(${person.niceName})}"
-                    th:class="|tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}|"
+                    th:class="|text-sm ${not loop.last ? 'mb-8' : ''}|"
                   ></dd>
                 </dl>
               </th:block>
             </div>
           </div>
 
-          <div class="md:tw-col-start-1 md:tw-row-start-4">
+          <div class="md:col-start-1 md:row-start-4">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-notifications-body}, ~{::person-details-notifications-actions})}"
             >
@@ -243,10 +235,10 @@
                 <a
                   th:if="${canEditNotifications}"
                   th:href="@{/web/person/__${person.id}__/notifications}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -256,10 +248,10 @@
             >
               <th:block th:ref="person-details-notifications-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-notifications-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-notifications-box-icon-rounded}, className='bg-blue-400 text-white dark:bg-sky-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-notifications-box-icon-rounded">
-                    <svg th:replace="~{icon/mail::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/mail::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -271,7 +263,7 @@
             </div>
           </div>
 
-          <div class="md:tw-col-start-2 md:tw-row-start-1">
+          <div class="md:col-start-2 md:row-start-1">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-account-body}, ~{::person-details-account-actions})}"
             >
@@ -285,10 +277,10 @@
                 <a
                   th:if="${canEditAccounts}"
                   th:href="@{/web/person/__${person.id}__/account?year=__${selectedYear}__}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -298,10 +290,10 @@
             >
               <th:block th:ref="person-details-account-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-account-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-account-box-icon-rounded}, className='bg-emerald-500 text-white dark:bg-green-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-account-box-icon-rounded">
-                    <svg th:replace="~{icon/calendar::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/calendar::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -309,27 +301,27 @@
                 <th:block th:if="${account != null}">
                   <span
                     th:text="#{person.account.vacation.entitlement.1}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="text-sm text-black/75 dark:text-zinc-300"
                   >
                   </span>
                   <span
                     th:text="#{person.account.vacation.entitlement.2(${account.actualVacationDays + account.remainingVacationDays})}"
-                    class="tw-my-1 tw-text-lg tw-font-medium"
+                    class="my-1 text-lg font-medium"
                   >
                   </span>
                   <span
                     th:text="#{person.account.vacation.entitlement.remaining(${account.remainingVacationDays})}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="text-sm text-black/75 dark:text-zinc-300"
                   >
                   </span>
                   <span
                     th:if="${not account.doRemainingVacationDaysExpire}"
                     th:text="#{person.account.vacation.entitlement.remaining.doNotExpire}"
-                    class="tw-mt-2 tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="mt-2 text-sm text-black/75 dark:text-zinc-300"
                   ></span>
                   <span
                     th:if="${account.doRemainingVacationDaysExpire}"
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    class="text-sm text-black/75 dark:text-zinc-300"
                   >
                     <th:block
                       th:text="#{person.account.vacation.entitlement.remaining.notExpiring.one(${account.remainingVacationDaysNotExpiring})}"
@@ -341,13 +333,13 @@
                   </span>
                 </th:block>
                 <th:block th:if="${account == null}">
-                  <span th:text="#{person.account.vacation.noInformation}" class="tw-text-sm"></span>
+                  <span th:text="#{person.account.vacation.noInformation}" class="text-sm"></span>
                 </th:block>
               </th:block>
             </div>
           </div>
 
-          <div class="md:tw-col-start-2 md:tw-row-start-3">
+          <div class="md:col-start-2 md:row-start-3">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-workingtime-body}, ~{::person-details-workingtime-actions})}"
             >
@@ -358,10 +350,10 @@
                 <a
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -371,98 +363,98 @@
             >
               <th:block th:ref="person-details-workingtime-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-workingtime-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-workingtime-box-icon-rounded}, className='bg-emerald-500 text-white dark:bg-green-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-workingtime-box-icon-rounded">
-                    <svg th:replace="~{icon/clock::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/clock::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
               <th:block th:ref="person-details-workingtime-box-body">
-                <span class="tw-text-sm">
+                <span class="text-sm">
                   <th:block th:if="${workingTime != null}">
-                    <p class="tw-mb-2">
+                    <p class="mb-2">
                       <th:block th:text="#{person.account.workingTime.validity}" />
                       <span class="is-inline-block">
                         <th:block th:replace="~{fragments/date::date(${workingTime.validFrom})}"></th:block> </span
                       >:
                     </p>
-                    <table class="tw-flex">
-                      <caption th:text="#{person.account.workingTime.title}" class="tw-sr-only"></caption>
-                      <thead class="tw-order-last">
+                    <table class="flex">
+                      <caption th:text="#{person.account.workingTime.title}" class="sr-only"></caption>
+                      <thead class="order-last">
                         <tr>
-                          <th th:text="#{MONDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{TUESDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{WEDNESDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{THURSDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{FRIDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{SATURDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
-                          <th th:text="#{SUNDAY}" class="tw-block tw-text-sm tw-font-medium" scope="col"></th>
+                          <th th:text="#{MONDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{TUESDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{WEDNESDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{THURSDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{FRIDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{SATURDAY}" class="block text-sm font-medium" scope="col"></th>
+                          <th th:text="#{SUNDAY}" class="block text-sm font-medium" scope="col"></th>
                         </tr>
                       </thead>
-                      <tbody class="tw-mr-1 tw-flex">
-                        <tr class="tw-flex tw-flex-col">
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                      <tbody class="mr-1 flex">
+                        <tr class="flex flex-col">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.monday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.tuesday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.wednesday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.thursday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.friday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.saturday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
-                          <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                          <td class="flex-1 flex items-center py-0.5">
                             <th:block th:if="${workingTime.sunday.duration > 0}">
-                              <svg th:replace="~{icon/check-circle-2::svg(className='tw-w-4 tw-h-4')}" />
+                              <svg th:replace="~{icon/check-circle-2::svg(className='w-4 h-4')}" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
-                              class="tw-sr-only"
+                              class="sr-only"
                             ></span>
                           </td>
                         </tr>
@@ -477,7 +469,7 @@
             </div>
           </div>
 
-          <div class="md:tw-col-start-2 md:tw-row-start-2">
+          <div class="md:col-start-2 md:row-start-2">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-federalState-body}, ~{::person-details-federalState-actions})}"
             >
@@ -488,10 +480,10 @@
                 <a
                   th:if="${canEditWorkingtime}"
                   th:href="@{/web/person/__${person.id}__/workingtime}"
-                  class="icon-link tw-px-1"
+                  class="icon-link"
                   aria-hidden="true"
                 >
-                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
               </th:block>
@@ -501,10 +493,10 @@
             >
               <th:block th:ref="person-details-federalstate-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::person-details-federalstate-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::person-details-federalstate-box-icon-rounded}, className='bg-emerald-500 text-white dark:bg-green-500 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="person-details-federalstate-box-icon-rounded">
-                    <svg th:replace="~{icon/map::svg(className='tw-w-8 tw-h-8')}" />
+                    <svg th:replace="~{icon/map::svg(className='w-8 h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -512,13 +504,13 @@
                 <span
                   th:if="${federalState.name == 'NONE'}"
                   th:text="#{federalState.NONE}"
-                  class="tw-text-base tw-font-medium"
+                  class="text-base font-medium"
                 ></span>
                 <p th:if="${federalState.name != 'NONE'}">
-                  <span th:text="#{person.account.workingTime.federalState}" class="tw-block tw-mb-1 tw-text-sm"></span>
+                  <span th:text="#{person.account.workingTime.federalState}" class="block mb-1 text-sm"></span>
                   <span
                     th:with="countryCode=|country.${federalState.country}|,federalStateCode=|federalState.${federalState}|"
-                    class="tw-text-base tw-font-medium"
+                    class="text-base font-medium"
                   >
                     <th:block th:text="#{__${countryCode}__}"></th:block> -
                     <th:block th:text="#{__${federalStateCode}__}"></th:block>
@@ -528,7 +520,7 @@
             </div>
           </div>
 
-          <div th:if="${canDeletePerson}" class="md:tw-col-start-2 md:tw-row-start-4">
+          <div th:if="${canDeletePerson}" class="md:col-start-2 md:row-start-4">
             <th:block th:replace="~{person/detail-section/action-delete-person::section}"></th:block>
           </div>
         </div>

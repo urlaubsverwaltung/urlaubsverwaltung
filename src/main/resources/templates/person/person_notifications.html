@@ -1,7 +1,12 @@
 <!doctype html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="#{person.notifications.meta.title}"></title>
+    <th:block th:fragment="styles">
+      <link rel="stylesheet" th:href="@{/css/notifications.css}" />
+    </th:block>
     <th:block th:fragment="preload">
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_notifications.js')}" />
     </th:block>
@@ -11,7 +16,7 @@
   </head>
 
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <div class="feedback">
           <p th:if="${success}" th:text="#{person.notifications.update.success}" class="alert alert-success"></p>
@@ -37,23 +42,21 @@
         Aktiviere oder Deaktiviere E-Mail Benachrichtigungen nach deinem Belieben.
       </p>
 
-      <div class="tw-mt-8">
+      <div class="mt-8">
         <div
           th:replace="~{fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})}"
         >
           <th:block th:ref="person-notifications-navigation-body">
-            <ul
-              class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0"
-            >
+            <ul class="mb-2 flex flex-col gap-2 xs:flex-row xs:gap-8 xs:mb-0">
               <li
-                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-                th:classappend="${activeContent == 'self' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+                class="pl-2 border-l-4 dark:border-l-2 xs:border-l-0 dark:xs:border-l-0 xs:border-b-4 dark:xs:border-b-2 xs:pl-0"
+                th:classappend="${activeContent == 'self' ? 'border-zinc-200' : 'border-transparent'}"
               >
                 <a
                   href="#"
                   th:href="@{/web/person/{userId}/notifications(userId=${personNotificationsDto.personId})}"
-                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
-                  th:classappend="${activeContent == 'self' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  class="text-xl font-medium no-underline hover:text-black-almost dark:hover:text-zinc-200"
+                  th:classappend="${activeContent == 'self' ? 'text-black-almost dark:text-zinc-200' : 'text-zinc-400 dark:text-zinc-500'}"
                   th:text="#{person.notifications.navigation.personal}"
                   data-turbo="true"
                 >
@@ -61,14 +64,14 @@
                 </a>
               </li>
               <li
-                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
-                th:classappend="${activeContent == 'departments' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
+                class="pl-2 border-l-4 dark:border-l-2 xs:border-l-0 dark:xs:border-l-0 xs:border-b-4 dark:xs:border-b-2 xs:pl-0"
+                th:classappend="${activeContent == 'departments' ? 'border-zinc-200' : 'border-transparent'}"
               >
                 <a
                   href="#"
                   th:href="@{/web/person/{userId}/notifications/departments(userId=${personNotificationsDto.personId})}"
-                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
-                  th:classappend="${activeContent == 'departments' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  class="text-xl font-medium no-underline hover:text-black-almost dark:hover:text-zinc-200"
+                  th:classappend="${activeContent == 'departments' ? 'text-black-almost dark:text-zinc-200' : 'text-zinc-400 dark:text-zinc-500'}"
                   th:text="#{person.notifications.navigation.departments}"
                   data-turbo="true"
                 >

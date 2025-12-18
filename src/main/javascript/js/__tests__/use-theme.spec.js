@@ -32,7 +32,7 @@ describe("useTheme", () => {
   });
 
   test("initializes with system theme preference - light mode", async () => {
-    mockHtmlElement.classList.contains.mockImplementation((className) => className === "tw-system");
+    mockHtmlElement.classList.contains.mockImplementation((className) => className === "theme-system");
     mockPrefersDark.value = false; // Light mode
 
     const themeModule = await import("../use-theme");
@@ -42,7 +42,7 @@ describe("useTheme", () => {
   });
 
   test("initializes with system theme preference - dark mode", async () => {
-    mockHtmlElement.classList.contains.mockImplementation((className) => className === "tw-system");
+    mockHtmlElement.classList.contains.mockImplementation((className) => className === "theme-system");
     mockPrefersDark.value = true; // Dark mode
 
     const themeModule = await import("../use-theme");
@@ -53,8 +53,8 @@ describe("useTheme", () => {
 
   test("initializes with explicitly set light theme", async () => {
     mockHtmlElement.classList.contains.mockImplementation((className) => {
-      if (className === "tw-system") return false;
-      if (className === "tw-dark") return false;
+      if (className === "theme-system") return false;
+      if (className === "theme-dark") return false;
       return false;
     });
 
@@ -68,8 +68,8 @@ describe("useTheme", () => {
 
   test("initializes with explicitly set dark theme", async () => {
     mockHtmlElement.classList.contains.mockImplementation((className) => {
-      if (className === "tw-system") return false;
-      if (className === "tw-dark") return true;
+      if (className === "theme-system") return false;
+      if (className === "theme-dark") return true;
       return false;
     });
 
@@ -80,7 +80,7 @@ describe("useTheme", () => {
   });
 
   test("updates theme when system preference changes", async () => {
-    mockHtmlElement.classList.contains.mockImplementation((className) => className === "tw-system");
+    mockHtmlElement.classList.contains.mockImplementation((className) => className === "theme-system");
     mockPrefersDark.value = false; // Light mode initially
 
     // Get the callback function for subscription
