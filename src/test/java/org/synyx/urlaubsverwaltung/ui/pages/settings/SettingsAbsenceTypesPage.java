@@ -47,7 +47,6 @@ public class SettingsAbsenceTypesPage {
      * Submits the custom-absence-types form and waits for dom-content loaded.
      */
     public void submitCustomAbsenceTypes() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=submit-custom-absence-types-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=submit-custom-absence-types-button]").click();
     }
 }

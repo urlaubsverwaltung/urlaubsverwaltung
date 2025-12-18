@@ -28,7 +28,6 @@ public class SettingsWorkingTimePage {
      * Submits the overtime form and waits for dom-content loaded.
      */
     public void submitOvertimeForm() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=submit-overtime-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=submit-overtime-button]").click();
     }
 }

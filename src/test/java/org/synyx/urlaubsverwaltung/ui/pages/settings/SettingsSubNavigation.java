@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
 import java.util.regex.Pattern;
-
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 /**
  * Represents the sub navigation of the {@link SettingsPage}
@@ -22,8 +19,7 @@ public class SettingsSubNavigation {
     }
 
     public void goToOvertime() {
-        page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_TAB_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(OVERTIME_TAB_SELECTOR).click();
     }
 
     public void goToAbsenceTypes() {

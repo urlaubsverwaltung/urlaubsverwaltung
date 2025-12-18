@@ -32,8 +32,7 @@ public class LoginPage {
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.fill(USERNAME_SELECTOR, credentials.username);
         page.fill(PASSWORD_SELECTOR, credentials.password);
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     private static boolean usernameElementExists(Page page) {

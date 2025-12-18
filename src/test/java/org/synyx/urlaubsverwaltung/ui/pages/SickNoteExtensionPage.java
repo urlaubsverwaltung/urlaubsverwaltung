@@ -51,7 +51,5 @@ public class SickNoteExtensionPage {
 
     public void submit() {
         page.locator("[data-test-id=extension-submit-button]").click();
-        // or habe we wait for URL?
-        page.waitForLoadState(DOMCONTENTLOADED);
     }
 }

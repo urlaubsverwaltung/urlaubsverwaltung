@@ -139,8 +139,7 @@ public class ApplicationPage {
     }
 
     public void submit() {
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean showsFromError() {

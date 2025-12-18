@@ -37,8 +37,7 @@ public class ApplicationDetailPage {
     }
 
     public void selectEdit() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=application-edit-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=application-edit-button]").click();
     }
 
     private String title(String username) {

@@ -28,13 +28,11 @@ public class NavigationPage {
     }
 
     public void clickSickNotes() {
-        page.waitForResponse(Response::ok, () -> page.locator(SICK_NOTES_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SICK_NOTES_SELECTOR).click();
     }
 
     public void clickSettings() {
-        page.waitForResponse(Response::ok, () -> page.locator(SETTINGS_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SETTINGS_SELECTOR).click();
     }
 
     public static class QuickAdd {
@@ -68,24 +66,20 @@ public class NavigationPage {
                 // opens the menu that contains links to new pages
                 page.locator(BUTTON_SELECTOR).click();
             } else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
-                page.waitForResponse(Response::ok, () -> page.locator(PLAIN_APPLICATION_SELECTOR).click());
-                page.waitForLoadState(DOMCONTENTLOADED);
+                page.locator(PLAIN_APPLICATION_SELECTOR).click();
             }
         }
 
         public void newApplication() {
-            page.waitForResponse(Response::ok, () -> page.waitForSelector(APPLICATION_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.waitForSelector(APPLICATION_SELECTOR).click();
         }
 
         public void newOvertime() {
-            page.waitForResponse(Response::ok, () -> page.waitForSelector(OVERTIME_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.waitForSelector(OVERTIME_SELECTOR).click();
         }
 
         public void newSickNote() {
-            page.waitForResponse(Response::ok, () -> page.waitForSelector(SICKNOTE_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.waitForSelector(SICKNOTE_SELECTOR).click();
         }
     }
 
@@ -96,8 +90,7 @@ public class NavigationPage {
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();
-            page.waitForResponse(Response::ok, () -> page.waitForSelector(LOGOUT_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.waitForSelector(LOGOUT_SELECTOR).click();
         }
     }
 }

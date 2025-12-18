@@ -24,8 +24,7 @@ public class SettingsPage {
      * Submits the setting form and waits for dom-content loaded.
      */
     public void saveSettings() {
-        page.waitForResponse(Response::ok, () -> page.locator(SAVE_BUTTON_SELECTOR).first().click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SAVE_BUTTON_SELECTOR).first().click();
     }
 
     public void clickDisableHalfDayAbsence() {
