@@ -24,17 +24,6 @@
   @apply border-transparent;
 }
 
-.alert-dismissible {
-  padding-right: calc(var(--alert-padding) + 20px);
-
-  .close {
-    position: relative;
-    top: -2px;
-    right: -21px;
-    color: inherit;
-  }
-}
-
 .alert-danger {
   @apply text-red-800;
   background-color: #f2dede;
