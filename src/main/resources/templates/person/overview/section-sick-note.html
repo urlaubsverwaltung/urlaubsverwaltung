@@ -32,7 +32,7 @@
             <div th:replace="~{fragments/box::box-with-icon(~{::sick-days-box-icon}, ~{::sick-days-box-body})}">
               <th:block th:ref="sick-days-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='bg-red-600 text-white dark:bg-red-600 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="sick-days-box-icon-rounded">
                     <svg th:replace="~{icon/medkit::svg(className='w-8 h-8')}" />
@@ -68,7 +68,7 @@
             >
               <th:block th:ref="child-sick-days-box-icon">
                 <div
-                  th:replace="~{fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
+                  th:replace="~{fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='bg-red-600 text-white dark:bg-red-600 dark:text-zinc-900')}"
                 >
                   <th:block th:ref="child-sick-days-box-icon-rounded">
                     <svg th:replace="~{icon/child::svg(className='w-8 h-8')}"></svg>

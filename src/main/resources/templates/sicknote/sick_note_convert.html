@@ -95,7 +95,7 @@
               <div th:replace="~{fragments/box::box-with-icon(~{::sicknote-box-icon}, ~{::sicknote-box-body})}">
                 <th:block th:ref="sicknote-box-icon">
                   <div
-                    th:replace="~{fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='bg-red-500 text-white dark:bg-red-600 dark:text-zinc-900')}"
+                    th:replace="~{fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='bg-red-600 text-white dark:bg-red-600 dark:text-zinc-900')}"
                   >
                     <th:block th:ref="sicknote-box-icon-rounded">
                       <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
