@@ -264,7 +264,7 @@
                     <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
                     <th:block th:text="#{application.data.specialleave.description}"></th:block>
                   </p>
-                  <ul>
+                  <ul class="ml-8 list-disc">
                     <li
                       th:each="specialLeaveItem : ${specialLeave.specialLeaveItems}"
                       th:text="#{__${specialLeaveItem.messageKey}__.info(${specialLeaveItem.days})}"
