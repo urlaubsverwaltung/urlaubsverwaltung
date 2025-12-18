@@ -6,11 +6,9 @@
   <body>
     <th:block th:fragment="section">
       <div class="uv-form__group">
-        <div class="uv-help-block flex flex-auto justify-left items-start pt-2">
-          <div>
-            <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
-          </div>
-          <div class="flex flex-col">
+        <div class="uv-help-block">
+          <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+          <div class="flex flex-col gap-4">
             <p th:text="#{settings.specialleave.help}"></p>
             <p>
               <th:block th:text="#{settings.specialleave.description.1}" />
@@ -24,7 +22,7 @@
             </p>
           </div>
         </div>
-        <table id="special-leave-table" class="w-full absence-type-settings-table">
+        <table id="special-leave-table" class="mt-4 w-full absence-type-settings-table">
           <caption th:text="#{settings.specialleave.title}" class="sr-only"></caption>
           <thead>
             <tr>

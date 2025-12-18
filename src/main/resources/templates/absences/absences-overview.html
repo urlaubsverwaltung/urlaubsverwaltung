@@ -126,10 +126,10 @@
                     ></option>
                   </th:block>
                 </select>
-                <span class="uv-help-block hidden md:inline col-start-3 row-start-3">
-                  <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                <p class="uv-help-block hidden md:flex col-start-3 row-start-3">
+                  <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
                   <th:block th:text="#{absences.overview.department.help}"></th:block>
-                </span>
+                </p>
               </th:block>
             </div>
           </form>

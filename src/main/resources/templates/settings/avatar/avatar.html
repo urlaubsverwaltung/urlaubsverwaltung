@@ -7,10 +7,8 @@
     <th:block th:fragment="section">
       <div class="uv-form__group">
         <div class="uv-form__group-info">
-          <div class="uv-help-block flex items-start gap-1">
-            <span class="shrink-0 inline-flex translate-y-px">
-              <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
-            </span>
+          <div class="uv-help-block">
+            <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
             <p>
               <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
               <a

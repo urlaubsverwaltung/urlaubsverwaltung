@@ -15,24 +15,20 @@
 
       <div class="uv-form__group">
         <div class="uv-form__group-info">
-          <div class="uv-help-block flex flex-auto justify-left items-start md:flex-none">
-            <div>
-              <svg th:replace="~{icon/info::svg(className='w-4 h-4 mr-1')}"></svg>
-            </div>
-            <div class="flex flex-col">
-              <p>
-                <th:block th:text="#{settings.absenceTypes.help.1}" />
-                <a
-                  class="inline-flex items-center"
-                  target="_blank"
-                  rel="noopener"
-                  href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
-                >
-                  <th:block th:text="#{settings.absenceTypes.help.2}" />
-                  <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
-                </a>
-              </p>
-            </div>
+          <div class="uv-help-block">
+            <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+            <p>
+              <th:block th:text="#{settings.absenceTypes.help.1}" />
+              <a
+                class="inline-flex items-center"
+                target="_blank"
+                rel="noopener"
+                href="https://urlaubsverwaltung.cloud/hilfe/urlaubsverwaltung/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
+              >
+                <th:block th:text="#{settings.absenceTypes.help.2}" />
+                <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+              </a>
+            </p>
           </div>
         </div>
         <div class="mt-4 w-full sticky top-0">

@@ -27,10 +27,24 @@ legend {
 /* ----------------------- */
 
 .uv-help-block {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
   color: #737373;
   @apply text-sm;
   @apply dark:text-zinc-200/75;
+
+  &:has(.uv-help-block-icon) {
+    align-items: baseline; /* align icon with first line of multiline text */
+  }
+
+  .uv-help-block-icon {
+    flex-shrink: 0;
+    transform: translateY(3px); /* align icon with text */
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 label {
