@@ -5,11 +5,11 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="grow flex justify-center">
-        <div class="mt-8 w-full max-w-screen-xl flex flex-col lg:flex-row lg:items-start lg:justify-between lg:mt-16">
+      <div class="grow flex flex-col items-center">
+        <div class="w-full max-w-screen-xl">
           <div class="px-8 xs:px-16">
             <h1
-              class="flex flex-col gap-2 text-3xl font-medium sm:flex-row sm:gap-0.5 lg:flex-col lg:gap-2 lg:text-5xl lg:leading-[1]"
+              class="mt-4 flex flex-col font-medium text-3xl sm:space-x-2 sm:items-baseline sm:text-4xl xs:mt-8 lg:mt-24 lg:space-x-0 lg:text-5xl lg:leading-[1]"
             >
               <th:block th:text="${status}">500</th:block>&nbsp;
               <span class="sm:mt-2" th:text="#{error-page.server-error.title}"></span>
@@ -29,18 +29,18 @@
               <a href="/" class="button text-base px-4 py-2" th:text="#{error-page.goto.start}"></a>
             </div>
           </div>
-        </div>
-        <div class="shrink-0 mt-12 flex justify-center lg:mr-16">
-          <picture th:if="${theme == 'system'}">
-            <source th:srcset="@{/images/5xx_bear_dark.png}" media="(prefers-color-scheme: dark)" />
-            <img src="#" th:src="@{/images/5xx_bear.png}" alt="" />
-          </picture>
-          <th:block
-            th:if="${theme != 'system'}"
-            th:with="src=${theme == 'dark' ? '/images/5xx_bear_dark.png' : '/images/5xx_bear.png'}"
-          >
-            <img src="#" th:src="@{${src}}" alt="" />
-          </th:block>
+          <div class="shrink-0 mt-12 flex justify-center lg:mr-16">
+            <picture th:if="${theme == 'system'}">
+              <source th:srcset="@{/images/5xx_bear_dark.png}" media="(prefers-color-scheme: dark)" />
+              <img src="#" th:src="@{/images/5xx_bear.svg}" alt="" />
+            </picture>
+            <th:block
+              th:if="${theme != 'system'}"
+              th:with="src=${theme == 'dark' ? '/images/5xx_bear_dark.png' : '/images/5xx_bear.svg'}"
+            >
+              <img src="#" th:src="@{${src}}" alt="" />
+            </th:block>
+          </div>
         </div>
       </div>
     </main>
