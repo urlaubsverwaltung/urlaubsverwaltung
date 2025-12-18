@@ -150,8 +150,7 @@ class SickNoteUIIT {
     }
 
     private void login(Page page, Person person) {
-        final LoginPage loginPage = new LoginPage(page);
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
+        final LoginPage loginPage = new LoginPage(page, port);
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
     }
 

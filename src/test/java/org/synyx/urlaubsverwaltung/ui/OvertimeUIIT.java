@@ -80,14 +80,13 @@ class OvertimeUIIT {
     void ensureOvertimeCreation(Page page) {
         final Person person = createPerson("dBradley", "Donald", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();

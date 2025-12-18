@@ -81,13 +81,12 @@ class CustomAbsenceTypeUIIT {
 
         final Person person = createPerson("dBradley", "Donald", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsPage settingsPage = new SettingsPage(page);
         final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
         page.waitForLoadState();
 

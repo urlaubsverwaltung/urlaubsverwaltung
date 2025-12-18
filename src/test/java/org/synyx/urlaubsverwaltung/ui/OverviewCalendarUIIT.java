@@ -103,11 +103,10 @@ class OverviewCalendarUIIT {
 
         final Person officePerson = createPerson("Alfred", "Pennyworth the fourth", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
@@ -129,11 +128,10 @@ class OverviewCalendarUIIT {
 
         final Person officePerson = createPerson("Bob", "Bobson", List.of(USER, OFFICE));
 
-        final LoginPage loginPage = new LoginPage(page);
+        final LoginPage loginPage = new LoginPage(page, port);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
