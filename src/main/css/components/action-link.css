@@ -1,14 +1,14 @@
 .action-link {
   @apply whitespace-nowrap;
-  @apply no-underline!;
-  @apply flex!;
-  @apply items-center!;
-  @apply transition-opacity!;
-  @apply duration-100!;
-  @apply text-zinc-900/50!;
-  @apply hover:text-zinc-900/100!;
-  @apply focus:text-zinc-900/100!;
-  @apply dark:text-zinc-50/75!;
-  @apply dark:hover:text-zinc-50/75!;
-  @apply dark:focus:text-zinc-50/75!;
+  @apply no-underline;
+  @apply flex;
+  @apply items-center;
+  @apply transition-opacity;
+  @apply duration-100;
+  @apply text-zinc-900/50;
+  @apply hover:text-zinc-900;
+  @apply focus:text-zinc-900;
+  @apply dark:text-zinc-50/75;
+  @apply dark:hover:text-zinc-50/75;
+  @apply dark:focus:text-zinc-50/75;
 }

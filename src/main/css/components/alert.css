@@ -6,6 +6,7 @@
   margin-bottom: 20px;
   border: 1px solid transparent;
   border-radius: var(--alert-border-radius);
+  @apply dark:font-medium;
 
   > p,
   > ul {
@@ -15,13 +16,6 @@
   > p + p {
     margin-top: 5px;
   }
-
-  @apply dark:font-medium;
-  /* TODO @apply dark:bg-opacity-95;*/
-  /* `border-transparent` is relevant to override default :is(dark *) {border-color} */
-  /* otherwise light-theme has no border-color and dark-theme has one (due to the default) */
-  /* therefore border color should be explicitly at the html element for instance */
-  @apply border-transparent;
 }
 
 .alert-danger {

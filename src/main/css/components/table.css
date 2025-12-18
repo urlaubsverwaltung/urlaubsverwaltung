@@ -111,11 +111,13 @@ tr.inactive td > * {
 
 .hoverable-table tr:hover .action-link,
 .selectable-table tr:hover .action-link {
-  /*TODO @apply text-opacity-75!;*/
+  @apply text-zinc-900/75;
+  @apply dark:text-zinc-50/75;
 }
 .hoverable-table tr:hover .action-link:hover,
 .selectable-table tr:hover .action-link:hover {
-  /*TODO @apply text-opacity-100!;*/
+  @apply text-zinc-900;
+  @apply dark:text-zinc-50;
 }
 
 /**************************************************************************
