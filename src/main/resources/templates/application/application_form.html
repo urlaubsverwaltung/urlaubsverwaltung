@@ -259,12 +259,12 @@
                 <p class="uv-form__input-error" th:if="${#fields.hasErrors('reason')}" data-test-id="reason-error">
                   <th:block th:errors="*{reason}">reason Error</th:block>
                 </p>
-                <div class="uv-help-block mt-4">
-                  <p>
-                    <svg th:replace="~{icon/info::svg(className='w-4 h-4')}"></svg>
+                <div class="uv-help-block flex-col gap-2 mt-4">
+                  <p class="flex gap-2 items-baseline">
+                    <svg th:replace="~{icon/info::svg(className='w-4 h-4 shrink-0 translate-y-[3px]')}"></svg>
                     <th:block th:text="#{application.data.specialleave.description}"></th:block>
                   </p>
-                  <ul class="ml-8 list-disc">
+                  <ul class="ml-10 list-disc">
                     <li
                       th:each="specialLeaveItem : ${specialLeave.specialLeaveItems}"
                       th:text="#{__${specialLeaveItem.messageKey}__.info(${specialLeaveItem.days})}"
