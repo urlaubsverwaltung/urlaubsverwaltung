@@ -28,6 +28,7 @@
             <form
               id="person-delete-form"
               method="post"
+              class="flex flex-col gap-4"
               th:action="@{/web/person/__${person.id}__/delete}"
               th:object="${personDeleteForm}"
             >
@@ -47,11 +48,14 @@
               <p
                 th:if="${lastOfficeUserCannotBeDeleted != null and lastOfficeUserCannotBeDeleted}"
                 th:text="#{person.account.dangerzone.delete.confirmation.validation.error.office}"
-                class="mt-4 error"
+                class="error"
               >
                 Letzter Office User kann nicht gelöscht werden.
               </p>
-              <div th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}">
+              <div
+                th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}"
+                class="flex flex-col gap-4"
+              >
                 <p th:text="#{person.account.dangerzone.description.extension}"></p>
 
                 <label class="w-full">
@@ -68,7 +72,7 @@
                   class="error text-sm"
                 ></p>
 
-                <div class="flex justify-between mt-4">
+                <div class="flex justify-between gap-4">
                   <button
                     th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
                     class="button-danger"
