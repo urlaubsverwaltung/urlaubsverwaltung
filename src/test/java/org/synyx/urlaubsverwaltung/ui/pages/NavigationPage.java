@@ -74,17 +74,17 @@ public class NavigationPage {
         }
 
         public void newApplication() {
-            page.waitForResponse(Response::ok, () -> page.locator(APPLICATION_SELECTOR).click());
+            page.waitForResponse(Response::ok, () -> page.waitForSelector(APPLICATION_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newOvertime() {
-            page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_SELECTOR).click());
+            page.waitForResponse(Response::ok, () -> page.waitForSelector(OVERTIME_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newSickNote() {
-            page.waitForResponse(Response::ok, () -> page.locator(SICKNOTE_SELECTOR).click());
+            page.waitForResponse(Response::ok, () -> page.waitForSelector(SICKNOTE_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }
