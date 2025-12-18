@@ -43,6 +43,16 @@
 
 .sicknote-extend-button {
   @apply border-2;
+  border-radius: var(--uv-input-border-radius);
+
+  &:is(duet-date-picker) {
+    .duet-date__input {
+      /* override for this extend button */
+      border: none;
+      box-shadow: none;
+      border-radius: calc(var(--uv-input-border-radius) - 1px);
+    }
+  }
 }
 
 .sicknote-extend-button[aria-pressed="true"],
