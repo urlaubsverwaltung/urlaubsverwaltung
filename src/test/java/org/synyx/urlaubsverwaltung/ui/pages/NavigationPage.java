@@ -67,8 +67,7 @@ public class NavigationPage {
             if (page.locator(BUTTON_SELECTOR).isVisible()) {
                 // opens the menu that contains links to new pages
                 page.locator(BUTTON_SELECTOR).click();
-            }
-            else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
+            } else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
                 page.waitForResponse(Response::ok, () -> page.locator(PLAIN_APPLICATION_SELECTOR).click());
                 page.waitForLoadState(DOMCONTENTLOADED);
             }
@@ -97,7 +96,7 @@ public class NavigationPage {
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();
-            page.waitForResponse(Response::ok, () -> page.locator(LOGOUT_SELECTOR).click());
+            page.waitForResponse(Response::ok, () -> page.waitForSelector(LOGOUT_SELECTOR).click());
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }
