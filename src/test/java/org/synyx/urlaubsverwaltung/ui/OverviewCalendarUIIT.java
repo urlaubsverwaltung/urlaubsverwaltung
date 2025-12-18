@@ -56,7 +56,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 @Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
 @UiTest
-class OverviewCalendarUUIT {
+class OverviewCalendarUIIT {
 
     @LocalServerPort
     private int port;
