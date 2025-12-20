@@ -340,6 +340,7 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.newApplication();
 
         // default is: half days enabled
+        applicationFormPage.isVisible();
         assertThat(applicationFormPage.showsDayLengthInputs()).isTrue();
 
         navigationPage.clickSettings();
