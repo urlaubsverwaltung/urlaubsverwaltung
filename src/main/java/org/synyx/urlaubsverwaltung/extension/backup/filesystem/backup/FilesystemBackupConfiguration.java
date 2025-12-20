@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.extension.backup.filesystem.backup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.synyx.urlaubsverwaltung.extension.backup.backup.ConditionalOnBackupCreateEnabled;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 @EnableConfigurationProperties(FilesystemBackupConfigurationProperties.class)
@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.extension.backup.backup.ConditionalOnBackupCr
 class FilesystemBackupConfiguration {
 
     @Bean
-    FilesystemBackupCreateService filesystemBackupCreateService(ObjectMapper objectMapper, FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties) {
-        return new FilesystemBackupCreateService(objectMapper, filesystemBackupConfigurationProperties);
+    FilesystemBackupCreateService filesystemBackupCreateService(JsonMapper jsonMapper, FilesystemBackupConfigurationProperties filesystemBackupConfigurationProperties) {
+        return new FilesystemBackupCreateService(jsonMapper, filesystemBackupConfigurationProperties);
     }
 }

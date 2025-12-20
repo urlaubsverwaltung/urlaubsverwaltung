@@ -42,8 +42,8 @@ class PersonServiceExtensionImplTest {
 
     private static Person anyPerson() {
         PersonDTO personDTO = anyPersonDTO(1L);
-        final Person createdPerson = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
-        createdPerson.setId(personDTO.getId());
+        final Person createdPerson = new Person(personDTO.username(), personDTO.lastName(), personDTO.firstName(), personDTO.email());
+        createdPerson.setId(personDTO.id());
         createdPerson.setPermissions(Set.of(Role.USER));
         createdPerson.setNotifications(Set.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         return createdPerson;
@@ -76,14 +76,14 @@ class PersonServiceExtensionImplTest {
         when(personService.create(any(String.class), any(String.class), any(String.class), any(String.class))).thenReturn(createdPerson);
 
         final PersonDTO createdDTO = sut.create(anyPersonDTO());
-        assertThat(createdDTO.getId()).isOne();
-        assertThat(createdDTO.getUsername()).isEqualTo("muster");
-        assertThat(createdDTO.getLastName()).isEqualTo("Muster");
-        assertThat(createdDTO.getFirstName()).isEqualTo("Marlene");
-        assertThat(createdDTO.getEmail()).isEqualTo("muster@example.org");
-        assertThat(createdDTO.getPermissions()).containsOnly(RoleDTO.USER);
-        assertThat(createdDTO.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-        assertThat(createdDTO.isEnabled()).isTrue();
+        assertThat(createdDTO.id()).isOne();
+        assertThat(createdDTO.username()).isEqualTo("muster");
+        assertThat(createdDTO.lastName()).isEqualTo("Muster");
+        assertThat(createdDTO.firstName()).isEqualTo("Marlene");
+        assertThat(createdDTO.email()).isEqualTo("muster@example.org");
+        assertThat(createdDTO.permissions()).containsOnly(RoleDTO.USER);
+        assertThat(createdDTO.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+        assertThat(createdDTO.enabled()).isTrue();
     }
 
     @Test
@@ -96,14 +96,14 @@ class PersonServiceExtensionImplTest {
         final PersonDTO updatedPersonDTO = sut.update(personDTO);
 
         assertThat(updatedPersonDTO).isNotNull();
-        assertThat(updatedPersonDTO.getId()).isOne();
-        assertThat(updatedPersonDTO.getUsername()).isEqualTo("muster");
-        assertThat(updatedPersonDTO.getLastName()).isEqualTo("Muster");
-        assertThat(updatedPersonDTO.getFirstName()).isEqualTo("Marlene");
-        assertThat(updatedPersonDTO.getEmail()).isEqualTo("muster@example.org");
-        assertThat(updatedPersonDTO.getPermissions()).containsOnly(RoleDTO.USER);
-        assertThat(updatedPersonDTO.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-        assertThat(updatedPersonDTO.isEnabled()).isTrue();
+        assertThat(updatedPersonDTO.id()).isOne();
+        assertThat(updatedPersonDTO.username()).isEqualTo("muster");
+        assertThat(updatedPersonDTO.lastName()).isEqualTo("Muster");
+        assertThat(updatedPersonDTO.firstName()).isEqualTo("Marlene");
+        assertThat(updatedPersonDTO.email()).isEqualTo("muster@example.org");
+        assertThat(updatedPersonDTO.permissions()).containsOnly(RoleDTO.USER);
+        assertThat(updatedPersonDTO.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+        assertThat(updatedPersonDTO.enabled()).isTrue();
 
 
         ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
@@ -149,9 +149,9 @@ class PersonServiceExtensionImplTest {
         final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByID(any())).thenReturn(Optional.of(anyPerson()));
 
-        Optional<PersonDTO> personById = sut.getPersonById(personDTO.getId());
+        Optional<PersonDTO> personById = sut.getPersonById(personDTO.id());
 
-        verify(personService).getPersonByID(personDTO.getId());
+        verify(personService).getPersonByID(personDTO.id());
         assertThat(personById).isPresent()
             .contains(personDTO);
     }
@@ -171,9 +171,9 @@ class PersonServiceExtensionImplTest {
         final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(anyPerson()));
 
-        Optional<PersonDTO> personById = sut.getPersonByUsername(personDTO.getUsername());
+        Optional<PersonDTO> personById = sut.getPersonByUsername(personDTO.username());
 
-        verify(personService).getPersonByUsername(personDTO.getUsername());
+        verify(personService).getPersonByUsername(personDTO.username());
         assertThat(personById).isPresent()
             .contains(personDTO);
     }
@@ -193,9 +193,9 @@ class PersonServiceExtensionImplTest {
         final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByMailAddress(any())).thenReturn(Optional.of(anyPerson()));
 
-        Optional<PersonDTO> personById = sut.getPersonByMailAddress(personDTO.getEmail());
+        Optional<PersonDTO> personById = sut.getPersonByMailAddress(personDTO.email());
 
-        verify(personService).getPersonByMailAddress(personDTO.getEmail());
+        verify(personService).getPersonByMailAddress(personDTO.email());
         assertThat(personById).isPresent()
             .contains(personDTO);
     }
@@ -301,14 +301,14 @@ class PersonServiceExtensionImplTest {
         final PersonDTO appointedPerson = sut.appointAsInitialUserIfNoInitialUserPresent(personDTO);
 
         assertThat(appointedPerson).isNotNull();
-        assertThat(appointedPerson.getId()).isOne();
-        assertThat(appointedPerson.getUsername()).isEqualTo("muster");
-        assertThat(appointedPerson.getLastName()).isEqualTo("Muster");
-        assertThat(appointedPerson.getFirstName()).isEqualTo("Marlene");
-        assertThat(appointedPerson.getEmail()).isEqualTo("muster@example.org");
-        assertThat(appointedPerson.getPermissions()).containsOnly(RoleDTO.USER);
-        assertThat(appointedPerson.getNotifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-        assertThat(appointedPerson.isEnabled()).isTrue();
+        assertThat(appointedPerson.id()).isOne();
+        assertThat(appointedPerson.username()).isEqualTo("muster");
+        assertThat(appointedPerson.lastName()).isEqualTo("Muster");
+        assertThat(appointedPerson.firstName()).isEqualTo("Marlene");
+        assertThat(appointedPerson.email()).isEqualTo("muster@example.org");
+        assertThat(appointedPerson.permissions()).containsOnly(RoleDTO.USER);
+        assertThat(appointedPerson.notifications()).containsOnly(MailNotificationDTO.NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
+        assertThat(appointedPerson.enabled()).isTrue();
 
         ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
         verify(personService).appointAsOfficeUserIfNoOfficeUserPresent(personArgumentCaptor.capture());

@@ -2,15 +2,14 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
-
 public class ApplicationDetailPage {
+
+    private static final String DATA_PAGE = "main[data-page='application-detail']";
 
     private final Page page;
     private final MessageSource messageSource;
@@ -20,6 +19,10 @@ public class ApplicationDetailPage {
         this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
+    }
+
+    public void isVisible() {
+        page.waitForSelector(DATA_PAGE);
     }
 
     public boolean isVisibleForPerson(String username) {
@@ -37,8 +40,7 @@ public class ApplicationDetailPage {
     }
 
     public void selectEdit() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=application-edit-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=application-edit-button]").click();
     }
 
     private String title(String username) {

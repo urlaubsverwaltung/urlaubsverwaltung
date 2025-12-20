@@ -88,15 +88,15 @@ class PersonEventHandlerExtensionTest {
             final PersonCreatedEventDTO result = argumentCaptor.getValue();
 
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isNotNull();
-            assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-            assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(1L);
-            assertThat(result.getUsername()).isEqualTo(person.getUsername());
-            assertThat(result.getLastName()).isEqualTo(person.getLastName());
-            assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
-            assertThat(result.getEmail()).isEqualTo(person.getEmail());
-            assertThat(result.isEnabled()).isTrue();
+            assertThat(result.id()).isNotNull();
+            assertThat(result.createdAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.tenantId()).isEqualTo("default");
+            assertThat(result.personId()).isEqualTo(1L);
+            assertThat(result.username()).isEqualTo(person.getUsername());
+            assertThat(result.lastName()).isEqualTo(person.getLastName());
+            assertThat(result.firstName()).isEqualTo(person.getFirstName());
+            assertThat(result.email()).isEqualTo(person.getEmail());
+            assertThat(result.enabled()).isTrue();
         }
 
         @Test
@@ -136,15 +136,15 @@ class PersonEventHandlerExtensionTest {
             final PersonUpdatedEventDTO result = argumentCaptor.getValue();
 
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isNotNull();
-            assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-            assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(1L);
-            assertThat(result.getUsername()).isEqualTo(person.getUsername());
-            assertThat(result.getLastName()).isEqualTo(person.getLastName());
-            assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
-            assertThat(result.getEmail()).isEqualTo(person.getEmail());
-            assertThat(result.isEnabled()).isTrue();
+            assertThat(result.id()).isNotNull();
+            assertThat(result.createdAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.tenantId()).isEqualTo("default");
+            assertThat(result.personId()).isEqualTo(1L);
+            assertThat(result.username()).isEqualTo(person.getUsername());
+            assertThat(result.lastName()).isEqualTo(person.getLastName());
+            assertThat(result.firstName()).isEqualTo(person.getFirstName());
+            assertThat(result.email()).isEqualTo(person.getEmail());
+            assertThat(result.enabled()).isTrue();
         }
 
         @Test
@@ -184,15 +184,15 @@ class PersonEventHandlerExtensionTest {
             final PersonDisabledEventDTO result = argumentCaptor.getValue();
 
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isNotNull();
-            assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-            assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(1L);
-            assertThat(result.getUsername()).isEqualTo(person.getUsername());
-            assertThat(result.getLastName()).isEqualTo(person.getLastName());
-            assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
-            assertThat(result.getEmail()).isEqualTo(person.getEmail());
-            assertThat(result.isEnabled()).isFalse();
+            assertThat(result.id()).isNotNull();
+            assertThat(result.createdAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.tenantId()).isEqualTo("default");
+            assertThat(result.personId()).isEqualTo(1L);
+            assertThat(result.username()).isEqualTo(person.getUsername());
+            assertThat(result.lastName()).isEqualTo(person.getLastName());
+            assertThat(result.firstName()).isEqualTo(person.getFirstName());
+            assertThat(result.email()).isEqualTo(person.getEmail());
+            assertThat(result.enabled()).isFalse();
         }
 
         @Test
@@ -231,15 +231,15 @@ class PersonEventHandlerExtensionTest {
             final PersonDeletedEventDTO result = argumentCaptor.getValue();
 
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isNotNull();
-            assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
-            assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(1L);
-            assertThat(result.getUsername()).isEqualTo(person.getUsername());
-            assertThat(result.getLastName()).isEqualTo(person.getLastName());
-            assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
-            assertThat(result.getEmail()).isEqualTo(person.getEmail());
-            assertThat(result.isEnabled()).isTrue();
+            assertThat(result.id()).isNotNull();
+            assertThat(result.createdAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.tenantId()).isEqualTo("default");
+            assertThat(result.personId()).isEqualTo(1L);
+            assertThat(result.username()).isEqualTo(person.getUsername());
+            assertThat(result.lastName()).isEqualTo(person.getLastName());
+            assertThat(result.firstName()).isEqualTo(person.getFirstName());
+            assertThat(result.email()).isEqualTo(person.getEmail());
+            assertThat(result.enabled()).isTrue();
         }
     }
 }

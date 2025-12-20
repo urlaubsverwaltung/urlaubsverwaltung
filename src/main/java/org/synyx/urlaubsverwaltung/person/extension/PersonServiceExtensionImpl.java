@@ -34,10 +34,10 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     @Override
     public PersonDTO create(PersonDTO person) {
         final Person created = personService.create(
-            person.getUsername(),
-            person.getFirstName(),
-            person.getLastName(),
-            person.getEmail()
+            person.username(),
+            person.firstName(),
+            person.lastName(),
+            person.email()
         );
         return toPersonDTO(created);
     }
@@ -53,7 +53,7 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
         personService.getPersonByID(signedInUserId)
             .ifPresentOrElse(
                 signedInUser -> personService.delete(toPerson(person), signedInUser),
-                () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.getId(), signedInUserId)
+                () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.id(), signedInUserId)
             );
     }
 

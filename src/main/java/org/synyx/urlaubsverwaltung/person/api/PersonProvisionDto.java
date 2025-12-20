@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ public class PersonProvisionDto {
     @NotEmpty
     private String email;
 
+    @JsonCreator
     PersonProvisionDto(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;

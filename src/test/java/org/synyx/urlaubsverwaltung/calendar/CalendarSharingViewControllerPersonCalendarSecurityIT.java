@@ -51,7 +51,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends SingleTenant
             get("/web/calendars/share/persons/1")
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(redirectedUrl("/oauth2/authorization/default"));
     }
 
     @Test
@@ -105,7 +105,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends SingleTenant
                 .with(csrf())
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(redirectedUrl("/oauth2/authorization/default"));
     }
 
     @Test

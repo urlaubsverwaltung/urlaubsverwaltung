@@ -2,11 +2,9 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
 import java.util.Locale;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
 
 public class SettingsAbsenceTypesPage {
@@ -47,7 +45,6 @@ public class SettingsAbsenceTypesPage {
      * Submits the custom-absence-types form and waits for dom-content loaded.
      */
     public void submitCustomAbsenceTypes() {
-        page.waitForResponse(Response::ok, () -> page.locator("[data-test-id=submit-custom-absence-types-button]").click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator("[data-test-id=submit-custom-absence-types-button]").click();
     }
 }

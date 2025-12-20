@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
 import jakarta.validation.constraints.Size;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 @Validated

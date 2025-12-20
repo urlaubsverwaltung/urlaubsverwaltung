@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsWorkingTimePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -82,7 +82,7 @@ class OvertimeUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
@@ -117,6 +117,9 @@ class OvertimeUIIT {
         assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
         assertThat(overtimeDetailPage.showsHours(2)).isTrue();
         assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {

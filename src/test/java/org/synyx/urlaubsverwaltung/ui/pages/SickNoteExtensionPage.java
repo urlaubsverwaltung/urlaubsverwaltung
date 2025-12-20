@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.lang.System.lineSeparator;
 
 public class SickNoteExtensionPage {
@@ -51,7 +50,5 @@ public class SickNoteExtensionPage {
 
     public void submit() {
         page.locator("[data-test-id=extension-submit-button]").click();
-        // or habe we wait for URL?
-        page.waitForLoadState(DOMCONTENTLOADED);
     }
 }

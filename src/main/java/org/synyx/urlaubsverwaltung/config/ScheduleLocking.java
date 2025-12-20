@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.config;
 import net.javacrumbs.shedlock.core.ClockProvider;
 import net.javacrumbs.shedlock.core.LockConfiguration;
 import net.javacrumbs.shedlock.core.LockingTaskExecutor;
-import net.javacrumbs.shedlock.support.annotation.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.time.Duration;
 

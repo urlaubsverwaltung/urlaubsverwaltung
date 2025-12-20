@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;

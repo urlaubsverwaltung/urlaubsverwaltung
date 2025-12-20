@@ -18,8 +18,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
+import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -49,9 +51,8 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
-import static java.lang.String.format;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers(parallel = true)
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
@@ -104,8 +105,9 @@ class OverviewCalendarUIIT {
         final Person officePerson = createPerson("Alfred", "Pennyworth the fourth", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
@@ -116,9 +118,12 @@ class OverviewCalendarUIIT {
         overviewPage.clickDay(date);
 
         // Ensure navigation to ApplicationPage
-        page.context().waitForCondition(applicationPage::isVisible);
+        applicationFormPage.isVisible();
         //... with correct dates
-        applicationPage.assertDatesAreSelected(date, date);
+        applicationFormPage.assertDatesAreSelected(date, date);
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
 
@@ -129,11 +134,13 @@ class OverviewCalendarUIIT {
         final Person officePerson = createPerson("Bob", "Bobson", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
+        overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
@@ -144,9 +151,12 @@ class OverviewCalendarUIIT {
         overviewPage.clickDay(endDate);
 
         // Ensure navigation to ApplicationPage
-        page.context().waitForCondition(applicationPage::isVisible);
+        applicationFormPage.isVisible();
         //... with correct dates
-        applicationPage.assertDatesAreSelected(startDate, endDate);
+        applicationFormPage.assertDatesAreSelected(startDate, endDate);
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
 

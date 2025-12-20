@@ -23,8 +23,8 @@ import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteExtensionPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteOverviewPage;
-import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsPage;
+import org.synyx.urlaubsverwaltung.ui.pages.SickNoteFormPage;
+import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -115,6 +115,9 @@ class SickNoteUIIT {
         childSickNote(page, person);
         childSickNoteWithIncapacityCertificate(page, person);
         sickNoteStatisticListView(page, person);
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     @Test
@@ -132,11 +135,14 @@ class SickNoteUIIT {
         final LocalDate startDate = LocalDate.now(clock).minusDays(1);
         sickNote(page, user, startDate);
         sickNoteExtension(page, user, startDate, LocalDate.now(clock));
+
+        navigationPage.isVisible();
+        navigationPage.logout();
     }
 
     private void enableUserSickNoteCreation(Page page, boolean enable) {
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsPage settingsPage = new SettingsPage(page);
+        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
 
         navigationPage.clickSettings();
 
@@ -166,7 +172,7 @@ class SickNoteUIIT {
 
     private void createSickNote(Page page, Person person, LocalDate startDate) {
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
@@ -204,7 +210,7 @@ class SickNoteUIIT {
 
     private void sickNoteWithIncapacityCertificate(Page page, Person person) {
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
@@ -231,7 +237,7 @@ class SickNoteUIIT {
 
     private void childSickNote(Page page, Person person) {
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
@@ -255,7 +261,7 @@ class SickNoteUIIT {
 
     private void childSickNoteWithIncapacityCertificate(Page page, Person person) {
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();

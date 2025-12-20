@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.web.pageable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
@@ -29,10 +29,11 @@ class PageableUserAwareArgumentResolver extends PageableHandlerMethodArgumentRes
     private final PersonService personService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    PageableUserAwareArgumentResolver(SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver,
-                                      UserPaginationSettingsSupplier userPaginationSettingsSupplier,
-                                      PersonService personService, ApplicationEventPublisher applicationEventPublisher) {
-
+    PageableUserAwareArgumentResolver(
+        SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver,
+        UserPaginationSettingsSupplier userPaginationSettingsSupplier,
+        PersonService personService, ApplicationEventPublisher applicationEventPublisher
+    ) {
         super(sortHandlerMethodArgumentResolver);
         this.userPaginationSettingsSupplier = userPaginationSettingsSupplier;
         this.personService = personService;

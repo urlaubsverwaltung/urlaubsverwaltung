@@ -44,7 +44,7 @@ class PersonBasedataViewControllerSecurityIT extends SingleTenantTestContainersB
             get("/web/person/1/basedata")
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(redirectedUrl("/oauth2/authorization/default"));
     }
 
     @ParameterizedTest
@@ -80,7 +80,7 @@ class PersonBasedataViewControllerSecurityIT extends SingleTenantTestContainersB
                 .with(csrf())
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
+            .andExpect(redirectedUrl("/oauth2/authorization/default"));
     }
 
     @ParameterizedTest
