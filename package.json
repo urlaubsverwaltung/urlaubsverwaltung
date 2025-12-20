@@ -51,7 +51,7 @@
     "jquery": "3.7.1",
     "lint-staged": "16.2.7",
     "rimraf": "6.1.2",
-    "rollup": "4.53.5",
+    "rollup": "4.54.0",
     "rollup-plugin-esbuild": "6.2.1",
     "rollup-plugin-postcss": "4.0.2",
     "timepicker": "1.14.1"
