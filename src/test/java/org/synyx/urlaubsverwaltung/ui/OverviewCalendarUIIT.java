@@ -111,6 +111,7 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
+        overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
 
         // Click on a day in the next month
