@@ -2,14 +2,12 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
 import java.time.LocalDate;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class SickNotePage {
+public class SickNoteFormPage {
 
     private static final String PERSON_SELECTOR = "[data-test-id=person-select]";
     private static final String SICKNOTE_TYPE_SELECTOR = "[data-test-id=sicknote-type-select]";
@@ -33,7 +31,7 @@ public class SickNotePage {
         }
     }
 
-    public SickNotePage(Page page) {
+    public SickNoteFormPage(Page page) {
         this.page = page;
     }
 
@@ -58,8 +56,7 @@ public class SickNotePage {
      * You may have to add a wait yourself after calling this method.
      */
     public void submit() {
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean dayTypeFullSelected() {

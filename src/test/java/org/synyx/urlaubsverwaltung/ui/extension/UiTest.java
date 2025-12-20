@@ -51,7 +51,7 @@ import java.nio.file.Paths;
 @Documented
 @Inherited
 @UsePlaywright(UiTest.CustomOptions.class)
-@ExtendWith({ PlaywrightTraceExtension.class, TestRecordVideoExtension.class })
+@ExtendWith({PlaywrightTraceExtension.class, TestRecordVideoExtension.class})
 @ContextConfiguration(initializers = UITestInitializer.class)
 @Tag("ui")
 public @interface UiTest {
@@ -75,6 +75,7 @@ public @interface UiTest {
                     .setLocale("de")
                     .setScreenSize(1500, 2000)
                     .setViewportSize(1500, 2000)
+                    .setRecordVideoSize(1500, 2000)
                 );
         }
     }

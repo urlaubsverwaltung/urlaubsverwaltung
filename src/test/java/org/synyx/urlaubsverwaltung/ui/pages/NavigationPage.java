@@ -2,14 +2,13 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
 import static com.microsoft.playwright.options.WaitForSelectorState.DETACHED;
 
 public class NavigationPage {
 
+    private static final String NAVIGATION_SELECTOR = "div.navigation";
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String SETTINGS_SELECTOR = "[data-test-id=navigation-settings-link]";
 
@@ -23,18 +22,20 @@ public class NavigationPage {
         this.page = page;
     }
 
+    public void isVisible() {
+        page.waitForSelector(NAVIGATION_SELECTOR);
+    }
+
     public void logout() {
         avatarMenu.logout();
     }
 
     public void clickSickNotes() {
-        page.waitForResponse(Response::ok, () -> page.locator(SICK_NOTES_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SICK_NOTES_SELECTOR).click();
     }
 
     public void clickSettings() {
-        page.waitForResponse(Response::ok, () -> page.locator(SETTINGS_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SETTINGS_SELECTOR).click();
     }
 
     public static class QuickAdd {
@@ -67,26 +68,21 @@ public class NavigationPage {
             if (page.locator(BUTTON_SELECTOR).isVisible()) {
                 // opens the menu that contains links to new pages
                 page.locator(BUTTON_SELECTOR).click();
-            }
-            else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
-                page.waitForResponse(Response::ok, () -> page.locator(PLAIN_APPLICATION_SELECTOR).click());
-                page.waitForLoadState(DOMCONTENTLOADED);
+            } else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
+                page.locator(PLAIN_APPLICATION_SELECTOR).click();
             }
         }
 
         public void newApplication() {
-            page.waitForResponse(Response::ok, () -> page.locator(APPLICATION_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.locator(APPLICATION_SELECTOR).click();
         }
 
         public void newOvertime() {
-            page.waitForResponse(Response::ok, () -> page.locator(OVERTIME_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.locator(OVERTIME_SELECTOR).click();
         }
 
         public void newSickNote() {
-            page.waitForResponse(Response::ok, () -> page.locator(SICKNOTE_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.locator(SICKNOTE_SELECTOR).click();
         }
     }
 
@@ -97,8 +93,12 @@ public class NavigationPage {
 
         void logout() {
             page.locator(AVATAR_SELECTOR).click();
-            page.waitForResponse(Response::ok, () -> page.locator(LOGOUT_SELECTOR).click());
-            page.waitForLoadState(DOMCONTENTLOADED);
+            page.waitForSelector(LOGOUT_SELECTOR).click();
+
+            page.context().clearCookies();
+            page.context().clearPermissions();
+            page.evaluate("window.localStorage.clear();");
+            page.evaluate("window.sessionStorage.clear();");
         }
     }
 }

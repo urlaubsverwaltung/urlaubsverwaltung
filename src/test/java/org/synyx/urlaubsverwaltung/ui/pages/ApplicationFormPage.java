@@ -2,17 +2,15 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class ApplicationPage {
+public class ApplicationFormPage {
 
     private static final String FROM_INPUT_SELECTOR = "#from";
     private static final String TO_INPUT_SELECTOR = "#to";
@@ -24,16 +22,16 @@ public class ApplicationPage {
 
     private final Page page;
 
-    public ApplicationPage(Page page) {
+    public ApplicationFormPage(Page page) {
         this.page = page;
     }
 
-    public boolean isVisible() {
-        return page.locator(VACATION_TYPE_SELECT_SELECTOR).isVisible()
-            && page.locator(FROM_INPUT_SELECTOR).isVisible();
+    public void isVisible() {
+        page.waitForSelector(VACATION_TYPE_SELECT_SELECTOR);
+        page.waitForSelector(FROM_INPUT_SELECTOR);
     }
 
-    public void assertDatesAreSelected(LocalDate startDate, LocalDate endDate){
+    public void assertDatesAreSelected(LocalDate startDate, LocalDate endDate) {
         final String startDateString = ofPattern("d.M.yyyy").format(startDate);
         final String endDateString = ofPattern("d.M.yyyy").format(endDate);
 
@@ -139,8 +137,7 @@ public class ApplicationPage {
     }
 
     public void submit() {
-        page.waitForResponse(Response::ok, () -> page.locator(SUBMIT_SELECTOR).click());
-        page.waitForLoadState(DOMCONTENTLOADED);
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean showsFromError() {
@@ -162,6 +159,7 @@ public class ApplicationPage {
     public boolean showsOvertimeReductionHours() {
         return page.locator("[data-test-id=overtime-hours]").isVisible();
     }
+
     public boolean showsOvertimeReductionHoursError() {
         return page.locator("[data-test-id=overtime-hours-error]").isVisible();
     }
