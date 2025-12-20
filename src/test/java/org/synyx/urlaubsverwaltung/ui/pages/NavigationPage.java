@@ -74,15 +74,15 @@ public class NavigationPage {
         }
 
         public void newApplication() {
-            page.locator(APPLICATION_SELECTOR).click();
+            page.waitForSelector(APPLICATION_SELECTOR).click();
         }
 
         public void newOvertime() {
-            page.locator(OVERTIME_SELECTOR).click();
+            page.waitForSelector(OVERTIME_SELECTOR).click();
         }
 
         public void newSickNote() {
-            page.locator(SICKNOTE_SELECTOR).click();
+            page.waitForSelector(SICKNOTE_SELECTOR).click();
         }
     }
 
