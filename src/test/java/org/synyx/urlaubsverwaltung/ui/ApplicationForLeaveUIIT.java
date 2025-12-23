@@ -236,6 +236,7 @@ class ApplicationForLeaveUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
+        overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
