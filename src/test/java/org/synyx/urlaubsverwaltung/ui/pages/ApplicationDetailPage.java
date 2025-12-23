@@ -7,6 +7,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class ApplicationDetailPage {
 
     private static final String DATA_PAGE = "main[data-page='application-detail']";
@@ -29,9 +31,9 @@ public class ApplicationDetailPage {
         return page.title().equals(title(username));
     }
 
-    public boolean showsApplicationCreatedInfo() {
+    public void showsApplicationCreatedInfo() {
         final String text = messageSource.getMessage("application.action.apply.success", new Object[]{}, locale);
-        return page.getByText(text).isVisible();
+        assertThat(page.getByText(text)).isVisible();
     }
 
     public Locator replacementLocator(Person person) {

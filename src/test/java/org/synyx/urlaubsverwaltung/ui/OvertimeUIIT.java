@@ -109,11 +109,7 @@ class OvertimeUIIT {
 
         overtimePage.submit();
 
-        page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
-
-        // overtime created info vanishes sometime
-        page.context().waitForCondition(() -> !overtimeDetailPage.showsOvertimeCreatedInfo());
-
+        overtimeDetailPage.showsOvertimeCreatedInfo();
         overtimeDetailPage.isVisibleForPerson(person.getNiceName());
         overtimeDetailPage.showsHours(2);
         overtimeDetailPage.showsMinutes(30);

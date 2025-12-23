@@ -39,23 +39,25 @@
           </th:block>
         </div>
 
-        <div class="feedback">
-          <div
-            th:if="${createdDepartmentName != null}"
-            th:text="#{department.action.create.success(${createdDepartmentName})}"
-            class="alert alert-success"
-          ></div>
-          <div
-            th:if="${updatedDepartmentName != null}"
-            th:text="#{department.action.edit.success(${updatedDepartmentName})}"
-            class="alert alert-success"
-          ></div>
-          <div
-            th:if="${deletedDepartmentName != null}"
-            th:text="#{department.action.delete.success(${deletedDepartmentName})}"
-            class="alert alert-success"
-          ></div>
-        </div>
+        <th:block
+          th:if="${createdDepartmentName != null or updatedDepartmentName != null or deletedDepartmentName != null}"
+          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+        >
+          <th:block th:ref="feedback-success-body">
+            <p
+              th:if="${createdDepartmentName != null}"
+              th:text="#{department.action.create.success(${createdDepartmentName})}"
+            ></p>
+            <p
+              th:if="${updatedDepartmentName != null}"
+              th:text="#{department.action.edit.success(${updatedDepartmentName})}"
+            ></p>
+            <p
+              th:if="${deletedDepartmentName != null}"
+              th:text="#{department.action.delete.success(${deletedDepartmentName})}"
+            ></p>
+          </th:block>
+        </th:block>
 
         <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
         <table
