@@ -26,7 +26,6 @@
 @import "../components/section-heading.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);
-@import "../components/ui.timepicker.css" layer(components);
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {
