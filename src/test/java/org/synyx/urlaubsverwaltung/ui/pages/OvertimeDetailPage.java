@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import java.util.regex.Pattern;
@@ -23,9 +22,8 @@ public class OvertimeDetailPage {
         assertThat(page.locator(PERSON_SELECTOR)).containsText(username);
     }
 
-    public boolean showsOvertimeCreatedInfo() {
-        final Locator element = page.locator(ALERT_SUCCESS_SELECTOR);
-        return element != null && element.isVisible();
+    public void showsOvertimeCreatedInfo() {
+        assertThat(page.locator(ALERT_SUCCESS_SELECTOR)).isVisible();
     }
 
     public void showsHours(int hours) {

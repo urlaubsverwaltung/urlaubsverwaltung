@@ -89,9 +89,14 @@
           th:object="${comment}"
           class="hidden"
         >
-          <div th:if="${#fields.hasGlobalErrors()}" class="feedback">
-            <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
-          </div>
+          <th:block
+            th:if="${#fields.hasGlobalErrors()}"
+            th:insert="~{fragments/feedback-box::feedback-box-error(~{::feedback-error-body})}"
+          >
+            <th:block th:ref="feedback-error-body">
+              <p th:text="#{application.action.reason.error}"></p>
+            </th:block>
+          </th:block>
 
           <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
           <div class="flex justify-between mt-2 mb-6">
