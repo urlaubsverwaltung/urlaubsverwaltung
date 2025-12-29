@@ -313,6 +313,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <addResources>true</addResources>
           <layout>ZIP</layout>
           <image>
             <name>
@@ -329,6 +330,13 @@
             </publishRegistry>
           </docker>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- Frontend assets -->
