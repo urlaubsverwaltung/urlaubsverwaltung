@@ -6,6 +6,8 @@ uv:
     mode: single
 
 spring:
+  application:
+    name: Urlaubsverwaltung
   web:
     resources:
       cache:
