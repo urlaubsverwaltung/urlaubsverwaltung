@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 /**
  * Represents the sub navigation of the {@link SettingsAbsencesPage}
@@ -19,12 +19,10 @@ public class SettingsSubNavigation {
     }
 
     public void goToOvertime() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(OVERTIME_TAB_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(OVERTIME_TAB_SELECTOR));
     }
 
     public void goToAbsenceTypes() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(ABSENCE_TYPES_TAB_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(ABSENCE_TYPES_TAB_SELECTOR));
     }
 }

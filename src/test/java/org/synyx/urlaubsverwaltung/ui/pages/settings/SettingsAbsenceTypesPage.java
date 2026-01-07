@@ -6,7 +6,7 @@ import com.microsoft.playwright.Page;
 import java.util.Locale;
 
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SettingsAbsenceTypesPage {
 
@@ -43,7 +43,6 @@ public class SettingsAbsenceTypesPage {
     }
 
     public void submitCustomAbsenceTypesAndWaitForPageRefresh() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator("[data-test-id=submit-custom-absence-types-button]").click());
+        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=submit-custom-absence-types-button]"));
     }
 }

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SettingsWorkingTimePage {
 
@@ -24,7 +24,6 @@ public class SettingsWorkingTimePage {
     }
 
     public void submitOvertimeFormAndWaitForPageRefresh() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator("[data-test-id=submit-overtime-button]").click());
+        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=submit-overtime-button]"));
     }
 }

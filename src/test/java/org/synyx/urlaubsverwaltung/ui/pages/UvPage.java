@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 
@@ -9,6 +10,16 @@ public abstract class UvPage {
 
     private UvPage() {
         //
+    }
+
+    /**
+     * Clicks the locator element and waits for a page refresh.
+     *
+     * @param page {@link Page} to work with
+     * @param locator to click
+     */
+    public static void clickAndWaitForPageRefresh(Page page, Locator locator) {
+        executeAndWaitForPageRefresh(page, unused -> locator.click());
     }
 
     /**

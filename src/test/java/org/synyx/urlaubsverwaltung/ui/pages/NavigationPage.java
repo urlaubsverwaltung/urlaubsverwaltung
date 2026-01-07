@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class NavigationPage {
 
@@ -27,16 +27,14 @@ public class NavigationPage {
      * Clicks sick-notes link and waits for page refresh.
      */
     public void goToSickNotes() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(SICK_NOTES_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(SICK_NOTES_SELECTOR));
     }
 
     /**
      * Clicks settings link and waits for page refresh.
      */
     public void goToSettings() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(SETTINGS_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(SETTINGS_SELECTOR));
     }
 
     public static class QuickAdd {
@@ -69,23 +67,19 @@ public class NavigationPage {
         public void clickCreateNewApplication() {
             // UV can be configured, so that a user can only create new applications.
             // in this case there is no "quick-add" menu, but a simple link to create the new
-            executeAndWaitForPageRefresh(page, page ->
-                page.locator(PLAIN_APPLICATION_SELECTOR).click());
+            clickAndWaitForPageRefresh(page, page.locator(PLAIN_APPLICATION_SELECTOR));
         }
 
         public void clickPopoverNewApplication() {
-            executeAndWaitForPageRefresh(page, page ->
-                page.waitForSelector(APPLICATION_SELECTOR).click());
+            clickAndWaitForPageRefresh(page, page.locator(APPLICATION_SELECTOR));
         }
 
         public void clickPopoverNewOvertime() {
-            executeAndWaitForPageRefresh(page, page ->
-                page.waitForSelector(OVERTIME_SELECTOR).click());
+            clickAndWaitForPageRefresh(page, page.locator(OVERTIME_SELECTOR));
         }
 
         public void clickPopoverNewSickNote() {
-            executeAndWaitForPageRefresh(page, page ->
-                page.waitForSelector(SICKNOTE_SELECTOR).click());
+            clickAndWaitForPageRefresh(page, page.locator(SICKNOTE_SELECTOR));
         }
     }
 

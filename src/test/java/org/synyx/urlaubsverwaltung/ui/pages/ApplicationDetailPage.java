@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class ApplicationDetailPage {
 
@@ -42,8 +42,7 @@ public class ApplicationDetailPage {
     }
 
     public void selectEdit() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator("[data-test-id=application-edit-button]").click());
+        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=application-edit-button]"));
     }
 
     private String title(String username) {

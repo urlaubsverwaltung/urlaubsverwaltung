@@ -6,7 +6,7 @@ import com.microsoft.playwright.Page;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SickNoteFormPage {
 
@@ -53,8 +53,7 @@ public class SickNoteFormPage {
     }
 
     public void submitAndWaitForPageRefresh() {
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(SUBMIT_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(SUBMIT_SELECTOR));
     }
 
     public boolean dayTypeFullSelected() {

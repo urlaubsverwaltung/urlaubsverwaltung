@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class LoginPage {
 
@@ -30,8 +30,7 @@ public class LoginPage {
         page.waitForSelector(USERNAME_SELECTOR).fill(credentials.username());
         page.waitForSelector(PASSWORD_SELECTOR).fill(credentials.password());
 
-        executeAndWaitForPageRefresh(page, page ->
-            page.locator(SUBMIT_SELECTOR).click());
+        clickAndWaitForPageRefresh(page, page.locator(SUBMIT_SELECTOR));
     }
 
     public record Credentials(String username, String password) {
