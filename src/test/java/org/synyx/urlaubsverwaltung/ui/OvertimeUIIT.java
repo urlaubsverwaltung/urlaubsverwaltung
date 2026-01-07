@@ -89,15 +89,14 @@ class OvertimeUIIT {
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
 
         settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
-        settingsWorkingTimePage.submitOvertimeForm();
+        settingsWorkingTimePage.submitOvertimeFormAndWaitForPageRefresh();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newOvertime();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewOvertime();
 
         final int currentYear = LocalDate.now().getYear();
 
@@ -107,7 +106,7 @@ class OvertimeUIIT {
         overtimePage.hours(1);
         overtimePage.minutes(90);
 
-        overtimePage.submit();
+        overtimePage.submitAndWaitForPageRefresh();
 
         page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
 
@@ -118,7 +117,6 @@ class OvertimeUIIT {
         assertThat(overtimeDetailPage.showsHours(2)).isTrue();
         assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 

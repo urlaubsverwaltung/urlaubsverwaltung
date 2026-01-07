@@ -108,7 +108,6 @@ class SickNoteUIIT {
         login(page, person);
 
         final NavigationPage navigationPage = new NavigationPage(page);
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
         sickNote(page, person, LocalDate.of(2022, FEBRUARY, 23));
         sickNoteWithIncapacityCertificate(page, person);
@@ -116,7 +115,6 @@ class SickNoteUIIT {
         childSickNoteWithIncapacityCertificate(page, person);
         sickNoteStatisticListView(page, person);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -136,7 +134,6 @@ class SickNoteUIIT {
         sickNote(page, user, startDate);
         sickNoteExtension(page, user, startDate, LocalDate.now(clock));
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -144,7 +141,7 @@ class SickNoteUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
 
         if (enable) {
             settingsPage.clickUserSubmitSickNotesAllowed();
@@ -152,7 +149,7 @@ class SickNoteUIIT {
             settingsPage.clickUserToSubmitSickNotesForbidden();
         }
 
-        settingsPage.saveSettings();
+        settingsPage.submitAndWaitForPageRefresh();
     }
 
     private void login(Page page, Person person) {
@@ -174,8 +171,8 @@ class SickNoteUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newSickNote();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewSickNote();
 
         if (person.hasRole(OFFICE)) {
             assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
@@ -186,7 +183,7 @@ class SickNoteUIIT {
         sickNotePage.startDate(startDate);
         assertThat(sickNotePage.showsToDate(startDate)).isTrue();
 
-        sickNotePage.submit();
+        sickNotePage.submitAndWaitForPageRefresh();
     }
 
     private void sickNoteExtension(Page page, Person person, LocalDate startDate, LocalDate nextEndDate) {
@@ -194,14 +191,14 @@ class SickNoteUIIT {
         final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newSickNote();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewSickNote();
 
         assertThat(sickNoteExtensionPage.isVisible()).isTrue();
         sickNoteExtensionPage.setCustomNextEndDate(nextEndDate);
 
         assertThat(sickNoteExtensionPage.showsExtensionPreview(startDate, nextEndDate)).isTrue();
-        sickNoteExtensionPage.submit();
+        sickNoteExtensionPage.submitAndWaitForPageRefresh();
 
         // no extension hint shown since sick note has not been accepted yet (sick note has been edited right away)
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
@@ -213,8 +210,8 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newSickNote();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewSickNote();
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -226,7 +223,7 @@ class SickNoteUIIT {
         sickNotePage.aubStartDate(LocalDate.of(2022, MARCH, 11));
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MARCH, 11))).isTrue();
 
-        sickNotePage.submit();
+        sickNotePage.submitAndWaitForPageRefresh();
 
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MARCH, 10))).isTrue();
@@ -240,8 +237,8 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newSickNote();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewSickNote();
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -251,7 +248,7 @@ class SickNoteUIIT {
         sickNotePage.startDate(LocalDate.of(2022, APRIL, 11));
         sickNotePage.toDate(LocalDate.of(2022, APRIL, 12));
 
-        sickNotePage.submit();
+        sickNotePage.submitAndWaitForPageRefresh();
 
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, APRIL, 11))).isTrue();
@@ -264,8 +261,8 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newSickNote();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewSickNote();
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -278,7 +275,7 @@ class SickNoteUIIT {
         sickNotePage.aubStartDate(LocalDate.of(2022, MAY, 11));
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MAY, 11))).isTrue();
 
-        sickNotePage.submit();
+        sickNotePage.submitAndWaitForPageRefresh();
 
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MAY, 10))).isTrue();
@@ -292,7 +289,7 @@ class SickNoteUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
         final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(page, messageSource, GERMAN);
 
-        navigationPage.clickSickNotes();
+        navigationPage.goToSickNotes();
 
         assertThat(sickNoteOverviewPage.showsSickNoteStatistic(person.getFirstName(), person.getLastName(), 3, 1)).isTrue();
         assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic(person.getFirstName(), person.getLastName(), 4, 1)).isTrue();

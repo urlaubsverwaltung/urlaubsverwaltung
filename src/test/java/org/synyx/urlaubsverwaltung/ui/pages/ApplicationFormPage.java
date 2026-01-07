@@ -9,6 +9,7 @@ import java.util.List;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class ApplicationFormPage {
 
@@ -136,8 +137,9 @@ public class ApplicationFormPage {
         return textarea.inputValue().equals(comment);
     }
 
-    public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+    public void submitAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SUBMIT_SELECTOR).click());
     }
 
     public boolean showsFromError() {

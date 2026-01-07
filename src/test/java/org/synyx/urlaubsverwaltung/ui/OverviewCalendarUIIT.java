@@ -123,7 +123,6 @@ class OverviewCalendarUIIT {
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(date, date);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -156,7 +155,6 @@ class OverviewCalendarUIIT {
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(startDate, endDate);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 

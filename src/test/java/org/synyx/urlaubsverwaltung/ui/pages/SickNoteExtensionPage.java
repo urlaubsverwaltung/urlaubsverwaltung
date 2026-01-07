@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import static java.lang.System.lineSeparator;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class SickNoteExtensionPage {
 
@@ -48,7 +49,8 @@ public class SickNoteExtensionPage {
             .contains("%s %s %s %s".formatted(startLabel, startValue, nextEndLabel, nextEndValue));
     }
 
-    public void submit() {
-        page.locator("[data-test-id=extension-submit-button]").click();
+    public void submitAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator("[data-test-id=extension-submit-button]").click());
     }
 }

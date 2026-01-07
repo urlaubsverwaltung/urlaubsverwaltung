@@ -1,14 +1,11 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
-import static com.microsoft.playwright.options.WaitForSelectorState.DETACHED;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class NavigationPage {
 
-    private static final String NAVIGATION_SELECTOR = "div.navigation";
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String SETTINGS_SELECTOR = "[data-test-id=navigation-settings-link]";
 
@@ -22,26 +19,29 @@ public class NavigationPage {
         this.page = page;
     }
 
-    public void isVisible() {
-        page.waitForSelector(NAVIGATION_SELECTOR);
-    }
-
     public void logout() {
         avatarMenu.logout();
     }
 
-    public void clickSickNotes() {
-        page.locator(SICK_NOTES_SELECTOR).click();
+    /**
+     * Clicks sick-notes link and waits for page refresh.
+     */
+    public void goToSickNotes() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SICK_NOTES_SELECTOR).click());
     }
 
-    public void clickSettings() {
-        page.locator(SETTINGS_SELECTOR).click();
+    /**
+     * Clicks settings link and waits for page refresh.
+     */
+    public void goToSettings() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SETTINGS_SELECTOR).click());
     }
 
     public static class QuickAdd {
         private static final String PLAIN_APPLICATION_SELECTOR = "[data-test-id=new-application]";
         private static final String BUTTON_SELECTOR = "[data-test-id=add-something-new]";
-        private static final String POPUPMENU_SELECTOR = "[data-test-id=add-something-new-popupmenu]";
         private static final String APPLICATION_SELECTOR = "[data-test-id=quick-add-new-application]";
         private static final String SICKNOTE_SELECTOR = "[data-test-id=quick-add-new-sicknote]";
         private static final String OVERTIME_SELECTOR = "[data-test-id=quick-add-new-overtime]";
@@ -52,37 +52,40 @@ public class NavigationPage {
             this.page = page;
         }
 
-        public boolean hasPopup() {
-            page.locator(POPUPMENU_SELECTOR).waitFor(new Locator.WaitForOptions().setState(ATTACHED));
-            page.locator(PLAIN_APPLICATION_SELECTOR).waitFor(new Locator.WaitForOptions().setState(DETACHED));
-            return true;
+        /**
+         * The user can open a popover menu when there are multiple options
+         * (e.g. create new application or a new sick-note).
+         *
+         * <p>
+         * This element is NOT available when sick-note feature is disabled, for instance.
+         */
+        public void togglePopover() {
+            page.locator(BUTTON_SELECTOR).click();
         }
 
-        public boolean hasNoPopup() {
-            page.locator(POPUPMENU_SELECTOR).waitFor(new Locator.WaitForOptions().setState(DETACHED));
-            page.locator(PLAIN_APPLICATION_SELECTOR).waitFor(new Locator.WaitForOptions().setState(ATTACHED));
-            return true;
+        /**
+         * If the user is only allowed to create new applications, then there is no popover button, but only this link.
+         */
+        public void clickCreateNewApplication() {
+            // UV can be configured, so that a user can only create new applications.
+            // in this case there is no "quick-add" menu, but a simple link to create the new
+            executeAndWaitForPageRefresh(page, page ->
+                page.locator(PLAIN_APPLICATION_SELECTOR).click());
         }
 
-        public void click() {
-            if (page.locator(BUTTON_SELECTOR).isVisible()) {
-                // opens the menu that contains links to new pages
-                page.locator(BUTTON_SELECTOR).click();
-            } else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
-                page.locator(PLAIN_APPLICATION_SELECTOR).click();
-            }
+        public void clickPopoverNewApplication() {
+            executeAndWaitForPageRefresh(page, page ->
+                page.waitForSelector(APPLICATION_SELECTOR).click());
         }
 
-        public void newApplication() {
-            page.waitForSelector(APPLICATION_SELECTOR).click();
+        public void clickPopoverNewOvertime() {
+            executeAndWaitForPageRefresh(page, page ->
+                page.waitForSelector(OVERTIME_SELECTOR).click());
         }
 
-        public void newOvertime() {
-            page.waitForSelector(OVERTIME_SELECTOR).click();
-        }
-
-        public void newSickNote() {
-            page.waitForSelector(SICKNOTE_SELECTOR).click();
+        public void clickPopoverNewSickNote() {
+            executeAndWaitForPageRefresh(page, page ->
+                page.waitForSelector(SICKNOTE_SELECTOR).click());
         }
     }
 
@@ -92,8 +95,15 @@ public class NavigationPage {
         private static final String LOGOUT_SELECTOR = "[data-test-id=logout]";
 
         void logout() {
+
             page.locator(AVATAR_SELECTOR).click();
-            page.waitForSelector(LOGOUT_SELECTOR).click();
+
+            // logout redirects to spring identityprovider overview page
+            // or to the configured redirectTo page, don't know.
+            // we just want to wait for a successful logout... so wait for any page refresh.
+            executeAndWaitForPageRefresh(page, page -> {
+                page.waitForSelector(LOGOUT_SELECTOR).click();
+            });
 
             page.context().clearCookies();
             page.context().clearPermissions();

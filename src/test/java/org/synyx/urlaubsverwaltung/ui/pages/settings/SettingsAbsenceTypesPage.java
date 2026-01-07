@@ -6,6 +6,7 @@ import com.microsoft.playwright.Page;
 import java.util.Locale;
 
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class SettingsAbsenceTypesPage {
 
@@ -41,10 +42,8 @@ public class SettingsAbsenceTypesPage {
         return absenceTypeLocator.locator("[data-test-id=vacation-type-active]");
     }
 
-    /**
-     * Submits the custom-absence-types form and waits for dom-content loaded.
-     */
-    public void submitCustomAbsenceTypes() {
-        page.locator("[data-test-id=submit-custom-absence-types-button]").click();
+    public void submitCustomAbsenceTypesAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator("[data-test-id=submit-custom-absence-types-button]").click());
     }
 }

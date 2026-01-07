@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+
 public class SettingsWorkingTimePage {
 
     private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
@@ -21,10 +23,8 @@ public class SettingsWorkingTimePage {
         page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
-    /**
-     * Submits the overtime form and waits for dom-content loaded.
-     */
-    public void submitOvertimeForm() {
-        page.locator("[data-test-id=submit-overtime-button]").click();
+    public void submitOvertimeFormAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator("[data-test-id=submit-overtime-button]").click());
     }
 }

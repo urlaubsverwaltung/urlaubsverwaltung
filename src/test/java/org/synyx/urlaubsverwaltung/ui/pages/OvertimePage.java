@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class OvertimePage {
 
@@ -33,8 +34,9 @@ public class OvertimePage {
         page.locator(MINUTES_SELECTOR).fill(String.valueOf(minutes));
     }
 
-    public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+    public void submitAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SUBMIT_SELECTOR).click());
     }
 
     public boolean showsEndDate(LocalDate endDate) {

@@ -89,40 +89,39 @@ class CustomAbsenceTypeUIIT {
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
         settingsPage.navigation().goToAbsenceTypes();
         settingsAbsenceTypesPage.addNewVacationType();
 
         // ensure at least one translation required error hint
-        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
         assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).isVisible();
 
         // ensure saving valid vacation type succeeds
         settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
-        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
         assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).not().isVisible();
 
         // enable vacation type to ensure selecting it later creating a new application for leave
         final Locator status = settingsAbsenceTypesPage.vacationTypeStatusCheckbox(settingsAbsenceTypesPage.lastVacationType());
         assertThat(status).not().isChecked();
         status.check();
-        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
 
         // ensure unique vacation type name error hint
         settingsAbsenceTypesPage.addNewVacationType();
         settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
-        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
         assertThat(settingsAbsenceTypesPage.vacationTypeUniqueTranslationError(settingsAbsenceTypesPage.lastVacationType(), GERMAN)).isVisible();
 
         // ensure vacation type is selectable creating a new application for leave
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
         applicationFormPage.isVisible();
 
         // this throws when the name cannot be found
         applicationFormPage.selectVacationTypeOfName("Biertag");
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 

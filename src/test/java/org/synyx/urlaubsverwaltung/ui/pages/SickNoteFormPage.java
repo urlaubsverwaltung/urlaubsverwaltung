@@ -6,6 +6,7 @@ import com.microsoft.playwright.Page;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
 
 public class SickNoteFormPage {
 
@@ -51,12 +52,9 @@ public class SickNoteFormPage {
         setDate(aubStartDate, AUB_FROM_SELECTOR);
     }
 
-    /**
-     * Submits the sick note form. Note that this method doesn't wait until something happens (e.g. submit button is stale for instance).
-     * You may have to add a wait yourself after calling this method.
-     */
-    public void submit() {
-        page.locator(SUBMIT_SELECTOR).click();
+    public void submitAndWaitForPageRefresh() {
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SUBMIT_SELECTOR).click());
     }
 
     public boolean dayTypeFullSelected() {

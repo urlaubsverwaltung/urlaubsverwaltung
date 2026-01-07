@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
 
+import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.executeAndWaitForPageRefresh;
+
 public class LoginPage {
 
     private static final String USERNAME_SELECTOR = "#username";
@@ -16,22 +18,20 @@ public class LoginPage {
         this.port = port;
     }
 
-    public void isVisible() {
-        page.waitForSelector(USERNAME_SELECTOR);
-        page.waitForSelector(PASSWORD_SELECTOR);
-    }
-
     /**
-     * Fills the login form with the given credentials and submits the login form.
+     * Fills the login form with the given credentials, submits the login form and waits for page refresh.
      *
      * @param credentials username and password
      */
     public void login(Credentials credentials) {
+
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        this.isVisible();
-        page.fill(USERNAME_SELECTOR, credentials.username);
-        page.fill(PASSWORD_SELECTOR, credentials.password);
-        page.locator(SUBMIT_SELECTOR).click();
+
+        page.waitForSelector(USERNAME_SELECTOR).fill(credentials.username());
+        page.waitForSelector(PASSWORD_SELECTOR).fill(credentials.password());
+
+        executeAndWaitForPageRefresh(page, page ->
+            page.locator(SUBMIT_SELECTOR).click());
     }
 
     public record Credentials(String username, String password) {

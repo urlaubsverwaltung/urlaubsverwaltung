@@ -107,25 +107,21 @@ class ApplicationForLeaveUIIT {
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
 
         settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.disableOvertime();
-        settingsWorkingTimePage.submitOvertimeForm();
+        settingsWorkingTimePage.submitOvertimeFormAndWaitForPageRefresh();
 
-        navigationPage.isVisible();
         navigationPage.logout();
 
         // now the quick-add button should link directly to application-for-leave page
         // for the user logged in with role=USER
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
-        assertThat(navigationPage.quickAdd.hasNoPopup()).isTrue();
-
-        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.clickCreateNewApplication();
         applicationFormPage.isVisible();
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -144,13 +140,12 @@ class ApplicationForLeaveUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
 
         settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
-        settingsWorkingTimePage.submitOvertimeForm();
+        settingsWorkingTimePage.submitOvertimeFormAndWaitForPageRefresh();
 
-        navigationPage.isVisible();
         navigationPage.logout();
 
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
@@ -158,15 +153,11 @@ class ApplicationForLeaveUIIT {
         overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-
-        // clicking the element should open the popup menu
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         applicationFormPage.isVisible();
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -186,9 +177,8 @@ class ApplicationForLeaveUIIT {
 
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         applicationFormPage.from(getNextWorkday());
 
@@ -201,7 +191,7 @@ class ApplicationForLeaveUIIT {
 
         applicationFormPage.setCommentForReplacement(batman, "please be gentle!");
 
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
 
         applicationDetailPage.isVisible();
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
@@ -220,7 +210,6 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -239,9 +228,8 @@ class ApplicationForLeaveUIIT {
         overviewPage.isVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         assertThat(applicationFormPage.showsReason()).isFalse();
 
@@ -249,7 +237,7 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.showsReason()).isTrue();
         assertThat(applicationFormPage.showsOvertimeReductionHours()).isFalse();
 
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
 
         applicationFormPage.isVisible();
         assertThat(applicationFormPage.showsFromError()).isTrue();
@@ -258,13 +246,12 @@ class ApplicationForLeaveUIIT {
 
         applicationFormPage.from(getNextWorkday());
         applicationFormPage.reason("some reason text.");
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
 
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -286,14 +273,13 @@ class ApplicationForLeaveUIIT {
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         // ensure overtime feature is enabled
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
         settingsPage.navigation().goToOvertime();
         settingsWorkingTimePage.enableOvertime();
-        settingsWorkingTimePage.submitOvertimeForm();
+        settingsWorkingTimePage.submitOvertimeFormAndWaitForPageRefresh();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         assertThat(applicationFormPage.showsOvertimeReductionHours()).isFalse();
 
@@ -301,7 +287,7 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.showsOvertimeReductionHours()).isTrue();
         assertThat(applicationFormPage.showsReason()).isFalse();
 
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
         applicationFormPage.isVisible();
 
         assertThat(applicationFormPage.showsFromError()).isTrue();
@@ -311,13 +297,12 @@ class ApplicationForLeaveUIIT {
         applicationFormPage.from(getNextWorkday());
         applicationFormPage.overtimeReductionHours(1);
         applicationFormPage.overtimeReductionMinutes(30);
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
 
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         // application created info vanishes sometime
         page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -337,22 +322,21 @@ class ApplicationForLeaveUIIT {
         // log in as office user and disable halfDay
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        navigationPage.isVisible();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         // default is: half days enabled
         applicationFormPage.isVisible();
         assertThat(applicationFormPage.showsDayLengthInputs()).isTrue();
 
-        navigationPage.clickSettings();
+        navigationPage.goToSettings();
 
         settingsPage.isVisible();
         settingsPage.clickDisableHalfDayAbsence();
-        settingsPage.saveSettings();
+        settingsPage.submitAndWaitForPageRefresh();
 
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
 
         applicationFormPage.isVisible();
         // we just disabled half days in the settings
@@ -369,7 +353,7 @@ class ApplicationForLeaveUIIT {
 
         applicationFormPage.setCommentForReplacement(batman, "please be gentle!");
 
-        applicationFormPage.submit();
+        applicationFormPage.submitAndWaitForPageRefresh();
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
@@ -387,7 +371,6 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
