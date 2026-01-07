@@ -98,12 +98,10 @@ public class NavigationPage {
 
             page.locator(AVATAR_SELECTOR).click();
 
-            // logout redirects to spring identityprovider overview page
-            // or to the configured redirectTo page, don't know.
-            // we just want to wait for a successful logout... so wait for any page refresh.
-            executeAndWaitForPageRefresh(page, page -> {
-                page.waitForSelector(LOGOUT_SELECTOR).click();
-            });
+            // do not wait for page refresh, this doesn't work on CI with webkit (timeout...)
+            // however, this should not be an issue since a logout requires a login to interact with UV,
+            // which explicitly navigates to the login page.
+            page.waitForSelector(LOGOUT_SELECTOR).click();
 
             page.context().clearCookies();
             page.context().clearPermissions();
