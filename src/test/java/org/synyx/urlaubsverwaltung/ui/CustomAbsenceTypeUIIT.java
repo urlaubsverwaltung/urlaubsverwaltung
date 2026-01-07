@@ -117,7 +117,7 @@ class CustomAbsenceTypeUIIT {
         // ensure vacation type is selectable creating a new application for leave
         navigationPage.quickAdd.togglePopover();
         navigationPage.quickAdd.clickPopoverNewApplication();
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
 
         // this throws when the name cannot be found
         applicationFormPage.selectVacationTypeOfName("Biertag");

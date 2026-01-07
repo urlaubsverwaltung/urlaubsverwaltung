@@ -24,7 +24,7 @@ public class OverviewPage {
         this.locale = locale;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(DATA_PAGE);
     }
 

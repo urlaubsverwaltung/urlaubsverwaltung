@@ -120,7 +120,7 @@ class ApplicationForLeaveUIIT {
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         navigationPage.quickAdd.clickCreateNewApplication();
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
 
         navigationPage.logout();
     }
@@ -150,13 +150,13 @@ class ApplicationForLeaveUIIT {
 
         loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
-        overviewPage.isVisible();
+        overviewPage.waitForVisible();
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         navigationPage.quickAdd.togglePopover();
         navigationPage.quickAdd.clickPopoverNewApplication();
 
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
 
         navigationPage.logout();
     }
@@ -193,7 +193,7 @@ class ApplicationForLeaveUIIT {
 
         applicationFormPage.submitAndWaitForPageRefresh();
 
-        applicationDetailPage.isVisible();
+        applicationDetailPage.waitForVisible();
         page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
@@ -225,7 +225,7 @@ class ApplicationForLeaveUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
+        overviewPage.waitForVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         navigationPage.quickAdd.togglePopover();
@@ -239,7 +239,7 @@ class ApplicationForLeaveUIIT {
 
         applicationFormPage.submitAndWaitForPageRefresh();
 
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         assertThat(applicationFormPage.showsFromError()).isTrue();
         assertThat(applicationFormPage.showsToError()).isTrue();
         assertThat(applicationFormPage.showsReasonError()).isTrue();
@@ -269,7 +269,7 @@ class ApplicationForLeaveUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
+        overviewPage.waitForVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         // ensure overtime feature is enabled
@@ -288,7 +288,7 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.showsReason()).isFalse();
 
         applicationFormPage.submitAndWaitForPageRefresh();
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
 
         assertThat(applicationFormPage.showsFromError()).isTrue();
         assertThat(applicationFormPage.showsToError()).isTrue();
@@ -326,19 +326,19 @@ class ApplicationForLeaveUIIT {
         navigationPage.quickAdd.clickPopoverNewApplication();
 
         // default is: half days enabled
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         assertThat(applicationFormPage.showsDayLengthInputs()).isTrue();
 
         navigationPage.goToSettings();
 
-        settingsPage.isVisible();
+        settingsPage.waitForVisible();
         settingsPage.clickDisableHalfDayAbsence();
         settingsPage.submitAndWaitForPageRefresh();
 
         navigationPage.quickAdd.togglePopover();
         navigationPage.quickAdd.clickPopoverNewApplication();
 
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         // we just disabled half days in the settings
         assertThat(applicationFormPage.showsDayLengthInputs()).isFalse();
 
@@ -367,7 +367,7 @@ class ApplicationForLeaveUIIT {
         // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
 
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationFormPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 

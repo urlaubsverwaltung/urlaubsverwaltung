@@ -27,7 +27,7 @@ public class ApplicationFormPage {
         this.page = page;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(VACATION_TYPE_SELECT_SELECTOR);
         page.waitForSelector(FROM_INPUT_SELECTOR);
     }

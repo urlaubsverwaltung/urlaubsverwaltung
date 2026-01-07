@@ -111,7 +111,7 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
+        overviewPage.waitForVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
 
         // Click on a day in the next month
@@ -119,7 +119,7 @@ class OverviewCalendarUIIT {
         overviewPage.clickDay(date);
 
         // Ensure navigation to ApplicationPage
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(date, date);
 
@@ -140,7 +140,7 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
+        overviewPage.waitForVisible();
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
@@ -151,7 +151,7 @@ class OverviewCalendarUIIT {
         overviewPage.clickDay(endDate);
 
         // Ensure navigation to ApplicationPage
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(startDate, endDate);
 

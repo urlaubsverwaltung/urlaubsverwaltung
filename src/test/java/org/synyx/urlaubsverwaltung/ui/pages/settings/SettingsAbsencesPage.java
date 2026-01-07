@@ -17,7 +17,7 @@ public class SettingsAbsencesPage {
         this.page = page;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(DATA_PAGE);
     }
 
