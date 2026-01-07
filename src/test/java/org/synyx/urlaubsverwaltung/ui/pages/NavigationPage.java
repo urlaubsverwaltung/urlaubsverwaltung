@@ -105,8 +105,6 @@ public class NavigationPage {
 
             page.context().clearCookies();
             page.context().clearPermissions();
-            page.evaluate("window.localStorage.clear();");
-            page.evaluate("window.sessionStorage.clear();");
         }
     }
 }
