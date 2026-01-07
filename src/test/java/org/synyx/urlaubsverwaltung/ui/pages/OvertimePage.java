@@ -5,7 +5,6 @@ import com.microsoft.playwright.Page;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class OvertimePage {
 
@@ -21,6 +20,11 @@ public class OvertimePage {
         this.page = page;
     }
 
+    public void waitForVisible() {
+        page.waitForSelector(DUET_START_DATE_SELECTOR);
+        page.waitForSelector(DUET_END_DATE_SELECTOR);
+    }
+
     public void startDate(LocalDate startDate) {
         final String dateString = ofPattern("d.M.yyyy").format(startDate);
         page.locator(DUET_START_DATE_SELECTOR).fill(dateString);
@@ -34,8 +38,11 @@ public class OvertimePage {
         page.locator(MINUTES_SELECTOR).fill(String.valueOf(minutes));
     }
 
-    public void submitAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator(SUBMIT_SELECTOR));
+    /**
+     * Submits the form and does not wait for anything. You have to wait yourself for a condition!
+     */
+    public void submit() {
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean showsEndDate(LocalDate endDate) {

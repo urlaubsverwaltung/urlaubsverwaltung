@@ -23,6 +23,10 @@ public class SickNoteOverviewPage {
         this.messageSource = messageSource;
     }
 
+    public void waitForVisible() {
+        page.waitForSelector(TABLE_SELECTOR);
+    }
+
     public boolean showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
         final String sickDaysText = messageSource.getMessage("sicknotes.daysOverview.sickDays.number", new Object[]{}, locale);
         final String sickDaysAubText = messageSource.getMessage("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate}, locale);

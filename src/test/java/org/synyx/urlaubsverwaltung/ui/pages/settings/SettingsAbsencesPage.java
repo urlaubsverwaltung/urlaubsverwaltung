@@ -2,9 +2,9 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
-
 public class SettingsAbsencesPage {
+
+    public static final String URL = "**/web/settings/absences";
 
     private static final String DATA_PAGE = "main[data-page='settings-absences']";
 
@@ -26,7 +26,9 @@ public class SettingsAbsencesPage {
     }
 
     public void submitAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator(SAVE_BUTTON_SELECTOR).first());
+        page.locator(SAVE_BUTTON_SELECTOR).first().click();
+        // success and validation errors both show an alert box
+        page.waitForSelector(".feedback");
     }
 
     public void clickDisableHalfDayAbsence() {

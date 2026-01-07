@@ -12,8 +12,6 @@ import static java.lang.String.format;
 
 public class OverviewPage {
 
-    private static final String DATA_PAGE = "main[data-page='overview']";
-
     private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -24,13 +22,9 @@ public class OverviewPage {
         this.locale = locale;
     }
 
-    public void waitForVisible() {
-        page.waitForSelector(DATA_PAGE);
-    }
-
-    public boolean isVisibleForPerson(String username, int year) {
+    public void waitForVisibleWithPerson(String username, int year) {
         final String titleText = messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
-        return page.title().contains(titleText);
+        page.waitForCondition(() -> page.title().contains(titleText));
     }
 
     public void selectDateRange(LocalDate startDate, LocalDate endDate) {

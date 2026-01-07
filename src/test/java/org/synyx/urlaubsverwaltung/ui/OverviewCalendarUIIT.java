@@ -48,7 +48,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.util.Locale.GERMAN;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -111,8 +110,7 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.waitForVisible();
-        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
+        overviewPage.waitForVisibleWithPerson(officePerson.getNiceName(), FIXED_DATE.getYear());
 
         // Click on a day in the next month
         final LocalDate date = LocalDate.of(2022, 3, 15);
@@ -140,8 +138,7 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.waitForVisible();
-        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
+        overviewPage.waitForVisibleWithPerson(officePerson.getNiceName(), FIXED_DATE.getYear());
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
         final LocalDate startDate = LocalDate.of(2022, 3, 8);

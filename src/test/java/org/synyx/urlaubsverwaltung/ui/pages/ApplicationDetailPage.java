@@ -7,8 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
-
 public class ApplicationDetailPage {
 
     private static final String DATA_PAGE = "main[data-page='application-detail']";
@@ -36,13 +34,16 @@ public class ApplicationDetailPage {
         return page.getByText(text).isVisible();
     }
 
-    public boolean showsReplacement(Person person) {
-        final Locator element = page.locator("[data-test-id=holiday-replacement-list]");
-        return element.textContent().contains(person.getNiceName());
+    public Locator replacementLocator(Person person) {
+        final Page.LocatorOptions hasText = new Page.LocatorOptions().setHasText(person.getNiceName());
+        return page.locator("[data-test-id=holiday-replacement-list]", hasText);
     }
 
-    public void selectEdit() {
-        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=application-edit-button]"));
+    /**
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickEdit() {
+        page.locator("[data-test-id=application-edit-button]").click();
     }
 
     private String title(String username) {

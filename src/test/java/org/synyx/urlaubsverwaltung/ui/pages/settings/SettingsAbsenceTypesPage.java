@@ -6,7 +6,6 @@ import com.microsoft.playwright.Page;
 import java.util.Locale;
 
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SettingsAbsenceTypesPage {
 
@@ -42,7 +41,10 @@ public class SettingsAbsenceTypesPage {
         return absenceTypeLocator.locator("[data-test-id=vacation-type-active]");
     }
 
-    public void submitCustomAbsenceTypesAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=submit-custom-absence-types-button]"));
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void submitCustomAbsenceTypes() {
+        page.locator("[data-test-id=submit-custom-absence-types-button]").click();
     }
 }

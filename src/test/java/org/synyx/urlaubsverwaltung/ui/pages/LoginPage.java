@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
-
 public class LoginPage {
 
     private static final String USERNAME_SELECTOR = "#username";
@@ -19,7 +17,8 @@ public class LoginPage {
     }
 
     /**
-     * Fills the login form with the given credentials, submits the login form and waits for page refresh.
+     * Fills the login form with the given credentials and submits the login form.<br />
+     * This method does not wait for navigation! Ensure this yourself afterward.
      *
      * @param credentials username and password
      */
@@ -27,10 +26,9 @@ public class LoginPage {
 
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
-        page.waitForSelector(USERNAME_SELECTOR).fill(credentials.username());
-        page.waitForSelector(PASSWORD_SELECTOR).fill(credentials.password());
-
-        clickAndWaitForPageRefresh(page, page.locator(SUBMIT_SELECTOR));
+        page.locator(USERNAME_SELECTOR).fill(credentials.username());
+        page.locator(PASSWORD_SELECTOR).fill(credentials.password());
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public record Credentials(String username, String password) {

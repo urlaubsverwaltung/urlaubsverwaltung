@@ -6,7 +6,6 @@ import com.microsoft.playwright.Page;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SickNoteFormPage {
 
@@ -36,6 +35,11 @@ public class SickNoteFormPage {
         this.page = page;
     }
 
+    public void waitForVisible() {
+        page.waitForSelector(FROM_SELECTOR);
+        page.waitForSelector(TO_SELECTOR);
+    }
+
     public void startDate(LocalDate startDate) {
         setDate(startDate, FROM_SELECTOR);
     }
@@ -52,8 +56,11 @@ public class SickNoteFormPage {
         setDate(aubStartDate, AUB_FROM_SELECTOR);
     }
 
-    public void submitAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator(SUBMIT_SELECTOR));
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void submit() {
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean dayTypeFullSelected() {

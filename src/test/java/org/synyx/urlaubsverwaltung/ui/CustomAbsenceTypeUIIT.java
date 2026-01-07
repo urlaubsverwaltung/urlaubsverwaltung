@@ -89,29 +89,29 @@ class CustomAbsenceTypeUIIT {
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        navigationPage.goToSettings();
-        settingsPage.navigation().goToAbsenceTypes();
+        navigationPage.clickSettings();
+        settingsPage.navigation().clickAbsenceTypes();
         settingsAbsenceTypesPage.addNewVacationType();
 
         // ensure at least one translation required error hint
-        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
         assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).isVisible();
 
         // ensure saving valid vacation type succeeds
         settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
-        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
         assertThat(settingsAbsenceTypesPage.vacationTypeMissingTranslationError(settingsAbsenceTypesPage.lastVacationType())).not().isVisible();
 
         // enable vacation type to ensure selecting it later creating a new application for leave
         final Locator status = settingsAbsenceTypesPage.vacationTypeStatusCheckbox(settingsAbsenceTypesPage.lastVacationType());
         assertThat(status).not().isChecked();
         status.check();
-        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
 
         // ensure unique vacation type name error hint
         settingsAbsenceTypesPage.addNewVacationType();
         settingsAbsenceTypesPage.setVacationTypeLabel(settingsAbsenceTypesPage.lastVacationType(), GERMAN, "Biertag");
-        settingsAbsenceTypesPage.submitCustomAbsenceTypesAndWaitForPageRefresh();
+        settingsAbsenceTypesPage.submitCustomAbsenceTypes();
         assertThat(settingsAbsenceTypesPage.vacationTypeUniqueTranslationError(settingsAbsenceTypesPage.lastVacationType(), GERMAN)).isVisible();
 
         // ensure vacation type is selectable creating a new application for leave

@@ -5,10 +5,13 @@ import org.springframework.context.MessageSource;
 
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class SickNoteDetailPage {
+
+    public static final Pattern SICKNOTE_DETAIL_URL_ANY_PATTERN = Pattern.compile(".+/web/sicknote/\\d+");
 
     private static final String PERSON_SELECTOR = "[data-test-id=sicknote-person]";
     private static final String TYPE_SELECTOR = "[data-test-id=sicknote-type]";
@@ -23,6 +26,11 @@ public class SickNoteDetailPage {
         this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
+    }
+
+    public void waitForVisible() {
+        page.waitForSelector(PERSON_SELECTOR);
+        page.waitForSelector(TYPE_SELECTOR);
     }
 
     public boolean showsSickNoteForPerson(String name) {

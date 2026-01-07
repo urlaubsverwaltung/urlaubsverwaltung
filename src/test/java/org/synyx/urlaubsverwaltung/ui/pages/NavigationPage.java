@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
 public class NavigationPage {
 
@@ -24,17 +24,17 @@ public class NavigationPage {
     }
 
     /**
-     * Clicks sick-notes link and waits for page refresh.
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
      */
-    public void goToSickNotes() {
-        clickAndWaitForPageRefresh(page, page.locator(SICK_NOTES_SELECTOR));
+    public void clickSickNotes() {
+        page.locator(SICK_NOTES_SELECTOR).click();
     }
 
     /**
-     * Clicks settings link and waits for page refresh.
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
      */
-    public void goToSettings() {
-        clickAndWaitForPageRefresh(page, page.locator(SETTINGS_SELECTOR));
+    public void clickSettings() {
+        page.locator(SETTINGS_SELECTOR).click();
     }
 
     public static class QuickAdd {
@@ -51,6 +51,18 @@ public class NavigationPage {
         }
 
         /**
+         * If the user is only allowed to create new applications, then there is no popover button, but only this link.
+         *
+         * <p>
+         * see {@link QuickAdd#togglePopover()} to open the popover element and click a navigation link afterward.
+         */
+        public void clickCreateNewApplication() {
+            // UV can be configured, so that a user can only create new applications.
+            // in this case there is no "quick-add" menu, but a simple link to create the new
+            page.locator(PLAIN_APPLICATION_SELECTOR).click();
+        }
+
+        /**
          * The user can open a popover menu when there are multiple options
          * (e.g. create new application or a new sick-note).
          *
@@ -58,28 +70,30 @@ public class NavigationPage {
          * This element is NOT available when sick-note feature is disabled, for instance.
          */
         public void togglePopover() {
+            // JavaScript is required currently to open the popover -> wait for fetched assets
+            page.waitForLoadState(DOMCONTENTLOADED);
             page.locator(BUTTON_SELECTOR).click();
         }
 
         /**
-         * If the user is only allowed to create new applications, then there is no popover button, but only this link.
+         * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
          */
-        public void clickCreateNewApplication() {
-            // UV can be configured, so that a user can only create new applications.
-            // in this case there is no "quick-add" menu, but a simple link to create the new
-            clickAndWaitForPageRefresh(page, page.locator(PLAIN_APPLICATION_SELECTOR));
-        }
-
         public void clickPopoverNewApplication() {
-            clickAndWaitForPageRefresh(page, page.locator(APPLICATION_SELECTOR));
+            page.locator(APPLICATION_SELECTOR).click();
         }
 
+        /**
+         * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+         */
         public void clickPopoverNewOvertime() {
-            clickAndWaitForPageRefresh(page, page.locator(OVERTIME_SELECTOR));
+            page.locator(OVERTIME_SELECTOR).click();
         }
 
+        /**
+         * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+         */
         public void clickPopoverNewSickNote() {
-            clickAndWaitForPageRefresh(page, page.locator(SICKNOTE_SELECTOR));
+            page.locator(SICKNOTE_SELECTOR).click();
         }
     }
 
@@ -90,12 +104,13 @@ public class NavigationPage {
 
         void logout() {
 
+            page.waitForLoadState(DOMCONTENTLOADED);
             page.locator(AVATAR_SELECTOR).click();
 
             // do not wait for page refresh, this doesn't work on CI with webkit (timeout...)
-            // however, this should not be an issue since a logout requires a login to interact with UV,
+            // however, this should not be an issue since a logout requires a new login to interact with UV again,
             // which explicitly navigates to the login page.
-            page.waitForSelector(LOGOUT_SELECTOR).click();
+            page.locator(LOGOUT_SELECTOR).click();
 
             page.context().clearCookies();
             page.context().clearPermissions();

@@ -8,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import static java.lang.System.lineSeparator;
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
 
 public class SickNoteExtensionPage {
 
@@ -48,8 +47,10 @@ public class SickNoteExtensionPage {
             .replaceAll("\\s{2,}", " ")
             .contains("%s %s %s %s".formatted(startLabel, startValue, nextEndLabel, nextEndValue));
     }
-
-    public void submitAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=extension-submit-button]"));
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void submit() {
+        page.locator("[data-test-id=extension-submit-button]").click();
     }
 }

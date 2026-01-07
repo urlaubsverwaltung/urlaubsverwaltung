@@ -2,9 +2,9 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
-import static org.synyx.urlaubsverwaltung.ui.pages.UvPage.clickAndWaitForPageRefresh;
-
 public class SettingsWorkingTimePage {
+
+    public static final String URL = "/web/settings/overtime";
 
     private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
     private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
@@ -23,7 +23,10 @@ public class SettingsWorkingTimePage {
         page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
-    public void submitOvertimeFormAndWaitForPageRefresh() {
-        clickAndWaitForPageRefresh(page, page.locator("[data-test-id=submit-overtime-button]"));
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void submit() {
+        page.locator("[data-test-id=submit-overtime-button]").click();
     }
 }
