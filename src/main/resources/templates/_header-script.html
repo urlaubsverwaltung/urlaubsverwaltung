@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Header Script</title>
+  </head>
+  <body>
+    <th:block th:ref="script">
+      <th:block th:if="${not #strings.isEmpty(headerScriptContent)}" th:utext="${headerScriptContent}"></th:block>
+    </th:block>
+  </body>
+</html>
