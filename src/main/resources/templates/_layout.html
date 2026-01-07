@@ -123,6 +123,7 @@
     <th:block th:replace="${scriptsDefer}"></th:block>
     <th:block th:replace="${prefetchOrPrerender}"></th:block>
     <th:block th:replace="${additional}"></th:block>
+    <th:block th:replace="~{_header-script::script}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">
     <div th:replace="~{_info-banner::banner}"></div>
