@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -110,7 +111,8 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.waitForVisibleWithPerson(officePerson.getNiceName(), FIXED_DATE.getYear());
+        page.waitForURL(OverviewPage.URL_PATTERN);
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Click on a day in the next month
         final LocalDate date = LocalDate.of(2022, 3, 15);
@@ -138,7 +140,8 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.waitForVisibleWithPerson(officePerson.getNiceName(), FIXED_DATE.getYear());
+        page.waitForURL(OverviewPage.URL_PATTERN);
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
         final LocalDate startDate = LocalDate.of(2022, 3, 8);
