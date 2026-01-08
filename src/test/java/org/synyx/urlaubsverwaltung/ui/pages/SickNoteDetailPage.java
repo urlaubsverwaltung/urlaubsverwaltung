@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import java.time.LocalDate;
 import java.util.Locale;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class SickNoteDetailPage {
@@ -25,41 +26,45 @@ public class SickNoteDetailPage {
         this.locale = locale;
     }
 
-    public boolean showsSickNoteForPerson(String name) {
+    public void waitForVisible() {
+        page.waitForSelector(PERSON_SELECTOR);
+        page.waitForSelector(TYPE_SELECTOR);
+    }
+
+    public void showsSickNoteForPerson(String name) {
         final String typeText = messageSource.getMessage("application.data.sicknotetype.sicknote", new Object[]{}, locale);
-
-        return page.locator(PERSON_SELECTOR).textContent().contains(name)
-            && page.locator(TYPE_SELECTOR).textContent().contains(typeText);
+        assertThat(page.locator(PERSON_SELECTOR)).containsText(name);
+        assertThat(page.locator(TYPE_SELECTOR)).hasText(typeText);
     }
 
-    public boolean showsChildSickNoteForPerson(String name) {
+    public void showsChildSickNoteForPerson(String name) {
         final String typeText = messageSource.getMessage("application.data.sicknotetype.sicknotechild", new Object[]{}, locale);
-        return page.locator(PERSON_SELECTOR).textContent().contains(name)
-            && page.locator(TYPE_SELECTOR).textContent().contains(typeText);
+        assertThat(page.locator(PERSON_SELECTOR)).containsText(name);
+        assertThat(page.locator(TYPE_SELECTOR)).hasText(typeText);
     }
 
-    public boolean showsSickNoteDateFrom(LocalDate dateFrom) {
+    public void showsSickNoteDateFrom(LocalDate dateFrom) {
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(dateFrom);
-        return page.locator(DATE_SELECTOR).textContent().contains(expectedDateString);
+        assertThat(page.locator(DATE_SELECTOR)).containsText(expectedDateString);
     }
 
-    public boolean showsSickNoteDateTo(LocalDate dateTo) {
+    public void showsSickNoteDateTo(LocalDate dateTo) {
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(dateTo);
-        return page.locator(DATE_SELECTOR).textContent().contains(expectedDateString);
+        assertThat(page.locator(DATE_SELECTOR)).containsText(expectedDateString);
     }
 
-    public boolean showsSickNoteAubDateFrom(LocalDate aubDateFrom) {
+    public void showsSickNoteAubDateFrom(LocalDate aubDateFrom) {
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(aubDateFrom);
-        return page.locator(AUB_DATE_SELECTOR).textContent().contains(expectedDateString);
+        assertThat(page.locator(AUB_DATE_SELECTOR)).containsText(expectedDateString);
     }
 
-    public boolean showsSickNoteAubDateTo(LocalDate aubDateTo) {
+    public void showsSickNoteAubDateTo(LocalDate aubDateTo) {
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(aubDateTo);
-        return page.locator(AUB_DATE_SELECTOR).textContent().contains(expectedDateString);
+        assertThat(page.locator(AUB_DATE_SELECTOR)).containsText(expectedDateString);
     }
 
-    public boolean showsNoIncapacityCertificate() {
+    public void showsNoIncapacityCertificate() {
         final String notPresentText = messageSource.getMessage("sicknote.data.aub.notPresent", new Object[]{}, locale);
-        return page.locator(AUB_DATE_SELECTOR).textContent().contains(notPresentText);
+        assertThat(page.locator(AUB_DATE_SELECTOR)).hasText(notPresentText);
     }
 }

@@ -4,6 +4,7 @@ import com.microsoft.playwright.Page;
 
 import java.time.LocalDate;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class OvertimePage {
@@ -20,26 +21,33 @@ public class OvertimePage {
         this.page = page;
     }
 
-    public void startDate(LocalDate startDate) {
+    public void waitForVisible() {
+        page.waitForSelector(DUET_START_DATE_SELECTOR);
+        page.waitForSelector(DUET_END_DATE_SELECTOR);
+    }
+
+    public void setStartDate(LocalDate startDate) {
         final String dateString = ofPattern("d.M.yyyy").format(startDate);
         page.locator(DUET_START_DATE_SELECTOR).fill(dateString);
     }
 
-    public void hours(int hours) {
+    public void setHours(int hours) {
         page.locator(HOURS_SELECTOR).fill(String.valueOf(hours));
     }
 
-    public void minutes(int minutes) {
+    public void setMinutes(int minutes) {
         page.locator(MINUTES_SELECTOR).fill(String.valueOf(minutes));
     }
 
+    /**
+     * Submits the form and does not wait for anything. You have to wait yourself for a condition!
+     */
     public void submit() {
         page.locator(SUBMIT_SELECTOR).click();
     }
 
-    public boolean showsEndDate(LocalDate endDate) {
-        final String value = page.locator(DUET_END_DATE_SELECTOR).inputValue();
+    public void showsEndDate(LocalDate endDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(endDate);
-        return value.equals(expectedDateString);
+        assertThat(page.locator(DUET_END_DATE_SELECTOR)).hasValue(expectedDateString);
     }
 }

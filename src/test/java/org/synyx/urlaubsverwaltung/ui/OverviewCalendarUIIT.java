@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -48,7 +49,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.util.Locale.GERMAN;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -111,19 +111,18 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
-        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
+        page.waitForURL(OverviewPage.URL_PATTERN);
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Click on a day in the next month
         final LocalDate date = LocalDate.of(2022, 3, 15);
         overviewPage.clickDay(date);
 
         // Ensure navigation to ApplicationPage
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(date, date);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
@@ -141,8 +140,8 @@ class OverviewCalendarUIIT {
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        overviewPage.isVisible();
-        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), FIXED_DATE.getYear())).isTrue();
+        page.waitForURL(OverviewPage.URL_PATTERN);
+        assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), FIXED_DATE.getYear()));
 
         // Select a range of 3 days (Tuesday to Thursday) in the next month
         final LocalDate startDate = LocalDate.of(2022, 3, 8);
@@ -152,11 +151,10 @@ class OverviewCalendarUIIT {
         overviewPage.clickDay(endDate);
 
         // Ensure navigation to ApplicationPage
-        applicationFormPage.isVisible();
+        applicationFormPage.waitForVisible();
         //... with correct dates
         applicationFormPage.assertDatesAreSelected(startDate, endDate);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 

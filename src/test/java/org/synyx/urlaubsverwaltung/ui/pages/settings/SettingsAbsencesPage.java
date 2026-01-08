@@ -4,6 +4,8 @@ import com.microsoft.playwright.Page;
 
 public class SettingsAbsencesPage {
 
+    public static final String URL = "**/web/settings/absences";
+
     private static final String DATA_PAGE = "main[data-page='settings-absences']";
 
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
@@ -15,7 +17,7 @@ public class SettingsAbsencesPage {
         this.page = page;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(DATA_PAGE);
     }
 
@@ -23,11 +25,10 @@ public class SettingsAbsencesPage {
         return new SettingsSubNavigation(page);
     }
 
-    /**
-     * Submits the setting form and waits for dom-content loaded.
-     */
-    public void saveSettings() {
+    public void submitAndWaitForPageRefresh() {
         page.locator(SAVE_BUTTON_SELECTOR).first().click();
+        // success and validation errors both show an alert box
+        page.waitForSelector(".feedback");
     }
 
     public void clickDisableHalfDayAbsence() {

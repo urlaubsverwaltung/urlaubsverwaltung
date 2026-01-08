@@ -4,6 +4,8 @@ import com.microsoft.playwright.Page;
 
 public class SettingsWorkingTimePage {
 
+    public static final String URL = "/web/settings/overtime";
+
     private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
     private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
 
@@ -22,9 +24,9 @@ public class SettingsWorkingTimePage {
     }
 
     /**
-     * Submits the overtime form and waits for dom-content loaded.
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */
-    public void submitOvertimeForm() {
+    public void submit() {
         page.locator("[data-test-id=submit-overtime-button]").click();
     }
 }

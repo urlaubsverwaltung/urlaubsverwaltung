@@ -44,7 +44,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -91,21 +90,22 @@ class OvertimeUIIT {
 
         navigationPage.clickSettings();
 
-        settingsPage.navigation().goToOvertime();
+        settingsPage.navigation().clickOvertime();
         settingsWorkingTimePage.enableOvertime();
-        settingsWorkingTimePage.submitOvertimeForm();
+        settingsWorkingTimePage.submit();
+        page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newOvertime();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewOvertime();
+        overtimePage.waitForVisible();
 
         final int currentYear = LocalDate.now().getYear();
 
-        overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
-        page.context().waitForCondition(() -> overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23)));
+        overtimePage.setStartDate(LocalDate.of(currentYear, FEBRUARY, 23));
+        overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23));
 
-        overtimePage.hours(1);
-        overtimePage.minutes(90);
+        overtimePage.setHours(1);
+        overtimePage.setMinutes(90);
 
         overtimePage.submit();
 
@@ -114,11 +114,10 @@ class OvertimeUIIT {
         // overtime created info vanishes sometime
         page.context().waitForCondition(() -> !overtimeDetailPage.showsOvertimeCreatedInfo());
 
-        assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
-        assertThat(overtimeDetailPage.showsHours(2)).isTrue();
-        assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
+        overtimeDetailPage.isVisibleForPerson(person.getNiceName());
+        overtimeDetailPage.showsHours(2);
+        overtimeDetailPage.showsMinutes(30);
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 
