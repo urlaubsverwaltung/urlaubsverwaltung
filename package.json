@@ -48,7 +48,6 @@
     "font-awesome": "4.7.0",
     "idiomorph": "0.7.4",
     "jest-fixed-jsdom": "0.0.11",
-    "jquery": "3.7.1",
     "lint-staged": "16.2.7",
     "rimraf": "6.1.2",
     "rollup": "4.55.1",

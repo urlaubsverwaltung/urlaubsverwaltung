@@ -12,10 +12,15 @@
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
-        <div class="feedback">
-          <p th:if="${createSuccess}" th:text="#{person.account.action.create.success}" class="alert alert-success"></p>
-          <p th:if="${updateSuccess}" th:text="#{person.account.action.update.success}" class="alert alert-success"></p>
-        </div>
+        <th:block
+          th:if="${#bools.isTrue(createSuccess) or #bools.isTrue(updateSuccess)}"
+          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+        >
+          <th:block th:ref="feedback-success-body">
+            <p th:if="${createSuccess}" th:text="#{person.account.action.create.success}"></p>
+            <p th:if="${updateSuccess}" th:text="#{person.account.action.update.success}"></p>
+          </th:block>
+        </th:block>
 
         <div class="space-y-12 md:space-y-0 md:grid gap-12 grid-cols-1 md:grid-cols-2">
           <div class="md:col-start-1 md:row-start-1">

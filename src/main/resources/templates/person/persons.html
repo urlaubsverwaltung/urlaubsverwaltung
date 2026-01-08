@@ -16,13 +16,16 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0" data-turbo="true">
-      <div class="feedback">
+      <th:block
+        th:if="${personDeletionSuccess}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+      >
         <p
-          th:if="${personDeletionSuccess}"
+          th:ref="feedback-success-body"
           th:text="#{person.account.action.deletion.success(${personDeletionSuccess})}"
-          class="alert alert-success"
         ></p>
-      </div>
+      </th:block>
+
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})}"
       >

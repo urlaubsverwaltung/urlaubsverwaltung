@@ -13,19 +13,19 @@
     <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
       <h1 class="sr-only" th:text="#{applications.title}">Abwesenheiten</h1>
 
-      <div
-        class="feedback"
+      <th:block
         th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess) or #bools.isTrue(cancelSuccess) or #bools.isTrue(acceptSickNoteSuccess) or #bools.isTrue(cancelSickNoteSuccess)}"
+        th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
       >
-        <div class="alert alert-success">
-          <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
-          <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
-          <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
-          <th:block th:if="${cancelSuccess}" th:text="#{application.action.cancel.success}"></th:block>
-          <th:block th:if="${acceptSickNoteSuccess}" th:text="#{sicknote.action.accept.success}"></th:block>
-          <th:block th:if="${cancelSickNoteSuccess}" th:text="#{sicknote.action.cancel.success}"></th:block>
-        </div>
-      </div>
+        <th:block th:ref="feedback-success-body">
+          <p th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></p>
+          <p th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></p>
+          <p th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></p>
+          <p th:if="${cancelSuccess}" th:text="#{application.action.cancel.success}"></p>
+          <p th:if="${acceptSickNoteSuccess}" th:text="#{sicknote.action.accept.success}"></p>
+          <p th:if="${cancelSickNoteSuccess}" th:text="#{sicknote.action.cancel.success}"></p>
+        </th:block>
+      </th:block>
 
       <div
         th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"

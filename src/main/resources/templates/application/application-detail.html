@@ -53,40 +53,35 @@
           </th:block>
         </div>
 
-        <div class="feedback">
-          <div th:if="${editSuccess}" class="alert alert-success" th:text="#{application.action.apply.edit}"></div>
-          <div th:if="${editError}" class="alert alert-danger" th:text="#{application.error.notEditable}"></div>
-          <div th:if="${applySuccess}" class="alert alert-success" th:text="#{application.action.apply.success}"></div>
-          <div
-            th:if="${remindAlreadySent}"
-            class="alert alert-danger"
-            th:text="#{application.action.remind.error.alreadySent}"
-          ></div>
-          <div
-            th:if="${remindNoWay}"
-            class="alert alert-danger"
-            th:text="#{application.action.remind.error.impatient}"
-          ></div>
-          <div th:if="${remindIsSent}" class="alert alert-success" th:text="#{application.action.remind.success}"></div>
-          <div th:if="${errors != null}" class="alert alert-danger" th:text="#{application.action.reason.error}"></div>
-          <div
-            th:if="${notPrivilegedToApprove}"
-            class="alert alert-danger"
-            th:text="#{application.action.remind.error.notPrivilegedToApprove}"
-          ></div>
-          <div th:if="${allowSuccess}" class="alert alert-success" th:text="#{application.action.allow.success}"></div>
-          <div
-            th:if="${rejectSuccess}"
-            class="alert alert-success"
-            th:text="#{application.action.reject.success}"
-          ></div>
-          <div th:if="${referSuccess}" class="alert alert-success" th:text="#{application.action.refer.success}"></div>
-          <div
-            th:if="${cancelSuccess}"
-            class="alert alert-success"
-            th:text="#{application.action.cancel.success}"
-          ></div>
-        </div>
+        <th:block
+          th:if="${#bools.isTrue(editSuccess) or #bools.isTrue(applySuccess) or #bools.isTrue(remindIsSent) or #bools.isTrue(allowSuccess) or #bools.isTrue(rejectSuccess) or #bools.isTrue(referSuccess) or #bools.isTrue(cancelSuccess)}"
+          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+        >
+          <th:block th:ref="feedback-success-body">
+            <p th:if="${editSuccess}" th:text="#{application.action.apply.edit}"></p>
+            <p th:if="${applySuccess}" th:text="#{application.action.apply.success}"></p>
+            <p th:if="${remindIsSent}" th:text="#{application.action.remind.success}"></p>
+            <p th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></p>
+            <p th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></p>
+            <p th:if="${referSuccess}" th:text="#{application.action.refer.success}"></p>
+            <p th:if="${cancelSuccess}" th:text="#{application.action.cancel.success}"></p>
+          </th:block>
+        </th:block>
+        <th:block
+          th:if="${#bools.isTrue(editError) or #bools.isTrue(remindAlreadySent) or #bools.isTrue(remindNoWay) or #bools.isTrue(notPrivilegedToApprove) or errors != null}"
+          th:insert="~{fragments/feedback-box::feedback-box-error(~{::feedback-error-body})}"
+        >
+          <th:block th:ref="feedback-error-body">
+            <p th:if="${editError}" th:text="#{application.error.notEditable}"></p>
+            <p th:if="${remindAlreadySent}" th:text="#{application.action.remind.error.alreadySent}"></p>
+            <p th:if="${remindNoWay}" th:text="#{application.action.remind.error.impatient}"></p>
+            <p
+              th:if="${notPrivilegedToApprove}"
+              th:text="#{application.action.remind.error.notPrivilegedToApprove}"
+            ></p>
+            <p th:if="${errors != null}" th:text="#{application.action.reason.error}"></p>
+          </th:block>
+        </th:block>
 
         <div class="actions">
           <th:block
