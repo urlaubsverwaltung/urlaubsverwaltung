@@ -5,6 +5,7 @@ import com.microsoft.playwright.Page;
 
 import java.time.LocalDate;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class SickNoteFormPage {
@@ -63,37 +64,39 @@ public class SickNoteFormPage {
         page.locator(SUBMIT_SELECTOR).click();
     }
 
-    public boolean dayTypeFullSelected() {
-        return page.locator(DAY_TYPE_FULL_SELECTOR).isChecked();
+    public void dayTypeFullSelected() {
+        assertThat(page.locator(DAY_TYPE_FULL_SELECTOR)).isChecked();
     }
 
-    public boolean typeSickNoteSelected() {
-        return page.locator(SICKNOTE_TYPE_SELECTOR).inputValue().equals(Type.SICK_NOTE.value);
+    public void typeSickNoteSelected() {
+        assertThat(page.locator(SICKNOTE_TYPE_SELECTOR)).hasValue(Type.SICK_NOTE.value);
     }
 
-    public boolean showsToDate(LocalDate fromDate) {
+    public void showsToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
-        final String value = page.locator(TO_SELECTOR).inputValue();
-        return value.equals(expectedDateString);
+        assertThat(page.locator(TO_SELECTOR)).hasValue(expectedDateString);
     }
 
-    public boolean showsAubToDate(LocalDate fromDate) {
+    public void showsAubToDate(LocalDate fromDate) {
         final String expectedDateString = ofPattern("d.M.yyyy").format(fromDate);
-        final String value = page.locator(AUB_TO_SELECTOR).inputValue();
-        return value.equals(expectedDateString);
+        assertThat(page.locator(AUB_TO_SELECTOR)).hasValue(expectedDateString);
     }
 
     /**
      * Check if the given name matches the selected person.
      *
      * @param name the displayed username
-     * @return <code>true</code> when the given name is the selected element, <code>false</code> otherwise
      */
-    public boolean personSelected(String name) {
+    public void personSelected(String name) {
         final Locator selectElement = page.locator(PERSON_SELECTOR);
+        // read current selected value of <select> (which is the id of the person)
         final String value = (String) selectElement.evaluate("node => node.value");
-        final Locator optionElement = selectElement.locator("option[value=\"" + value + "\"]");
-        return optionElement.textContent().strip().equals(name);
+        // and verify this selected person has the expected name
+        assertThat(selectElement.locator("option[value=\"" + value + "\"]")).hasText(name);
+
+        // note: there could be a race condition, I think?
+        // evaluate reads the current value, which could not match the expected name,
+        // because the value changes eventually to the matching name.
     }
 
     private void setDate(LocalDate date, String selector) {

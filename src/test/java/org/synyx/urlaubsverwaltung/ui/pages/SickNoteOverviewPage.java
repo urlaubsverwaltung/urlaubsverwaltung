@@ -4,10 +4,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.springframework.context.MessageSource;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.function.Predicate;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class SickNoteOverviewPage {
 
@@ -27,63 +26,40 @@ public class SickNoteOverviewPage {
         page.waitForSelector(TABLE_SELECTOR);
     }
 
-    public boolean showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
-        final String sickDaysText = messageSource.getMessage("sicknotes.daysOverview.sickDays.number", new Object[]{}, locale);
-        final String sickDaysAubText = messageSource.getMessage("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate}, locale);
-
-        Predicate<String> hasSickDaysText = text -> text.contains(sickDays + " " + sickDaysText);
-        Predicate<String> hasSickDaysCertificate = text -> text.contains(sickDaysAubText);
-
-        if (daysWithIncapacityCertificate == 0) {
-            hasSickDaysCertificate = Predicate.not(hasSickDaysCertificate);
-        }
-
-        return rowWithPerson(firstName, lastName)
-            .map(Locator::textContent)
-            .map(SickNoteOverviewPage::cleanupTextContent)
-            .filter(hasSickDaysText.and(hasSickDaysCertificate))
-            .isPresent();
+    public void showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
+        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.number");
+        final String sickDaysAubText = msg("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate});
+        showsPersonRow(firstName, lastName, sickDays + " " + sickDaysText, sickDaysAubText, daysWithIncapacityCertificate);
     }
 
-    public boolean showsChildSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
-        final String sickDaysText = messageSource.getMessage("sicknotes.daysOverview.sickDays.child.number", new Object[]{}, locale);
-        final String sickDaysAubText = messageSource.getMessage("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate}, locale);
-
-        Predicate<String> hasSickDaysText = textContent -> textContent.contains(sickDays + " " + sickDaysText);
-        Predicate<String> hasSickDaysCertificate = textContent -> textContent.contains(sickDaysAubText);
-
-        if (daysWithIncapacityCertificate == 0) {
-            hasSickDaysCertificate = Predicate.not(hasSickDaysCertificate);
-        }
-
-        return rowWithPerson(firstName, lastName)
-            .map(Locator::textContent)
-            .map(SickNoteOverviewPage::cleanupTextContent)
-            .filter(hasSickDaysText.and(hasSickDaysCertificate))
-            .isPresent();
+    public void showsChildSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
+        final String sickDaysText = msg("sicknotes.daysOverview.sickDays.child.number");
+        final String sickDaysAubText = msg("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate});
+        showsPersonRow(firstName, lastName, sickDays + " " + sickDaysText, sickDaysAubText, daysWithIncapacityCertificate);
     }
 
-    private static String cleanupTextContent(String text) {
-        // remove new lines from textContent (<br /> are new lines for instance)
-        return text.replaceAll("\\n", "")
-            // remove tabs from textContent (don't know where tabs come from)
-            .replaceAll("\\t", "")
-            // and remove multiple whitespace characters
-            .replaceAll(" {2,}", " ");
+    private String msg(String key) {
+        return msg(key, new Object[]{});
     }
 
-    private Optional<Locator> rowWithPerson(String firstName, String lastName) {
+    private String msg(String key, Object[] args) {
+        return messageSource.getMessage(key, args, locale);
+    }
 
-        final Locator table = page.locator(TABLE_SELECTOR);
-        table.waitFor();
-        final List<Locator> tableRows = table.locator("tr").all();
+    private void showsPersonRow(String firstName, String lastName, String sickDaysText, String aubText, int daysWithIncapacityCertificate) {
 
-        for (Locator tableRow : tableRows) {
-            if (tableRow.textContent().contains(firstName) && tableRow.textContent().contains(lastName)) {
-                return Optional.of(tableRow);
-            }
-        }
+        final Locator personRowLocator = page.locator("tr")
+            // person
+            .filter(new Locator.FilterOptions().setHasText(firstName))
+            .filter(new Locator.FilterOptions().setHasText(lastName))
+            // sick days
+            .filter(new Locator.FilterOptions().setHasText(sickDaysText))
+            // AUB
+            .filter(daysWithIncapacityCertificate == 0
+                ? new Locator.FilterOptions().setHasNotText(aubText)
+                : new Locator.FilterOptions().setHasText(aubText)
+            );
 
-        return Optional.empty();
+        assertThat(page.locator(TABLE_SELECTOR).locator(personRowLocator)).isVisible();
     }
 }

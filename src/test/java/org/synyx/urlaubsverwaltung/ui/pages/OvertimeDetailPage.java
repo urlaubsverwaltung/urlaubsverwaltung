@@ -3,6 +3,10 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import java.util.regex.Pattern;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class OvertimeDetailPage {
 
     private static final String ALERT_SUCCESS_SELECTOR = ".alert-success";
@@ -15,8 +19,8 @@ public class OvertimeDetailPage {
         this.page = page;
     }
 
-    public boolean isVisibleForPerson(String username) {
-        return page.locator(PERSON_SELECTOR).textContent().strip().startsWith(username);
+    public void isVisibleForPerson(String username) {
+        assertThat(page.locator(PERSON_SELECTOR)).containsText(username);
     }
 
     public boolean showsOvertimeCreatedInfo() {
@@ -24,17 +28,17 @@ public class OvertimeDetailPage {
         return element != null && element.isVisible();
     }
 
-    public boolean showsHours(int hours) {
-        final String durationText = page.locator(DURATION_SELECTOR).textContent().strip();
+    public void showsHours(int hours) {
         // this test may be a false positive when the expected hours are the same as the actual minutes of the overtime entry
         // while the overtime entry contains minutes only... improve it when you need it.
-        return durationText.startsWith(hours + " ");
+        final Pattern startsWithHours = Pattern.compile("^%d ".formatted(hours));
+        assertThat(page.locator(DURATION_SELECTOR)).hasText(startsWithHours);
     }
 
-    public boolean showsMinutes(int minutes) {
-        final String durationText = page.locator(DURATION_SELECTOR).textContent().strip();
+    public void showsMinutes(int minutes) {
         // check if the second digit chunk matches the expected minutes
         // this test fails when the overtime entry contains minutes only, of course. improve it when you need it.
-        return durationText.matches(String.format("^\\d+ \\w+\\. %d \\w+\\.", minutes));
+        final Pattern minutesPattern = Pattern.compile("^\\d+ \\w+\\. %d \\w+\\.".formatted(minutes));
+        assertThat(page.locator(DURATION_SELECTOR)).hasText(minutesPattern);
     }
 }
