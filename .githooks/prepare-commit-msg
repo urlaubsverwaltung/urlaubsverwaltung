@@ -7,7 +7,7 @@ if [ -n "$IS_AMEND" ]; then
 fi
 
 # Extract the current branch name
-BRANCH_NAME=$(git symbolic-ref --short HEAD)
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
 # Identify the issue number from the branch name
 ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+')
