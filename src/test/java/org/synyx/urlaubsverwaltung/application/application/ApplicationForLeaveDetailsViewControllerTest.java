@@ -960,6 +960,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -975,6 +976,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -990,6 +992,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -1005,6 +1008,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -1020,6 +1024,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
