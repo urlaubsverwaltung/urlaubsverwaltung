@@ -643,7 +643,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID))
+            .andExpect(flash().attribute("referSuccess", true));
 
         verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
@@ -664,7 +665,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID))
+            .andExpect(flash().attribute("referSuccess", true));
 
         verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
@@ -688,7 +690,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID))
+            .andExpect(flash().attribute("referSuccess", true));
 
         verify(applicationInteractionService).refer(application, departmentHead, signedInPerson);
     }
@@ -735,7 +738,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID))
+            .andExpect(flash().attribute("referSuccess", true));
 
         verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
@@ -758,7 +762,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID))
+            .andExpect(flash().attribute("referSuccess", true));
 
         verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
@@ -960,6 +965,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -975,6 +981,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -990,6 +997,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -1005,6 +1013,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
@@ -1020,6 +1029,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(flash().attribute("cancelSuccess", true))
             .andExpect(status().isFound());
 
         verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());

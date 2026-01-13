@@ -200,11 +200,8 @@ class ApplicationForLeaveUIIT {
         applicationFormPage.submit();
 
         applicationDetailPage.waitForVisible();
-        page.waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
+        applicationDetailPage.showsApplicationCreatedInfo();
         page.waitForCondition(() -> applicationDetailPage.isVisibleForPerson(officePerson.getNiceName()));
-
-        // application created info vanishes sometime
-        page.waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
         assertThat(applicationDetailPage.replacementLocator(batman)).isVisible();
         assertThat(applicationDetailPage.replacementLocator(joker)).isVisible();
@@ -252,9 +249,7 @@ class ApplicationForLeaveUIIT {
         applicationFormPage.reason("some reason text.");
         applicationFormPage.submit();
 
-        page.waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
-        // application created info vanishes sometime
-        page.waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+        applicationDetailPage.showsApplicationCreatedInfo();
 
         navigationPage.logout();
     }
@@ -305,9 +300,7 @@ class ApplicationForLeaveUIIT {
         applicationFormPage.setOvertimeReductionMinutes(30);
         applicationFormPage.submit();
 
-        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
-        // application created info vanishes sometime
-        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+        applicationDetailPage.showsApplicationCreatedInfo();
 
         navigationPage.logout();
     }
@@ -364,11 +357,9 @@ class ApplicationForLeaveUIIT {
         applicationFormPage.setCommentForReplacement(batman, "please be gentle!");
 
         applicationFormPage.submit();
-        page.waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
-        page.waitForCondition(() -> applicationDetailPage.isVisibleForPerson(officePerson.getNiceName()));
 
-        // application created info vanishes sometime
-        page.waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+        applicationDetailPage.showsApplicationCreatedInfo();
+        page.waitForCondition(() -> applicationDetailPage.isVisibleForPerson(officePerson.getNiceName()));
 
         assertThat(applicationDetailPage.replacementLocator(batman)).isVisible();
         assertThat(applicationDetailPage.replacementLocator(joker)).isVisible();

@@ -6,14 +6,18 @@
   <body>
     <th:block th:fragment="save-feedback">
       <div class="uv-form__global-feedback">
-        <div class="feedback">
-          <div
-            th:if="${not #strings.isEmpty(errors)}"
-            th:text="#{settings.action.update.error}"
-            class="alert alert-danger"
-          ></div>
-          <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></div>
-        </div>
+        <th:block
+          th:if="${success}"
+          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+        >
+          <p th:ref="feedback-success-body" th:text="#{settings.action.update.success}"></p>
+        </th:block>
+        <th:block
+          th:if="${not #strings.isEmpty(errors)}"
+          th:insert="~{fragments/feedback-box::feedback-box-error(~{::feedback-error-body})}"
+        >
+          <p th:ref="feedback-error-body" th:text="#{settings.action.update.error}"></p>
+        </th:block>
       </div>
     </th:block>
 
