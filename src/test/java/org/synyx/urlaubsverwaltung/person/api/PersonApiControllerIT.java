@@ -29,6 +29,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.json.JsonCompareMode.STRICT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -346,6 +347,111 @@ class PersonApiControllerIT extends SingleTenantTestContainersBase {
                 .accept(HAL_JSON_VALUE)
         )
             .andExpect(status().isConflict());
+    }
+
+    @Test
+    void ensureDeactivatePersonSuccessfully() throws Exception {
+        final Person activePerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        activePerson.setId(1L);
+        activePerson.setPermissions(List.of(Role.USER));
+
+        final Person deactivatedPerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        deactivatedPerson.setId(1L);
+        deactivatedPerson.setPermissions(List.of(Role.USER, Role.INACTIVE));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(activePerson));
+        when(personService.update(activePerson)).thenReturn(deactivatedPerson);
+
+        perform(
+            put("/api/persons/1/deactivate")
+                .with(oidcLogin().idToken(builder -> builder.subject("office@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                  "id": 1,
+                  "email": "shane@example.org",
+                  "firstName": "shane",
+                  "lastName": "last",
+                  "niceName": "shane last",
+                  "active": false
+                }
+                """, false));
+    }
+
+    @Test
+    void ensureActivatePersonSuccessfully() throws Exception {
+        final Person inactivePerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        inactivePerson.setId(1L);
+        inactivePerson.setPermissions(List.of(Role.USER, Role.INACTIVE));
+
+        final Person activatedPerson = new Person("shane@example.org", "last", "shane", "shane@example.org");
+        activatedPerson.setId(1L);
+        activatedPerson.setPermissions(List.of(Role.USER));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(inactivePerson));
+        when(personService.update(inactivePerson)).thenReturn(activatedPerson);
+
+        perform(
+            put("/api/persons/1/activate")
+                .with(oidcLogin().idToken(builder -> builder.subject("office@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(HAL_JSON_VALUE))
+            .andExpect(content().json("""
+                {
+                  "id": 1,
+                  "email": "shane@example.org",
+                  "firstName": "shane",
+                  "lastName": "last",
+                  "niceName": "shane last",
+                  "active": true
+                }
+                """, false));
+    }
+
+    @Test
+    void ensureDeactivatePersonReturns404WhenPersonNotFound() throws Exception {
+        when(personService.getPersonByID(999L)).thenReturn(Optional.empty());
+
+        perform(
+            put("/api/persons/999/deactivate")
+                .with(oidcLogin().idToken(builder -> builder.subject("office@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void ensureActivatePersonReturns404WhenPersonNotFound() throws Exception {
+        when(personService.getPersonByID(999L)).thenReturn(Optional.empty());
+
+        perform(
+            put("/api/persons/999/activate")
+                .with(oidcLogin().idToken(builder -> builder.subject("office@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void ensureCannotDeactivateLastOfficeUser() throws Exception {
+        final Person officePerson = new Person("office@example.org", "office", "office", "office@example.org");
+        officePerson.setId(1L);
+        officePerson.setPermissions(List.of(Role.USER, Role.OFFICE));
+
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(officePerson));
+        when(personService.numberOfPersonsWithOfficeRoleExcludingPerson(1L)).thenReturn(0);
+
+        perform(
+            put("/api/persons/1/deactivate")
+                .with(oidcLogin().idToken(builder -> builder.subject("office@example.org")).authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+                .accept(HAL_JSON_VALUE)
+        )
+            .andExpect(status().isBadRequest());
     }
 
     public static String asJsonString(final Object obj) {
