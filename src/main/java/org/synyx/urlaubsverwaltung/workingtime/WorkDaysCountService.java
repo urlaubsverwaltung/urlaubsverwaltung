@@ -38,9 +38,10 @@ public class WorkDaysCountService {
      *
      * @param dayLength personal daily working time of the given person
      * @param startDate start day of the period to calculate the working days
-     * @param endDate   last day of the period to calculate the working days
+     * @param endDate   last day of the period to calculate the working days, must be after <code>startDate</code>
      * @param person    to calculate workdays in a certain time period
      * @return number of workdays in a certain time period
+     * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
