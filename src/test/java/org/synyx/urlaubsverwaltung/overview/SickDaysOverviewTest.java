@@ -65,6 +65,49 @@ class SickDaysOverviewTest {
             .containsEntry("TOTAL", workingDays)
             .containsEntry("WITH_AUB", workingDaysAub);
     }
+    @Test
+    void ensureGeneratesCorrectSickDaysOverviewWithSickNoteSpanningMultipleYearsButAubEndsInLastYear() {
+
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1L);
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+        sickNoteType.setMessageKey("Krankmeldung");
+
+        final LocalDate intervalStart = LocalDate.of(2026, 1, 1);
+
+        final LocalDate sickNoteStartDate = LocalDate.of(2025, 12, 29);
+        final LocalDate sickNoteEndDate = LocalDate.of(2026, 1, 9);
+
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .dayLength(FULL)
+            .sickNoteType(sickNoteType)
+            .status(ACTIVE)
+            // extend beyond turn of the year (actually it just has to extend the requested interval below)
+            .startDate(sickNoteStartDate)
+            .endDate(sickNoteEndDate)
+            // aub must end before the start of the requested interval below
+            .aubStartDate(sickNoteStartDate)
+            .aubEndDate(LocalDate.of(2025, 12,  31))
+            .build();
+
+        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
+
+        final BigDecimal sickNoteWorkingDays = BigDecimal.valueOf(42);
+        when(workDaysCountService.getWorkDaysCount(FULL, intervalStart, sickNoteEndDate, person)).thenReturn(sickNoteWorkingDays);
+
+        final LocalDate from = LocalDate.of(2026, 1, 1);
+        final LocalDate to = LocalDate.of(2026, 12, 31);
+        final SickDaysOverview sut = new SickDaysOverview(List.of(sickNote), workDaysCountService, from, to);
+
+        final SickDays actual = sut.getSickDays();
+
+        assertThat(actual.getDays())
+            .containsEntry("TOTAL", sickNoteWorkingDays)
+            .containsEntry("WITH_AUB", BigDecimal.ZERO);
+    }
 
     @Test
     void ensureGeneratesCorrectSickDaysOverview() {

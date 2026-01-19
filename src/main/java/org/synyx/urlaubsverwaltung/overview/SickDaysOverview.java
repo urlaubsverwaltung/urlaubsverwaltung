@@ -62,6 +62,13 @@ public class SickDaysOverview {
         final LocalDate startAUB = max(of((sickNote.getAubStartDate()), from));
         final LocalDate endAUB = min(of((sickNote.getAubEndDate()), to));
 
+        // requested time interval e.g. 1.1.2026 to 31.12.2026
+        // but AUB is not part of this interval (could happen when sick-note extends beyond the turn of the year)
+        boolean aubBeforeRequestedInterval = endAUB.isBefore(startAUB);
+        if (aubBeforeRequestedInterval) {
+            return BigDecimal.ZERO;
+        }
+
         return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startAUB, endAUB, sickNote.getPerson());
     }
 
