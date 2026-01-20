@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.calendar.CalendarAbsence;
 import org.synyx.urlaubsverwaltung.calendar.CalendarAbsenceConfiguration;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteAcceptedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCreatedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteDeletedEvent;
@@ -105,6 +106,12 @@ class CalendarSyncService {
 
     @Async
     @EventListener
+    public void consumeSickNoteAcceptedEvent(SickNoteAcceptedEvent event) {
+        addCalendarEntry(event.sickNote());
+    }
+
+    @Async
+    @EventListener
     public void consumeSickNoteUpdatedEvent(SickNoteUpdatedEvent event) {
         updateCalendarEntry(event.sickNote());
     }
@@ -152,7 +159,7 @@ class CalendarSyncService {
     }
 
     private void updateCalendarEntry(SickNote sickNote) {
-        getAbsenceByIdAndType(sickNote.getId(), VACATION)
+        getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
             .ifPresent(absenceMapping -> calendarProviderService.getCalendarProvider()
                 .ifPresent(calendarProvider -> {
                     final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
