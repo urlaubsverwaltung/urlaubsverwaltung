@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -26,11 +27,15 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 
 @Service
 class CalendarSyncService {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SettingsService settingsService;
     private final CalendarSettingsService calendarSettingsService;
@@ -137,49 +142,102 @@ class CalendarSyncService {
 
     private void addCalendarEntry(Application application) {
         calendarProviderService.getCalendarProvider()
-            .flatMap(calendarProvider -> calendarProvider.add(new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
-            .ifPresent(eventId -> createCalendarEntryMapping(application.getId(), VACATION, eventId));
+            .ifPresentOrElse(
+                calendarProvider -> calendarProvider.add(new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
+                    .ifPresentOrElse(
+                        eventId -> {
+                            createCalendarEntryMapping(application.getId(), VACATION, eventId);
+                            LOG.info("Added calendar entry for application id={}, eventId={}", application.getId(), eventId);
+                        },
+                        () -> LOG.info("Calendar provider returned no eventId for application id={}", application.getId())
+                    ),
+                () -> LOG.info("No calendar provider configured, skipping add for application id={}", application.getId())
+            );
     }
 
     private void addCalendarEntry(SickNote sickNote) {
         calendarProviderService.getCalendarProvider()
-            .flatMap(calendarProvider -> calendarProvider.add(new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings()))
-            .ifPresent(eventId -> createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId));
+            .ifPresentOrElse(
+                calendarProvider -> calendarProvider.add(new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration()), getCalendarSettings())
+                    .ifPresentOrElse(
+                        eventId -> {
+                            createCalendarEntryMapping(sickNote.getId(), SICKNOTE, eventId);
+                            LOG.info("Added calendar entry for sick note id={}, eventId={}", sickNote.getId(), eventId);
+                        },
+                        () -> LOG.info("Calendar provider returned no eventId for sick note id={}", sickNote.getId())
+                    ),
+                () -> LOG.info("No calendar provider configured, skipping add for sick note id={}", sickNote.getId())
+            );
     }
 
     private void updateCalendarEntry(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
-            .ifPresent(absenceMapping ->
-                calendarProviderService.getCalendarProvider()
-                    .ifPresent(calendarProvider -> {
-                        final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
-                        calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
-                    })
+            .ifPresentOrElse(
+                absenceMapping -> calendarProviderService.getCalendarProvider()
+                    .ifPresentOrElse(
+                        calendarProvider -> {
+                            final CalendarAbsence absence = new CalendarAbsence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+                            calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
+                            LOG.info("Updated calendar entry for application id={}, eventId={}", application.getId(), absenceMapping.getEventId());
+                        },
+                        () -> LOG.info("No calendar provider configured, skipping update for application id={}", application.getId())
+                    ),
+                () -> LOG.info("No calendar mapping found for application id={}, skipping update", application.getId())
             );
     }
 
     private void updateCalendarEntry(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
-            .ifPresent(absenceMapping -> calendarProviderService.getCalendarProvider()
-                .ifPresent(calendarProvider -> {
-                    final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
-                    calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
-                })
+            .ifPresentOrElse(
+                absenceMapping -> calendarProviderService.getCalendarProvider()
+                    .ifPresentOrElse(
+                        calendarProvider -> {
+                            final CalendarAbsence absence = new CalendarAbsence(sickNote.getPerson(), sickNote.getPeriod(), getAbsenceTimeConfiguration());
+                            calendarProvider.update(absence, absenceMapping.getEventId(), getCalendarSettings());
+                            LOG.info("Updated calendar entry for sick note id={}, eventId={}", sickNote.getId(), absenceMapping.getEventId());
+                        },
+                        () -> LOG.info("No calendar provider configured, skipping update for sick note id={}", sickNote.getId())
+                    ),
+                () -> LOG.info("No calendar mapping found for sick note id={}, skipping update", sickNote.getId())
             );
     }
 
     private void deleteCalendarEntry(Application application) {
         getAbsenceByIdAndType(application.getId(), VACATION)
-            .flatMap(absenceMapping -> calendarProviderService.getCalendarProvider()
-                .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
-            .ifPresent(absenceMappingRepository::deleteByEventId);
+            .ifPresentOrElse(
+                absenceMapping -> calendarProviderService.getCalendarProvider()
+                    .ifPresentOrElse(
+                        calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())
+                            .ifPresentOrElse(
+                                eventId -> {
+                                    absenceMappingRepository.deleteByEventId(eventId);
+                                    LOG.info("Deleted calendar entry for application id={}, eventId={}", application.getId(), eventId);
+                                },
+                                () -> LOG.info("Calendar provider returned no eventId for delete of application id={}", application.getId())
+                            ),
+                        () -> LOG.info("No calendar provider configured, skipping delete for application id={}", application.getId())
+                    ),
+                () -> LOG.info("No calendar mapping found for application id={}, skipping delete", application.getId())
+            );
     }
 
     private void deleteCalendarEntry(SickNote sickNote) {
         getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
-            .flatMap(absenceMapping -> calendarProviderService.getCalendarProvider()
-                .flatMap(calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())))
-            .ifPresent(absenceMappingRepository::deleteByEventId);
+            .ifPresentOrElse(
+                absenceMapping -> calendarProviderService.getCalendarProvider()
+                    .ifPresentOrElse(
+                        calendarProvider -> calendarProvider.delete(absenceMapping.getEventId(), getCalendarSettings())
+                            .ifPresentOrElse(
+                                eventId -> {
+                                    absenceMappingRepository.deleteByEventId(eventId);
+                                    LOG.info("Deleted calendar entry for sick note id={}, eventId={}", sickNote.getId(), eventId);
+                                },
+                                () -> LOG.info("Calendar provider returned no eventId for delete of sick note id={}", sickNote.getId())
+                            ),
+                        () -> LOG.info("No calendar provider configured, skipping delete for sick note id={}", sickNote.getId())
+                    ),
+                () -> LOG.info("No calendar mapping found for sick note id={}, skipping delete", sickNote.getId())
+            );
     }
 
     void checkCalendarSyncSettings() {
