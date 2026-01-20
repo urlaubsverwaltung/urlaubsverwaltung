@@ -1,5 +1,6 @@
-${AnsiStyle.BOLD}${application.title}
+${AnsiStyle.BOLD}${spring.application.name}
 ${AnsiStyle.NORMAL}${application.version}
+
           ////       ////////       ////
         /::::://////////////////////:::::/
        //::::::////////////////////:::::://

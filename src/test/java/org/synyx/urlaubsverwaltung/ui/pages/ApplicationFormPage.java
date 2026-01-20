@@ -26,7 +26,7 @@ public class ApplicationFormPage {
         this.page = page;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(VACATION_TYPE_SELECT_SELECTOR);
         page.waitForSelector(FROM_INPUT_SELECTOR);
     }
@@ -85,37 +85,51 @@ public class ApplicationFormPage {
         page.locator(":focus").blur();
     }
 
-    /**
-     * DayLength can be enabled/disabled in the settings. This method checks if the input elements are available in the application page.
-     *
-     * @return {@code true} when inputs are visible, {@code false} otherwise.
-     */
-    public boolean showsDayLengthInputs() {
-        return page.locator(DAY_LENGTH_FULL_SELECTOR).isVisible()
-            && page.locator(DAY_LENGTH_MORNING_SELECTOR).isVisible()
-            && page.locator(DAY_LENGTH_NOON_SELECTOR).isVisible();
+    public Locator dayLengthFullLocator() {
+        return page.locator(DAY_LENGTH_FULL_SELECTOR);
+    }
+
+    public Locator dayLengthMorningLocator() {
+        return page.locator(DAY_LENGTH_MORNING_SELECTOR);
+    }
+
+    public Locator dayLengthNoonLocator() {
+        return page.locator(DAY_LENGTH_NOON_SELECTOR);
     }
 
     /**
-     * Checks if the given person is visible at the given position of added replacements.
+     * Waits for the given person to be shown as a replacement at the given position.
      *
-     * @param person   person that should be visible
-     * @param position the position to check against. starts with 1.
-     * @return <code>true</code> if the person is visible at the given position, <code>false</code> otherwise.
+     * @param person replacement person
+     * @param position position
      */
-    public boolean showsAddedReplacementAtPosition(Person person, int position) {
-        return this.showsAddedReplacementAtPosition(person, position, "");
+    public void waitForReplacementAtPosition(Person person, int position) {
+        waitForReplacementAtPosition(person, position, "");
+    }
+
+    /**
+     * Waits for the given person to be shown as a replacement at the given position.
+     *
+     * @param person replacement person
+     * @param position position
+     * @param comment optional comment
+     */
+    public void waitForReplacementAtPosition(Person person, int position, String comment) {
+        page.waitForCondition(() -> this.showsAddedReplacementAtPosition(person, position, comment));
     }
 
     /**
      * Checks if the given person is visible at the given position of added replacements and if it has the given comment.
+     *
+     * <p>
+     * This method does not wait till something will be visible or not. You have to ensure loaded elements upfront!
      *
      * @param person   person that should be visible
      * @param position the position to check against. starts with 1.
      * @param comment  the comment for the replacement
      * @return <code>true</code> if the person is visible at the given position, <code>false</code> otherwise.
      */
-    public boolean showsAddedReplacementAtPosition(Person person, int position, String comment) {
+    private boolean showsAddedReplacementAtPosition(Person person, int position, String comment) {
         if (position < 1) {
             throw new IllegalArgumentException("position must be greater 0.");
         }
@@ -135,40 +149,42 @@ public class ApplicationFormPage {
         final Locator textarea = row.locator("textarea");
         return textarea.inputValue().equals(comment);
     }
-
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
     public void submit() {
         page.locator(SUBMIT_SELECTOR).click();
     }
 
-    public boolean showsFromError() {
-        return page.locator("[data-test-id=from-error]").isVisible();
+    public Locator fromErrorLocator() {
+        return page.locator("[data-test-id=from-error]");
     }
 
-    public boolean showsToError() {
-        return page.locator("[data-test-id=to-error]").isVisible();
+    public Locator toErrorLocator() {
+        return page.locator("[data-test-id=to-error]");
     }
 
-    public boolean showsReason() {
-        return page.locator("[data-test-id=reason]").isVisible();
+    public Locator reasonErrorLocator() {
+        return page.locator("[data-test-id=reason-error]");
     }
 
-    public boolean showsReasonError() {
-        return page.locator("[data-test-id=reason-error]").isVisible();
+    public Locator reasonLocator() {
+        return page.locator("[data-test-id=reason]");
     }
 
-    public boolean showsOvertimeReductionHours() {
-        return page.locator("[data-test-id=overtime-hours]").isVisible();
+    public Locator overtimeHoursLocator() {
+        return page.locator("[data-test-id=overtime-hours]");
     }
 
-    public boolean showsOvertimeReductionHoursError() {
-        return page.locator("[data-test-id=overtime-hours-error]").isVisible();
+    public Locator overtimeHoursErrorLocator() {
+        return page.locator("[data-test-id=overtime-hours-error]");
     }
 
-    public void overtimeReductionHours(double hours) {
+    public void setOvertimeReductionHours(double hours) {
         page.locator("[data-test-id=overtime-hours]").fill(String.valueOf(hours));
     }
 
-    public void overtimeReductionMinutes(int minutes) {
+    public void setOvertimeReductionMinutes(int minutes) {
         page.locator("[data-test-id=overtime-minutes]").fill(String.valueOf(minutes));
     }
 

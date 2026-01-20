@@ -89,18 +89,22 @@
           </th:block>
         </div>
 
-        <div class="feedback">
-          <th:block th:if="${#bools.isTrue(showExtensionCreatedFeedback)}">
-            <p class="alert alert-success" th:text="#{sicknote.extend.submitted.success-info}">
-              Verlängerung der Krankmeldung wurde erfolgreich eingereicht.
-            </p>
-          </th:block>
-          <th:block th:if="${errors != null && errors.hasFieldErrors('text')}">
-            <p class="alert alert-danger" th:text="${#messages.msg(errors.getFieldErrors('text').get(0).getCode())}">
-              error feedback
-            </p>
-          </th:block>
-        </div>
+        <th:block
+          th:if="${#bools.isTrue(showExtensionCreatedFeedback)}"
+          th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
+        >
+          <p th:ref="feedback-success-body" th:text="#{sicknote.extend.submitted.success-info}">
+            Verlängerung der Krankmeldung wurde erfolgreich eingereicht.
+          </p>
+        </th:block>
+        <th:block
+          th:if="${errors != null && errors.hasFieldErrors('text')}"
+          th:insert="~{fragments/feedback-box::feedback-box-error(~{::feedback-error-body})}"
+        >
+          <p th:ref="feedback-error-body" th:text="${#messages.msg(errors.getFieldErrors('text').get(0).getCode())}">
+            error feedback
+          </p>
+        </th:block>
 
         <div class="actions">
           <th:block th:if="${canAcceptSickNote}">

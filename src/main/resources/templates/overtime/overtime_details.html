@@ -11,12 +11,12 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="feedback max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
-        <p
-          th:if="${overtimeRecord != null}"
-          th:text="#{'overtime.feedback.' + ${overtimeRecord}}"
-          class="alert alert-success"
-        ></p>
+      <div th:if="${overtimeRecord != null}" class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+        <th:block th:replace="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}">
+          <th:block th:ref="feedback-success-body">
+            <p th:text="#{'overtime.feedback.' + ${overtimeRecord}}"></p>
+          </th:block>
+        </th:block>
       </div>
 
       <div class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0 lg:grid lg:grid-cols-2 lg:gap-8">
@@ -176,10 +176,6 @@
             th:object="${comment}"
             class="hidden"
           >
-            <div th:if="${#fields.hasGlobalErrors()}" class="feedback">
-              <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
-            </div>
-
             <textarea th:field="*{text}" th:errorclass="error" rows="2"></textarea>
             <div class="flex justify-between mt-2 mb-6">
               <button

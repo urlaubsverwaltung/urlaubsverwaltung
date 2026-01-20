@@ -17,8 +17,11 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  /** @type HTMLElement */
-  const target = event.target;
+  /** @type HTMLButtonElement */
+  const target = event.target.closest("button");
+  if (!target) {
+    return;
+  }
 
   const commandFor = target.getAttribute("commandfor");
   if (commandFor) {
@@ -30,7 +33,14 @@ document.addEventListener("click", function (event) {
       if (command === "show-modal") {
         targetElement.showModal();
       } else if (command === "close") {
-        targetElement.close();
+        if (typeof targetElement.close === "function") {
+          // e.g. dialog or popover
+          targetElement.close();
+        } else {
+          // otherwise, just remove the element.
+          // don't know the impact yet... this may be not so clever?
+          targetElement.remove();
+        }
       }
     }
   }

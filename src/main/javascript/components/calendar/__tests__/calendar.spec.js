@@ -6,7 +6,6 @@
  * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
  */
 
-import { cleanup, setup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
 import fetchMock from "fetch-mock";
 import { parseISO } from "date-fns";
 
@@ -38,11 +37,12 @@ describe("calendar", () => {
     };
   }
 
-  beforeEach(setup);
-  afterEach(cleanup);
-
   beforeAll(() => {
     fetchMock.mockGlobal();
+  });
+
+  afterEach(() => {
+    jest.resetModules();
   });
 
   beforeEach(() => {
@@ -489,11 +489,6 @@ describe("calendar", () => {
 
     document.body.innerHTML = `<div id="datepicker"></div>`;
 
-    // loading calendar.js registers a jQuery ready callback
-    // which will be executed asynchronously
     await import("./../index.js");
-
-    // therefore we have to wait till ready callbacks are invoked
-    return waitForFinishedJQueryReadyCallbacks();
   }
 });

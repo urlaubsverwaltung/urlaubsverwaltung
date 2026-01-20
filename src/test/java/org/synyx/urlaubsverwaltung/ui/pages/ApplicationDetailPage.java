@@ -7,6 +7,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 public class ApplicationDetailPage {
 
     private static final String DATA_PAGE = "main[data-page='application-detail']";
@@ -21,7 +23,7 @@ public class ApplicationDetailPage {
         this.locale = locale;
     }
 
-    public void isVisible() {
+    public void waitForVisible() {
         page.waitForSelector(DATA_PAGE);
     }
 
@@ -29,17 +31,20 @@ public class ApplicationDetailPage {
         return page.title().equals(title(username));
     }
 
-    public boolean showsApplicationCreatedInfo() {
+    public void showsApplicationCreatedInfo() {
         final String text = messageSource.getMessage("application.action.apply.success", new Object[]{}, locale);
-        return page.getByText(text).isVisible();
+        assertThat(page.getByText(text)).isVisible();
     }
 
-    public boolean showsReplacement(Person person) {
-        final Locator element = page.locator("[data-test-id=holiday-replacement-list]");
-        return element.textContent().contains(person.getNiceName());
+    public Locator replacementLocator(Person person) {
+        final Page.LocatorOptions hasText = new Page.LocatorOptions().setHasText(person.getNiceName());
+        return page.locator("[data-test-id=holiday-replacement-list]", hasText);
     }
 
-    public void selectEdit() {
+    /**
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickEdit() {
         page.locator("[data-test-id=application-edit-button]").click();
     }
 

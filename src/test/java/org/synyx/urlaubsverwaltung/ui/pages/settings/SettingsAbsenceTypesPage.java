@@ -42,7 +42,7 @@ public class SettingsAbsenceTypesPage {
     }
 
     /**
-     * Submits the custom-absence-types form and waits for dom-content loaded.
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */
     public void submitCustomAbsenceTypes() {
         page.locator("[data-test-id=submit-custom-absence-types-button]").click();

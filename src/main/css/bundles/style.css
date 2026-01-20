@@ -11,6 +11,7 @@
 @import "../components/dropdown-caret.css" layer(components);
 @import "../components/dropdown-menu.css" layer(components);
 @import "../components/loading.css" layer(components);
+@import "../components/feedback-box.css" layer(components);
 @import "../components/form.css" layer(components);
 @import "../components/icon-link.css" layer(components);
 @import "../components/info-banner.css" layer(components);
@@ -26,7 +27,6 @@
 @import "../components/section-heading.css" layer(components);
 @import "../components/text-bubble.css" layer(components);
 @import "../components/tooltip.css" layer(components);
-@import "../components/ui.timepicker.css" layer(components);
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {

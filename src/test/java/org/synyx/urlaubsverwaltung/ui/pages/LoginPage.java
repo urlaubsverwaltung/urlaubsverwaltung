@@ -16,21 +16,18 @@ public class LoginPage {
         this.port = port;
     }
 
-    public void isVisible() {
-        page.waitForSelector(USERNAME_SELECTOR);
-        page.waitForSelector(PASSWORD_SELECTOR);
-    }
-
     /**
-     * Fills the login form with the given credentials and submits the login form.
+     * Fills the login form with the given credentials and submits the login form.<br />
+     * This method does not wait for navigation! Ensure this yourself afterward.
      *
      * @param credentials username and password
      */
     public void login(Credentials credentials) {
+
         page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
-        this.isVisible();
-        page.fill(USERNAME_SELECTOR, credentials.username);
-        page.fill(PASSWORD_SELECTOR, credentials.password);
+
+        page.locator(USERNAME_SELECTOR).fill(credentials.username());
+        page.locator(PASSWORD_SELECTOR).fill(credentials.password());
         page.locator(SUBMIT_SELECTOR).click();
     }
 

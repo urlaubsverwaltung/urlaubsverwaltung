@@ -1,0 +1,23 @@
+.uv-feedback-box {
+  /* property name is also referenced in javascript */
+  /* there might be a visible layout shift... please have a look at this increasing the duration */
+  --uv-feedback-transition-duration: 300ms;
+
+  opacity: 1;
+  overflow-y: clip;
+  transition: all ease-out var(--uv-feedback-transition-duration);
+
+  /* no animation of displaying the element */
+  /* since we would have to handle an already visible element (dynamic rendering after ajax call) */
+  /* @starting-style { } */
+
+  &.uv-feedback-box--fade-out {
+    opacity: 0;
+    max-height: 0;
+    /* margin, padding and border are defined by .alert */
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-color: transparent;
+  }
+}

@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.ui.pages.settings;
 
 import com.microsoft.playwright.Page;
 
-import java.util.regex.Pattern;
-
 /**
  * Represents the sub navigation of the {@link SettingsAbsencesPage}
  */
@@ -18,12 +16,17 @@ public class SettingsSubNavigation {
         this.page = page;
     }
 
-    public void goToOvertime() {
+    /**
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickOvertime() {
         page.locator(OVERTIME_TAB_SELECTOR).click();
     }
 
-    public void goToAbsenceTypes() {
+    /**
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickAbsenceTypes() {
         page.locator(ABSENCE_TYPES_TAB_SELECTOR).click();
-        page.waitForURL(Pattern.compile("/settings/absence-types$"));
     }
 }

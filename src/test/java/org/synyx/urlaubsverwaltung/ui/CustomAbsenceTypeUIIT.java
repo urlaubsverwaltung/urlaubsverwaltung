@@ -90,7 +90,7 @@ class CustomAbsenceTypeUIIT {
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
-        settingsPage.navigation().goToAbsenceTypes();
+        settingsPage.navigation().clickAbsenceTypes();
         settingsAbsenceTypesPage.addNewVacationType();
 
         // ensure at least one translation required error hint
@@ -115,14 +115,13 @@ class CustomAbsenceTypeUIIT {
         assertThat(settingsAbsenceTypesPage.vacationTypeUniqueTranslationError(settingsAbsenceTypesPage.lastVacationType(), GERMAN)).isVisible();
 
         // ensure vacation type is selectable creating a new application for leave
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
-        applicationFormPage.isVisible();
+        navigationPage.quickAdd.togglePopover();
+        navigationPage.quickAdd.clickPopoverNewApplication();
+        applicationFormPage.waitForVisible();
 
         // this throws when the name cannot be found
         applicationFormPage.selectVacationTypeOfName("Biertag");
 
-        navigationPage.isVisible();
         navigationPage.logout();
     }
 

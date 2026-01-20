@@ -331,6 +331,9 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         } else {
             applicationInteractionService.directCancel(application, signedInUser, Optional.ofNullable(comment.getText()));
         }
+
+        redirectAttributes.addFlashAttribute("cancelSuccess", true);
+
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 

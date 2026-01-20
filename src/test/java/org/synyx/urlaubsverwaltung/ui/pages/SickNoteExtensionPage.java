@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.springframework.context.MessageSource;
 
@@ -7,7 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static java.lang.System.lineSeparator;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class SickNoteExtensionPage {
 
@@ -31,23 +32,23 @@ public class SickNoteExtensionPage {
 
     public void setCustomNextEndDate(LocalDate nextEndDate) {
         final String nextEndDateValue = DATE_FORMATTER.format(nextEndDate);
+        // this only works for initialised datepicker (fails with native date input element)
         page.locator("[data-test-id=sicknote-custom-next-end-date-input]").fill(nextEndDateValue);
     }
 
-    public boolean showsExtensionPreview(LocalDate startDate, LocalDate nextEndDate) {
+    public void showsExtensionPreview(LocalDate startDate, LocalDate nextEndDate) {
 
         final String startLabel = messageSource.getMessage("sicknote.extend.preview.new.start.label", null, locale);
         final String startValue = DATE_FULL_FORMATTER.withLocale(locale).format(startDate);
         final String nextEndLabel = messageSource.getMessage("sicknote.extend.preview.new.end.label", null, locale);
         final String nextEndValue = DATE_FULL_FORMATTER.withLocale(locale).format(nextEndDate);
 
-        return page.locator("[data-test-id=sick-note-extension-next-preview]")
-            .textContent()
-            .replaceAll(lineSeparator(), "")
-            .replaceAll("\\s{2,}", " ")
-            .contains("%s %s %s %s".formatted(startLabel, startValue, nextEndLabel, nextEndValue));
+        final Locator locator = page.locator("[data-test-id=sick-note-extension-next-preview]");
+        assertThat(locator).containsText("%s %s %s %s".formatted(startLabel, startValue, nextEndLabel, nextEndValue));
     }
-
+    /**
+     * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
+     */
     public void submit() {
         page.locator("[data-test-id=extension-submit-button]").click();
     }

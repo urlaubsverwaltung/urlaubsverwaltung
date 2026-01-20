@@ -5,7 +5,7 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>5.33.0-SNAPSHOT</version>
+  <version>5.35.0-SNAPSHOT</version>
 
   <name>Urlaubsverwaltung</name>
 
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>3.0.0</version>
+      <version>3.0.1</version>
     </dependency>
 
     <!-- SESSION -->
@@ -137,7 +137,7 @@
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-provider-jdbc-template</artifactId>
-      <version>7.4.0</version>
+      <version>7.5.0</version>
     </dependency>
 
     <!-- MAIL -->
@@ -162,12 +162,12 @@
     <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>jollyday-core</artifactId>
-      <version>1.8.0</version>
+      <version>1.8.1</version>
     </dependency>
     <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>jollyday-jaxb</artifactId>
-      <version>1.8.0</version>
+      <version>1.8.1</version>
     </dependency>
 
     <!-- DEVELOPMENT -->
@@ -186,7 +186,7 @@
     <dependency>
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
-      <version>4.2.2</version>
+      <version>4.2.3</version>
     </dependency>
 
     <!-- GOOGLE CALENDAR SYNC -->
@@ -227,7 +227,7 @@
     <dependency>
       <groupId>com.github.dasniko</groupId>
       <artifactId>testcontainers-keycloak</artifactId>
-      <version>4.0.1</version>
+      <version>4.1.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -313,6 +313,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <addResources>true</addResources>
           <layout>ZIP</layout>
           <image>
             <name>
@@ -329,6 +330,13 @@
             </publishRegistry>
           </docker>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- Frontend assets -->
@@ -337,8 +345,8 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>2.0.0</version>
         <configuration>
-          <nodeVersion>v24.11.0</nodeVersion>
-          <npmVersion>11.6.1</npmVersion>
+          <nodeVersion>v24.13.0</nodeVersion>
+          <npmVersion>11.6.2</npmVersion>
         </configuration>
         <executions>
           <!-- Install node/npm binary to run npm/node scripts-->

@@ -7,12 +7,13 @@ import org.springframework.context.MessageSource;
 
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
 public class OverviewPage {
 
-    private static final String DATA_PAGE = "main[data-page='overview']";
+    public static final Pattern URL_PATTERN = Pattern.compile("/web/person/\\d+/overview");
 
     private final Page page;
     private final MessageSource messageSource;
@@ -24,13 +25,8 @@ public class OverviewPage {
         this.locale = locale;
     }
 
-    public void isVisible() {
-        page.waitForSelector(DATA_PAGE);
-    }
-
-    public boolean isVisibleForPerson(String username, int year) {
-        final String titleText = messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
-        return page.title().contains(titleText);
+    public String getExpectedPageTitle(String username, int year) {
+        return messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
     }
 
     public void selectDateRange(LocalDate startDate, LocalDate endDate) {

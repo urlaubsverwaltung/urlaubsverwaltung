@@ -141,13 +141,16 @@
                     th:data-iso-value="${applicationForLeaveForm.startDateIsoValue}"
                   />
                   <input
-                    id="startTime"
-                    name="startTime"
+                    type="time"
                     class="w-1/3"
+                    th:field="*{startTime}"
                     th:errorclass="error"
                     th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
                     autocomplete="off"
                   />
+                  <datalist>
+                    <option>00:00</option>
+                  </datalist>
                 </div>
                 <p class="uv-form__input-error" th:if="${#fields.hasErrors('startDate')}" data-test-id="from-error">
                   <th:block th:errors="*{startDate}">startDate Error</th:block>
@@ -172,9 +175,9 @@
                     th:data-iso-value="${applicationForLeaveForm.endDateIsoValue}"
                   />
                   <input
-                    id="endTime"
-                    name="endTime"
+                    type="time"
                     class="w-1/3"
+                    th:field="*{endTime}"
                     th:errorclass="error"
                     th:placeholder="#{pattern.time} + ' ' + #{application.data.time.placeholder}"
                     autocomplete="off"
