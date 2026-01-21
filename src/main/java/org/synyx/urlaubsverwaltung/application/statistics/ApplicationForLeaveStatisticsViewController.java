@@ -121,9 +121,9 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
-        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
+        final Page<ApplicationForLeaveStatistics> personsPage =
+            getStatisticsForPageable(pageable, query, signedInUser, period, false);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).toList();
@@ -178,12 +178,9 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
-        final String adaptedQuery = allElements ? "" : query;
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
-
-        final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
+        final Page<ApplicationForLeaveStatistics> statisticsPage = getStatisticsForPageable(pageable, query, signedInUser, period, allElements);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
+
         final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, locale, statistics);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -191,6 +188,22 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.fileName(), UTF_8).build());
 
         return ResponseEntity.status(OK).headers(headers).body(csvFile.resource());
+    }
+
+    private Page<ApplicationForLeaveStatistics> getStatisticsForPageable(Pageable pageable, String query, Person signedInUser, FilterPeriod period, boolean allElements) {
+
+        final String adaptedQuery = allElements ? "" : query;
+        final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
+
+        // sorting by persons AND statistics is not supported by the UI. either person OR statistics.
+        // PersonPageRequest is only paged, when the original pageable contains sorting info
+        if (personPageRequest.isPaged()) {
+            final PersonPageRequest request = allElements ? PersonPageRequest.of(0, MAX_VALUE, personPageRequest.getSort()) : personPageRequest;
+            return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery);
+        } else {
+            final Pageable request = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
+            return applicationForLeaveStatisticsService.getStatistics(signedInUser, period, new PageableSearchQuery(request, adaptedQuery));
+        }
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {

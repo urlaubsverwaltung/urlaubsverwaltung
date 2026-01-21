@@ -74,7 +74,8 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
     }
 
     /**
-     * Constructor for test purpose only (since not typed...).
+     * Constructor for test purpose only (since not typed...).<br />
+     * Real world scenario uses {@link PersonPageRequest#ofApiPageable(Pageable)}.
      *
      * @param pageNumber zero-based page number, must not be negative.
      * @param pageSize the size of the page to be returned, must be greater than 0.
