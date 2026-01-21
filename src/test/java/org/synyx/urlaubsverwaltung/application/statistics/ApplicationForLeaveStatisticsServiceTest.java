@@ -12,6 +12,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -304,15 +307,20 @@ class ApplicationForLeaveStatisticsServiceTest {
             anyPerson.setId(2L);
             anyPerson.setPermissions(List.of(USER));
 
-            // TODO this is actually wrong! the sut search sorts by statistics, persons must be fetched to the absence entity result set
-            when(personService.getActivePersons(PersonPageRequest.of(0, 10), ""))
+            when(personService.getActivePersons(any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
                 .thenReturn(new PageImpl<>(List.of(anyPerson)));
 
             final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
             final List<VacationType<?>> vacationTypes = List.of(vacationType);
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-            when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes))
+            // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
+            final List<Application> applications = List.of(new Application());
+
+            when(applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(startDate, endDate, vacationTypes, ""))
+                .thenReturn(applications);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes, applications))
                 .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, vacationTypes)));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
@@ -344,8 +352,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             departmentMemberTwo.setPermissions(List.of(USER));
             departmentMemberTwo.setFirstName("Bernd");
 
-            // TODO this is actually wrong! the sut search sorts by statistics, persons must be fetched to the absence entity result set
-            when(departmentService.getManagedMembersOfPerson(departmentManagement, PersonPageRequest.of(0, 10), ""))
+            when(departmentService.getManagedMembersOfPerson(eq(departmentManagement), any(PersonPageRequest.PersonPageRequestUnpaged.class), eq("")))
                 // note different sorting of persons to requested statistics sorting
                 // departmentMember must be second in the expected result
                 .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));
@@ -360,7 +367,13 @@ class ApplicationForLeaveStatisticsServiceTest {
             final ApplicationForLeaveStatistics statistics2 = new ApplicationForLeaveStatistics(departmentMemberTwo, vacationTypes);
             statistics2.setLeftVacationDaysForYear(BigDecimal.ZERO);
 
-            when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes))
+            // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
+            final List<Application> applications = List.of(new Application());
+
+            when(applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(startDate, endDate, vacationTypes, ""))
+                .thenReturn(applications);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes, applications))
                 .thenReturn(Map.of(
                     departmentMember, statistics1,
                     departmentMemberTwo, statistics2
