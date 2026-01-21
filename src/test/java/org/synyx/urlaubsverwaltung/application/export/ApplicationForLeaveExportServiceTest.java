@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -76,10 +77,8 @@ class ApplicationForLeaveExportServiceTest {
         final List<Person> personsForExport = List.of(user);
         final PersonId userId = new PersonId(user.getId());
 
-        final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.unsorted());
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(personPageRequest, "");
-
-        when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(personsForExport));
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
+        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
@@ -93,7 +92,8 @@ class ApplicationForLeaveExportServiceTest {
 
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
 
-        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, personSearchQuery);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
+        final Page<ApplicationForLeaveExport> export = sut.getAll(person, from, to, pageableSearchQuery);
 
         assertThat(export.getContent()).hasSize(1);
 
@@ -121,10 +121,9 @@ class ApplicationForLeaveExportServiceTest {
         final PersonId departmentMemberId = new PersonId(departmentMember.getId());
         final List<Person> personsForExport = List.of(departmentMember);
 
-        final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.unsorted());
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(personPageRequest, "");
-
-        when(departmentService.getManagedMembersOfPerson(person, personSearchQuery)).thenReturn(new PageImpl<>(List.of(departmentMember)));
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        when(departmentService.getManagedMembersOfPerson(person, personPageRequest, ""))
+            .thenReturn(new PageImpl<>(List.of(departmentMember)));
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
@@ -138,6 +137,7 @@ class ApplicationForLeaveExportServiceTest {
 
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(departmentMemberId, List.of("department")));
 
+        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
         final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 31), personSearchQuery);
 
         final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().get(0);
@@ -155,11 +155,11 @@ class ApplicationForLeaveExportServiceTest {
         person.setId(1L);
         person.setPermissions(List.of(USER));
 
-        final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.unsorted());
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(personPageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.unsorted());
+        when(departmentService.getManagedMembersOfPerson(person, personPageRequest, ""))
+            .thenReturn(new PageImpl<>(List.of()));
 
-        when(departmentService.getManagedMembersOfPerson(person, personSearchQuery)).thenReturn(new PageImpl<>(List.of()));
-
+        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
         final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 31), personSearchQuery);
 
         verifyNoMoreInteractions(departmentService);
@@ -183,13 +183,8 @@ class ApplicationForLeaveExportServiceTest {
         final List<Person> personsForExport = List.of(user);
         final PersonId userId = new PersonId(user.getId());
 
-        final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
-        final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
-
-        final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "firstName");
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(personPageRequest, "");
-
-        when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(personsForExport));
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
+        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
@@ -202,6 +197,9 @@ class ApplicationForLeaveExportServiceTest {
         when(personBasedataService.getBasedataByPersonId(List.of(user.getId()))).thenReturn(Map.of(userId, personBasedata));
 
         when(departmentService.getDepartmentNamesByMembers(personsForExport)).thenReturn(Map.of(userId, List.of("department")));
+
+        final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
+        final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
 
         final Page<ApplicationForLeaveExport> export = sut.getAll(office, from, to, exportSearchQuery);
 
@@ -233,10 +231,9 @@ class ApplicationForLeaveExportServiceTest {
         final PageRequest exportPageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "totalAllowedVacationDays");
         final PageableSearchQuery exportSearchQuery = new PageableSearchQuery(exportPageRequest, "");
 
-        final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.unsorted());
-        final PageableSearchQuery personSearchQuery = new PageableSearchQuery(personPageRequest, "");
-
-        when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(personsForExport));
+        // TODO this is actually wrong! the sut search sorts by statistics, persons must be fetched to the absence entity result set
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        when(personService.getActivePersons(personPageRequest, "")).thenReturn(new PageImpl<>(personsForExport));
 
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);

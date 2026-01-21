@@ -1,17 +1,17 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -24,11 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
 class ApplicationForLeaveStatisticsService {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final PersonBasedataService personBasedataService;
@@ -58,7 +62,9 @@ class ApplicationForLeaveStatisticsService {
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
     Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
+
         final Pageable pageable = pageableSearchQuery.getPageable();
+
         final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
         final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).toList();
@@ -89,43 +95,25 @@ class ApplicationForLeaveStatisticsService {
     }
 
     private Page<Person> getAllRelevantPersons(Person person, PageableSearchQuery pageableSearchQuery) {
-        final Pageable pageable = pageableSearchQuery.getPageable();
-        final boolean sortByPerson = isSortByPersonAttribute(pageable);
 
-        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            final PageableSearchQuery query = sortByPerson
-                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
-                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
+        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
 
-            return personService.getActivePersons(query);
+        // this has been / is a bug, we don't want to fix right now...
+        // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
+        if (pageRequest.isUnpaged()) {
+            LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
+            final Pageable pageable = pageableSearchQuery.getPageable();
+            pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
+
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
+            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
         }
 
         if (person.isDepartmentPrivileged()) {
-            final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
-            return departmentService.getManagedMembersOfPerson(person, query);
+            return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
         }
 
-        return new PageImpl<>(List.of(person), pageable, 1);
-    }
-
-    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
-        Sort personSort = Sort.unsorted();
-
-        for (Sort.Order order : statisticsPageRequest.getSort()) {
-            if (order.getProperty().startsWith("person.")) {
-                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace("person.", "")));
-            }
-        }
-
-        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
-    }
-
-    private boolean isSortByPersonAttribute(Pageable pageable) {
-        for (Sort.Order order : pageable.getSort()) {
-            if (!order.getProperty().startsWith("person.")) {
-                return false;
-            }
-        }
-        return true;
+        return new PageImpl<>(List.of(person), pageableSearchQuery.getPageable(), 1);
     }
 }
