@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.pageable;
 
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -17,22 +18,26 @@ class PageableConfiguration implements WebMvcConfigurer {
     private final UserPaginationSettingsSupplier userPaginationSettingsSupplier;
     private final PersonService personService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final DataWebProperties dataWebProperties;
 
     PageableConfiguration(
         SortHandlerMethodArgumentResolver sortResolver,
         UserPaginationSettingsSupplier userPaginationSettingsSupplier,
-        PersonService personService, ApplicationEventPublisher applicationEventPublisher
+        PersonService personService,
+        ApplicationEventPublisher applicationEventPublisher,
+        DataWebProperties dataWebProperties
     ) {
         this.sortResolver = sortResolver;
         this.userPaginationSettingsSupplier = userPaginationSettingsSupplier;
         this.personService = personService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.dataWebProperties = dataWebProperties;
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new PageableUserAwareArgumentResolver(
-            sortResolver, userPaginationSettingsSupplier, personService, applicationEventPublisher
+            sortResolver, userPaginationSettingsSupplier, personService, applicationEventPublisher, dataWebProperties
         ));
     }
 }
