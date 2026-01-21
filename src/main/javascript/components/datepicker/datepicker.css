@@ -156,7 +156,7 @@ duet-date-picker[disabled] input {
 }
 
 .duet-date__day.datepicker-day-today {
-  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
   @apply shadow-cyan-600;
   @apply dark:shadow-sky-400;
 }
@@ -180,13 +180,13 @@ duet-date-picker[disabled] input {
 }
 
 .duet-date__day:hover:before,
-.duet-date__day.is-today::before {
+.duet-date__day.datepicker-day-today::before {
   border-radius: 0;
 }
 
 /* override @duetds styling to not hide the absence-bars */
 .duet-date__day:hover:before,
-.duet-date__day.is-today::before {
+.duet-date__day.datepicker-day-today::before {
   opacity: 1; /* would be nearly opaque */
   top: auto; /* absence-bar should be shown at the bottom */
 }
