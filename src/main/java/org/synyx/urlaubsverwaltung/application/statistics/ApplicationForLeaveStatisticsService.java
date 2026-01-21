@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -70,15 +69,15 @@ class ApplicationForLeaveStatisticsService {
      * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
      * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
      *
-     * @param person              person to restrict the returned page content
-     * @param period              filter result set for a given period of time
-     * @param pageableSearchQuery the page request
+     * @param person             person to restrict the returned page content
+     * @param period             filter result set for a given period of time
+     * @param statisticsPageable the page request
+     * @param query              optional query to filter for person firstname for instance
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
-    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
+    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
 
-        final Pageable pageable = pageableSearchQuery.getPageable();
-        final String query = pageableSearchQuery.getQuery();
+        final Pageable pageable = statisticsPageable.toPageable();
 
         // TODO this is actually wrong! statistics is relevant for pagination, not person.
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable, query);

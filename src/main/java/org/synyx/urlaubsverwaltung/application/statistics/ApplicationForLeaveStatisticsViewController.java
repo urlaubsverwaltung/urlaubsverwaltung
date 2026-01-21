@@ -8,7 +8,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -28,7 +27,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -89,7 +87,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
     @GetMapping
     public String applicationForLeaveStatistics(
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
@@ -162,7 +160,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
     @GetMapping(value = "/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
@@ -200,10 +198,13 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         if (personPageRequest.isPaged()) {
             final PersonPageRequest request = allElements ? PersonPageRequest.of(0, MAX_VALUE, personPageRequest.getSort()) : personPageRequest;
             return applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, period, request, adaptedQuery);
-        } else {
-            final Pageable request = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
-            return applicationForLeaveStatisticsService.getStatistics(signedInUser, period, new PageableSearchQuery(request, adaptedQuery));
         }
+
+        final ApplicationForLeaveStatisticsPageRequest request = allElements
+            ? ApplicationForLeaveStatisticsPageRequest.of(0, MAX_VALUE, pageable.getSort())
+            : ApplicationForLeaveStatisticsPageRequest.of(pageable);
+
+        return applicationForLeaveStatisticsService.getStatistics(signedInUser, period, request, adaptedQuery);
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {
@@ -220,17 +221,20 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             PersonSortProperty.LAST_NAME.key()
         );
 
+        final List<String> sortableStatisticsProperties = List.of(
+            ApplicationForLeaveStatisticsSortProperty.TOTAL_ALLOWED_VACATION_DAYS_KEY,
+            ApplicationForLeaveStatisticsSortProperty.TOTAL_WAITING_VACATION_DAYS_KEY,
+            ApplicationForLeaveStatisticsSortProperty.LEFT_VACATION_DAYS_FOR_PERIOD_KEY,
+            ApplicationForLeaveStatisticsSortProperty.LEFT_VACATION_DAYS_FOR_YEAR_KEY
+        );
+
         final List<HtmlOptionDto> personOptions = sortOptionGroupDto(PersonPageRequest.PERSON_PREFIX, sortablePersonProperties, originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
 
-        final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(List.of("totalAllowedVacationDays", "totalWaitingVacationDays", "leftVacationDaysForPeriod", "leftVacationDaysForYear"), originalPersonSort);
+        final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(ApplicationForLeaveStatisticsPageRequest.STATISTICS_PREFIX, sortableStatisticsProperties, originalPersonSort);
         final HtmlOptgroupDto statisticsOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.statistics.label", statisticsOptions);
 
         return new HtmlSelectDto(List.of(personOptgroup, statisticsOptgroup));
-    }
-
-    private static List<HtmlOptionDto> sortOptionGroupDto(List<String> properties, Sort sort) {
-        return sortOptionGroupDto("", properties, sort);
     }
 
     private static List<HtmlOptionDto> sortOptionGroupDto(String propertyPrefix, List<String> properties, Sort sort) {
