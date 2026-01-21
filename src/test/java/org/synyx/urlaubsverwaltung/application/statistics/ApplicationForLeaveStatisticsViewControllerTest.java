@@ -319,7 +319,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -385,7 +385,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

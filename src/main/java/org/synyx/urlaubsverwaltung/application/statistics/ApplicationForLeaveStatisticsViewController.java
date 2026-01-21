@@ -204,7 +204,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             ? ApplicationForLeaveStatisticsPageRequest.of(0, MAX_VALUE, pageable.getSort())
             : ApplicationForLeaveStatisticsPageRequest.of(pageable);
 
-        return applicationForLeaveStatisticsService.getStatistics(signedInUser, period, request, adaptedQuery);
+        return applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(signedInUser, period, request, adaptedQuery);
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {

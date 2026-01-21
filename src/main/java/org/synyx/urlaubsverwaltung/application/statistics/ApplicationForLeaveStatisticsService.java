@@ -62,7 +62,7 @@ class ApplicationForLeaveStatisticsService {
      */
     Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query) {
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, personPageable, query);
-        return getStatistics(filterPeriod, relevantPersonsPage, personPageable);
+        return getStatisticsSortedByStatistics(filterPeriod, relevantPersonsPage, personPageable);
     }
 
     /**
@@ -75,17 +75,17 @@ class ApplicationForLeaveStatisticsService {
      * @param query              optional query to filter for person firstname for instance
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
-    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
+    Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
 
         final Pageable pageable = statisticsPageable.toPageable();
 
         // TODO this is actually wrong! statistics is relevant for pagination, not person.
         final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable, query);
 
-        return getStatistics(period, relevantPersonsPage, pageable);
+        return getStatisticsSortedByStatistics(period, relevantPersonsPage, pageable);
     }
 
-    private Page<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period, Page<Person> relevantPersonsPage, Pageable originalPageable) {
+    private Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(FilterPeriod period, Page<Person> relevantPersonsPage, Pageable originalPageable) {
 
         final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).toList();
