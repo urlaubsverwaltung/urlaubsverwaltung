@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.slf4j.Logger;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -21,17 +22,13 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
 class ApplicationForLeaveStatisticsService {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final PersonBasedataService personBasedataService;
@@ -61,8 +58,14 @@ class ApplicationForLeaveStatisticsService {
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
     Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query) {
-        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, personPageable, query);
-        return getStatisticsSortedByStatistics(filterPeriod, relevantPersonsPage, personPageable);
+
+        final Page<Person> personPage = getAllRelevantPersons(person, personPageable, query);
+        final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
+
+        final Iterable<ApplicationForLeaveStatistics> statistics = getStatisticsSortedByStatistics(filterPeriod, personPage.getContent(), vacationTypes, null);
+        final List<ApplicationForLeaveStatistics> content = StreamSupport.stream(statistics.spliterator(), false).toList();
+
+        return new PageImpl<>(content, personPageable.toPageable(), personPage.getTotalElements());
     }
 
     /**
@@ -78,55 +81,45 @@ class ApplicationForLeaveStatisticsService {
     Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(Person person, FilterPeriod period, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
 
         final Pageable pageable = statisticsPageable.toPageable();
+        final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
 
-        // TODO this is actually wrong! statistics is relevant for pagination, not person.
-        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable, query);
+        final List<Application> allApplications = applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(period.startDate(), period.endDate(), vacationTypes, query);
 
-        return getStatisticsSortedByStatistics(period, relevantPersonsPage, pageable);
+        // fetch all allowed persons, there may be persons without applications
+        final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query).getContent();
+
+        final Collection<ApplicationForLeaveStatistics> allStatistics =
+            getStatisticsSortedByStatistics(period, persons, vacationTypes, allApplications);
+
+        final List<ApplicationForLeaveStatistics> paginatedStatistics = allStatistics.stream()
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .toList();
+
+        return new PageImpl<>(paginatedStatistics, pageable, allStatistics.size());
     }
 
-    private Page<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(FilterPeriod period, Page<Person> relevantPersonsPage, Pageable originalPageable) {
+    private Collection<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(FilterPeriod period, List<Person> persons, List<VacationType<?>> vacationTypes, @Nullable List<Application> applications) {
 
-        final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).toList();
+        final List<Long> personIdValues = persons.stream().map(Person::getId).toList();
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
-        final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
-            .build(relevantPersonsPage.getContent(), period.startDate(), period.endDate(), activeVacationTypes).values();
+        final Collection<ApplicationForLeaveStatistics> statisticsCollection;
+        if (applications != null) {
+            statisticsCollection = applicationForLeaveStatisticsBuilder
+                .build(persons, period.startDate(), period.endDate(), vacationTypes, applications).values();
+        } else {
+            statisticsCollection = applicationForLeaveStatisticsBuilder
+                .build(persons, period.startDate(), period.endDate(), vacationTypes).values();
+        }
 
         statisticsCollection.forEach(statistics -> {
             final PersonId personId = statistics.getPerson().getIdAsPersonId();
             statistics.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
         });
 
-        Stream<ApplicationForLeaveStatistics> statisticsStream = statisticsCollection.stream();
-        if (relevantPersonsPage.getPageable().isUnpaged()) {
-            // we don't have to restrict the statistics if persons page is paged and or sorted already.
-            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
-            statisticsStream = statisticsStream
-                .skip((long) originalPageable.getPageNumber() * originalPageable.getPageSize())
-                .limit(originalPageable.getPageSize());
-        }
-
-        final List<ApplicationForLeaveStatistics> content = statisticsStream
-            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, originalPageable.getSort()))
-            .toList();
-
-        return new PageImpl<>(content, originalPageable, relevantPersonsPage.getTotalElements());
-    }
-
-    private Page<Person> getAllRelevantPersons(Person person, Pageable pageable, String query) {
-
-        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageable);
-
-        // this has been / is a bug, we don't want to fix right now...
-        // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
-        if (pageRequest.isUnpaged()) {
-            LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
-            pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        }
-
-        return getAllRelevantPersons(person, pageRequest, query);
+        return statisticsCollection;
     }
 
     private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {

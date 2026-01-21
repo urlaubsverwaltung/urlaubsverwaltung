@@ -26,6 +26,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
@@ -74,6 +75,13 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses) {
         return toApplication(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, statuses));
+    }
+
+    @Override
+    public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<ApplicationStatus> statuses, List<VacationType<?>> vacationTypes, String personQuery) {
+        final String query = hasText(personQuery) ? personQuery : "";
+        final List<Long> vacationTypeIds = vacationTypes.stream().map(VacationType::getId).toList();
+        return toApplication(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(startDate, endDate, statuses, vacationTypeIds, query));
     }
 
     @Override
