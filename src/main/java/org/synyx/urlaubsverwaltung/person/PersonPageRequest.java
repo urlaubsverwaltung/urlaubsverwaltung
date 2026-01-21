@@ -17,7 +17,7 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     public static final String PERSON_PREFIX = "person.";
-    public static final String DEFAULT_PERSON_SORT = PERSON_PREFIX + PersonSortProperty.FIRST_NAME_KEY;
+    public static final String DEFAULT_PERSON_SORT_KEY = PERSON_PREFIX + PersonSortProperty.FIRST_NAME_KEY;
 
     private final Sort personSort;
 

@@ -67,7 +67,7 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Locale locale
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);

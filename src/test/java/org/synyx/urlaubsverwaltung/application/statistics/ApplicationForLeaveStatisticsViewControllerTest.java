@@ -28,7 +28,6 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -319,9 +318,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, expectedSortProperty));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -386,9 +384,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

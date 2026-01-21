@@ -98,7 +98,7 @@ public class PersonsViewController implements HasLaunchpad {
         @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
         final int currentYear = Year.now(clock).getValue();

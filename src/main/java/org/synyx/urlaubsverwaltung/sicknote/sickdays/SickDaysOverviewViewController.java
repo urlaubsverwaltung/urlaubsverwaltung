@@ -74,7 +74,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT, direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
     ) {
