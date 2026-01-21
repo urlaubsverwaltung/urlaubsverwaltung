@@ -53,6 +53,20 @@ class ApplicationForLeaveStatisticsService {
     }
 
     /**
+     * Get the matching page sorted by given person criteria.
+     *
+     * @param person person to restrict the returned page content
+     * @param filterPeriod filter result set for a given period of time
+     * @param personPageable person pageable criteria
+     * @param query optional person query, to search for firstname for instance
+     * @return filtered page of {@link ApplicationForLeaveStatistics}
+     */
+    Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query) {
+        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, personPageable, query);
+        return getStatistics(filterPeriod, relevantPersonsPage, personPageable);
+    }
+
+    /**
      * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
      * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
      *
@@ -64,9 +78,17 @@ class ApplicationForLeaveStatisticsService {
     Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
 
         final Pageable pageable = pageableSearchQuery.getPageable();
+        final String query = pageableSearchQuery.getQuery();
+
+        // TODO this is actually wrong! statistics is relevant for pagination, not person.
+        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable, query);
+
+        return getStatistics(period, relevantPersonsPage, pageable);
+    }
+
+    private Page<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period, Page<Person> relevantPersonsPage, Pageable originalPageable) {
 
         final List<VacationType<?>> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
         final List<Long> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).toList();
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
@@ -83,37 +105,41 @@ class ApplicationForLeaveStatisticsService {
             // we don't have to restrict the statistics if persons page is paged and or sorted already.
             // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
             statisticsStream = statisticsStream
-                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-                .limit(pageable.getPageSize());
+                .skip((long) originalPageable.getPageNumber() * originalPageable.getPageSize())
+                .limit(originalPageable.getPageSize());
         }
 
         final List<ApplicationForLeaveStatistics> content = statisticsStream
-            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, originalPageable.getSort()))
             .toList();
 
-        return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
+        return new PageImpl<>(content, originalPageable, relevantPersonsPage.getTotalElements());
     }
 
-    private Page<Person> getAllRelevantPersons(Person person, PageableSearchQuery pageableSearchQuery) {
+    private Page<Person> getAllRelevantPersons(Person person, Pageable pageable, String query) {
 
-        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
+        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageable);
 
         // this has been / is a bug, we don't want to fix right now...
         // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
         if (pageRequest.isUnpaged()) {
             LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
-            final Pageable pageable = pageableSearchQuery.getPageable();
             pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         }
 
+        return getAllRelevantPersons(person, pageRequest, query);
+    }
+
+    private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {
+
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
+            return personService.getActivePersons(pageRequest, query);
         }
 
         if (person.isDepartmentPrivileged()) {
-            return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
+            return departmentService.getManagedMembersOfPerson(person, pageRequest, query);
         }
 
-        return new PageImpl<>(List.of(person), pageableSearchQuery.getPageable(), 1);
+        return new PageImpl<>(List.of(person), pageRequest.toPageable(), 1);
     }
 }
