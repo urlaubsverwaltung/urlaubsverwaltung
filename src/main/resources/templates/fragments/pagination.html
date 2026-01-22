@@ -6,7 +6,7 @@
   </head>
   <body>
     <nav
-      th:fragment="pagination(pagination, label, turboFrame)"
+      th:fragment="pagination(pagination, label, turboFrame, testIdPrefix)"
       th:with="page=${pagination.page}"
       th:aria-label="${label}"
     >
@@ -18,6 +18,7 @@
             class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-previous'}"
           >
             <svg th:replace="~{icon/chevron-left::svg(className='w-6 h-6')}"></svg>
             <span class="sr-only" th:text="#{pagination.page.previous}"></span>
@@ -33,6 +34,7 @@
             th:aria-label="#{pagination.page('1')}"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-0'}"
           >
             1
           </a>
@@ -52,6 +54,7 @@
               th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
               th:data-turbo-frame="${turboFrame}"
               data-turbo-action="advance"
+              th:data-test-id="${testIdPrefix + '-page-button-' + (pageNumber - 1)}"
             >
               2
             </a>
@@ -71,6 +74,7 @@
             th:aria-label="#{pagination.page.last(${page.totalPages})}"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-' + (page.totalPages - 1)}"
           >
             3
           </a>
@@ -82,6 +86,7 @@
             class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-next'}"
           >
             <span class="sr-only" th:text="#{pagination.page.next}"></span>
             <svg th:replace="~{icon/chevron-right::svg(className='w-6 h-6')}"></svg>
@@ -91,8 +96,8 @@
     </nav>
 
     <select
-      th:fragment="default-size-select(id, size, autosubmit)"
-      th:replace="~{fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit})}"
+      th:fragment="default-size-select(id, size, autosubmit, testIdPrefix)"
+      th:replace="~{fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit}, testId=${testIdPrefix + '-page-size'})}"
     >
       <th:block th:ref="pagination-size-options">
         <option th:if="${size < 10}" th:value="${size}" th:selected="${size < 10}" th:text="${size}">4</option>
