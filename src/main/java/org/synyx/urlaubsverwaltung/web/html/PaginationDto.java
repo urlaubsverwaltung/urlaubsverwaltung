@@ -8,19 +8,22 @@ public class PaginationDto<T> {
 
     private final Page<T> page;
     private final String pageLinkPrefix;
+    private final boolean oneIndexed;
 
-    public PaginationDto(Page<T> page, String pageLinkPrefix) {
+    public PaginationDto(Page<T> page, String pageLinkPrefix, boolean oneIndexed) {
         this.page = page;
         this.pageLinkPrefix = pageLinkPrefix;
+        this.oneIndexed = oneIndexed;
     }
 
     public Page<T> getPage() {
         return page;
     }
 
-    public String hrefForPage(int pageNumber) {
+    public String hrefForPage(int pageNumberZeroBased) {
+        final int page = oneIndexed ? pageNumberZeroBased + 1 : pageNumberZeroBased;
         // TODO "page" is configurable in application properties with `spring.data.web.pageable.page-parameter=page`
-        return pageLinkPrefix + "&page=" + pageNumber;
+        return pageLinkPrefix + "&page=" + page;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -66,19 +67,21 @@ public class PersonsViewController implements HasLaunchpad {
     private final VacationDaysService vacationDaysService;
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
+    private final DataWebProperties dataWebProperties;
     private final Clock clock;
 
     @Autowired
     public PersonsViewController(
         PersonService personService, AccountService accountService,
         VacationDaysService vacationDaysService, DepartmentService departmentService,
-        PersonBasedataService personBasedataService, Clock clock
+        PersonBasedataService personBasedataService, DataWebProperties dataWebProperties, Clock clock
     ) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
+        this.dataWebProperties = dataWebProperties;
         this.clock = clock;
     }
 
@@ -92,6 +95,7 @@ public class PersonsViewController implements HasLaunchpad {
         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
+        final boolean isPaginationOneIndexed = dataWebProperties.getPageable().isOneIndexedParameters();
 
         final int currentYear = Year.now(clock).getValue();
         final Integer selectedYear = requestedYear.orElse(currentYear);
@@ -152,9 +156,9 @@ public class PersonsViewController implements HasLaunchpad {
         requestedYear.ifPresent(year -> paginationLinkParameters.add(new QueryParam("year", String.valueOf(year))));
 
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
-        final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
+        final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix, isPaginationOneIndexed);
         model.addAttribute("personsPagination", personsPagination);
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().toList());
+        model.addAttribute("paginationPageNumbers", IntStream.range(0, personDtoPage.getTotalPages()).boxed().toList());
 
         final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
         model.addAttribute("sortSelect", htmlSelectDto);

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -74,13 +75,20 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     private DateFormatAware dateFormatAware;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private DataWebProperties dataWebProperties;
+
+    final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
 
     private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
+        pageableProperties.setOneIndexedParameters(true);
+        when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, messageSource, clock);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, messageSource, dataWebProperties, clock);
     }
 
     @Test
