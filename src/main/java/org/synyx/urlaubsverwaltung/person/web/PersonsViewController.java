@@ -95,8 +95,6 @@ public class PersonsViewController implements HasLaunchpad {
         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
-        final boolean isPaginationOneIndexed = dataWebProperties.getPageable().isOneIndexedParameters();
-
         final int currentYear = Year.now(clock).getValue();
         final Integer selectedYear = requestedYear.orElse(currentYear);
         final LocalDate now = LocalDate.now(clock);
@@ -156,7 +154,7 @@ public class PersonsViewController implements HasLaunchpad {
         requestedYear.ifPresent(year -> paginationLinkParameters.add(new QueryParam("year", String.valueOf(year))));
 
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
-        final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix, isPaginationOneIndexed);
+        final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix, dataWebProperties.getPageable());
         model.addAttribute("personsPagination", personsPagination);
         model.addAttribute("paginationPageNumbers", IntStream.range(0, personDtoPage.getTotalPages()).boxed().toList());
 

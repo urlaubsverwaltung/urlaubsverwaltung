@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -85,7 +86,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @BeforeEach
     void setUp() {
         pageableProperties.setOneIndexedParameters(true);
-        when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+        pageableProperties.setPageParameter("page");
+        lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
             applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware, messageSource, dataWebProperties, clock);

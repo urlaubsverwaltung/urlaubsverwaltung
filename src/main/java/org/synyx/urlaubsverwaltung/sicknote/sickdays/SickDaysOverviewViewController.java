@@ -77,8 +77,6 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
     ) {
-        final boolean isPaginationOneIndexed = dataWebProperties.getPageable().isOneIndexedParameters();
-
         final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
         final LocalDate startDate = dateFormatAware.parse(from, locale).orElse(firstDayOfYear);
         final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
@@ -111,7 +109,7 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
             new QueryParam("query", query)
         ));
 
-        model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix, isPaginationOneIndexed));
+        model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix, dataWebProperties.getPageable()));
         model.addAttribute("paginationPageNumbers", IntStream.range(0, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
 

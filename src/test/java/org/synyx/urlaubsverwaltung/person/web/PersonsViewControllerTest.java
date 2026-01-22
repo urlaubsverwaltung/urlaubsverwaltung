@@ -59,6 +59,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -100,7 +101,8 @@ class PersonsViewControllerTest {
         clock = Clock.systemUTC();
 
         pageableProperties.setOneIndexedParameters(true);
-        when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+        pageableProperties.setPageParameter("page");
+        lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
     }
@@ -117,7 +119,7 @@ class PersonsViewControllerTest {
         final PaginationDto<Person> expectedPagination = new PaginationDto<>(
             new PageImpl<>(List.of()),
             "?active=true&query=&sort=person.firstName,ASC&size=20",
-            true
+            pageableProperties
         );
 
         perform(get("/web/person"))

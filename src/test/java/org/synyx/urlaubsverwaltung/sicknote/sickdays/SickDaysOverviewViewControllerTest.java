@@ -48,6 +48,7 @@ import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -79,7 +80,8 @@ class SickDaysOverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         pageableProperties.setOneIndexedParameters(true);
-        when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+        pageableProperties.setPageParameter("page");
+        lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
 
         sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware, dataWebProperties, clock);
     }
@@ -119,7 +121,7 @@ class SickDaysOverviewViewControllerTest {
 
         final PageImpl<SickDaysOverviewDto> page = new PageImpl<>(List.of(), defaultSickDaysPageable(), 0);
         final String filterQuery = "?from=%s&to=%s&query=&sort=person.firstName,ASC&size=20".formatted(fromDateIsoString, toDateIsoString);
-        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery, true);
+        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery, pageableProperties);
 
         assertThat(result)
             .hasStatusOk()

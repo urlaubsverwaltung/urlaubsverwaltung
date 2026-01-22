@@ -94,8 +94,6 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
     ) {
-        final boolean isPaginationOneIndexed = dataWebProperties.getPageable().isOneIndexedParameters();
-
         final FilterPeriod period = toFilterPeriod(from, to, locale);
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, List.of(
             new QueryParam("from", period.getStartDateIsoValue()),
@@ -115,7 +113,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         }
         if (!errors.isEmpty()) {
             model.addAttribute("period", period);
-            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix, isPaginationOneIndexed));
+            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix, dataWebProperties.getPageable()));
             model.addAttribute("errors", errors);
             return "application/application-statistics";
         }
@@ -132,7 +130,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
 
         final PageImpl<ApplicationForLeaveStatisticsDto> statisticsPage = new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements());
-        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix, isPaginationOneIndexed);
+        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix, dataWebProperties.getPageable());
 
         model.addAttribute("statisticsPagination", statisticsPagination);
         model.addAttribute("paginationPageNumbers", IntStream.range(0, personsPage.getTotalPages()).boxed().toList());
