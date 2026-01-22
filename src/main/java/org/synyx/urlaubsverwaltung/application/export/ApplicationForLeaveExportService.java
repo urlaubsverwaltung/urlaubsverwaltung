@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsPageable;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -17,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.groupingBy;
@@ -64,16 +63,16 @@ class ApplicationForLeaveExportService {
     /**
      * Returns a list of all application for leaves that the person is allowed to access.
      *
-     * @param person to ask for the export
-     * @param from   a specific date
-     * @param to     a specific date
+     * @param person         to ask for the export
+     * @param from           a specific date
+     * @param to             a specific date
+     * @param personPageable person pageable criteria
+     * @param query          optional person query, to search for firstname for instance
      * @return list of all {@link ApplicationForLeaveExport} that the person can access
      */
-    Page<ApplicationForLeaveExport> getAll(Person person, LocalDate from, LocalDate to, PageableSearchQuery pageableSearchQuery) {
+    Page<ApplicationForLeaveExport> getAllSortedByPerson(Person person, LocalDate from, LocalDate to, PersonPageRequest personPageable, String query) {
 
-        final Pageable pageable = pageableSearchQuery.getPageable();
-
-        final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
+        final Page<Person> relevantMembersPage = getMembersForPerson(person, personPageable, query);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
         final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
 
@@ -88,24 +87,54 @@ class ApplicationForLeaveExportService {
             applicationsByPerson.putIfAbsent(member, List.of());
         }
 
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
+        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
+
+        final List<ApplicationForLeaveExport> content = applicationsByPerson.entrySet()
+            .stream()
+            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId))
+            .toList();
+
+        return new PageImpl<>(content, relevantMembersPage.getPageable(), relevantMembersPage.getTotalElements());
+    }
+
+    /**
+     * Returns a list of all application for leaves that the person is allowed to access.
+     *
+     * @param person             to ask for the export
+     * @param from               a specific date
+     * @param to                 a specific date
+     * @param statisticsPageable the page request
+     * @param query              optional query to filter for person firstname for instance
+     * @return list of all {@link ApplicationForLeaveExport} that the person can access
+     */
+    Page<ApplicationForLeaveExport> getAllSortedByStatistics(Person person, LocalDate from, LocalDate to, ApplicationForLeaveStatisticsPageable statisticsPageable, String query) {
+
+        final Pageable pageable = statisticsPageable.toPageable();
+
+        final Page<Person> relevantMembersPage = getMembersForPerson(person, PersonPageRequest.unpaged(), query);
+        final List<Person> relevantMembers = relevantMembersPage.getContent();
+        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).toList();
+
+        if (relevantPersonIds.isEmpty()) {
+            return Page.empty();
+        }
+
+        final List<Application> applications = getApplications(person, relevantMembers, from, to);
+
+        final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
+        for (Person member : relevantMembers) {
+            applicationsByPerson.putIfAbsent(member, List.of());
+        }
 
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
         final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
 
-        Stream<ApplicationForLeaveExport> exportsStream = applicationsByPerson.entrySet()
-            .stream()
-            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId));
-
-        if (relevantMembersPage.getPageable().isUnpaged()) {
-            // we don't have to restrict the statistics if persons page is paged and or sorted already.
-            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
-            exportsStream = exportsStream
-                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-                .limit(pageable.getPageSize());
-        }
-
-        final List<ApplicationForLeaveExport> content = exportsStream
+        final List<ApplicationForLeaveExport> content = applicationsByPerson.entrySet().stream()
+            .map(toApplicationForLeaveExport(basedataByPersonId, departmentsByPersonId))
             .sorted(new SortComparator<>(ApplicationForLeaveExport.class, pageable.getSort()))
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
             .toList();
 
         return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
@@ -131,22 +160,12 @@ class ApplicationForLeaveExportService {
         return List.of();
     }
 
-    private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
-
-        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
-
-        // this has been / is a bug, we don't want to fix right now...
-        // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
-        if (pageRequest.isUnpaged()) {
-            LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
-            final Pageable pageable = pageableSearchQuery.getPageable();
-            pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        }
+    private Page<Person> getMembersForPerson(Person person, PersonPageRequest pageRequest, String query) {
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
+            return personService.getActivePersons(pageRequest, query);
         }
 
-        return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
+        return departmentService.getManagedMembersOfPerson(person, pageRequest, query);
     }
 }
