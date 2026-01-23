@@ -15,6 +15,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteAcceptedEvent;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -30,6 +33,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 
 @ExtendWith(MockitoExtension.class)
@@ -147,5 +151,76 @@ class CalendarSyncServiceTest {
         sut.consumeApplicationRejectedEvent(event);
 
         verify(absenceMappingRepository).deleteByEventId("eventId");
+    }
+
+    @Test
+    void ensureToCreateCalendarEventOnSickNoteAcceptedEvent() {
+
+        final LocalDate now = LocalDate.now();
+
+        final Person person = new Person();
+        person.setFirstName("first");
+        person.setLastName("last");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .startDate(now)
+            .endDate(now.plusDays(2))
+            .dayLength(DayLength.FULL)
+            .build();
+
+        final SickNoteAcceptedEvent event = SickNoteAcceptedEvent.of(sickNote);
+
+        final GoogleCalendarSyncProvider googleCalendarSyncProvider = mock(GoogleCalendarSyncProvider.class);
+        when(calendarProviderService.getCalendarProvider()).thenReturn(Optional.of(googleCalendarSyncProvider));
+        when(googleCalendarSyncProvider.add(any(CalendarAbsence.class), any(CalendarSettings.class))).thenReturn(Optional.of("eventId"));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(new CalendarSettings());
+
+        sut.consumeSickNoteAcceptedEvent(event);
+
+        final ArgumentCaptor<AbsenceMapping> absenceMappingArgumentCaptor = forClass(AbsenceMapping.class);
+        verify(absenceMappingRepository).save(absenceMappingArgumentCaptor.capture());
+        final AbsenceMapping absenceMapping = absenceMappingArgumentCaptor.getValue();
+        assertThat(absenceMapping.getEventId()).isEqualTo("eventId");
+        assertThat(absenceMapping.getAbsenceId()).isEqualTo(1L);
+        assertThat(absenceMapping.getAbsenceMappingType()).isEqualTo(SICKNOTE);
+    }
+
+    @Test
+    void ensureToUpdateCalendarEventOnSickNoteUpdatedEvent() {
+
+        final LocalDate now = LocalDate.of(2022, 12, 10);
+
+        final Person person = new Person();
+        person.setFirstName("first");
+        person.setLastName("last");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1L)
+            .person(person)
+            .startDate(now)
+            .endDate(now.plusDays(2))
+            .dayLength(DayLength.FULL)
+            .build();
+
+        final SickNoteUpdatedEvent event = SickNoteUpdatedEvent.of(sickNote);
+
+        when(absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceMappingType(1L, SICKNOTE)).thenReturn(Optional.of(new AbsenceMapping(1L, SICKNOTE, "eventId")));
+        final GoogleCalendarSyncProvider googleCalendarSyncProvider = mock(GoogleCalendarSyncProvider.class);
+        when(calendarProviderService.getCalendarProvider()).thenReturn(Optional.of(googleCalendarSyncProvider));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        final CalendarSettings calendarSettings = new CalendarSettings();
+        when(calendarSettingsService.getCalendarSettings()).thenReturn(calendarSettings);
+
+        sut.consumeSickNoteUpdatedEvent(event);
+
+        final ArgumentCaptor<CalendarAbsence> absenceArgumentCaptor = forClass(CalendarAbsence.class);
+        verify(googleCalendarSyncProvider).update(absenceArgumentCaptor.capture(), eq("eventId"), eq(calendarSettings));
+        final CalendarAbsence absence = absenceArgumentCaptor.getValue();
+        assertThat(absence.getPerson()).isEqualTo(person);
+        assertThat(absence.getStartDate()).isEqualTo(ZonedDateTime.of(2022, 12, 10, 0, 0, 0, 0, ZoneId.of("Europe/Berlin")));
+        assertThat(absence.getEndDate()).isEqualTo(ZonedDateTime.of(2022, 12, 13, 0, 0, 0, 0, ZoneId.of("Europe/Berlin")));
     }
 }

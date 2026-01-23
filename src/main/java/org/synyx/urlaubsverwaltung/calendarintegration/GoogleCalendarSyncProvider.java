@@ -42,24 +42,27 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
-        if (maybeCalendarClient.isPresent()) {
-            final String calendarId = googleCalendarSettings.getCalendarId();
-            try {
-                final Event eventToCommit = new Event();
-                fillEvent(absence, eventToCommit);
-
-                final Event eventInCalendar = maybeCalendarClient.get().events().insert(calendarId, eventToCommit).execute();
-
-                LOG.info("Event {} for '{}' added to google calendar '{}'.", eventInCalendar.getId(),
-                    absence.getPerson().getId(), calendarId);
-
-                return Optional.of(eventInCalendar.getId());
-
-            } catch (IOException ex) {
-                LOG.warn("An error occurred while trying to add appointment to calendar {}", calendarId, ex);
-            }
+        if (maybeCalendarClient.isEmpty()) {
+            LOG.info("No Google Calendar client available, skipping add for person id={}", absence.getPerson().getId());
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        final String calendarId = googleCalendarSettings.getCalendarId();
+        try {
+            final Event eventToCommit = new Event();
+            fillEvent(absence, eventToCommit);
+
+            final Event eventInCalendar = maybeCalendarClient.get().events().insert(calendarId, eventToCommit).execute();
+
+            LOG.info("Event {} for '{}' added to google calendar '{}'.", eventInCalendar.getId(),
+                absence.getPerson().getId(), calendarId);
+
+            return Optional.of(eventInCalendar.getId());
+
+        } catch (IOException ex) {
+            LOG.warn("An error occurred while trying to add appointment to calendar {}", calendarId, ex);
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -68,24 +71,27 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
-        if (maybeCalendarClient.isPresent()) {
-            final String calendarId = googleCalendarSettings.getCalendarId();
-            try {
-                final Calendar calendarClient = maybeCalendarClient.get();
+        if (maybeCalendarClient.isEmpty()) {
+            LOG.info("No Google Calendar client available, skipping update for eventId={}", eventId);
+            return;
+        }
 
-                // gather exiting event
-                final Event event = calendarClient.events().get(calendarId, eventId).execute();
+        final String calendarId = googleCalendarSettings.getCalendarId();
+        try {
+            final Calendar calendarClient = maybeCalendarClient.get();
 
-                // update event with absence
-                fillEvent(absence, event);
+            // gather exiting event
+            final Event event = calendarClient.events().get(calendarId, eventId).execute();
 
-                // sync event to calendar
-                calendarClient.events().patch(calendarId, eventId, event).execute();
+            // update event with absence
+            fillEvent(absence, event);
 
-                LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
-            } catch (IOException ex) {
-                LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
-            }
+            // sync event to calendar
+            calendarClient.events().patch(calendarId, eventId, event).execute();
+
+            LOG.info("Event {} has been updated in calendar '{}'.", eventId, calendarId);
+        } catch (IOException ex) {
+            LOG.warn("Could not update event {} in calendar '{}'.", eventId, calendarId, ex);
         }
     }
 
@@ -95,18 +101,20 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
-        if (maybeCalendarClient.isPresent()) {
-            final String calendarId = googleCalendarSettings.getCalendarId();
-            try {
-                maybeCalendarClient.get().events().delete(calendarId, eventId).execute();
-                LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
-                return Optional.of(eventId);
-            } catch (IOException ex) {
-                LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
-                return Optional.empty();
-            }
+        if (maybeCalendarClient.isEmpty()) {
+            LOG.info("No Google Calendar client available, skipping delete for eventId={}", eventId);
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        final String calendarId = googleCalendarSettings.getCalendarId();
+        try {
+            maybeCalendarClient.get().events().delete(calendarId, eventId).execute();
+            LOG.info("Event {} has been deleted in calendar '{}'.", eventId, calendarId);
+            return Optional.of(eventId);
+        } catch (IOException ex) {
+            LOG.warn("Could not delete event {} in calendar '{}'", eventId, calendarId, ex);
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -115,18 +123,21 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         final GoogleCalendarSettings googleCalendarSettings = calendarSettings.getGoogleCalendarSettings();
         final Optional<Calendar> maybeCalendarClient = googleCalendarClientProvider.getCalendarClient(googleCalendarSettings);
 
-        if (maybeCalendarClient.isPresent()) {
-            final String calendarId = googleCalendarSettings.getCalendarId();
-            try {
-                final HttpResponse httpResponse = maybeCalendarClient.get().calendarList().get(calendarId).executeUsingHead();
-                if (httpResponse.getStatusCode() == SC_OK) {
-                    LOG.info("Calendar sync successfully activated!");
-                } else {
-                    throw new IOException(httpResponse.getStatusMessage());
-                }
-            } catch (IOException e) {
-                LOG.warn("Could not connect to calendar with calendar id '{}'", calendarId, e);
+        if (maybeCalendarClient.isEmpty()) {
+            LOG.info("No Google Calendar client available, skipping calendar sync settings check");
+            return;
+        }
+
+        final String calendarId = googleCalendarSettings.getCalendarId();
+        try {
+            final HttpResponse httpResponse = maybeCalendarClient.get().calendarList().get(calendarId).executeUsingHead();
+            if (httpResponse.getStatusCode() == SC_OK) {
+                LOG.info("Calendar sync successfully activated!");
+            } else {
+                throw new IOException(httpResponse.getStatusMessage());
             }
+        } catch (IOException e) {
+            LOG.warn("Could not connect to calendar with calendar id '{}'", calendarId, e);
         }
     }
 
