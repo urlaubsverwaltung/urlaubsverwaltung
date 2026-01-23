@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,7 @@ import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -68,12 +70,20 @@ class SickDaysOverviewViewControllerTest {
     private PersonService personService;
     @Mock
     private DateFormatAware dateFormatAware;
+    @Mock
+    private DataWebProperties dataWebProperties;
+
+    final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
 
     private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware, clock);
+        pageableProperties.setOneIndexedParameters(true);
+        pageableProperties.setPageParameter("page");
+        lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+
+        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, dateFormatAware, dataWebProperties, clock);
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
@@ -111,7 +121,7 @@ class SickDaysOverviewViewControllerTest {
 
         final PageImpl<SickDaysOverviewDto> page = new PageImpl<>(List.of(), defaultSickDaysPageable(), 0);
         final String filterQuery = "?from=%s&to=%s&query=&sort=person.firstName,ASC&size=20".formatted(fromDateIsoString, toDateIsoString);
-        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery);
+        final PaginationDto<SickDaysOverviewDto> pagination = new PaginationDto<>(page, filterQuery, pageableProperties);
 
         assertThat(result)
             .hasStatusOk()

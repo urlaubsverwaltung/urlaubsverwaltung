@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -58,6 +59,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -89,11 +91,20 @@ class PersonsViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private PersonBasedataService personBasedataService;
+    @Mock
+    private DataWebProperties dataWebProperties;
+
+    final DataWebProperties.Pageable pageableProperties = new DataWebProperties.Pageable();
 
     @BeforeEach
     void setUp() {
         clock = Clock.systemUTC();
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+
+        pageableProperties.setOneIndexedParameters(true);
+        pageableProperties.setPageParameter("page");
+        lenient().when(dataWebProperties.getPageable()).thenReturn(pageableProperties);
+
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
     }
 
     @Test
@@ -107,7 +118,8 @@ class PersonsViewControllerTest {
 
         final PaginationDto<Person> expectedPagination = new PaginationDto<>(
             new PageImpl<>(List.of()),
-            "?active=true&query=&sort=person.firstName,ASC&size=20"
+            "?active=true&query=&sort=person.firstName,ASC&size=20",
+            pageableProperties
         );
 
         perform(get("/web/person"))
@@ -464,7 +476,7 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesGivenYear() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -486,7 +498,7 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
 
         final Person person = new Person();
         person.setId(1L);
@@ -683,7 +695,7 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreOnlyDisplayedIfTheyDoNotExpire(final boolean doExpire, final BigDecimal remainingVacationDays) throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);
@@ -737,7 +749,7 @@ class PersonsViewControllerTest {
     void ensuresThatRemainingVacationDaysLeftAreDisplayedIfBeforeExpireDate() throws Exception {
 
         clock = Clock.fixed(Instant.parse("2022-03-31T06:00:00Z"), ZoneId.of("UTC"));
-        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, dataWebProperties, clock);
 
         final Person signedInUser = personWithRole(USER, OFFICE);
         signedInUser.setId(1L);

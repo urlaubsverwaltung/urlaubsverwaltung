@@ -8,6 +8,7 @@ public class NavigationPage {
 
     private static final String SICK_NOTES_SELECTOR = "[data-test-id=navigation-sick-notes-link]";
     private static final String SETTINGS_SELECTOR = "[data-test-id=navigation-settings-link]";
+    private static final String PERSONS_SELECTOR = "[data-test-id=navigation-persons-link]";
 
     private final Page page;
     private final AvatarMenu avatarMenu;
@@ -35,6 +36,13 @@ public class NavigationPage {
      */
     public void clickSettings() {
         page.locator(SETTINGS_SELECTOR).click();
+    }
+
+    /**
+     * Clicks the link, does not wait for anything. You have to wait for the next visible page yourself!
+     */
+    public void clickPersons() {
+        page.locator(PERSONS_SELECTOR).click();
     }
 
     public static class QuickAdd {

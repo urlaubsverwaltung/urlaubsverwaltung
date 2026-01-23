@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import de.focus_shift.launchpad.api.HasLaunchpad;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -64,6 +65,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
     private final MessageSource messageSource;
+    private final DataWebProperties dataWebProperties;
     private final Clock clock;
 
     @Autowired
@@ -71,7 +73,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource,
-        Clock clock
+        DataWebProperties dataWebProperties, Clock clock
     ) {
         this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
@@ -79,6 +81,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
         this.messageSource = messageSource;
+        this.dataWebProperties = dataWebProperties;
         this.clock = clock;
     }
 
@@ -110,7 +113,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         }
         if (!errors.isEmpty()) {
             model.addAttribute("period", period);
-            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix));
+            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix, dataWebProperties.getPageable()));
             model.addAttribute("errors", errors);
             return "application/application-statistics";
         }
@@ -127,10 +130,10 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
 
         final PageImpl<ApplicationForLeaveStatisticsDto> statisticsPage = new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements());
-        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix);
+        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix, dataWebProperties.getPageable());
 
         model.addAttribute("statisticsPagination", statisticsPagination);
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().toList());
+        model.addAttribute("paginationPageNumbers", IntStream.range(0, personsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
         model.addAttribute("period", period);
         model.addAttribute("from", period.startDate());

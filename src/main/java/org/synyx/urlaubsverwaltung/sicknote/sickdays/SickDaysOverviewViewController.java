@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,17 +50,20 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
     private final SickDaysStatisticsService sickDaysStatisticsService;
     private final PersonService personService;
     private final DateFormatAware dateFormatAware;
+    private final DataWebProperties dataWebProperties;
     private final Clock clock;
 
     SickDaysOverviewViewController(
         SickDaysStatisticsService sickDaysStatisticsService,
         PersonService personService,
         DateFormatAware dateFormatAware,
+        DataWebProperties dataWebProperties,
         Clock clock
     ) {
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
+        this.dataWebProperties = dataWebProperties;
         this.clock = clock;
     }
 
@@ -105,8 +109,8 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
             new QueryParam("query", query)
         ));
 
-        model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix));
-        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
+        model.addAttribute("statisticsPagination", new PaginationDto<>(statisticsPage, pageLinkPrefix, dataWebProperties.getPageable()));
+        model.addAttribute("paginationPageNumbers", IntStream.range(0, sickDaysStatisticsPage.getTotalPages()).boxed().toList());
         model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());

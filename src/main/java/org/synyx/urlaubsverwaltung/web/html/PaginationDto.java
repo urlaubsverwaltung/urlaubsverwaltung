@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.html;
 
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
 
 import java.util.Objects;
@@ -8,19 +9,21 @@ public class PaginationDto<T> {
 
     private final Page<T> page;
     private final String pageLinkPrefix;
+    private final DataWebProperties.Pageable pageableProperties;
 
-    public PaginationDto(Page<T> page, String pageLinkPrefix) {
+    public PaginationDto(Page<T> page, String pageLinkPrefix, DataWebProperties.Pageable pageableProperties) {
         this.page = page;
         this.pageLinkPrefix = pageLinkPrefix;
+        this.pageableProperties = pageableProperties;
     }
 
     public Page<T> getPage() {
         return page;
     }
 
-    public String hrefForPage(int pageNumber) {
-        // TODO "page" is configurable in application properties with `spring.data.web.pageable.page-parameter=page`
-        return pageLinkPrefix + "&page=" + pageNumber;
+    public String hrefForPage(int pageNumberZeroBased) {
+        final int page = pageableProperties.isOneIndexedParameters() ? pageNumberZeroBased + 1 : pageNumberZeroBased;
+        return "%s&%s=%s".formatted(pageLinkPrefix, pageableProperties.getPageParameter(), page);
     }
 
     @Override

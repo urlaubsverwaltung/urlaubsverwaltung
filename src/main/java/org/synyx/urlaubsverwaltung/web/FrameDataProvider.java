@@ -95,7 +95,7 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
-            elements.add(new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"));
+            elements.add(new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link"));
         }
 
         final boolean canViewDepartments = user.hasRole(OFFICE) || user.hasRole(BOSS);

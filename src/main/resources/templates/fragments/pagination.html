@@ -6,7 +6,7 @@
   </head>
   <body>
     <nav
-      th:fragment="pagination(pagination, label, turboFrame)"
+      th:fragment="pagination(pagination, label, turboFrame, testIdPrefix)"
       th:with="page=${pagination.page}"
       th:aria-label="${label}"
     >
@@ -14,10 +14,11 @@
         <li th:if="${not page.first && page.totalPages > 7}">
           <a
             href="#"
-            th:href="${pagination.hrefForPage(page.number)}"
+            th:href="${pagination.hrefForPage(page.number - 1)}"
             class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-previous'}"
           >
             <svg th:replace="~{icon/chevron-left::svg(className='w-6 h-6')}"></svg>
             <span class="sr-only" th:text="#{pagination.page.previous}"></span>
@@ -26,32 +27,34 @@
         <li th:with="isSelected=${page.first}">
           <a
             href="#"
-            th:href="${pagination.hrefForPage(1)}"
+            th:href="${pagination.hrefForPage(0)}"
             class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
             th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
             th:attr="aria-current=${isSelected ? 'page' : ''}"
             th:aria-label="#{pagination.page('1')}"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-0'}"
           >
             1
           </a>
         </li>
         <li th:if="${page.totalPages > 7 && page.number > 2}" role="presentation" class="px-4 py-1">…</li>
-        <th:block th:each="pageNumber : ${paginationPageNumbers}" th:with="isSelected=${pageNumber == page.number + 1}">
+        <th:block th:each="pageNumber : ${paginationPageNumbers}" th:with="isSelected=${pageNumber == page.number}">
           <li
-            th:if="${not pageNumberStat.first && not pageNumberStat.last && (page.totalPages <= 7 || pageNumber == page.number || pageNumber == page.number + 1 || pageNumber == page.number + 2)}"
+            th:if="${not pageNumberStat.first && not pageNumberStat.last && (page.totalPages <= 7 || pageNumber == page.number || pageNumber == page.number - 1 || pageNumber == page.number + 1)}"
           >
             <a
               href="#"
               th:href="${pagination.hrefForPage(pageNumber)}"
               class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
               th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
-              th:text="${pageNumber}"
+              th:text="${pageNumber + 1}"
               th:attr="aria-current=${isSelected ? 'page' : ''}"
               th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
               th:data-turbo-frame="${turboFrame}"
               data-turbo-action="advance"
+              th:data-test-id="${testIdPrefix + '-page-button-' + pageNumber}"
             >
               2
             </a>
@@ -63,7 +66,7 @@
         <li th:if="${page.totalPages > 1}" th:with="isSelected=${page.last}">
           <a
             href="#"
-            th:href="${pagination.hrefForPage(page.totalPages)}"
+            th:href="${pagination.hrefForPage(page.totalPages - 1)}"
             class="block px-4 py-1 no-underline text-inherit dark:text-zinc-50 rounded-md border-2 transition-colors"
             th:classappend="${isSelected ? 'border-neutral-600 dark:border-zinc-300' : 'hover:border-neutral-400 focus:border-neutral-400 dark:hover:dark:border-zinc-500 dark:focus:border-zinc-500'}"
             th:text="${page.totalPages}"
@@ -71,6 +74,7 @@
             th:aria-label="#{pagination.page.last(${page.totalPages})}"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-' + (page.totalPages - 1)}"
           >
             3
           </a>
@@ -78,10 +82,11 @@
         <li th:if="${page.totalPages > 7 && not page.last}">
           <a
             href="#"
-            th:href="${pagination.hrefForPage(page.number + 2)}"
+            th:href="${pagination.hrefForPage(page.number + 1)}"
             class="block py-1 text-current no-underline flex items-center"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
+            th:data-test-id="${testIdPrefix + '-page-button-next'}"
           >
             <span class="sr-only" th:text="#{pagination.page.next}"></span>
             <svg th:replace="~{icon/chevron-right::svg(className='w-6 h-6')}"></svg>
@@ -91,8 +96,8 @@
     </nav>
 
     <select
-      th:fragment="default-size-select(id, size, autosubmit)"
-      th:replace="~{fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit})}"
+      th:fragment="default-size-select(id, size, autosubmit, testIdPrefix)"
+      th:replace="~{fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit}, testId=${testIdPrefix + '-page-size'})}"
     >
       <th:block th:ref="pagination-size-options">
         <option th:if="${size < 10}" th:value="${size}" th:selected="${size < 10}" th:text="${size}">4</option>

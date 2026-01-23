@@ -423,7 +423,7 @@
       <div class="mt-8 md:mt-16 flex flex-col md:flex-row md:items-center gap-8">
         <div id="pagination">
           <nav
-            th:replace="~{fragments/pagination::pagination(${statisticsPagination}, #{applications.statistics.pagination.navigation.aria-label}, 'frame-statistics')}"
+            th:replace="~{fragments/pagination::pagination(pagination=${statisticsPagination}, label=#{applications.statistics.pagination.navigation.aria-label}, turboFrame='frame-statistics', testIdPrefix='sickdays')}"
           ></nav>
         </div>
         <form
@@ -446,13 +446,14 @@
               <select
                 name="size"
                 id="pagination-size-select"
-                th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${statisticsPagination.page.size}, autosubmit='size-submit')}"
+                th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${statisticsPagination.page.size}, autosubmit='size-submit', testIdPrefix='sickdays')}"
               ></select>
             </span>
             <span
               id="pagination-size-hint"
               class="whitespace-nowrap"
               th:text="#{pagination.page.size.total.text(${statisticsPagination.page.totalElements}, ${#messages.msg('applications.statistics.pagination.total.text')})}"
+              data-test-id="sickdays-page-total-elements"
             >
               von 42 Personen
             </span>

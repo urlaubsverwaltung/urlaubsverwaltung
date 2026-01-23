@@ -204,7 +204,7 @@
           </p>
           <div class="mt-8 md:mt-16">
             <div class="max-w-full overflow-x-auto">
-              <table id="person-table" class="list-table person-table hoverable-table text-sm">
+              <table id="person-table" class="list-table person-table hoverable-table text-sm" data-test-id="persons">
                 <caption class="sr-only" th:text="#{persons.list.caption}"></caption>
                 <thead class="hidden lg:table-header-group print:table-header-group">
                   <tr>
@@ -234,7 +234,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr th:each="person,loopStatus : ${personsPagination.page.content}">
+                  <tr
+                    th:each="person,loopStatus : ${personsPagination.page.content}"
+                    th:data-test-id="|persons-row-${loopStatus.index}|"
+                  >
                     <td class="is-centered">
                       <div class="print:hidden text-blue-50 dark:text-sky-800">
                         <img
@@ -350,7 +353,7 @@
             <div class="mt-8 md:mt-16 flex flex-col md:flex-row md:items-center gap-8">
               <div id="persons-pagination">
                 <nav
-                  th:replace="~{fragments/pagination::pagination(${personsPagination}, #{persons.pagination.navigation.aria-label}, 'frame-persons')}"
+                  th:replace="~{fragments/pagination::pagination(pagination=${personsPagination}, label=#{persons.pagination.navigation.aria-label}, turboFrame='frame-persons', testIdPrefix='persons')}"
                 ></nav>
               </div>
               <form
@@ -373,13 +376,14 @@
                     <select
                       name="size"
                       id="pagination-size-select"
-                      th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${personsPagination.page.size}, autosubmit='size-submit')}"
+                      th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${personsPagination.page.size}, autosubmit='size-submit', testIdPrefix='persons')}"
                     ></select>
                   </span>
                   <span
                     class="whitespace-nowrap"
                     id="pagination-size-hint"
                     th:text="#{pagination.page.size.total.text(${personsPagination.page.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
+                    data-test-id="persons-page-total-elements"
                   >
                     von 42 Personen
                   </span>
