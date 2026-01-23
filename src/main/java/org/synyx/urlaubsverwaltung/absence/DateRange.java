@@ -38,6 +38,11 @@ public record DateRange(LocalDate startDate, LocalDate endDate) implements Itera
         return new DateRange(year.atDay(1), year.atDay(year.length()));
     }
 
+    /**
+     * @param startDate start of the date range, inclusive
+     * @param endDate start of the date range, inclusive
+     * @throws IllegalArgumentException when <code>endDate</code> is before <code>startDate</code>
+     */
     public DateRange {
         if (startDate != null && endDate != null) {
             Assert.isTrue(!startDate.isAfter(endDate), "The end date must be greater than or equal to the start date.");
