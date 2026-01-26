@@ -24,19 +24,20 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "sick_note_extension_generator", sequenceName = "sick_note_extension_id_seq")
     private Long id;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "sick_note_id")
+    @Column(name = "sick_note_id", nullable = false)
     private Long sickNoteId;
 
-    @Column(name = "new_end_date")
+    @Column(name = "new_end_date", nullable = false)
     private LocalDate newEndDate;
 
-    @Column(name = "is_aub")
+    @Column(name = "is_aub", nullable = false)
     private boolean isAub;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private SickNoteExtensionStatus status;
 
     public Long getId() {

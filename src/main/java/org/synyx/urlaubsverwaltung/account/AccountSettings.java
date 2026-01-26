@@ -38,19 +38,20 @@ public class AccountSettings implements Serializable {
     /**
      * Specifies the day of month of the date, when the vacation will expire globally
      */
-    @Column(name = "account_expiry_date_day_of_month")
+    @Column(name = "account_expiry_date_day_of_month", nullable = false)
     private int expiryDateDayOfMonth = 1;
 
     /**
      * Specifies the month of the date, when the vacation will expire globally
      */
-    @Column(name = "account_expiry_date_month")
+    @Column(name = "account_expiry_date_month", nullable = false)
     @Enumerated(STRING)
     private Month expiryDateMonth = APRIL;
 
     /**
      * Specifies if remaining vacation days will expire globally
      */
+    @Column(nullable = false)
     private boolean doRemainingVacationDaysExpireGlobally = true;
 
     public Integer getDefaultVacationDays() {

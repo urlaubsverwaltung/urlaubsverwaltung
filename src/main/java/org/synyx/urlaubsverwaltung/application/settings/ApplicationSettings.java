@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.settings;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -24,11 +25,13 @@ public class ApplicationSettings implements Serializable {
     /**
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
      */
+    @Column(nullable = false)
     private boolean remindForWaitingApplications = false;
 
     /**
      * Specifies if applications can be done for half-day leave
      */
+    @Column(nullable = false)
     private boolean allowHalfDays = true;
 
     /**
@@ -40,6 +43,7 @@ public class ApplicationSettings implements Serializable {
     /**
      * Activates a notification {daysBeforeRemindForUpcomingApplications} days before upcoming applications
      */
+    @Column(nullable = false)
     private boolean remindForUpcomingApplications = false;
 
     /**
@@ -50,6 +54,7 @@ public class ApplicationSettings implements Serializable {
     /**
      * Activates a notification after {daysBeforeRemindForUpcomingHolidayReplacement} days for upcoming replacement
      */
+    @Column(nullable = false)
     private boolean remindForUpcomingHolidayReplacement = false;
 
     /**

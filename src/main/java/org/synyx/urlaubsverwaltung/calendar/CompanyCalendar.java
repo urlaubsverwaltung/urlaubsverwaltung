@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -28,13 +27,14 @@ public class CompanyCalendar extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "company_calendar_generator", sequenceName = "company_calendar_id_seq")
     private Long id;
 
-    @NotNull
-    @OneToOne
+    @OneToOne(optional = false)
     private Person person;
 
+    @Column(nullable = false)
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    @Column(nullable = false)
     @Convert(converter = PeriodConverter.class)
     private Period calendarPeriod;
 

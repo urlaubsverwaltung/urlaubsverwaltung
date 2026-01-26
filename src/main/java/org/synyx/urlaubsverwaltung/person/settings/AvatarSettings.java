@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.settings;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ public class AvatarSettings implements Serializable {
     /**
      * Is gravatar used for avatar images
      */
+    @Column(nullable = false)
     private boolean gravatarEnabled = false;
 
     public boolean isGravatarEnabled() {
