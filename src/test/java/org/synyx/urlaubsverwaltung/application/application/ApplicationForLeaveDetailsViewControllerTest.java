@@ -60,6 +60,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -138,6 +139,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -169,6 +171,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -200,6 +203,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -230,6 +234,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -258,6 +263,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -290,6 +296,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -322,6 +329,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();
@@ -355,6 +363,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .messageKey("message-key")
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)
+            .category(HOLIDAY)
             .build();
 
         final Person person = new Person();

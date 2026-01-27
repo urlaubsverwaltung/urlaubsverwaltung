@@ -42,6 +42,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -607,6 +608,11 @@ class SickNoteViewController implements HasLaunchpad {
         applicationForLeave.setEndDate(sickNoteConvertForm.getEndDate());
         applicationForLeave.setReason(sickNoteConvertForm.getReason());
         applicationForLeave.setStatus(ALLOWED);
+
+        if (vacationType.isOfCategory(OVERTIME)) {
+            applicationForLeave.setHours(Duration.ZERO);
+        }
+
         applicationForLeave.setApplicationDate(LocalDate.now(clock));
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 

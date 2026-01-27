@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticMessageSource;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.List.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.empty;
@@ -1524,7 +1526,7 @@ class SickNoteViewControllerTest {
             .status(ACTIVE)
             .build();
 
-        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).build()));
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
 
         perform(post("/web/sicknote/15/convert").param("vacationType", "42"))
@@ -1691,7 +1693,7 @@ class SickNoteViewControllerTest {
             .status(ACTIVE)
             .build();
 
-        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).build()));
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
         when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
 
         final Person signedInPerson = new Person();
@@ -1702,6 +1704,29 @@ class SickNoteViewControllerTest {
         );
 
         verify(sickNoteInteractionService).convert(any(SickNote.class), any(Application.class), eq(signedInPerson));
+    }
+
+    @Test
+    void ensurePostConvertSickNoteToVacationConvertsSickNoteToOvertimeReductionWithZeroHours() throws Exception {
+
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person())
+            .status(ACTIVE)
+            .build();
+
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(ProvidedVacationType.builder(new StaticMessageSource()).category(OVERTIME).build()));
+        when(sickNoteService.getById(15L)).thenReturn(Optional.of(sickNote));
+
+        final Person signedInPerson = new Person();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        perform(post("/web/sicknote/15/convert")
+            .param("vacationType", "42")
+        );
+
+        final ArgumentCaptor<Application> captor = ArgumentCaptor.forClass(Application.class);
+        verify(sickNoteInteractionService).convert(any(SickNote.class), captor.capture(), eq(signedInPerson));
+        assertThat(captor.getValue().getHours()).isZero();
     }
 
     @Test
