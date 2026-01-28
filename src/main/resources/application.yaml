@@ -31,6 +31,8 @@ spring:
     url: jdbc:postgresql://localhost:5434/urlaubsverwaltung
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: validate
   session:
     jdbc:
       initialize-schema: always
