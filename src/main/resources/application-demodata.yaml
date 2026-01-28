@@ -48,7 +48,6 @@ spring:
         cachecontrol:
           cache-public: false
           max-age: 0
-          cache-private: false
 
 launchpad:
   apps[0]:
