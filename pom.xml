@@ -137,7 +137,7 @@
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-provider-jdbc-template</artifactId>
-      <version>7.5.0</version>
+      <version>7.6.0</version>
     </dependency>
 
     <!-- MAIL -->
