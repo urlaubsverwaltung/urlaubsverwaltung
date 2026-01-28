@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.data.domain.Page;
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.Year;
 import java.util.Collection;
@@ -123,12 +122,23 @@ public interface PersonService {
     List<Person> getAllPersonsHavingAccountInYear(Year year);
 
     /**
-     * Find all active persons matching the given query.
+     * Find all active persons matching the given pageable.
      *
-     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
-     * @return paginated active persons matching the search query
+     * @param pageable page request with sort criteria
+     * @return paginated active persons
      */
-    Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery);
+    default Page<Person> getActivePersons(PersonPageable pageable) {
+        return getActivePersons(pageable, "");
+    }
+
+    /**
+     * Find all active persons matching the given pageable and query.
+     *
+     * @param pageable page request with sort criteria
+     * @param query search query, e.g. firstname and/or lastname
+     * @return paginated active persons
+     */
+    Page<Person> getActivePersons(PersonPageable pageable, String query);
 
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
@@ -147,12 +157,23 @@ public interface PersonService {
     List<Person> getActivePersonsWithNotificationType(MailNotification notification);
 
     /**
-     * Find all inactive persons matching the given query.
+     * Find all inactive persons given the pageable.
      *
-     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
-     * @return paginated inactive persons matching the search query
+     * @param pageable page request with sort criteria
+     * @return paginated inactive persons
      */
-    Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery);
+    default Page<Person> getInactivePersons(PersonPageable pageable) {
+        return getInactivePersons(pageable, "");
+    }
+
+    /**
+     * Find all inactive persons matching the given pageable and query.
+     *
+     * @param pageable page request with sort criteria
+     * @param query    search query, e.g. firstname and/or lastname
+     * @return paginated inactive persons
+     */
+    Page<Person> getInactivePersons(PersonPageable pageable, String query);
 
     /**
      * This method allows to get the signed in user.

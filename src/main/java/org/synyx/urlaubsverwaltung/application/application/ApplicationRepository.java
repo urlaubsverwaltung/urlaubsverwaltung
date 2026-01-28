@@ -32,6 +32,17 @@ interface ApplicationRepository extends CrudRepository<ApplicationEntity, Long> 
 
     List<ApplicationEntity> findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> statuses);
 
+    @Query("""
+        SELECT a FROM application a
+            WHERE cast(strpos(lower(concat(a.person.firstName,' ',a.person.lastName)), lower(:personQuery)) AS INTEGER) > 0
+            AND a.endDate >= :start AND a.startDate <= :end
+            AND a.status IN :statuses
+            AND a.vacationType.id IN :vacationTypeIds
+            ORDER BY a.startDate
+        """)
+    List<ApplicationEntity> findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+        LocalDate start, LocalDate end, List<ApplicationStatus> statuses, List<Long> vacationTypeIds, String personQuery);
+
     @Query(
         "select x from application x "
             + "where x.status = ?3 "

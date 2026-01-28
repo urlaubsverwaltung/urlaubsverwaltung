@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.Year;
@@ -318,12 +317,14 @@ class PersonServiceImplTest {
     void ensureGetActivePersonsPage() {
 
         final Page<Person> expected = Page.empty();
-        final PageRequest pageRequest = PageRequest.of(1, 100);
-        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
-        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(expected);
+        final PageRequest repoPageRequest = PageRequest.of(1, 100);
+        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", repoPageRequest))
+            .thenReturn(expected);
 
-        final Page<Person> actual = sut.getActivePersons(personPageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.unsorted());
+
+        final Page<Person> actual = sut.getActivePersons(personPageRequest, "name-query");
         assertThat(actual).isSameAs(expected);
     }
 
@@ -344,14 +345,14 @@ class PersonServiceImplTest {
     void ensureGetInactivePersonsPage() {
 
         final Page<Person> expected = Page.empty();
-        final PageRequest pageRequest = PageRequest.of(1, 100, Sort.by(Sort.Direction.ASC, "firstName"));
-        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
         // currently a hard coded pageRequest is used in implementation
         final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");
         when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(expected);
 
-        final Page<Person> actual = sut.getInactivePersons(personPageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 100, Sort.by("firstName"));
+
+        final Page<Person> actual = sut.getInactivePersons(personPageRequest, "name-query");
         assertThat(actual).isSameAs(expected);
     }
 

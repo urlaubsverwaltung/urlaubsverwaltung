@@ -65,11 +65,20 @@ class ApplicationForLeaveStatisticsBuilder {
         this.clock = clock;
     }
 
+    /**
+     * @param from from
+     * @param to to
+     * @param vacationTypes vacationTypes
+     * @param personQuery to filter for person firstname for instance
+     * @return list of applications
+     */
+    public List<Application> getApplicationsOfInterest(LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, String personQuery) {
+        Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
+        return applicationService.getApplicationsForACertainPeriodAndStatus(from, to, activeStatuses(), vacationTypes, personQuery);
+    }
+
     public Map<Person, ApplicationForLeaveStatistics> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
-
-        final LocalDate today = LocalDate.now(clock);
-        final DateRange dateRange = new DateRange(from, to);
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
         final List<Person> personsWithAccount = holidayAccounts.stream().map(Account::getPerson).toList();
@@ -78,7 +87,26 @@ class ApplicationForLeaveStatisticsBuilder {
         final LocalDate lastDateOfYear = from.with(lastDayOfYear());
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(firstDateOfYear, lastDateOfYear, personsWithAccount, activeStatuses());
 
-        final Map<Person, LeftOvertime> leftOvertimeByPerson = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(personsWithAccount, applications, from, to);
+        // TODO returned map could not contain entry for person without an account
+        return asd(persons, holidayAccounts, from, to, applications, vacationTypes);
+    }
+
+    public Map<Person, ApplicationForLeaveStatistics> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, List<Application> applications) {
+        Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
+
+        final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
+        final List<Person> personsWithAccount = holidayAccounts.stream().map(Account::getPerson).toList();
+
+        // TODO returned map could not contain entry for person without an account
+        return asd(personsWithAccount, holidayAccounts, from, to, applications, vacationTypes);
+    }
+
+    private Map<Person, ApplicationForLeaveStatistics> asd(List<Person> persons, List<Account> holidayAccounts, LocalDate from, LocalDate to, List<Application> applications, List<VacationType<?>> vacationTypes) {
+
+        final LocalDate today = LocalDate.now(clock);
+        final DateRange dateRange = new DateRange(from, to);
+
+        final Map<Person, LeftOvertime> leftOvertimeByPerson = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, dateRange);
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
@@ -110,12 +138,12 @@ class ApplicationForLeaveStatisticsBuilder {
                 return statistics;
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(personsWithAccount, Year.of(from.getYear()));
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
         final Map<Person, List<Application>> applicationsByPerson =
-            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, personsWithAccount, activeStatuses()).stream()
+            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, activeStatuses()).stream()
                 .collect(groupingBy(Application::getPerson));
 
-        for (Person person : personsWithAccount) {
+        for (Person person : persons) {
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
             final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
             for (Application application : personApplications) {

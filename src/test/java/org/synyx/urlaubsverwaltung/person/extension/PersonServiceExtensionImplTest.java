@@ -15,9 +15,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.util.List;
 import java.util.Optional;
@@ -220,16 +220,14 @@ class PersonServiceExtensionImplTest {
 
         Stream<PersonDTO> result = sut.getActivePersons();
 
-        ArgumentCaptor<PageableSearchQuery> argumentCaptor = ArgumentCaptor.forClass(PageableSearchQuery.class);
-
+        ArgumentCaptor<PersonPageRequest> argumentCaptor = ArgumentCaptor.forClass(PersonPageRequest.class);
         verify(personService).getActivePersons(argumentCaptor.capture());
 
-        PageableSearchQuery pageableSearchQueryCaptor = argumentCaptor.getValue();
+        PersonPageRequest pageableSearchQueryCaptor = argumentCaptor.getValue();
         assertThat(pageableSearchQueryCaptor).isNotNull();
-        assertThat(pageableSearchQueryCaptor.getQuery()).isEmpty();
-        assertThat(pageableSearchQueryCaptor.getPageable().getSort()).isEqualTo(Sort.unsorted());
-        assertThat(pageableSearchQueryCaptor.getPageable().getPageNumber()).isZero();
-        assertThat(pageableSearchQueryCaptor.getPageable().getPageSize()).isEqualTo(25);
+        assertThat(pageableSearchQueryCaptor.getSort()).isEqualTo(Sort.unsorted());
+        assertThat(pageableSearchQueryCaptor.getPageNumber()).isZero();
+        assertThat(pageableSearchQueryCaptor.getPageSize()).isEqualTo(25);
 
         assertThat(result).containsOnly(anyPersonDTO);
     }
@@ -255,17 +253,14 @@ class PersonServiceExtensionImplTest {
 
         Stream<PersonDTO> result = sut.getInactivePersons();
 
-
-        ArgumentCaptor<PageableSearchQuery> argumentCaptor = ArgumentCaptor.forClass(PageableSearchQuery.class);
-
+        ArgumentCaptor<PersonPageRequest> argumentCaptor = ArgumentCaptor.forClass(PersonPageRequest.class);
         verify(personService).getInactivePersons(argumentCaptor.capture());
 
-        PageableSearchQuery pageableSearchQueryCaptor = argumentCaptor.getValue();
+        PersonPageRequest pageableSearchQueryCaptor = argumentCaptor.getValue();
         assertThat(pageableSearchQueryCaptor).isNotNull();
-        assertThat(pageableSearchQueryCaptor.getQuery()).isEmpty();
-        assertThat(pageableSearchQueryCaptor.getPageable().getSort()).isEqualTo(Sort.unsorted());
-        assertThat(pageableSearchQueryCaptor.getPageable().getPageNumber()).isZero();
-        assertThat(pageableSearchQueryCaptor.getPageable().getPageSize()).isEqualTo(25);
+        assertThat(pageableSearchQueryCaptor.getSort()).isEqualTo(Sort.unsorted());
+        assertThat(pageableSearchQueryCaptor.getPageNumber()).isZero();
+        assertThat(pageableSearchQueryCaptor.getPageSize()).isEqualTo(25);
 
         assertThat(result).containsOnly(anyPersonDTO);
     }

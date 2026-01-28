@@ -25,9 +25,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -145,7 +145,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of()));
 
         final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build());
@@ -200,7 +201,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addWaitingVacationDays(vacationType, BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(vacationType, BigDecimal.valueOf(4));
 
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
@@ -250,9 +252,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "max");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("max")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -269,14 +270,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "person.firstName,ASC:person.firstName",
-        "person.lastName,ASC:person.lastName",
-        "totalAllowedVacationDays,ASC:totalAllowedVacationDays",
-        "totalWaitingVacationDays,ASC:totalWaitingVacationDays",
-        "leftVacationDaysForPeriod,ASC:leftVacationDaysForPeriod",
-        "leftVacationDaysForYear,ASC:leftVacationDaysForYear"
+        "person.firstName,ASC:firstName",
+        "person.lastName,ASC:lastName",
     }, delimiter = ':')
-    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedByPersonAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -287,9 +284,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, expectedSortProperty));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -306,14 +302,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-        "person.firstName,DESC:person.firstName",
-        "person.lastName,DESC:person.lastName",
-        "totalAllowedVacationDays,DESC:totalAllowedVacationDays",
-        "totalWaitingVacationDays,DESC:totalWaitingVacationDays",
-        "leftVacationDaysForPeriod,DESC:leftVacationDaysForPeriod",
-        "leftVacationDaysForYear,DESC:leftVacationDaysForYear"
+        "totalAllowedVacationDays,ASC:totalAllowedVacationDays",
+        "totalWaitingVacationDays,ASC:totalWaitingVacationDays",
+        "leftVacationDaysForPeriod,ASC:leftVacationDaysForPeriod",
+        "leftVacationDaysForYear,ASC:leftVacationDaysForYear"
     }, delimiter = ':')
-    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedByStatisticsAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
         signedInUser.setId(1L);
@@ -324,9 +318,74 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", sortQuery));
+
+        resultActions
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("John"))
+                )
+            )));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "person.firstName,DESC:firstName",
+        "person.lastName,DESC:lastName",
+    }, delimiter = ':')
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedByPersonDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", sortQuery));
+
+        resultActions
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("John"))
+                )
+            )));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "totalAllowedVacationDays,DESC:totalAllowedVacationDays",
+        "totalWaitingVacationDays,DESC:totalWaitingVacationDays",
+        "leftVacationDaysForPeriod,DESC:leftVacationDaysForPeriod",
+        "leftVacationDaysForYear,DESC:leftVacationDaysForYear"
+    }, delimiter = ':')
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedByStatisticsDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1L);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2L);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -353,9 +412,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "person.lastName"));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -395,7 +453,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest), eq("")))
             .thenReturn(new PageImpl<>(List.of()));
 
         perform(get("/web/application/statistics/download")
@@ -421,8 +480,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, 20, Sort.by("firstName"));
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(statistics)));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
@@ -454,8 +515,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(2, 50, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -490,8 +551,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, Integer.MAX_VALUE, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -525,8 +586,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
-        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+        final PersonPageRequest pageRequest = PersonPageRequest.of(0, Integer.MAX_VALUE, Sort.by("firstName"));
+        when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -545,10 +606,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("query", "hans"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
-    }
-
-    private static PageableSearchQuery defaultPersonSearchQuery() {
-        return new PageableSearchQuery(defaultPageRequest(), "");
     }
 
     private static Pageable defaultPageRequest() {

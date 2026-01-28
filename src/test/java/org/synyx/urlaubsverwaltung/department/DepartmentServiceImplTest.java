@@ -11,16 +11,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
+import org.synyx.urlaubsverwaltung.person.PersonPageable;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -333,7 +333,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
 
@@ -397,7 +397,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
 
@@ -461,7 +461,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
 
@@ -472,7 +472,7 @@ class DepartmentServiceImplTest {
         person.setId(1L);
         person.setPermissions(List.of());
 
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonPageable(), "");
 
         assertThat(actual.getContent()).isEmpty();
         verifyNoInteractions(departmentRepository);
@@ -731,7 +731,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(inactivePerson);
     }
 
@@ -795,7 +795,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(inactivePerson);
     }
 
@@ -853,7 +853,7 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(janeId, maxId, inactivePersonId)))
             .thenReturn(List.of(jane, max, inactivePerson));
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).containsExactly(inactivePerson);
     }
 
@@ -873,7 +873,7 @@ class DepartmentServiceImplTest {
         when(departmentMembershipService.getDepartmentStaff(Set.of()))
             .thenReturn(Map.of());
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonPageable(), "");
         assertThat(actual.getContent()).isEmpty();
     }
 
@@ -924,12 +924,12 @@ class DepartmentServiceImplTest {
             // sut has to sort them by the given Sort, however.
             .thenReturn(List.of(max, jule, inactive, jane));
 
-        final PageRequest pageRequest = PageRequest.of(1, 2, Sort.by("lastName").and(Sort.by("firstName")));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2,
+            Sort.by("lastName").and(Sort.by("firstName")));
 
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageableSearchQuery);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, personPageRequest, "");
         assertThat(actual.getTotalPages()).isEqualTo(2);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
         assertThat(actual.getContent()).containsExactly(max);
     }
 
@@ -977,12 +977,12 @@ class DepartmentServiceImplTest {
             // sut has to sort them by the given Sort, however.
             .thenReturn(List.of(max, jule, jane));
 
-        final PageRequest pageRequest = PageRequest.of(1, 2, Sort.by("lastName").and(Sort.by("firstName")));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2,
+            Sort.by("lastName").and(Sort.by("firstName")));
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageableSearchQuery);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, personPageRequest, "");
         assertThat(actual.getTotalPages()).isEqualTo(2);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
         assertThat(actual.getContent()).containsExactly(max);
     }
 
@@ -1016,10 +1016,8 @@ class DepartmentServiceImplTest {
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1056,10 +1054,8 @@ class DepartmentServiceImplTest {
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1096,10 +1092,8 @@ class DepartmentServiceImplTest {
 
         when(personService.getAllPersonsByIds(Set.of(memberId, inactiveId))).thenReturn(List.of(member, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1134,10 +1128,9 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(member, 1L, pageableSearchQuery);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(member, 1L, personPageRequest, "");
         assertThat(actual).isEqualTo(Page.empty());
 
         verify(personService, times(0)).getAllPersonsByIds(anySet());
@@ -1188,10 +1181,10 @@ class DepartmentServiceImplTest {
             // sut has to sort them by the given Sort, however.
             .thenReturn(List.of(max, jule, inactive, jane));
 
-        final PageRequest pageRequest = PageRequest.of(1, 2, Sort.by("lastName").and(Sort.by("firstName")));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2,
+            Sort.by("lastName").and(Sort.by("firstName")));
 
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(2);
         assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
@@ -1225,10 +1218,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
-        final PageRequest pageRequest = PageRequest.of(1, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 10);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         // membership is missing (neither department head nor second stage authority)
         assertThat(actual).isEqualTo(Page.empty());
@@ -1264,10 +1255,8 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1303,10 +1292,8 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1342,10 +1329,8 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(maxId, inactiveId)))
             .thenReturn(List.of(max, inactive));
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
         assertThat(actual.getPageable().getPageNumber()).isZero();
@@ -1372,10 +1357,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
-        final PageRequest pageRequest = PageRequest.of(0, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10);
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual).isEqualTo(Page.empty());
         verifyNoInteractions(personService);
@@ -1423,10 +1406,10 @@ class DepartmentServiceImplTest {
             // sut has to sort them by the given Sort, however.
             .thenReturn(List.of(max, jule, jane));
 
-        final PageRequest pageRequest = PageRequest.of(1, 2, Sort.by("lastName").and(Sort.by("firstName")));
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 2,
+            Sort.by("lastName").and(Sort.by("firstName")));
 
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual.getTotalPages()).isEqualTo(2);
         assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
@@ -1460,10 +1443,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
-        final PageRequest pageRequest = PageRequest.of(1, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 10);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         // membership is missing (neither department head nor second stage authority)
         assertThat(actual).isEqualTo(Page.empty());
@@ -1496,10 +1477,8 @@ class DepartmentServiceImplTest {
 
         when(departmentMembershipService.getDepartmentStaff(1L)).thenReturn(staff);
 
-        final PageRequest pageRequest = PageRequest.of(1, 10);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
-
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, pageableSearchQuery);
+        final PersonPageRequest personPageRequest = PersonPageRequest.of(1, 10);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1L, personPageRequest, "");
 
         assertThat(actual).isEqualTo(Page.empty());
         verifyNoInteractions(personService);
@@ -2926,11 +2905,7 @@ class DepartmentServiceImplTest {
         assertThat(actual).isTrue();
     }
 
-    private static PageableSearchQuery defaultPersonSearchQuery() {
-        return new PageableSearchQuery(defaultPageRequest(), "");
-    }
-
-    private static PageRequest defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
+    private static PersonPageable defaultPersonPageable() {
+        return PersonPageRequest.of(0, 20, Sort.by("firstName"));
     }
 }

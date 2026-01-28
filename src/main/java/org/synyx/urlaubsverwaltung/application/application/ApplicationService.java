@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -54,6 +55,18 @@ public interface ApplicationService {
      * @return all {@link Application}s of the given persons with vacation time between startDate and endDate
      */
     List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses);
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the matching persons.
+     *
+     * @param startDate
+     * @param endDate
+     * @param statuses
+     * @param vacationTypes
+     * @param personQuery   optional filter for person firstname for instance
+     * @return all {@link Application}s of the matching persons with vacation time between startDate and endDate
+     */
+    List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<ApplicationStatus> statuses, List<VacationType<?>> vacationTypes, String personQuery);
 
     /**
      * Returns all {@link Application}s where their start or end date is overlapping with the given period between startDate and endDate

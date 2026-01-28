@@ -4,15 +4,11 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.Year;
@@ -191,12 +187,8 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery) {
-        final Pageable pageable = personPageableSearchQuery.getPageable();
-        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
-        final String query = personPageableSearchQuery.getQuery();
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
+    public Page<Person> getActivePersons(PersonPageable personPageable, String query) {
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, personPageable.toPageable());
     }
 
     @Override
@@ -210,11 +202,8 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery) {
-        final Pageable pageable = personPageableSearchQuery.getPageable();
-        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest);
+    public Page<Person> getInactivePersons(PersonPageable pageable, String query) {
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, query, pageable.toPageable());
     }
 
     @Override
@@ -284,24 +273,6 @@ class PersonServiceImpl implements PersonService {
         normalized.setNotifications(person.getNotifications());
 
         return normalized;
-    }
-
-    private static Sort mapToImplicitPersonSort(Sort requestedSort) {
-        final Sort.Order firstNameOrder = requestedSort.getOrderFor("firstName");
-        final Sort.Order lastNameOrder = requestedSort.getOrderFor("lastName");
-
-        // e.g. if content should be sorted by firstName, use lastName as second sort criteria
-        final Sort implicitSort;
-
-        if (firstNameOrder != null) {
-            implicitSort = requestedSort.and(Sort.by(firstNameOrder.getDirection(), "lastName"));
-        } else if (lastNameOrder != null) {
-            implicitSort = requestedSort.and(Sort.by(lastNameOrder.getDirection(), "firstName"));
-        } else {
-            implicitSort = requestedSort;
-        }
-
-        return implicitSort;
     }
 
     private PersonCreatedEvent toPersonCreatedEvent(Person person) {

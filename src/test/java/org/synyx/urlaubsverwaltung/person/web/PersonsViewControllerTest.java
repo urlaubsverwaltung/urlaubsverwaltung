@@ -25,11 +25,11 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.math.BigDecimal;
@@ -114,7 +114,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         final PaginationDto<Person> expectedPagination = new PaginationDto<>(
             new PageImpl<>(List.of()),
@@ -133,7 +133,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -146,7 +146,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -159,7 +159,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -172,7 +172,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -185,7 +185,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -201,7 +201,7 @@ class PersonsViewControllerTest {
         person.setId(2L);
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("personsPagination",
@@ -223,7 +223,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getInactivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getInactivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -236,7 +236,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getInactivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getInactivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -249,7 +249,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -262,7 +262,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -275,7 +275,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
@@ -292,7 +292,7 @@ class PersonsViewControllerTest {
         person.setPermissions(List.of(INACTIVE));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
-        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("personsPagination",
@@ -323,7 +323,7 @@ class PersonsViewControllerTest {
         clark.setPermissions(List.of(INACTIVE));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(bruce, clark));
-        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(
@@ -369,7 +369,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
@@ -405,7 +405,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
@@ -438,7 +438,7 @@ class PersonsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(false);
 
@@ -523,7 +523,7 @@ class PersonsViewControllerTest {
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
@@ -541,7 +541,7 @@ class PersonsViewControllerTest {
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("departments", hasSize(1)));
@@ -644,7 +644,7 @@ class PersonsViewControllerTest {
         wolf.setPermissions(List.of(USER));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(new PersonId(2L), "42", null)));
 
@@ -681,7 +681,7 @@ class PersonsViewControllerTest {
         wolf.setPermissions(List.of(USER));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(page);
 
         perform(get("/web/person"))
             .andExpect(model().attribute("showPersonnelNumberColumn", false));
@@ -705,7 +705,7 @@ class PersonsViewControllerTest {
         person.setId(2L);
         person.setPermissions(List.of(USER));
 
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of(person)));
 
         final Year year = Year.now(clock);
         final LocalDate startDate = LocalDate.of(year.getValue(), JANUARY, 1);
@@ -759,7 +759,7 @@ class PersonsViewControllerTest {
         person.setId(2L);
         person.setPermissions(List.of(USER));
 
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
+        when(personService.getActivePersons(defaultPageRequest(), "")).thenReturn(new PageImpl<>(List.of(person)));
 
         final Year year = Year.now(clock);
         final LocalDate startDate = LocalDate.of(year.getValue(), JANUARY, 1);
@@ -806,23 +806,23 @@ class PersonsViewControllerTest {
             .perform(builder);
     }
 
-    private static PageableSearchQuery defaultPersonSearchQuery() {
-        return new PageableSearchQuery(defaultPageRequest(), "");
-    }
-
     /**
      * create a default PageRequest used to invoke services.
      * Note the difference to the pageable consumed by the view controller which has keys like `person.firstName` or `account.someAttribute`.
      *
      * @return {@link PageRequest} passed to the services
      */
-    private static PageRequest defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
+    private static PersonPageRequest defaultPageRequest() {
+
+        final PageRequest pageRequest = PageRequest.of(0, 20)
+            .withSort(Sort.by("person.firstName"));
+
+        return PersonPageRequest.ofApiPageable(pageRequest);
     }
 
     private void mockDefaultPageRequest(Person signedInUser) {
         final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest(), "")).thenReturn(page);
     }
 
     private static Person personWithRole(Role... role) {

@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.person.PersonPageable;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -171,11 +171,12 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person                    person to get managed members for
-     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @param person         person to get managed members for
+     * @param personPageable person pageable
+     * @param query          query firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
+    Page<Person> getManagedMembersOfPerson(Person person, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link List} of all managed and active {@link Person}s.
@@ -192,35 +193,38 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person                    person to get managed members for
-     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @param person         person to get managed members for
+     * @param personPageable person pageable
+     * @param query          query firstname, lastname
      * @return all managed and inactive members for the person
      */
-    Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person              person to get managed members for
-     * @param departmentId        departmentId to get managed members for
-     * @param pageableSearchQuery searchQuery to restrict the result set
+     * @param person         person to get managed members for
+     * @param departmentId   departmentId to get managed members for
+     * @param personPageable person pageable
+     * @param query          query for firstname, lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery);
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person              person to get managed members for
-     * @param departmentId        departmentId to get managed members for
-     * @param pageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @param person         person to get managed members for
+     * @param departmentId   departmentId to get managed members for
+     * @param personPageable person pageable
+     * @param query          query for firstname, lastname
      * @return all managed and inactive members for the person
      */
-    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery);
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable personPageable, String query);
 
     /**
      * Get all distinct managed members of the department head.

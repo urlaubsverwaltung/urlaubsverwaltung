@@ -3,14 +3,13 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -114,39 +113,13 @@ public class SickDaysStatisticsService {
     }
 
     private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
-        final Pageable pageable = pageableSearchQuery.getPageable();
-        final boolean sortByPerson = isSortByPersonAttribute(pageable);
+
+        final PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
-            final PageableSearchQuery query = sortByPerson
-                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
-                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
-
-            return personService.getActivePersons(query);
+            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
         }
 
-        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
-        return departmentService.getManagedMembersOfPerson(person, query);
-    }
-
-    private boolean isSortByPersonAttribute(Pageable pageable) {
-        for (Sort.Order order : pageable.getSort()) {
-            if (!order.getProperty().startsWith("person.")) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
-        Sort personSort = Sort.unsorted();
-
-        for (Sort.Order order : statisticsPageRequest.getSort()) {
-            if (order.getProperty().startsWith("person.")) {
-                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace("person.", "")));
-            }
-        }
-
-        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
+        return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
     }
 }
