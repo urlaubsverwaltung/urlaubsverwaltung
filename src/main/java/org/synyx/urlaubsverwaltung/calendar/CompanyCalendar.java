@@ -29,12 +29,16 @@ public class CompanyCalendar extends AbstractTenantAwareEntity {
     private Long id;
 
     @NotNull
-    @OneToOne
+    @OneToOne(optional = false)
     private Person person;
 
+    @NotNull
+    @Column(nullable = false)
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    @NotNull
+    @Column(nullable = false)
     @Convert(converter = PeriodConverter.class)
     private Period calendarPeriod;
 

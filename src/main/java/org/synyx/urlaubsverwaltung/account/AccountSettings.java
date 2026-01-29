@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 
 import java.io.Serializable;
@@ -38,19 +39,23 @@ public class AccountSettings implements Serializable {
     /**
      * Specifies the day of month of the date, when the vacation will expire globally
      */
-    @Column(name = "account_expiry_date_day_of_month")
+    @NotNull
+    @Column(name = "account_expiry_date_day_of_month", nullable = false)
     private int expiryDateDayOfMonth = 1;
 
     /**
      * Specifies the month of the date, when the vacation will expire globally
      */
-    @Column(name = "account_expiry_date_month")
+    @NotNull
+    @Column(name = "account_expiry_date_month", nullable = false)
     @Enumerated(STRING)
     private Month expiryDateMonth = APRIL;
 
     /**
      * Specifies if remaining vacation days will expire globally
      */
+    @NotNull
+    @Column(nullable = false)
     private boolean doRemainingVacationDaysExpireGlobally = true;
 
     public Integer getDefaultVacationDays() {

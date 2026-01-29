@@ -6,6 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.tenancy.tenant.AbstractTenantAwareEntity;
 
 import java.time.Instant;
@@ -24,19 +25,25 @@ public class SickNoteExtensionEntity extends AbstractTenantAwareEntity {
     @SequenceGenerator(name = "sick_note_extension_generator", sequenceName = "sick_note_extension_id_seq")
     private Long id;
 
-    @Column(name = "created_at")
+    @NotNull
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "sick_note_id")
+    @NotNull
+    @Column(name = "sick_note_id", nullable = false)
     private Long sickNoteId;
 
-    @Column(name = "new_end_date")
+    @NotNull
+    @Column(name = "new_end_date", nullable = false)
     private LocalDate newEndDate;
 
-    @Column(name = "is_aub")
+    @NotNull
+    @Column(name = "is_aub", nullable = false)
     private boolean isAub;
 
+    @NotNull
     @Enumerated(STRING)
+    @Column(nullable = false)
     private SickNoteExtensionStatus status;
 
     public Long getId() {
