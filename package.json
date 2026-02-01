@@ -62,7 +62,7 @@
     "@eslint/js": "9.39.2",
     "@tailwindcss/postcss": "4.1.18",
     "@types/jest": "30.0.0",
-    "autoprefixer": "10.4.23",
+    "autoprefixer": "10.4.24",
     "babel-jest": "30.2.0",
     "concurrently": "9.2.1",
     "cross-env": "10.1.0",
