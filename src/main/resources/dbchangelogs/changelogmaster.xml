@@ -22,5 +22,6 @@
   <include relativeToChangelogFile="true" file="changelog-5.26.0-overtime-external.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.29.0-department-membership-history.xml"/>
   <include relativeToChangelogFile="true" file="changelog-5.29.0-cleanup-department-person-relations.xml"/>
+  <include relativeToChangelogFile="true" file="changelog-5.35.0-adjust-settings-sequence-to-entity.xml"/>
 
 </databaseChangeLog>

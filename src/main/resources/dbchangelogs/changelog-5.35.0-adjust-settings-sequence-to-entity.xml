@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet author="grafjo" id="5.35.0-alter-expiry-date-of-account-settings-to-int">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="account_expiry_date_day_of_month"/>
+    </preConditions>
+    <modifyDataType tableName="settings" columnName="account_expiry_date_day_of_month" newDataType="INTEGER"/>
+  </changeSet>
+
+  <changeSet author="grafjo" id="5.35.0-adjust-settings-sequence-to-entity">
+    <preConditions onFail="MARK_RAN">
+      <sequenceExists sequenceName="settings_id_seq"/>
+    </preConditions>
+    <alterSequence sequenceName="settings_id_seq" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet author="grafjo" id="5.35.0-adjust-calendar-settings-sequence-to-entity">
+    <preConditions onFail="MARK_RAN">
+      <sequenceExists sequenceName="calendar_settings_id_seq"/>
+    </preConditions>
+    <alterSequence sequenceName="calendar_settings_id_seq" incrementBy="1"/>
+  </changeSet>
+</databaseChangeLog>
