@@ -313,7 +313,8 @@ public class Application {
     }
 
     public Duration getHours() {
-        return hours == null && (getVacationType() != null && getVacationType().isOfCategory(OVERTIME)) ? Duration.ZERO : hours;
+        final boolean overtimeReductionWithoutHours = hours == null && (getVacationType() != null && getVacationType().isOfCategory(OVERTIME));
+        return overtimeReductionWithoutHours ? Duration.ZERO : hours;
     }
 
     public DateRange getDateRange() {
