@@ -2265,7 +2265,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2299,7 +2299,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2333,7 +2333,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2367,7 +2367,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2401,7 +2401,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2435,7 +2435,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2469,7 +2469,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2503,7 +2503,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2537,7 +2537,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2571,7 +2571,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2605,7 +2605,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [
@@ -2639,7 +2639,7 @@
         "remindDate": null,
         "applicationStatus": "WAITING",
         "teamInformed": false,
-        "hours": null,
+        "hours": "PT0S",
         "upcomingHolidayReplacementNotificationSend": null,
         "upcomingApplicationsReminderSend": null,
         "applicationComments": [

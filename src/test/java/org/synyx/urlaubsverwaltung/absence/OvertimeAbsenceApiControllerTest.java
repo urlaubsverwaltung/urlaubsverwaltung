@@ -228,18 +228,40 @@ class OvertimeAbsenceApiControllerTest {
     }
 
     @Test
-    void durationNotKnown() throws Exception {
+    void ensureToSetDurationToZeroIfNotKnown() throws Exception {
+
+        final LocalDate date = LocalDate.of(2016, 1, 1);
+
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(2L);
         long applicationId = 3L;
         final Application application = new Application();
+        application.setStartDate(date);
+        application.setEndDate(date);
         application.setId(applicationId);
         application.setPerson(person);
+        application.setDayLength(DayLength.FULL);
         application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
 
+        when(workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), new DateRange(date, date)))
+            .thenReturn(Map.of(person, new WorkingTimeCalendar(Map.of(date, fullWorkday()))));
+
         perform(get("/api/persons/2/absences/3/overtime"))
-            .andExpect(status().isInternalServerError());
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(content().json("""
+                {
+                    "id": 3,
+                    "duration": "PT0S",
+                    "durationShares": [
+                        {
+                            "date": "2016-01-01",
+                            "duration": "PT0S"
+                        }
+                    ]
+                }
+                """));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

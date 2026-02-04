@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.absence.DateRange;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -25,6 +24,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 
 /**
  * This class describes an application for leave.
@@ -313,7 +313,8 @@ public class Application {
     }
 
     public Duration getHours() {
-        return hours;
+        final boolean overtimeReductionWithoutHours = hours == null && (getVacationType() != null && getVacationType().isOfCategory(OVERTIME));
+        return overtimeReductionWithoutHours ? Duration.ZERO : hours;
     }
 
     public DateRange getDateRange() {
@@ -370,7 +371,7 @@ public class Application {
      */
     public Duration getOvertimeReductionShareFor(DateRange dateRange, WorkingTimeCalendarSupplier workingTimeCalendarSupplier) {
 
-        if (vacationType == null || !VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
+        if (vacationType == null || !OVERTIME.equals(vacationType.getCategory())) {
             return Duration.ZERO;
         }
 

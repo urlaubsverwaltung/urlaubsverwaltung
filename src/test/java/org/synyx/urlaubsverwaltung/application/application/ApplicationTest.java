@@ -402,6 +402,26 @@ class ApplicationTest {
     }
 
     @Test
+    void ensureGetOvertimeReductionHoursWhenConvertingFromSickNoteWithDefaultZero() {
+        final LocalDate startDate = LocalDate.of(2022, 8, 10);
+        final LocalDate endDate = LocalDate.of(2022, 8, 12);
+
+        final Person person = new Person();
+        person.setId(1L);
+
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(FULL);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationType(1L, OVERTIME, new StaticMessageSource()));
+        application.setHours(null);
+
+        assertThat(application.getHours()).isZero();
+    }
+
+    @Test
     void equals() {
         final Application applicationOne = new Application();
         applicationOne.setId(1L);
