@@ -20,7 +20,8 @@
   "related_applications": [
     {
       "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=cloud.urlaubsverwaltung.mobile.urlaubsverwaltung"
+      "url": "https://play.google.com/store/apps/details?id=cloud.urlaubsverwaltung.mobile.urlaubsverwaltung",
+      "id": "cloud.urlaubsverwaltung.mobile.urlaubsverwaltung"
     },
     {
       "platform": "itunes",
