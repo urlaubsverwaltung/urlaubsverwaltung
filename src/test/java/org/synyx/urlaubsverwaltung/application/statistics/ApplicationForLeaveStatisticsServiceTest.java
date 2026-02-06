@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -51,13 +53,16 @@ class ApplicationForLeaveStatisticsServiceTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
+    private ApplicationService applicationService;
+    @Mock
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
     @Mock
     private VacationTypeService vacationTypeService;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsService(personService, personBasedataService, departmentService, applicationForLeaveStatisticsBuilder, vacationTypeService);
+        sut = new ApplicationForLeaveStatisticsService(personService, personBasedataService, departmentService,
+            applicationService, applicationForLeaveStatisticsBuilder, vacationTypeService);
     }
 
     @Nested
@@ -317,7 +322,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
             final List<Application> applications = List.of(new Application());
 
-            when(applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(startDate, endDate, vacationTypes, ""))
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), vacationTypes, ""))
                 .thenReturn(applications);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes, applications))
@@ -370,7 +375,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             // actual applications are not of interest. returned list just has to be passed into applicationForLeaveStatisticsBuilder
             final List<Application> applications = List.of(new Application());
 
-            when(applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(startDate, endDate, vacationTypes, ""))
+            when(applicationService.getApplicationsForACertainPeriodAndStatus(startDate, endDate, ApplicationStatus.activeStatuses(), vacationTypes, ""))
                 .thenReturn(applications);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes, applications))

@@ -6,7 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -19,11 +21,13 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -33,17 +37,23 @@ class ApplicationForLeaveStatisticsService {
     private final PersonService personService;
     private final PersonBasedataService personBasedataService;
     private final DepartmentService departmentService;
+    private final ApplicationService applicationService;
     private final ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
     private final VacationTypeService vacationTypeService;
 
     @Autowired
     ApplicationForLeaveStatisticsService(
-        PersonService personService, PersonBasedataService personBasedataService, DepartmentService departmentService,
-        ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder, VacationTypeService vacationTypeService
+        PersonService personService,
+        PersonBasedataService personBasedataService,
+        DepartmentService departmentService,
+        ApplicationService applicationService,
+        ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder,
+        VacationTypeService vacationTypeService
     ) {
         this.personService = personService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
+        this.applicationService = applicationService;
         this.applicationForLeaveStatisticsBuilder = applicationForLeaveStatisticsBuilder;
         this.vacationTypeService = vacationTypeService;
     }
@@ -85,7 +95,8 @@ class ApplicationForLeaveStatisticsService {
         final Pageable pageable = statisticsPageable.toPageable();
         final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
 
-        final List<Application> allApplications = applicationForLeaveStatisticsBuilder.getApplicationsOfInterest(period.startDate(), period.endDate(), vacationTypes, query);
+        final List<Application> allApplications =
+            getApplicationsOfInterest(period.startDate(), period.endDate(), vacationTypes, query);
 
         // fetch all allowed persons, there may be persons without applications
         final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query).getContent();
@@ -128,6 +139,11 @@ class ApplicationForLeaveStatisticsService {
         }
 
         return statistics;
+    }
+
+    private List<Application> getApplicationsOfInterest(LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, String personQuery) {
+        Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
+        return applicationService.getApplicationsForACertainPeriodAndStatus(from, to, activeStatuses(), vacationTypes, personQuery);
     }
 
     private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {

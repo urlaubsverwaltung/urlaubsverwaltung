@@ -65,18 +65,6 @@ class ApplicationForLeaveStatisticsBuilder {
         this.clock = clock;
     }
 
-    /**
-     * @param from from
-     * @param to to
-     * @param vacationTypes vacationTypes
-     * @param personQuery to filter for person firstname for instance
-     * @return list of applications
-     */
-    public List<Application> getApplicationsOfInterest(LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes, String personQuery) {
-        Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
-        return applicationService.getApplicationsForACertainPeriodAndStatus(from, to, activeStatuses(), vacationTypes, personQuery);
-    }
-
     public Map<Person, ApplicationForLeaveStatistics> build(List<Person> persons, LocalDate from, LocalDate to, List<VacationType<?>> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
