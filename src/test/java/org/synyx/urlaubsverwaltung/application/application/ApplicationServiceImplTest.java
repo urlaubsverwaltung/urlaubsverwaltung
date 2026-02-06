@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -473,6 +475,179 @@ class ApplicationServiceImplTest {
             final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, persons, List.of(WAITING));
 
             assertThat(actual).containsExactly(application);
+        }
+
+        @Test
+        void ensureGetApplicationsForACertainPeriodWithNullPersonQuery() {
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
+
+            final VacationType<?> vacationType1 = ProvidedVacationType.builder(messageSource).id(1L).build();
+            final VacationType<?> vacationType2 = ProvidedVacationType.builder(messageSource).id(2L).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType1, vacationType2);
+
+            final ApplicationEntity applicationEntity = new ApplicationEntity();
+            applicationEntity.setId(1L);
+            applicationEntity.setVacationType(new VacationTypeEntity());
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(1L, 2L), ""))
+                .thenReturn(List.of(applicationEntity));
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, null);
+
+            final Application expectedApplication = new Application();
+            expectedApplication.setId(1L);
+            assertThat(actual).containsExactly(expectedApplication);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"", "      "})
+        void ensureGetApplicationsForACertainPeriodWithEmptyPersonQuery(String givenQuery) {
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType);
+
+            final ApplicationEntity applicationEntity = new ApplicationEntity();
+            applicationEntity.setId(1L);
+            applicationEntity.setVacationType(new VacationTypeEntity());
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(1L), ""))
+                .thenReturn(List.of(applicationEntity));
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, givenQuery);
+
+            final Application expectedApplication = new Application();
+            expectedApplication.setId(1L);
+            assertThat(actual).containsExactly(expectedApplication);
+        }
+
+        @Test
+        void ensureGetApplicationsForACertainPeriodWithValidPersonQuery() {
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType);
+
+            final ApplicationEntity applicationEntity = new ApplicationEntity();
+            applicationEntity.setId(1L);
+            applicationEntity.setVacationType(new VacationTypeEntity());
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(1L), "John"))
+                .thenReturn(List.of(applicationEntity));
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "John");
+
+            final Application expectedApplication = new Application();
+            expectedApplication.setId(1L);
+            assertThat(actual).containsExactly(expectedApplication);
+        }
+
+        @Test
+        void ensureGetApplicationsForACertainPeriodWithMultipleVacationTypes() {
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
+
+            final VacationType<?> vacationType1 = ProvidedVacationType.builder(messageSource).id(5L).build();
+            final VacationType<?> vacationType2 = ProvidedVacationType.builder(messageSource).id(10L).build();
+            final VacationType<?> vacationType3 = ProvidedVacationType.builder(messageSource).id(15L).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType1, vacationType2, vacationType3);
+
+            final ApplicationEntity applicationEntity = new ApplicationEntity();
+            applicationEntity.setId(1L);
+            applicationEntity.setVacationType(new VacationTypeEntity());
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(5L, 10L, 15L), "Smith"))
+                .thenReturn(List.of(applicationEntity));
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "Smith");
+
+            final Application expectedApplication = new Application();
+            expectedApplication.setId(1L);
+            assertThat(actual).containsExactly(expectedApplication);
+        }
+
+        @Test
+        void ensureGetApplicationsForACertainPeriodWithEmptyVacationTypesList() {
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING, ALLOWED);
+            final List<VacationType<?>> vacationTypes = List.of();
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(), ""))
+                .thenReturn(List.of());
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, null);
+            assertThat(actual).isEmpty();
+        }
+
+        @Test
+        void ensureGetApplicationsForACertainPeriodReturnsCorrectlyMappedApplications() {
+            when(messageSource.getMessage("vacation-type-message-key", new Object[]{}, JAPANESE)).thenReturn("vacation type label");
+
+            final LocalDate startDate = LocalDate.parse("2025-01-01");
+            final LocalDate endDate = LocalDate.parse("2025-01-31");
+            final List<ApplicationStatus> statuses = List.of(WAITING);
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).id(1L).build();
+            final List<VacationType<?>> vacationTypes = List.of(vacationType);
+
+            final Person person = new Person();
+            person.setId(1L);
+
+            final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+            vacationTypeEntity.setId(2L);
+            vacationTypeEntity.setActive(true);
+            vacationTypeEntity.setColor(CYAN);
+            vacationTypeEntity.setMessageKey("vacation-type-message-key");
+            vacationTypeEntity.setRequiresApprovalToApply(true);
+            vacationTypeEntity.setVisibleToEveryone(true);
+            vacationTypeEntity.setCategory(OVERTIME);
+
+            final ApplicationEntity applicationEntity = new ApplicationEntity();
+            applicationEntity.setId(42L);
+            applicationEntity.setPerson(person);
+            applicationEntity.setStartDate(startDate);
+            applicationEntity.setEndDate(endDate);
+            applicationEntity.setStatus(WAITING);
+            applicationEntity.setVacationType(vacationTypeEntity);
+            applicationEntity.setDayLength(DayLength.FULL);
+
+            when(applicationRepository.findByEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusInAndPersonNiceNameContainingIgnoreCase(
+                startDate, endDate, statuses, List.of(1L), "test"))
+                .thenReturn(List.of(applicationEntity));
+
+            final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "test");
+
+            assertThat(actual).hasSize(1);
+            assertThat(actual.get(0)).satisfies(application -> {
+                assertThat(application.getId()).isEqualTo(42L);
+                assertThat(application.getPerson()).isSameAs(person);
+                assertThat(application.getStartDate()).isEqualTo(startDate);
+                assertThat(application.getEndDate()).isEqualTo(endDate);
+                assertThat(application.getStatus()).isEqualTo(WAITING);
+                assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
+                assertThat(application.getVacationType()).satisfies(vt -> {
+                    assertThat(vt.getId()).isEqualTo(2L);
+                    assertThat(vt.isActive()).isTrue();
+                    assertThat(vt.getColor()).isEqualTo(CYAN);
+                    assertThat(vt.getLabel(JAPANESE)).isEqualTo("vacation type label");
+                    assertThat(vt.isRequiresApprovalToApply()).isTrue();
+                    assertThat(vt.isVisibleToEveryone()).isTrue();
+                    assertThat(vt.getCategory()).isEqualTo(OVERTIME);
+                });
+            });
         }
     }
 
