@@ -33,9 +33,8 @@ public interface PersonPageable {
         // e.g. if content should be sorted by firstName, use lastName as second sort criteria
         final Sort implicitSort;
 
-        // TODO this should be made more robust!
-        //      not firstNameOrder!=null is the condition to add implicit lastName, we have to verify the incoming Sort
-        //      doesn't have a lastName sorting, too.
+        // actually we would have to check whether lastName is already in requestedSort or not.
+        // however, practically only firstName OR lastName is sortable currently.
         if (firstNameOrder != null) {
             final Sort.TypedSort<?> sort = personSort.by(PersonSortProperty.LAST_NAME.propertyExtractor());
             implicitSort = requestedSort.and(firstNameOrder.isAscending() ? sort.ascending() : sort.descending());
