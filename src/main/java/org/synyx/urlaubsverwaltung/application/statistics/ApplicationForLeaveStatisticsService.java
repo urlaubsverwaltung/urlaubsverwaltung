@@ -120,11 +120,11 @@ class ApplicationForLeaveStatisticsService {
     private Collection<ApplicationForLeaveStatistics> enrichWithPersonBaseData(Collection<ApplicationForLeaveStatistics> statistics, List<Person> persons) {
 
         final List<Long> personIdValues = persons.stream().map(Person::getId).toList();
-        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
+        final Map<PersonId, PersonBasedata> baseDataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
         for (ApplicationForLeaveStatistics statistic : statistics) {
             final PersonId personId = statistic.getPerson().getIdAsPersonId();
-            statistic.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
+            statistic.setPersonBasedata(baseDataByPersonId.getOrDefault(personId, null));
         }
 
         return statistics;
