@@ -31,6 +31,7 @@ import java.time.Year;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.math.BigDecimal.TEN;
 import static java.time.LocalDate.of;
@@ -126,15 +127,17 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
-        assertThat(statistics.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
+            assertThat(value.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
+        });
     }
 
     @Test
@@ -183,15 +186,17 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
-        assertThat(statistics.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
+            assertThat(value.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
+        });
     }
 
     @Test
@@ -248,15 +253,17 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getLeftRemainingVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(5));
-        assertThat(statistics.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(2));
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getLeftRemainingVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(5));
+            assertThat(value.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(2));
+        });
     }
 
     @Test
@@ -311,15 +318,17 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getLeftRemainingVacationDaysForYear()).isEqualTo(BigDecimal.ZERO);
-        assertThat(statistics.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.ZERO);
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getLeftRemainingVacationDaysForYear()).isEqualTo(BigDecimal.ZERO);
+            assertThat(value.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.ZERO);
+        });
     }
 
     @Test
@@ -422,16 +431,18 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(List.of(person), from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(4));
-        assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(TEN);
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(4));
+            assertThat(value.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
+            assertThat(value.getLeftVacationDaysForYear()).isEqualTo(TEN);
+        });
     }
 
     @Test
@@ -470,14 +481,16 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
 
-        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(persons, from, to, List.of(type));
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(persons, from, to, List.of(type));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
 
-        final ApplicationForLeaveStatistics statistics = actual.get(person);
-        assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ofHours(9));
-        assertThat(statistics.getLeftOvertimeForPeriod()).isEqualTo(Duration.ofHours(3));
+        final Optional<ApplicationForLeaveStatistics> statistics = actual.get(person);
+        assertThat(statistics).hasValueSatisfying(value -> {
+            assertThat(value.getPerson()).isEqualTo(person);
+            assertThat(value.getLeftOvertimeForYear()).isEqualTo(Duration.ofHours(9));
+            assertThat(value.getLeftOvertimeForPeriod()).isEqualTo(Duration.ofHours(3));
+        });
     }
 }

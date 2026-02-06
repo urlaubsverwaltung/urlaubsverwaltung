@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -68,7 +69,7 @@ class SickDaysStatisticsViewController {
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Locale locale
     ) {
 

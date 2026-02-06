@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.extension.ExtensionConfiguration;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageStreamSupport;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -77,13 +77,13 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
 
     @Override
     public Stream<PersonDTO> getActivePersons() {
-        return PageStreamSupport.stream(pageable -> personService.getActivePersons(new PageableSearchQuery(pageable)))
+        return PageStreamSupport.stream(pageable -> personService.getActivePersons(PersonPageRequest.of(pageable)))
             .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override
     public Stream<PersonDTO> getInactivePersons() {
-        return PageStreamSupport.stream(pageable -> personService.getInactivePersons(new PageableSearchQuery(pageable)))
+        return PageStreamSupport.stream(pageable -> personService.getInactivePersons(PersonPageRequest.of(pageable)))
             .map(PersonDTOMapper::toPersonDTO);
     }
 

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -24,9 +23,11 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
+import org.synyx.urlaubsverwaltung.person.PersonPageable;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
@@ -92,7 +93,7 @@ public class PersonsViewController implements HasLaunchpad {
         @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+        @SortDefault(sort = PersonPageRequest.DEFAULT_PERSON_SORT_KEY, direction = Sort.Direction.ASC) Pageable pageable,
         Model model
     ) throws UnknownDepartmentException {
         final int currentYear = Year.now(clock).getValue();
@@ -101,21 +102,16 @@ public class PersonsViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        Sort personSort = Sort.unsorted();
+        final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
+
+        // #5850 will introduce typed account page request
         Sort accountSort = Sort.unsorted();
         for (Sort.Order order : pageable.getSort()) {
             final String propertyWithPrefix = order.getProperty();
-            if (propertyWithPrefix.startsWith("person.")) {
-                final String property = propertyWithPrefix.replace("person.", "");
-                personSort = personSort.and(Sort.by(order.getDirection(), property));
-            } else if (propertyWithPrefix.startsWith("account.")) {
-                final String property = propertyWithPrefix.replace("account.", "");
-                accountSort = accountSort.and(Sort.by(order.getDirection(), property));
-            }
+            final String property = propertyWithPrefix.replace("account.", "");
+            accountSort = accountSort.and(Sort.by(order.getDirection(), property));
         }
-        final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
-        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
         Page<Person> personPage = null;
 
         final boolean departmentPresent = requestedDepartmentId.isPresent();
@@ -130,15 +126,15 @@ public class PersonsViewController implements HasLaunchpad {
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
                 personPage = active
-                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
-                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
+                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query)
+                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageRequest, query);
             }
         }
 
         if (personPage == null) {
             personPage = active
-                ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
-                : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
+                ? getRelevantActivePersons(signedInUser, personPageRequest, query)
+                : getRelevantInactivePersons(signedInUser, personPageRequest, query);
         }
 
         final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now, departmentPresent, department);
@@ -158,7 +154,7 @@ public class PersonsViewController implements HasLaunchpad {
         model.addAttribute("personsPagination", personsPagination);
         model.addAttribute("paginationPageNumbers", IntStream.range(0, personDtoPage.getTotalPages()).boxed().toList());
 
-        final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
+        final HtmlSelectDto htmlSelectDto = htmlSelectDto(personPageRequest.getSort(), accountSort);
         model.addAttribute("sortSelect", htmlSelectDto);
 
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
@@ -174,19 +170,19 @@ public class PersonsViewController implements HasLaunchpad {
         return "person/persons";
     }
 
-    private Page<Person> getRelevantActivePersons(Person signedInUser, PageableSearchQuery personPageableSearchQuery) {
+    private Page<Person> getRelevantActivePersons(Person signedInUser, PersonPageRequest personPageRequest, String query) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons(personPageableSearchQuery);
+            return personService.getActivePersons(personPageRequest, query);
         } else {
-            return departmentService.getManagedMembersOfPerson(signedInUser, personPageableSearchQuery);
+            return departmentService.getManagedMembersOfPerson(signedInUser, personPageRequest, query);
         }
     }
 
-    private Page<Person> getRelevantInactivePersons(Person signedInUser, PageableSearchQuery personPageableSearchQuery) {
+    private Page<Person> getRelevantInactivePersons(Person signedInUser, PersonPageable personPageable, String query) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getInactivePersons(personPageableSearchQuery);
+            return personService.getInactivePersons(personPageable, query);
         }
-        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, personPageableSearchQuery);
+        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, personPageable, query);
     }
 
     private List<Department> getRelevantDepartmentsSortedByName(Person signedInUser) {
@@ -288,15 +284,20 @@ public class PersonsViewController implements HasLaunchpad {
         return new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
     }
 
-    private static HtmlSelectDto htmlSelectDto(Sort originalPersonSort, Sort originalAccountSort) {
+    private static HtmlSelectDto htmlSelectDto(Sort personSort, Sort accountSort) {
 
-        final List<HtmlOptionDto> personOptions = htmlOptionDtos("person", List.of("firstName", "lastName"), originalPersonSort);
+        final List<String> sortablePersonProperties = List.of(
+            PersonSortProperty.FIRST_NAME.key(),
+            PersonSortProperty.LAST_NAME.key()
+        );
+
+        final List<HtmlOptionDto> personOptions = htmlOptionDtos(PersonPageRequest.PERSON_PREFIX, sortablePersonProperties, personSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
 
-        final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), originalAccountSort);
+        final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), accountSort);
         final HtmlOptgroupDto urlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.urlaub.label", urlaubOptions);
 
-        final List<HtmlOptionDto> resturlaubOptions = htmlOptionDtos("account", List.of("entitlementRemaining", "vacationDaysLeftRemaining"), originalAccountSort);
+        final List<HtmlOptionDto> resturlaubOptions = htmlOptionDtos("account", List.of("entitlementRemaining", "vacationDaysLeftRemaining"), accountSort);
         final HtmlOptgroupDto resturlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.resturlaub.label", resturlaubOptions);
 
         return new HtmlSelectDto(List.of(personOptgroup, urlaubOptgroup, resturlaubOptgroup));

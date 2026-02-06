@@ -1,11 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.export;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -14,6 +13,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -27,7 +27,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.groupingBy;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -40,7 +42,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Transactional
 class ApplicationForLeaveExportService {
 
-    private static final String PERSON_PREFIX = "person.";
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
     private final DepartmentService departmentService;
@@ -130,39 +132,21 @@ class ApplicationForLeaveExportService {
     }
 
     private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
-        final Pageable pageable = pageableSearchQuery.getPageable();
-        final boolean sortByPerson = isSortByPersonAttribute(pageable);
+
+        PersonPageRequest pageRequest = PersonPageRequest.ofApiPageable(pageableSearchQuery.getPageable());
+
+        // this has been / is a bug, we don't want to fix right now...
+        // the pageNumber and pageSize must actually NOT be considered when the pageable doesn't contain info for person pagination
+        if (pageRequest.isUnpaged()) {
+            LOG.error("reached buggy path of fetching paginated persons for statistics, despite person should not be paginated.");
+            final Pageable pageable = pageableSearchQuery.getPageable();
+            pageRequest = PersonPageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            final PageableSearchQuery query = sortByPerson
-                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
-                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
-
-            return personService.getActivePersons(query);
+            return personService.getActivePersons(pageRequest, pageableSearchQuery.getQuery());
         }
 
-        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
-        return departmentService.getManagedMembersOfPerson(person, query);
-    }
-
-    private boolean isSortByPersonAttribute(Pageable pageable) {
-        for (Sort.Order order : pageable.getSort()) {
-            if (!order.getProperty().startsWith(PERSON_PREFIX)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
-        Sort personSort = Sort.unsorted();
-
-        for (Sort.Order order : statisticsPageRequest.getSort()) {
-            if (order.getProperty().startsWith(PERSON_PREFIX)) {
-                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace(PERSON_PREFIX, "")));
-            }
-        }
-
-        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
+        return departmentService.getManagedMembersOfPerson(person, pageRequest, pageableSearchQuery.getQuery());
     }
 }

@@ -4,15 +4,14 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonPageable;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
 import java.time.Clock;
@@ -114,9 +113,9 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
+    public Page<Person> getManagedMembersOfPerson(Person person, PersonPageable pageable, String query) {
         final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, personPageableSearchQuery, not(Person::isInactive));
+        return managedMembersOfPerson(personId, pageable, query, not(Person::isInactive));
     }
 
     @Override
@@ -127,21 +126,21 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
+    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PersonPageable pageable, String query) {
         final PersonId personId = person.getIdAsPersonId();
-        return managedMembersOfPerson(personId, personPageableSearchQuery, Person::isInactive);
+        return managedMembersOfPerson(personId, pageable, query, Person::isInactive);
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery) {
-        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive));
-        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
+        final Predicate<Person> filter = nameContains(query).and(not(Person::isInactive));
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageable, filter);
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery) {
-        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive);
-        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, String query) {
+        final Predicate<Person> filter = nameContains(query).and(Person::isInactive);
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageable, filter);
     }
 
     @Override
@@ -588,14 +587,13 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentEntity;
     }
 
-    private Page<Person> managedMembersOfPerson(PersonId personId, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
+    private Page<Person> managedMembersOfPerson(PersonId personId, PersonPageable pageable, String query, Predicate<Person> predicate) {
 
-        final Pageable pageable = personPageableSearchQuery.getPageable();
         final List<DepartmentMembership> memberships = getManagedMemberMembershipsOfPerson(personId);
 
         final List<Person> managedMembers = membershipsToPersons(memberships)
             .stream()
-            .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
+            .filter(nameContains(query).and(predicate))
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .toList();
 
@@ -604,10 +602,10 @@ class DepartmentServiceImpl implements DepartmentService {
             .limit(pageable.getPageSize())
             .toList();
 
-        return new PageImpl<>(content, pageable, managedMembers.size());
+        return new PageImpl<>(content, pageable.toPageable(), managedMembers.size());
     }
 
-    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
+    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PersonPageable pageable, Predicate<Person> filter) {
 
         final DepartmentStaff staff = departmentMembershipService.getDepartmentStaff(departmentId);
         if (!doesPersonManageDepartment(person, staff)) {
@@ -621,7 +619,6 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final List<Person> members = personService.getAllPersonsByIds(memberPersonIds);
 
-        final Pageable pageable = pageableSearchQuery.getPageable();
         final List<Person> content = members.stream()
             .filter(filter)
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
@@ -629,7 +626,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .limit(pageable.getPageSize())
             .toList();
 
-        return new PageImpl<>(content, pageable, members.size());
+        return new PageImpl<>(content, pageable.toPageable(), members.size());
     }
 
     private static boolean doesPersonManageDepartment(Person person, DepartmentStaff staff) {
