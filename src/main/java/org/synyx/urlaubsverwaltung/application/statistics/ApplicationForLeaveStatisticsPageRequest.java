@@ -1,18 +1,13 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.slf4j.Logger;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.ObjectUtils;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Objects.requireNonNullElseGet;
-import static org.slf4j.LoggerFactory.getLogger;
 
 public class ApplicationForLeaveStatisticsPageRequest extends AbstractPageRequest implements ApplicationForLeaveStatisticsPageable {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     public static final String STATISTICS_PREFIX = "";
 
