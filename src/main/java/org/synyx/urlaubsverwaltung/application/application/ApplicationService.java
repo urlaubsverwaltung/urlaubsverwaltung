@@ -49,9 +49,9 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *
-     * @param startDate
-     * @param endDate
-     * @param persons
+     * @param startDate start of the period
+     * @param endDate   end of the period (inclusive)
+     * @param persons   persons to consider
      * @return all {@link Application}s of the given persons with vacation time between startDate and endDate
      */
     List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses);
@@ -59,10 +59,10 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the matching persons.
      *
-     * @param startDate
-     * @param endDate
-     * @param statuses
-     * @param vacationTypes
+     * @param startDate     start of the period
+     * @param endDate       end of the period (inclusive)
+     * @param statuses      application status to consider
+     * @param vacationTypes vacationType to consider
      * @param personQuery   optional filter for person firstname for instance
      * @return all {@link Application}s of the matching persons with vacation time between startDate and endDate
      */
