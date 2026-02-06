@@ -141,6 +141,57 @@ class ApplicationForLeaveStatisticsServiceTest {
         }
 
         @Test
+        void ensureStatisticsAreSortedByPerson() {
+            final LocalDate startDate = LocalDate.parse("2018-01-01");
+            final LocalDate endDate = LocalDate.parse("2018-12-31");
+            final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+            final Person officePerson = new Person();
+            officePerson.setId(1L);
+            officePerson.setPermissions(List.of(USER, OFFICE));
+
+            final Person anne = new Person();
+            anne.setId(2L);
+            anne.setPermissions(List.of(USER));
+            anne.setFirstName("Anne");
+
+            final Person anja = new Person();
+            anja.setId(3L);
+            anja.setPermissions(List.of(USER));
+            anja.setFirstName("Anja");
+
+            final Person brunhilde = new Person();
+            brunhilde.setId(4L);
+            brunhilde.setPermissions(List.of(USER));
+            brunhilde.setFirstName("Brunhilde");
+
+            final PersonPageRequest personPageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
+            when(personService.getActivePersons(personPageRequest, ""))
+                // return sorted list (sorted based on pageRequest)
+                .thenReturn(new PageImpl<>(List.of(anja, anne, brunhilde)));
+
+            final VacationType<?> vacationType = ProvidedVacationType.builder(new StaticMessageSource()).build();
+            final List<VacationType<?>> activeVacationTypes = List.of(vacationType);
+            when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
+
+            when(applicationForLeaveStatisticsBuilder.build(List.of(anja, anne, brunhilde), startDate, endDate, activeVacationTypes))
+                .thenReturn(Map.of(
+                    anne, Optional.of(new ApplicationForLeaveStatistics(anne, activeVacationTypes)),
+                    brunhilde, Optional.of(new ApplicationForLeaveStatistics(brunhilde, activeVacationTypes)),
+                    anja, Optional.of(new ApplicationForLeaveStatistics(anja, activeVacationTypes))
+                ));
+
+            final Page<ApplicationForLeaveStatistics> actual =
+                sut.getStatisticsSortedByPerson(officePerson, filterPeriod, personPageRequest, "");
+
+            final List<ApplicationForLeaveStatistics> actualStatistics = actual.getContent();
+            assertThat(actualStatistics).hasSize(3);
+            assertThat(actualStatistics.get(0).getPerson()).isEqualTo(anja);
+            assertThat(actualStatistics.get(1).getPerson()).isEqualTo(anne);
+            assertThat(actualStatistics.get(2).getPerson()).isEqualTo(brunhilde);
+        }
+
+        @Test
         void ensureStatisticsRequestedForBasicUserHimself() {
 
             final LocalDate startDate = LocalDate.parse("2018-01-01");

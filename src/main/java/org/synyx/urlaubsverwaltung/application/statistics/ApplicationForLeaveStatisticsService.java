@@ -62,10 +62,10 @@ class ApplicationForLeaveStatisticsService {
     /**
      * Get the matching page sorted by given person criteria.
      *
-     * @param person person to restrict the returned page content
-     * @param filterPeriod filter result set for a given period of time
+     * @param person         person to restrict the returned page content
+     * @param filterPeriod   filter result set for a given period of time
      * @param personPageable person pageable criteria
-     * @param query optional person query, to search for firstname for instance
+     * @param query          optional person query, to search for firstname for instance
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
     Page<ApplicationForLeaveStatistics> getStatisticsSortedByPerson(Person person, FilterPeriod filterPeriod, PersonPageRequest personPageable, String query) {
@@ -114,29 +114,25 @@ class ApplicationForLeaveStatisticsService {
         return new PageImpl<>(paginatedStatistics, pageable, allStatistics.size());
     }
 
-    private Collection<ApplicationForLeaveStatistics> getStatistics(
-        FilterPeriod period, List<Person> persons, List<VacationType<?>> vacationTypes, @Nullable List<Application> applications) {
+    private List<ApplicationForLeaveStatistics> getStatistics(
+        FilterPeriod period, List<Person> sortedPersons, List<VacationType<?>> vacationTypes, @Nullable List<Application> applications) {
 
-        final Collection<ApplicationForLeaveStatistics> statisticsCollection;
-        if (applications != null) {
-            statisticsCollection = applicationForLeaveStatisticsBuilder
-                .build(persons, period.startDate(), period.endDate(), vacationTypes, applications)
-                .values()
-                .stream()
-                .flatMap(Optional::stream)
-                .toList();
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson;
+        if (applications == null) {
+            statisticsByPerson = applicationForLeaveStatisticsBuilder.build(sortedPersons, period.startDate(), period.endDate(), vacationTypes);
         } else {
-            statisticsCollection = applicationForLeaveStatisticsBuilder
-                .build(persons, period.startDate(), period.endDate(), vacationTypes).values()
-                .stream()
-                .flatMap(Optional::stream)
-                .toList();
+            statisticsByPerson = applicationForLeaveStatisticsBuilder.build(sortedPersons, period.startDate(), period.endDate(), vacationTypes, applications);
         }
 
-        return enrichWithPersonBaseData(statisticsCollection, persons);
+        final List<ApplicationForLeaveStatistics> sortedStatistics = sortedPersons.stream()
+            .map(statisticsByPerson::get)
+            .flatMap(Optional::stream)
+            .toList();
+
+        return enrichWithPersonBaseData(sortedStatistics, sortedPersons);
     }
 
-    private Collection<ApplicationForLeaveStatistics> enrichWithPersonBaseData(Collection<ApplicationForLeaveStatistics> statistics, List<Person> persons) {
+    private List<ApplicationForLeaveStatistics> enrichWithPersonBaseData(List<ApplicationForLeaveStatistics> statistics, List<Person> persons) {
 
         final List<Long> personIdValues = persons.stream().map(Person::getId).toList();
         final Map<PersonId, PersonBasedata> baseDataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
