@@ -109,7 +109,7 @@ public class PersonsViewController implements HasLaunchpad {
 
         final PersonPageRequest personPageRequest = PersonPageRequest.ofApiPageable(pageable);
 
-        // TODO typed account sort/pageRequest
+        // #5850 will introduce typed account page request
         Sort accountSort = Sort.unsorted();
         for (Sort.Order order : pageable.getSort()) {
             final String propertyWithPrefix = order.getProperty();
