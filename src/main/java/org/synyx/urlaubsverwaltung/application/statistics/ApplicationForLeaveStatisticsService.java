@@ -62,7 +62,9 @@ class ApplicationForLeaveStatisticsService {
         final Page<Person> personPage = getAllRelevantPersons(person, personPageable, query);
         final List<VacationType<?>> vacationTypes = vacationTypeService.getActiveVacationTypes();
 
-        final Iterable<ApplicationForLeaveStatistics> statistics = getStatisticsSortedByStatistics(filterPeriod, personPage.getContent(), vacationTypes, null);
+        final Iterable<ApplicationForLeaveStatistics> statistics =
+            getStatistics(filterPeriod, personPage.getContent(), vacationTypes, null);
+
         final List<ApplicationForLeaveStatistics> content = StreamSupport.stream(statistics.spliterator(), false).toList();
 
         return new PageImpl<>(content, personPageable.toPageable(), personPage.getTotalElements());
@@ -89,7 +91,7 @@ class ApplicationForLeaveStatisticsService {
         final List<Person> persons = getAllRelevantPersons(person, PersonPageRequest.unpaged(), query).getContent();
 
         final Collection<ApplicationForLeaveStatistics> allStatistics =
-            getStatisticsSortedByStatistics(period, persons, vacationTypes, allApplications);
+            getStatistics(period, persons, vacationTypes, allApplications);
 
         final List<ApplicationForLeaveStatistics> paginatedStatistics = allStatistics.stream()
             .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
@@ -100,10 +102,8 @@ class ApplicationForLeaveStatisticsService {
         return new PageImpl<>(paginatedStatistics, pageable, allStatistics.size());
     }
 
-    private Collection<ApplicationForLeaveStatistics> getStatisticsSortedByStatistics(FilterPeriod period, List<Person> persons, List<VacationType<?>> vacationTypes, @Nullable List<Application> applications) {
-
-        final List<Long> personIdValues = persons.stream().map(Person::getId).toList();
-        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
+    private Collection<ApplicationForLeaveStatistics> getStatistics(
+        FilterPeriod period, List<Person> persons, List<VacationType<?>> vacationTypes, @Nullable List<Application> applications) {
 
         final Collection<ApplicationForLeaveStatistics> statisticsCollection;
         if (applications != null) {
@@ -114,12 +114,20 @@ class ApplicationForLeaveStatisticsService {
                 .build(persons, period.startDate(), period.endDate(), vacationTypes).values();
         }
 
-        statisticsCollection.forEach(statistics -> {
-            final PersonId personId = statistics.getPerson().getIdAsPersonId();
-            statistics.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
-        });
+        return enrichWithPersonBaseData(statisticsCollection, persons);
+    }
 
-        return statisticsCollection;
+    private Collection<ApplicationForLeaveStatistics> enrichWithPersonBaseData(Collection<ApplicationForLeaveStatistics> statistics, List<Person> persons) {
+
+        final List<Long> personIdValues = persons.stream().map(Person::getId).toList();
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
+
+        for (ApplicationForLeaveStatistics statistic : statistics) {
+            final PersonId personId = statistic.getPerson().getIdAsPersonId();
+            statistic.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
+        }
+
+        return statistics;
     }
 
     private Page<Person> getAllRelevantPersons(Person person, PersonPageRequest pageRequest, String query) {
