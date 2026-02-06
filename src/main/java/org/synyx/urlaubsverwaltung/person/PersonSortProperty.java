@@ -4,7 +4,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Defines sortable attributes of a {@link Person}.
+ * Defines sortable attributes of {@link Person}.
+ * May be used in conjunction with {@link PersonPageable}.
  */
 public enum PersonSortProperty {
 

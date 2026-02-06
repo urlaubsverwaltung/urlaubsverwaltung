@@ -6,6 +6,10 @@ import org.synyx.urlaubsverwaltung.person.PersonSortProperty;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Defines sortable attributes of {@link ApplicationForLeaveStatistics}.
+ * May be used in conjunction with {@link ApplicationForLeaveStatisticsPageable}.
+ */
 public enum ApplicationForLeaveStatisticsSortProperty {
 
     TOTAL_ALLOWED_VACATION_DAYS(ApplicationForLeaveStatisticsSortProperty.TOTAL_ALLOWED_VACATION_DAYS_KEY, ApplicationForLeaveStatistics::getTotalAllowedVacationDays),
