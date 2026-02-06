@@ -287,28 +287,22 @@ class ApplicationServiceImplTest {
         void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
             when(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).thenReturn(null);
 
             final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
-
-            verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
-
             assertThat(totalHours).isEqualTo(ZERO);
+            verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
         }
 
         @Test
         void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
             when(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
             final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
-
-            verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
-
             assertThat(totalHours).isEqualTo(Duration.ofHours(1));
+            verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
         }
     }
 
