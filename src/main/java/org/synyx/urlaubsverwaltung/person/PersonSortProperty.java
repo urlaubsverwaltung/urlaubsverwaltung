@@ -39,12 +39,11 @@ public enum PersonSortProperty {
      * @return the matched {@link PersonSortProperty}, {@link Optional#empty()} if key is unknown.
      */
     public static Optional<PersonSortProperty> byKey(String key) {
-        final PersonSortProperty sort = switch (key) {
+        return Optional.ofNullable(switch (key) {
             case FIRST_NAME_KEY -> FIRST_NAME;
             case LAST_NAME_KEY -> LAST_NAME;
             default -> null;
-        };
-        return Optional.ofNullable(sort);
+        });
     }
 
     /**

@@ -43,14 +43,13 @@ public enum ApplicationForLeaveStatisticsSortProperty {
      * @return the matched {@link ApplicationForLeaveStatisticsSortProperty}, {@link Optional#empty()} if key is unknown.
      */
     public static Optional<ApplicationForLeaveStatisticsSortProperty> byKey(String key) {
-        final ApplicationForLeaveStatisticsSortProperty sort = switch (key) {
+        return Optional.ofNullable(switch (key) {
             case TOTAL_ALLOWED_VACATION_DAYS_KEY -> TOTAL_ALLOWED_VACATION_DAYS;
             case TOTAL_WAITING_VACATION_DAYS_KEY -> TOTAL_WAITING_VACATION_DAYS;
             case LEFT_VACATION_DAYS_FOR_PERIOD_KEY -> LEFT_VACATION_DAYS_FOR_PERIOD;
             case LEFT_VACATION_DAYS_FOR_YEAR_KEY -> LEFT_VACATION_DAYS_FOR_YEAR;
             default -> null;
-        };
-        return Optional.ofNullable(sort);
+        });
     }
 
     /**
