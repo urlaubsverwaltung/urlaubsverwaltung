@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.TypedSort;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Optional;
@@ -100,14 +101,14 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
 
         Sort sort = Sort.unsorted();
 
-        final Sort.TypedSort<Person> personSort = Sort.TypedSort.sort(Person.class);
+        final TypedSort<Person> personSort = TypedSort.sort(Person.class);
 
         for (Sort.Order order : pageable.getSort()) {
             if (order.getProperty().startsWith(PERSON_PREFIX)) {
                 final String property = order.getProperty().replace(PERSON_PREFIX, "");
                 final Optional<PersonSortProperty> maybeSort = PersonSortProperty.byKey(property);
                 if (maybeSort.isPresent()) {
-                    final Sort.TypedSort<?> by = personSort.by(maybeSort.get().propertyExtractor());
+                    final TypedSort<?> by = personSort.by(maybeSort.get().propertyExtractor());
                     sort = sort.and(order.isAscending() ? by.ascending() : by.descending());
                 } else {
                     // error: this should not happen by our program flow (only when client is "experimenting")
