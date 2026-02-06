@@ -608,10 +608,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    private static Pageable defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName"));
-    }
-
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())

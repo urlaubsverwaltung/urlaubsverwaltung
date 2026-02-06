@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
@@ -49,11 +48,9 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -65,8 +62,6 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
 @Controller
 @RequestMapping("/web")
 public class PersonsViewController implements HasLaunchpad {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final AccountService accountService;
