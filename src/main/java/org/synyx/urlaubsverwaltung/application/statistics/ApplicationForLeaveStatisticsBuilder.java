@@ -51,7 +51,6 @@ class ApplicationForLeaveStatisticsBuilder {
     private final OvertimeService overtimeService;
     private final Clock clock;
 
-    @Autowired
     ApplicationForLeaveStatisticsBuilder(
         AccountService accountService, ApplicationService applicationService,
         WorkingTimeCalendarService workingTimeCalendarService,
