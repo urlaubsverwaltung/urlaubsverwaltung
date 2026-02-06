@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.activeStatuses;
@@ -119,10 +120,17 @@ class ApplicationForLeaveStatisticsService {
         final Collection<ApplicationForLeaveStatistics> statisticsCollection;
         if (applications != null) {
             statisticsCollection = applicationForLeaveStatisticsBuilder
-                .build(persons, period.startDate(), period.endDate(), vacationTypes, applications).values();
+                .build(persons, period.startDate(), period.endDate(), vacationTypes, applications)
+                .values()
+                .stream()
+                .flatMap(Optional::stream)
+                .toList();
         } else {
             statisticsCollection = applicationForLeaveStatisticsBuilder
-                .build(persons, period.startDate(), period.endDate(), vacationTypes).values();
+                .build(persons, period.startDate(), period.endDate(), vacationTypes).values()
+                .stream()
+                .flatMap(Optional::stream)
+                .toList();
         }
 
         return enrichWithPersonBaseData(statisticsCollection, persons);

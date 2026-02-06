@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,7 +93,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, activeVacationTypes))
-                .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, activeVacationTypes)));
+                .thenReturn(Map.of(anyPerson, Optional.of(new ApplicationForLeaveStatistics(anyPerson, activeVacationTypes))));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(personsWithRole, filterPeriod, personPageRequest, "");
 
@@ -124,7 +125,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, activeVacationTypes))
-                .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, activeVacationTypes)));
+                .thenReturn(Map.of(anyPerson, Optional.of(new ApplicationForLeaveStatistics(anyPerson, activeVacationTypes))));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(personsWithRole, filterPeriod, personPageRequest, "");
 
@@ -158,7 +159,8 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
             final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-            when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes)).thenReturn(Map.of(person, applicationForLeaveStatistics));
+            when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes))
+                .thenReturn(Map.of(person, Optional.of(applicationForLeaveStatistics)));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
@@ -194,7 +196,8 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
             final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-            when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes)).thenReturn(Map.of(person, applicationForLeaveStatistics));
+            when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes))
+                .thenReturn(Map.of(person, Optional.of(applicationForLeaveStatistics)));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
@@ -229,7 +232,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember), startDate, endDate, vacationTypes))
-                .thenReturn(Map.of(departmentMember, new ApplicationForLeaveStatistics(departmentMember, vacationTypes)));
+                .thenReturn(Map.of(departmentMember, Optional.of(new ApplicationForLeaveStatistics(departmentMember, vacationTypes))));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(departmentHead, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
@@ -261,7 +264,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember), startDate, endDate, vacationTypes))
-                .thenReturn(Map.of(departmentMember, new ApplicationForLeaveStatistics(departmentMember, vacationTypes)));
+                .thenReturn(Map.of(departmentMember, Optional.of(new ApplicationForLeaveStatistics(departmentMember, vacationTypes))));
 
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(departmentHead, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
@@ -284,7 +287,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(user), startDate, endDate, vacationTypes))
-                .thenReturn(Map.of(user, new ApplicationForLeaveStatistics(user, vacationTypes)));
+                .thenReturn(Map.of(user, Optional.of(new ApplicationForLeaveStatistics(user, vacationTypes))));
 
             final PersonPageRequest pageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(user, filterPeriod, pageRequest, "");
@@ -326,7 +329,7 @@ class ApplicationForLeaveStatisticsServiceTest {
                 .thenReturn(applications);
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes, applications))
-                .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, vacationTypes)));
+                .thenReturn(Map.of(anyPerson, Optional.of(new ApplicationForLeaveStatistics(anyPerson, vacationTypes))));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(personWithRole, filterPeriod, pageRequest, "");
@@ -380,8 +383,8 @@ class ApplicationForLeaveStatisticsServiceTest {
 
             when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes, applications))
                 .thenReturn(Map.of(
-                    departmentMember, statistics1,
-                    departmentMemberTwo, statistics2
+                    departmentMember, Optional.of(statistics1),
+                    departmentMemberTwo, Optional.of(statistics2)
                 ));
 
             final ApplicationForLeaveStatisticsPageRequest pageRequest = ApplicationForLeaveStatisticsPageRequest.of(0, 10, Sort.by("leftVacationDaysForYear"));
