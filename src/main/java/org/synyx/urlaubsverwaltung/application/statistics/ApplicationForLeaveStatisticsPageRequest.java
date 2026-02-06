@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Optional;
-
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -50,10 +48,6 @@ public class ApplicationForLeaveStatisticsPageRequest extends AbstractPageReques
     /**
      * This method simply maps the {@link Pageable} to a {@link ApplicationForLeaveStatisticsPageRequest}. Nothing else considered here.
      *
-     * <p>
-     * If you are interested in mapping a custom api exposed {@link Pageable} please see
-     * {@link ApplicationForLeaveStatisticsPageRequest#ofApiPageable(Pageable)}.
-     *
      * @param pageable {@link Pageable} to map
      * @return the {@link ApplicationForLeaveStatisticsPageRequest}
      */
@@ -82,41 +76,6 @@ public class ApplicationForLeaveStatisticsPageRequest extends AbstractPageReques
      */
     public static ApplicationForLeaveStatisticsPageRequest of(int pageNumber, int pageSize, Sort sort) {
         return new ApplicationForLeaveStatisticsPageRequest(pageNumber, pageSize, sort);
-    }
-
-    /**
-     * This method maps the api exposed {@link Pageable} to a typed {@link ApplicationForLeaveStatisticsPageRequest}.
-     *
-     * <p>
-     * API exposed means, that the {@link Pageable} {@link Sort} has been constructed with property names
-     * prefixed with {@link ApplicationForLeaveStatisticsPageRequest#STATISTICS_PREFIX} followed by {@link ApplicationForLeaveStatisticsSortProperty} values.
-     *
-     * @param pageable a generic {@link Pageable}
-     * @return the mapped {@link ApplicationForLeaveStatisticsPageRequest}, {@link ApplicationForLeaveStatisticsPageRequest.ApplicationForLeaveStatisticsPageRequestUnpaged} when there is no sort criteria
-     */
-    public static ApplicationForLeaveStatisticsPageRequest ofApiPageable(Pageable pageable) {
-
-        Sort sort = Sort.unsorted();
-
-        final Sort.TypedSort<ApplicationForLeaveStatistics> statisticsSort = Sort.TypedSort.sort(ApplicationForLeaveStatistics.class);
-
-        for (Sort.Order order : pageable.getSort()) {
-            // different to PersonPageable, statistics has no prefix. we're simply ignoring values that cannot be mapped.
-            final String property = order.getProperty();
-            final Optional<ApplicationForLeaveStatisticsSortProperty> maybeSort = ApplicationForLeaveStatisticsSortProperty.byKey(property);
-            if (maybeSort.isPresent()) {
-                final Sort.TypedSort<?> by = statisticsSort.by(maybeSort.get().propertyExtractor());
-                sort = sort.and(order.isAscending() ? by.ascending() : by.descending());
-            } else {
-                LOG.info("Could not map statistics sort property '{}' to domain. Ignoring it.", property);
-            }
-        }
-
-        if (sort.isUnsorted()) {
-            return ApplicationForLeaveStatisticsPageRequest.unpaged();
-        }
-
-        return new ApplicationForLeaveStatisticsPageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
     @Override
