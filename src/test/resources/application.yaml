@@ -45,10 +45,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        id:
-          new_generator_mappings: false
   session:
     jdbc:
       initialize-schema: always
