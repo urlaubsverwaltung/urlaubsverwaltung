@@ -101,5 +101,5 @@ jobs:
         uses: actions/upload-artifact@v6
         if: ${{ always() && hashFiles('target/ui-test/**/FAILED-*') != '' }}
         with:
-          name: failed-ui-tests-${{ github.run_attempt }}
+          name: failed-ui-tests-${{ matrix.browser }}-${{ github.run_attempt }}
           path: target/ui-test/**/FAILED-*
