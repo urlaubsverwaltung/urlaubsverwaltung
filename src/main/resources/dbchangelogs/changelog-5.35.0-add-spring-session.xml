@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+  <changeSet author="schneider" id="add-spring-session">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="SPRING_SESSION"/>
+        <tableExists tableName="SPRING_SESSION_ATTRIBUTES"/>
+      </not>
+    </preConditions>
+
+    <sqlFile path="classpath:org/springframework/session/jdbc/schema-postgresql.sql"/>
+
+  </changeSet>
+</databaseChangeLog>
