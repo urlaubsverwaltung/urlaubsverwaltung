@@ -1,7 +1,6 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "@rollup/plugin-replace";
-import inject from "@rollup/plugin-inject";
 import dynamicImportVariables from "@rollup/plugin-dynamic-import-vars";
 import postcss from "rollup-plugin-postcss";
 import esbuild from "rollup-plugin-esbuild";
@@ -80,10 +79,6 @@ export default {
       "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
       "process.env.MODE": JSON.stringify(MODE),
     }),
-    inject({
-      $: "jquery",
-      jQuery: "jquery",
-    }),
     postcss({
       use: ["less"],
       extract: "css/common.css",
@@ -92,7 +87,6 @@ export default {
     dynamicImportVariables(),
     resolve({
       preferBuiltins: false,
-      dedupe: ["jquery"],
     }),
     commonjs({
       // inject jquery results in a cjs import `require('juery')` in es modules.
