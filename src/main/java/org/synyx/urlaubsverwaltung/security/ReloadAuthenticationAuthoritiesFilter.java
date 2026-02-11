@@ -45,7 +45,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
         if (session == null) {
             return true;
         }
@@ -56,7 +56,13 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws ServletException, IOException {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         sessionService.unmarkSessionToReloadAuthorities(session.getId());
 
         final SecurityContext context = SecurityContextHolder.getContext();

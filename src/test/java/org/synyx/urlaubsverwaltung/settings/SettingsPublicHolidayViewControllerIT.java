@@ -94,7 +94,7 @@ class SettingsPublicHolidayViewControllerIT extends SingleTenantTestContainersBa
         expectedSettingsDto.setId(1L);
         expectedSettingsDto.setPublicHolidaysSettings(publicHolidaysSettings);
 
-        mockMvc.perform(get("/web/settings/public-holidays").with(oidcLogin))
+        mockMvc.perform(get("/web/settings/public-holidays").with(csrf()).with(oidcLogin))
             .andExpect(status().isOk())
             .andExpect(model().attribute("settings", expectedSettingsDto))
             .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))

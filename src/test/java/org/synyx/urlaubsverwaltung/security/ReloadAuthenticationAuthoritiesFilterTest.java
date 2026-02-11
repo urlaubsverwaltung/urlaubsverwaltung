@@ -25,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -76,17 +77,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     }
 
     @Test
-    void ensuresFilterSetsAuthenticationWithNewAuthoritiesButSessionIsNullDoNothing() {
-
-        final MockHttpServletRequest request = mock(MockHttpServletRequest.class);
-        when(request.getSession()).thenReturn(null);
-
-        final boolean shouldNotFilter = sut.shouldNotFilter(request);
-        assertThat(shouldNotFilter).isTrue();
-    }
-
-    @Test
-    void ensuresFilterSetsNoNewAuthenticationIfReloadIsNotDefined() {
+    void shouldNotFilterWhenNoSessionExists() {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -95,14 +86,48 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     }
 
     @Test
-    void ensuresFilterSetsNoNewAuthenticationIfReloadIsFalse() {
+    void shouldNotFilterWhenSessionExistsButReloadIsNotDefined() {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession(); // create a session without the reload attribute
 
+        final boolean shouldNotFilter = sut.shouldNotFilter(request);
+        assertThat(shouldNotFilter).isTrue();
+    }
+
+    @Test
+    void shouldNotFilterWhenSessionExistsButReloadIsFalse() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.getSession().setAttribute("reloadAuthorities", false);
 
         final boolean shouldNotFilter = sut.shouldNotFilter(request);
         assertThat(shouldNotFilter).isTrue();
+    }
+
+    @Test
+    void shouldFilterWhenSessionExistsAndReloadIsTrue() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.getSession().setAttribute("reloadAuthorities", true);
+
+        final boolean shouldNotFilter = sut.shouldNotFilter(request);
+        assertThat(shouldNotFilter).isFalse();
+    }
+
+    @Test
+    void doFilterInternalContinuesFilterChainWhenNoSessionExists() throws ServletException, IOException {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        // no session created
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockFilterChain filterChain = new MockFilterChain();
+
+        sut.doFilterInternal(request, response, filterChain);
+
+        assertThat(filterChain.getRequest()).isEqualTo(request);
+        assertThat(filterChain.getResponse()).isEqualTo(response);
+        verifyNoInteractions(personService, sessionService, securityContextRepository, tenantContextHolder);
     }
 
     private OAuth2AuthenticationToken prepareOAuth2Authentication() {
