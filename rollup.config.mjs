@@ -7,15 +7,10 @@ import esbuild from "rollup-plugin-esbuild";
 import { assetsManifest } from "./rollup-plugin-assets-manifest.mjs";
 import { rimraf } from "rimraf";
 import glob from "fast-glob";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 
 const NODE_ENV = process.env.NODE_ENV;
 const MODE = process.env.MODE || NODE_ENV || "development";
 const isProduction = MODE === "production";
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 const paths = {
   src: "src/main/javascript",
