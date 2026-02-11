@@ -2,9 +2,9 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "@rollup/plugin-replace";
 import dynamicImportVariables from "@rollup/plugin-dynamic-import-vars";
-import postcss from "rollup-plugin-postcss";
 import esbuild from "rollup-plugin-esbuild";
 import { assetsManifest } from "./rollup-plugin-assets-manifest.mjs";
+import { css } from "./rollup-plugin-css.mjs";
 import { rimraf } from "rimraf";
 import glob from "fast-glob";
 
@@ -74,7 +74,7 @@ export default {
       "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
       "process.env.MODE": JSON.stringify(MODE),
     }),
-    postcss({
+    css({
       extract: "css/common.css",
     }),
     // `@rollup/plugin-dynamic-import-vars` is required for duetds-datepicker (bundled with stencil and dynamic imports)
