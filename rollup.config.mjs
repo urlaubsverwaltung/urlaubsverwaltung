@@ -75,7 +75,7 @@ export default {
       "process.env.MODE": JSON.stringify(MODE),
     }),
     css({
-      extract: "css/common.css",
+      extract: `${paths.dist}/../css/common.css`,
     }),
     // `@rollup/plugin-dynamic-import-vars` is required for duetds-datepicker (bundled with stencil and dynamic imports)
     dynamicImportVariables(),

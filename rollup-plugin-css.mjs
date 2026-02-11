@@ -1,5 +1,7 @@
 import postcss from "postcss";
 import postcssLoadConfig from "postcss-load-config";
+import { writeFileSync, mkdirSync } from "node:fs";
+import path from "node:path";
 
 /**
  * Rollup plugin to process and extract CSS files using PostCSS.
@@ -71,12 +73,16 @@ export function css(options = {}) {
       // Combine all processed CSS files
       const allCss = [...styles.values()].join("\n\n");
 
-      // Emit the combined CSS as an asset
-      this.emitFile({
-        type: "asset",
-        fileName: extract,
-        source: allCss,
-      });
+      // Write CSS file directly to the specified path (outside rollup output directory)
+      try {
+        // Ensure the directory exists
+        mkdirSync(path.dirname(extract), { recursive: true });
+        // Write the CSS file
+        writeFileSync(extract, allCss, "utf8");
+        this.info(`CSS extracted to: ${extract}`);
+      } catch (error) {
+        this.error(`Failed to write CSS file to ${extract}: ${error.message}`);
+      }
     },
   };
 }
