@@ -51,7 +51,7 @@ export default [
     }
   },
   {
-    files: ["**/*.config.m?js"],
+    files: ["rollup.config.mjs", "rollup-plugin-assets-manifest.mjs", "eslint.config.mjs", "postcss.config.js"],
     languageOptions: {
       globals: globals.node,
     }
