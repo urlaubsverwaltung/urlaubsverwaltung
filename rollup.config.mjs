@@ -1,22 +1,16 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "@rollup/plugin-replace";
-import inject from "@rollup/plugin-inject";
 import dynamicImportVariables from "@rollup/plugin-dynamic-import-vars";
-import postcss from "rollup-plugin-postcss";
 import esbuild from "rollup-plugin-esbuild";
 import { assetsManifest } from "./rollup-plugin-assets-manifest.mjs";
+import { css } from "./rollup-plugin-css.mjs";
 import { rimraf } from "rimraf";
 import glob from "fast-glob";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 
 const NODE_ENV = process.env.NODE_ENV;
 const MODE = process.env.MODE || NODE_ENV || "development";
 const isProduction = MODE === "production";
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 const paths = {
   src: "src/main/javascript",
@@ -80,19 +74,13 @@ export default {
       "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
       "process.env.MODE": JSON.stringify(MODE),
     }),
-    inject({
-      $: "jquery",
-      jQuery: "jquery",
-    }),
-    postcss({
-      use: ["less"],
-      extract: "css/common.css",
+    css({
+      extract: `${paths.dist}/../css/common.css`,
     }),
     // `@rollup/plugin-dynamic-import-vars` is required for duetds-datepicker (bundled with stencil and dynamic imports)
     dynamicImportVariables(),
     resolve({
       preferBuiltins: false,
-      dedupe: ["jquery"],
     }),
     commonjs({
       // inject jquery results in a cjs import `require('juery')` in es modules.
