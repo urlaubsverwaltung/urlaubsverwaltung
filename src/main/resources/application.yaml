@@ -33,9 +33,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-  session:
-    jdbc:
-      initialize-schema: always
   messages:
     basename: messages,launchpad-core
     fallback-to-system-locale: false

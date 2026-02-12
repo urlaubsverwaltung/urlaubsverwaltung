@@ -45,9 +45,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-  session:
-    jdbc:
-      initialize-schema: always
   messages:
     fallback-to-system-locale: false
   threads:
