@@ -42,7 +42,7 @@ services:
         condition: service_started
 
   postgres:
-    image: postgres:15.3
+    image: postgres:18.2
     environment:
       POSTGRES_DB: urlaubsverwaltung
       POSTGRES_USER: urlaubsverwaltung
