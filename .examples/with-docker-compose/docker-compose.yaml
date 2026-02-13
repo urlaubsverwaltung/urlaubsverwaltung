@@ -2,7 +2,7 @@
 services:
 
   urlaubsverwaltung:
-    image: urlaubsverwaltung/urlaubsverwaltung:5.34.2
+    image: urlaubsverwaltung/urlaubsverwaltung:5.34.3
     network_mode: "host"
     restart: always
     environment:
