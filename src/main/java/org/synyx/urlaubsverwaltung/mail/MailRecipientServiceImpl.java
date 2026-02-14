@@ -75,8 +75,9 @@ class MailRecipientServiceImpl implements MailRecipientService {
         }
 
         return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
-            .distinct()
             .filter(recipient -> recipient.getNotifications().contains(mailNotification))
+            .filter(not(isEqual(personOfInterest)))
+            .distinct()
             .toList();
     }
 
