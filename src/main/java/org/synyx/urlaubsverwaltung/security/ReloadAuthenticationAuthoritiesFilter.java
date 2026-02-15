@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,7 +45,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
         if (session == null) {
             return true;
         }
@@ -55,8 +55,14 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
     }
 
     @Override
-    public void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws ServletException, IOException {
-        final HttpSession session = request.getSession();
+    public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
+        final HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         sessionService.unmarkSessionToReloadAuthorities(session.getId());
 
         final SecurityContext context = SecurityContextHolder.getContext();
