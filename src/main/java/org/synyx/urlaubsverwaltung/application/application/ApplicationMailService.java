@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.scheduling.annotation.Async;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
@@ -956,8 +958,7 @@ class ApplicationMailService {
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
         final Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-            .flatMap(application -> mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER).stream()
-                .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
+            .flatMap(this::applicationsPerRecipient)
             .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
@@ -974,6 +975,11 @@ class ApplicationMailService {
                 .build();
             mailService.send(mailToRemindForWaiting);
         }
+    }
+
+    private @NonNull Stream<AbstractMap.SimpleEntry<Person, Application>> applicationsPerRecipient(Application application) {
+        return mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER).stream()
+            .map(person -> new AbstractMap.SimpleEntry<>(person, application));
     }
 
     private static MailTemplateModelSupplier applicationRemindCronManagementMailTemplateModelSupplier(List<Application> applications) {
