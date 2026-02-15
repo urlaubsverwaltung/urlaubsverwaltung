@@ -51,37 +51,43 @@ class MailServiceImpl implements MailService {
     public void send(final Mail mail) {
 
         final List<Person> recipients = getRecipients(mail);
-        final Map<Person, Locale> effectiveLocales = userSettingsService.getEffectiveLocale(recipients);
-
-        recipients.forEach(recipient -> {
-
-            final Locale effectiveLocale = effectiveLocales.get(recipient);
-
-            final Context context = new Context(effectiveLocale);
-            context.setVariables(mail.getTemplateModel(effectiveLocale));
-            context.setVariable("baseLinkURL", getApplicationUrl());
-            context.setVariable("rightPadder", RightPadder.getInstance());
-            context.setVariable("recipient", recipient);
-
-            final String from = generateMailAddressAndDisplayName(mailProperties.getFrom(), mailProperties.getFromDisplayName());
-
-            final String replyToMailAdress = mail.getReplyTo().map(Person::getEmail).orElse(mailProperties.getReplyTo());
-            final String replyToDisplayName = mail.getReplyTo().map(Person::getNiceName).orElse(mailProperties.getReplyToDisplayName());
-            final String replyTo = generateMailAddressAndDisplayName(replyToMailAdress, replyToDisplayName);
-
-            final String email = recipient.getEmail();
-            final String subject = getTranslation(effectiveLocale, mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
-            final String body = emailTemplateEngine.process(mail.getTemplateName(), context);
-
-            if (email != null) {
-                mail.getMailAttachments().ifPresentOrElse(
-                    mailAttachments -> mailSenderService.sendEmail(from, replyTo, email, subject, body, mailAttachments),
-                    () -> mailSenderService.sendEmail(from, replyTo, email, subject, body)
-                );
-            } else {
-                LOG.debug("Could not send mail to E-Mail-Address of person with id {}, because email is null.", recipient.getId());
+        if (recipients.isEmpty()) {
+            LOG.info("not sending e-mail because of empty recipients. subjectMessageKey={}", mail.getSubjectMessageKey());
+        } else {
+            final Map<Person, Locale> effectiveLocales = userSettingsService.getEffectiveLocale(recipients);
+            for (Person recipient : recipients) {
+                sendToRecipient(mail, recipient, effectiveLocales);
             }
-        });
+        }
+    }
+
+    private void sendToRecipient(Mail mail, Person recipient, Map<Person, Locale> effectiveLocales) {
+        final Locale effectiveLocale = effectiveLocales.get(recipient);
+
+        final Context context = new Context(effectiveLocale);
+        context.setVariables(mail.getTemplateModel(effectiveLocale));
+        context.setVariable("baseLinkURL", getApplicationUrl());
+        context.setVariable("rightPadder", RightPadder.getInstance());
+        context.setVariable("recipient", recipient);
+
+        final String from = generateMailAddressAndDisplayName(mailProperties.getFrom(), mailProperties.getFromDisplayName());
+
+        final String replyToMailAddress = mail.getReplyTo().map(Person::getEmail).orElse(mailProperties.getReplyTo());
+        final String replyToDisplayName = mail.getReplyTo().map(Person::getNiceName).orElse(mailProperties.getReplyToDisplayName());
+        final String replyTo = generateMailAddressAndDisplayName(replyToMailAddress, replyToDisplayName);
+
+        final String email = recipient.getEmail();
+        final String subject = getTranslation(effectiveLocale, mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
+        final String body = emailTemplateEngine.process(mail.getTemplateName(), context);
+
+        if (email != null) {
+            mail.getMailAttachments().ifPresentOrElse(
+                mailAttachments -> mailSenderService.sendEmail(from, replyTo, email, subject, body, mailAttachments),
+                () -> mailSenderService.sendEmail(from, replyTo, email, subject, body)
+            );
+        } else {
+            LOG.debug("Could not send mail to E-Mail-Address of person with id {}, because email is null.", recipient.getId());
+        }
     }
 
     private List<Person> getRecipients(Mail mail) {
