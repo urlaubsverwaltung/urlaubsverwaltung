@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
@@ -77,6 +78,23 @@ class MailRecipientServiceImplTest {
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind)
             .containsOnly(bossAndOffice);
+    }
+
+    @Test
+    void ensureThatTheRecipientOfInterestCannotBeThePersonOfInterest() {
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        // given boss
+        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+        boss.setId(2L);
+        boss.setPermissions(List.of(USER, BOSS));
+        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(boss));
+
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(boss, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
+        assertThat(recipientsForAllowAndRemind)
+            .isEmpty();
     }
 
     @Test
