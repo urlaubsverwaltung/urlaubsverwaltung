@@ -82,7 +82,7 @@
     "rimraf": "6.1.2",
     "rollup": "4.57.1",
     "rollup-plugin-esbuild": "6.2.1",
-    "tailwindcss": "4.1.18"
+    "tailwindcss": "4.2.0"
   },
   "lint-staged": {
     "*.{js,html,svg,css}": [
