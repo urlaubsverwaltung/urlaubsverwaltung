@@ -382,7 +382,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> membersOfDepartmentHead) {
         return applicationService.getForStatesAndPerson(List.of(WAITING), membersOfDepartmentHead).stream()
             .filter(withoutApplicationsOf(head))
-            .filter(withoutSecondStageAuthorityApplications())
+            .filter(withoutSecondStageAuthorityApplications(head))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .toList();
@@ -400,8 +400,14 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         return application -> !application.getPerson().equals(person);
     }
 
-    private Predicate<Application> withoutSecondStageAuthorityApplications() {
-        return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
+    private Predicate<Application> withoutSecondStageAuthorityApplications(Person signedInPerson) {
+        return application -> {
+            if (application.getPerson().hasRole(SECOND_STAGE_AUTHORITY)) {
+                // verify signedInPerson is allowed to manage applicationForLeave person
+                return departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, application.getPerson());
+            }
+            return true;
+        };
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
