@@ -54,7 +54,7 @@ kann man sich unter [urlaubsverwaltung.cloud/preis](https://urlaubsverwaltung.cl
 ### Voraussetzungen
 
 * [JDK 21](https://adoptium.net)
-* [PostgreSQL Datenbank (v15.3)](https://www.postgresql.org/)
+* [PostgreSQL Datenbank (17.7)](https://www.postgresql.org/)
 * [E-Mail-Server](#e-mail-server-konfigurieren)
 * [Security Provider](#security-provider-konfigurieren)
 
