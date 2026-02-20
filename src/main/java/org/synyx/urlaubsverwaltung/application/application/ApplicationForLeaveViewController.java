@@ -121,9 +121,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         model.addAttribute("activeContent", activeTab.name);
     }
 
-    private void prepareUserApplications(Model model, Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority, Locale locale) {
+    private void prepareUserApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> memberOfSecondStageAuthority, Locale locale) {
         final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
-        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, membersOfDepartmentHead, memberOfSecondStageAuthority, locale);
         model.addAttribute("userApplications", userApplicationsDtos);
     }
 
@@ -133,9 +133,9 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
-    private void prepareOtherApplications(Model model, Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority, Locale locale) {
-        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
-        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+    private void prepareOtherApplications(Model model, Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> membersOfSecondStageAuthority, Locale locale) {
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority);
+        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersOfDepartmentHead, membersOfSecondStageAuthority, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
     }
 
@@ -187,9 +187,13 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         );
     }
 
-    private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
-                                                                         List<Person> membersAsSecondStageAuthority, Locale locale) {
-
+    private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(
+        List<ApplicationForLeave> applications,
+        Person signedInUser,
+        List<Person> membersAsDepartmentHead,
+        List<Person> membersAsSecondStageAuthority,
+        Locale locale
+    ) {
         return applications.stream()
             .map(applicationForLeave -> {
                 final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
@@ -198,8 +202,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             .toList();
     }
 
-    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersAsDepartmentHead,
-                                                 List<Person> membersAsSecondStageAuthority, MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
+    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersOfDepartmentHead,
+                                                 List<Person> membersOfSecondStageAuthority, MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
@@ -210,8 +214,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
         final boolean isOffice = signedInUser.hasRole(OFFICE);
-        final boolean isDepartmentHeadOfPerson = membersAsDepartmentHead.contains(person);
-        final boolean isSecondStageAuthorityOfPerson = membersAsSecondStageAuthority.contains(person);
+        final boolean isDepartmentHeadOfPerson = membersOfDepartmentHead.contains(person);
+        final boolean isSecondStageAuthorityOfPerson = membersOfSecondStageAuthority.contains(person);
         final boolean isOwn = person.equals(signedInUser);
 
         final boolean isAllowedToEdit = isWaiting && isOwn;
@@ -333,7 +337,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             .toList();
     }
 
-    private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
+    private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser, List<Person> membersOfDepartmentHead, List<Person> membersOfSecondStageAuthority) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
@@ -346,12 +350,12 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
 
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(signedInUser, membersAsSecondStageAuthority));
+            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(signedInUser, membersOfSecondStageAuthority));
         }
 
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser, membersAsDepartmentHead));
+            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser, membersOfDepartmentHead));
         }
 
         return applicationsForLeave.stream()
@@ -375,8 +379,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             .toList();
     }
 
-    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> members) {
-        return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
+    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> membersOfDepartmentHead) {
+        return applicationService.getForStatesAndPerson(List.of(WAITING), membersOfDepartmentHead).stream()
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
@@ -384,8 +388,8 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             .toList();
     }
 
-    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage, List<Person> members) {
-        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
+    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage, List<Person> membersOfSecondStageAuthority) {
+        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersOfSecondStageAuthority).stream()
             .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
