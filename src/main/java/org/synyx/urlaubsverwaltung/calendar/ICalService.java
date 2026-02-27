@@ -125,6 +125,7 @@ public class ICalService {
 
         if (absence.isHolidayReplacement() || !isOwn) {
             event.add(TRANSPARENT);
+            event.add(new XProperty("X-MICROSOFT-CDO-BUSYSTATUS", "FREE"));
         }
 
         if (method == CANCELLED) {
