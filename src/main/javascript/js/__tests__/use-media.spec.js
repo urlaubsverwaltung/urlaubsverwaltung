@@ -1,3 +1,4 @@
+import { vi, describe, test, expect, beforeEach, afterEach } from "vitest";
 import { useMedia } from "../use-media";
 
 describe("useMedia", () => {
@@ -14,17 +15,17 @@ describe("useMedia", () => {
 
     mockMediaQueryList = {
       matches: false,
-      addEventListener: jest.fn().mockImplementation((event, callback) => {
+      addEventListener: vi.fn().mockImplementation((event, callback) => {
         if (event === "change") {
           changeListeners.push(callback);
         }
       }),
-      addListener: jest.fn().mockImplementation((callback) => {
+      addListener: vi.fn().mockImplementation((callback) => {
         addListenerCallbacks.push(callback);
       }),
     };
 
-    mockMatchMedia = jest.fn().mockImplementation(() => mockMediaQueryList);
+    mockMatchMedia = vi.fn().mockImplementation(() => mockMediaQueryList);
 
     globalThis.matchMedia = mockMatchMedia;
   });
@@ -60,7 +61,7 @@ describe("useMedia", () => {
 
   test("falls back to addListener for Safari", () => {
     // Make addEventListener throw to simulate Safari
-    mockMediaQueryList.addEventListener = jest.fn().mockImplementation(() => {
+    mockMediaQueryList.addEventListener = vi.fn().mockImplementation(() => {
       throw new Error("Not supported");
     });
 
@@ -74,11 +75,11 @@ describe("useMedia", () => {
 
   test("handles errors when both addEventListener and addListener fail", () => {
     // Make both methods throw to test error handling
-    mockMediaQueryList.addEventListener = jest.fn().mockImplementation(() => {
+    mockMediaQueryList.addEventListener = vi.fn().mockImplementation(() => {
       throw new Error("addEventListener not supported");
     });
 
-    mockMediaQueryList.addListener = jest.fn().mockImplementation(() => {
+    mockMediaQueryList.addListener = vi.fn().mockImplementation(() => {
       throw new Error("addListener not supported");
     });
 

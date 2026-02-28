@@ -1,9 +1,10 @@
+import { vi, describe, test, expect, afterEach } from "vitest";
 import { de as localeDE } from "date-fns/locale/de";
 import { deAT as localeDEAT } from "date-fns/locale/de-AT";
 import { el as localeEL } from "date-fns/locale/el";
 import { enGB as localeENGB } from "date-fns/locale/en-GB";
 
-jest.mock("../../lib/date-fns/locale-resolver");
+vi.mock("../../lib/date-fns/locale-resolver");
 
 describe("date-fns-localized", () => {
   let uvLanguage = "";
@@ -17,7 +18,8 @@ describe("date-fns-localized", () => {
 
   afterEach(() => {
     uvLanguage = "";
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetModules();
   });
 
   test.each([
@@ -37,18 +39,12 @@ describe("date-fns-localized", () => {
     // which then calls `setLocale`
     await wait();
 
-    // locale data is dynamically loaded on runtime with `import(..)` by date-fns-localized.js
-    // the loaded locale data module has an attached { "default": (..) } part which the `localeDE` of this test has not.
-    // this is due to babel configuration settings I think. I didn't look for details...
-    // the attached `default` part has something to do with JavaScript Module and CommonJS Module compatibility
-    // however, I don't care here. therefore just expect an object containing the original locale :o)
-    expect(setLocale).toHaveBeenCalledWith({
-      // this is not correct actually... the code running in the browser is slightly different...
-      // actually it should be `toHaveBeenCalledWith(expect.objectContaining({ code: expectedLocaleStuff.code }))`
-      // however... babel transpiles the code differently to the rollup setup (at least I think so) (jest uses babel)
-      // jest/babel uses datefns de.js files while the rollup build bundles the de.mjs files
-      [expectedCode]: expect.objectContaining({ code: expectedLocaleStuff.code }),
-    });
+    // using expect.objectContaining since the actual argument contains `{[code]: x, default: x}`
+    expect(setLocale).toHaveBeenCalledWith(
+      expect.objectContaining({
+        [expectedCode]: expectedLocaleStuff,
+      }),
+    );
   });
 
   test.each([["en"], ["en-US"]])("loads date-fn english locale for window.uv.language=%s", async (givenLanguage) => {

@@ -1,3 +1,5 @@
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+
 describe("special-leave-table", function () {
   beforeEach(function () {});
 
@@ -5,7 +7,7 @@ describe("special-leave-table", function () {
     while (document.body.firstElementChild) {
       document.body.firstElementChild.remove();
     }
-    jest.resetModules();
+    vi.resetModules();
   });
 
   it("does not break when table does not exist", async function () {

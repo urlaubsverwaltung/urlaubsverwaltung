@@ -1,3 +1,4 @@
+import { vi, describe, it, expect, afterEach } from "vitest";
 import "..";
 
 describe("table-sortable", () => {
@@ -6,7 +7,7 @@ describe("table-sortable", () => {
       document.body.firstChild.remove();
     }
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("is registered as a 'uv-table-sortable' custom element", function () {

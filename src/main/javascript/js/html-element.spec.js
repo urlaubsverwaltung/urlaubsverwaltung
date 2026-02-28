@@ -1,3 +1,4 @@
+import { describe, test, expect } from "vitest";
 import { updateHtmlElementAttributes } from "./html-element";
 
 describe("html-element", function () {

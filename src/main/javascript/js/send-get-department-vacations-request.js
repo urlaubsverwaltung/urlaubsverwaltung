@@ -1,8 +1,8 @@
 // disabling no-restricted-imports of date-fns#format is ok since we're formatting dates for api requests
-// eslint-disable-next-line no-restricted-imports
-import { format, isAfter } from "date-fns";
+import { isAfter } from "date-fns/isAfter";
 import { parseISO } from "date-fns/parseISO";
-import { getJSON } from "../js/fetch";
+import { format } from "date-fns/format";
+import { getJSON } from "./fetch";
 
 const icons = {
   check: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="w-4 h-4 stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`,
@@ -50,8 +50,12 @@ export default async function sendGetDepartmentVacationsRequest(
 }
 
 function createHtmlForVacation(vacation, isNewPerson) {
-  const startDate = format(parseISO(vacation.from), "dd.MM.yyyy");
-  const endDate = format(parseISO(vacation.to), "dd.MM.yyyy");
+  let eins = parseISO(vacation.from);
+  const startDate = format(eins, "dd.MM.yyyy");
+
+  let zwei = parseISO(vacation.to);
+  const endDate = format(zwei, "dd.MM.yyyy");
+
   const person = vacation.person.niceName;
 
   let html = "";

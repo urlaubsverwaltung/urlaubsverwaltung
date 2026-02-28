@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import "../checkbox-card/checkbox-card";
 
 describe("checkbox-card", function () {

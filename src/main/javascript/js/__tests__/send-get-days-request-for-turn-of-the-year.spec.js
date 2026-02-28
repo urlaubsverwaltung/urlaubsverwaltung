@@ -1,11 +1,4 @@
-/**
- * @jest-environment jest-fixed-jsdom
- *
- * jest-fixed-jsdom sets up stuff like Request and other globals not implemented by jsdom.
- * please note that this breaks `jest.mock` (you may use `jest.spyOn` ...
- * see https://github.com/mswjs/jest-fixed-jsdom/issues/34
- */
-
+import { vi, describe, it, expect, afterEach, beforeAll } from "vitest";
 import fetchMock from "fetch-mock";
 import sendGetDaysRequestForTurnOfTheYear from "../send-get-days-request-for-turn-of-the-year";
 
@@ -20,7 +13,7 @@ describe("send-get-days-request-for-turn-of-the-year", function () {
     }
     fetchMock.removeRoutes();
     fetchMock.clearHistory();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("does not fetch anything when 'personId', 'startDate' and 'toDate' is not given", async function () {

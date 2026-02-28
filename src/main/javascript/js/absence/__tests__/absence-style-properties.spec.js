@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from "vitest";
 import { addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "../absence-style-properties";
 
 describe("absence-style-properties", () => {

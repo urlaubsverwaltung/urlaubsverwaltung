@@ -1,3 +1,4 @@
+import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import "../vacation-type-select";
 
 describe("vacation-type-select", function () {
