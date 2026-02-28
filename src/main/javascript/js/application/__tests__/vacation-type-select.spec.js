@@ -3,13 +3,14 @@ import "../vacation-type-select";
 
 describe("vacation-type-select", function () {
   beforeEach(async function () {
+    /* happy-dom does not support <select is="xxx"> ... */
     document.body.innerHTML = `
-      <select id="vacationType" name="vacationType" is="uv-vacation-type-select">
+      <uv-vacation-type-select id="vacationType" name="vacationType">
         <option value="1000" data-vacationtype-category="HOLIDAY">Erholungsurlaub</option>
         <option value="2000" data-vacationtype-category="SPECIALLEAVE">Sonderurlaub</option>
         <option value="3000" data-vacationtype-category="UNPAIDLEAVE">Unbezahlter Urlaub</option>
         <option value="4000" data-vacationtype-category="OVERTIME">Überstundenabbau</option>
-      </select>
+      </uv-vacation-type-select>
     `;
   });
 
@@ -21,12 +22,12 @@ describe("vacation-type-select", function () {
   });
 
   describe("SPECIAL_LEAVE", function () {
-    it("adds 'hidden' class to 'overtime' element", function () {
+    it("adds 'hidden' class to 'overtime' element", async function () {
       const overtimeElement = document.createElement("div");
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
-      setVacationType("SPECIALLEAVE");
+      await setVacationType("SPECIALLEAVE");
 
       expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
@@ -107,9 +108,10 @@ describe("vacation-type-select", function () {
   });
 });
 
-function setVacationType(vacationType) {
+async function setVacationType(vacationType) {
   const value = document.querySelector(`option[data-vacationtype-category='${vacationType}']`).value;
   const selectElement = document.querySelector("#vacationType");
   selectElement.value = value;
-  selectElement.dispatchEvent(new Event("change"));
+  selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+  await new Promise(resolve => setTimeout(resolve, 0))
 }

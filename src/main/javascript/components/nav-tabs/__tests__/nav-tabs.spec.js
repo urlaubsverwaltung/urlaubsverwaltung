@@ -15,10 +15,12 @@ describe("nav-tabs", function () {
     expect(element).toBeDefined();
   });
 
-  it("updates look and feel after nav-tab is clicked", function () {
+  it("updates look and feel after nav-tab is clicked", async function () {
     const div = document.createElement("div");
+
+    // happy-dom cannot handle <element is=""> ...
     div.innerHTML = `
-      <ul is="uv-nav-tabs">
+      <uv-nav-tabs>
         <li class="border-b-4 border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="text-black-almost">
             AAA
@@ -29,7 +31,7 @@ describe("nav-tabs", function () {
             BBB
           </a>
         </li>
-      </ul>
+      </uv-nav-tabs>
       <div>
         <div id="content-aaa">
           content AAA
@@ -68,8 +70,10 @@ describe("nav-tabs", function () {
 
   it("does not update look and feel after current active nav-tab is clicked", function () {
     const div = document.createElement("div");
+
+    // happy-dom cannot handle <element is=""> ...
     div.innerHTML = `
-      <ul is="uv-nav-tabs">
+      <uv-nav-tabs>
         <li class="border-b-4 border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="text-black-almost">
             AAA
@@ -80,7 +84,7 @@ describe("nav-tabs", function () {
             BBB
           </a>
         </li>
-      </ul>
+      </uv-nav-tabs>
       <div>
         <div id="content-aaa">
           content AAA
@@ -121,8 +125,10 @@ describe("nav-tabs", function () {
     vi.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
+
+    // happy-dom cannot handle <element is=""> ...
     div.innerHTML = `
-      <ul is="uv-nav-tabs">
+      <uv-nav-tabs>
         <li class="border-b-4 border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="text-black-almost">
             AAA
@@ -133,7 +139,7 @@ describe("nav-tabs", function () {
             BBB
           </a>
         </li>
-      </ul>
+      </uv-nav-tabs>
       <div>
         <div id="content-aaa">
           content AAA
@@ -167,14 +173,16 @@ describe("nav-tabs", function () {
     vi.spyOn(globalThis.history, "replaceState");
 
     const div = document.createElement("div");
+
+    // happy-dom cannot handle <element is=""> ...
     div.innerHTML = `
-      <ul is="uv-nav-tabs">
+      <uv-nav-tabs>
         <li class="border-b-4 border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="text-black-almost">
             AAA
           </a>
         </li>
-      </ul>
+      </uv-nav-tabs>
       <div>
         <div id="content-aaa">
           content AAA
