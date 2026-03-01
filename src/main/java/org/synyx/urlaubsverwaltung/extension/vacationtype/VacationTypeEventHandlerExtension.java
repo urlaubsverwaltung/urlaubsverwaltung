@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.extension.vacationtype;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import de.focus_shift.urlaubsverwaltung.extension.api.vacationtype.VacationTypeUpdatedEventDTO;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeCreatedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdatedEvent;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.settings.SupportedLanguages;
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @Component
-@ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
+@ConditionalOnExtensionsEnabled
 class VacationTypeEventHandlerExtension {
 
     private final TenantSupplier tenantSupplier;

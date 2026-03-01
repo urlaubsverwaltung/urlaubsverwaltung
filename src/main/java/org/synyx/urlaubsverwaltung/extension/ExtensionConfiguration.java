@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.extension;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +9,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
+@ConditionalOnExtensionsEnabled
 @EnableConfigurationProperties(ExtensionConfigurationProperties.class)
 public class ExtensionConfiguration {
 

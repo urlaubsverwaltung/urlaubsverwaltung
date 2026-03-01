@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
@@ -56,6 +57,7 @@ class OvertimeServiceImpl implements OvertimeService {
     private final WorkingTimeCalendarService workingTimeCalendarService;
     private final OvertimeMailService overtimeMailService;
     private final SettingsService settingsService;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
     OvertimeServiceImpl(
@@ -66,6 +68,7 @@ class OvertimeServiceImpl implements OvertimeService {
         WorkingTimeCalendarService workingTimeCalendarService,
         OvertimeMailService overtimeMailService,
         SettingsService settingsService,
+        ApplicationEventPublisher applicationEventPublisher,
         Clock clock
     ) {
         this.overtimeRepository = overtimeRepository;
@@ -75,6 +78,7 @@ class OvertimeServiceImpl implements OvertimeService {
         this.workingTimeCalendarService = workingTimeCalendarService;
         this.overtimeMailService = overtimeMailService;
         this.settingsService = settingsService;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
     }
 
@@ -131,6 +135,8 @@ class OvertimeServiceImpl implements OvertimeService {
         LOG.info("Created new overtime. overtime id={}, person id={}, author id={}",
             saved.getId(), saved.getPerson().getId(), commentEntity.getPerson().getId());
 
+        publishOvertimeCreatedEvent(saved);
+
         return entityToOvertime(saved);
     }
 
@@ -169,6 +175,8 @@ class OvertimeServiceImpl implements OvertimeService {
 
         LOG.info("Updated overtime. overtime id={}, person id={}, author id={}",
             updated.getId(), updated.getPerson().getId(), commentEntity.getPerson().getId());
+
+        publishOvertimeUpdatedEvent(updated);
 
         return entityToOvertime(updated);
     }
@@ -510,6 +518,16 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private OvertimeSettings getOvertimeSettings() {
         return settingsService.getSettings().getOvertimeSettings();
+    }
+
+    private void publishOvertimeCreatedEvent(OvertimeEntity saved) {
+        applicationEventPublisher.publishEvent(OvertimeCreatedEvent.of(
+            saved.getId(), saved.getPerson().getUsername(), saved.getStartDate(), saved.getEndDate(), saved.getDuration()));
+    }
+
+    private void publishOvertimeUpdatedEvent(OvertimeEntity updated) {
+        applicationEventPublisher.publishEvent(OvertimeUpdatedEvent.of(
+            updated.getId(), updated.getPerson().getUsername(), updated.getStartDate(), updated.getEndDate(), updated.getDuration()));
     }
 
     private void sendOvertimeModifiedNotification(OvertimeEntity overtimeEntity, OvertimeCommentEntity commentEntity, Person modifierPerson) {

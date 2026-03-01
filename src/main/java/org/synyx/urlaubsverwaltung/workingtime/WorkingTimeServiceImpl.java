@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.CachedSupplier;
@@ -34,13 +35,17 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private final WorkingTimeRepository workingTimeRepository;
     private final SettingsService settingsService;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeServiceImpl(WorkingTimeRepository workingTimeRepository,
-                                  SettingsService settingsService, Clock clock) {
+                                  SettingsService settingsService,
+                                  ApplicationEventPublisher applicationEventPublisher,
+                                  Clock clock) {
         this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
     }
 
@@ -73,6 +78,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
         workingTimeRepository.save(workingTimeEntity);
         LOG.info("Created working time {} for person {}", workingTimeEntity, person);
+
+        publishWorkingTimeConfiguredEvent(person, validFrom, workingDays, federalState);
     }
 
     @Override
@@ -159,6 +166,11 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     @Override
     public void deleteAllByPerson(Person person) {
         workingTimeRepository.deleteByPerson(person);
+    }
+
+    private void publishWorkingTimeConfiguredEvent(Person person, LocalDate validFrom, List<Integer> workingDays, FederalState federalState) {
+        applicationEventPublisher.publishEvent(WorkingTimeConfiguredEvent.of(
+            person.getUsername(), validFrom, workingDays, federalState != null ? federalState.name() : null));
     }
 
     private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> workingTimeEntities) {

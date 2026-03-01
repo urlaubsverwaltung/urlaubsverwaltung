@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsActivatedEvent;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsDeactivatedEvent;
 
 import java.util.List;
 
@@ -100,5 +102,54 @@ class SettingsServiceImplTest {
 
         final Settings savedSettings = settingsArgumentCaptor.getValue();
         assertThat(savedSettings.getOvertimeSettings().isOvertimeSyncActive()).isFalse();
+    }
+
+    @Test
+    void ensureOvertimeSettingsActivatedEventIsFiredWhenOvertimeActivated() {
+
+        final Settings oldSettings = new Settings();
+        oldSettings.getOvertimeSettings().setOvertimeActive(false);
+        when(settingsRepository.findAll()).thenReturn(List.of(oldSettings));
+
+        final Settings newSettings = new Settings();
+        newSettings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsRepository.save(newSettings)).thenReturn(newSettings);
+
+        sut.save(newSettings);
+
+        verify(applicationEventPublisher).publishEvent(any(OvertimeSettingsActivatedEvent.class));
+    }
+
+    @Test
+    void ensureOvertimeSettingsDeactivatedEventIsFiredWhenOvertimeDeactivated() {
+
+        final Settings oldSettings = new Settings();
+        oldSettings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsRepository.findAll()).thenReturn(List.of(oldSettings));
+
+        final Settings newSettings = new Settings();
+        newSettings.getOvertimeSettings().setOvertimeActive(false);
+        when(settingsRepository.save(newSettings)).thenReturn(newSettings);
+
+        sut.save(newSettings);
+
+        verify(applicationEventPublisher).publishEvent(any(OvertimeSettingsDeactivatedEvent.class));
+    }
+
+    @Test
+    void ensureNoOvertimeSettingsEventIsFiredWhenOvertimeActiveUnchanged() {
+
+        final Settings oldSettings = new Settings();
+        oldSettings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsRepository.findAll()).thenReturn(List.of(oldSettings));
+
+        final Settings newSettings = new Settings();
+        newSettings.getOvertimeSettings().setOvertimeActive(true);
+        when(settingsRepository.save(newSettings)).thenReturn(newSettings);
+
+        sut.save(newSettings);
+
+        verify(applicationEventPublisher, never()).publishEvent(any(OvertimeSettingsActivatedEvent.class));
+        verify(applicationEventPublisher, never()).publishEvent(any(OvertimeSettingsDeactivatedEvent.class));
     }
 }

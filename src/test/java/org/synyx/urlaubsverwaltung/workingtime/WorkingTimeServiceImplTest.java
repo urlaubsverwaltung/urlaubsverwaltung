@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
@@ -49,12 +50,14 @@ class WorkingTimeServiceImplTest {
     private WorkingTimeRepository workingTimeRepository;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeServiceImpl(workingTimeRepository, settingsService, fixedClock);
+        sut = new WorkingTimeServiceImpl(workingTimeRepository, settingsService, applicationEventPublisher, fixedClock);
     }
 
     @Test
@@ -174,6 +177,14 @@ class WorkingTimeServiceImplTest {
         assertThat(persistedWorkingTimeEntity.getFederalStateOverride()).isEqualTo(federalState);
     }
 
+    @Test
+    void ensureWorkingTimeConfiguredEventIsFiredOnTouch() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        sut.touch(List.of(1, 2), LocalDate.now(UTC), person);
+
+        verify(applicationEventPublisher).publishEvent(any(WorkingTimeConfiguredEvent.class));
+    }
 
     @Test
     void getByPerson() {

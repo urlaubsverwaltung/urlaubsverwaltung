@@ -1661,6 +1661,185 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureDepartmentCreatedEventIsFired() {
+
+        final PersonId memberId = new PersonId(1L);
+        final Person member = new Person();
+        member.setId(memberId.value());
+        member.setUsername("member");
+
+        final PersonId headId = new PersonId(2L);
+        final Person head = new Person();
+        head.setId(headId.value());
+        head.setUsername("head");
+
+        final Department department = new Department();
+        department.setName("TestDepartment");
+        department.setMembers(List.of(member));
+        department.setDepartmentHeads(List.of(head));
+
+        final DepartmentEntity savedEntity = new DepartmentEntity();
+        savedEntity.setId(42L);
+        savedEntity.setName("TestDepartment");
+
+        when(departmentRepository.save(any())).thenReturn(savedEntity);
+
+        final DepartmentMembership memberMembership = new DepartmentMembership(memberId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership headMembership = new DepartmentMembership(headId, 42L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentStaff staff = new DepartmentStaff(42L, List.of(memberMembership), List.of(headMembership), List.of());
+
+        when(departmentMembershipService.createInitialMemberships(any(Long.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(staff);
+
+        when(personService.getAllPersonsByIds(anySet())).thenReturn(List.of(member, head));
+
+        sut.create(department);
+
+        final ArgumentCaptor<DepartmentCreatedEvent> captor = ArgumentCaptor.forClass(DepartmentCreatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(captor.capture());
+
+        final DepartmentCreatedEvent event = captor.getValue();
+        assertThat(event.departmentId()).isEqualTo(42L);
+        assertThat(event.departmentName()).isEqualTo("TestDepartment");
+        assertThat(event.memberCount()).isEqualTo(1);
+    }
+
+    @Test
+    void ensureMemberAndHeadAssignedEventsAreFiredOnCreate() {
+
+        final PersonId memberId1 = new PersonId(1L);
+        final Person member1 = new Person();
+        member1.setId(memberId1.value());
+        member1.setUsername("member1");
+
+        final PersonId memberId2 = new PersonId(2L);
+        final Person member2 = new Person();
+        member2.setId(memberId2.value());
+        member2.setUsername("member2");
+
+        final PersonId headId = new PersonId(3L);
+        final Person head = new Person();
+        head.setId(headId.value());
+        head.setUsername("head");
+
+        final Department department = new Department();
+        department.setName("TestDepartment");
+        department.setMembers(List.of(member1, member2));
+        department.setDepartmentHeads(List.of(head));
+
+        final DepartmentEntity savedEntity = new DepartmentEntity();
+        savedEntity.setId(42L);
+        savedEntity.setName("TestDepartment");
+
+        when(departmentRepository.save(any())).thenReturn(savedEntity);
+
+        final DepartmentMembership memberMembership1 = new DepartmentMembership(memberId1, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership memberMembership2 = new DepartmentMembership(memberId2, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership headMembership = new DepartmentMembership(headId, 42L, DepartmentMembershipKind.DEPARTMENT_HEAD, Instant.now(clock));
+        final DepartmentStaff staff = new DepartmentStaff(42L, List.of(memberMembership1, memberMembership2), List.of(headMembership), List.of());
+
+        when(departmentMembershipService.createInitialMemberships(any(Long.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(staff);
+
+        when(personService.getAllPersonsByIds(anySet())).thenReturn(List.of(member1, member2, head));
+
+        sut.create(department);
+
+        verify(applicationEventPublisher).publishEvent(any(DepartmentCreatedEvent.class));
+        verify(applicationEventPublisher, times(2)).publishEvent(any(DepartmentMemberAssignedEvent.class));
+        verify(applicationEventPublisher).publishEvent(any(DepartmentHeadAssignedEvent.class));
+    }
+
+    @Test
+    void ensureDepartmentUpdatedEventIsFired() {
+
+        final Department department = new Department();
+        department.setId(42L);
+        department.setName("department");
+
+        final DepartmentEntity oldEntity = new DepartmentEntity();
+        oldEntity.setId(42L);
+        when(departmentRepository.findById(42L)).thenReturn(Optional.of(oldEntity));
+
+        final DepartmentEntity updatedEntity = new DepartmentEntity();
+        updatedEntity.setId(42L);
+        updatedEntity.setName("department");
+        when(departmentRepository.save(any())).thenReturn(updatedEntity);
+
+        final DepartmentStaff staff = new DepartmentStaff(42L, List.of(), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L)).thenReturn(staff);
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(staff);
+
+        sut.update(department);
+
+        verify(applicationEventPublisher).publishEvent(any(DepartmentUpdatedEvent.class));
+    }
+
+    @Test
+    void ensureMemberAssignedAndUnassignedEventsAreFiredOnUpdate() {
+
+        final PersonId existingMemberId = new PersonId(1L);
+        final Person existingMember = new Person();
+        existingMember.setId(existingMemberId.value());
+        existingMember.setUsername("existingMember");
+
+        final PersonId removedMemberId = new PersonId(2L);
+        final Person removedMember = new Person();
+        removedMember.setId(removedMemberId.value());
+        removedMember.setUsername("removedMember");
+
+        final PersonId newMemberId = new PersonId(3L);
+        final Person newMember = new Person();
+        newMember.setId(newMemberId.value());
+        newMember.setUsername("newMember");
+
+        final Department department = new Department();
+        department.setId(42L);
+        department.setName("department");
+        department.setMembers(List.of(existingMember, newMember));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(42L);
+        when(departmentRepository.findById(42L)).thenReturn(Optional.of(departmentEntity));
+
+        final DepartmentMembership existingMembership = new DepartmentMembership(existingMemberId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership removedMembership = new DepartmentMembership(removedMemberId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff currentStaff = new DepartmentStaff(42L, List.of(existingMembership, removedMembership), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L)).thenReturn(currentStaff);
+
+        when(personService.getAllPersonsByIds(anySet())).thenReturn(List.of(existingMember, removedMember, newMember));
+
+        final DepartmentMembership newMembership = new DepartmentMembership(newMemberId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff updatedStaff = new DepartmentStaff(42L, List.of(existingMembership, newMembership), List.of(), List.of());
+
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(updatedStaff);
+
+        when(departmentRepository.save(any(DepartmentEntity.class))).thenReturn(departmentEntity);
+
+        sut.update(department);
+
+        verify(applicationEventPublisher).publishEvent(any(DepartmentUpdatedEvent.class));
+        verify(applicationEventPublisher).publishEvent(any(DepartmentMemberAssignedEvent.class));
+        verify(applicationEventPublisher).publishEvent(any(DepartmentMemberUnassignedEvent.class));
+    }
+
+    @Test
+    void ensureDepartmentDeletedEventIsFired() {
+
+        when(departmentRepository.existsById(42L)).thenReturn(true);
+
+        sut.delete(42L);
+
+        final ArgumentCaptor<DepartmentDeletedEvent> captor = ArgumentCaptor.forClass(DepartmentDeletedEvent.class);
+        verify(applicationEventPublisher).publishEvent(captor.capture());
+
+        final DepartmentDeletedEvent event = captor.getValue();
+        assertThat(event.departmentId()).isEqualTo(42L);
+    }
+
+    @Test
     void ensureGetAllDepartmentSorted() {
 
         final DepartmentEntity departmentEntity1 = new DepartmentEntity();

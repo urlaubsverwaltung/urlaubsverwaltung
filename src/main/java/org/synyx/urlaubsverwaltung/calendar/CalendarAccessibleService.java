@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -11,13 +12,16 @@ public class CalendarAccessibleService {
 
     private final CompanyCalendarService companyCalendarService;
     private final CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     CalendarAccessibleService(CompanyCalendarService companyCalendarService,
-                              CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository) {
+                              CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository,
+                              ApplicationEventPublisher applicationEventPublisher) {
 
         this.companyCalendarService = companyCalendarService;
         this.companyCalendarAccessibleRepository = companyCalendarAccessibleRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public boolean isCompanyCalendarAccessible() {
@@ -32,11 +36,21 @@ public class CalendarAccessibleService {
 
     void enableCompanyCalendar() {
         setCompanyCalendarAccessibility(true);
+        publishCompanyCalendarEnabledEvent();
     }
 
     void disableCompanyCalendar() {
         setCompanyCalendarAccessibility(false);
         companyCalendarService.deleteCalendarsForPersonsWithoutOneOfRole(Role.BOSS, Role.OFFICE);
+        publishCompanyCalendarDisabledEvent();
+    }
+
+    private void publishCompanyCalendarEnabledEvent() {
+        applicationEventPublisher.publishEvent(CompanyCalendarEnabledEvent.of());
+    }
+
+    private void publishCompanyCalendarDisabledEvent() {
+        applicationEventPublisher.publishEvent(CompanyCalendarDisabledEvent.of());
     }
 
     private void setCompanyCalendarAccessibility(boolean isCompanyCalendarAccessible) {

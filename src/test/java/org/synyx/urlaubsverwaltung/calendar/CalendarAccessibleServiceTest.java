@@ -6,12 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,9 +28,12 @@ class CalendarAccessibleServiceTest {
     @Mock
     private CompanyCalendarAccessibleRepository companyCalendarAccessibleRepository;
 
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @BeforeEach
     void setUp() {
-        sut = new CalendarAccessibleService(companyCalendarService, companyCalendarAccessibleRepository);
+        sut = new CalendarAccessibleService(companyCalendarService, companyCalendarAccessibleRepository, applicationEventPublisher);
     }
 
     @Test
@@ -110,5 +115,23 @@ class CalendarAccessibleServiceTest {
         sut.disableCompanyCalendar();
 
         verify(companyCalendarService).deleteCalendarsForPersonsWithoutOneOfRole(Role.BOSS, Role.OFFICE);
+    }
+
+    @Test
+    void ensureCompanyCalendarEnabledEventIsFired() {
+
+        when(companyCalendarAccessibleRepository.findAll()).thenReturn(List.of());
+
+        sut.enableCompanyCalendar();
+
+        verify(applicationEventPublisher).publishEvent(any(CompanyCalendarEnabledEvent.class));
+    }
+
+    @Test
+    void ensureCompanyCalendarDisabledEventIsFired() {
+
+        sut.disableCompanyCalendar();
+
+        verify(applicationEventPublisher).publishEvent(any(CompanyCalendarDisabledEvent.class));
     }
 }

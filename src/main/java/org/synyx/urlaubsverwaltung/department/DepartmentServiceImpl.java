@@ -190,6 +190,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
         LOG.info("Created department: {}", createdDepartment);
 
+        publishDepartmentCreatedEvents(createdDepartment);
+
         return createdDepartment;
     }
 
@@ -224,6 +226,11 @@ class DepartmentServiceImpl implements DepartmentService {
 
         LOG.info("Updated department: {}", updatedDepartment);
 
+        publishDepartmentUpdatedEvent(updatedDepartment);
+
+        final Map<Long, Person> personById = persons.stream().collect(toMap(Person::getId, identity()));
+        publishMembershipChangeEvents(department.getId(), currentStaff, updatedStaff, personById);
+
         return updatedDepartment;
     }
 
@@ -231,6 +238,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public void delete(Long departmentId) {
 
         if (this.departmentExists(departmentId)) {
+            publishDepartmentDeletedEvent(departmentId);
             departmentRepository.deleteById(departmentId);
         } else {
             LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
@@ -640,6 +648,68 @@ class DepartmentServiceImpl implements DepartmentService {
         final boolean isSecondStage = person.hasRole(SECOND_STAGE_AUTHORITY) && staff.hasSecondStageAuthority(personId);
 
         return isDepartmentHead || isSecondStage;
+    }
+
+    private void publishDepartmentCreatedEvents(Department department) {
+        applicationEventPublisher.publishEvent(DepartmentCreatedEvent.of(department));
+        for (Person member : department.getMembers()) {
+            applicationEventPublisher.publishEvent(DepartmentMemberAssignedEvent.of(department.getId(), member.getUsername()));
+        }
+        for (Person head : department.getDepartmentHeads()) {
+            applicationEventPublisher.publishEvent(DepartmentHeadAssignedEvent.of(department.getId(), head.getUsername()));
+        }
+    }
+
+    private void publishDepartmentUpdatedEvent(Department department) {
+        applicationEventPublisher.publishEvent(DepartmentUpdatedEvent.of(department));
+    }
+
+    private void publishDepartmentDeletedEvent(Long departmentId) {
+        applicationEventPublisher.publishEvent(DepartmentDeletedEvent.of(departmentId));
+    }
+
+    private void publishMembershipChangeEvents(Long departmentId, DepartmentStaff previousStaff, DepartmentStaff updatedStaff, Map<Long, Person> personById) {
+        final Set<PersonId> previousMemberIds = previousStaff.members().stream().map(DepartmentMembership::personId).collect(toSet());
+        final Set<PersonId> updatedMemberIds = updatedStaff.members().stream().map(DepartmentMembership::personId).collect(toSet());
+
+        updatedMemberIds.stream()
+            .filter(id -> !previousMemberIds.contains(id))
+            .forEach(id -> {
+                final Person person = personById.get(id.value());
+                if (person != null) {
+                    applicationEventPublisher.publishEvent(DepartmentMemberAssignedEvent.of(departmentId, person.getUsername()));
+                }
+            });
+
+        previousMemberIds.stream()
+            .filter(id -> !updatedMemberIds.contains(id))
+            .forEach(id -> {
+                final Person person = personById.get(id.value());
+                if (person != null) {
+                    applicationEventPublisher.publishEvent(DepartmentMemberUnassignedEvent.of(departmentId, person.getUsername()));
+                }
+            });
+
+        final Set<PersonId> previousHeadIds = previousStaff.departmentHeads().stream().map(DepartmentMembership::personId).collect(toSet());
+        final Set<PersonId> updatedHeadIds = updatedStaff.departmentHeads().stream().map(DepartmentMembership::personId).collect(toSet());
+
+        updatedHeadIds.stream()
+            .filter(id -> !previousHeadIds.contains(id))
+            .forEach(id -> {
+                final Person person = personById.get(id.value());
+                if (person != null) {
+                    applicationEventPublisher.publishEvent(DepartmentHeadAssignedEvent.of(departmentId, person.getUsername()));
+                }
+            });
+
+        previousHeadIds.stream()
+            .filter(id -> !updatedHeadIds.contains(id))
+            .forEach(id -> {
+                final Person person = personById.get(id.value());
+                if (person != null) {
+                    applicationEventPublisher.publishEvent(DepartmentHeadUnassignedEvent.of(departmentId, person.getUsername()));
+                }
+            });
     }
 
     private void sendMemberLeftDepartmentEvent(DepartmentStaff newStaff, DepartmentStaff previousStaff) {
