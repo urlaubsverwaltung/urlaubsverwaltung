@@ -33,14 +33,6 @@ export default {
       if (id.includes("node_modules")) {
         const packageName = id.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
 
-        if (/node_modules\/jquery-ui\/ui\/i18n/.test(id)) {
-          const locale = id.match(/datepicker-(\w\w)/)[1];
-          // build separate bundles for jquery-ui-datepicker
-          // which can be included on demand in the view templates
-          // or used as dynamic import and handled by webpack
-          return `npm.${packageName}.datepicker.${locale}`;
-        }
-
         if (packageName === "date-fns") {
           // build separate bundles for dateFn locales
           // which can be included on demand in the view templates
