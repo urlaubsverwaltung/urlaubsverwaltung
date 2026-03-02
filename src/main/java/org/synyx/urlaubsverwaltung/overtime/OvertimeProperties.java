@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,11 +14,26 @@ public class OvertimeProperties {
      */
     private boolean syncActive = false;
 
+    /**
+     * The URL to the zeiterfassung lock settings.
+     */
+    @URL
+    @NotEmpty
+    private String zeiterfassungLockSettingsUrl = "https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden";
+
     public boolean isSyncActive() {
         return syncActive;
     }
 
     public void setSyncActive(boolean syncActive) {
         this.syncActive = syncActive;
+    }
+
+    public String getZeiterfassungLockSettingsUrl() {
+        return zeiterfassungLockSettingsUrl;
+    }
+
+    public void setZeiterfassungLockSettingsUrl(String zeiterfassungLockSettingsUrl) {
+        this.zeiterfassungLockSettingsUrl = zeiterfassungLockSettingsUrl;
     }
 }

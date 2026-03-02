@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -20,14 +21,17 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 public class SettingsOvertimeViewController implements HasLaunchpad {
 
     private final SettingsService settingsService;
+    private final OvertimeProperties overtimeProperties;
     private final SettingsOvertimeValidator settingsValidator;
 
     @Autowired
     public SettingsOvertimeViewController(
         SettingsService settingsService,
+        OvertimeProperties overtimeProperties,
         SettingsOvertimeValidator settingsValidator
     ) {
         this.settingsService = settingsService;
+        this.overtimeProperties = overtimeProperties;
         this.settingsValidator = settingsValidator;
     }
 
@@ -68,6 +72,8 @@ public class SettingsOvertimeViewController implements HasLaunchpad {
 
     private void fillModel(Model model, SettingsOvertimeDto settingsDto) {
         model.addAttribute("settings", settingsDto);
+        model.addAttribute("overtimeSyncActive", settingsDto.getOvertimeSettings().isOvertimeSyncActive());
+        model.addAttribute("overtimeSyncZeiterfassungSettingsUrl", overtimeProperties.getZeiterfassungLockSettingsUrl());
     }
 
     private SettingsOvertimeDto settingsToDto(Settings settings) {
