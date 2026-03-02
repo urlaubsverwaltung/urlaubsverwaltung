@@ -52,7 +52,7 @@
 
     <span
       th:fragment="avatar-bordered(url,niceName,initials,width,height,personId)"
-      class="bg-gradient-to-br from-blue-50 to-blue-200 dark:from-sky-800 dark:to-zinc-800 rounded-full p-1 inline-flex"
+      class="bg-linear-to-br from-blue-50 to-blue-200 dark:from-sky-800 dark:to-zinc-800 rounded-full p-1 inline-flex"
     >
       <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${initials},${width},${height},${personId})}" />
     </span>
