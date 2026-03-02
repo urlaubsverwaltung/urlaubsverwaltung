@@ -9,7 +9,6 @@ import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationUpd
 import de.focus_shift.urlaubsverwaltung.extension.api.application.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.VacationTypeDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationCreatedFro
 import org.synyx.urlaubsverwaltung.application.application.ApplicationUpdatedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Instant;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 @Component
-@ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
+@ConditionalOnExtensionsEnabled
 public class ApplicationEventHandlerExtension {
 
     private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();

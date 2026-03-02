@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -47,6 +48,8 @@ class PersonCalendarServiceTest {
     private ICalService iCalService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private static LocalDate toDateTime(String input) {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
@@ -55,7 +58,7 @@ class PersonCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new PersonCalendarService(calendarAbsenceService, personService, personCalendarRepository, iCalService, messageSource, Clock.systemUTC());
+        sut = new PersonCalendarService(calendarAbsenceService, personService, personCalendarRepository, iCalService, messageSource, applicationEventPublisher, Clock.systemUTC());
     }
 
     @Test
@@ -295,6 +298,35 @@ class PersonCalendarServiceTest {
         sut.deletePersonalCalendarForPerson(1);
 
         verify(personCalendarRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void ensurePersonalCalendarCreatedEventIsFired() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        final PersonCalendar receivedPersonCalendar = new PersonCalendar(person);
+        when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.of(receivedPersonCalendar));
+
+        when(personCalendarRepository.save(receivedPersonCalendar)).thenReturn(receivedPersonCalendar);
+
+        sut.createCalendarForPerson(1L, java.time.Period.parse("P12M"));
+
+        verify(applicationEventPublisher).publishEvent(any(PersonalCalendarCreatedEvent.class));
+    }
+
+    @Test
+    void ensurePersonalCalendarDeletedEventIsFired() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+
+        sut.deletePersonalCalendarForPerson(1);
+
+        verify(applicationEventPublisher).publishEvent(any(PersonalCalendarDeletedEvent.class));
     }
 
     @Test

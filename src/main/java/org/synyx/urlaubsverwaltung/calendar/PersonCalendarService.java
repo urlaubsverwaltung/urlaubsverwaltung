@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
@@ -27,19 +28,22 @@ public class PersonCalendarService {
     private final PersonCalendarRepository personCalendarRepository;
     private final ICalService iCalService;
     private final MessageSource messageSource;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
     @Autowired
     PersonCalendarService(
         CalendarAbsenceService absenceService, PersonService personService,
         PersonCalendarRepository personCalendarRepository, ICalService iCalService,
-        MessageSource messageSource, Clock clock
+        MessageSource messageSource, ApplicationEventPublisher applicationEventPublisher,
+        Clock clock
     ) {
         this.absenceService = absenceService;
         this.personService = personService;
         this.personCalendarRepository = personCalendarRepository;
         this.iCalService = iCalService;
         this.messageSource = messageSource;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
     }
 
@@ -53,7 +57,11 @@ public class PersonCalendarService {
         personCalendar.setCalendarPeriod(calendarPeriod);
         personCalendar.generateSecret();
 
-        return personCalendarRepository.save(personCalendar);
+        final PersonCalendar savedCalendar = personCalendarRepository.save(personCalendar);
+
+        publishPersonalCalendarCreatedEvent(person);
+
+        return savedCalendar;
     }
 
     public Optional<PersonCalendar> getPersonCalendar(Long personId) {
@@ -94,12 +102,22 @@ public class PersonCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         personCalendarRepository.deleteByPerson(person);
+
+        publishPersonalCalendarDeletedEvent(person);
     }
 
     @EventListener
     void deletePersonalCalendar(PersonDeletedEvent event) {
 
         personCalendarRepository.deleteByPerson(event.person());
+    }
+
+    private void publishPersonalCalendarCreatedEvent(Person person) {
+        applicationEventPublisher.publishEvent(PersonalCalendarCreatedEvent.of(person.getUsername()));
+    }
+
+    private void publishPersonalCalendarDeletedEvent(Person person) {
+        applicationEventPublisher.publishEvent(PersonalCalendarDeletedEvent.of(person.getUsername()));
     }
 
     private Person getPersonOrThrow(Long personId) {

@@ -6,12 +6,12 @@ import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.CompanyVac
 import de.focus_shift.urlaubsverwaltung.extension.api.companyvacation.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.slf4j.Logger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationDeletedEvent;
 import org.synyx.urlaubsverwaltung.companyvacation.CompanyVacationPublishedEvent;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,7 +21,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-@ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
+@ConditionalOnExtensionsEnabled
 class CompanyVacationEventHandlerExtension {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());

@@ -5,12 +5,11 @@ import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDeletedEventD
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDisabledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonUpdatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.extension.ExtensionConfiguration;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonCreatedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
@@ -18,8 +17,8 @@ import org.synyx.urlaubsverwaltung.person.PersonDisabledEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.PersonUpdatedEvent;
 
-@ConditionalOnBean(ExtensionConfiguration.class)
 @Component
+@ConditionalOnExtensionsEnabled
 class PersonEventHandlerExtension {
 
     private final TenantSupplier tenantSupplier;

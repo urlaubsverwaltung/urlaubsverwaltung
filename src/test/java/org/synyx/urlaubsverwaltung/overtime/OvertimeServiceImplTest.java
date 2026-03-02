@@ -13,6 +13,7 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.StaticMessageSource;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -79,6 +80,8 @@ class OvertimeServiceImplTest {
     private OvertimeMailService overtimeMailService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -90,7 +93,7 @@ class OvertimeServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, personService,
-            workingTimeCalendarService, overtimeMailService, settingsService, clock);
+            workingTimeCalendarService, overtimeMailService, settingsService, applicationEventPublisher, clock);
     }
 
     @Nested
@@ -334,6 +337,40 @@ class OvertimeServiceImplTest {
             verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
             verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
         }
+
+        @Test
+        void ensureOvertimeCreatedEventIsFiredOnCreate() {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person("owner", "Owner", "Olivia", "owner@example.org");
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+            savedOvertimeEntity.setStartDate(LocalDate.now());
+            savedOvertimeEntity.setEndDate(LocalDate.now());
+            savedOvertimeEntity.setLastModificationDate(LocalDate.now());
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+
+            sut.createOvertime(ownerId, dateRange, duration, authorId, "Foo Bar");
+
+            verify(applicationEventPublisher).publishEvent(any(OvertimeCreatedEvent.class));
+        }
     }
 
     @Nested
@@ -536,6 +573,39 @@ class OvertimeServiceImplTest {
             verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
             verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
             verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+        }
+
+        @Test
+        void ensureOvertimeUpdatedEventIsFiredOnUpdate() throws Exception {
+
+            final PersonId authorId = new PersonId(1L);
+            final Person author = new Person();
+            author.setId(authorId.value());
+
+            final PersonId ownerId = new PersonId(2L);
+            final Person owner = new Person("owner", "Owner", "Olivia", "owner@example.org");
+            owner.setId(ownerId.value());
+
+            final OvertimeEntity savedOvertimeEntity = new OvertimeEntity();
+            savedOvertimeEntity.setId(1L);
+            savedOvertimeEntity.setPerson(owner);
+            savedOvertimeEntity.setLastModificationDate(LocalDate.now());
+
+            final OvertimeCommentEntity savedCommentEntity = new OvertimeCommentEntity(clock);
+            savedCommentEntity.setId(1L);
+            savedCommentEntity.setPerson(author);
+
+            when(personService.getAllPersonsByIds(List.of(ownerId, authorId))).thenReturn(List.of(author, owner));
+            when(overtimeRepository.findById(anyLong())).thenReturn(Optional.of(savedOvertimeEntity));
+            when(overtimeRepository.save(any(OvertimeEntity.class))).thenReturn(savedOvertimeEntity);
+            when(overtimeCommentRepository.save(any(OvertimeCommentEntity.class))).thenReturn(savedCommentEntity);
+
+            final DateRange dateRange = new DateRange(LocalDate.now(), LocalDate.now());
+            final Duration duration = Duration.ofHours(8);
+
+            sut.updateOvertime(new OvertimeId(1L), dateRange, duration, authorId, "Foo Bar");
+
+            verify(applicationEventPublisher).publishEvent(any(OvertimeUpdatedEvent.class));
         }
     }
 

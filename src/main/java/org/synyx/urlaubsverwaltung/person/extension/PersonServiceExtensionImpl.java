@@ -3,9 +3,8 @@ package org.synyx.urlaubsverwaltung.person.extension;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonServiceExtension;
 import org.slf4j.Logger;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.extension.ExtensionConfiguration;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonPageRequest;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -19,7 +18,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPerson;
 import static org.synyx.urlaubsverwaltung.person.extension.PersonDTOMapper.toPersonDTO;
 
-@ConditionalOnBean(ExtensionConfiguration.class)
+@ConditionalOnExtensionsEnabled
 @Service
 public class PersonServiceExtensionImpl implements PersonServiceExtension {
 

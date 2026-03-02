@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,6 +118,11 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
+        final Collection<Role> previousPermissions = personRepository.findById(person.getId())
+            .map(Person::getPermissions)
+            .map(List::copyOf)
+            .orElse(List.of());
+
         final Person updatedPerson = personRepository.save(normalizePerson(person));
         LOG.info("Updated person: {}", updatedPerson);
 
@@ -125,6 +131,8 @@ class PersonServiceImpl implements PersonService {
         }
 
         applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
+
+        publishPermissionsChangedEventIfNecessary(updatedPerson, previousPermissions);
 
         return updatedPerson;
     }
@@ -258,6 +266,15 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
+    }
+
+    private void publishPermissionsChangedEventIfNecessary(Person updatedPerson, Collection<Role> previousPermissions) {
+        final Collection<Role> currentPermissions = updatedPerson.getPermissions();
+        if (!new HashSet<>(previousPermissions).equals(new HashSet<>(currentPermissions))) {
+            applicationEventPublisher.publishEvent(
+                PersonPermissionsChangedEvent.of(updatedPerson, previousPermissions, currentPermissions)
+            );
+        }
     }
 
     private Person normalizePerson(Person person) {

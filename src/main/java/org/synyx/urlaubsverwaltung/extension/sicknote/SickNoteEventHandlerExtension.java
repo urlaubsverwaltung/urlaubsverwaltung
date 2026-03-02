@@ -9,7 +9,6 @@ import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNotePeriodDTO
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNotePersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteUpdatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteAcceptedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCancelledEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCreatedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteToApplicationConvertedEvent;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteUpdatedEvent;
 
 import java.time.Instant;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 @Component
-@ConditionalOnProperty(value = "uv.extensions.enabled", havingValue = "true")
+@ConditionalOnExtensionsEnabled
 public class SickNoteEventHandlerExtension {
 
     private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();

@@ -64,6 +64,8 @@ class PersonServiceImplTest {
     private ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor;
     @Captor
     private ArgumentCaptor<PersonDeletedEvent> personDeletedEventArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<PersonPermissionsChangedEvent> personPermissionsChangedEventArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -484,6 +486,44 @@ class PersonServiceImplTest {
 
         sut.update(inactivePerson);
         verify(applicationEventPublisher, never()).publishEvent(any(PersonDisabledEvent.class));
+    }
+
+    @Test
+    void ensurePersonPermissionsChangedEventIsFiredWhenPermissionsChange() {
+
+        final Person previousPerson = createPerson("muster", USER, BOSS);
+        previousPerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(previousPerson));
+
+        final Person personToUpdate = createPerson("muster", USER, OFFICE);
+        personToUpdate.setId(1L);
+        when(personRepository.save(personToUpdate)).thenReturn(personToUpdate);
+
+        sut.update(personToUpdate);
+
+        verify(applicationEventPublisher).publishEvent(personPermissionsChangedEventArgumentCaptor.capture());
+        final PersonPermissionsChangedEvent event = personPermissionsChangedEventArgumentCaptor.getValue();
+        assertThat(event.personId()).isEqualTo(1L);
+        assertThat(event.previousPermissions()).containsExactlyInAnyOrder(USER, BOSS);
+        assertThat(event.currentPermissions()).containsExactlyInAnyOrder(USER, OFFICE);
+        assertThat(event.grantedPermissions()).containsExactly(OFFICE);
+        assertThat(event.revokedPermissions()).containsExactly(BOSS);
+    }
+
+    @Test
+    void ensurePersonPermissionsChangedEventIsNotFiredWhenPermissionsDoNotChange() {
+
+        final Person previousPerson = createPerson("muster", USER, BOSS);
+        previousPerson.setId(1L);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(previousPerson));
+
+        final Person personToUpdate = createPerson("muster", USER, BOSS);
+        personToUpdate.setId(1L);
+        when(personRepository.save(personToUpdate)).thenReturn(personToUpdate);
+
+        sut.update(personToUpdate);
+
+        verify(applicationEventPublisher, never()).publishEvent(any(PersonPermissionsChangedEvent.class));
     }
 
     @Test

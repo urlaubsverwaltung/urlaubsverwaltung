@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsActivatedEvent;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsDeactivatedEvent;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -36,9 +38,24 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Settings save(Settings settings) {
+
+        final boolean previousOvertimeActive = getSettings().getOvertimeSettings().isOvertimeActive();
+
         final Settings savedSettings = settingsRepository.save(settings);
         LOG.info("Updated settings: {}", savedSettings);
+
+        publishOvertimeSettingsChangeEvent(previousOvertimeActive, savedSettings);
+
         return savedSettings;
+    }
+
+    private void publishOvertimeSettingsChangeEvent(boolean previousOvertimeActive, Settings savedSettings) {
+        final boolean currentOvertimeActive = savedSettings.getOvertimeSettings().isOvertimeActive();
+        if (!previousOvertimeActive && currentOvertimeActive) {
+            applicationEventPublisher.publishEvent(OvertimeSettingsActivatedEvent.of());
+        } else if (previousOvertimeActive && !currentOvertimeActive) {
+            applicationEventPublisher.publishEvent(OvertimeSettingsDeactivatedEvent.of());
+        }
     }
 
     @Override
