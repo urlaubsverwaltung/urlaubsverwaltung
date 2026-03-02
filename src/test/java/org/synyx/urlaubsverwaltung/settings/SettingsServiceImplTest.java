@@ -3,18 +3,20 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SettingsServiceImplTest {
@@ -23,13 +25,12 @@ class SettingsServiceImplTest {
 
     @Mock
     private SettingsRepository settingsRepository;
-
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsServiceImpl(settingsRepository, applicationEventPublisher);
+        sut = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(), applicationEventPublisher);
     }
 
     @Test
@@ -68,5 +69,36 @@ class SettingsServiceImplTest {
 
         verify(settingsRepository, never()).save(any(Settings.class));
         verify(applicationEventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void ensureThatSyncIsDeactivatedIfPropertyIsTrue() {
+
+        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
+
+        final OvertimeProperties overtimeProperties = new OvertimeProperties();
+        overtimeProperties.setSyncActive(true);
+
+        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, overtimeProperties, applicationEventPublisher);
+        settingsService.insertDefaultSettings();
+
+        verify(settingsRepository).save(settingsArgumentCaptor.capture());
+
+        final Settings savedSettings = settingsArgumentCaptor.getValue();
+        assertThat(savedSettings.getOvertimeSettings().isOvertimeSyncActive()).isTrue();
+    }
+
+    @Test
+    void ensureThatSyncIsDeactivatedIfPropertyIsFalseByDefault() {
+
+        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
+
+        final SettingsServiceImpl settingsService = new SettingsServiceImpl(settingsRepository, new OvertimeProperties(), applicationEventPublisher);
+        settingsService.insertDefaultSettings();
+
+        verify(settingsRepository).save(settingsArgumentCaptor.capture());
+
+        final Settings savedSettings = settingsArgumentCaptor.getValue();
+        assertThat(savedSettings.getOvertimeSettings().isOvertimeSyncActive()).isFalse();
     }
 }
