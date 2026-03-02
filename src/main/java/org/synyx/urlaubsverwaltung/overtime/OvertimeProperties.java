@@ -12,11 +12,24 @@ public class OvertimeProperties {
      */
     private boolean syncActive = false;
 
+    /**
+     * The URL to the zeiterfassung lock settings.
+     */
+    private String zeiterfassungLockSettingsUrl = "https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden";
+
     public boolean isSyncActive() {
         return syncActive;
     }
 
     public void setSyncActive(boolean syncActive) {
         this.syncActive = syncActive;
+    }
+
+    public String getZeiterfassungLockSettingsUrl() {
+        return zeiterfassungLockSettingsUrl;
+    }
+
+    public void setZeiterfassungLockSettingsUrl(String zeiterfassungLockSettingsUrl) {
+        this.zeiterfassungLockSettingsUrl = zeiterfassungLockSettingsUrl;
     }
 }
