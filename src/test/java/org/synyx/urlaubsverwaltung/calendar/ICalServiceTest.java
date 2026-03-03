@@ -330,6 +330,7 @@ class ICalServiceTest {
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
+                X-MICROSOFT-CDO-BUSYSTATUS:FREE
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -361,6 +362,7 @@ class ICalServiceTest {
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 TRANSP:TRANSPARENT
+                X-MICROSOFT-CDO-BUSYSTATUS:FREE
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -393,6 +395,7 @@ class ICalServiceTest {
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
                 \s
                 TRANSP:TRANSPARENT
+                X-MICROSOFT-CDO-BUSYSTATUS:FREE
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
