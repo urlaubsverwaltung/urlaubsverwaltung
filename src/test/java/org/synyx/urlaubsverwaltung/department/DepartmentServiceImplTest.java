@@ -1643,7 +1643,6 @@ class DepartmentServiceImplTest {
         when(personService.getAllPersonsByIds(Set.of(personId, personThatWillLeftId))).thenReturn(List.of(person, personThatWillLeft));
 
         final DepartmentStaff updatedStaff = new DepartmentStaff(42L, List.of(personMembership), List.of(), List.of());
-
         when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
             .thenReturn(updatedStaff);
 
@@ -1812,7 +1811,6 @@ class DepartmentServiceImplTest {
 
         final DepartmentMembership newMembership = new DepartmentMembership(newMemberId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
         final DepartmentStaff updatedStaff = new DepartmentStaff(42L, List.of(existingMembership, newMembership), List.of(), List.of());
-
         when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
             .thenReturn(updatedStaff);
 
@@ -1823,6 +1821,91 @@ class DepartmentServiceImplTest {
         verify(applicationEventPublisher).publishEvent(any(DepartmentUpdatedEvent.class));
         verify(applicationEventPublisher).publishEvent(any(DepartmentMemberAssignedEvent.class));
         verify(applicationEventPublisher).publishEvent(any(DepartmentMemberUnassignedEvent.class));
+    }
+
+    @Test
+    void ensureNoMemberUnassignedEventWhenMembersStayTheSameOnUpdate() {
+
+        final PersonId memberAId = new PersonId(1L);
+        final Person memberA = new Person();
+        memberA.setId(memberAId.value());
+        memberA.setUsername("memberA");
+
+        final PersonId memberBId = new PersonId(2L);
+        final Person memberB = new Person();
+        memberB.setId(memberBId.value());
+        memberB.setUsername("memberB");
+
+        final Department department = new Department();
+        department.setId(42L);
+        department.setName("department");
+        department.setMembers(List.of(memberA, memberB));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(42L);
+        when(departmentRepository.findById(42L)).thenReturn(Optional.of(departmentEntity));
+
+        final DepartmentMembership membershipA = new DepartmentMembership(memberAId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership membershipB = new DepartmentMembership(memberBId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff currentStaff = new DepartmentStaff(42L, List.of(membershipA, membershipB), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L)).thenReturn(currentStaff);
+
+        when(personService.getAllPersonsByIds(anySet())).thenReturn(List.of(memberA, memberB));
+
+        // updateDepartmentMemberships now returns the complete staff after applying changes.
+        // When nothing changed, the returned staff matches the current staff.
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(currentStaff);
+
+        when(departmentRepository.save(any(DepartmentEntity.class))).thenReturn(departmentEntity);
+
+        sut.update(department);
+
+        verify(applicationEventPublisher).publishEvent(any(DepartmentUpdatedEvent.class));
+        verify(applicationEventPublisher, never()).publishEvent(any(DepartmentMemberAssignedEvent.class));
+        verify(applicationEventPublisher, never()).publishEvent(any(DepartmentMemberUnassignedEvent.class));
+    }
+
+    @Test
+    void ensureNoPersonLeftDepartmentEventWhenMembersStayTheSameOnUpdate() {
+
+        final PersonId memberAId = new PersonId(1L);
+        final Person memberA = new Person();
+        memberA.setId(memberAId.value());
+        memberA.setUsername("memberA");
+
+        final PersonId memberBId = new PersonId(2L);
+        final Person memberB = new Person();
+        memberB.setId(memberBId.value());
+        memberB.setUsername("memberB");
+
+        final Department department = new Department();
+        department.setId(42L);
+        department.setName("department");
+        department.setMembers(List.of(memberA, memberB));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(42L);
+        when(departmentRepository.findById(42L)).thenReturn(Optional.of(departmentEntity));
+
+        final DepartmentMembership membershipA = new DepartmentMembership(memberAId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentMembership membershipB = new DepartmentMembership(memberBId, 42L, DepartmentMembershipKind.MEMBER, Instant.now(clock));
+        final DepartmentStaff currentStaff = new DepartmentStaff(42L, List.of(membershipA, membershipB), List.of(), List.of());
+        when(departmentMembershipService.getDepartmentStaff(42L)).thenReturn(currentStaff);
+
+        when(personService.getAllPersonsByIds(anySet())).thenReturn(List.of(memberA, memberB));
+
+        // updateDepartmentMemberships now returns the complete staff after applying changes.
+        // When nothing changed, the returned staff matches the current staff.
+        when(departmentMembershipService.updateDepartmentMemberships(any(Long.class), any(DepartmentStaff.class), any(List.class), any(List.class), any(List.class)))
+            .thenReturn(currentStaff);
+
+        when(departmentRepository.save(any(DepartmentEntity.class))).thenReturn(departmentEntity);
+
+        sut.update(department);
+
+        verify(applicationEventPublisher).publishEvent(any(DepartmentUpdatedEvent.class));
+        verify(applicationEventPublisher, never()).publishEvent(any(PersonLeftDepartmentEvent.class));
     }
 
     @Test

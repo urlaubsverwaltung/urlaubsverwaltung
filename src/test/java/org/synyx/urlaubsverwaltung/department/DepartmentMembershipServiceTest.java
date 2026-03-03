@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -292,7 +293,8 @@ class DepartmentMembershipServiceTest {
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
-            verifyNoMoreInteractions(repository);
+            verify(repository).findAllByDepartmentIdIsInAndValidToIsNull(List.of(1L));
+            verify(repository, never()).deleteAll(anyList());
 
             final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
             assertThat(actualSaved).satisfiesExactly(
@@ -400,7 +402,8 @@ class DepartmentMembershipServiceTest {
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
-            verifyNoMoreInteractions(repository);
+            verify(repository).findAllByDepartmentIdIsInAndValidToIsNull(List.of(1L));
+            verify(repository, never()).deleteAll(anyList());
 
             final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
             assertThat(actualSaved).satisfiesExactly(
@@ -508,7 +511,8 @@ class DepartmentMembershipServiceTest {
             sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
 
             verify(repository).saveAll(saveAllCaptor.capture());
-            verifyNoMoreInteractions(repository);
+            verify(repository).findAllByDepartmentIdIsInAndValidToIsNull(List.of(1L));
+            verify(repository, never()).deleteAll(anyList());
 
             final List<DepartmentMembershipEntity> actualSaved = saveAllCaptor.getValue();
             assertThat(actualSaved).satisfiesExactly(
@@ -521,6 +525,91 @@ class DepartmentMembershipServiceTest {
                     assertThat(entry.getValidTo()).isEqualTo(Instant.now(fixedClock));
                 }
             );
+        }
+
+        @Test
+        void ensureReturnsCompleteStaffWhenNothingChanged() {
+
+            final Instant now = Instant.now(fixedClock);
+            final PersonId personId = new PersonId(1L);
+
+            final DepartmentMembershipEntity existingEntity = new DepartmentMembershipEntity();
+            existingEntity.setId(42L);
+            existingEntity.setPersonId(1L);
+            existingEntity.setDepartmentId(1L);
+            existingEntity.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            existingEntity.setValidFrom(now.minus(Duration.ofDays(10)));
+            existingEntity.setValidTo(null);
+
+            when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingEntity));
+            when(repository.findAllByDepartmentIdIsInAndValidToIsNull(List.of(1L))).thenReturn(List.of(existingEntity));
+
+            final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
+            final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
+
+            final DepartmentStaff actual = sut.updateDepartmentMemberships(1L, currentStaff, List.of(personId), List.of(), List.of());
+
+            assertThat(actual.departmentId()).isEqualTo(1L);
+            assertThat(actual.members()).hasSize(1);
+            assertThat(actual.members().getFirst().personId()).isEqualTo(personId);
+            assertThat(actual.departmentHeads()).isEmpty();
+            assertThat(actual.secondStageAuthorities()).isEmpty();
+        }
+
+        @Test
+        void ensureReturnsCompleteStaffWhenMemberAdded() {
+
+            final PersonId personId = new PersonId(1L);
+
+            final DepartmentMembershipEntity savedEntity = new DepartmentMembershipEntity();
+            savedEntity.setId(1L);
+            savedEntity.setPersonId(1L);
+            savedEntity.setDepartmentId(42L);
+            savedEntity.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            savedEntity.setValidFrom(Instant.now(fixedClock));
+            savedEntity.setValidTo(null);
+
+            when(repository.findAllByDepartmentId(42L)).thenReturn(List.of());
+            when(repository.findAllByDepartmentIdIsInAndValidToIsNull(List.of(42L))).thenReturn(List.of(savedEntity));
+
+            final DepartmentStaff currentStaff = DepartmentStaff.empty(42L);
+
+            final DepartmentStaff actual = sut.updateDepartmentMemberships(42L, currentStaff, List.of(personId), List.of(), List.of());
+
+            assertThat(actual.departmentId()).isEqualTo(42L);
+            assertThat(actual.members()).hasSize(1);
+            assertThat(actual.members().getFirst().personId()).isEqualTo(personId);
+            assertThat(actual.departmentHeads()).isEmpty();
+            assertThat(actual.secondStageAuthorities()).isEmpty();
+        }
+
+        @Test
+        void ensureReturnsCompleteStaffWhenMemberRemoved() {
+
+            final Instant now = Instant.now(fixedClock);
+            final PersonId personId = new PersonId(1L);
+
+            final DepartmentMembershipEntity existingEntity = new DepartmentMembershipEntity();
+            existingEntity.setId(42L);
+            existingEntity.setPersonId(1L);
+            existingEntity.setDepartmentId(1L);
+            existingEntity.setMembershipKind(DepartmentMembershipKind.MEMBER);
+            existingEntity.setValidFrom(now.minus(Duration.ofDays(10)));
+            existingEntity.setValidTo(null);
+
+            when(repository.findAllByDepartmentId(1L)).thenReturn(List.of(existingEntity));
+            // after removal, the entity has validTo set, so findAllByValidToIsNull returns empty
+            when(repository.findAllByDepartmentIdIsInAndValidToIsNull(List.of(1L))).thenReturn(List.of());
+
+            final DepartmentMembership currentMembership = new DepartmentMembership(personId, 1L, DepartmentMembershipKind.MEMBER, now);
+            final DepartmentStaff currentStaff = DepartmentStaff.ofMemberships(1L, List.of(currentMembership));
+
+            final DepartmentStaff actual = sut.updateDepartmentMemberships(1L, currentStaff, List.of(), List.of(), List.of());
+
+            assertThat(actual.departmentId()).isEqualTo(1L);
+            assertThat(actual.members()).isEmpty();
+            assertThat(actual.departmentHeads()).isEmpty();
+            assertThat(actual.secondStageAuthorities()).isEmpty();
         }
 
         @Test

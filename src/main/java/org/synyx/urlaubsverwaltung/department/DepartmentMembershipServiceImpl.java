@@ -151,7 +151,7 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
      * @param nextMembers person IDs of the members that should be in the department after the update
      * @param nextDepartmentHeads person IDs of the department heads that should be in the department after the update
      * @param nextSecondStageAuthorities person IDs of the second stage authorities that should be in the department after the update
-     * @return a {@link DepartmentStaff} containing the updated membership information
+     * @return a {@link DepartmentStaff} containing the complete current membership information after applying changes
      */
     DepartmentStaff updateDepartmentMemberships(
         Long departmentId,
@@ -169,7 +169,7 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
 
         final List<DepartmentMembershipEntity> toSave = Stream.concat(toUpdate.stream(), newMemberships.stream()).toList();
 
-        final DepartmentStaff departmentStaff = saveAll(departmentId, toSave);
+        saveAll(departmentId, toSave);
 
         LOG.info("updated memberships for department with id {}: {}/{} members, {}/{} department heads, {}/{} second stage authorities.",
             departmentId,
@@ -178,7 +178,7 @@ class DepartmentMembershipServiceImpl implements DepartmentMembershipService {
             nextSecondStageAuthorities.size(), memberIdsDiff.currentSecondStageAuthorityIds.size()
         );
 
-        return departmentStaff;
+        return getDepartmentStaff(departmentId);
     }
 
     DepartmentStaff getDepartmentStaff(Long departmentId) {
