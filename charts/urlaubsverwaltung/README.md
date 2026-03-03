@@ -173,7 +173,7 @@ customizedManagementServer:
 
 livenessProbe: |
     httpGet:
-      path: /actuator/health
+      path: /actuator/health/liveness
       port: http-management
     initialDelaySeconds: 120
     periodSeconds: 10
@@ -181,7 +181,7 @@ livenessProbe: |
 
 readinessProbe: |
     httpGet:
-      path: /actuator/health
+      path: /actuator/health/readiness
       port: http-management
     initialDelaySeconds: 60
     periodSeconds: 10
