@@ -67,7 +67,7 @@ jobs:
         run: ./mvnw dependency:go-offline verify -Pui-test -Dbrowser=${{matrix.browser}}
 
       - name: Upload artifacts of failed tests
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ always() && hashFiles('target/ui-test/**/FAILED-*') != '' }}
         with:
           name: failed-ui-tests
