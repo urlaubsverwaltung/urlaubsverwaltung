@@ -133,6 +133,14 @@ export const HolidayService = (function () {
       return isSickNoteActiveNoon(getAbsencesForDate(date));
     },
 
+    hasAnyPersonalAbsence: function (date) {
+      return this.isPersonalAbsenceFull(date) || this.isPersonalHalfDayAbsence(date);
+    },
+
+    isPersonalAbsenceFull: function (date) {
+      return this.isPersonalHolidayFull(date) || this.isSickDayFull(date);
+    },
+
     isPersonalHolidayFull: function (date) {
       return (
         this.isPersonalHolidayFullWaiting(date) ||
@@ -158,13 +166,12 @@ export const HolidayService = (function () {
       return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
     },
 
-    isHalfDayAbsence: function (date) {
-      return (
-        this.isPersonalHolidayMorning(date) ||
-        this.isPersonalHolidayNoon(date) ||
-        this.isSickDayMorning(date) ||
-        this.isSickDayNoon(date)
-      );
+    isPersonalHalfDayAbsence: function (date) {
+      return this.isPersonalAbsenceMorning(date) || this.isPersonalAbsenceNoon(date);
+    },
+
+    isPersonalAbsenceMorning: function (date) {
+      return this.isPersonalHolidayMorning(date) || this.isSickDayMorning(date);
     },
 
     isPersonalHolidayMorning: function (date) {
@@ -190,6 +197,10 @@ export const HolidayService = (function () {
 
     isPersonalHolidayMorningCancellationRequest(date) {
       return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
+    },
+
+    isPersonalAbsenceNoon: function (date) {
+      return this.isPersonalHolidayNoon(date) || this.isSickDayNoon(date);
     },
 
     isPersonalHolidayNoon: function (date) {
@@ -243,20 +254,37 @@ export const HolidayService = (function () {
       return "";
     },
 
-    getAbsenceId: function (date) {
-      const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].id;
-      }
-      return "-1";
-    },
+    getPersonalAbsences: function (date) {
+      const acceptableTypes = new Set(["VACATION", "SICK_NOTE"]);
 
-    getAbsenceType: function (date) {
+      let full;
+      let morning;
+      let noon;
+
       const absences = getAbsencesForDate(date);
-      if (absences[0]) {
-        return absences[0].absenceType;
+      for (let absence of absences) {
+        if (acceptableTypes.has(absence.absenceType)) {
+          switch (absence.absent) {
+            case "FULL": {
+              full = absence;
+              break;
+            }
+            case "MORNING": {
+              morning = absence;
+              break;
+            }
+            case "NOON": {
+              noon = absence;
+              break;
+            }
+            default: {
+              console.log("TODO Error?");
+              break;
+            }
+          }
+        }
       }
-      return "";
+      return [full, morning, noon];
     },
 
     getTypeId: function (date) {
@@ -283,21 +311,33 @@ export const HolidayService = (function () {
      * @param {Date} [to]
      */
     bookHoliday: function (from, to) {
+      document.location.href = this.getNewHolidayUrl(from, to);
+    },
+
+    getNewHolidayUrl: function (from, to) {
       const parameters = {
         personId: personId,
         from: format(from, "yyyy-MM-dd"),
         to: to ? format(to, "yyyy-MM-dd") : undefined,
       };
 
-      document.location.href = webPrefix + "/application/new" + paramize(parameters);
+      return webPrefix + "/application/new" + paramize(parameters);
+    },
+
+    getApplicationForLeaveWebUrl: function (applicationId) {
+      return webPrefix + "/application/" + applicationId;
     },
 
     navigateToApplicationForLeave: function (applicationId) {
-      document.location.href = webPrefix + "/application/" + applicationId;
+      document.location.href = this.getApplicationForLeaveWebUrl(applicationId);
+    },
+
+    getSickNoteWebUrl: function (sickNoteId) {
+      return webPrefix + "/sicknote/" + sickNoteId;
     },
 
     navigateToSickNote: function (sickNoteId) {
-      document.location.href = webPrefix + "/sicknote/" + sickNoteId;
+      document.location.href = this.getSickNoteWebUrl(sickNoteId);
     },
 
     /**

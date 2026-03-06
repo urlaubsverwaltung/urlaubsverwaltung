@@ -47,6 +47,8 @@ describe("calendar", () => {
 
   beforeEach(() => {
     globalThis.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    HTMLDialogElement.prototype.showModal = jest.fn();
+    HTMLDialogElement.prototype.togglePopover = jest.fn();
   });
 
   afterEach(() => {
@@ -64,77 +66,10 @@ describe("calendar", () => {
     expect(document.body).toMatchSnapshot();
   });
 
-  it("clicking on empty day redirects to new application", async () => {
-    // today is 2017-12-01
-    mockDate(1_512_130_448_379);
-
-    fetchMock.route(
-      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-      {
-        absences: [],
-      },
-    );
-
-    await calendarTestSetup();
-
-    const holidayService = createHolidayService({ personId: 42 });
-    holidayService.bookHoliday = jest.fn();
-    // fetch personal holiday data and cache the (mocked) response
-    // the response is used when the calendar renders
-    await holidayService.fetchAbsences(2017);
-
-    renderCalendar(holidayService);
-
-    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
-    expect(someDay).toBeTruthy();
-    someDay.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
-    someDay.click();
-
-    expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-15"), parseISO("2017-12-15"));
-  });
-
-  it("clicking on day with absence redirects to existing application", async () => {
-    // today is 2017-12-01
-    mockDate(1_512_130_448_379);
-
-    fetchMock.route(
-      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-      {
-        absences: [
-          {
-            date: "2017-12-15",
-            absenceType: "VACATION",
-            id: 1337,
-            absent: "FULL",
-            absentNumeric: 1,
-            status: "ALLOWED",
-            typeId: 1,
-          },
-        ],
-      },
-    );
-
-    await calendarTestSetup();
-
-    const holidayService = createHolidayService({ personId: 42 });
-    holidayService.navigateToApplicationForLeave = jest.fn();
-    // fetch personal holiday data and cache the (mocked) response
-    // the response is used when the calendar renders
-    await holidayService.fetchAbsences(2017);
-
-    renderCalendar(holidayService);
-
-    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
-    expect(someDay).toBeTruthy();
-    someDay.click();
-
-    expect(holidayService.navigateToApplicationForLeave).toHaveBeenCalledWith("1337");
-  });
-
   describe.each([[`.datepicker-prev`], [`.datepicker-next`]])(
     "ensure correct rendering when clicking %s ",
     (buttonSelector) => {
-      test("click", async () => {
+      test("renders", async () => {
         // 01.12.2017
         mockDate(1_512_130_448_379);
 
@@ -180,127 +115,122 @@ describe("calendar", () => {
     },
   );
 
+  it("clicking on empty day redirects to new application", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.route(
+      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [],
+      },
+    );
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    holidayService.bookHoliday = jest.fn();
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+    expect(someDay).toBeTruthy();
+    someDay.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+    someDay.click();
+
+    expect(holidayService.bookHoliday).toHaveBeenCalledWith(parseISO("2017-12-15"), parseISO("2017-12-15"));
+  });
+
+  it("clicking on day with absence opens a popover with a link to the application", async () => {
+    // today is 2017-12-01
+    mockDate(1_512_130_448_379);
+
+    fetchMock.route(
+      "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+      {
+        absences: [
+          {
+            date: "2017-12-15",
+            absenceType: "VACATION",
+            id: 1337,
+            absent: "FULL",
+            absentNumeric: 1,
+            status: "ALLOWED",
+            typeId: 1,
+          },
+        ],
+      },
+    );
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42, webPrefix: "https://prefix.com" });
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2017);
+
+    renderCalendar(holidayService);
+
+    const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="2017-12-15"]`);
+    expect(someDay).toBeTruthy();
+    someDay.click();
+
+    const popover = document.querySelector("dialog");
+    expect(popover.showModal).toHaveBeenCalled();
+
+    const link = popover.querySelector("a");
+    expect(link.href).toBe("https://prefix.com/application/1337");
+  });
+
   describe.each([["ALLOWED"], ["WAITING"], ["TEMPORARY_ALLOWED"]])(
     "ensure vacation of status=%s is clickable",
     (givenStatus) => {
-      test("in the past", async () => {
-        // today is 2017-12-01
-        mockDate(1_512_130_448_379);
+      describe.each([
+        ["today", "2017-12-01"],
+        ["a day in the past", "2017-11-01"],
+        ["a day in the future", "2017-12-05"],
+      ])("for", (name, date) => {
+        test(name, async () => {
+          // today is 2017-12-01
+          mockDate(1_512_130_448_379);
 
-        // personId -> createHolidayService (param)
-        // year -> holidayService.fetchPersonal (param)
-        // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.route(
-          "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-          {
-            absences: [
-              {
-                date: "2017-11-01",
-                absenceType: "VACATION",
-                absent: "FULL",
-                absentNumeric: 1,
-                status: givenStatus,
-                typeId: 1,
-              },
-            ],
-          },
-        );
+          // personId -> createHolidayService (param)
+          // year -> holidayService.fetchPersonal (param)
+          // type -> holidayService.fetchPersonal (implementation detail)
+          fetchMock.route(
+            "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
+            {
+              absences: [
+                {
+                  date: date,
+                  absenceType: "VACATION",
+                  absent: "FULL",
+                  absentNumeric: 1,
+                  status: givenStatus,
+                  typeId: 1,
+                },
+              ],
+            },
+          );
 
-        await calendarTestSetup();
+          await calendarTestSetup();
 
-        const holidayService = createHolidayService({ personId: 42 });
-        // fetch personal holiday data and cache the (mocked) response
-        // the response is used when the calendar renders
-        await holidayService.fetchAbsences(2017);
+          const holidayService = createHolidayService({ personId: 42 });
+          // fetch personal holiday data and cache the (mocked) response
+          // the response is used when the calendar renders
+          await holidayService.fetchAbsences(2017);
 
-        renderCalendar(holidayService);
+          renderCalendar(holidayService);
 
-        const $ = document.querySelector.bind(document);
-        expect(
-          $(
-            '[data-datepicker-date="2017-11-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-          ),
-        ).toBeTruthy();
-      });
-
-      test("in the future", async () => {
-        // today is 2017-12-01
-        mockDate(1_512_130_448_379);
-
-        // personId -> createHolidayService (param)
-        // year -> holidayService.fetchPersonal (param)
-        // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.route(
-          "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-          {
-            absences: [
-              {
-                date: "2017-12-05",
-                absenceType: "VACATION",
-                absent: "FULL",
-                absentNumeric: 1,
-                status: givenStatus,
-                typeId: 1,
-              },
-            ],
-          },
-        );
-
-        await calendarTestSetup();
-
-        const holidayService = createHolidayService({ personId: 42 });
-        // fetch personal holiday data and cache the (mocked) response
-        // the response is used when the calendar renders
-        await holidayService.fetchAbsences(2017);
-
-        renderCalendar(holidayService);
-
-        const $ = document.querySelector.bind(document);
-        expect(
-          $(
-            '[data-datepicker-date="2017-12-05"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-          ),
-        ).toBeTruthy();
-      });
-
-      test("today", async () => {
-        // today is 2017-12-01
-        mockDate(1_512_130_448_379);
-
-        // personId -> createHolidayService (param)
-        // year -> holidayService.fetchPersonal (param)
-        // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.route(
-          "/persons/42/absences?from=2017-01-01&to=2017-12-31&absence-types=vacation%2Csick_note%2Cno_workday",
-          {
-            absences: [
-              {
-                date: "2017-12-01",
-                absenceType: "VACATION",
-                absent: "FULL",
-                absentNumeric: 1,
-                status: givenStatus,
-                typeId: 1,
-              },
-            ],
-          },
-        );
-
-        await calendarTestSetup();
-
-        const holidayService = createHolidayService({ personId: 42 });
-        // fetch personal holiday data and cache the (mocked) response
-        // the response is used when the calendar renders
-        await holidayService.fetchAbsences(2017);
-
-        renderCalendar(holidayService);
-
-        const $ = document.querySelector.bind(document);
-        expect(
-          $(
-            '[data-datepicker-date="2017-12-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-          ),
-        ).toBeTruthy();
+          const someDay = document.querySelector(`.datepicker-day[data-datepicker-date="${date}"]`);
+          expect(someDay).toBeTruthy();
+          someDay.click();
+          const popover = document.querySelector("dialog");
+          expect(popover.showModal).toHaveBeenCalled();
+        });
       });
     },
   );
@@ -370,26 +300,34 @@ describe("calendar", () => {
       renderCalendar(holidayService);
 
       const $ = document.querySelector.bind(document);
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-full absence-full--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-morning absence-morning--solid datepicker-day-sick-note-noon absence-noon--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-12"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-noon absence-noon--solid datepicker-day-sick-note-morning absence-morning--solid"]',
-        ),
-      ).toBeTruthy();
-      expect(
-        $(
-          '[data-datepicker-date="2020-12-13"][class="datepicker-day datepicker-day-today datepicker-day-weekend datepicker-day-sick-note-full absence-full--solid"]',
-        ),
-      ).toBeTruthy();
+
+      let saturday = $('[data-datepicker-date="2020-12-05"]');
+      expect(saturday.classList).toContain("datepicker-day-past");
+      expect(saturday.classList).toContain("datepicker-day-weekend");
+      expect(saturday.classList).toContain("datepicker-day-absence-full");
+      expect(saturday.classList).toContain("absence-full--solid");
+
+      let sunday = $('[data-datepicker-date="2020-12-06"]');
+      expect(sunday.classList).toContain("datepicker-day-past");
+      expect(sunday.classList).toContain("datepicker-day-weekend");
+      expect(sunday.classList).toContain("datepicker-day-absence-morning");
+      expect(sunday.classList).toContain("absence-morning--solid");
+      expect(sunday.classList).toContain("datepicker-day-sick-note-noon");
+      expect(sunday.classList).toContain("absence-noon--solid");
+
+      let saturday2 = $('[data-datepicker-date="2020-12-12"]');
+      expect(saturday2.classList).toContain("datepicker-day-past");
+      expect(saturday2.classList).toContain("datepicker-day-weekend");
+      expect(saturday2.classList).toContain("datepicker-day-sick-note-morning");
+      expect(saturday2.classList).toContain("absence-morning--solid");
+      expect(saturday2.classList).toContain("datepicker-day-absence-noon");
+      expect(saturday2.classList).toContain("absence-noon--solid");
+
+      let sunday2 = $('[data-datepicker-date="2020-12-13"]');
+      expect(sunday2.classList).toContain("datepicker-day-today");
+      expect(sunday2.classList).toContain("datepicker-day-weekend");
+      expect(sunday2.classList).toContain("datepicker-day-sick-note-full");
+      expect(sunday2.classList).toContain("absence-full--solid");
     });
   });
 
@@ -439,13 +377,9 @@ describe("calendar", () => {
     renderCalendar(holidayService);
 
     const $ = document.querySelector.bind(document);
-    expect(
-      $('[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
-    ).toBeTruthy();
-    expect(
-      $('[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
-    ).toBeTruthy();
-    expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-05"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-06"] > svg')).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-09"] > svg')).toBeTruthy();
   });
 
   function mockEmptyYear(personId, year) {
