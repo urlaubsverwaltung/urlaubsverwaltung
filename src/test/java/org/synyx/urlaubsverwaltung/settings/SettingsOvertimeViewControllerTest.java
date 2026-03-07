@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,7 @@ class SettingsOvertimeViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsOvertimeViewController(settingsService, settingsValidator);
+        sut = new SettingsOvertimeViewController(settingsService, new OvertimeProperties(), settingsValidator);
     }
 
     @Test

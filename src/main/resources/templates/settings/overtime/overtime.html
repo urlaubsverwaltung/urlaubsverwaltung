@@ -6,6 +6,25 @@
   <body>
     <th:block th:fragment="section">
       <div class="uv-form__group">
+        <!-- info when property based overtime sync is enabled -->
+        <div th:if="${overtimeSyncActiveByProperty == true}" class="uv-form__group-info">
+          <div class="uv-help-block">
+            <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+            <p>
+              <th:block th:text="#{settings.overtime.overtimeActiveByProperty}" />
+              <a
+                class="inline-flex items-center"
+                target="_blank"
+                rel="noopener"
+                th:href="${overtimeSyncZeiterfassungSettingsUrl}"
+              >
+                <th:block th:text="#{settings.overtime.overtimeActiveByProperty.link}" />
+                <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+              </a>
+            </p>
+          </div>
+        </div>
+
         <!-- Overtime Active Settings -->
         <div class="uv-form__input-row">
           <p th:text="|#{settings.overtime.overtimeActive}:|" class="uv-form__label uv-form__label--required">
@@ -36,7 +55,7 @@
         </div>
       </div>
 
-      <div class="uv-form__group">
+      <div th:if="${overtimeSyncActiveByProperty == false}" class="uv-form__group">
         <div class="uv-form__group-info uv-help-block">
           <p>
             <span
@@ -46,6 +65,18 @@
               BETA
             </span>
             <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
+            <br />
+            <br />
+            <th:block th:text="#{settings.overtime.overtimeActiveByProperty}" />
+            <a
+              class="inline-flex items-center"
+              target="_blank"
+              rel="noopener"
+              th:href="${overtimeSyncZeiterfassungSettingsUrl}"
+            >
+              <th:block th:text="#{settings.overtime.overtimeActiveByProperty.link}" />
+              <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+            </a>
           </p>
         </div>
 
@@ -79,7 +110,7 @@
         </div>
       </div>
 
-      <div class="uv-form__group">
+      <div th:if="${overtimeSyncActiveByProperty == false}" class="uv-form__group">
         <!-- Overtime Write Privileged Only Settings -->
         <div class="uv-form__input-row">
           <p
@@ -156,7 +187,7 @@
         </p>
 
         <!-- Maximum Overtime Settings -->
-        <div class="uv-form__input-row">
+        <div th:if="${overtimeSyncActiveByProperty == false}" class="uv-form__input-row">
           <label th:text="|#{settings.overtime.maximum}:|" class="is-required" for="overtimeSettings.maximumOvertime">
             Maximale Anzahl der Überstunden
           </label>
@@ -175,7 +206,7 @@
         </div>
 
         <!-- Minimum Overtime Settings -->
-        <div class="uv-form__input-row">
+        <div th:if="${overtimeSyncActiveByProperty == false}" class="uv-form__input-row">
           <label th:text="|#{settings.overtime.minimum}:|" class="is-required" for="overtimeSettings.minimumOvertime">
             Maximale Anzahl der Minusstunden
           </label>

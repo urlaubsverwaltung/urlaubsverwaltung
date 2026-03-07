@@ -16,7 +16,7 @@ public class SettingsOvertimeValidator implements Validator {
     }
 
     @Override
-    public void validate(Object o, @NonNull Errors errors) {
+    public void validate(@NonNull Object o, @NonNull Errors errors) {
         final SettingsOvertimeDto settings = (SettingsOvertimeDto) o;
         validateOvertimeSettings(settings.getOvertimeSettings(), errors);
     }
