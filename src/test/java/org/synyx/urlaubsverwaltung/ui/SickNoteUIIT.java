@@ -103,11 +103,11 @@ class SickNoteUIIT {
 
     @Test
     void ensureSickNote(Page page) {
+        final LoginPage loginPage = new LoginPage(page, port);
+        final NavigationPage navigationPage = new NavigationPage(page);
 
         final Person person = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        login(page, person);
-
-        final NavigationPage navigationPage = new NavigationPage(page);
+        login(loginPage, person);
 
         sickNote(page, person, LocalDate.of(2022, FEBRUARY, 23));
         sickNoteWithIncapacityCertificate(page, person);
@@ -120,18 +120,19 @@ class SickNoteUIIT {
 
     @Test
     void ensureUserCanExtendSickNote(Page page) {
+        final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
 
         final Person office = createPerson("Alfred-2", "Pennyworth-2", List.of(USER, OFFICE));
         final Person user = createPerson("Dick", "Grayson", List.of(USER));
 
         // Login office
-        login(page, office);
+        login(loginPage, office);
         enableUserSickNoteCreation(page, true);
         navigationPage.logout();
 
         // Login user
-        login(page, user);
+        login(loginPage, user);
 
         final LocalDate startDate = LocalDate.now(clock).minusDays(1);
         sickNote(page, user, startDate);
@@ -155,8 +156,7 @@ class SickNoteUIIT {
         settingsPage.submitAndWaitForPageRefresh();
     }
 
-    private void login(Page page, Person person) {
-        final LoginPage loginPage = new LoginPage(page, port);
+    private void login(LoginPage loginPage, Person person) {
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
     }
 
