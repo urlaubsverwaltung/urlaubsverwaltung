@@ -123,11 +123,14 @@ class SickNoteUIIT {
         final NavigationPage navigationPage = new NavigationPage(page);
 
         final Person office = createPerson("Alfred-2", "Pennyworth-2", List.of(USER, OFFICE));
+        final Person user = createPerson("Dick", "Grayson", List.of(USER));
+
+        // Login office
         login(page, office);
         enableUserSickNoteCreation(page, true);
         navigationPage.logout();
 
-        final Person user = createPerson("Dick", "Grayson", List.of(USER));
+        // Login user
         login(page, user);
 
         final LocalDate startDate = LocalDate.now(clock).minusDays(1);
