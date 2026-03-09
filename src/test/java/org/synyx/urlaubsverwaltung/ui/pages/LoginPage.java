@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.WaitUntilState;
 
 public class LoginPage {
 
@@ -24,7 +25,8 @@ public class LoginPage {
      */
     public void login(Credentials credentials) {
 
-        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak",
+            new Page.NavigateOptions().setWaitUntil(WaitUntilState.NETWORKIDLE));
 
         page.locator(USERNAME_SELECTOR).fill(credentials.username());
         page.locator(PASSWORD_SELECTOR).fill(credentials.password());
