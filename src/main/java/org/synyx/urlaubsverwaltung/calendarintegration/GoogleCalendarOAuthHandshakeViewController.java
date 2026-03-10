@@ -4,9 +4,9 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -35,7 +34,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    private static HttpTransport httpTransport;
+    private static final HttpTransport httpTransport = new NetHttpTransport();
 
     private final CalendarSettingsService calendarSettingsService;
     private final CalendarSyncService calendarSyncService;
@@ -46,13 +45,10 @@ public class GoogleCalendarOAuthHandshakeViewController {
         CalendarSettingsService calendarSettingsService,
         CalendarSyncService calendarSyncService,
         GoogleAuthorizationCodeFlowFactory googleAuthorizationCodeFlowFactory
-    ) throws GeneralSecurityException, IOException {
-
+    ) {
         this.calendarSettingsService = calendarSettingsService;
         this.calendarSyncService = calendarSyncService;
         this.googleAuthorizationCodeFlowFactory = googleAuthorizationCodeFlowFactory;
-
-        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
     private static HttpResponse checkGoogleCalendar(Calendar client, CalendarSettings calendarSettings) throws IOException {

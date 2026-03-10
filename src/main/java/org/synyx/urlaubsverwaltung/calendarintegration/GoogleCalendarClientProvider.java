@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
@@ -14,8 +13,6 @@ import com.google.api.services.calendar.Calendar;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -41,11 +38,6 @@ class GoogleCalendarClientProvider {
 
     private Optional<Calendar> createCalendarClient(GoogleCalendarSettings googleCalendarSettings) {
 
-        final Optional<NetHttpTransport> maybeHttpTransport = getNetHttpTransport();
-        if (maybeHttpTransport.isEmpty()) {
-            return Optional.empty();
-        }
-
         final String refreshToken = googleCalendarSettings.getRefreshToken();
 
         final TokenResponse tokenResponse = new TokenResponse();
@@ -53,7 +45,7 @@ class GoogleCalendarClientProvider {
 
         final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
-        final NetHttpTransport httpTransport = maybeHttpTransport.get();
+        final NetHttpTransport httpTransport = new NetHttpTransport();
         final Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse, googleCalendarSettings);
 
         final Calendar calendar = new Calendar.Builder(httpTransport, jsonFactory, credential)
@@ -63,15 +55,6 @@ class GoogleCalendarClientProvider {
         LOG.debug("Created new google calendar client");
 
         return Optional.of(calendar);
-    }
-
-    private static Optional<NetHttpTransport> getNetHttpTransport() {
-        try {
-            return Optional.of(GoogleNetHttpTransport.newTrustedTransport());
-        } catch (GeneralSecurityException | IOException e) {
-            LOG.error("Could not create google calendar client. ", e);
-        }
-        return Optional.empty();
     }
 
     private Credential createCredentialWithRefreshToken(HttpTransport transport, JsonFactory jsonFactory, TokenResponse tokenResponse, GoogleCalendarSettings googleCalendarSettings) {
