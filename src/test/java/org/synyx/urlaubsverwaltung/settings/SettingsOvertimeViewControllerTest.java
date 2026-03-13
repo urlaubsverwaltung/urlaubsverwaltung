@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeProperties;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,11 +43,12 @@ class SettingsOvertimeViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsOvertimeViewController(settingsService, settingsValidator);
+        sut = new SettingsOvertimeViewController(settingsService, new OvertimeProperties(), settingsValidator);
     }
 
     @Test
     void ensureGetSettings() throws Exception {
+
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
 
@@ -59,7 +61,9 @@ class SettingsOvertimeViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("settings", allOf(
                 hasProperty("overtimeSettings", sameInstance(overtimeSettings))
-            )));
+            )))
+            .andExpect(model().attribute("overtimeSyncActive", false))
+            .andExpect(model().attribute("overtimeSyncZeiterfassungSettingsUrl", "https://urlaubsverwaltung.cloud/hilfe/zeiterfassung/zeiteintraege/#koennen-zeiteintraege-festgeschrieben-werden"));
     }
 
     @Test

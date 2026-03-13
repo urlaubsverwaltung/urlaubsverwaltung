@@ -37,16 +37,27 @@
       </div>
 
       <div class="uv-form__group">
-        <div class="uv-form__group-info uv-help-block">
-          <p>
-            <span
-              class="px-1.5 no-underline rounded-full bg-blue-100 text-blue-800 dark:border dark:border-blue-600 dark:text-blue-600 dark:bg-transparent"
-              th:text="#{settings.betaTag}"
-            >
-              BETA
-            </span>
-            <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
-          </p>
+        <div class="uv-form__group-info">
+          <div class="uv-help-block">
+            <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
+            <div>
+              <p>
+                <th:block th:text="#{settings.overtime.overtimeActiveByProperty}" />
+                <a
+                  class="inline-flex items-center"
+                  target="_blank"
+                  rel="noopener"
+                  th:href="${overtimeSyncZeiterfassungSettingsUrl}"
+                >
+                  <th:block th:text="#{settings.overtime.overtimeActiveByProperty.link}" />
+                  <svg th:replace="~{icon/external-link::svg(className='w-4 h-4 ml-1')}"></svg>
+                </a>
+              </p>
+              <p>
+                <th:block th:utext="#{settings.overtime.overtimeSyncActive.description}" />
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- Overtime Sync Active Settings -->
@@ -79,7 +90,7 @@
         </div>
       </div>
 
-      <div class="uv-form__group">
+      <div th:if="${overtimeSyncActive == false}" class="uv-form__group">
         <!-- Overtime Write Privileged Only Settings -->
         <div class="uv-form__input-row">
           <p
@@ -156,7 +167,7 @@
         </p>
 
         <!-- Maximum Overtime Settings -->
-        <div class="uv-form__input-row">
+        <div th:if="${overtimeSyncActive == false}" class="uv-form__input-row">
           <label th:text="|#{settings.overtime.maximum}:|" class="is-required" for="overtimeSettings.maximumOvertime">
             Maximale Anzahl der Überstunden
           </label>
@@ -175,7 +186,7 @@
         </div>
 
         <!-- Minimum Overtime Settings -->
-        <div class="uv-form__input-row">
+        <div th:if="${overtimeSyncActive == false}" class="uv-form__input-row">
           <label th:text="|#{settings.overtime.minimum}:|" class="is-required" for="overtimeSettings.minimumOvertime">
             Maximale Anzahl der Minusstunden
           </label>
