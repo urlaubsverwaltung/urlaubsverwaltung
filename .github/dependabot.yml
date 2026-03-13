@@ -20,6 +20,7 @@ updates:
           - "babel-*"
         exclude-patterns:
           - "@babel/eslint-parser"
+          - "babel-jest"
       eslint:
         patterns:
           - "eslint"
@@ -30,6 +31,7 @@ updates:
         patterns:
           - "jest"
           - "jest-*"
+          - "babel-jest"
       postcss:
         patterns:
           - "postcss"
