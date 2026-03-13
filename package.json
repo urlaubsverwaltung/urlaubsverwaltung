@@ -54,7 +54,7 @@
     "@tailwindcss/postcss": "4.2.1",
     "@types/jest": "30.0.0",
     "autoprefixer": "10.4.27",
-    "babel-jest": "30.2.0",
+    "babel-jest": "30.3.0",
     "concurrently": "9.2.1",
     "cross-env": "10.1.0",
     "cssnano": "7.1.3",
