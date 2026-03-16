@@ -9,7 +9,6 @@ import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALF_Y
 @Validated
 public class CompanyCalendarDto {
 
-    @NotNull
     private long personId;
     @Size(min = 1)
     private String calendarUrl;
