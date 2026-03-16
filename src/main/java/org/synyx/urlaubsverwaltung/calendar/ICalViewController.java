@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -50,7 +51,7 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return new String(iCal.getByteArray());
+        return new String(iCal.getByteArray(), StandardCharsets.UTF_8);
     }
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
