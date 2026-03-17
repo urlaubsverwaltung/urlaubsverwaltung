@@ -1,14 +1,11 @@
 import "../js/common";
 import { useTheme } from "../js/use-theme";
 import ApexCharts from "apexcharts/core";
-import RadialChart from "apexcharts/radialBar";
-import BarChart from "apexcharts/bar";
-import Legend from "apexcharts/features/legend";
-import Keyboard from "apexcharts/features/keyboard";
+import "apexcharts/radialBar";
+import "apexcharts/bar";
+import "apexcharts/features/legend";
+import "apexcharts/features/keyboard";
 import { useMedia } from "../js/use-media";
-
-ApexCharts.use(BarChart, RadialChart);
-ApexCharts.registerFeatures(Legend, Keyboard);
 
 const series = globalThis.sicknoteStatistic.dataseriesNames.map((name, index) => ({
   name,
