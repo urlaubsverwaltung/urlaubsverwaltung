@@ -1,7 +1,7 @@
 import "../js/common";
 import { useTheme } from "../js/use-theme";
 import ApexCharts from "apexcharts/core";
-import RadialChart from "apexcharts/radial";
+import RadialChart from "apexcharts/radialBar";
 import BarChart from "apexcharts/bar";
 import Legend from "apexcharts/features/legend";
 import Keyboard from "apexcharts/features/keyboard";
