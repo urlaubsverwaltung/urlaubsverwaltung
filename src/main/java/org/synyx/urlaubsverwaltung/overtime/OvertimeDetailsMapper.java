@@ -9,7 +9,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.function.Function;
 
-class OvertimeDetailsMapper {
+final class OvertimeDetailsMapper {
 
     private OvertimeDetailsMapper() {
         // ok

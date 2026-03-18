@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeLabel;
 import java.util.List;
 import java.util.Locale;
 
-public class AbsenceTypeSettingsDtoMapper {
+public final class AbsenceTypeSettingsDtoMapper {
 
     private AbsenceTypeSettingsDtoMapper() {
     }

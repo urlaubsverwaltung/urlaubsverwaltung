@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-public class SickNote {
+public final class SickNote {
 
     private final Long id;
     private final Person person;

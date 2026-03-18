@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaginationPageLinkBuilder {
+public final class PaginationPageLinkBuilder {
 
     private PaginationPageLinkBuilder() {
     }

@@ -5,7 +5,7 @@ import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettings
 import java.util.List;
 import java.util.function.Function;
 
-public class SpecialLeaveSettingsDtoMapper {
+public final class SpecialLeaveSettingsDtoMapper {
 
     private SpecialLeaveSettingsDtoMapper() {
     }

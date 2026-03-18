@@ -34,7 +34,7 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
     /**
      * {@link PersonPageRequest} implementation to represent the absence of pagination information.
      */
-    public static class PersonPageRequestUnpaged extends PersonPageRequest {
+    public static final class PersonPageRequestUnpaged extends PersonPageRequest {
         private PersonPageRequestUnpaged() {
             super(0, 1);
         }

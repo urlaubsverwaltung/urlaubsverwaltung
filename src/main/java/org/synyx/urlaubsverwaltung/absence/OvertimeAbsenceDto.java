@@ -45,7 +45,7 @@ public class OvertimeAbsenceDto extends RepresentationModel<OvertimeAbsenceDto> 
             .toList();
     }
 
-    public static class DatedDurationShareDto {
+    public static final class DatedDurationShareDto {
 
         @Schema(example = "2024-12-31", format = DATE_PATTERN)
         private final String date;

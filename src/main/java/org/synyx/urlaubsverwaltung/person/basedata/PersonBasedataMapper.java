@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
-class PersonBasedataMapper {
+final class PersonBasedataMapper {
 
     private PersonBasedataMapper() {
         // ok

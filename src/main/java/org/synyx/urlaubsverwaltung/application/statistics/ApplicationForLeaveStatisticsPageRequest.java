@@ -25,7 +25,7 @@ public class ApplicationForLeaveStatisticsPageRequest extends AbstractPageReques
     /**
      * {@link ApplicationForLeaveStatisticsPageRequest} implementation to represent the absence of pagination information.
      */
-    public static class ApplicationForLeaveStatisticsPageRequestUnpaged extends ApplicationForLeaveStatisticsPageRequest {
+    public static final class ApplicationForLeaveStatisticsPageRequestUnpaged extends ApplicationForLeaveStatisticsPageRequest {
         private ApplicationForLeaveStatisticsPageRequestUnpaged() {
             super(0, 1);
         }
