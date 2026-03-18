@@ -355,9 +355,9 @@ public class Application {
                 case ZERO -> Duration.ZERO;
                 case FULL -> dayLength.isFull() ? halfDayReduction.multipliedBy(2) : halfDayReduction;
                 case MORNING ->
-                    (dayLength.isFull() || (dayLength.isMorning() && dayLengthAtDate.isMorning())) ? halfDayReduction : Duration.ZERO;
+                    dayLength.isFull() || (dayLength.isMorning() && dayLengthAtDate.isMorning()) ? halfDayReduction : Duration.ZERO;
                 case NOON ->
-                    (dayLength.isFull() || (dayLength.isNoon() && dayLengthAtDate.isNoon())) ? halfDayReduction : Duration.ZERO;
+                    dayLength.isFull() || (dayLength.isNoon() && dayLengthAtDate.isNoon()) ? halfDayReduction : Duration.ZERO;
             };
         }));
     }
