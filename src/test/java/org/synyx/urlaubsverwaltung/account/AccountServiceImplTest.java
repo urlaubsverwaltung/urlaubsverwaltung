@@ -123,11 +123,11 @@ class AccountServiceImplTest {
         final LocalDate expiryDate = LocalDate.of(year, APRIL, 1);
 
         final AccountEntity accountEntity1 = new AccountEntity(person, from, to, null, expiryDate,
-            new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment");
+            BigDecimal.valueOf(30), BigDecimal.valueOf(3), ZERO, "awesome comment");
         accountEntity1.setId(1L);
 
         final AccountEntity accountEntity2 = new AccountEntity(person2, from, to, true, expiryDate,
-            new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment nummero dueee");
+            BigDecimal.valueOf(30), BigDecimal.valueOf(3), ZERO, "awesome comment nummero dueee");
         accountEntity2.setId(2L);
 
         when(accountRepository.findAccountByYearAndPersons(2012, List.of(person, person2)))
@@ -143,8 +143,8 @@ class AccountServiceImplTest {
             assertThat(account.getValidTo()).isEqualTo(to);
             assertThat(account.isDoRemainingVacationDaysExpireGlobally()).isFalse();
             assertThat(account.isDoRemainingVacationDaysExpireLocally()).isNull();
-            assertThat(account.getAnnualVacationDays()).isEqualTo(new BigDecimal(30));
-            assertThat(account.getRemainingVacationDays()).isEqualTo(new BigDecimal(3));
+            assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
+            assertThat(account.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(3));
             assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
             assertThat(account.getComment()).isEqualTo("awesome comment");
         });
@@ -156,8 +156,8 @@ class AccountServiceImplTest {
             assertThat(account.getValidTo()).isEqualTo(to);
             assertThat(account.isDoRemainingVacationDaysExpireGlobally()).isFalse();
             assertThat(account.isDoRemainingVacationDaysExpireLocally()).isTrue();
-            assertThat(account.getAnnualVacationDays()).isEqualTo(new BigDecimal(30));
-            assertThat(account.getRemainingVacationDays()).isEqualTo(new BigDecimal(3));
+            assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
+            assertThat(account.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(3));
             assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
             assertThat(account.getComment()).isEqualTo("awesome comment nummero dueee");
         });

@@ -245,7 +245,7 @@ class VacationDaysServiceTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), new DateRange(firstDayOfYear, lastDayOfYear));
-        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal(12L));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(12L));
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
@@ -282,7 +282,7 @@ class VacationDaysServiceTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), year)).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Map<Account, HolidayAccountVacationDays> actual = sut.getVacationDaysLeft(List.of(account), year);
-        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(new BigDecimal(12L));
+        assertThat(actual.get(account).vacationDaysYear().getVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(12L));
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDays()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
         assertThat(actual.get(account).vacationDaysYear().getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);

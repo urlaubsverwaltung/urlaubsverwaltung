@@ -335,7 +335,7 @@ class OvertimeFormDtoValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(8));
 
         final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
-        overtimeFormDto.setHours(new BigDecimal(8));
+        overtimeFormDto.setHours(BigDecimal.valueOf(8));
         overtimeFormDto.setMinutes(0);
 
         sut.validate(overtimeFormDto, errors);
@@ -355,7 +355,7 @@ class OvertimeFormDtoValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofDays(8));
 
         final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
-        overtimeFormDto.setHours(new BigDecimal(8));
+        overtimeFormDto.setHours(BigDecimal.valueOf(8));
         overtimeFormDto.setMinutes(30);
 
         sut.validate(overtimeFormDto, errors);
@@ -406,7 +406,7 @@ class OvertimeFormDtoValidatorTest {
         overtimeFormDto.setPerson(person);
         overtimeFormDto.setStartDate(startDate);
         overtimeFormDto.setEndDate(endDate);
-        overtimeFormDto.setHours(new BigDecimal(2));
+        overtimeFormDto.setHours(BigDecimal.valueOf(2));
         overtimeFormDto.setMinutes(0);
 
         final Overtime originalOvertime = new Overtime(new OvertimeId(42L), person.getIdAsPersonId(), new DateRange(startDate, endDate), Duration.ofHours(3), OvertimeType.UV_INTERNAL, Instant.now());
@@ -427,7 +427,7 @@ class OvertimeFormDtoValidatorTest {
             .thenReturn(Duration.ofMinutes(210));
 
         final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
-        overtimeFormDto.setHours(new BigDecimal(3));
+        overtimeFormDto.setHours(BigDecimal.valueOf(3));
         overtimeFormDto.setMinutes(0);
         overtimeFormDto.setId(42L);
 
@@ -453,7 +453,7 @@ class OvertimeFormDtoValidatorTest {
 
         final OvertimeFormDto overtimeFormDto = validOvertimeFormDto();
         overtimeFormDto.setReduce(true);
-        overtimeFormDto.setHours(new BigDecimal(3));
+        overtimeFormDto.setHours(BigDecimal.valueOf(3));
         overtimeFormDto.setId(42L);
 
         when(overtimeService.getOvertimeById(any(OvertimeId.class)))

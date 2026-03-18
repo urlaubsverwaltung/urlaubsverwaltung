@@ -205,8 +205,8 @@ class AccountFormValidator implements Validator {
     private void validateFullOrHalfDay(BigDecimal days, String field, Errors errors) {
 
         final int scale = days.stripTrailingZeros().scale();
-        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
-        final boolean isFullOrHalfAnHour = scale <= 1 && (decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5"));
+        final String decimal = days.subtract(BigDecimal.valueOf(days.intValue())).toPlainString();
+        final boolean isFullOrHalfAnHour = scale <= 1 && ("0".equals(decimal) || decimal.startsWith("0.0") || decimal.startsWith("0.5"));
 
         if (!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_FULL_OR_HALF_NUMBER);
