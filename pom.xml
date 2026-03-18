@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-  <groupId>org.synyx</groupId>
-  <artifactId>urlaubsverwaltung</artifactId>
-  <version>5.37.0-SNAPSHOT</version>
-
-  <name>Urlaubsverwaltung</name>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.0.3</version>
   </parent>
+  <groupId>org.synyx</groupId>
+  <artifactId>urlaubsverwaltung</artifactId>
+
+  <version>5.37.0-SNAPSHOT</version>
+
+  <name>Urlaubsverwaltung</name>
+
+  <scm>
+    <url>https://github.com/urlaubsverwaltung/urlaubsverwaltung</url>
+    <developerConnection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</developerConnection>
+    <connection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</connection>
+    <tag>HEAD</tag>
+  </scm>
 
   <properties>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
@@ -28,13 +35,6 @@
     <docker-image-name>${project.artifactId}</docker-image-name>
     <docker-image-version>${project.version}</docker-image-version>
   </properties>
-
-  <scm>
-    <url>https://github.com/urlaubsverwaltung/urlaubsverwaltung</url>
-    <developerConnection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</developerConnection>
-    <connection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</connection>
-    <tag>HEAD</tag>
-  </scm>
 
   <dependencies>
 
@@ -452,7 +452,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.6.2</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
@@ -495,9 +494,11 @@
                 <phase>none</phase>
               </execution>
             </executions>
+            <version>2.0.0</version>
           </plugin>
           <!-- skip unit tests -->
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>true</skipTests>
