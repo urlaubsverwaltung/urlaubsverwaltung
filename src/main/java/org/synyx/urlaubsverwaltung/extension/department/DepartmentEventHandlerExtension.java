@@ -12,13 +12,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.department.DepartmentCreatedEvent;
-import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 import org.synyx.urlaubsverwaltung.department.DepartmentDeletedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentHeadAssignedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentHeadUnassignedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentMemberAssignedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentMemberUnassignedEvent;
 import org.synyx.urlaubsverwaltung.department.DepartmentUpdatedEvent;
+import org.synyx.urlaubsverwaltung.extension.ConditionalOnExtensionsEnabled;
 
 @Component
 @ConditionalOnExtensionsEnabled

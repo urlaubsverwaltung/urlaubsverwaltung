@@ -6,10 +6,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysSettings;
+import org.synyx.urlaubsverwaltung.settings.InitialDefaultSettingsSavedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForChristmasEveUpdatedEvent;
 import org.synyx.urlaubsverwaltung.settings.WorkingDurationForNewYearsEveUpdatedEvent;
-import org.synyx.urlaubsverwaltung.settings.InitialDefaultSettingsSavedEvent;
 
 import java.time.Clock;
 import java.time.Instant;
