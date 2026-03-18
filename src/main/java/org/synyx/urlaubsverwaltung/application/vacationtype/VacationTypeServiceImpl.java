@@ -95,8 +95,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
                     }
                 }
             })
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+            .flatMap(Optional::stream)
             .map(VacationType.class::cast)
             .map(VacationTypeServiceImpl::convert)
             .toList();
