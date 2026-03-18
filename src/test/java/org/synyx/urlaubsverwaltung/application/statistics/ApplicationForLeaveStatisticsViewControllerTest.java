@@ -147,7 +147,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatisticsSortedByPerson(signedInUser, filterPeriod, pageRequest, ""))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build());
+        final List<VacationType<?>> vacationType = List.of(ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").id(1L).build());
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         when(dateFormatAware.parse("01.01.2019", locale)).thenReturn(Optional.of(LocalDate.of(2019, 1, 1)));
@@ -164,7 +164,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("statisticsPagination", hasProperty("page", hasProperty("content", is(List.of())))))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label"))))
+            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label", 1L))))
             .andExpect(view().name("application/application-statistics"));
     }
 
@@ -179,7 +179,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").build();
+        final VacationType<?> vacationType = ProvidedVacationType.builder(messageSource).messageKey("vacation-type-label-message-key").id(2L).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -233,7 +233,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label"))))
+            .andExpect(model().attribute("vacationTypes", List.of(new ApplicationForLeaveStatisticsVacationTypeDto("vacation type label", 2L))))
             .andExpect(view().name("application/application-statistics"));
     }
 
