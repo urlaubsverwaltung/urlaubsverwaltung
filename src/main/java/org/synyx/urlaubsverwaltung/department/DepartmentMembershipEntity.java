@@ -103,7 +103,9 @@ public class DepartmentMembershipEntity extends AbstractTenantAwareEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DepartmentMembershipEntity that = (DepartmentMembershipEntity) o;
         return Objects.equals(id, that.id);
     }

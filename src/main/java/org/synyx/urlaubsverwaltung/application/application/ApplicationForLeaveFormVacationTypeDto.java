@@ -36,8 +36,12 @@ public class ApplicationForLeaveFormVacationTypeDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ApplicationForLeaveFormVacationTypeDto that = (ApplicationForLeaveFormVacationTypeDto) o;
         return Objects.equals(id, that.id) && Objects.equals(label, that.label) && category == that.category;
     }

@@ -37,8 +37,12 @@ public class SettingsAccountDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SettingsAccountDto that = (SettingsAccountDto) o;
         return Objects.equals(id, that.id)
             && Objects.equals(workingTimeSettings, that.workingTimeSettings)

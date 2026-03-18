@@ -31,8 +31,12 @@ public class OverviewVacationTypDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OverviewVacationTypDto that = (OverviewVacationTypDto) o;
         return Objects.equals(label, that.label)
             && category == that.category

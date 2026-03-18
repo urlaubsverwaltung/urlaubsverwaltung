@@ -53,7 +53,9 @@ public class SickNoteSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SickNoteSettings that = (SickNoteSettings) o;
         return userIsAllowedToSubmitSickNotes == that.userIsAllowedToSubmitSickNotes
             && Objects.equals(maximumSickPayDays, that.maximumSickPayDays)

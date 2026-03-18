@@ -122,7 +122,9 @@ public class OvertimeSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OvertimeSettings that = (OvertimeSettings) o;
         return overtimeActive == that.overtimeActive
             && overtimeReductionWithoutApplicationActive == that.overtimeReductionWithoutApplicationActive

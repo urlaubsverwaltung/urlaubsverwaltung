@@ -15,7 +15,7 @@ public class AvatarSettings implements Serializable {
      */
     @NotNull
     @Column(nullable = false)
-    private boolean gravatarEnabled = false;
+    private boolean gravatarEnabled;
 
     public boolean isGravatarEnabled() {
         return gravatarEnabled;
@@ -27,8 +27,12 @@ public class AvatarSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         AvatarSettings that = (AvatarSettings) o;
         return gravatarEnabled == that.gravatarEnabled;
     }

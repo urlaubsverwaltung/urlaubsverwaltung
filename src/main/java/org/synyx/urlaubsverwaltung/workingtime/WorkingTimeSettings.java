@@ -157,7 +157,9 @@ public class WorkingTimeSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WorkingTimeSettings that = (WorkingTimeSettings) o;
         return monday == that.monday
             && tuesday == that.tuesday

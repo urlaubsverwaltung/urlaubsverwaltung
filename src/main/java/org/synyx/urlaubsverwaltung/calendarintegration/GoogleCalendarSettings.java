@@ -54,8 +54,12 @@ public class GoogleCalendarSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GoogleCalendarSettings that = (GoogleCalendarSettings) o;
         return Objects.equals(getClientId(), that.getClientId()) &&
             Objects.equals(getClientSecret(), that.getClientSecret()) &&

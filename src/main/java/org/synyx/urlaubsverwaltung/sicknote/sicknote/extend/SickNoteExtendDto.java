@@ -83,8 +83,12 @@ class SickNoteExtendDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
         var that = (SickNoteExtendDto) obj;
         return Objects.equals(this.sickNoteId, that.sickNoteId) &&
             Objects.equals(this.startDate, that.startDate) &&

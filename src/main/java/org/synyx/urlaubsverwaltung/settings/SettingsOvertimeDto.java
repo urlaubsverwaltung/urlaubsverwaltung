@@ -27,8 +27,12 @@ public class SettingsOvertimeDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SettingsOvertimeDto that = (SettingsOvertimeDto) o;
         return Objects.equals(id, that.id)
             && Objects.equals(overtimeSettings, that.overtimeSettings);

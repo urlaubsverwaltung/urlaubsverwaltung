@@ -16,8 +16,12 @@ public class ApplicationForLeaveStatisticsVacationTypeDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ApplicationForLeaveStatisticsVacationTypeDto that = (ApplicationForLeaveStatisticsVacationTypeDto) o;
         return Objects.equals(label, that.label);
     }

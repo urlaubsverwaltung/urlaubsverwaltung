@@ -40,8 +40,12 @@ public final class Asset {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Asset asset = (Asset) o;
         return Objects.equals(url, asset.url) && Objects.equals(dependencies, asset.dependencies);
     }
