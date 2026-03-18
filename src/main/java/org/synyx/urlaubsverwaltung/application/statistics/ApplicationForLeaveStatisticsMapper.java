@@ -46,6 +46,6 @@ final class ApplicationForLeaveStatisticsMapper {
     }
 
     private static ApplicationForLeaveStatisticsVacationTypeDto vacationTypeDto(VacationType<?> vacationType, Locale locale) {
-        return new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale));
+        return new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale), vacationType.getId());
     }
 }

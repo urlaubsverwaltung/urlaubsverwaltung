@@ -154,7 +154,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
     private List<ApplicationForLeaveStatisticsVacationTypeDto> vacationTypeDtos(Locale locale) {
         return vacationTypeService.getAllVacationTypes().stream()
-            .map(vacationType -> new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale)))
+            .map(vacationType -> new ApplicationForLeaveStatisticsVacationTypeDto(vacationType.getLabel(locale), vacationType.getId()))
             .toList();
     }
 
