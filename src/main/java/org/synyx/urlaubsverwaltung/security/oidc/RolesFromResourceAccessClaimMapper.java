@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -71,7 +70,7 @@ class RolesFromResourceAccessClaimMapper implements RolesFromClaimMapper {
 
         if (properties.isAuthorityCheckEnabled() && resourceAccessRoles.stream().noneMatch(neededResourceAccessRole::equals)) {
             LOG.error("User with sub '{}' has not required permission '{}' in '{}' to access urlaubsverwaltung!", claims.get(SUB), neededResourceAccessRole, resourceAccessRoles);
-            throw new MissingClaimAuthorityException(format("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung!", claims.get(SUB), neededResourceAccessRole, resourceAccessRoles));
+            throw new MissingClaimAuthorityException("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung!".formatted(claims.get(SUB), neededResourceAccessRole, resourceAccessRoles));
         }
 
         return resourceAccessRoles.stream()

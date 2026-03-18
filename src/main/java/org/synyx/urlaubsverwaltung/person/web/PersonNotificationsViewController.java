@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.util.List;
 import java.util.Objects;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -172,10 +171,10 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        if (hasText(section) && !section.equals(ACTIVE_CONTENT_SELF)) {
-            return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
+        if (hasText(section) && !ACTIVE_CONTENT_SELF.equals(section)) {
+            return "redirect:/web/person/%s/notifications/%s".formatted(person.getId(), section);
         } else {
-            return format("redirect:/web/person/%s/notifications", person.getId());
+            return "redirect:/web/person/%s/notifications".formatted(person.getId());
         }
     }
 }

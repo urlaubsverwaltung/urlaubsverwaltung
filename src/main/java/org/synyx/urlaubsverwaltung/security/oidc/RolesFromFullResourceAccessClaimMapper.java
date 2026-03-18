@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -89,7 +88,7 @@ class RolesFromFullResourceAccessClaimMapper implements RolesFromClaimMapper {
         if (properties.isAuthorityCheckEnabled() && grantedAuthorities.stream().noneMatch(NEEDED_RESOURCE_ACCESS_ROLE::equals)) {
             final String prefixedNeededRole = properties.getRolePrefix().concat(NEEDED_RESOURCE_ACCESS_ROLE.toString().toLowerCase());
             LOG.error("User with sub '{}' has not required permission '{}' in '{}' to access urlaubsverwaltung!", claims.get(SUB), prefixedNeededRole, grantedAuthorities);
-            throw new MissingClaimAuthorityException(format("User has not required permission '%s' in '%s' to access urlaubsverwaltung!", prefixedNeededRole, grantedAuthorities));
+            throw new MissingClaimAuthorityException("User has not required permission '%s' in '%s' to access urlaubsverwaltung!".formatted(prefixedNeededRole, grantedAuthorities));
         }
 
         return grantedAuthorities;

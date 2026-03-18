@@ -27,7 +27,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
@@ -68,7 +67,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to access data of user '%s'", signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException("User '%s' has not the correct permissions to access data of user '%s'".formatted(signedInUser.getId(), person.getId()));
         }
 
         final int currentYear = Year.now(clock).getValue();

@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
-import static java.lang.String.format;
 import static java.text.NumberFormat.getInstance;
 import static java.time.format.DateTimeFormatter.ofLocalizedDate;
 import static java.time.format.FormatStyle.SHORT;
@@ -37,7 +36,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
     @Override
     public String fileName(FilterPeriod period, Locale locale) {
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
-        return format("%s_%s_%s_%s.csv",
+        return "%s_%s_%s_%s.csv".formatted(
             getTranslation(locale, "applications.statistics").replace(" ", "-"),
             period.startDate().format(dateTimeFormatter).replace("/", "-"),
             period.endDate().format(dateTimeFormatter).replace("/", "-"),

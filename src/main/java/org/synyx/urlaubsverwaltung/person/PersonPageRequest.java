@@ -171,6 +171,6 @@ public class PersonPageRequest extends AbstractPageRequest implements PersonPage
 
     @Override
     public String toString() {
-        return String.format("Page request [number: %d, size %d, sort: %s]", getPageNumber(), getPageSize(), getSort());
+        return "Page request [number: %d, size %d, sort: %s]".formatted(getPageNumber(), getPageSize(), getSort());
     }
 }

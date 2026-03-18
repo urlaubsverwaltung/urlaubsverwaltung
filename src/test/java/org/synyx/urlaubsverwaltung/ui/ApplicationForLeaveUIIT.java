@@ -39,7 +39,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -377,7 +376,7 @@ class ApplicationForLeaveUIIT {
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
 
-        final String email = format("%s.%s@example.org", trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
+        final String email = "%s.%s@example.org".formatted(trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
         final Optional<Person> personByMailAddress = personService.getPersonByMailAddress(email);
         if (personByMailAddress.isPresent()) {
             return personByMailAddress.get();

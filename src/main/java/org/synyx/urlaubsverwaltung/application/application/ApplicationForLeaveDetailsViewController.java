@@ -169,7 +169,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final boolean allowedToAllowWaitingApplication = isAllowedToAllowWaitingApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
         final boolean allowedToAllowTemporaryAllowedApplication = isAllowedToAllowTemporaryAllowedApplication(application, signedInUser, isSecondStageAuthority);
         if (!(allowedToAllowWaitingApplication || allowedToAllowTemporaryAllowedApplication)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to allow application for leave of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to allow application for leave of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -425,8 +425,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
         final boolean allowedToCommentApplication = isAllowedToCommentApplication(signedInUser, isDepartmentHead, isSecondStageAuthority);
         if (!allowedToCommentApplication) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to comment the application for leave of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to comment the application for leave of user '%s'".formatted(
                 signedInUser.getId(), application.getPerson().getId()));
         }
 

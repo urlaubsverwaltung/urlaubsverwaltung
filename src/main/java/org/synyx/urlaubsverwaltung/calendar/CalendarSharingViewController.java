@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -62,7 +61,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @GetMapping
     public String redirect() {
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personService.getSignedInUser().getId());
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personService.getSignedInUser().getId());
     }
 
     @GetMapping("/persons/{personId}")
@@ -118,7 +117,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
         personCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personId);
     }
 
     @PostMapping(value = "/persons/{personId}/me", params = "unlink")
@@ -127,7 +126,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personId);
     }
 
     @PostMapping(value = "/persons/{personId}/departments/{departmentId}")
@@ -138,7 +137,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final Period calendarPeriod = departmentCalendarDto.getCalendarPeriod().getPeriod();
         departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId, calendarPeriod);
 
-        return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
+        return "redirect:/web/calendars/share/persons/%d/departments/%d".formatted(personId, departmentId);
     }
 
     @PostMapping(value = "persons/{personId}/departments/{departmentId}", params = "unlink")
@@ -147,7 +146,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
         departmentCalendarService.deleteCalendarForDepartmentAndPerson(departmentId, personId);
 
-        return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
+        return "redirect:/web/calendars/share/persons/%d/departments/%d".formatted(personId, departmentId);
     }
 
     @PostMapping(value = "/persons/{personId}/company")
@@ -157,7 +156,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
         companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personId);
     }
 
     @PostMapping(value = "/persons/{personId}/company", params = "unlink")
@@ -166,7 +165,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
         companyCalendarService.deleteCalendarForPerson(personId);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personId);
     }
 
     @PostMapping(value = "/persons/{personId}/company/accessible")
@@ -179,7 +178,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             calendarAccessibleService.disableCompanyCalendar();
         }
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
+        return REDIRECT_WEB_CALENDARS_SHARE_PERSONS.formatted(personId);
     }
 
     private void prepareModelForCompanyCalendar(Model model, long personId, Person signedInUser) {
@@ -208,7 +207,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarService.getPersonCalendar(personId);
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
-            final var path = format("web/persons/%d/calendar?secret=%s", personId, personCalendar.getSecret());
+            final var path = "web/persons/%d/calendar?secret=%s".formatted(personId, personCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .replacePath(path).build().toString();
 
@@ -230,8 +229,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         final List<DepartmentCalendarDto> departmentCalendarDtos = new ArrayList<>(departments.size());
 
         if (activeDepartmentId != null && departments.stream().noneMatch(department -> department.getId().equals(activeDepartmentId))) {
-            throw new ResponseStatusException(BAD_REQUEST, String.format(
-                "person=%s is not a member of department=%s", personId, activeDepartmentId));
+            throw new ResponseStatusException(BAD_REQUEST, "person=%s is not a member of department=%s".formatted(personId, activeDepartmentId));
         }
 
         for (Department department : departments) {
@@ -246,7 +244,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             final var maybeDepartmentCalendar = departmentCalendarService.getCalendarForDepartment(departmentId, personId);
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
-                final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());
+                final var path = "web/departments/%s/persons/%s/calendar?secret=%s".formatted(departmentId, personId, departmentCalendar.getSecret());
                 final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
                     .replacePath(path).build().toString();
 
@@ -273,7 +271,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         if (maybeCompanyCalendar.isPresent()) {
 
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-            final var path = format("web/company/persons/%d/calendar?secret=%s", personId, companyCalendar.getSecret());
+            final var path = "web/company/persons/%d/calendar?secret=%s".formatted(personId, companyCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .replacePath(path).build().toString();
 

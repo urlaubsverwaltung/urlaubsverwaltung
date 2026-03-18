@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
@@ -191,8 +190,7 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_detail";
         }
 
-        throw new AccessDeniedException(format(
-            "User '%s' has not the correct permissions to see the sick note of user '%s'",
+        throw new AccessDeniedException("User '%s' has not the correct permissions to see the sick note of user '%s'".formatted(
             signedInUser.getId(), sickNotePerson.getId()));
     }
 
@@ -322,8 +320,7 @@ class SickNoteViewController implements HasLaunchpad {
         if (!signedInUser.hasRole(OFFICE)
             && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
             && !(sickNotePerson.equals(signedInUser) && sickNote.isSubmitted())) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to edit the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNotePerson.getId()));
         }
 
@@ -357,8 +354,7 @@ class SickNoteViewController implements HasLaunchpad {
         if (!signedInUser.hasRole(OFFICE)
             && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNotePerson)
             && !(sickNotePerson.equals(signedInUser) && persistedSickNote.isSubmitted())) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to edit the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNotePerson.getId()));
         }
 
@@ -424,8 +420,7 @@ class SickNoteViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote.getPerson())) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to comment the sick note of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to comment the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
@@ -496,8 +491,7 @@ class SickNoteViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote.getPerson())) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to cancel the sick note of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to cancel the sick note of user '%s'".formatted(
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
@@ -514,7 +508,7 @@ class SickNoteViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("cancelSickNoteSuccess", true);
         }
 
-        if (redirectUrl != null && redirectUrl.equals("/web/sicknote/submitted")) {
+        if ("/web/sicknote/submitted".equals(redirectUrl)) {
             return "redirect:" + redirectUrl;
         }
 

@@ -123,7 +123,7 @@ public class VacationDaysService {
         final LocalDate to = dateRange.endDate();
 
         if (to.getYear() != from.getYear()) {
-            throw new IllegalArgumentException(String.format("date range must be in the same year but was from=%s to=%s", from, to));
+            throw new IllegalArgumentException("date range must be in the same year but was from=%s to=%s".formatted(from, to));
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).toList();

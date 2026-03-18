@@ -85,7 +85,7 @@ public class PersonCalendarService {
         final Person person = getPersonOrThrow(personId);
         final PersonCalendar personCalendar = maybePersonCalendar.get();
         if (!personCalendar.getPerson().equals(person)) {
-            throw new IllegalArgumentException(String.format("Secret=%s does not match the given personId=%s", secret, personId));
+            throw new IllegalArgumentException("Secret=%s does not match the given personId=%s".formatted(secret, personId));
         }
 
         final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);

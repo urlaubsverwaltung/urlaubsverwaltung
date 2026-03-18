@@ -119,6 +119,6 @@ class ApplicationForLeaveCsvExportServiceTest {
     }
 
     private void addMessageSource(String key, Locale locale) {
-        when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn(String.format("{%s}", key));
+        when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn("{%s}".formatted(key));
     }
 }
