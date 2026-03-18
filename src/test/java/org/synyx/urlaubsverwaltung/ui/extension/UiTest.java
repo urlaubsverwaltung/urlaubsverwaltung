@@ -15,7 +15,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 /**
  * Base configuration for UI tests.
@@ -71,7 +71,7 @@ public @interface UiTest {
                     .setSlowMo(200)
                 )
                 .setContextOptions(new Browser.NewContextOptions()
-                    .setRecordVideoDir(Paths.get("target/ui-test", browser))
+                    .setRecordVideoDir(Path.of("target/ui-test", browser))
                     .setLocale("de")
                     .setScreenSize(1500, 2000)
                     .setViewportSize(1500, 2000)

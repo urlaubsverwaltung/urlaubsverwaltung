@@ -16,7 +16,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +78,7 @@ class BackupCreateServiceIT {
         assertThat(backupFile).isPresent();
 
         final String actualBackup = Files.readString(backupFile.get());
-        final String expectedBackup = Files.readString(Paths.get(EXISTING_UV_BACKUP_FILE));
+        final String expectedBackup = Files.readString(Path.of(EXISTING_UV_BACKUP_FILE));
 
         assertThatJson(actualBackup).isEqualTo(expectedBackup);
     }

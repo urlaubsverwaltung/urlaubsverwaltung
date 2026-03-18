@@ -10,7 +10,6 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -33,7 +32,7 @@ class FilesystemRestoreService implements BackupRestoreService {
 
     @Override
     public void restoreBackup() {
-        final Path backupFile = Paths.get(this.filesystemBackupConfigurationProperties.backupFile());
+        final Path backupFile = Path.of(this.filesystemBackupConfigurationProperties.backupFile());
 
         if (!Files.exists(backupFile)) {
             LOG.warn("Backup file={} does not exist - restore will be skipped!", backupFile.toAbsolutePath());
