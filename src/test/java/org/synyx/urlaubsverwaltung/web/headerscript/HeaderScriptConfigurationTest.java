@@ -17,34 +17,30 @@ class HeaderScriptConfigurationTest {
                 "uv.header-script.enabled=true",
                 "uv.header-script.content=<script src=\"test.js\"></script>"
             )
-            .run(context -> {
-                assertThat(context).hasSingleBean(HeaderScriptControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).hasSingleBean(HeaderScriptControllerAdvice.class));
     }
 
     @Test
     void ensureHeaderScriptControllerAdviceExistsWithEmptyContent() {
         contextRunner
             .withPropertyValues("uv.header-script.enabled=true")
-            .run(context -> {
-                assertThat(context).hasSingleBean(HeaderScriptControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).hasSingleBean(HeaderScriptControllerAdvice.class));
     }
 
     @Test
     void ensureHeaderScriptControllerAdviceDoesNotExistWhenPropertyIsMissing() {
         contextRunner
-            .run(context -> {
-                assertThat(context).doesNotHaveBean(HeaderScriptControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).doesNotHaveBean(HeaderScriptControllerAdvice.class));
     }
 
     @Test
     void ensureHeaderScriptControllerAdviceDoesNotExistWhenPropertyIsSetToDisabled() {
         contextRunner
             .withPropertyValues("uv.header-script.enabled=false")
-            .run(context -> {
-                assertThat(context).doesNotHaveBean(HeaderScriptControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).doesNotHaveBean(HeaderScriptControllerAdvice.class));
     }
 }

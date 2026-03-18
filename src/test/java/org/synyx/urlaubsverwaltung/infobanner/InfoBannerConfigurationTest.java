@@ -17,25 +17,22 @@ class InfoBannerConfigurationTest {
                 "uv.info-banner.enabled=true",
                 "uv.info-banner.text.de=Awesome Text"
             )
-            .run(context -> {
-                assertThat(context).hasSingleBean(InfoBannerControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).hasSingleBean(InfoBannerControllerAdvice.class));
     }
 
     @Test
     void ensureInfoBannerControllerAdviceDoesNotExistWhenPropertyIsMissing() {
         contextRunner
-            .run(context -> {
-                assertThat(context).doesNotHaveBean(InfoBannerControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).doesNotHaveBean(InfoBannerControllerAdvice.class));
     }
 
     @Test
     void ensureInfoBannerControllerAdviceDoesNotExistWhenPropertyIsSetToDisabled() {
         contextRunner
             .withPropertyValues("uv.info-banner.enabled=false")
-            .run(context -> {
-                assertThat(context).doesNotHaveBean(InfoBannerControllerAdvice.class);
-            });
+            .run(context ->
+                assertThat(context).doesNotHaveBean(InfoBannerControllerAdvice.class));
     }
 }
