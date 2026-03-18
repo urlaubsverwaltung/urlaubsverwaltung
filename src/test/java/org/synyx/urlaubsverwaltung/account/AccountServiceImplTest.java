@@ -136,7 +136,7 @@ class AccountServiceImplTest {
         final List<Account> actual = sut.getHolidaysAccount(2012, List.of(person, person2));
         assertThat(actual).hasSize(2);
 
-        assertThat(actual.get(0)).satisfies(account -> {
+        assertThat(actual.getFirst()).satisfies(account -> {
             assertThat(account.getId()).isEqualTo(1);
             assertThat(account.getPerson()).isEqualTo(person);
             assertThat(account.getValidFrom()).isEqualTo(from);

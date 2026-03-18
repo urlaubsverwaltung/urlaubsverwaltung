@@ -129,7 +129,7 @@ class CompanyVacationServiceImplTest {
         verify(applicationEventPublisher, times(2)).publishEvent(companyVacationPublishedEventArgumentCaptor.capture());
 
         assertThat(companyVacationPublishedEventArgumentCaptor.getAllValues()).hasSize(2);
-        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(0);
+        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().getFirst();
         assertThat(newYearsEvent.dayLength()).isEqualTo(DayLength.NOON);
         final CompanyVacationPublishedEvent christmasEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(1);
         assertThat(christmasEvent.dayLength()).isEqualTo(DayLength.MORNING);
@@ -150,7 +150,7 @@ class CompanyVacationServiceImplTest {
         verify(applicationEventPublisher, times(2)).publishEvent(companyVacationDeletedEventArgumentCaptor.capture());
 
         assertThat(companyVacationDeletedEventArgumentCaptor.getAllValues()).hasSize(2);
-        final CompanyVacationDeletedEvent christmasEvent = companyVacationDeletedEventArgumentCaptor.getAllValues().get(0);
+        final CompanyVacationDeletedEvent christmasEvent = companyVacationDeletedEventArgumentCaptor.getAllValues().getFirst();
         assertThat(christmasEvent.sourceId()).isEqualTo("settings-christmas-eve");
         final CompanyVacationDeletedEvent newYearsEvent = companyVacationDeletedEventArgumentCaptor.getAllValues().get(1);
         assertThat(newYearsEvent.sourceId()).isEqualTo("settings-new-years-eve");
@@ -172,7 +172,7 @@ class CompanyVacationServiceImplTest {
         verify(applicationEventPublisher, times(2)).publishEvent(companyVacationPublishedEventArgumentCaptor.capture());
 
         assertThat(companyVacationPublishedEventArgumentCaptor.getAllValues()).hasSize(2);
-        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(0);
+        final CompanyVacationPublishedEvent newYearsEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().getFirst();
         assertThat(newYearsEvent.dayLength()).isEqualTo(DayLength.NOON);
         final CompanyVacationPublishedEvent christmasEvent = companyVacationPublishedEventArgumentCaptor.getAllValues().get(1);
         assertThat(christmasEvent.dayLength()).isEqualTo(DayLength.MORNING);

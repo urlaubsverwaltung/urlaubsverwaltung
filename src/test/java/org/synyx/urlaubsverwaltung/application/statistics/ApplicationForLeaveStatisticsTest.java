@@ -55,12 +55,12 @@ class ApplicationForLeaveStatisticsTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.getFirst(), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.getFirst(), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
 
         assertThat(statistics.getWaitingVacationDays())
-            .containsEntry(vacationTypes.get(0), new BigDecimal("2"))
+            .containsEntry(vacationTypes.getFirst(), new BigDecimal("2"))
             .containsEntry(vacationTypes.get(1), ONE);
     }
 
@@ -119,9 +119,9 @@ class ApplicationForLeaveStatisticsTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
-        statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.getFirst(), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.getFirst(), ONE);
+        statistics.addWaitingVacationDays(vacationTypes.getFirst(), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(2), ONE);
@@ -136,9 +136,9 @@ class ApplicationForLeaveStatisticsTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
-        statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.getFirst(), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.getFirst(), ONE);
+        statistics.addAllowedVacationDays(vacationTypes.getFirst(), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);

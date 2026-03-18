@@ -126,8 +126,8 @@ class SickNoteMailServiceTest {
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.getFirst().getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
         assertThat(mails.getFirst().getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
-        assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
-        assertThat(mails.get(0).getTemplateModel(GERMAN)).isEqualTo(modelA);
+        assertThat(mails.getFirst().getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
+        assertThat(mails.getFirst().getTemplateModel(GERMAN)).isEqualTo(modelA);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay.office");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");

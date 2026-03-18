@@ -54,12 +54,12 @@ class DepartmentDtoTest {
         assertThat(sut.getDepartmentHeads().getPersons()).hasSize(2);
 
         final List<PersonDto> memberPersons = sut.getMembers().getPersons();
-        assertPersonResponseEqualsPerson(memberPersons.get(0), members.get(0));
+        assertPersonResponseEqualsPerson(memberPersons.getFirst(), members.getFirst());
         assertPersonResponseEqualsPerson(memberPersons.get(1), members.get(1));
         assertPersonResponseEqualsPerson(memberPersons.get(2), members.get(2));
 
         final List<PersonDto> departmentHeadPersons = sut.getDepartmentHeads().getPersons();
-        assertPersonResponseEqualsPerson(departmentHeadPersons.get(0), departmentHeads.get(0));
+        assertPersonResponseEqualsPerson(departmentHeadPersons.getFirst(), departmentHeads.getFirst());
         assertPersonResponseEqualsPerson(departmentHeadPersons.get(1), departmentHeads.get(1));
     }
 

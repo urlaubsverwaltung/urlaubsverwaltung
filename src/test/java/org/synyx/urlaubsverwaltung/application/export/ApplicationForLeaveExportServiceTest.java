@@ -97,7 +97,7 @@ class ApplicationForLeaveExportServiceTest {
 
         assertThat(export.getContent()).hasSize(1);
 
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().get(0);
+        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
         assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
         assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
@@ -140,7 +140,7 @@ class ApplicationForLeaveExportServiceTest {
         final PageableSearchQuery personSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10), "");
         final Page<ApplicationForLeaveExport> export = sut.getAll(person, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 31), personSearchQuery);
 
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().get(0);
+        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
         assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
         assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
@@ -205,7 +205,7 @@ class ApplicationForLeaveExportServiceTest {
 
         assertThat(export.getContent()).hasSize(1);
 
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().get(0);
+        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
         assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
         assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");
@@ -251,7 +251,7 @@ class ApplicationForLeaveExportServiceTest {
 
         assertThat(export.getContent()).hasSize(1);
 
-        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().get(0);
+        final ApplicationForLeaveExport applicationForLeaveExport = export.getContent().getFirst();
         assertThat(applicationForLeaveExport.getFirstName()).isEqualTo("Marlene");
         assertThat(applicationForLeaveExport.getLastName()).isEqualTo("Muster");
         assertThat(applicationForLeaveExport.getPersonalNumber()).isEqualTo("personnelNumber");

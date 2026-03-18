@@ -129,7 +129,7 @@ class ApplicationCommentServiceImplTest {
 
         final ArgumentCaptor<List<ApplicationCommentEntity>> argument = ArgumentCaptor.forClass(List.class);
         verify(commentRepository).saveAll(argument.capture());
-        assertThat(argument.getValue().get(0).getPerson()).isNull();
+        assertThat(argument.getValue().getFirst().getPerson()).isNull();
     }
 
     @Test

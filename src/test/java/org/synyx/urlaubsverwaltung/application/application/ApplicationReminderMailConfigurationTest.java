@@ -49,7 +49,7 @@ class ApplicationReminderMailConfigurationTest {
         verifyNoInteractions(service);
 
         // Waiting Application Reminder
-        final CronTask cronTask = cronTaskList.get(0);
+        final CronTask cronTask = cronTaskList.getFirst();
         assertThat(cronTask.getExpression()).isEqualTo("0 0 7 * * *");
 
         cronTask.getRunnable().run();
