@@ -92,7 +92,15 @@ class ApplicationForLeaveStatisticsBuilder {
 
         addApplicationInfosToStatistics(dateRange, persons, statisticsByPerson);
 
+        addMissingPersonsToStatistics(statisticsByPerson, persons);
+
         return statisticsByPerson;
+    }
+
+    private void addMissingPersonsToStatistics(Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson, List<Person> persons) {
+        persons.forEach(person ->
+            statisticsByPerson.computeIfAbsent(person, p -> Optional.empty())
+        );
     }
 
     private Map<Person, Optional<ApplicationForLeaveStatistics>> getStatisticsByPersonWithoutApplicationInfo(DateRange dateRange, List<Person> persons, List<Account> holidayAccounts, List<Application> applications, List<VacationType<?>> vacationTypes) {

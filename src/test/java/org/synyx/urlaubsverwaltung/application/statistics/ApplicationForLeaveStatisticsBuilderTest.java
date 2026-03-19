@@ -493,4 +493,38 @@ class ApplicationForLeaveStatisticsBuilderTest {
             assertThat(value.getLeftOvertimeForPeriod()).isEqualTo(Duration.ofHours(3));
         });
     }
+
+    @Test
+    void ensureThatAllPersonsThatWhereRequestedAreThereWithOptionalEmptyIfNoAccount() {
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+
+        final LocalDate from = of(2014, JANUARY, 1);
+        final LocalDate to = of(2014, DECEMBER, 31);
+
+        final List<Account> accounts = List.of();
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final List<Person> persons = List.of(person);
+        when(accountService.getHolidaysAccount(2014, persons)).thenReturn(accounts);
+
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarMondayToSunday(from, to);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(Map.of(person, workingTimeCalendar));
+
+        final List<Application> applications = List.of();
+        final List<Person> personsWithAccount = List.of();
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, personsWithAccount, activeStatuses())).thenReturn(applications);
+
+        final Map<Person, LeftOvertime> leftOvertimeByPerson = Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ofHours(3)));
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(leftOvertimeByPerson);
+
+        when(vacationDaysService.getVacationDaysLeft(accounts, new DateRange(from, to))).thenReturn(Map.of());
+
+        final VacationType<?> type = ProvidedVacationType.builder(new StaticMessageSource()).build();
+        final Map<Person, Optional<ApplicationForLeaveStatistics>> actual = sut.build(persons, from, to, List.of(type));
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person)
+            .containsEntry(person, Optional.empty());
+    }
 }
