@@ -128,7 +128,9 @@ public final class OvertimeListRecordDto {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OvertimeListRecordDto that = (OvertimeListRecordDto) o;
         return isExternal == that.isExternal && isAllowedToEdit == that.isAllowedToEdit
             && Objects.equals(id, that.id)

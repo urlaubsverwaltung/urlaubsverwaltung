@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -70,7 +69,7 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private Collection<Role> extractPermissions(Person person) {
         if (person.hasRole(INACTIVE)) {
-            throw new DisabledException(format("User '%s' has been deactivated", person.getId()));
+            throw new DisabledException("User '%s' has been deactivated".formatted(person.getId()));
         }
         return person.getPermissions();
     }

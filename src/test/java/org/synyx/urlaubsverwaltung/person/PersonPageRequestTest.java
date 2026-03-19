@@ -77,7 +77,7 @@ class PersonPageRequestTest {
 
             final List<Order> actualOrders = actual.getSort().toList();
             assertThat(actualOrders).hasSize(2);
-            assertThat(actualOrders.get(0).isAscending()).isTrue();
+            assertThat(actualOrders.getFirst().isAscending()).isTrue();
             assertThat(actualOrders.get(1).isDescending()).isTrue();
         }
 

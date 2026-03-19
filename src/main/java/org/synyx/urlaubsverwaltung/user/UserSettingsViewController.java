@@ -81,7 +81,7 @@ class UserSettingsViewController implements HasLaunchpad {
         final Locale userLocale = userSettingsDto.getLocale();
         userSettingsService.updateUserPreference(signedInUser, theme, userLocale);
 
-        return String.format("redirect:/web/person/%s/settings", personId);
+        return "redirect:/web/person/%s/settings".formatted(personId);
     }
 
     private LocaleDto toLocaleDto(Locale locale) {

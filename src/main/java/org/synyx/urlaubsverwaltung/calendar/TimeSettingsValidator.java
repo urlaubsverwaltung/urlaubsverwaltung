@@ -4,7 +4,7 @@ import org.springframework.validation.Errors;
 
 import java.time.LocalTime;
 
-public class TimeSettingsValidator {
+public final class TimeSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";

@@ -142,7 +142,7 @@ class ApplicationServiceImplTest {
             final List<Application> actual = sut.findApplicationsByIds(List.of(1337L));
 
             assertThat(actual).hasSize(1);
-            assertThat(actual.get(0)).satisfies(application -> {
+            assertThat(actual.getFirst()).satisfies(application -> {
                 assertThat(application.getId()).isEqualTo(1337L);
                 assertThat(application.getAddress()).isEqualTo("address");
                 assertThat(application.getApplicationDate()).isSameAs(applicationDate);
@@ -631,7 +631,7 @@ class ApplicationServiceImplTest {
             final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, statuses, vacationTypes, "test");
 
             assertThat(actual).hasSize(1);
-            assertThat(actual.get(0)).satisfies(application -> {
+            assertThat(actual.getFirst()).satisfies(application -> {
                 assertThat(application.getId()).isEqualTo(42L);
                 assertThat(application.getPerson()).isSameAs(person);
                 assertThat(application.getStartDate()).isEqualTo(startDate);
@@ -833,7 +833,7 @@ class ApplicationServiceImplTest {
             )).thenReturn(List.of(applicationEntity));
 
             when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
-                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, (date) -> fullWorkday())));
+                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
 
             assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
                 .containsEntry(batman, Duration.ofHours(10));
@@ -871,7 +871,7 @@ class ApplicationServiceImplTest {
             )).thenReturn(List.of(applicationEntity));
 
             when(workingTimeCalendarService.getWorkingTimesByPersons(persons, new DateRange(startDate, endDate)))
-                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, (date) -> fullWorkday())));
+                .thenReturn(Map.of(batman, workingTimeCalendar(startDate, endDate, date -> fullWorkday())));
 
             assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
                 .containsEntry(batman, Duration.ofHours(5));

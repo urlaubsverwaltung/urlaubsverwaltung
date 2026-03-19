@@ -99,7 +99,7 @@ class SickNoteStatisticsTest {
         final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
         final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote1, sickNote2), List.of());
 
-        assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(new BigDecimal(2));
+        assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(BigDecimal.valueOf(2));
     }
 
     @Nested
@@ -177,7 +177,7 @@ class SickNoteStatisticsTest {
         final LocalDate asOfDate = LocalDate.of(2022, 10, 17);
         final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote, sickNoteChild), List.of());
 
-        assertThat(sut.getTotalNumberOfSickDaysAllCategories()).isEqualTo(new BigDecimal(13));
+        assertThat(sut.getTotalNumberOfSickDaysAllCategories()).isEqualTo(BigDecimal.valueOf(13));
     }
 
     @Nested
@@ -258,7 +258,7 @@ class SickNoteStatisticsTest {
             final SickNoteStatistics sut = new SickNoteStatistics(year, asOfDate, List.of(sickNote), List.of(person));
 
             // 2015 has 261 monday to friday workdays
-            assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(new BigDecimal(261));
+            assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(BigDecimal.valueOf(261));
         }
 
         @Test

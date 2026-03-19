@@ -66,7 +66,9 @@ public class TimeSettings implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TimeSettings that = (TimeSettings) o;
         return Objects.equals(timeZoneId, that.timeZoneId)
             && Objects.equals(workDayBeginHour, that.workDayBeginHour)

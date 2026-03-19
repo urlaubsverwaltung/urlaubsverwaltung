@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
@@ -64,7 +63,7 @@ public class SortComparator<T> implements Comparator<T> {
             return null;
         }
 
-        final String errorMessage = format("type=\"%s\" does not contain property=\"%s\".", type, String.join(".", properties));
+        final String errorMessage = "type=\"%s\" does not contain property=\"%s\".".formatted(type, String.join(".", properties));
 
         final PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(type, properties.getFirst());
         if (propertyDescriptor == null) {

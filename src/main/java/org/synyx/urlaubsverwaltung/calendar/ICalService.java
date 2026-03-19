@@ -93,8 +93,7 @@ public class ICalService {
 
         absences.stream()
             .map(absence -> this.toVEvent(absence, method, absence.getPerson().equals(recipient), locale))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+            .flatMap(Optional::stream)
             .forEach(calendar::add);
 
         return calendar;

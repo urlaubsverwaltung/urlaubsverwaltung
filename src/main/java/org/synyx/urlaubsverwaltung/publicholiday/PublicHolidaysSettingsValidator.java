@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 
 import org.springframework.validation.Errors;
 
-public class PublicHolidaysSettingsValidator {
+public final class PublicHolidaysSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
 

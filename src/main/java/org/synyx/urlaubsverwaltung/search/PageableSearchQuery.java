@@ -28,8 +28,12 @@ public class PageableSearchQuery {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PageableSearchQuery that = (PageableSearchQuery) o;
         return Objects.equals(pageable, that.pageable) && Objects.equals(query, that.query);
     }

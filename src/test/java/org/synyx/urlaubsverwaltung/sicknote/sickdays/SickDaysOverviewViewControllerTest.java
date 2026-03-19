@@ -89,11 +89,11 @@ class SickDaysOverviewViewControllerTest {
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
         final int year = clockYear();
         return Stream.of(
-            Arguments.of(String.format("25.03.%s", year), LocalDate.of(year, 3, 25)),
-            Arguments.of(String.format("25.03.%s", year - 2000), LocalDate.of(year, 3, 25)),
-            Arguments.of(String.format("25.3.%s", year), LocalDate.of(year, 3, 25)),
-            Arguments.of(String.format("25.3.%s", year - 2000), LocalDate.of(year, 3, 25)),
-            Arguments.of(String.format("1.4.%s", year - 2000), LocalDate.of(year, 4, 1))
+            Arguments.of("25.03.%s".formatted(year), LocalDate.of(year, 3, 25)),
+            Arguments.of("25.03.%s".formatted(year - 2000), LocalDate.of(year, 3, 25)),
+            Arguments.of("25.3.%s".formatted(year), LocalDate.of(year, 3, 25)),
+            Arguments.of("25.3.%s".formatted(year - 2000), LocalDate.of(year, 3, 25)),
+            Arguments.of("1.4.%s".formatted(year - 2000), LocalDate.of(year, 4, 1))
         );
     }
 

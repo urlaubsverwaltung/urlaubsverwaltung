@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrCreateBrowserContext;
 import static com.microsoft.playwright.impl.junit.PageExtension.getOrCreatePage;
@@ -41,7 +41,7 @@ public class TestRecordVideoExtension implements AfterEachCallback {
         } else {
             // rename video file
             final String newVideoFilePath = videoPath(context);
-            final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
+            final File newVideoFile = new File(Path.of(newVideoFilePath).toUri());
             final boolean isMoved = videoFile.renameTo(newVideoFile);
             if (!isMoved) {
                 LOG.info("could not rename test video file.");

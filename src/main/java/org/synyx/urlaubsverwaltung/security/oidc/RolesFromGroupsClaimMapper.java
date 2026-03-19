@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.SUB;
@@ -56,13 +55,13 @@ class RolesFromGroupsClaimMapper implements RolesFromClaimMapper {
         final String neededResourceAccessRole = properties.getRolePrefix().concat(USER.name().toLowerCase());
         if (properties.isAuthorityCheckEnabled() && !claims.containsKey(groupClaim.getClaimName())) {
             LOG.error("User with sub '{}' has not required permission '{}' in '{}' to access urlaubsverwaltung! The claim '{}' is missing!", claims.get(SUB), neededResourceAccessRole, groupClaim.getClaimName(), groupClaim.getClaimName());
-            throw new MissingClaimAuthorityException(format("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung! The claim '%s' is missing!", claims.get(SUB), neededResourceAccessRole, groupClaim.getClaimName(), groupClaim.getClaimName()));
+            throw new MissingClaimAuthorityException("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung! The claim '%s' is missing!".formatted(claims.get(SUB), neededResourceAccessRole, groupClaim.getClaimName(), groupClaim.getClaimName()));
         }
 
         final List<String> groups = extractRolesFromClaimName(claims, groupClaim.getClaimName());
         if (properties.isAuthorityCheckEnabled() && groups.stream().noneMatch(neededResourceAccessRole::equals)) {
             LOG.error("User with sub '{}' has not required permission '{}' in '{}' to access urlaubsverwaltung!", claims.get(SUB), neededResourceAccessRole, claims.get("groups"));
-            throw new MissingClaimAuthorityException(format("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung!", claims.get(SUB), neededResourceAccessRole, claims.get("groups")));
+            throw new MissingClaimAuthorityException("User with sub '%s' has not required permission '%s' in '%s' to access urlaubsverwaltung!".formatted(claims.get(SUB), neededResourceAccessRole, claims.get("groups")));
         }
 
         return groups.stream()

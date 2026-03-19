@@ -101,7 +101,7 @@ class ApplicationForLeaveStatisticsServiceTest {
                 sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "");
 
             assertThat(actual.getContent()).hasSize(1);
-            assertThat(actual.getContent().get(0).getPerson()).isEqualTo(person);
+            assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(person);
         }
 
         @ParameterizedTest
@@ -137,7 +137,7 @@ class ApplicationForLeaveStatisticsServiceTest {
                 sut.getStatisticsSortedByPerson(personRequestingStatistics, filterPeriod, personPageRequest, "");
 
             assertThat(actual.getContent()).hasSize(1);
-            assertThat(actual.getContent().get(0).getPerson()).isEqualTo(member);
+            assertThat(actual.getContent().getFirst().getPerson()).isEqualTo(member);
         }
 
         @Test
@@ -186,7 +186,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
             final List<ApplicationForLeaveStatistics> actualStatistics = actual.getContent();
             assertThat(actualStatistics).hasSize(3);
-            assertThat(actualStatistics.get(0).getPerson()).isEqualTo(anja);
+            assertThat(actualStatistics.getFirst().getPerson()).isEqualTo(anja);
             assertThat(actualStatistics.get(1).getPerson()).isEqualTo(anne);
             assertThat(actualStatistics.get(2).getPerson()).isEqualTo(brunhilde);
         }
@@ -212,7 +212,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             final PersonPageRequest pageRequest = PersonPageRequest.of(0, 10, Sort.by("firstName"));
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(user, filterPeriod, pageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
-            assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(user);
+            assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(user);
         }
 
         @Test
@@ -247,7 +247,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
 
-            final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().get(0);
+            final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().getFirst();
             assertThat(applicationForLeaveStatisticsOfPerson.getPerson()).isEqualTo(person);
             assertThat(applicationForLeaveStatisticsOfPerson.getPersonBasedata()).hasValue(personBasedata);
         }
@@ -284,7 +284,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByPerson(office, filterPeriod, personPageRequest, "");
             assertThat(statisticsPage.getContent()).hasSize(1);
 
-            final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().get(0);
+            final ApplicationForLeaveStatistics applicationForLeaveStatisticsOfPerson = statisticsPage.getContent().getFirst();
             assertThat(applicationForLeaveStatisticsOfPerson.getPerson()).isEqualTo(person);
             assertThat(applicationForLeaveStatisticsOfPerson.getPersonBasedata()).hasValue(personBasedata);
         }
@@ -329,7 +329,7 @@ class ApplicationForLeaveStatisticsServiceTest {
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(personWithRole, filterPeriod, pageRequest, "");
 
             assertThat(statisticsPage.getContent()).hasSize(1);
-            assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(anyPerson);
+            assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(anyPerson);
         }
 
         @ParameterizedTest
@@ -385,8 +385,8 @@ class ApplicationForLeaveStatisticsServiceTest {
             final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatisticsSortedByStatistics(departmentManagement, filterPeriod, pageRequest, "");
 
             assertThat(statisticsPage.getContent()).hasSize(2);
-            assertThat(statisticsPage.getContent().get(0).getPerson()).isEqualTo(departmentMemberTwo);
-            assertThat(statisticsPage.getContent().get(0).getLeftVacationDaysForYear()).isEqualTo(BigDecimal.ZERO);
+            assertThat(statisticsPage.getContent().getFirst().getPerson()).isEqualTo(departmentMemberTwo);
+            assertThat(statisticsPage.getContent().getFirst().getLeftVacationDaysForYear()).isEqualTo(BigDecimal.ZERO);
             assertThat(statisticsPage.getContent().get(1).getPerson()).isEqualTo(departmentMember);
             assertThat(statisticsPage.getContent().get(1).getLeftVacationDaysForYear()).isEqualTo(BigDecimal.TEN);
         }

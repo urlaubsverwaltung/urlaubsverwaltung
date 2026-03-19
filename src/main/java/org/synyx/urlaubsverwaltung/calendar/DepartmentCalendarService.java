@@ -99,7 +99,7 @@ public class DepartmentCalendarService {
         final Department department = getDepartmentOrThrow(departmentId);
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.get();
         if (!departmentCalendar.getDepartmentId().equals(departmentId)) {
-            throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
+            throw new IllegalArgumentException("Secret=%s does not match the given departmentId=%s".formatted(secret, departmentId));
         }
 
         final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);

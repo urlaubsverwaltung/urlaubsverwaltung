@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Boolean.FALSE;
 
-class PersonDTOMapper {
+final class PersonDTOMapper {
 
     private PersonDTOMapper() {
         // Utility classes should not have public constructors java:S1118

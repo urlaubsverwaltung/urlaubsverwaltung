@@ -76,7 +76,6 @@ public interface CsvExportService<T> {
      * @return {@link ByteArrayResource} based on the filter period and data
      */
     default ByteArrayResource resource(FilterPeriod period, Locale locale, List<T> data) {
-        final ByteArrayResource byteArrayResource;
 
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             byteArrayOutputStream.write(bom());
@@ -86,8 +85,7 @@ public interface CsvExportService<T> {
                     write(period, locale, data, csvWriter);
                 }
             }
-            byteArrayResource = new ByteArrayResource(byteArrayOutputStream.toByteArray());
-            return byteArrayResource;
+            return new ByteArrayResource(byteArrayOutputStream.toByteArray());
         } catch (ValidationException | IOException e) {
             throw new CsvExportException("csv data not be written to ByteArrayResource", e);
         }

@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -45,7 +44,7 @@ public class AssetManifestService {
             return withContext(assets.get(assetNameWithoutHash), contextPath);
         }
 
-        throw new IllegalStateException(format("could not resolve given asset name=%s", assetNameWithoutHash));
+        throw new IllegalStateException("could not resolve given asset name=%s".formatted(assetNameWithoutHash));
     }
 
     private Asset withContext(Asset asset, String contextPath) {
@@ -75,7 +74,7 @@ public class AssetManifestService {
         try {
             return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getInputStream();
         } catch (IOException e) {
-            final String message = String.format("could not read %s. please ensure 'npm run build' has been executed.", ASSETS_MANIFEST_FILE);
+            final String message = "could not read %s. please ensure 'npm run build' has been executed.".formatted(ASSETS_MANIFEST_FILE);
             throw new IllegalStateException(message);
         }
     }

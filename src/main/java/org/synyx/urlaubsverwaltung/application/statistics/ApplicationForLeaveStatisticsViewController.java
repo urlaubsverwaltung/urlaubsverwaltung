@@ -251,8 +251,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
     private static List<HtmlOptionDto> sortOptionDto(String propertyPrefix, String property, Sort.Order order) {
         final String prefix = hasText(propertyPrefix) ? propertyPrefix + "." : "";
         return List.of(
-            new HtmlOptionDto(String.format("applications.statistics.sort.%s.asc", property), prefix + property + ",asc", order != null && order.isAscending()),
-            new HtmlOptionDto(String.format("applications.statistics.sort.%s.desc", property), prefix + property + ",desc", order != null && order.isDescending())
+            new HtmlOptionDto("applications.statistics.sort.%s.asc".formatted(property), prefix + property + ",asc", order != null && order.isAscending()),
+            new HtmlOptionDto("applications.statistics.sort.%s.desc".formatted(property), prefix + property + ",desc", order != null && order.isDescending())
         );
     }
 }

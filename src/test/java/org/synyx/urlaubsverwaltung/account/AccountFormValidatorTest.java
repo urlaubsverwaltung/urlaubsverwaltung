@@ -147,7 +147,7 @@ class AccountFormValidatorTest {
 
         int maxDays = 40;
         final AccountForm form = new AccountForm(2013);
-        form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
+        form.setAnnualVacationDays(BigDecimal.valueOf(maxDays + 1));
 
         sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays), this::getSettings);
         verify(errors).rejectValue("annualVacationDays", "error.entry.max", new Object[]{BigDecimal.valueOf(40)}, "");
@@ -241,7 +241,7 @@ class AccountFormValidatorTest {
     void ensureRemainingVacationDaysMustBeFullOrHalf() {
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("10.3"));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
+        form.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(11));
 
         sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfNumber");
@@ -279,7 +279,7 @@ class AccountFormValidatorTest {
     @Test
     void ensureRemainingVacationDaysNotExpiringMustBeFullOrHalf() {
         final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDays(new BigDecimal(10));
+        form.setRemainingVacationDays(BigDecimal.valueOf(10));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("10.3"));
 
         sut.validateRemainingVacationDaysNotExpiring(form, errors);

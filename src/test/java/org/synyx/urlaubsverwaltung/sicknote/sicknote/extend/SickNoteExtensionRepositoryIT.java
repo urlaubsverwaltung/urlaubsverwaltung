@@ -54,7 +54,7 @@ class SickNoteExtensionRepositoryIT extends SingleTenantTestContainersBase {
         final List<SickNoteExtensionEntity> actual = sut.findAllBySickNoteIdOrderByCreatedAtDesc(sickNoteId);
 
         assertThat(actual).hasSize(2);
-        assertThat(actual.get(0).getNewEndDate()).isEqualTo(now.plusDays(2));
+        assertThat(actual.getFirst().getNewEndDate()).isEqualTo(now.plusDays(2));
         assertThat(actual.get(1).getNewEndDate()).isEqualTo(now.plusDays(1));
     }
 }

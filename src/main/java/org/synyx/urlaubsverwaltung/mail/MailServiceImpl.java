@@ -110,6 +110,6 @@ class MailServiceImpl implements MailService {
     }
 
     private String generateMailAddressAndDisplayName(String address, String displayName) {
-        return String.format("%s <%s>", displayName, address);
+        return "%s <%s>".formatted(displayName, address);
     }
 }

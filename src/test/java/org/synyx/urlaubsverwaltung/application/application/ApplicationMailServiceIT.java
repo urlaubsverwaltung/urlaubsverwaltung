@@ -1362,7 +1362,7 @@ class ApplicationMailServiceIT extends SingleTenantTestContainersBase {
         final Address[] from = msg.getFrom();
         assertThat(from).isNotNull();
         assertThat(from).hasSize(1);
-        assertThat(from[0]).hasToString(String.format("%s <%s>", mailProperties.getFromDisplayName(), mailProperties.getFrom()));
+        assertThat(from[0]).hasToString("%s <%s>".formatted(mailProperties.getFromDisplayName(), mailProperties.getFrom()));
     }
 
     @Test

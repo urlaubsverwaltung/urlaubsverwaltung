@@ -92,8 +92,8 @@ public class SickNoteStatistics {
             return ZERO;
         }
 
-        return (valueOf(numberOfPersonsWithMinimumOneSickNote)
-            .divide(numberOfPersons, 3, HALF_UP))
+        return valueOf(numberOfPersonsWithMinimumOneSickNote)
+            .divide(numberOfPersons, 3, HALF_UP)
             .multiply(valueOf(100));
     }
 

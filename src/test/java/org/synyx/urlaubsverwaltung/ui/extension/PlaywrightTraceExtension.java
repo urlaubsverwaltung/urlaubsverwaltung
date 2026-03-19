@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.microsoft.playwright.impl.junit.BrowserContextExtension.getOrCreateBrowserContext;
 
@@ -34,7 +33,7 @@ class PlaywrightTraceExtension implements BeforeEachCallback, AfterEachCallback 
             browserContext.tracing().stop();
         } else {
             final String filename = filePath(extensionContext);
-            final Path path = Paths.get(filename);
+            final Path path = Path.of(filename);
             browserContext.tracing().stop(new Tracing.StopOptions().setPath(path));
         }
     }

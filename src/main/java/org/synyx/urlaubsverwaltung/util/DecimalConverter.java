@@ -3,10 +3,10 @@ package org.synyx.urlaubsverwaltung.util;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-public class DecimalConverter {
+public final class DecimalConverter {
 
     private static final char[] ZEROES = new char[]{'0', '0', '0', '0', '0', '0', '0', '0', '0'};
-    private static final BigDecimal ONE_BILLION = new BigDecimal(1000000000L);
+    private static final BigDecimal ONE_BILLION = BigDecimal.valueOf(1000000000L);
 
     private DecimalConverter() {
         // ok
@@ -43,6 +43,6 @@ public class DecimalConverter {
     }
 
     private static int extractNanosecondDecimal(BigDecimal value, long integer) {
-        return value.subtract(new BigDecimal(integer)).multiply(ONE_BILLION).intValue();
+        return value.subtract(BigDecimal.valueOf(integer)).multiply(ONE_BILLION).intValue();
     }
 }

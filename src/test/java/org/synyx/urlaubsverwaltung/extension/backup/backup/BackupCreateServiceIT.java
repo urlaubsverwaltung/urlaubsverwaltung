@@ -16,7 +16,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +78,7 @@ class BackupCreateServiceIT {
         assertThat(backupFile).isPresent();
 
         final String actualBackup = Files.readString(backupFile.get());
-        final String expectedBackup = Files.readString(Paths.get(EXISTING_UV_BACKUP_FILE));
+        final String expectedBackup = Files.readString(Path.of(EXISTING_UV_BACKUP_FILE));
 
         assertThatJson(actualBackup).isEqualTo(expectedBackup);
     }
@@ -91,9 +90,9 @@ class BackupCreateServiceIT {
         sequences.forEach(sequence -> {
             final String schemaName = (String) sequence.get("schemaname");
             final String sequenceName = (String) sequence.get("sequencename");
-            final String getMinValueSql = String.format("SELECT min_value FROM pg_sequences WHERE schemaname = '%s' AND sequencename = '%s'", schemaName, sequenceName);
+            final String getMinValueSql = "SELECT min_value FROM pg_sequences WHERE schemaname = '%s' AND sequencename = '%s'".formatted(schemaName, sequenceName);
             final Long minValue = jdbcTemplate.queryForObject(getMinValueSql, Long.class);
-            final String resetSequenceSql = String.format("ALTER SEQUENCE %s.%s RESTART WITH %d", schemaName, sequenceName, minValue);
+            final String resetSequenceSql = "ALTER SEQUENCE %s.%s RESTART WITH %d".formatted(schemaName, sequenceName, minValue);
             jdbcTemplate.execute(resetSequenceSql);
         });
     }

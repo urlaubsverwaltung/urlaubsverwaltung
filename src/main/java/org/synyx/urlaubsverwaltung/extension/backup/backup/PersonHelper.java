@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.extension.backup.backup;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
-class PersonHelper {
+final class PersonHelper {
 
     private PersonHelper() {
     }

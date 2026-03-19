@@ -73,7 +73,7 @@ class VacationTypeServiceImplTest {
 
         final List<VacationType<?>> typesWithoutCategory = sut.getActiveVacationTypesWithoutCategory(OVERTIME);
         assertThat(typesWithoutCategory).hasSize(1);
-        assertThat(typesWithoutCategory.get(0).getId()).isEqualTo(1);
+        assertThat(typesWithoutCategory.getFirst().getId()).isEqualTo(1);
     }
 
     @Test
@@ -93,7 +93,7 @@ class VacationTypeServiceImplTest {
 
         final List<VacationType<?>> activeVacationTypes = sut.getActiveVacationTypes();
         assertThat(activeVacationTypes).hasSize(2);
-        assertThat(activeVacationTypes.get(0).getId()).isEqualTo(1);
+        assertThat(activeVacationTypes.getFirst().getId()).isEqualTo(1);
         assertThat(activeVacationTypes.get(1).getId()).isEqualTo(2);
     }
 
@@ -114,7 +114,7 @@ class VacationTypeServiceImplTest {
 
         final List<VacationType<?>> allVacationTypes = sut.getAllVacationTypes();
         assertThat(allVacationTypes).hasSize(2);
-        assertThat(allVacationTypes.get(0).getId()).isEqualTo(1);
+        assertThat(allVacationTypes.getFirst().getId()).isEqualTo(1);
         assertThat(allVacationTypes.get(1).getId()).isEqualTo(2);
     }
 
@@ -136,7 +136,7 @@ class VacationTypeServiceImplTest {
         when(vacationTypeRepository.findAll(Sort.by("id"))).thenReturn(List.of(entity));
 
         final List<VacationType<?>> allVacationTypes = sut.getAllVacationTypes();
-        assertThat(allVacationTypes.get(0)).satisfies(vacationType -> {
+        assertThat(allVacationTypes.getFirst()).satisfies(vacationType -> {
             assertThat(vacationType).isInstanceOf(CustomVacationType.class);
 
             final CustomVacationType customVacationType = (CustomVacationType) vacationType;
@@ -188,12 +188,12 @@ class VacationTypeServiceImplTest {
         verify(vacationTypeRepository).saveAll(argumentCaptor.capture());
 
         final List<VacationTypeEntity> persistedList = argumentCaptor.getValue();
-        assertThat(persistedList.get(0).getId()).isEqualTo(1);
-        assertThat(persistedList.get(0).getCategory()).isEqualTo(HOLIDAY);
-        assertThat(persistedList.get(0).getMessageKey()).isEqualTo("holiday.message.key");
-        assertThat(persistedList.get(0).isActive()).isTrue();
-        assertThat(persistedList.get(0).isRequiresApprovalToApply()).isFalse();
-        assertThat(persistedList.get(0).isVisibleToEveryone()).isFalse();
+        assertThat(persistedList.getFirst().getId()).isEqualTo(1);
+        assertThat(persistedList.getFirst().getCategory()).isEqualTo(HOLIDAY);
+        assertThat(persistedList.getFirst().getMessageKey()).isEqualTo("holiday.message.key");
+        assertThat(persistedList.getFirst().isActive()).isTrue();
+        assertThat(persistedList.getFirst().isRequiresApprovalToApply()).isFalse();
+        assertThat(persistedList.getFirst().isVisibleToEveryone()).isFalse();
         assertThat(persistedList.get(1).getId()).isEqualTo(2);
         assertThat(persistedList.get(1).getCategory()).isEqualTo(OVERTIME);
         assertThat(persistedList.get(1).getMessageKey()).isEqualTo("overtime.message.key");
@@ -261,7 +261,7 @@ class VacationTypeServiceImplTest {
 
         final List<VacationTypeEntity> actual = captor.getValue();
         assertThat(actual).hasSize(2);
-        assertThat(actual.get(0)).satisfies(entity -> {
+        assertThat(actual.getFirst()).satisfies(entity -> {
             assertThat(entity.isActive()).isTrue();
             assertThat(entity.getCategory()).isEqualTo(OTHER);
             assertThat(entity.isRequiresApprovalToApply()).isTrue();

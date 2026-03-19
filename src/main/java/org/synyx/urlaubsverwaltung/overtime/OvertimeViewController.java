@@ -46,7 +46,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static java.lang.String.format;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -121,8 +120,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see overtime records of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to see overtime records of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -195,8 +193,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see overtime records of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to see overtime records of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -244,8 +241,7 @@ public class OvertimeViewController implements HasLaunchpad {
         }
 
         if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to record overtime for user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to record overtime for user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -265,8 +261,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person person = overtimeFormDto.getPerson();
 
         if (!overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to record overtime for user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to record overtime for user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -293,8 +288,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
         if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to edit overtime record of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -326,8 +320,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
         if (!overtimeService.isUserIsAllowedToUpdateOvertime(signedInUser, person, overtime)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to edit overtime record of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to edit overtime record of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 
@@ -358,8 +351,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(overtime.personId().value()).orElseThrow(() -> new IllegalStateException("expected person to exist."));
 
         if (!overtimeService.isUserIsAllowedToAddOvertimeComment(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to add overtime comment of user '%s'",
+            throw new AccessDeniedException("User '%s' has not the correct permissions to add overtime comment of user '%s'".formatted(
                 signedInUser.getId(), person.getId()));
         }
 

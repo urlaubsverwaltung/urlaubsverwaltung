@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -48,6 +47,6 @@ class FilesystemBackupCreateService implements BackupCreateService {
     private Path getPath() {
         final String backupPath = this.filesystemBackupConfigurationProperties.backupPath();
         final String filename = "urlaubsverwaltung-%s.json".formatted(Instant.now().getEpochSecond());
-        return Paths.get(backupPath, filename);
+        return Path.of(backupPath, filename);
     }
 }

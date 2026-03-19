@@ -51,16 +51,16 @@ public class SickDaysOverview {
 
     private BigDecimal getTotalDays(SickNote sickNote, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
 
-        final LocalDate start = max(of((sickNote.getStartDate()), from));
-        final LocalDate end = min(of((sickNote.getEndDate()), to));
+        final LocalDate start = max(of(sickNote.getStartDate(), from));
+        final LocalDate end = min(of(sickNote.getEndDate(), to));
 
         return workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), start, end, sickNote.getPerson());
     }
 
     private BigDecimal getDaysWithAUB(SickNote sickNote, WorkDaysCountService workDaysCountService, LocalDate from, LocalDate to) {
 
-        final LocalDate startAUB = max(of((sickNote.getAubStartDate()), from));
-        final LocalDate endAUB = min(of((sickNote.getAubEndDate()), to));
+        final LocalDate startAUB = max(of(sickNote.getAubStartDate(), from));
+        final LocalDate endAUB = min(of(sickNote.getAubEndDate(), to));
 
         // requested period from user is e.g. 1.1.2026 to 31.12.2026
         // start if sick note is in 2025 and end in 2026

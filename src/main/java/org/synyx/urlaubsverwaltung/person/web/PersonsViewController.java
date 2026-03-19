@@ -316,8 +316,8 @@ public class PersonsViewController implements HasLaunchpad {
 
     private static List<HtmlOptionDto> htmlOptionDto(String propertyPrefix, String property, Sort.Order order) {
         return List.of(
-            new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
-            new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
+            new HtmlOptionDto("persons.sort.%s.asc".formatted(property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
+            new HtmlOptionDto("persons.sort.%s.desc".formatted(property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
         );
     }
 }

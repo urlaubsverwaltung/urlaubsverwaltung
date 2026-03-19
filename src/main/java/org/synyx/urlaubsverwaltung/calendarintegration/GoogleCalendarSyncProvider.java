@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -183,9 +182,9 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     private static String getEventSubject(CalendarAbsence absence) {
         if (absence.isHolidayReplacement()) {
-            return format("Vertretung für %s", absence.getPerson().getNiceName());
+            return "Vertretung für %s".formatted(absence.getPerson().getNiceName());
         }
 
-        return format("%s abwesend", absence.getPerson().getNiceName());
+        return "%s abwesend".formatted(absence.getPerson().getNiceName());
     }
 }

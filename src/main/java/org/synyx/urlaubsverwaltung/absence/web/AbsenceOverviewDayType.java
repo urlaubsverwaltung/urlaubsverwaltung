@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
-public class AbsenceOverviewDayType {
+public final class AbsenceOverviewDayType {
 
     private final boolean waitingSickNoteMorning;
     private final boolean waitingSickNoteNoon;

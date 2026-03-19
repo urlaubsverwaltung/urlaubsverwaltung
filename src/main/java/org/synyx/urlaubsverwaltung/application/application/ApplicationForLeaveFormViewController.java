@@ -50,7 +50,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
@@ -164,7 +163,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             .orElse(signedInUser);
 
         if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
@@ -210,7 +209,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
         if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
         final Person replacementPersonToAdd = applicationForLeave.getHolidayReplacementToAdd();
@@ -246,7 +245,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Person person = ofNullable(applicationForLeaveForm.getPerson()).orElse(signedInUser);
 
         if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(signedInUser.getId(), person.getId()));
         }
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
@@ -282,7 +281,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Person person = ofNullable(appForm.getPerson()).orElse(applier);
 
         if (!isPersonAllowedToExecuteRoleOn(applier, APPLICATION_ADD, person)) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, applier.getId(), person.getId()));
+            throw new AccessDeniedException(USER_HAS_NOT_THE_CORRECT_PERMISSIONS.formatted(applier.getId(), person.getId()));
         }
 
         applicationForLeaveFormValidator.validate(appForm, errors);

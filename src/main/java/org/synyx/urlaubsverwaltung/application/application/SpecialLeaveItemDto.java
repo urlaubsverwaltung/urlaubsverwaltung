@@ -34,8 +34,12 @@ public class SpecialLeaveItemDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SpecialLeaveItemDto that = (SpecialLeaveItemDto) o;
         return active == that.active && days == that.days && Objects.equals(messageKey, that.messageKey);
     }

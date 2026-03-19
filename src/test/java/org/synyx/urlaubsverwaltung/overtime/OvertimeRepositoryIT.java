@@ -86,8 +86,8 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
 
         final List<OvertimeEntity> overtimes = sut.findByPersonAndStartDateIsBefore(person, of(2016, 1, 1));
         assertThat(overtimes).hasSize(4);
-        assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2012, 1, 1));
-        assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(overtimes.getFirst().getStartDate()).isEqualTo(of(2012, 1, 1));
+        assertThat(overtimes.getFirst().getDuration()).isEqualTo(Duration.ofHours(1));
         assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2014, 12, 30));
         assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
         assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2015, 10, 5));
@@ -120,8 +120,8 @@ class OvertimeRepositoryIT extends SingleTenantTestContainersBase {
         final List<OvertimeEntity> actual = sut.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end);
 
         assertThat(actual).hasSize(4);
-        assertThat(actual.get(0).getPerson()).isEqualTo(person);
-        assertThat(actual.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(actual.getFirst().getPerson()).isEqualTo(person);
+        assertThat(actual.getFirst().getDuration()).isEqualTo(Duration.ofHours(1));
         assertThat(actual.get(1).getPerson()).isEqualTo(person);
         assertThat(actual.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
         assertThat(actual.get(2).getPerson()).isEqualTo(person2);

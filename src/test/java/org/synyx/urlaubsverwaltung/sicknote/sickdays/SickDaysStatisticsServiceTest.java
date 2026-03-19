@@ -96,7 +96,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
@@ -132,7 +132,7 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().getFirst()).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
     }
 
     @Test
@@ -176,7 +176,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
@@ -212,7 +212,7 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(secondStageAuthority, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().getFirst()).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
     }
 
     @Test
@@ -251,7 +251,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Office");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
@@ -298,7 +298,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Office");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
@@ -344,7 +344,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Boss");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
@@ -391,7 +391,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Boss");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
@@ -419,7 +419,7 @@ class SickDaysStatisticsServiceTest {
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(boss, startDate, endDate, pageableSearchQuery);
 
         assertThat(allSicknotesPage.getContent()).hasSize(1);
-        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
+        assertThat(allSicknotesPage.getContent().getFirst()).satisfies(statistics -> assertThat(statistics.getSickNotes()).isEmpty());
     }
 
     @Test
@@ -463,7 +463,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
@@ -519,7 +519,7 @@ class SickDaysStatisticsServiceTest {
 
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
-        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+        assertThat(allSicknotes.getFirst()).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");

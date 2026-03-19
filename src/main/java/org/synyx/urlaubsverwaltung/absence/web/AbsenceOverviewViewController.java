@@ -532,7 +532,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, LocalDate today, Locale locale) {
 
-        final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
+        final String tableHeadDayText = "%02d".formatted(date.getDayOfMonth());
         final String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT_STANDALONE, locale);
         final boolean isToday = date.isEqual(today);
 

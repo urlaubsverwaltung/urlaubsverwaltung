@@ -64,7 +64,7 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
     void deletePerson() {
 
         final LocalDate now = LocalDate.now();
-        final VacationType<?> vacationType = vacationTypeService.getActiveVacationTypes().get(0);
+        final VacationType<?> vacationType = vacationTypeService.getActiveVacationTypes().getFirst();
 
         final Person personWithId = personService.create("user", "Marlene", "Muster", "muster@example.org", List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED), List.of(USER));
         final Long personId = personWithId.getId();
@@ -146,13 +146,13 @@ class PersonServiceIT extends SingleTenantTestContainersBase {
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
-        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId).get(0).person()).isNull();
+        assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPersonWithId).getFirst().person()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isNull();
         assertThat(applicationService.getApplicationById(applicationWithApplierWithId.getId()).get().getApplier()).isNull();
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).isEmpty();
-        assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId).get(0).getPerson()).isNull();
+        assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId).getFirst().getPerson()).isNull();
         assertThat(overtimeService.getOvertimeById(overtimeRecord.id())).isEmpty();
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getMembers()).isEmpty();
         assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).isEmpty();
