@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,7 @@ class RolesFromClaimMapperConverter implements Converter<String, GrantedAuthorit
     }
 
     @Override
-    public GrantedAuthority convert(@NonNull String source) {
+    public @Nullable GrantedAuthority convert(@NonNull String source) {
         try {
             final String authority = source.replace(properties.getRolePrefix(), "").toUpperCase();
             return new SimpleGrantedAuthority(Role.valueOf(authority).name());

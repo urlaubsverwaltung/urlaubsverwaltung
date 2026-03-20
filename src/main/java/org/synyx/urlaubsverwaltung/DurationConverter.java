@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -10,7 +11,7 @@ import java.time.temporal.ChronoUnit;
 public class DurationConverter implements AttributeConverter<Duration, Double> {
 
     @Override
-    public Double convertToDatabaseColumn(Duration attribute) {
+    public @Nullable Double convertToDatabaseColumn(Duration attribute) {
         if (attribute == null) {
             return null;
         }
@@ -18,7 +19,7 @@ public class DurationConverter implements AttributeConverter<Duration, Double> {
     }
 
     @Override
-    public Duration convertToEntityAttribute(Double duration) {
+    public @Nullable Duration convertToEntityAttribute(Double duration) {
         if (duration == null) {
             return null;
         }

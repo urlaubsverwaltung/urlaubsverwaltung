@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +139,7 @@ public enum FederalState {
         return Arrays.copyOfRange(codes, 1, codes.length);
     }
 
-    public String getCountry() {
+    public @Nullable String getCountry() {
         if (codes == null || codes.length == 0) {
             return null;
         }

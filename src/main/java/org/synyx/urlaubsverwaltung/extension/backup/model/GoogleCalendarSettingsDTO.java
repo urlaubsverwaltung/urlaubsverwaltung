@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.backup.model;
 
+import org.jspecify.annotations.Nullable;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 
 /**
@@ -12,7 +13,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
  */
 public record GoogleCalendarSettingsDTO(String clientId, String clientSecret, String refreshToken, String calendarId) {
 
-    public static GoogleCalendarSettingsDTO of(GoogleCalendarSettings googleCalendarSettings) {
+    public static @Nullable GoogleCalendarSettingsDTO of(GoogleCalendarSettings googleCalendarSettings) {
         if (googleCalendarSettings == null) {
             return null;
         }
