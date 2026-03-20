@@ -88,6 +88,7 @@ class OvertimeServiceImpl implements OvertimeService {
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         return overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear)
             .stream()
+            .filter(overtimeEntity -> !overtimeEntity.isExternal() || (overtimeEntity.isExternal() && !overtimeEntity.getDuration().isZero()))
             .map(OvertimeServiceImpl::entityToOvertime)
             .toList();
     }

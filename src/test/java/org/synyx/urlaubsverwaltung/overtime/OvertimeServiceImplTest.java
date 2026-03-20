@@ -48,6 +48,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
@@ -56,6 +57,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarFactory.fullWorkday;
@@ -894,7 +896,7 @@ class OvertimeServiceImplTest {
             personOfOvertime.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -919,7 +921,7 @@ class OvertimeServiceImplTest {
             personOfOvertime.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -940,7 +942,7 @@ class OvertimeServiceImplTest {
             person.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -962,7 +964,7 @@ class OvertimeServiceImplTest {
             person.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -984,7 +986,7 @@ class OvertimeServiceImplTest {
             person.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -1009,7 +1011,7 @@ class OvertimeServiceImplTest {
             other.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -1034,7 +1036,7 @@ class OvertimeServiceImplTest {
             personOfOvertime.getIdAsPersonId(),
             new DateRange(LocalDate.now(clock), LocalDate.now(clock)),
             Duration.ofHours(1),
-            OvertimeType.UV_INTERNAL,
+            UV_INTERNAL,
             Instant.now(clock)
         );
 
@@ -1379,6 +1381,45 @@ class OvertimeServiceImplTest {
         sut.getExternalOvertimeByDate(date, person.getIdAsPersonId());
 
         verify(overtimeRepository).findByPersonIdAndStartDateAndEndDateAndExternalIsTrue(person.getId(), date, date);
+    }
+
+    @Test
+    void ensureToRetrieveOnlyNotZeroExternalOvertime() {
+        final LocalDate date = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(firstDayOfMonth());
+
+        final Person person = new Person();
+        person.setId(1L);
+        final OvertimeEntity overtimeNegative = new OvertimeEntity(person, date, date, Duration.ofHours(-1), false);
+        overtimeNegative.setId(1L);
+        final OvertimeEntity overtimeZero = new OvertimeEntity(person, date, date, Duration.ZERO, false);
+        overtimeZero.setId(2L);
+        final OvertimeEntity overtimePositive = new OvertimeEntity(person, date, date, Duration.ofHours(1), false);
+        overtimePositive.setId(3L);
+        final OvertimeEntity externalOvertimeNegative = new OvertimeEntity(person, date, date, Duration.ofHours(-1), true);
+        externalOvertimeNegative.setId(4L);
+        final OvertimeEntity externalOvertimeZero = new OvertimeEntity(person, date, date, Duration.ZERO, true);
+        externalOvertimeZero.setId(5L);
+        final OvertimeEntity externalOvertimePositive = new OvertimeEntity(person, date, date, Duration.ofHours(1), true);
+        externalOvertimePositive.setId(6L);
+
+        final LocalDate firstDayOfYear = date.with(firstDayOfYear());
+        final LocalDate lastDayOfYear = date.with(lastDayOfYear());
+        when(overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, firstDayOfYear, lastDayOfYear))
+            .thenReturn(List.of(overtimeNegative, overtimeZero, overtimePositive, externalOvertimeNegative, externalOvertimeZero, externalOvertimePositive));
+
+        final List<Overtime> overtimeRecordsForPersonAndYear = sut.getOvertimeRecordsForPersonAndYear(person, date.getYear());
+
+        assertThat(overtimeRecordsForPersonAndYear)
+            .hasSize(5)
+            .extracting(Overtime::type, Overtime::duration)
+            .containsExactlyInAnyOrder(
+                tuple(UV_INTERNAL, Duration.ofHours(-1)),
+                tuple(UV_INTERNAL, Duration.ZERO),
+                tuple(UV_INTERNAL, Duration.ofHours(1)),
+                tuple(EXTERNAL, Duration.ofHours(-1)),
+                tuple(EXTERNAL, Duration.ofHours(1))
+            )
+            .doesNotContain(tuple(EXTERNAL, Duration.ZERO));
     }
 
     private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly, boolean overtimeActive, boolean overtimeSyncActive) {
