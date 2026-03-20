@@ -10,7 +10,7 @@
       class="p-4 rounded-full flex items-center justify-center"
       th:classappend="${className}"
     >
-      <th:block th:replace="${content}" />
+      <th:block th:replace="~{${content}}" />
     </span>
   </body>
 </html>

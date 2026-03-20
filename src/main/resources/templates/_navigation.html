@@ -263,7 +263,7 @@
       th:data-test-id="${dataTestId}"
     >
       <span class="px-2 py-1 rounded-sm flex items-center ml-2.5">
-        <svg th:replace="${icon}"></svg>
+        <svg th:replace="~{${icon}}"></svg>
       </span>
       <span class="ml-4 whitespace-nowrap text-ellipsis overflow-hidden" style="min-width: 0" th:text="${text}"></span>
     </a>
@@ -277,7 +277,7 @@
       th:data-test-id="${dataTestId}"
     >
       <span class="px-2 py-1 rounded-sm flex items-center ml-2.5">
-        <svg th:replace="${icon}"></svg>
+        <svg th:replace="~{${icon}}"></svg>
       </span>
       <span class="ml-4 whitespace-nowrap text-ellipsis overflow-hidden" style="min-width: 0" th:text="${text}"></span>
       <svg th:replace="~{icon/external-link::svg(className='ml-1.5 h-4 w-4')}"></svg>

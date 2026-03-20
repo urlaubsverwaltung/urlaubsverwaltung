@@ -17,7 +17,7 @@
         class="appearance-none pr-8"
         th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}, is=${is}"
       >
-        <option th:replace="${options}"></option>
+        <option th:replace="~{${options}}"></option>
       </select>
       <span class="select-caret pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" class="fill-current h-4 w-4">
@@ -28,7 +28,7 @@
 
     <span class="select-with-addon w-full flex items-center" th:fragment="one-with-addon(id, name, options, addon)">
       <span th:replace="~{::one(${id}, ${name}, ${options})}"></span>
-      <span class="h-full flex select-addon" th:insert="${addon}"></span>
+      <span class="h-full flex select-addon" th:insert="~{${addon}}"></span>
     </span>
 
     <span
@@ -44,7 +44,7 @@
         class="appearance-none pr-8"
         th:attrappend="data-test-id=${testId}"
       >
-        <option th:replace="${options}"></option>
+        <option th:replace="~{${options}}"></option>
       </select>
       <span class="select-caret pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
         <svg th:replace="~{icon/more-horizontal::svg(className='h-4 w-4')}" />

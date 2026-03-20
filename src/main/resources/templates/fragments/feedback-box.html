@@ -29,7 +29,7 @@
       data-test-id="feedback-box"
     >
       <div>
-        <th:block th:replace="${body}"></th:block>
+        <th:block th:replace="~{${body}}"></th:block>
       </div>
       <div>
         <button class="flex items-center bg-transparent" th:commandfor="${id}" command="close">

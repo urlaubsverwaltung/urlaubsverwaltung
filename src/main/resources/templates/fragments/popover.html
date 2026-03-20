@@ -30,7 +30,7 @@
         th:classappend="|${buttonClass}${hideChevron ? '' : ' pr-8'}|"
         class="relative"
       >
-        <th:block th:replace="${button}" />
+        <th:block th:replace="~{${button}}" />
         <span
           th:if="${not hideChevron}"
           class="select-caret pointer-events-none absolute inset-y-0 right-0 flex items-center px-2"
@@ -56,7 +56,7 @@
         class="popover"
         th:classappend="${popoverClass}"
       >
-        <th:block th:replace="${dropdown}" />
+        <th:block th:replace="~{${dropdown}}" />
       </div>
     </th:block>
   </body>

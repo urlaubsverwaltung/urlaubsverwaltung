@@ -7,10 +7,10 @@
   <body>
     <div th:fragment="box-with-icon(icon, body)" class="flex items-start gap-6">
       <div class="p-1">
-        <th:block th:replace="${icon}"></th:block>
+        <th:block th:replace="~{${icon}}"></th:block>
       </div>
       <div class="box-text flex-1 flex flex-col">
-        <th:block th:replace="${body}"></th:block>
+        <th:block th:replace="~{${body}}"></th:block>
       </div>
     </div>
   </body>

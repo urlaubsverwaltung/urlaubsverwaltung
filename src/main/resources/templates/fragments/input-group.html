@@ -10,9 +10,9 @@
       class="uv-input-group"
       th:classappend="${hasError == true ? 'uv-has-error' : ''}"
     >
-      <th:block th:replace="${body}"></th:block>
+      <th:block th:replace="~{${body}}"></th:block>
       <span class="uv-input-group-addon">
-        <th:block th:replace="${addon}"></th:block>
+        <th:block th:replace="~{${addon}}"></th:block>
       </span>
     </span>
   </body>
