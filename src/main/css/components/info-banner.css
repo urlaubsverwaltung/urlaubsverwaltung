@@ -1,8 +1,7 @@
 .info-banner {
-  @apply py-2;
-  @apply px-4;
-  @apply bg-sky-900;
-  @apply text-white;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  background-color: var(--color-sky-900);
+  color: var(--color-white);
 }
 
 .info-banner-text {
@@ -13,9 +12,9 @@
 
 .info-banner a {
   text-decoration: underline;
-  color: white;
+  color: var(--color-white);
 }
 
 .info-banner a:hover {
-  color: white;
+  color: var(--color-white);
 }

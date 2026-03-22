@@ -15,6 +15,7 @@
 @import "../components/form.css" layer(components);
 @import "../components/icon-link.css" layer(components);
 @import "../components/info-banner.css" layer(components);
+@import "../components/launchpad.css" layer(components);
 @import "../components/list.css" layer(components);
 @import "../components/navigation.css" layer(components);
 @import "../components/multi-select.css" layer(base);
@@ -30,6 +31,16 @@
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {
+  :root {
+    /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
+    --info-banner-height: 0px;
+    --info-banner-sticky-top: 0;
+    --navigation-sticky-top: var(--info-banner-height);
+
+    --top-bar-height: 53px;
+    --content-sticky-top: calc(var(--navigation-sticky-top) + var(--top-bar-height));
+  }
+
   html {
     height: -webkit-fill-available;
 
@@ -59,14 +70,26 @@
     @apply dark:text-zinc-200;
     min-height: 100vh;
     min-height: -webkit-fill-available;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      "banner banner banner banner"
+      "navigation _ launchpad-app avatar"
+      "content content content content";
+    overflow: hidden;
+    height: 100vh;
   }
 
-  body > [class*="max-w"][class*="mx-auto"] {
-    /* since width is controlled by the body:flex container we have to define 100% now. */
-    /* otherwise `margin: 0 auto` to center something would have a width of 'auto' instead of the maximum available space. */
-    width: 100%;
+  @variant lg {
+    body {
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "banner banner"
+        "launchpad-app avatar"
+        "navigation content";
+    }
   }
 
   @font-face {
@@ -99,15 +122,6 @@
 
   dialog {
     margin: auto;
-  }
-
-  @variant lg {
-    :root {
-      --uv-header-height: 3.25rem;
-    }
-    @variant dark {
-      --uv-header-height: 3.25rem;
-    }
   }
 
   hr {
@@ -212,9 +226,5 @@
 
   .is-inline-block {
     display: inline-block;
-  }
-
-  .is-sticky {
-    margin: 0;
   }
 }

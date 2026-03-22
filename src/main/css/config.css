@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+@theme {
+  --breakpoint-desktop: 1280px;
+}
+
 /* html element has .dark class to enforce dark theme */
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
 

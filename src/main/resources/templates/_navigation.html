@@ -2,285 +2,75 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Navigation fragment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Navigation</title>
   </head>
   <body>
-    <th:block th:ref="nav">
-      <div class="navigation print:hidden">
-        <nav class="relative">
-          <input id="menu-toggle-checkbox" type="checkbox" class="hidden" />
-          <label for="menu-toggle-checkbox" class="flex items-center px-6 py-5 lg:hidden cursor-pointer">
-            <span class="inline-block">
-              <span class="hamburger-bar"></span>
-              <span class="hamburger-bar"></span>
-              <span class="hamburger-bar"></span>
-              <span class="hamburger-bar"></span>
-              <span class="hamburger-bar"></span>
+    <th:block th:fragment="nav">
+      <div class="navigation-container">
+        <button class="navigation-button flex items-center gap-2 lg:hidden" popovertarget="navigation">
+          <svg th:replace="~{icon/menu::svg(className='w-5 h-5')}" />
+          <th:block th:text="#{nav.menu}">Menü</th:block>
+        </button>
+        <nav id="navigation" popover class="navigation">
+          <div th:if="${not #lists.isEmpty(navigation.favorites)}">
+            <span id="nav-group-quick-label" class="sr-only nav-group-label">
+              :<th:block th:text="#{nav.quick}">Einreichen</th:block>
             </span>
-          </label>
-          <div class="navigation-inner flex lg:justify-between px-6 lg:px-8">
-            <div class="flex-1 hidden 2xl:flex xl:items-center">
-              <a
-                href="/"
-                class="font-logo text-xl font-medium mr-8 md:mr-16 text-zinc-900 dark:text-zinc-100 no-underline"
-                th:text="#{nav.urlaubsverwaltung.title}"
-              >
-                Urlaubsverwaltung
-              </a>
-            </div>
-            <div
-              class="navigation-items grow w-full"
-              th:classappend="${#lists.size(navigation.elements) > 6 ? 'max-w-7xl' : 'max-w-6xl'}"
-            >
-              <ul class="navigation-list py-8 lg:py-3 lg:px-2 xl:px-0">
-                <li th:each="navigationItem : ${navigation.elements}">
-                  <a
-                    th:fragment="navigation-item(id, href, text, icon)"
-                    href="#"
-                    th:href="@{__${navigationItem.href}__}"
-                    th:id="${navigationItem.id}"
-                    class="group flex items-center text-zinc-900 overflow-hidden hover:text-blue-400 focus:text-blue-400 transition-colors text-2xl font-medium no-underline space-x-5 dark:text-zinc-100 dark:hover:text-zinc-400 dark:focus:text-zinc-400 lg:text-lg lg:font-normal lg:space-x-2 xl:space-x-2"
-                    th:data-test-id="${navigationItem.dataTestId}"
-                    th:data-title="${#messages.msg(navigationItem.messageKey)}"
-                  >
-                    <th:block
-                      th:with="className='shrink-0 text-zinc-900/50 transition-colors dark:text-zinc-100 w-8 h-8 lg:w-5 lg:h-5 group-hover:text-blue-400/50 dark:group-hover:text-zinc-400 group-focus:text-blue-400/50 dark:group-focus:text-zinc-400'"
-                    >
-                      <svg th:replace="~{__${'icon/' + navigationItem.iconName + '::svg'}__}"></svg>
-                    </th:block>
-                    <span
-                      class="overflow-hidden text-ellipsis whitespace-nowrap"
-                      style="min-width: 0"
-                      th:text="${#messages.msg(navigationItem.messageKey)}"
-                    ></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div class="absolute right-0 top-0 lg:static lg:flex-1 flex justify-end">
-              <div class="px-6 lg:px-0 py-3 lg:py-2 flex items-center gap-2">
-                <div th:if="${navigationRequestPopupEnabled}" class="relative flex items-center">
-                  <uv-nav-popup-menu-button>
-                    <a
-                      id="add-something-new"
-                      href="#add-something-new-menu"
-                      class="nav-popup-menu-button flex items-center no-underline outline-hidden"
-                      data-test-id="add-something-new"
-                      tabindex="-1"
-                    >
-                      <svg
-                        th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon w-7 h-7 lg:w-8 lg:h-8')}"
-                      ></svg>
-                      <span class="sr-only" th:text="#{nav.add.button.text}"></span>
-                      <svg th:replace="~{icon/chevron-down::svg(className='w-4 h-4')}"></svg>
-                    </a>
-                  </uv-nav-popup-menu-button>
-                  <div id="add-something-new-menu" class="nav-popup-menu">
-                    <div class="nav-popup-menu-inner">
-                      <div class="nav-popup-menu-inner__header">
-                        <h3 th:text="#{nav.add.title}">Etwas Neues eintragen</h3>
-                      </div>
-                      <div class="nav-popup-menu-inner__content">
-                        <ul>
-                          <li>
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/application/new}, icon=~{::menu-add-application-icon}, text=#{nav.add.vacation}, dataTestId='quick-add-new-application')}"
-                            >
-                              <svg
-                                th:ref="menu-add-application-icon"
-                                th:replace="~{icon/calendar::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li th:if="${navigationSickNoteAddAccess}" class="mt-4 xs:mt-1">
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/sicknote/new}, icon=~{::menu-add-sicknote-icon}, text=#{nav.add.sicknote}, dataTestId='quick-add-new-sicknote')}"
-                            >
-                              <svg
-                                th:ref="menu-add-sicknote-icon"
-                                th:replace="~{icon/medkit::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li th:if="${navigationOvertimeAddAccess}" class="mt-4 xs:mt-1">
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')}"
-                            >
-                              <svg
-                                th:ref="menu-add-overtime-icon"
-                                th:replace="~{icon/clock::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <ul aria-labelledby="nav-group-quick-label">
+              <li th:each="link : ${navigation.favorites}">
                 <a
-                  href="#"
-                  th:href="@{/web/application/new}"
-                  class="flex items-center"
-                  data-test-id="new-application"
-                  th:if="${not navigationRequestPopupEnabled}"
+                  class="flex items-center gap-2"
+                  th:id="${link.id}"
+                  th:href="@{__${link.href}__}"
+                  th:data-test-id="${link.dataTestId}"
                 >
-                  <svg
-                    th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon w-8 h-8 lg:w-9 lg:h-9')}"
-                  ></svg>
-                  <span class="sr-only" th:text="#{nav.add.vacation}"></span>
+                  <span class="rounded p-1 bg-green-300 dark:bg-green-500 dark:text-zinc-900">
+                    <svg th:replace="~{icon/plus::svg(className='w-3 h-3 stroke-4')}"></svg>
+                  </span>
+                  <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
                 </a>
-                <div th:replace="~{launchpad/launchpad::navigation-item}"></div>
-                <div class="relative">
-                  <uv-nav-popup-menu-button>
-                    <a
-                      href="#avatar-menu"
-                      class="nav-popup-menu-button h-full flex items-center gap-1 no-underline outline-hidden"
-                      id="avatar-link"
-                      data-test-id="avatar"
-                      aria-hidden="true"
-                      tabindex="-1"
-                    >
-                      <span class="shrink-0 inline-flex text-blue-200 dark:text-sky-800">
-                        <img
-                          th:replace="~{fragments/avatar::avatar(className='w-8 h-8 lg:w-9 lg:h-9',url=${menuGravatarUrl + '?d=404&s=40'},niceName=${userFirstName + ' ' + userLastName},initials=${userInitials},width='40',height='40',personId=null)}"
-                          alt=""
-                        />
-                      </span>
-                      <svg th:replace="~{icon/chevron-down::svg(className='w-4 h-4')}"></svg>
-                    </a>
-                  </uv-nav-popup-menu-button>
-                  <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
-                    <div class="nav-popup-menu-inner">
-                      <div class="nav-popup-menu-inner__header">
-                        <a
-                          href="#"
-                          th:href="@{/web/person/{userId}/overview(userId=${userId})}"
-                          class="dark:from-sky-800 dark:via-slate-800 dark:to-sky-900 flex items-center gap-4 hover:no-underline focus:no-underline"
-                        >
-                          <span class="text-blue-200 dark:text-sky-800">
-                            <img
-                              th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},initials=${userInitials},width='64',height='64',personId=null)}"
-                              alt=""
-                            />
-                          </span>
-                          <p class="m-0 whitespace-nowrap overflow-hidden text-ellipsis">
-                            <span
-                              th:text="#{nav.avatar-menu.signed-in-as}"
-                              class="text-sm block text-gray-600 dark:text-zinc-100"
-                            ></span>
-                            <span
-                              class="text-lg leading-none text-gray-700 hover:text-black focus:text-black dark:text-zinc-200"
-                              th:text="${userFirstName + ' ' + userLastName}"
-                            >
-                              Max Mustermann
-                            </span>
-                          </p>
-                        </a>
-                      </div>
-                      <div class="nav-popup-menu-inner__content">
-                        <ul>
-                          <li>
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})}"
-                            >
-                              <svg
-                                th:ref="menu-help-icon"
-                                th:replace="~{icon/help-circle::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li class="mt-4 xs:mt-1">
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})}"
-                            >
-                              <svg
-                                th:ref="menu-person-icon"
-                                th:replace="~{icon/user-circle::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li class="mt-4 xs:mt-1">
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/notifications(userId=${userId})}, icon=~{::menu-notifications-icon}, text=#{nav.notifications.title})}"
-                            >
-                              <svg
-                                th:ref="menu-notifications-icon"
-                                th:replace="~{icon/mail::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li class="mt-4 xs:mt-1">
-                            <a
-                              href="#"
-                              th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})}"
-                            >
-                              <svg
-                                th:ref="menu-user-settings-icon"
-                                th:replace="~{icon/sliders::svg(className='w-6 h-6')}"
-                              ></svg>
-                            </a>
-                          </li>
-                          <li class="mt-4 xs:mt-1" role="separator"></li>
-                          <li>
-                            <form th:action="@{/logout}" method="POST" class="ml-auto w-full">
-                              <button type="submit" class="nav-popup-menu_link rounded-b-2xl" data-test-id="logout">
-                                <span class="flex items-center">
-                                  <span class="px-2 py-1 rounded-sm flex items-center ml-2.5">
-                                    <svg th:replace="~{icon/logout::svg(className='w-6 h-6')}"></svg>
-                                  </span>
-                                  <span class="ml-4" th:text="#{nav.signout.title}"></span>
-                                </span>
-                              </button>
-                            </form>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
-          <div class="navigation-content-spacer pointer-events-none flex justify-between w-full lg:hidden">
-            <div class="navigation-content-spacer--left h-4 w-4"></div>
-            <div class="navigation-content-spacer--right h-4 w-4"></div>
+          <div th:if="${not #lists.isEmpty(navigation.basic)}">
+            <span id="nav-group-basic-label" class="sr-only nav-group-label">
+              :<th:block th:text="#{nav.basic}">me</th:block>
+            </span>
+            <ul aria-labelledby="nav-group-basic-label">
+              <li th:each="link : ${navigation.basic}">
+                <a th:id="${link.id}" th:href="@{__${link.href}__}" th:data-test-id="${link.dataTestId}">
+                  <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div th:if="${not #lists.isEmpty(navigation.company)}">
+            <span id="nav-group-company-label" class="nav-group-label">
+              :<th:block th:text="#{nav.company}">Unternehmen</th:block>
+            </span>
+            <ul aria-labelledby="nav-group-company-label">
+              <li th:each="link : ${navigation.company}">
+                <a th:href="@{__${link.href}__}" th:id="${link.id}" th:data-test-id="${link.dataTestId}">
+                  <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div th:if="${not #lists.isEmpty(navigation.settings)}">
+            <span id="nav-group-settings-label" class="nav-group-label">
+              :<th:block th:text="#{nav.settings}">Einstellungen</th:block>
+            </span>
+            <ul aria-labelledby="nav-group-settings-label">
+              <li th:each="link : ${navigation.settings}">
+                <a th:href="@{__${link.href}__}" th:id="${link.id}" th:data-test-id="${link.dataTestId}">
+                  <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
+                </a>
+              </li>
+            </ul>
           </div>
         </nav>
       </div>
     </th:block>
-
-    <a
-      th:with="external=${false}"
-      th:fragment="nav-popup-menu-link(href, icon, text)"
-      th:href="${href}"
-      class="nav-popup-menu_link"
-      th:data-test-id="${dataTestId}"
-    >
-      <span class="px-2 py-1 rounded-sm flex items-center ml-2.5">
-        <svg th:replace="${icon}"></svg>
-      </span>
-      <span class="ml-4 whitespace-nowrap text-ellipsis overflow-hidden" style="min-width: 0" th:text="${text}"></span>
-    </a>
-
-    <a
-      th:fragment="nav-popup-menu-link-external(href, icon, text)"
-      th:href="${href}"
-      class="nav-popup-menu_link"
-      target="_blank"
-      rel="noopener"
-      th:data-test-id="${dataTestId}"
-    >
-      <span class="px-2 py-1 rounded-sm flex items-center ml-2.5">
-        <svg th:replace="${icon}"></svg>
-      </span>
-      <span class="ml-4 whitespace-nowrap text-ellipsis overflow-hidden" style="min-width: 0" th:text="${text}"></span>
-      <svg th:replace="~{icon/external-link::svg(className='ml-1.5 h-4 w-4')}"></svg>
-    </a>
   </body>
 </html>

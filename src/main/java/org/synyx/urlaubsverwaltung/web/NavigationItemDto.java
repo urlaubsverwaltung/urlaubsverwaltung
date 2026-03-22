@@ -7,18 +7,16 @@ class NavigationItemDto {
     private final String id;
     private final String href;
     private final String messageKey;
-    private final String iconName;
     private final String dataTestId;
 
-    NavigationItemDto(String id, String href, String messageKey, String iconName) {
-        this(id, href, messageKey, iconName, null);
+    NavigationItemDto(String id, String href, String messageKey) {
+        this(id, href, messageKey, null);
     }
 
-    NavigationItemDto(String id, String href, String messageKey, String iconName, String dataTestId) {
+    NavigationItemDto(String id, String href, String messageKey, String dataTestId) {
         this.id = id;
         this.href = href;
         this.messageKey = messageKey;
-        this.iconName = iconName;
         this.dataTestId = dataTestId;
     }
 
@@ -32,10 +30,6 @@ class NavigationItemDto {
 
     public String getMessageKey() {
         return messageKey;
-    }
-
-    public String getIconName() {
-        return iconName;
     }
 
     public String getDataTestId() {
@@ -54,13 +48,12 @@ class NavigationItemDto {
         return id.equals(that.id)
             && href.equals(that.href)
             && messageKey.equals(that.messageKey)
-            && iconName.equals(that.iconName)
             && Objects.equals(dataTestId, that.dataTestId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, href, messageKey, iconName, dataTestId);
+        return Objects.hash(id, href, messageKey, dataTestId);
     }
 
     @Override
@@ -69,7 +62,6 @@ class NavigationItemDto {
             "id='" + id + '\'' +
             ", href='" + href + '\'' +
             ", messageKey='" + messageKey + '\'' +
-            ", iconName='" + iconName + '\'' +
             ", dataTestId='" + dataTestId + '\'' +
             '}';
     }
