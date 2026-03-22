@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
@@ -24,7 +25,7 @@ final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Loca
     private static final JsonMapper JSON_MAPPER = new JsonMapper();
 
     @Override
-    public String convertToDatabaseColumn(Map<Locale, String> attribute) {
+    public @Nullable String convertToDatabaseColumn(Map<Locale, String> attribute) {
 
         if (attribute == null) {
             return null;
@@ -39,7 +40,7 @@ final class VacationTypeLabelJpaConverter implements AttributeConverter<Map<Loca
     }
 
     @Override
-    public Map<Locale, String> convertToEntityAttribute(String dbData) {
+    public @Nullable Map<Locale, String> convertToEntityAttribute(String dbData) {
 
         if (dbData == null) {
             return null;

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.jspecify.annotations.Nullable;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -460,7 +461,7 @@ public class Application {
      *
      * @return start date with time or {@code null} if start date or start time is missing
      */
-    public ZonedDateTime getStartDateWithTime() {
+    public @Nullable ZonedDateTime getStartDateWithTime() {
 
         final LocalDate date = getStartDate();
         final LocalTime time = getStartTime();
@@ -477,7 +478,7 @@ public class Application {
      *
      * @return end date with time or {@code null} if end date or end time is missing
      */
-    public ZonedDateTime getEndDateWithTime() {
+    public @Nullable ZonedDateTime getEndDateWithTime() {
 
         final LocalDate date = getEndDate();
         final LocalTime time = getEndTime();

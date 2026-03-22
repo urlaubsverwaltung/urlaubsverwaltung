@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -218,7 +219,7 @@ public class ApplicationForLeaveForm {
     /**
      * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    public Duration getOvertimeReduction() {
+    public @Nullable Duration getOvertimeReduction() {
 
         if (hours == null && minutes == null) {
             return null;

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -127,7 +128,7 @@ public class OvertimeFormDto {
     /**
      * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    public Duration getDuration() {
+    public @Nullable Duration getDuration() {
 
         if (hours == null && minutes == null) {
             return null;
