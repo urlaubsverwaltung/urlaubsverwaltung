@@ -97,7 +97,6 @@ class ICalServiceTest {
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:806735982DE050F90FAEE972F010854E
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -130,7 +129,6 @@ class ICalServiceTest {
                 SUMMARY:Marlene Muster abwesend
                 UID:4F2F28B08279622C1D317D8D5F11D44D
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -165,7 +163,6 @@ class ICalServiceTest {
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:322D5F265624AA63A4C508E8C363B29A
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -198,7 +195,6 @@ class ICalServiceTest {
                 SUMMARY:Marlene Muster abwesend
                 UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -231,7 +227,6 @@ class ICalServiceTest {
                 SUMMARY:Marlene Muster abwesend
                 UID:791CAD0EA0808D42C4D2BED7D0A7CAC7
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -263,7 +258,6 @@ class ICalServiceTest {
                 SUMMARY:Marlene Muster abwesend
                 UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 SEQUENCE:1
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
@@ -295,7 +289,6 @@ class ICalServiceTest {
                 SUMMARY:Marlene Muster abwesend
                 UID:497ED5D042F718878138A3E2F8C3C35C
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 ORGANIZER:mailto:no-reply@example.org
                 END:VEVENT
                 END:VCALENDAR
@@ -328,7 +321,6 @@ class ICalServiceTest {
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 TRANSP:TRANSPARENT
                 X-MICROSOFT-CDO-BUSYSTATUS:FREE
                 ORGANIZER:mailto:no-reply@example.org
@@ -393,7 +385,6 @@ class ICalServiceTest {
                 X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
                 UID:D2A4772AEB3FD20D5F6997FCD8F28719
                 ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org
-                \s
                 TRANSP:TRANSPARENT
                 X-MICROSOFT-CDO-BUSYSTATUS:FREE
                 ORGANIZER:mailto:no-reply@example.org
