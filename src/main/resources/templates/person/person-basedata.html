@@ -10,15 +10,15 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
+    <main th:fragment="main" class="content-container">
       <div th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{})}">
         <th:block th:ref="person-basedata-heading-body">
           <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
         </th:block>
       </div>
 
-      <div class="mt-4 md:mt-6">
-        <div class="flex items-center gap-4 sm:gap-6 mb-4 md:mb-12">
+      <div class="mt-4 @3xl/main:mt-6">
+        <div class="flex items-center gap-4 @2xl/main:gap-6 mb-4 @3xl/main:mb-12">
           <div class="p-1 text-blue-50 dark:text-sky-800">
             <img
               th:replace="~{fragments/avatar::avatar-bordered(url=${personBasedata.gravatarURL + '?d=404&s=60'},niceName=${personBasedata.niceName},initials=${personBasedata.initials},width='60',height='60',personId=${personBasedata.personId})}"

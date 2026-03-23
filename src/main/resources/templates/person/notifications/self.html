@@ -30,8 +30,10 @@
       <input type="hidden" th:field="*{overtimeAppliedForManagement.active}" />
 
       <div class="list-selectable">
-        <div class="list-selectable__item flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
-          <span class="checkbox-switch flex items-center gap-2 md:gap-3">
+        <div
+          class="list-selectable__item flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16"
+        >
+          <span class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
             <input
               type="checkbox"
               id="email-notification-all-input"

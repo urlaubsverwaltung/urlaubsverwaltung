@@ -4,19 +4,19 @@
     <title th:text="#{error-page.common.meta.title}"></title>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
-      <div class="grow flex flex-col items-center">
+    <main th:fragment="main" class="content-container">
+      <div class="flex flex-col items-center">
         <div class="w-full max-w-screen-xl">
-          <div class="px-8 xs:px-16">
+          <div class="px-8 @lg/main:px-16">
             <h1
-              class="mt-4 flex flex-col font-medium text-3xl sm:space-x-2 sm:items-baseline sm:text-4xl xs:mt-8 lg:mt-24 lg:space-x-0 lg:text-5xl lg:leading-[1]"
+              class="mt-4 flex flex-col font-medium text-3xl @2xl/main:space-x-2 @2xl/main:items-baseline @2xl/main:text-4xl @lg/main:mt-8 @5xl/main:mt-24 @5xl/main:space-x-0 @5xl/main:text-5xl @5xl/main:leading-[1]"
             >
               <th:block th:text="${status}">500</th:block>&nbsp;
-              <span class="sm:mt-2" th:text="#{error-page.server-error.title}"></span>
+              <span class="@2xl/main:mt-2" th:text="#{error-page.server-error.title}"></span>
             </h1>
             <p class="mt-8 text-xl max-w-prose" th:text="#{error-page.server-error.paragraph}"></p>
             <div
-              class="mt-8 text-lg flex flex-col space-y-4 sm:flex-row sm:mt-8 sm:space-y-0 sm:space-x-2"
+              class="mt-8 text-lg flex flex-col space-y-4 @2xl/main:flex-row @2xl/main:mt-8 @2xl/main:space-y-0 @2xl/main:space-x-2"
               th:with="previousPageLink=${header_referer}"
             >
               <a
@@ -29,7 +29,7 @@
               <a href="/" class="button text-base px-4 py-2" th:text="#{error-page.goto.start}"></a>
             </div>
           </div>
-          <div class="shrink-0 mt-12 flex justify-center lg:mr-16">
+          <div class="shrink-0 mt-12 flex justify-center @5xl/main:mr-16">
             <picture th:if="${theme == 'system'}">
               <source th:srcset="@{/images/5xx_bear_dark.png}" media="(prefers-color-scheme: dark)" />
               <img src="#" th:src="@{/images/5xx_bear.svg}" alt="" />

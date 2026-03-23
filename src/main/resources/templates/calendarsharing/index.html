@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+    <main th:fragment="main" class="content-container">
       <header>
         <h1 class="mb-8 text-2xl text-medium">
           <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.title}"></th:block>
@@ -125,17 +125,17 @@
                 readonly
               />
             </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
+            <div class="flex flex-col gap-2 @2xl/main:flex-row">
               <button
                 th:text="#{calendar.share.me.reset.form.submit.text}"
                 type="submit"
-                class="button mb-4 sm:mb-0"
+                class="button mb-4 @2xl/main:mb-0"
               ></button>
               <button
                 th:text="#{calendar.share.me.unlink.form.submit.text}"
                 type="submit"
                 name="unlink"
-                class="button sm:mb-0"
+                class="button @2xl/main:mb-0"
               ></button>
             </div>
           </div>
@@ -247,17 +247,17 @@
                   readonly
                 />
               </div>
-              <div class="flex flex-col gap-2 sm:flex-row">
+              <div class="flex flex-col gap-2 @2xl/main:flex-row">
                 <button
                   th:text="#{calendar.share.department.reset.form.submit.text}"
                   type="submit"
-                  class="button mb-4 sm:mb-0"
+                  class="button mb-4 @2xl/main:mb-0"
                 ></button>
                 <button
                   th:text="#{calendar.share.department.unlink.form.submit.text}"
                   type="submit"
                   name="unlink"
-                  class="button sm:mb-0"
+                  class="button @2xl/main:mb-0"
                 ></button>
               </div>
             </div>
@@ -378,17 +378,17 @@
                 readonly
               />
             </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
+            <div class="flex flex-col gap-2 @2xl/main:flex-row">
               <button
                 th:text="#{calendar.share.company.reset.form.submit.text}"
                 type="submit"
-                class="button mb-4 sm:mb-0"
+                class="button mb-4 @2xl/main:mb-0"
               ></button>
               <button
                 th:text="#{calendar.share.company.unlink.form.submit.text}"
                 type="submit"
                 name="unlink"
-                class="button sm:mb-0"
+                class="button @2xl/main:mb-0"
               ></button>
             </div>
           </div>

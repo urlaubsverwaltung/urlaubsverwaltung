@@ -16,9 +16,11 @@
       "
     >
       <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
-        <uv-checkbox-card class="flex flex-col gap-2 md:flex-row md:items-center md:gap-4 xl:gap-16">
-          <div class="md:w-64 lg:w-72">
-            <span data-list-item-selection-toggle class="checkbox-switch flex items-center gap-2 md:gap-3">
+        <uv-checkbox-card
+          class="flex flex-col gap-2 @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-4 @7xl/main:gap-16"
+        >
+          <div class="@3xl/main:w-64 @5xl/main:w-72">
+            <span data-list-item-selection-toggle class="checkbox-switch flex items-center gap-2 @3xl/main:gap-3">
               <input
                 type="checkbox"
                 id="input"
@@ -32,8 +34,10 @@
               <label for="input" th:for="${id}" class="text-base font-normal" th:text="${#messages.msg(label)}"></label>
             </span>
           </div>
-          <div class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:md:text-inherit md:items-center">
-            <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 md:inline-block')}"></svg>
+          <div
+            class="flex-1 flex items-start gap-2 dark:text-zinc-400 dark:@3xl/main:text-inherit @3xl/main:items-center"
+          >
+            <svg th:replace="~{icon/info::svg(className='hidden shrink-0 w-4 h-4 @3xl/main:inline-block')}"></svg>
             <p th:id="${'info-' + id}" class="text-sm" th:text="${#messages.msg(info)}"></p>
           </div>
         </uv-checkbox-card>

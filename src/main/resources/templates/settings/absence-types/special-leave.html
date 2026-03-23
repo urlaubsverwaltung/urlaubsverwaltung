@@ -62,13 +62,13 @@
               </td>
 
               <td th:data-table-head-text="#{settings.specialleave.table.head.type}">
-                <span th:text="#{__${specialLeaveSettingsItem.messageKey}__}" class="w-1/2 md:w-full"> </span>
+                <span th:text="#{__${specialLeaveSettingsItem.messageKey}__}" class="w-1/2 @3xl/main:w-full"> </span>
               </td>
 
               <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
                 <input
                   th:id="|specialLeave-days-${loop.index}|"
-                  class="w-1/2 sm:w-full"
+                  class="w-1/2 @2xl/main:w-full"
                   th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}"
                   th:errorclass="error"
                   type="number"
