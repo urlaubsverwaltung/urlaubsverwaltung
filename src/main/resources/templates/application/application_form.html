@@ -40,7 +40,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+    <main th:fragment="main" class="content-container">
       <th:block th:if="${noHolidaysAccount == true}" th:text="#{application.applier.account.none}" />
 
       <th:block th:if="${noHolidaysAccount == null || noHolidaysAccount == false}">
@@ -396,7 +396,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="mt-2 md:pl-14">
+                        <div class="mt-2 @3xl/main:pl-14">
                           <div class="flex justify-between items-center">
                             <label
                               for="replacement-note"

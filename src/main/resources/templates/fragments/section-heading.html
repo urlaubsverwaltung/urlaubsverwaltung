@@ -5,20 +5,23 @@
     <title>section heading</title>
   </head>
   <body>
-    <div th:fragment="section-heading-paddingless(headingBody, headingActions)" class="section-heading mb-4 lg:mb-6">
-      <div class="flex gap-4 flex-col-reverse sm:flex-row items-baseline border-b">
+    <div
+      th:fragment="section-heading-paddingless(headingBody, headingActions)"
+      class="section-heading mb-4 @5xl/main:mb-6"
+    >
+      <div class="flex gap-4 flex-col-reverse @2xl/main:flex-row items-baseline border-b">
         <div class="flex-1 text-2xl leading-5 flex items-baseline flex-wrap space-x-1" style="min-width: 0">
           <th:block th:replace="${headingBody}"></th:block>
         </div>
-        <div class="self-end sm:self-auto print:hidden flex gap-2" th:if="${headingActions}">
+        <div class="self-end @2xl/main:self-auto print:hidden flex gap-2" th:if="${headingActions}">
           <th:block th:replace="${headingActions}"></th:block>
         </div>
       </div>
     </div>
-    <div th:fragment="section-heading(headingBody, headingActions)" class="section-heading mb-4 lg:mb-6">
+    <div th:fragment="section-heading(headingBody, headingActions)" class="section-heading mb-4 @5xl/main:mb-6">
       <div class="flex items-baseline pb-2 border-b-2 dark:border-b">
         <div
-          class="flex-1 text-2xl leading-5 flex items-baseline flex-wrap space-x-1 mt-4 sm:mt-0 sm:mr-4"
+          class="flex-1 text-2xl leading-5 flex items-baseline flex-wrap space-x-1 mt-4 @2xl/main:mt-0 @2xl/main:mr-4"
           style="min-width: 0"
         >
           <th:block th:replace="${headingBody}"></th:block>
