@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.EXTERNAL;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeType.UV_INTERNAL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -116,7 +117,7 @@ class OvertimeServiceImpl implements OvertimeService {
         entity.setStartDate(dateRange.startDate());
         entity.setEndDate(dateRange.endDate());
         entity.setDuration(duration);
-        entity.setExternal(type == OvertimeType.EXTERNAL);
+        entity.setExternal(type == EXTERNAL);
         entity.onUpdate();
 
         final OvertimeEntity saved = overtimeRepository.save(entity);
@@ -133,8 +134,8 @@ class OvertimeServiceImpl implements OvertimeService {
 
         sendOvertimeModifiedNotification(saved, savedCommentEntity, authorPerson);
 
-        LOG.info("Created new overtime. overtime id={}, person id={}, author id={}",
-            saved.getId(), saved.getPerson().getId(), commentEntity.getPerson().getId());
+        LOG.info("Created new overtime. overtime id={}, person id={}, author id={}, isExternal={}",
+            saved.getId(), saved.getPerson().getId(), commentEntity.getPerson().getId(), saved.isExternal());
 
         publishOvertimeCreatedEvent(saved);
 
@@ -174,8 +175,8 @@ class OvertimeServiceImpl implements OvertimeService {
 
         sendOvertimeModifiedNotification(updated, savedCommentEntity, editorPerson);
 
-        LOG.info("Updated overtime. overtime id={}, person id={}, author id={}",
-            updated.getId(), updated.getPerson().getId(), commentEntity.getPerson().getId());
+        LOG.info("Updated overtime. overtime id={}, person id={}, author id={}, type={}",
+            updated.getId(), updated.getPerson().getId(), commentEntity.getPerson().getId(), updated.isExternal());
 
         publishOvertimeUpdatedEvent(updated);
 
@@ -302,7 +303,7 @@ class OvertimeServiceImpl implements OvertimeService {
             entity.getPerson().getIdAsPersonId(),
             new DateRange(entity.getStartDate(), entity.getEndDate()),
             entity.getDuration(),
-            entity.isExternal() ? OvertimeType.EXTERNAL : UV_INTERNAL,
+            entity.isExternal() ? EXTERNAL : UV_INTERNAL,
             entity.getLastModificationDate().atStartOfDay().toInstant(ZoneOffset.UTC)
         );
     }
@@ -440,7 +441,7 @@ class OvertimeServiceImpl implements OvertimeService {
     public boolean isUserIsAllowedToUpdateOvertime(Person signedInUser, Person personOfOvertime, Overtime overtime) {
         final OvertimeSettings overtimeSettings = getOvertimeSettings();
         return overtimeSettings.isOvertimeActive()
-            && !overtime.type().equals(OvertimeType.EXTERNAL)
+            && !overtime.type().equals(EXTERNAL)
             &&
             (
                 signedInUser.hasRole(OFFICE)
@@ -533,6 +534,10 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private void sendOvertimeModifiedNotification(OvertimeEntity overtimeEntity, OvertimeCommentEntity commentEntity, Person modifierPerson) {
 
+        if (overtimeEntity.isExternal()) {
+            // for external overtimes no notifications are needed because they are only effect of an external system action which can trigger notifications in other context if needed.
+            return;
+        }
         if (modifierPerson.equals(overtimeEntity.getPerson())) {
             overtimeMailService.sendOvertimeNotificationToApplicantFromApplicant(overtimeEntity, commentEntity);
         } else {
