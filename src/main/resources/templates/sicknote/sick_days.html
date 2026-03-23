@@ -22,7 +22,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0" data-turbo="true">
+    <main th:fragment="main" class="content-container" data-turbo="true">
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::sick-notes-heading-body}, ~{::sick-notes-heading-actions})}"
       >
@@ -30,14 +30,14 @@
           <h1 th:text="#{sicknotes.title}">Krankmeldungen</h1>
         </th:block>
         <th:block th:ref="sick-notes-heading-actions">
-          <div class="flex flex-col sm:flex-row sm:gap-2">
-            <a th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse sm:flex-row">
+          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
+            <a th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row">
               <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.absences_overview}"></span>
             </a>
             <a
               th:href="@{/web/sicknote/statistics}"
-              class="icon-link flex items-center flex-row-reverse sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               th:data-title="#{action.sicknotes.statistics}"
             >
               <svg th:replace="~{icon/presentation-chart-bar::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -49,7 +49,7 @@
               )}"
             >
               <th:block th:ref="download-dropdown-summary">
-                <span class="icon-link text-base flex items-center flex-row-reverse sm:flex-row">
+                <span class="icon-link text-base flex items-center flex-row-reverse @2xl/main:flex-row">
                   <svg th:replace="~{icon/download::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span id="statistics-download-label" th:text="#{action.sicknotes.download}"></span>
                 </span>
@@ -89,8 +89,10 @@
         </th:block>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex flex-col md:grid md:grid-rows-2 lg:flex lg:flex-row gap-4 md:gap-2 print:hidden">
+      <div class="flex flex-col @3xl/main:flex-row gap-4">
+        <div
+          class="flex flex-col @3xl/main:grid @3xl/main:grid-rows-2 @5xl/main:flex @5xl/main:flex-row gap-4 @3xl/main:gap-2 print:hidden"
+        >
           <div
             th:replace="~{fragments/popover::popover-select(
               summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, placement='bottom-start'
@@ -162,8 +164,10 @@
               <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
               <input type="hidden" name="sort" th:value="${sortQuery}" />
             </div>
-            <div class="flex-1 flex flex-col md:flex-row">
-              <label for="search" class="md:sr-only"> <th:block th:text="#{action.search}">Suchen</th:block>: </label>
+            <div class="flex-1 flex flex-col @3xl/main:flex-row">
+              <label for="search" class="@3xl/main:sr-only">
+                <th:block th:text="#{action.search}">Suchen</th:block>:
+              </label>
               <span
                 th:replace="~{fragments/input-group::input-group(~{::search-input}, ~{::search-input-addon}, ${false})}"
               >
@@ -174,7 +178,7 @@
                     id="search"
                     name="query"
                     th:value="${query}"
-                    class="pr-8 border-none w-full md:w-auto"
+                    class="pr-8 border-none w-full @3xl/main:w-auto"
                     th:placeholder="#{action.search.placeholder.firstname-lastname}"
                     data-auto-submit="search-submit"
                     data-auto-submit-delay="100"
@@ -190,7 +194,7 @@
             </div>
           </form>
         </div>
-        <div class="md:ml-auto">
+        <div class="@3xl/main:ml-auto">
           <form
             action="#"
             th:action="@{/web/sickdays}"
@@ -204,7 +208,7 @@
               <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
               <input type="hidden" name="query" th:value="${query}" />
             </div>
-            <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+            <div class="flex flex-col @3xl/main:flex-row @3xl/main:items-center @3xl/main:gap-2">
               <label for="sort-select"> <th:block th:text="#{action.sort}">Sortieren</th:block>: </label>
               <select
                 id="sort-select"
@@ -273,20 +277,20 @@
         <table
           th:unless="${errorEndDateBeforeStartDate}"
           id="sick-note-table"
-          class="mt-8 md:mt-16 list-table hoverable-table text-sm"
+          class="mt-8 @3xl/main:mt-16 list-table hoverable-table text-sm"
           data-test-id="sick-notes-table"
         >
           <caption class="sr-only" th:text="#{sicknotes.title}">
             Krankmeldungen
           </caption>
-          <thead class="hidden lg:table-header-group">
+          <thead class="hidden @5xl/main:table-header-group">
             <tr>
               <th scope="col" class="print:hidden"></th>
               <th
                 scope="col"
                 th:if="${showPersonnelNumberColumn}"
                 th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                class="hidden lg:table-cell print:table-cell"
+                class="hidden @5xl/main:table-cell print:table-cell"
               ></th>
               <th scope="col" th:text="#{person.data.firstName}"></th>
               <th scope="col" th:text="#{person.data.lastName}"></th>
@@ -309,9 +313,9 @@
               <td
                 th:if="${showPersonnelNumberColumn}"
                 th:text="${sickDaysStatistic.personnelNumber}"
-                class="hidden lg:table-cell print:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
+                class="hidden @5xl/main:table-cell print:table-cell text-ellipsis overflow-hidden max-w-xs text-center"
               ></td>
-              <td class="hidden md:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <a
                   th:text="${sickDaysStatistic.personFirstName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -319,7 +323,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden md:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <a
                   th:text="${sickDaysStatistic.personLastName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -327,7 +331,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="md:hidden">
+              <td class="@3xl/main:hidden">
                 <a
                   th:text="${sickDaysStatistic.personNiceName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
@@ -335,7 +339,7 @@
                   data-turbo="false"
                 ></a>
               </td>
-              <td class="hidden md:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link"
@@ -361,7 +365,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="hidden md:table-cell">
+              <td class="hidden @3xl/main:table-cell">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link"
@@ -387,7 +391,7 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="md:hidden">
+              <td class="@3xl/main:hidden">
                 <div class="flex items-center">
                   <svg th:replace="~{icon/medkit::svg(className='w-3 h-3')}"></svg>
                   &nbsp;<th:block
@@ -420,7 +424,7 @@
         </table>
       </turbo-frame>
 
-      <div class="mt-8 md:mt-16 flex flex-col md:flex-row md:items-center gap-8">
+      <div class="mt-8 @3xl/main:mt-16 flex flex-col @3xl/main:flex-row @3xl/main:items-center gap-8">
         <div id="pagination">
           <nav
             th:replace="~{fragments/pagination::pagination(pagination=${statisticsPagination}, label=#{applications.statistics.pagination.navigation.aria-label}, turboFrame='frame-statistics', testIdPrefix='sickdays')}"
@@ -430,7 +434,7 @@
           action="#"
           th:action="@{/web/sickdays}"
           method="get"
-          class="md:ml-auto flex items-center"
+          class="@3xl/main:ml-auto flex items-center"
           data-turbo-frame="frame-statistics"
           data-turbo-action="advance"
         >

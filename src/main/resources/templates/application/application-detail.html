@@ -27,7 +27,7 @@
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main
       th:fragment="main"
-      class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0 lg:grid lg:grid-cols-2 lg:gap-8"
+      class="content-container @5xl/main:grid @5xl/main:grid-cols-2 @5xl/main:gap-8"
       data-page="application-detail"
     >
       <div>
@@ -130,7 +130,7 @@
           </th:block>
         </div>
 
-        <div class="flex flex-wrap space-y-8 lg:space-y-0">
+        <div class="flex flex-wrap space-y-8 @5xl/main:space-y-0">
           <div class="w-full">
             <div class="box mb-5 p-5">
               <div

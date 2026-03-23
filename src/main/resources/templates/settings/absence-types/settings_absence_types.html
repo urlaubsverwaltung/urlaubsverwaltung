@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form
@@ -32,7 +32,7 @@
               Einstellungen zu Abwesenheitsarten
             </h2>
             <div th:replace="~{settings/absence-types/absence-types::section}"></div>
-            <div class="mt-8 flex flex-col-reverse gap-4 xs:flex-row xs:gap-4">
+            <div class="mt-8 flex flex-col-reverse gap-4 @lg/main:flex-row @lg/main:gap-4">
               <button
                 th:text="#{action.save}"
                 type="submit"

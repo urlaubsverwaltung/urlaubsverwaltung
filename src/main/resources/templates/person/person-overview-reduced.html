@@ -10,7 +10,7 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+    <main th:fragment="main" class="content-container">
       <div class="mb-12">
         <div th:replace="~{fragments/section-heading::section-heading(~{::overview-heading-body}, ~{})}">
           <th:block th:ref="overview-heading-body">

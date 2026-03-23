@@ -11,7 +11,7 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
-      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-1.5">
+      <div class="content-container">
         <th:block
           th:if="${#bools.isTrue(updateSuccess)}"
           th:insert="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}"
@@ -21,8 +21,8 @@
           </th:block>
         </th:block>
 
-        <div class="space-y-12 md:space-y-0 md:grid gap-12 grid-cols-1 md:grid-cols-2">
-          <div class="md:col-start-1 md:row-start-1">
+        <div class="space-y-12 @3xl/main:space-y-0 @3xl/main:grid gap-12 grid-cols-1 @3xl/main:grid-cols-2">
+          <div class="@3xl/main:col-start-1 @3xl/main:row-start-1">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-basedata-body}, ~{::person-details-basedata-actions})}"
             >
@@ -105,7 +105,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-1 md:row-start-2">
+          <div class="@3xl/main:col-start-1 @3xl/main:row-start-2">
             <div th:replace="~{fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{})}">
               <th:block th:ref="person-details-departments-body">
                 <h2 th:text="#{person.account.departments.title}">Abteilungen</h2>
@@ -181,7 +181,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-1 md:row-start-3">
+          <div class="@3xl/main:col-start-1 @3xl/main:row-start-3">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-permissions-body}, ~{::person-details-permissions-actions})}"
             >
@@ -228,7 +228,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-1 md:row-start-4">
+          <div class="@3xl/main:col-start-1 @3xl/main:row-start-4">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-notifications-body}, ~{::person-details-notifications-actions})}"
             >
@@ -267,7 +267,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-2 md:row-start-1">
+          <div class="@3xl/main:col-start-2 @3xl/main:row-start-1">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-account-body}, ~{::person-details-account-actions})}"
             >
@@ -343,7 +343,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-2 md:row-start-3">
+          <div class="@3xl/main:col-start-2 @3xl/main:row-start-3">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-workingtime-body}, ~{::person-details-workingtime-actions})}"
             >
@@ -473,7 +473,7 @@
             </div>
           </div>
 
-          <div class="md:col-start-2 md:row-start-2">
+          <div class="@3xl/main:col-start-2 @3xl/main:row-start-2">
             <div
               th:replace="~{fragments/section-heading::section-heading(~{::person-details-federalState-body}, ~{::person-details-federalState-actions})}"
             >
@@ -524,7 +524,7 @@
             </div>
           </div>
 
-          <div th:if="${canDeletePerson}" class="md:col-start-2 md:row-start-4">
+          <div th:if="${canDeletePerson}" class="@3xl/main:col-start-2 @3xl/main:row-start-4">
             <th:block th:replace="~{person/detail-section/action-delete-person::section}"></th:block>
           </div>
         </div>

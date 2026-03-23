@@ -7,16 +7,16 @@
   <body>
     <div
       th:fragment="privacy-box(body)"
-      class="w-full bg-amber-50 dark:bg-amber-100 border border-amber-200 dark:border-0 p-4 flex flex-col sm:flex-row dark:rounded-sm"
+      class="w-full bg-amber-50 dark:bg-amber-100 border border-amber-200 dark:border-0 p-4 flex flex-col @2xl/main:flex-row dark:rounded-sm"
     >
-      <div class="mb-4 sm:mb-0 sm:mr-4 lg:mr-14 flex items-center sm:items-start">
+      <div class="mb-4 @2xl/main:mb-0 @2xl/main:mr-4 @5xl/main:mr-14 flex items-center @2xl/main:items-start">
         <svg th:replace="~{icon/info::svg(className='text-amber-300 dark:text-yellow-500 w-6 h-6 mr-2')}"></svg>
-        <span class="text-black/75 dark:text-black font-bold text-sm sm:mt-px" th:text="#{privacy-box.title}">
+        <span class="text-black/75 dark:text-black font-bold text-sm @2xl/main:mt-px" th:text="#{privacy-box.title}">
           Privacy Box Title
         </span>
       </div>
       <div
-        class="max-w-xl flex-1 text-sm lg:text-base text-black/80 dark:text-black dark:font-medium"
+        class="max-w-xl flex-1 text-sm @5xl/main:text-base text-black/80 dark:text-black dark:font-medium"
         th:insert="${body}"
       >
         Content Body

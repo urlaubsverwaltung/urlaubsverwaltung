@@ -10,8 +10,8 @@
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main">
-      <div th:if="${overtimeRecord != null}" class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+    <main th:fragment="main" class="content-container">
+      <div th:if="${overtimeRecord != null}">
         <th:block th:replace="~{fragments/feedback-box::feedback-box-success(~{::feedback-success-body})}">
           <th:block th:ref="feedback-success-body">
             <p th:text="#{'overtime.feedback.' + ${overtimeRecord}}"></p>
@@ -19,7 +19,7 @@
         </th:block>
       </div>
 
-      <div class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-12 xl:px-0 lg:grid lg:grid-cols-2 lg:gap-8">
+      <div class="@5xl/main:grid @5xl/main:grid-cols-2 @5xl/main:gap-8">
         <div>
           <div
             th:replace="~{fragments/section-heading::section-heading(~{::overtime-details-heading-body}, ~{::overtime-details-heading-actions})}"
@@ -37,18 +37,18 @@
               </div>
             </th:block>
             <th:block th:fragment="overtime-details-heading-actions">
-              <div class="flex flex-col sm:flex-row sm:gap-2">
+              <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
                 <a
                   th:if="${userIsAllowedToUpdateOvertime}"
                   th:href="@{/web/overtime/__${record.id}__/edit}"
-                  class="icon-link flex items-center flex-row-reverse sm:flex-row"
+                  class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
                 >
                   <svg th:replace="~{icon/pencil::svg(className='w-5 h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
                 <a
                   th:href="@{/web/overtime?person=__${record.person.id}__}"
-                  class="icon-link flex items-center flex-row-reverse sm:flex-row"
+                  class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
                   aria-hidden="true"
                 >
                   <svg th:replace="~{icon/clock::svg(className='w-5 h-5')}"></svg>&nbsp;
@@ -195,7 +195,7 @@
               <h2 th:text="#{overtime.data.person}">Mitarbeiter</h2>
             </th:block>
           </div>
-          <div class="flex flex-wrap space-y-8 lg:space-y-0">
+          <div class="flex flex-wrap space-y-8 @5xl/main:space-y-0">
             <div class="w-full">
               <div class="box mb-5 p-5">
                 <div
