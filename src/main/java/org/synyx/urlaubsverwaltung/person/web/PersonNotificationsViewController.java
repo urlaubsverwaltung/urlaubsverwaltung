@@ -98,6 +98,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         model.addAttribute("personNotificationsDto", personNotificationsDto);
         model.addAttribute("departmentsAvailable", numberOfDepartments != 0);
         model.addAttribute("personAssignedToDepartments", !personDepartments.isEmpty());
+        model.addAttribute("isOvertimeSyncActive", settingsService.getSettings().getOvertimeSettings().isOvertimeSyncActive());
 
         if (isDepartmentSection) {
             model.addAttribute("formFragment", "person/notifications/departments::form");

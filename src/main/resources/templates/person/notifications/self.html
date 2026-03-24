@@ -81,19 +81,21 @@
               ></li>
             </ul>
           </section>
-          <section>
-            <h2 class="snotification-section-title" th:text="#{person.notifications.section.overtime.title}">
-              Meine Überstunden
-            </h2>
-            <ul class="list-selectable">
-              <li
-                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
-              ></li>
-              <li
-                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
-              ></li>
-            </ul>
-          </section>
+          <th:block th:if="${!isOvertimeSyncActive}">
+            <section>
+              <h2 class="notification-section-title" th:text="#{person.notifications.section.overtime.title}">
+                Meine Überstunden
+              </h2>
+              <ul class="list-selectable">
+                <li
+                  th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
+                ></li>
+                <li
+                  th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
+                ></li>
+              </ul>
+            </section>
+          </th:block>
           <section th:if="${personNotificationsDto.personNewManagementAll.visible}">
             <h2 class="notification-section-title" th:text="#{person.notifications.section.persons.title}">Personen</h2>
             <ul class="list-selectable">
