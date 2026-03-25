@@ -139,7 +139,7 @@
   .absence-type-list-head {
     z-index: 1; /* place above color picker */
     position: sticky;
-    top: var(--uv-header-height);
+    top: 0;
     padding: 0 1rem;
     @apply bg-white;
     @apply dark:bg-zinc-900;

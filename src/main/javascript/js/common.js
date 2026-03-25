@@ -1,5 +1,4 @@
 import "../components/feedback-box";
-import "../components/info-banner";
 import "../components/modal";
 import "../components/navigation";
 import "../components/popover";

@@ -1,10 +1,18 @@
 .navigation-container {
   grid-area: navigation;
-  padding: 1rem;
+  /*padding: 1rem;*/
   background-color: var(--color-white);
 
   @variant dark {
     background-color: var(--color-zinc-950);
+  }
+
+  .navigation-button {
+    padding: 1rem;
+
+    @variant lg {
+      display: none;
+    }
   }
 
   .navigation {
@@ -88,7 +96,7 @@
 
       position: fixed;
       inset: 0;
-      top: var(--content-sticky-top);
+      top: anchor(bottom);
       width: auto;
 
       /* prevent body scrolling with overscroll behaviour and height + 1px */
@@ -100,7 +108,6 @@
         /* should render the navigation like normal on wide view */
         position: static;
         inset: unset;
-        top: var(--content-sticky-top);
       }
     }
   }
@@ -123,10 +130,6 @@
     flex-direction: column;
     padding: 0;
 
-    .navigation-button {
-      display: none;
-    }
-
     .navigation {
       flex: 1 0 0;
       width: 100%;
@@ -142,11 +145,10 @@
 }
 
 .nav-popover-menu-container {
-  top: calc(anchor(bottom) + 0.5rem);
-  width: calc(100vw - 1rem);
-  height: calc(100vh - var(--info-banner-height) - anchor-size(height) - 1rem - 0.5rem);
+  top: calc(anchor(bottom) + 1rem);
+  width: calc(100% - 1rem);
+  height: calc(100% - 1.5rem);
   margin: 0 auto;
-  inset-block-end: 1rem;
   @apply rounded-2xl;
 
   @variant xs {
@@ -265,6 +267,7 @@
   --popover-fade-x-end: 0;
   position-area: bottom;
   right: 0.5rem;
+  bottom: 0.5rem;
 
   @variant lg {
     --popover-fade-x-start: -100%;
