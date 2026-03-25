@@ -31,16 +31,6 @@
 @import "../components/settings-absence-types.css" layer(components);
 
 @layer base {
-  :root {
-    /* info-banner is optional and value is overridden by javascript with real height on runtime. as we don't know the content yet... */
-    --info-banner-height: 0px;
-    --info-banner-sticky-top: 0;
-    --navigation-sticky-top: var(--info-banner-height);
-
-    --top-bar-height: 53px;
-    --content-sticky-top: calc(var(--navigation-sticky-top) + var(--top-bar-height));
-  }
-
   html {
     height: -webkit-fill-available;
 
