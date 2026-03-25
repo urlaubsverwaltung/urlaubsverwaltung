@@ -12,7 +12,7 @@
           <svg th:replace="~{icon/menu::svg(className='w-5 h-5')}" />
           <th:block th:text="#{nav.menu}">Menü</th:block>
         </button>
-        <nav id="navigation" popover class="navigation">
+        <nav id="navigation" popover class="navigation top-bar-content-separator">
           <div th:if="${not #lists.isEmpty(navigation.favorites)}">
             <span id="nav-group-quick-label" class="sr-only nav-group-label">
               :<th:block th:text="#{nav.quick}">Einreichen</th:block>
