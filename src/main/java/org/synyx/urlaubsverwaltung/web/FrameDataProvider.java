@@ -69,7 +69,7 @@ public class FrameDataProvider implements DataProviderInterface {
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
 
             final Settings settings = settingsService.getSettings();
-            modelAndView.addObject("navigation", createNavigation(settings, user));
+            modelAndView.addObject("navigation", createNavigation(request, settings, user));
             // TODO not used anymore -> check in favGroup
             modelAndView.addObject("navigationSickNoteAddAccess", isAllowedToAddOrSubmitSickNote(user, settings.getSickNoteSettings()));
             // TODO not used anymore -> check in favGroup
@@ -78,93 +78,117 @@ public class FrameDataProvider implements DataProviderInterface {
         }
     }
 
-    private NavigationDto createNavigation(Settings settings, Person user) {
+    private NavigationDto createNavigation(HttpServletRequest request, Settings settings, Person user) {
 
-        final List<NavigationItemDto> favoriteItems = navFavoritesGroup(settings, user);
-        final List<NavigationItemDto> basicItems = navBasicGroup(settings);
-        final List<NavigationItemDto> companyItems = navCompanyGroup(settings, user);
-        final List<NavigationItemDto> settingItems = navSettingsGroup(settings, user);
+        final List<NavigationItemDto> favoriteItems = navFavoritesGroup(request, settings, user);
+        final List<NavigationItemDto> basicItems = navBasicGroup(request, settings);
+        final List<NavigationItemDto> companyItems = navCompanyGroup(request, settings, user);
+        final List<NavigationItemDto> settingItems = navSettingsGroup(request, settings, user);
 
         return new NavigationDto(favoriteItems, basicItems, companyItems, settingItems);
     }
 
-    private List<NavigationItemDto> navFavoritesGroup(Settings settings, Person user) {
+    private List<NavigationItemDto> navFavoritesGroup(HttpServletRequest request, Settings settings, Person user) {
         final List<NavigationItemDto> elements = new ArrayList<>();
+
+        final String url = request.getRequestURI();
 
         final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
         final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
 
-        elements.add(new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence"));
+        final String application = "/web/application/new";
+        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", url.equals(application)));
 
         if (isAllowedToAddOrSubmitSickNote(user, sickNoteSettings)) {
-            elements.add(new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote"));
+            final String sickNote = "/web/sicknote/new";
+            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", url.equals(sickNote)));
         }
 
         if (isUserAllowedToWriteOvertime(user, overtimeSettings)) {
-            elements.add(new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime"));
+            final String overtime = "/web/overtime/new";
+            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", url.equals(overtime)));
         }
 
         return elements;
     }
 
-    private List<NavigationItemDto> navBasicGroup(Settings settings) {
+    private List<NavigationItemDto> navBasicGroup(HttpServletRequest request, Settings settings) {
         final List<NavigationItemDto> elements = new ArrayList<>();
 
-        // TODO links
+        final String url = request.getRequestURI();
 
-        elements.add(new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos"));
-        elements.add(new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview"));
-        elements.add(new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences"));
-        elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes"));
+        final String application = "/web/application";
+        final String absence = "/web/absences";
+
+        elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
+        elements.add(new NavigationItemDto("basic-absence-overview-link", absence, "nav.basic.absence-overview", url.equals(absence)));
+        elements.add(new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", false));
+        elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes"));
+            elements.add(new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes", false));
         }
 
         return elements;
     }
 
-    private List<NavigationItemDto> navCompanyGroup(Settings settings, Person user) {
+    private List<NavigationItemDto> navCompanyGroup(HttpServletRequest request, Settings settings, Person user) {
         final List<NavigationItemDto> elements = new ArrayList<>();
 
-        // TODO links
+        final String url = request.getRequestURI();
 
         final boolean canViewPersons = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
         if (canViewPersons) {
-            elements.add(new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", "navigation-persons-link"));
+            final String person = "/web/person";
+            elements.add(new NavigationItemDto("company-person-link", person, "nav.company.staff", url.equals(person), "navigation-persons-link"));
         }
 
         final boolean canViewDepartments = user.hasRole(OFFICE) || user.hasRole(BOSS);
         if (canViewDepartments) {
-            elements.add(new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments"));
+            final String department = "/web/department";
+            elements.add(new NavigationItemDto("company-department-link", department, "nav.company.departments", url.equals(department)));
         }
 
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
         if (canViewSickNotes) {
-            elements.add(new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", "navigation-sick-notes-link"));
+            final String sickdays = "/web/sickdays";
+            elements.add(new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", url.equals(sickdays), "navigation-sick-notes-link"));
         }
 
         // TODO who is allowed to this this?
         if (user.hasRole(OFFICE) && overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("company-overtime-link", "/web/overtime", "nav.company.overtimes"));
+            final String overtime = "/web/overtime";
+            elements.add(new NavigationItemDto("company-overtime-link", overtime, "nav.company.overtimes", url.equals(overtime)));
         }
 
         return elements;
     }
 
-    private List<NavigationItemDto> navSettingsGroup(Settings settings, Person user) {
+    private List<NavigationItemDto> navSettingsGroup(HttpServletRequest request, Settings settings, Person user) {
         final List<NavigationItemDto> elements = new ArrayList<>();
 
         final boolean canViewSettings = user.hasRole(OFFICE);
         if (canViewSettings) {
-            elements.add(new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence"));
-            elements.add(new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes"));
-            elements.add(new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime"));
-            elements.add(new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays"));
-            elements.add(new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account"));
-            elements.add(new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar"));
-            elements.add(new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar"));
-            elements.add(new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync"));
+
+            final String url = request.getRequestURI();
+
+            final String absences = "/web/settings/absences";
+            final String absencTypes = "/web/settings/absence-types";
+            final String overtime = "/web/settings/overtime";
+            final String publicHolidays = "/web/settings/public-holidays";
+            final String account = "/web/settings/account";
+            final String avatar = "/web/settings/avatar";
+            final String calendar = "/web/settings/calendar";
+            final String calendarSync = "/web/settings/calendar-sync";
+
+            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", url.equals(absences)));
+            elements.add(new NavigationItemDto("settings-absencetypes-link", absencTypes, "nav.settings.absenceTypes", url.equals(absencTypes)));
+            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", url.equals(overtime)));
+            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", url.equals(publicHolidays)));
+            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", url.equals(account)));
+            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", url.equals(avatar)));
+            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", url.equals(calendar)));
+            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", url.equals(calendarSync)));
         }
 
         return elements;

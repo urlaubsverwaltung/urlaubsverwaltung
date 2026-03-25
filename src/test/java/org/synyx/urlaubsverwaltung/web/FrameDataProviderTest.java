@@ -482,51 +482,99 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createApplicationLink() {
-        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence");
+        return createApplicationLink(false);
+    }
+
+    private static NavigationItemDto createApplicationLink(boolean active) {
+        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", active);
     }
 
     private static NavigationItemDto createSickNoteLink() {
-        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote");
+        return createSickNoteLink(false);
+    }
+
+    private static NavigationItemDto createSickNoteLink(boolean active) {
+        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", active);
     }
 
     private static NavigationItemDto createOvertimeLink() {
-        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime");
+        return createOvertimeLink(false);
+    }
+
+    private static NavigationItemDto createOvertimeLink(boolean active) {
+        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active);
     }
 
     private static NavigationItemDto basicApplicationLink() {
-        return new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos");
+        return basicApplicationLink(false);
+    }
+
+    private static NavigationItemDto basicApplicationLink(boolean active) {
+        return new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos", active);
     }
 
     private static NavigationItemDto basicAbsenceOverviewLink() {
-        return new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview");
+        return basicAbsenceOverviewLink(false);
+    }
+
+    private static NavigationItemDto basicAbsenceOverviewLink(boolean active) {
+        return new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview", active);
     }
 
     private static NavigationItemDto basicAbsenceLink() {
-        return new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences");
+        return basicAbsenceLink(false);
+    }
+
+    private static NavigationItemDto basicAbsenceLink(boolean active) {
+        return new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", active);
     }
 
     private static NavigationItemDto basicSickNoteLink() {
-        return new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes");
+        return basicSickNoteLink(false);
+    }
+
+    private static NavigationItemDto basicSickNoteLink(boolean active) {
+        return new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", active);
     }
 
     private static NavigationItemDto basicOvertimeLink() {
-        return new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes");
+        return basicOvertimeLink(false);
+    }
+
+    private static NavigationItemDto basicOvertimeLink(boolean active) {
+        return new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes", active);
     }
 
     private static NavigationItemDto companyPersonLink() {
-        return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", "navigation-persons-link");
+        return companyPersonLink(false);
+    }
+
+    private static NavigationItemDto companyPersonLink(boolean active) {
+        return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", active, "navigation-persons-link");
     }
 
     private static NavigationItemDto companyDepartmentLink() {
-        return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments");
+        return companyDepartmentLink(false);
+    }
+
+    private static NavigationItemDto companyDepartmentLink(boolean active) {
+        return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", active);
     }
 
     private static NavigationItemDto companySickNoteLink() {
-        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", "navigation-sick-notes-link");
+        return companySickNoteLink(false);
+    }
+
+    private static NavigationItemDto companySickNoteLink(boolean active) {
+        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", active, "navigation-sick-notes-link");
     }
 
     private static NavigationItemDto companyOvertimeLink() {
-        return new NavigationItemDto("company-overtime-link", "/web/overtime", "nav.company.overtimes");
+        return companyOvertimeLink(false);
+    }
+
+    private static NavigationItemDto companyOvertimeLink(boolean active) {
+        return new NavigationItemDto("company-overtime-link", "/web/overtime", "nav.company.overtimes", active);
     }
 
     private static List<NavigationItemDto> settingsLinks() {

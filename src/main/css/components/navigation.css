@@ -15,38 +15,69 @@
       display: flex;
       flex-direction: column;
       gap: 0.125rem;
+    }
 
-      a {
-        display: block;
-        padding: 0.25rem 0;
-        color: inherit;
-        text-decoration: none;
+    .navigation-link {
+      display: block;
+      padding: 0.5rem;
+      color: inherit;
+      text-decoration: none;
+      @apply rounded;
 
-        --duration: 150ms;
-        transition:
-          color var(--duration),
-          background-color var(--duration);
+      --duration: 150ms;
+      transition:
+        color var(--duration),
+        background-color var(--duration);
 
-        @variant dark {
-          color: var(--color-zinc-200);
+      &:hover {
+        background-color: var(--color-blue-50);
+      }
+
+      @variant dark {
+        color: var(--color-zinc-200);
+
+        &:hover {
+          color: var(--color-zinc-100);
+          background-color: var(--color-zinc-800);
         }
+      }
 
-        @variant lg {
-          @apply rounded;
-          padding: var(--spacing) calc(var(--spacing) * 2);
-          transition: background-color 150ms;
+      @variant lg {
+        padding: var(--spacing) calc(var(--spacing) * 2);
+      }
+    }
 
-          &:hover {
-            background-color: var(--color-blue-50);
-          }
+    .navigation-link--active {
+      background-color: var(--color-blue-50);
 
-          @variant dark {
-            &:hover {
-              color: var(--color-zinc-100);
-              background-color: var(--color-zinc-800);
-            }
-          }
+      &:hover {
+        background-color: var(--color-blue-100);
+      }
+
+      @variant dark {
+        color: var(--color-zinc-100);
+        background-color: var(--color-zinc-800);
+
+        &:hover {
+          color: var(--color-zinc-50);
+          background-color: var(--color-zinc-700);
         }
+      }
+    }
+
+    .navigation-link--loading {
+      --from: var(--color-blue-50);
+      --via: var(--color-blue-100);
+      --to: var(--color-blue-50);
+
+      background: linear-gradient(90deg, var(--from) 33%, var(--via) 50%, var(--to) 66%);
+      background-size: 300% 100%;
+      animation: linear-loading 1.2s infinite linear;
+
+      @variant dark {
+        --from: var(--color-zinc-800);
+        --via: var(--color-zinc-700);
+        --to: var(--color-zinc-800);
       }
     }
 
@@ -247,4 +278,10 @@
   --popover-fade-x-end: 0;
   position-area: bottom;
   right: 0.5rem;
+}
+
+@keyframes linear-loading {
+  0% {
+    background-position: right;
+  }
 }
