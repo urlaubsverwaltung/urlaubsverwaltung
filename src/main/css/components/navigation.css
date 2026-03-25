@@ -254,6 +254,15 @@
     transform: translateX(var(--popover-fade-x-end));
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    --duration: 200ms;
+    transform: unset;
+    transition:
+      display var(--duration),
+      overlay var(--duration),
+      opacity var(--duration);
+  }
+
   @starting-style {
     &:popover-open {
       opacity: 0;
