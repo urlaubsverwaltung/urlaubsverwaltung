@@ -20,7 +20,8 @@
             <ul aria-labelledby="nav-group-quick-label">
               <li th:each="link : ${navigation.favorites}">
                 <a
-                  class="flex items-center gap-2"
+                  class="navigation-link flex items-center gap-2"
+                  th:classappend="${link.active ? 'navigation-link--active' : ''}"
                   th:id="${link.id}"
                   th:href="@{__${link.href}__}"
                   th:data-test-id="${link.dataTestId}"
@@ -39,7 +40,13 @@
             </span>
             <ul aria-labelledby="nav-group-basic-label">
               <li th:each="link : ${navigation.basic}">
-                <a th:id="${link.id}" th:href="@{__${link.href}__}" th:data-test-id="${link.dataTestId}">
+                <a
+                  class="navigation-link"
+                  th:classappend="${link.active ? 'navigation-link--active' : ''}"
+                  th:id="${link.id}"
+                  th:href="@{__${link.href}__}"
+                  th:data-test-id="${link.dataTestId}"
+                >
                   <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
                 </a>
               </li>
@@ -51,7 +58,13 @@
             </span>
             <ul aria-labelledby="nav-group-company-label">
               <li th:each="link : ${navigation.company}">
-                <a th:href="@{__${link.href}__}" th:id="${link.id}" th:data-test-id="${link.dataTestId}">
+                <a
+                  class="navigation-link"
+                  th:classappend="${link.active ? 'navigation-link--active' : ''}"
+                  th:href="@{__${link.href}__}"
+                  th:id="${link.id}"
+                  th:data-test-id="${link.dataTestId}"
+                >
                   <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
                 </a>
               </li>
@@ -63,7 +76,13 @@
             </span>
             <ul aria-labelledby="nav-group-settings-label">
               <li th:each="link : ${navigation.settings}">
-                <a th:href="@{__${link.href}__}" th:id="${link.id}" th:data-test-id="${link.dataTestId}">
+                <a
+                  class="navigation-link"
+                  th:classappend="${link.active ? 'navigation-link--active' : ''}"
+                  th:href="@{__${link.href}__}"
+                  th:id="${link.id}"
+                  th:data-test-id="${link.dataTestId}"
+                >
                   <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
                 </a>
               </li>
