@@ -211,11 +211,6 @@
     @apply font-bold;
   }
 
-  .content {
-    /* = height of navbar (50px) plus margin-bottom of row (27px) */
-    margin-top: 77px;
-  }
-
   .modal-dialog {
     margin-top: 77px;
     z-index: 2000;
