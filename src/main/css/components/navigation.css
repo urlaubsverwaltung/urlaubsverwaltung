@@ -9,7 +9,7 @@
   .navigation-button {
     padding: 1rem;
 
-    @variant lg {
+    @variant desktop {
       display: none;
     }
   }
@@ -49,7 +49,7 @@
         }
       }
 
-      @variant lg {
+      @variant desktop {
         padding: var(--spacing) calc(var(--spacing) * 2);
       }
     }
@@ -102,7 +102,7 @@
       overscroll-behavior: none;
       height: calc(100vh + 1px);
 
-      @variant lg {
+      @variant desktop {
         /* opening the navigation on small screen and increasing the window size */
         /* should render the navigation like normal on wide view */
         position: static;
@@ -124,7 +124,7 @@
     }
   }
 
-  @variant lg {
+  @variant desktop {
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -281,7 +281,7 @@
   right: 0.5rem;
   bottom: 0.5rem;
 
-  @variant lg {
+  @variant desktop {
     --popover-fade-x-start: -100%;
     --popover-fade-x-end: 0;
     left: 0.5rem;
