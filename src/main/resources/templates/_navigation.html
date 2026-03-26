@@ -8,7 +8,7 @@
   <body>
     <th:block th:fragment="nav">
       <div class="navigation-container">
-        <button class="navigation-button flex items-center gap-2 lg:hidden" popovertarget="navigation">
+        <button class="navigation-button flex items-center gap-2 desktop:hidden" popovertarget="navigation">
           <svg th:replace="~{icon/menu::svg(className='w-5 h-5')}" />
           <th:block th:text="#{nav.menu}">Menü</th:block>
         </button>
