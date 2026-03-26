@@ -127,7 +127,7 @@
                 &nbsp;
               </div>
             </td>
-            <td class="is-centered print:hidden state ${sickNote.status}">
+            <td class="text-center print:hidden state ${sickNote.status}">
               <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
                 <svg th:replace="~{icon/child::svg(className='w-6 h-6')}"></svg>
               </th:block>
@@ -162,7 +162,7 @@
                 </span>
               </a>
             </td>
-            <td class="is-centered">
+            <td class="text-center">
               <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
             </td>
             <td class="print:hidden hidden @3xl/main:table-cell">

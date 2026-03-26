@@ -124,7 +124,7 @@
                   th:text="#{overview.vacations.expired.description(${expiredRemainingVacationDays}, ${vacationDaysLeft.remainingVacationDays})}"
                 ></th:block>
               </td>
-              <td class="is-centered">
+              <td class="text-center">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
               <td class="hidden @3xl/main:table-cell print:hidden">
@@ -191,7 +191,7 @@
                   </span>
                 </a>
               </td>
-              <td class="is-centered">
+              <td class="text-center">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
                   <span th:class="|text-gray-500 days-${loopStatus.index}|">

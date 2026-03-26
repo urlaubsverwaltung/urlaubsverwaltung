@@ -219,17 +219,17 @@
                     <th scope="col" th:text="#{person.data.firstName}"></th>
                     <th scope="col" th:text="#{person.data.lastName}"></th>
                     <th scope="col" th:if="${isDepartmentPresent}" th:text="#{department.members.list.role}"></th>
-                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
-                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
+                    <th scope="col" class="text-center" th:text="#{persons.account.vacation.entitlement.year}"></th>
+                    <th scope="col" class="text-center" th:text="#{persons.account.vacation.entitlement.actual}"></th>
                     <th
                       scope="col"
-                      class="is-centered"
+                      class="text-center"
                       th:text="#{persons.account.vacation.entitlement.remaining}"
                     ></th>
-                    <th scope="col" class="is-centered" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
+                    <th scope="col" class="text-center" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
                     <th
                       scope="col"
-                      class="is-centered"
+                      class="text-center"
                       th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
                     ></th>
                     <th scope="col"><!-- placeholder to ensure correct number of th --></th>
@@ -240,7 +240,7 @@
                     th:each="person,loopStatus : ${personsPagination.page.content}"
                     th:data-test-id="|persons-row-${loopStatus.index}|"
                   >
-                    <td class="is-centered">
+                    <td class="text-center">
                       <div class="print:hidden text-blue-50 dark:text-sky-800">
                         <img
                           th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},initials=${person.initials},width='40',height='40',personId=${person.id})}"
@@ -287,7 +287,7 @@
                         </li>
                       </ul>
                     </td>
-                    <td class="is-centered hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
                       <th:block th:if="${person.entitlementYear != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
                       </th:block>
@@ -296,7 +296,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
                       <th:block th:if="${person.entitlementActual != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
                       </th:block>
@@ -305,7 +305,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
                       <th:block th:if="${person.entitlementRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
                       </th:block>
@@ -314,7 +314,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
                       <th:block th:if="${person.vacationDaysLeft != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
                       </th:block>
@@ -323,7 +323,7 @@
                         th:text="#{person.account.vacation.noInformation}"
                       ></th:block>
                     </td>
-                    <td class="is-centered hidden @3xl/main:table-cell print:table-cell">
+                    <td class="text-center hidden @3xl/main:table-cell print:table-cell">
                       <th:block th:if="${person.vacationDaysLeftRemaining != null}">
                         <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
                       </th:block>

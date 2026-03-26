@@ -379,7 +379,7 @@
                   <th:block th:if="${workingTime != null}">
                     <p class="mb-2">
                       <th:block th:text="#{person.account.workingTime.validity}" />
-                      <span class="is-inline-block">
+                      <span class="inline-block">
                         <th:block th:replace="~{fragments/date::date(${workingTime.validFrom})}"></th:block> </span
                       >:
                     </p>
