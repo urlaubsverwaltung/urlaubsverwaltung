@@ -216,13 +216,3 @@
     z-index: 2000;
   }
 }
-
-@layer utilities {
-  .is-centered {
-    text-align: center;
-  }
-
-  .is-inline-block {
-    display: inline-block;
-  }
-}
