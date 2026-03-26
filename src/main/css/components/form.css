@@ -284,11 +284,6 @@ textarea.error {
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
-    /* margin-top for role=group when it is adjacent to global-feedback */
-    &:where(.uv-form__global-feedback + *) {
-      margin-top: 1.5rem;
-    }
-    /* or other group  */
     ~ div[role="group"] {
       margin-top: 2.5rem;
     }
