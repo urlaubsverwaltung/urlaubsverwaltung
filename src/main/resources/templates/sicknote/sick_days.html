@@ -304,7 +304,7 @@
           </thead>
           <tbody>
             <tr th:each="sickDaysStatistic : ${statisticsPagination.page.content}">
-              <td class="is-centered print:hidden text-blue-50 dark:text-sky-800">
+              <td class="text-center print:hidden text-blue-50 dark:text-sky-800">
                 <img
                   th:replace="~{fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},initials=${sickDaysStatistic.personInitials},width='40',height='40',personId=${sickDaysStatistic.personId})}"
                   alt=""
