@@ -35,6 +35,10 @@
         <div th:replace="~{person/overview/section-vacation-days::section}"></div>
       </div>
 
+      <div class="mb-12">
+        <div th:replace="~{person/overview/section-application::section}"></div>
+      </div>
+
       <div th:if="${settings.overtimeSettings.overtimeActive}" class="mb-12">
         <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>

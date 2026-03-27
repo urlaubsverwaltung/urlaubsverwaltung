@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.synyx.urlaubsverwaltung.application.me.MyApplicationsViewController.MY_APPLICATIONS_ANONYMOUS_PATH;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -119,12 +120,12 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final String application = "/web/application";
         final String absenceOverview = "/web/absences";
-        final String myAbsences = "/web/my-absences";
+        final String myApplications = MY_APPLICATIONS_ANONYMOUS_PATH;
         final String overtime = "/web/overtime";
 
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
         elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", url.equals(absenceOverview)));
-        elements.add(new NavigationItemDto("basic-absence-link", myAbsences, "nav.basic.my-absences", url.equals(myAbsences)));
+        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", url.equals(myApplications)));
         elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {

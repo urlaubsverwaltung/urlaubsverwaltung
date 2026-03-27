@@ -14,9 +14,7 @@ import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -42,7 +40,6 @@ import java.util.Optional;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
@@ -61,8 +58,8 @@ public class OverviewViewController implements HasLaunchpad {
     private final PersonService personService;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
-    private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;
+    private ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -73,15 +70,15 @@ public class OverviewViewController implements HasLaunchpad {
     @Autowired
     public OverviewViewController(PersonService personService, AccountService accountService,
                                   VacationDaysService vacationDaysService,
-                                  ApplicationService applicationService, WorkDaysCountService workDaysCountService,
+                                  WorkDaysCountService workDaysCountService, ApplicationService applicationService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService,
                                   VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
-        this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
+        this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
@@ -124,10 +121,11 @@ public class OverviewViewController implements HasLaunchpad {
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
+        // for calendar.js
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
-        prepareApplications(person, yearToShow, model, locale);
+        prepareApplicationSummary(person, yearToShow, model, locale);
         prepareHolidayAccounts(person, yearToShow, now, model);
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
@@ -136,14 +134,32 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
-        model.addAttribute("userIsAllowedToCreateOvertime", overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person));
+
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, yearToShow));
+        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
 
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
-        model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person));
         model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));
 
         return "person/person-overview";
+    }
+
+    private void prepareApplicationSummary(Person person, int year, Model model, Locale locale) {
+        // get the person's applications for the given year
+        final LocalDate startDate = Year.of(year).atDay(1);
+        final LocalDate endDate = startDate.with(lastDayOfYear());
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
+
+        final YearlyUsedDaysSummary usedDaysOverview;
+
+        if (applications.isEmpty()) {
+            usedDaysOverview = new YearlyUsedDaysSummary(List.of(), year, workDaysCountService);
+        } else {
+            usedDaysOverview = new YearlyUsedDaysSummary(applications, year, workDaysCountService);
+        }
+
+        model.addAttribute("usedDaysOverview", usedDaysOverview);
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {
@@ -160,61 +176,6 @@ public class OverviewViewController implements HasLaunchpad {
 
         final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
-    }
-
-    private void prepareApplications(Person person, int year, Model model, Locale locale) {
-
-        // get the person's applications for the given year
-        final LocalDate startDate = Year.of(year).atDay(1);
-        final LocalDate endDate = startDate.with(lastDayOfYear());
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
-
-        final List<OverviewApplicationDto> applicationsForLeave;
-        final UsedDaysOverview usedDaysOverview;
-
-        if (applications.isEmpty()) {
-            applicationsForLeave = List.of();
-            usedDaysOverview = new UsedDaysOverview(List.of(), year, workDaysCountService);
-        } else {
-            applicationsForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
-                .map(applicationForLeave -> overviewApplicationDto(applicationForLeave, locale))
-                .toList();
-            usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
-        }
-
-        model.addAttribute("applications", applicationsForLeave);
-        model.addAttribute("usedDaysOverview", usedDaysOverview);
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
-    }
-
-    private OverviewApplicationDto overviewApplicationDto(ApplicationForLeave applicationForLeave, Locale locale) {
-        final OverviewApplicationDto dto = new OverviewApplicationDto();
-        dto.setId(applicationForLeave.getId());
-        dto.setStatus(applicationForLeave.getStatus());
-        dto.setVacationType(overviewVacationTypDto(applicationForLeave.getVacationType(), locale));
-        dto.setApplicationDate(applicationForLeave.getApplicationDate());
-        dto.setStartDate(applicationForLeave.getStartDate());
-        dto.setEndDate(applicationForLeave.getEndDate());
-        dto.setStartTime(applicationForLeave.getStartTime());
-        dto.setEndTime(applicationForLeave.getEndTime());
-        dto.setStartDateWithTime(applicationForLeave.getStartDateWithTime());
-        dto.setEndDateWithTime(applicationForLeave.getEndDateWithTime());
-        dto.setDayLength(applicationForLeave.getDayLength());
-        dto.setWorkDays(applicationForLeave.getWorkDays());
-        dto.setPersonId(applicationForLeave.getPerson().getId());
-        dto.setHours(applicationForLeave.getHours());
-        dto.setWeekDayOfStartDate(applicationForLeave.getWeekDayOfStartDate());
-        dto.setWeekDayOfEndDate(applicationForLeave.getWeekDayOfEndDate());
-        dto.setEditedDate(applicationForLeave.getEditedDate());
-        dto.setCancelDate(applicationForLeave.getCancelDate());
-        return dto;
-    }
-
-    private OverviewVacationTypDto overviewVacationTypDto(VacationType<?> vacationType, Locale locale) {
-        return new OverviewVacationTypDto(vacationType.getLabel(locale), vacationType.getCategory(), vacationType.getColor());
     }
 
     private void prepareHolidayAccounts(Person person, int year, LocalDate now, Model model) {
