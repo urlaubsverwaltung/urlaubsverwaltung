@@ -151,8 +151,21 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
         if (canViewSickNotes) {
+
             final String sickdays = "/web/sickdays";
-            elements.add(new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", url.equals(sickdays), "navigation-sick-notes-link"));
+            final String statistics = "/web/sicknote/statistics";
+
+            final boolean sickdaysActive = url.equals(sickdays);
+            final boolean statisticsActive = url.equals(statistics);
+            final boolean rootActive = sickdaysActive || statisticsActive;
+
+            final NavigationItemDto rootItem =
+                new NavigationItemDto("company-sicknote-link", sickdays, "nav.company.sicknotes", rootActive, "navigation-sick-notes-link");
+
+            elements.add(rootItem.withSubItems(List.of(
+                new NavigationItemDto("company-sicknote-overview-link", sickdays, "nav.company.sicknotes.overview", sickdaysActive),
+                new NavigationItemDto("company-sicknote-statistics-link", statistics, "nav.company.sicknotes.statistics", statisticsActive, "navigation-sick-notes-statistics-link")
+            )));
         }
 
         // TODO who is allowed to this this?

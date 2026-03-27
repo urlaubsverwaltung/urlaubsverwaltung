@@ -20,11 +20,19 @@
       gap: 0.125rem;
     }
 
-    .navigation-link {
+    .subnav-group {
+      gap: 0.25rem;
+    }
+
+    .navigation-link,
+    .navigation-sublink {
       display: block;
-      padding: 0.5rem;
       color: inherit;
       text-decoration: none;
+    }
+
+    .navigation-link {
+      padding: 0.5rem;
       @apply rounded;
 
       --duration: 150ms;
@@ -43,6 +51,50 @@
           color: var(--color-zinc-100);
           background-color: var(--color-zinc-800);
         }
+      }
+    }
+
+    .navigation-sublink {
+      --dot-size: 0.5rem;
+      --dot-color: var(--color-blue-300);
+      --color: var(--color-gray-900);
+
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      margin-left: 1.5rem;
+      padding: 0.25rem 0;
+
+      color: var(--color);
+
+      &::before {
+        anchor-name: --sublink-dot;
+
+        --duration: 300ms;
+        transition:
+          background-color var(--duration),
+          border-color var(--duration);
+
+        content: "";
+        display: block;
+        width: var(--dot-size);
+        aspect-ratio: 1;
+        border-radius: 9999px;
+        border: 1px solid var(--dot-color);
+        background-color: transparent;
+      }
+
+      &:hover,
+      &.navigation-sublink--active {
+        &::before {
+          background-color: var(--dot-color);
+        }
+      }
+
+      @variant dark {
+        --dot-color: var(--color-sky-600);
+        --color: var(--color-zinc-300);
       }
     }
 
@@ -287,6 +339,26 @@
 
       .navigation-link {
         padding: var(--spacing) calc(var(--spacing) * 2);
+      }
+
+      .navigation-link ~ .subnav-group {
+        display: none;
+      }
+
+      .navigation-link--active ~ .subnav-group {
+        display: flex;
+      }
+
+      .subnav-group {
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+        gap: 0.25rem;
+      }
+
+      .navigation-sublink {
+        display: inline-flex;
+        margin-left: 1.25rem;
+        padding: 0;
       }
 
       &:popover-open {
