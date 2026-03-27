@@ -8,10 +8,6 @@
 
   .navigation-button {
     padding: 1rem;
-
-    @variant desktop {
-      display: none;
-    }
   }
 
   .navigation {
@@ -47,10 +43,6 @@
           color: var(--color-zinc-100);
           background-color: var(--color-zinc-800);
         }
-      }
-
-      @variant desktop {
-        padding: var(--spacing) calc(var(--spacing) * 2);
       }
     }
 
@@ -101,13 +93,6 @@
       /* prevent body scrolling with overscroll behaviour and height + 1px */
       overscroll-behavior: none;
       height: calc(100vh + 1px);
-
-      @variant desktop {
-        /* opening the navigation on small screen and increasing the window size */
-        /* should render the navigation like normal on wide view */
-        position: static;
-        inset: unset;
-      }
     }
   }
 
@@ -123,28 +108,6 @@
       color: var(--color-zinc-500);
     }
   }
-
-  @variant desktop {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-
-    @variant dark {
-      background-color: var(--color-zinc-950);
-    }
-
-    .navigation {
-      flex: 1 0 0;
-      width: 100%;
-      position: static;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 2rem calc(var(--spacing) * 5);
-      overflow: auto;
-      overscroll-behavior: none;
-    }
-  }
 }
 
 .nav-popover-menu-container {
@@ -153,22 +116,6 @@
   height: calc(100% - 1.5rem);
   margin: 0 auto;
   @apply rounded-2xl;
-
-  @variant xs {
-    width: min-content;
-    margin: unset;
-    @apply shadow-2xl;
-    border: 1px solid var(--color-gray-200);
-
-    @apply backdrop-filter;
-    @apply backdrop-blur-xl;
-    @apply supports-backdrop-blur:bg-white/60;
-
-    @variant dark {
-      border-color: var(--color-zinc-800);
-      @apply supports-backdrop-blur:bg-zinc-900/60;
-    }
-  }
 
   .navigation-popover-menu-header {
     padding: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
@@ -280,12 +227,6 @@
   position-area: bottom;
   right: 0.5rem;
   bottom: 0.5rem;
-
-  @variant desktop {
-    --popover-fade-x-start: -100%;
-    --popover-fade-x-end: 0;
-    left: 0.5rem;
-  }
 }
 
 .nav-avatar-popover {
@@ -298,5 +239,68 @@
 @keyframes linear-loading {
   0% {
     background-position: right;
+  }
+}
+
+@variant xs {
+  .nav-popover-menu-container {
+    width: min-content;
+    margin: unset;
+    @apply shadow-2xl;
+    border: 1px solid var(--color-gray-200);
+
+    @apply backdrop-filter;
+    @apply backdrop-blur-xl;
+    @apply supports-backdrop-blur:bg-white/60;
+
+    @variant dark {
+      border-color: var(--color-zinc-800);
+      @apply supports-backdrop-blur:bg-zinc-900/60;
+    }
+  }
+}
+
+@variant desktop {
+  .navigation-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+
+    @variant dark {
+      background-color: var(--color-zinc-950);
+    }
+
+    .navigation-button {
+      display: none;
+    }
+
+    .navigation {
+      flex: 1 0 0;
+      width: 100%;
+      position: static;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem calc(var(--spacing) * 5);
+      overflow: auto;
+      overscroll-behavior: none;
+
+      .navigation-link {
+        padding: var(--spacing) calc(var(--spacing) * 2);
+      }
+
+      &:popover-open {
+        /* opening the navigation on small screen and increasing the window size */
+        /* should render the navigation like normal on wide view */
+        position: static;
+        inset: unset;
+      }
+    }
+  }
+
+  .nav-launchpad-popover {
+    --popover-fade-x-start: -100%;
+    --popover-fade-x-end: 0;
+    left: 0.5rem;
   }
 }
