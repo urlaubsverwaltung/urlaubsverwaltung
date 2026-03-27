@@ -63,6 +63,7 @@ class CompanyVacationServiceImpl implements CompanyVacationService {
         publishCompanyEvents();
     }
 
+    @Override
     public void publishCompanyEvents() {
         LOG.info("Publishing all company vacation events based on public holiday settings (working duration Christmas and new years eve)");
 

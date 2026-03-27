@@ -229,30 +229,37 @@ public record AbsencePeriod(
             return List.of(status).contains(this.status);
         }
 
+        @Override
         public boolean hasStatusTemporaryAllowed() {
             return hasStatusOneOf(AbsenceStatus.TEMPORARY_ALLOWED);
         }
 
+        @Override
         public boolean hasStatusWaiting() {
             return hasStatusOneOf(AbsenceStatus.WAITING);
         }
 
+        @Override
         public boolean hasStatusAllowed() {
             return hasStatusOneOf(AbsenceStatus.ALLOWED);
         }
 
+        @Override
         public boolean hasStatusAllowedCancellationRequested() {
             return hasStatusOneOf(AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
         }
 
+        @Override
         public Optional<String> getCategory() {
             return Optional.ofNullable(category);
         }
 
+        @Override
         public Optional<Long> getTypeId() {
             return Optional.ofNullable(typeId);
         }
 
+        @Override
         public boolean isVisibleToEveryone() {
             return visibleToEveryone;
         }
