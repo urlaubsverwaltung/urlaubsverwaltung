@@ -129,7 +129,7 @@ public class FrameDataProvider implements DataProviderInterface {
         elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", false));
+            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", url.equals(overtime)));
         }
 
         return elements;
