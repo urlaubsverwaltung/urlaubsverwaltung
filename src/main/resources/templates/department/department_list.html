@@ -29,10 +29,6 @@
               <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.department.create}"></span>
             </a>
-            <a th:href="@{/web/absences}" class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row">
-              <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.applications.absences_overview}"></span>
-            </a>
             <button th:replace="~{fragments/print::button}"></button>
           </div>
         </th:block>
