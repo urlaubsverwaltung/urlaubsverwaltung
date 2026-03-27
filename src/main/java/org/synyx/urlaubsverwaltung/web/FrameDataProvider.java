@@ -174,12 +174,6 @@ public class FrameDataProvider implements DataProviderInterface {
             )));
         }
 
-        // TODO who is allowed to this this?
-        if (user.hasRole(OFFICE) && overtimeEnabled(settings.getOvertimeSettings())) {
-            final String overtime = "/web/overtime";
-            elements.add(new NavigationItemDto("company-overtime-link", overtime, "nav.company.overtimes", url.equals(overtime)));
-        }
-
         return elements;
     }
 
