@@ -40,14 +40,6 @@
               <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.absences_overview}"></span>
             </a>
-            <a
-              href="#"
-              th:href="@{/web/application/statistics}"
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-            >
-              <svg th:replace="~{icon/presentation-chart-bar::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.applications.statistics}"></span>
-            </a>
           </div>
         </th:block>
         <th:block th:ref="user-applications-heading-body">
