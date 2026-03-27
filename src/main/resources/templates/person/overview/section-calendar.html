@@ -15,15 +15,6 @@
           <th:block th:ref="calendar-heading-actions">
             <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
               <a
-                th:if="${canAccessAbsenceOverview}"
-                class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-                href="#"
-                th:href="@{/web/absences}"
-              >
-                <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
-                <span th:text="#{overview.absences.overview.link.text}"></span>
-              </a>
-              <a
                 th:if="${canAccessCalendarShare}"
                 class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
                 href="#"

@@ -117,9 +117,7 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            model.addAttribute("canAccessAbsenceOverview", "false");
             model.addAttribute("canAccessCalendarShare", "false");
-
             return "person/person-overview-reduced";
         }
 
@@ -140,7 +138,6 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("userIsAllowedToCreateOvertime", overtimeService.isUserIsAllowedToCreateOvertime(signedInUser, person));
 
-        model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person));
         model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
