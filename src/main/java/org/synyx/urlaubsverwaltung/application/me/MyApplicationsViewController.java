@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -37,13 +38,15 @@ public class MyApplicationsViewController implements HasLaunchpad {
     public static final String MY_APPLICATIONS_PATH = "/web/persons/{personId}/applications";
 
     private final PersonService personService;
+    private final DepartmentService departmentService;
     private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final Clock clock;
 
-    public MyApplicationsViewController(PersonService personService, ApplicationService applicationService, WorkDaysCountService workDaysCountService, VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
+    public MyApplicationsViewController(PersonService personService, DepartmentService departmentService, ApplicationService applicationService, WorkDaysCountService workDaysCountService, VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
         this.personService = personService;
+        this.departmentService = departmentService;
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
@@ -70,6 +73,7 @@ public class MyApplicationsViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
@@ -84,7 +88,7 @@ public class MyApplicationsViewController implements HasLaunchpad {
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
 
-        return "me/absence/absence";
+        return "me/applications";
     }
 
     private void prepareApplications(Person person, int year, Model model, Locale locale) {

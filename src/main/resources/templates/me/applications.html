@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_applications.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="person_applications.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+    <main th:fragment="main" class="content-container" data-page="applications">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::absences-heading-body}, ~{})}">
+        <th:block th:ref="absences-heading-body">
+          <h2 id="applications" th:text="#{applications.title}">Abwesenheiten</h2>
+          <div
+            th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/persons/${person.id}/applications?year=|, selectedYear=${selectedYear})}"
+          ></div>
+        </th:block>
+      </div>
+
+      <div class="mb-16">
+        <div class="@2xl/main:flex">
+          <div class="@2xl/main:flex-1 @5xl/main:flex-none @5xl/main:w-1/3">
+            <div th:replace="~{person/box::person-box(person=${person}, departments=${departmentsOfPerson})}"></div>
+          </div>
+          <div class="@2xl/main:flex-1 flex flex-col @5xl/main:flex-row gap-y-8">
+            <div class="flex-1">
+              <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
+                <th:block th:ref="holidays-sum-box-icon">
+                  <div
+                    th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
+                  >
+                    <th:block th:ref="holidays-sum-box-icon-rounded">
+                      <svg th:replace="~{icon/sun::svg(className='w-8 h-8')}" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="holidays-sum-box-body">
+                  <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.holidayLeave.1}">
+                    Es wurden beantragt
+                  </span>
+                  <span
+                    class="my-1 text-lg font-medium"
+                    th:text="#{overview.vacations.holidayLeave.2(${usedDaysOverview.holidayDays.sum})}"
+                  >
+                    18,5 Tage Erholungsurlaub
+                  </span>
+                  <span class="text-sm text-black/75 dark:text-zinc-300">
+                    <span class="flex items-center">
+                      <span class="text-emerald-500 flex items-center">
+                        <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                      </span>
+                      <span
+                        th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
+                      ></span>
+                    </span>
+                  </span>
+                </th:block>
+              </div>
+            </div>
+            <div class="flex-1">
+              <div
+                th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
+              >
+                <th:block th:ref="other-days-sum-box-icon">
+                  <div
+                    th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
+                  >
+                    <th:block th:ref="other-days-sum-box-icon-rounded">
+                      <svg th:replace="~{icon/flag::svg(className='w-8 h-8')}" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="other-days-sum-box-body">
+                  <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.otherLeave.1}">
+                    Es wurden beantragt
+                  </span>
+                  <span
+                    class="my-1 text-lg font-medium"
+                    th:text="#{overview.vacations.otherLeave.2(${usedDaysOverview.otherDays.sum})}"
+                  >
+                    2,5 Tage andere Abwesenheiten
+                  </span>
+                  <span class="text-sm text-black/75 dark:text-zinc-300">
+                    <span class="flex items-center">
+                      <span class="text-emerald-500 flex items-center">
+                        <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                      </span>
+                      <span
+                        th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
+                      ></span>
+                    </span>
+                  </span>
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 @5xl/main:mb-12">
+        <table class="list-table selectable-table text-sm">
+          <caption class="sr-only" th:text="#{applications.title}">
+            Abwesenheiten
+          </caption>
+          <tbody>
+            <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}">
+              <td></td>
+              <td class="py-4">
+                <span class="block mb-1 text-lg" th:text="#{overview.vacations.expired}"></span>
+                <th:block
+                  th:text="#{overview.vacations.expired.description(${expiredRemainingVacationDays}, ${vacationDaysLeft.remainingVacationDays})}"
+                ></th:block>
+              </td>
+              <td class="text-center">
+                <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
+              </td>
+              <td class="hidden @3xl/main:table-cell print:hidden">
+                <div class="flex items-center justify-center">
+                  <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
+                  <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
+                  <th:block th:replace="~{fragments/date::date(${expiryDate})}"></th:block>
+                </div>
+              </td>
+            </tr>
+            <tr
+              th:each="app, loopStatus : ${applications}"
+              th:class="${app.status.name == 'CANCELLED' || app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'inactive' : 'active'}"
+              th:onclick="|navigate('/web/application/${app.id}');|"
+            >
+              <td class="hidden print:table-cell">
+                <th:block th:text="${#messages.msg(app.status)}"></th:block>
+              </td>
+              <td class="py-6 absence-type_color-box-parent">
+                <div
+                  class="absence-type_color-box"
+                  th:classappend="|
+                  ${app.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                  ${app.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                  ${app.status.name == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                  ${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                  ${app.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                  |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
+                  th:data-title="${#messages.msg(app.status)}"
+                >
+                  &nbsp;
+                </div>
+              </td>
+              <td class="py-6">
+                <a href="#" th:href="@{/web/application/{app} (app=${app.id})}" class="hover:no-underline group">
+                  <span
+                    class="block mb-0.5 text-lg group-hover:underline group-focus:underline"
+                    th:text="${app.vacationType.label}"
+                  ></span>
+                  <span class="block text-[#444444] dark:text-zinc-200">
+                    <th:block th:text="#{absence.period.for}" />
+                    <th:block th:if="${app.startDate == app.endDate}">
+                      <th:block
+                        th:replace="~{fragments/date::date(date=${app.startDate}, pattern='EEEE, dd.MM.yyyy')}"
+                      ></th:block
+                      >,
+                      <th:block
+                        th:if="${app.startTime != null && app.endTime != null}"
+                        th:with="APPLICATION_START_TIME=${#temporals.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#temporals.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
+                        th:text="#{absence.period.time(${APPLICATION_START_TIME},${APPLICATION_END_TIME})}"
+                      ></th:block>
+                      <th:block
+                        th:if="${app.startTime == null || app.endTime == null}"
+                        th:text="${#messages.msg(app.dayLength)}"
+                      ></th:block>
+                    </th:block>
+                    <th:block th:if="${app.startDate != app.endDate}">
+                      <th:block
+                        th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='EEEE, dd.MM.yyyy')}"
+                      ></th:block>
+                    </th:block>
+                  </span>
+                </a>
+              </td>
+              <td class="text-center">
+                <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
+                <th:block th:if="${app.startDate.year != app.endDate.year}">
+                  <span th:class="|text-gray-500 days-${loopStatus.index}|">
+                    <!-- is filled by javascript-->
+                  </span>
+                  <script type="text/javascript" th:inline="javascript">
+                    document.addEventListener("DOMContentLoaded", function () {
+                      const dayLength = /*[[${app.dayLength}]]*/ 1;
+                      const personId = /*[[${app.personId}]]*/ 1;
+                      const startDate = /*[[${#temporals.format(app.startDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
+                      const endDate = /*[[${#temporals.format(app.endDate, 'yyyy-MM-dd')}]]*/ "2022-07-20";
+
+                      sendGetDaysRequestForTurnOfTheYear(
+                        /*[[@{/api}]]*/ "",
+                        new Date(startDate),
+                        new Date(endDate),
+                        dayLength,
+                        personId,
+                        /*[[${'.days-' + loopStatus.index}]]*/ "",
+                      );
+                    });
+                  </script>
+                </th:block>
+                <span
+                  th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}"
+                  class="text-gray-500"
+                >
+                  <br />
+                  <th:block th:text="${{app.hours}}" />
+                  <th:block th:text="#{application.data.hours.number}" />
+                </span>
+              </td>
+              <td class="hidden @3xl/main:table-cell print:hidden">
+                <div class="flex items-center justify-center">
+                  <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
+                  <span>
+                    <th:block th:if="${app.status.name == 'WAITING'}">
+                      <th:block th:text="#{application.progress.APPLIED}"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.applicationDate})}"></th:block>
+                    </th:block>
+                    <th:block th:if="${app.status.name == 'TEMPORARY_ALLOWED'}">
+                      <th:block th:text="#{application.progress.TEMPORARY_ALLOWED}"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
+                    </th:block>
+                    <th:block th:if="${app.status.name == 'ALLOWED'}">
+                      <th:block th:if="${app.editedDate != null}">
+                        <th:block th:text="#{application.progress.ALLOWED}"></th:block>
+                        <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
+                      </th:block>
+                      <th:block th:if="${app.editedDate == null}">
+                        <th:block th:text="#{application.progress.ALLOWED_DIRECTLY}"></th:block>
+                        <th:block th:replace="~{fragments/date::date(${app.applicationDate})}"></th:block>
+                      </th:block>
+                    </th:block>
+                    <th:block th:if="${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}">
+                      <th:block th:text="#{application.progress.ALLOWED_CANCELLATION_REQUESTED}"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.cancelDate})}"></th:block>
+                    </th:block>
+                    <th:block th:if="${app.status.name == 'REJECTED'}">
+                      <th:block th:text="#{application.progress.REJECTED}"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
+                    </th:block>
+                    <th:block th:if="${app.status.name == 'CANCELLED' || app.status.name == 'REVOKED'}">
+                      <th:block th:text="#{application.progress.CANCELLED}"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.cancelDate})}"></th:block>
+                    </th:block>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>
