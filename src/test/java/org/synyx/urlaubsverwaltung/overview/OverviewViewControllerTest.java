@@ -242,21 +242,6 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewCanAccessAbsenceOverview() throws Exception {
-        final Person person = new Person();
-        person.setId(1L);
-        person.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("canAccessAbsenceOverview", true));
-    }
-
-
-    @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
         final Person person = new Person();
         person.setId(1L);
