@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.web.me;
+package org.synyx.urlaubsverwaltung.application.me;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -24,26 +24,26 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 /**
  * Object to abstract how many days have been used in a year.
  */
-public class MeUsedDaysDto {
+public class YearlyUsedDaysSummary {
 
     private final int year;
 
     // used days for vacation type HOLIDAY
-    private final MeUsedDays holidayDays;
-    private final MeUsedDays holidayDaysAllowed;
+    private final UsedDays holidayDays;
+    private final UsedDays holidayDaysAllowed;
 
     // used days for all the other vacation types except HOLIDAY
-    private final MeUsedDays otherDays;
-    private final MeUsedDays otherDaysAllowed;
+    private final UsedDays otherDays;
+    private final UsedDays otherDaysAllowed;
 
-    MeUsedDaysDto(List<Application> applications, int year, WorkDaysCountService calendarService) {
+    YearlyUsedDaysSummary(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
-        this.holidayDays = new MeUsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        this.holidayDaysAllowed = new MeUsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
-        this.otherDays = new MeUsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        this.otherDaysAllowed = new MeUsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
         for (final Application application : applications) {
             if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
@@ -67,19 +67,19 @@ public class MeUsedDaysDto {
         }
     }
 
-    public MeUsedDays getHolidayDays() {
+    public UsedDays getHolidayDays() {
         return holidayDays;
     }
 
-    public MeUsedDays getHolidayDaysAllowed() {
+    public UsedDays getHolidayDaysAllowed() {
         return holidayDaysAllowed;
     }
 
-    public MeUsedDays getOtherDays() {
+    public UsedDays getOtherDays() {
         return otherDays;
     }
 
-    public MeUsedDays getOtherDaysAllowed() {
+    public UsedDays getOtherDaysAllowed() {
         return otherDaysAllowed;
     }
 

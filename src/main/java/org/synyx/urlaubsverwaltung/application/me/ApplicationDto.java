@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.web.me;
+package org.synyx.urlaubsverwaltung.application.me;
 
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -10,12 +10,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
-class MeApplicationDto {
+class ApplicationDto {
 
     private Long id;
     private Long personId;
     private ApplicationStatus status;
-    private MeVacationTypDto vacationType;
+    private ApplicationVacationTypeDto vacationType;
     private LocalDate applicationDate;
 
     private LocalDate startDate;
@@ -56,11 +56,11 @@ class MeApplicationDto {
         this.status = status;
     }
 
-    public MeVacationTypDto getVacationType() {
+    public ApplicationVacationTypeDto getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(MeVacationTypDto vacationType) {
+    public void setVacationType(ApplicationVacationTypeDto vacationType) {
         this.vacationType = vacationType;
     }
 

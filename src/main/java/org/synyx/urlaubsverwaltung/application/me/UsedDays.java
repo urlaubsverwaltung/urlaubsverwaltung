@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.web.me;
+package org.synyx.urlaubsverwaltung.application.me;
 
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 
@@ -11,11 +11,11 @@ import static java.math.BigDecimal.ZERO;
 /**
  * Represents number of days for specific application states.
  */
-public class MeUsedDays {
+public class UsedDays {
 
     private final Map<String, BigDecimal> days;
 
-    MeUsedDays(ApplicationStatus... status) {
+    UsedDays(ApplicationStatus... status) {
 
         days = new HashMap<>();
 
