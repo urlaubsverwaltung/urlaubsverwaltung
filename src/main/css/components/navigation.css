@@ -59,22 +59,28 @@
       --dot-color: var(--color-blue-300);
       --color: var(--color-gray-900);
 
+      position: relative;
       display: flex;
       align-items: center;
       gap: 0.5rem;
 
-      margin-left: 1.5rem;
-      padding: 0.25rem 0;
+      margin-left: 1rem;
+      /* two times dot-size because of loading spinner */
+      padding-left: calc(var(--dot-size) * 2 + 0.25rem);
+      padding-right: 0.25rem;
 
       color: var(--color);
 
+      /* dot (+ ::after as spinner) */
       &::before {
-        anchor-name: --sublink-dot;
-
         --duration: 300ms;
         transition:
           background-color var(--duration),
           border-color var(--duration);
+
+        position: absolute;
+        top: calc(50% - (var(--dot-size) / 2));
+        left: calc(var(--dot-size) / 2);
 
         content: "";
         display: block;
@@ -129,6 +135,29 @@
         --from: var(--color-zinc-800);
         --via: var(--color-zinc-700);
         --to: var(--color-zinc-800);
+      }
+    }
+
+    .navigation-sublink--loading {
+      /* spinner */
+      &::after {
+        --gradient-shift: calc((var(--dot-size) / 2) - 1px);
+
+        content: "";
+        position: absolute;
+        top: calc(50% - var(--dot-size));
+        left: 0;
+
+        display: block;
+        width: calc(var(--dot-size) * 2);
+        aspect-ratio: 1;
+        border-radius: 9999px;
+        background:
+          radial-gradient(farthest-side, var(--dot-color) 94%, #0000) top/var(--gradient-shift) var(--gradient-shift)
+            no-repeat,
+          conic-gradient(#0000 30%, var(--dot-color));
+        -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--gradient-shift)), #000 0);
+        animation: rotate-loading 1s infinite linear;
       }
     }
 
@@ -294,6 +323,12 @@
   }
 }
 
+@keyframes rotate-loading {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
 @variant xs {
   .nav-popover-menu-container {
     width: min-content;
@@ -356,9 +391,9 @@
       }
 
       .navigation-sublink {
-        display: inline-flex;
-        margin-left: 1.25rem;
-        padding: 0;
+        /*display: inline-flex;*/
+        /*margin-left: 1.25rem;*/
+        /*padding: 0;*/
       }
 
       &:popover-open {
