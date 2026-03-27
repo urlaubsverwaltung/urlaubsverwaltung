@@ -35,14 +35,6 @@
               <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
               <span th:text="#{action.applications.absences_overview}"></span>
             </a>
-            <a
-              th:href="@{/web/sicknote/statistics}"
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              th:data-title="#{action.sicknotes.statistics}"
-            >
-              <svg th:replace="~{icon/presentation-chart-bar::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.sicknotes.statistics}"></span>
-            </a>
             <div
               th:replace="~{fragments/popover::popover-menu(
                 summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, placement='bottom-end'
