@@ -149,6 +149,12 @@ public class FrameDataProvider implements DataProviderInterface {
             elements.add(new NavigationItemDto("company-department-link", department, "nav.company.departments", url.equals(department)));
         }
 
+        final boolean canViewApplications = user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY);
+        if (canViewApplications) {
+            final String applications = "/web/application/statistics";
+            elements.add(new NavigationItemDto("company-application-link", applications, "nav.company.applications", url.equals(applications)));
+        }
+
         final boolean canViewSickNotes = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);
         if (canViewSickNotes) {
 
