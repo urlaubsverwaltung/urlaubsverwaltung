@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overview;
+package org.synyx.urlaubsverwaltung.application.me;
 
 import org.junit.jupiter.api.Test;
 

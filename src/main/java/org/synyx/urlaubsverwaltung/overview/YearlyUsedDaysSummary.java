@@ -24,7 +24,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 /**
  * Object to abstract how many days have been used in a year.
  */
-public class UsedDaysOverview {
+public class YearlyUsedDaysSummary {
 
     private final int year;
 
@@ -36,7 +36,7 @@ public class UsedDaysOverview {
     private final UsedDays otherDays;
     private final UsedDays otherDaysAllowed;
 
-    UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
+    YearlyUsedDaysSummary(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
         this.holidayDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
