@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web;
 
+import java.util.List;
 import java.util.Objects;
 
 class NavigationItemDto {
@@ -9,6 +10,7 @@ class NavigationItemDto {
     private final String messageKey;
     private final String dataTestId;
     private final boolean active;
+    private final List<NavigationItemDto> subItems;
 
     NavigationItemDto(String id, String href, String messageKey) {
         this(id, href, messageKey, false, null);
@@ -24,6 +26,20 @@ class NavigationItemDto {
         this.messageKey = messageKey;
         this.active = active;
         this.dataTestId = dataTestId;
+        this.subItems = List.of();
+    }
+
+    private NavigationItemDto(NavigationItemDto item, List<NavigationItemDto> subItems) {
+        this.id = item.id;
+        this.href = item.href;
+        this.messageKey = item.messageKey;
+        this.active = item.active;
+        this.dataTestId = item.dataTestId;
+        this.subItems = subItems;
+    }
+
+    public NavigationItemDto withSubItems(List<NavigationItemDto> subItems) {
+        return new NavigationItemDto(this, subItems);
     }
 
     public String getId() {
@@ -46,6 +62,10 @@ class NavigationItemDto {
         return dataTestId;
     }
 
+    public List<NavigationItemDto> getSubItems() {
+        return subItems;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,12 +79,13 @@ class NavigationItemDto {
             && href.equals(that.href)
             && messageKey.equals(that.messageKey)
             && Objects.equals(active, that.active)
-            && Objects.equals(dataTestId, that.dataTestId);
+            && Objects.equals(dataTestId, that.dataTestId)
+            && Objects.equals(subItems, that.subItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, href, messageKey, active, dataTestId);
+        return Objects.hash(id, href, messageKey, active, dataTestId, subItems);
     }
 
     @Override
@@ -75,6 +96,7 @@ class NavigationItemDto {
             ", messageKey='" + messageKey + '\'' +
             ", active='" + active + '\'' +
             ", dataTestId='" + dataTestId + '\'' +
+            ", subItems='" + subItems + '\'' +
             '}';
     }
 }
