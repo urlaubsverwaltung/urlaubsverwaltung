@@ -3,7 +3,7 @@
   <head
     th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
-    <title th:text="#{applications.statistics.header.title}">Abwesenheitsstatistik</title>
+    <title th:text="#{applications.statistics.header.title}">Abwesenheiten</title>
     <th:block th:fragment="scripts">
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
     </th:block>
@@ -20,7 +20,7 @@
         th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
       >
         <th:block th:ref="absences-statistics-heading-body">
-          <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
+          <h1 th:text="#{applications.statistics}">Abwesenheiten</h1>
         </th:block>
         <th:block th:ref="absences-statistics-heading-actions">
           <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
