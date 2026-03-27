@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title})}">
+    <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
+  </head>
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+    <main th:fragment="main" class="content-container" data-page="overview">
+      <div class="mb-12">
+        <div th:replace="~{me/absence/section-absences::section}"></div>
+      </div>
+    </main>
+  </body>
+</html>
