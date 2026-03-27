@@ -1,110 +1,100 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <title></title>
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_applications.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="person_applications.js"></script>
+    </th:block>
   </head>
-  <body>
-    <th:block th:fragment="section">
-      <div
-        th:replace="~{fragments/section-heading::section-heading(~{::absences-heading-body}, ~{::absences-heading-actions})}"
-      >
-        <th:block th:ref="absences-heading-body">
-          <h2 id="vacation" th:text="#{applications.title}">Abwesenheiten</h2>
-        </th:block>
-        <th:block th:ref="absences-heading-actions">
-          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
-            <a
-              th:if="${person.id == signedInUser.id}"
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              href="#"
-              th:href="@{/web/application/new}"
-            >
-              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.apply.vacation}"></span>
-            </a>
-            <a
-              th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-              href="#"
-              th:href="@{/web/application/new (personId=${person.id})}"
-            >
-              <svg th:replace="~{icon/plus-circle::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.apply.vacation}"></span>
-            </a>
-          </div>
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+    <main th:fragment="main" class="content-container" data-page="applications">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
+        <th:block th:ref="applications-heading-body">
+          <h2 id="applications" th:text="#{applications.title}">Abwesenheiten</h2>
+          <div
+            th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/persons/${person.id}/applications?year=|, selectedYear=${selectedYear})}"
+          ></div>
         </th:block>
       </div>
 
-      <div class="mb-4 @5xl/main:mb-6">
-        <div class="flex flex-wrap space-y-8 @2xl/main:space-y-0">
-          <div class="w-full @2xl/main:w-1/2">
-            <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
-              <th:block th:ref="holidays-sum-box-icon">
-                <div
-                  th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
-                >
-                  <th:block th:ref="holidays-sum-box-icon-rounded">
-                    <svg th:replace="~{icon/sun::svg(className='w-8 h-8')}" />
-                  </th:block>
-                </div>
-              </th:block>
-              <th:block th:ref="holidays-sum-box-body">
-                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.holidayLeave.1}">
-                  Es wurden beantragt
-                </span>
-                <span
-                  class="my-1 text-lg font-medium"
-                  th:text="#{overview.vacations.holidayLeave.2(${usedDaysOverview.holidayDays.sum})}"
-                >
-                  18,5 Tage Erholungsurlaub
-                </span>
-                <span class="text-sm text-black/75 dark:text-zinc-300">
-                  <span class="flex items-center">
-                    <span class="text-emerald-500 flex items-center">
-                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
-                    </span>
-                    <span
-                      th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
-                    ></span>
-                  </span>
-                </span>
-              </th:block>
-            </div>
+      <div class="mb-16">
+        <div class="@2xl/main:flex">
+          <div class="@2xl/main:flex-1 @5xl/main:flex-none @5xl/main:w-1/3">
+            <div th:replace="~{person/box::person-box(person=${person}, departments=${departmentsOfPerson})}"></div>
           </div>
-          <div class="w-full @2xl/main:w-1/2">
-            <div
-              th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
-            >
-              <th:block th:ref="other-days-sum-box-icon">
-                <div
-                  th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
-                >
-                  <th:block th:ref="other-days-sum-box-icon-rounded">
-                    <svg th:replace="~{icon/flag::svg(className='w-8 h-8')}" />
-                  </th:block>
-                </div>
-              </th:block>
-              <th:block th:ref="other-days-sum-box-body">
-                <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.otherLeave.1}">
-                  Es wurden beantragt
-                </span>
-                <span
-                  class="my-1 text-lg font-medium"
-                  th:text="#{overview.vacations.otherLeave.2(${usedDaysOverview.otherDays.sum})}"
-                >
-                  2,5 Tage andere Abwesenheiten
-                </span>
-                <span class="text-sm text-black/75 dark:text-zinc-300">
-                  <span class="flex items-center">
-                    <span class="text-emerald-500 flex items-center">
-                      <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
-                    </span>
-                    <span
-                      th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
-                    ></span>
+          <div class="@2xl/main:flex-1 flex flex-col @5xl/main:flex-row gap-y-8">
+            <div class="flex-1">
+              <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
+                <th:block th:ref="holidays-sum-box-icon">
+                  <div
+                    th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
+                  >
+                    <th:block th:ref="holidays-sum-box-icon-rounded">
+                      <svg th:replace="~{icon/sun::svg(className='w-8 h-8')}" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="holidays-sum-box-body">
+                  <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.holidayLeave.1}">
+                    Es wurden beantragt
                   </span>
-                </span>
-              </th:block>
+                  <span
+                    class="my-1 text-lg font-medium"
+                    th:text="#{overview.vacations.holidayLeave.2(${usedDaysOverview.holidayDays.sum})}"
+                  >
+                    18,5 Tage Erholungsurlaub
+                  </span>
+                  <span class="text-sm text-black/75 dark:text-zinc-300">
+                    <span class="flex items-center">
+                      <span class="text-emerald-500 flex items-center">
+                        <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                      </span>
+                      <span
+                        th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
+                      ></span>
+                    </span>
+                  </span>
+                </th:block>
+              </div>
+            </div>
+            <div class="flex-1">
+              <div
+                th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
+              >
+                <th:block th:ref="other-days-sum-box-icon">
+                  <div
+                    th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='bg-amber-300 text-white dark:bg-amber-400 dark:text-zinc-900')}"
+                  >
+                    <th:block th:ref="other-days-sum-box-icon-rounded">
+                      <svg th:replace="~{icon/flag::svg(className='w-8 h-8')}" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="other-days-sum-box-body">
+                  <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.vacations.otherLeave.1}">
+                    Es wurden beantragt
+                  </span>
+                  <span
+                    class="my-1 text-lg font-medium"
+                    th:text="#{overview.vacations.otherLeave.2(${usedDaysOverview.otherDays.sum})}"
+                  >
+                    2,5 Tage andere Abwesenheiten
+                  </span>
+                  <span class="text-sm text-black/75 dark:text-zinc-300">
+                    <span class="flex items-center">
+                      <span class="text-emerald-500 flex items-center">
+                        <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                      </span>
+                      <span
+                        th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
+                      ></span>
+                    </span>
+                  </span>
+                </th:block>
+              </div>
             </div>
           </div>
         </div>
@@ -265,6 +255,6 @@
           </tbody>
         </table>
       </div>
-    </th:block>
+    </main>
   </body>
 </html>

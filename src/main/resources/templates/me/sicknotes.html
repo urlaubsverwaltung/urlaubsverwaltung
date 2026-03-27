@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|theme-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_sicknotes.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="person_sicknotes.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+    <main th:fragment="main" class="content-container" data-page="sicknotes">
+      <div class="mb-12">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::sicknotes-heading-body}, ~{})}">
+          <th:block th:ref="sicknotes-heading-body">
+            <h2 id="sicknotes" th:text="#{sicknotes.title}">Krankmeldungen</h2>
+            <div
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/persons/${person.id}/sicknotes?year=|, selectedYear=${selectedYear})}"
+            ></div>
+          </th:block>
+        </div>
+
+        <div class="mb-16">
+          <div class="@2xl/main:flex">
+            <div class="@2xl/main:flex-1 @5xl/main:flex-none @5xl/main:w-1/3">
+              <div th:replace="~{person/box::person-box(person=${person}, departments=${departmentsOfPerson})}"></div>
+            </div>
+            <div class="@2xl/main:flex-1 flex flex-col @5xl/main:flex-row gap-y-8">
+              <div class="flex-1">
+                <div th:replace="~{fragments/box::box-with-icon(~{::sick-days-box-icon}, ~{::sick-days-box-body})}">
+                  <th:block th:ref="sick-days-box-icon">
+                    <div
+                      th:replace="~{fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='bg-red-600 text-white dark:bg-red-600 dark:text-zinc-900')}"
+                    >
+                      <th:block th:ref="sick-days-box-icon-rounded">
+                        <svg th:replace="~{icon/medkit::svg(className='w-8 h-8')}" />
+                      </th:block>
+                    </div>
+                  </th:block>
+                  <th:block th:ref="sick-days-box-body">
+                    <span class="text-sm text-black/75 dark:text-zinc-300" th:text="#{overview.sicknotes.sickdays.1}">
+                      Es bestehen
+                    </span>
+                    <span
+                      class="my-1 text-lg font-medium"
+                      th:text="#{overview.sicknotes.sickdays.2(${sickDaysOverview.sickDays.days['TOTAL']})}"
+                    >
+                      5,5 Krankheitstage
+                    </span>
+                    <span class="text-sm text-black/75 dark:text-zinc-300">
+                      <span class="flex items-center">
+                        <span class="text-emerald-500 flex items-center">
+                          <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                        </span>
+                        <span
+                          th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.sickDays.days['WITH_AUB']})}"
+                        ></span>
+                      </span>
+                    </span>
+                  </th:block>
+                </div>
+              </div>
+              <div class="flex-1">
+                <div
+                  th:replace="~{fragments/box::box-with-icon(~{::child-sick-days-box-icon}, ~{::child-sick-days-box-body})}"
+                >
+                  <th:block th:ref="child-sick-days-box-icon">
+                    <div
+                      th:replace="~{fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='bg-red-600 text-white dark:bg-red-600 dark:text-zinc-900')}"
+                    >
+                      <th:block th:ref="child-sick-days-box-icon-rounded">
+                        <svg th:replace="~{icon/child::svg(className='w-8 h-8')}"></svg>
+                      </th:block>
+                    </div>
+                  </th:block>
+                  <th:block th:ref="child-sick-days-box-body">
+                    <span
+                      class="text-sm text-black/75 dark:text-zinc-300"
+                      th:text="#{overview.sicknotes.sickdays.child.1}"
+                    >
+                      Es bestehen
+                    </span>
+                    <span
+                      class="my-1 text-lg font-medium"
+                      th:text="#{overview.sicknotes.sickdays.child.2(${sickDaysOverview.childSickDays.days['TOTAL']})}"
+                    >
+                      3.0 Kind-Krankheitstage
+                    </span>
+                    <span class="text-sm text-black/75 dark:text-zinc-300">
+                      <span class="flex items-center">
+                        <span class="text-emerald-500 flex items-center">
+                          <svg th:replace="~{icon/check::svg(className='w-5 h-5')}"></svg>
+                        </span>
+                        <span
+                          th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.childSickDays.days['WITH_AUB']})}"
+                        ></span>
+                      </span>
+                    </span>
+                  </th:block>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table class="list-table selectable-table text-sm">
+          <tbody>
+            <tr
+              th:each="sickNote,loopStatus : ${sickNotes}"
+              th:class="${(sickNote.status.name == 'ACTIVE' || sickNote.status.name == 'SUBMITTED') ? 'active' : 'inactive'}"
+              th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
+              th:with="sickNoteStatusNameI18n=${#messages.msg('sicknote.status.' + sickNote.status.name)}"
+            >
+              <td class="hidden print:table-cell">
+                <th:block th:text="${sickNoteStatusNameI18n}"></th:block>
+              </td>
+              <td class="py-6 absence-type_color-box-parent">
+                <div
+                  class="absence-type_color-box"
+                  th:classappend="|
+                  ${sickNote.status.name == 'SUBMITTED' ? 'absence-type_color-box-waiting' : ''}
+                  ${sickNote.status.name == 'ACTIVE' ? 'absence-type_color-box-allowed' : ''}
+                  ${sickNote.status.name == 'CONVERTED_TO_VACATION' ? 'absence-type_color-box-cancelled' : ''}
+                  ${sickNote.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  |"
+                  th:styleappend="'--absence-bar-color: var(--sick-note-color);'"
+                  th:data-title="${sickNoteStatusNameI18n}"
+                >
+                  &nbsp;
+                </div>
+              </td>
+              <td class="is-centered print:hidden state ${sickNote.status}">
+                <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
+                  <svg th:replace="~{icon/child::svg(className='w-6 h-6')}"></svg>
+                </th:block>
+                <th:block th:if="${sickNote.sickNoteType.category.name != 'SICK_NOTE_CHILD'}">
+                  <svg th:replace="~{icon/medkit::svg(className='w-6 h-6')}"></svg>
+                </th:block>
+              </td>
+              <td class="py-6">
+                <a th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}" class="hover:no-underline group">
+                  <span
+                    class="block mb-1 text-lg group-hover:underline group-focus:underline"
+                    th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
+                  ></span>
+                  <span class="flex flex-col lg:flex-row text-[#444444] dark:text-zinc-200">
+                    <th:block th:text="#{absence.period.for}" />
+                    <th:block
+                      th:replace="~{fragments/date-range::date-range-all(
+                    from=${sickNote.startDate},
+                    to=${sickNote.endDate},
+                    dayLength=${sickNote.dayLength}
+                  )}"
+                    ></th:block>
+                  </span>
+                  <span th:if="${sickNote.aubPresent}" class="text-sm text-black/75 dark:text-zinc-300">
+                    <span class="flex items-center">
+                      <span class="text-emerald-500 flex items-center">
+                        <svg th:replace="~{icon/check::svg(className='w-4 h-4')}"></svg>
+                      </span>
+                      &nbsp;
+                      <span th:text="#{overview.sicknotes.sickdays.aub(${sickNote.workDaysWithAub})}"></span>
+                    </span>
+                  </span>
+                </a>
+              </td>
+              <td class="is-centered">
+                <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
+              </td>
+              <td class="print:hidden hidden md:table-cell">
+                <div class="flex items-center justify-center">
+                  <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
+                  <span>
+                    <th:block th:text="#{sicknote.progress.lastEdited}"></th:block>
+                    <th:block th:replace="~{fragments/date::date(${sickNote.lastEdited})}"></th:block>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,17 +1,17 @@
-package org.synyx.urlaubsverwaltung.overview;
+package org.synyx.urlaubsverwaltung.application.me;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 import java.util.Objects;
 
-public class OverviewVacationTypDto {
+public class ApplicationVacationTypeDto {
 
     private final String label;
     private final VacationCategory category;
     private final VacationTypeColor color;
 
-    OverviewVacationTypDto(String label, VacationCategory category, VacationTypeColor color) {
+    ApplicationVacationTypeDto(String label, VacationCategory category, VacationTypeColor color) {
         this.label = label;
         this.category = category;
         this.color = color;
@@ -37,7 +37,7 @@ public class OverviewVacationTypDto {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        OverviewVacationTypDto that = (OverviewVacationTypDto) o;
+        ApplicationVacationTypeDto that = (ApplicationVacationTypeDto) o;
         return Objects.equals(label, that.label)
             && category == that.category
             && color == that.color;
@@ -50,7 +50,7 @@ public class OverviewVacationTypDto {
 
     @Override
     public String toString() {
-        return "OverviewVacationTypDto{" +
+        return "ApplicationVacationTypeDto{" +
             "label='" + label + '\'' +
             ", category=" + category +
             ", color=" + color +

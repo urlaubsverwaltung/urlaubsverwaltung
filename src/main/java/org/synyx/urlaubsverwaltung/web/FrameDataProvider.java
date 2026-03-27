@@ -18,12 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.synyx.urlaubsverwaltung.application.me.ApplicationsViewController.MY_APPLICATIONS_ANONYMOUS_PATH;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
+import static org.synyx.urlaubsverwaltung.sicknote.me.SickNotesViewController.MY_SICKNOTES_ANONYMOUS_PATH;
 
 /**
  * Interceptor to add menu specific information to all requests
@@ -118,16 +120,18 @@ public class FrameDataProvider implements DataProviderInterface {
         final String url = request.getRequestURI();
 
         final String application = "/web/application";
-        final String absence = "/web/absences";
+        final String absenceOverview = "/web/absences";
+        final String myApplications = MY_APPLICATIONS_ANONYMOUS_PATH;
+        final String mySicknotes = MY_SICKNOTES_ANONYMOUS_PATH;
         final String overtime = "/web/overtime";
 
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
-        elements.add(new NavigationItemDto("basic-absence-overview-link", absence, "nav.basic.absence-overview", url.equals(absence)));
-        elements.add(new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", false));
-        elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
+        elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", url.equals(absenceOverview)));
+        elements.add(new NavigationItemDto("basic-absence-link", myApplications, "nav.basic.my-absences", url.equals(myApplications) || url.matches("/web/persons/\\d+/applications$")));
+        elements.add(new NavigationItemDto("basic-sicknote-link", mySicknotes, "nav.basic.my-sicknotes", url.equals(mySicknotes) || url.matches("/web/persons/\\d+/sicknotes$")));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", false));
+            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", url.equals(overtime)));
         }
 
         return elements;
