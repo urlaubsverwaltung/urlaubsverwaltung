@@ -6,16 +6,14 @@
       <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_sicknotes.js')}" />
     </th:block>
     <th:block th:ref="scriptsDefer">
-      <script defer type="module" asset:src="person_applications.js"></script>
+      <script defer type="module" asset:src="person_sicknotes.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="content-container" data-page="overview">
+    <main th:fragment="main" class="content-container" data-page="sicknotes">
       <div class="mb-12">
-        <div
-          th:replace="~{fragments/section-heading::section-heading(~{::absences-heading-body}, ~{::absences-heading-actions})}"
-        >
-          <th:block th:ref="absences-heading-body">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::sicknotes-heading-body}, ~{})}">
+          <th:block th:ref="sicknotes-heading-body">
             <h2 id="sicknotes" th:text="#{sicknotes.title}">Krankmeldungen</h2>
             <div
               th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/persons/${person.id}/sicknotes?year=|, selectedYear=${selectedYear})}"
