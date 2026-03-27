@@ -548,7 +548,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicOvertimeLink(boolean active) {
-        return new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes", active);
+        return new NavigationItemDto("basic-overtime-link", "/web/overtime", "nav.basic.my-overtimes", active);
     }
 
     private static NavigationItemDto companyPersonLink() {
