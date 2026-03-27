@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 @Controller
 @RequestMapping("/")
-public class MySickNotesViewController implements HasLaunchpad {
+public class SickNotesViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
     public static final String MY_SICKNOTES_ANONYMOUS_PATH = "/web/persons/me/sicknotes";
@@ -47,11 +47,11 @@ public class MySickNotesViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public MySickNotesViewController(PersonService personService,
-                                     WorkDaysCountService workDaysCountService,
-                                     SickNoteService sickNoteService,
-                                     DepartmentService departmentService,
-                                     Clock clock) {
+    public SickNotesViewController(PersonService personService,
+                                   WorkDaysCountService workDaysCountService,
+                                   SickNoteService sickNoteService,
+                                   DepartmentService departmentService,
+                                   Clock clock) {
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteService = sickNoteService;

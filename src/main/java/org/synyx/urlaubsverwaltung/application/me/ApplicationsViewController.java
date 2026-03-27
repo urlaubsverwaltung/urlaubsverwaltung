@@ -31,7 +31,7 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Controller
 @RequestMapping("/")
-public class MyApplicationsViewController implements HasLaunchpad {
+public class ApplicationsViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
     public static final String MY_APPLICATIONS_ANONYMOUS_PATH = "/web/persons/me/applications";
@@ -44,7 +44,7 @@ public class MyApplicationsViewController implements HasLaunchpad {
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final Clock clock;
 
-    public MyApplicationsViewController(PersonService personService, DepartmentService departmentService, ApplicationService applicationService, WorkDaysCountService workDaysCountService, VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
+    public ApplicationsViewController(PersonService personService, DepartmentService departmentService, ApplicationService applicationService, WorkDaysCountService workDaysCountService, VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
