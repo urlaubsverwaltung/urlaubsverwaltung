@@ -119,6 +119,7 @@ public class FrameDataProvider implements DataProviderInterface {
 
         final String application = "/web/application";
         final String absence = "/web/absences";
+        final String overtime = "/web/overtime";
 
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
         elements.add(new NavigationItemDto("basic-absence-overview-link", absence, "nav.basic.absence-overview", url.equals(absence)));
@@ -126,7 +127,7 @@ public class FrameDataProvider implements DataProviderInterface {
         elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {
-            elements.add(new NavigationItemDto("basic-overtime-link", "#", "nav.basic.my-overtimes", false));
+            elements.add(new NavigationItemDto("basic-overtime-link", overtime, "nav.basic.my-overtimes", url.equals(overtime)));
         }
 
         return elements;
