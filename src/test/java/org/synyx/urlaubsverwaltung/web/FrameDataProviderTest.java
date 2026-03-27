@@ -104,7 +104,8 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyDepartmentLink(),
-                    companySickNoteLink()
+                    companySickNoteLink(),
+                    companyApplicationsLink()
                 );
                 assertThat(dto.settings()).isEmpty();
             });
@@ -172,6 +173,7 @@ class FrameDataProviderTest {
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
                     companyDepartmentLink(),
+                    companyApplicationsLink(),
                     companySickNoteLink(),
                     companyOvertimeLink()
                 );
@@ -217,6 +219,7 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
+                    companyApplicationsLink(),
                     companySickNoteLink()
                 );
                 assertThat(dto.settings()).isEmpty();
@@ -262,6 +265,7 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
+                    companyApplicationsLink(),
                     companySickNoteLink()
                 );
                 assertThat(dto.settings()).isEmpty();
@@ -306,6 +310,7 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
+                    companyApplicationsLink(),
                     companySickNoteLink()
                 );
                 assertThat(dto.settings()).isEmpty();
@@ -351,6 +356,7 @@ class FrameDataProviderTest {
                 );
                 assertThat(dto.company()).containsExactly(
                     companyPersonLink(),
+                    companyApplicationsLink(),
                     companySickNoteLink()
                 );
                 assertThat(dto.settings()).isEmpty();
@@ -551,6 +557,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto companyPersonLink(boolean active) {
         return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", active, "navigation-persons-link");
+    }
+
+    private static NavigationItemDto companyApplicationsLink() {
+        return companyApplicationsLink(false);
+    }
+
+    private static NavigationItemDto companyApplicationsLink(boolean active) {
+        return new NavigationItemDto("nav.company.applications", "/web/application/statistics", "nav.company.applications", active, "navigation-persons-link");
     }
 
     private static NavigationItemDto companyDepartmentLink() {
