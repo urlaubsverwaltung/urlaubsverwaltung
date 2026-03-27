@@ -11,8 +11,8 @@
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="content-container" data-page="applications">
-      <div th:replace="~{fragments/section-heading::section-heading(~{::absences-heading-body}, ~{})}">
-        <th:block th:ref="absences-heading-body">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
+        <th:block th:ref="applications-heading-body">
           <h2 id="applications" th:text="#{applications.title}">Abwesenheiten</h2>
           <div
             th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/persons/${person.id}/applications?year=|, selectedYear=${selectedYear})}"
