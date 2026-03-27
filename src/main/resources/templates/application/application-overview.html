@@ -28,20 +28,8 @@
       </th:block>
 
       <div
-        th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
+        th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{})}"
       >
-        <th:block th:ref="user-applications-heading-actions">
-          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
-            <a
-              href="#"
-              th:href="@{/web/absences}"
-              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
-            >
-              <svg th:replace="~{icon/calendar::svg(className='w-5 h-5')}"></svg>&nbsp;
-              <span th:text="#{action.applications.absences_overview}"></span>
-            </a>
-          </div>
-        </th:block>
         <th:block th:ref="user-applications-heading-body">
           <ul class="mb-2 flex flex-col @lg/main:flex-row gap-2 @lg/main:gap-8 @lg/main:mb-0" is="uv-nav-tabs">
             <li
