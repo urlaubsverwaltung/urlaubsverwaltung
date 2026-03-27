@@ -116,7 +116,7 @@ class OverviewViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService,
+            workDaysCountService, applicationService, sickNoteService, overtimeService, settingsService,
             departmentService, vacationTypeViewModelService, clock);
     }
 
