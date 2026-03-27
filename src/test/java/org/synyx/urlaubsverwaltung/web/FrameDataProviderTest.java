@@ -566,7 +566,13 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto companySickNoteLink(boolean active) {
-        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", active, "navigation-sick-notes-link");
+        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", active, "navigation-sick-notes-link")
+            .withSubItems(
+                List.of(
+                    new NavigationItemDto("company-sicknote-overview-link", "/web/sickdays", "nav.company.sicknotes.overview", active),
+                    new NavigationItemDto("company-sicknote-statistics-link", "/web/sicknote/statistics", "nav.company.sicknotes.statistics", false, "navigation-sick-notes-statistics-link")
+                )
+            );
     }
 
     private static NavigationItemDto companyOvertimeLink() {

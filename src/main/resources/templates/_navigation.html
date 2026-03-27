@@ -67,6 +67,19 @@
                 >
                   <th:block th:text="${#messages.msg(link.messageKey)}"></th:block>
                 </a>
+                <ul th:if="${not #lists.isEmpty(link.subItems)}" class="subnav-group">
+                  <li th:each="subLink : ${link.subItems}">
+                    <a
+                      class="navigation-sublink"
+                      th:classappend="${subLink.active ? 'navigation-sublink--active' : ''}"
+                      th:href="@{__${subLink.href}__}"
+                      th:id="${subLink.id}"
+                      th:data-test-id="${subLink.dataTestId}"
+                    >
+                      <th:block th:text="${#messages.msg(subLink.messageKey)}"></th:block>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>
