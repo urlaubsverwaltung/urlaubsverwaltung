@@ -35,6 +35,10 @@
         <div th:replace="~{person/overview/section-vacation-days::section}"></div>
       </div>
 
+      <div class="mb-4 @5xl/main:mb-12">
+        <div th:replace="~{person/overview/section-calendar::section}"></div>
+      </div>
+
       <div class="mb-12">
         <div th:replace="~{person/overview/section-application::section}"></div>
       </div>
@@ -45,10 +49,6 @@
 
       <div th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}" class="mb-12">
         <div th:replace="~{person/overview/section-sick-note::section}"></div>
-      </div>
-
-      <div class="mb-4 @5xl/main:mb-12">
-        <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
     </main>
   </body>
