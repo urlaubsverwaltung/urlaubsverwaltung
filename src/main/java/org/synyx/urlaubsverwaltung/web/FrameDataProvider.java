@@ -118,12 +118,13 @@ public class FrameDataProvider implements DataProviderInterface {
         final String url = request.getRequestURI();
 
         final String application = "/web/application";
-        final String absence = "/web/absences";
+        final String absenceOverview = "/web/absences";
+        final String myAbsences = "/web/my-absences";
         final String overtime = "/web/overtime";
 
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
-        elements.add(new NavigationItemDto("basic-absence-overview-link", absence, "nav.basic.absence-overview", url.equals(absence)));
-        elements.add(new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", false));
+        elements.add(new NavigationItemDto("basic-absence-overview-link", absenceOverview, "nav.basic.absence-overview", url.equals(absenceOverview)));
+        elements.add(new NavigationItemDto("basic-absence-link", myAbsences, "nav.basic.my-absences", url.equals(myAbsences)));
         elements.add(new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", false));
 
         if (overtimeEnabled(settings.getOvertimeSettings())) {

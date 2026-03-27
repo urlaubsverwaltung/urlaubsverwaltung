@@ -39,17 +39,13 @@
         <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>
 
+      <div th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}" class="mb-12">
+        <div th:replace="~{person/overview/section-sick-note::section}"></div>
+      </div>
+
       <div class="mb-4 @5xl/main:mb-12">
         <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
-
-      <div class="mb-12">
-        <div th:replace="~{person/overview/section-absences::section}"></div>
-      </div>
-
-      <th:block th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}">
-        <div th:replace="~{person/overview/section-sick-note::section}"></div>
-      </th:block>
     </main>
   </body>
 </html>
