@@ -9,8 +9,8 @@
       <script defer type="module" asset:src="calendar_sharing.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
       <header>
         <h1 class="mb-8 text-2xl text-medium">
           <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.title}"></th:block>
@@ -34,120 +34,122 @@
         </aside>
       </div>
 
-      <form
-        method="post"
-        th:action="@{/web/calendars/share/persons/{personId}/me#calendar-private (personId=${privateCalendarShare.personId})}"
-        th:object="${privateCalendarShare}"
-        class="mb-8"
-      >
-        <div class="mb-4">
-          <div
-            th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{})}"
-          >
-            <th:block th:ref="calendarsharing-private-heading-body">
-              <h2 id="calendar-private" class="text-xl">
-                <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.title}"></th:block>
+      <turbo-frame id="frame-calendar-share-me">
+        <form
+          method="post"
+          th:action="@{/web/calendars/share/persons/{personId}/me (personId=${privateCalendarShare.personId})}"
+          th:object="${privateCalendarShare}"
+          class="mb-8"
+        >
+          <div class="mb-4">
+            <div
+              th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-private-heading-body}, ~{})}"
+            >
+              <th:block th:ref="calendarsharing-private-heading-body">
+                <h2 class="text-xl">
+                  <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.title}"></th:block>
+                  <th:block
+                    th:if="${not isSignedInUser}"
+                    th:text="#{calendar.share.me.title.other(${personName})}"
+                  ></th:block>
+                </h2>
+              </th:block>
+            </div>
+
+            <div th:if="${#strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-3xl">
+              <p class="mb-8 text-base">
+                <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.paragraph.status}"></th:block>
                 <th:block
                   th:if="${not isSignedInUser}"
-                  th:text="#{calendar.share.me.title.other(${personName})}"
+                  th:text="#{calendar.share.me.paragraph.status.other(${personName})}"
                 ></th:block>
-              </h2>
-            </th:block>
-          </div>
+              </p>
+              <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+              <div class="mb-4">
+                <div th:each="calendarPeriod, loop : ${calendarPeriods}">
+                  <label th:for="${'personal-calendar-period-' + loop.index}">
+                    <input
+                      th:id="${'personal-calendar-period-' + loop.index}"
+                      type="radio"
+                      name="calendarPeriod"
+                      th:value="${calendarPeriod}"
+                      th:checked="${privateCalendarShare.calendarPeriod == calendarPeriod}"
+                    />
+                    <span th:text="${#messages.msg('calendar.share.me.range.' + calendarPeriod)}"></span>
+                  </label>
+                </div>
+              </div>
+              <button type="submit" class="button-main">
+                <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.form.submit.text}"></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.me.form.submit.text.other(${personName})}"
+                ></th:block>
+              </button>
+            </div>
 
-          <div th:if="${#strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-3xl">
-            <p class="mb-8 text-base">
-              <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.paragraph.status}"></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.me.paragraph.status.other(${personName})}"
-              ></th:block>
-            </p>
-            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
-            <div class="mb-4">
-              <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label th:for="${'personal-calendar-period-' + loop.index}">
-                  <input
-                    th:id="${'personal-calendar-period-' + loop.index}"
-                    type="radio"
-                    name="calendarPeriod"
-                    th:value="${calendarPeriod}"
-                    th:checked="${privateCalendarShare.calendarPeriod == calendarPeriod}"
-                  />
-                  <span th:text="${#messages.msg('calendar.share.me.range.' + calendarPeriod)}"></span>
-                </label>
+            <div th:if="${not #strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-4xl">
+              <p th:if="${privateCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
+                <th:block
+                  th:if="${isSignedInUser}"
+                  th:text="#{calendar.share.me.isshared.paragraph.status.all}"
+                ></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.me.isshared.paragraph.status.all.other(${personName})}"
+                ></th:block>
+              </p>
+              <p
+                th:unless="${privateCalendarShare.calendarPeriod == 'ALL'}"
+                class="mb-8 text-base"
+                th:with="privateCalendarPeriodText=${#messages.msg('calendar.share.me.range.' + privateCalendarShare.calendarPeriod)}"
+              >
+                <th:block
+                  th:if="${isSignedInUser}"
+                  th:text="#{calendar.share.me.isshared.paragraph.status(${privateCalendarPeriodText})}"
+                ></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.me.isshared.paragraph.status.other(${personName}, ${privateCalendarPeriodText})}"
+                ></th:block>
+              </p>
+              <p th:text="#{calendar.share.me.isshared.paragraph.info}" class="mb-2 text-base"></p>
+              <div
+                is="uv-copy-to-clipboard-input"
+                class="mb-8"
+                th:data-message-button-title="#{calendar.share.me.button.clipboard.tooltip}"
+              >
+                <input
+                  type="text"
+                  th:value="${privateCalendarShare.calendarUrl}"
+                  class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
+                  readonly
+                />
+              </div>
+              <div class="flex flex-col gap-2 @2xl/main:flex-row">
+                <button
+                  th:text="#{calendar.share.me.reset.form.submit.text}"
+                  type="submit"
+                  class="button mb-4 @2xl/main:mb-0"
+                ></button>
+                <button
+                  th:text="#{calendar.share.me.unlink.form.submit.text}"
+                  type="submit"
+                  name="unlink"
+                  class="button @2xl/main:mb-0"
+                ></button>
               </div>
             </div>
-            <button type="submit" class="button-main">
-              <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.form.submit.text}"></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.me.form.submit.text.other(${personName})}"
-              ></th:block>
-            </button>
           </div>
-
-          <div th:if="${not #strings.isEmpty(privateCalendarShare.calendarUrl)}" class="max-w-4xl">
-            <p th:if="${privateCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
-              <th:block
-                th:if="${isSignedInUser}"
-                th:text="#{calendar.share.me.isshared.paragraph.status.all}"
-              ></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.me.isshared.paragraph.status.all.other(${personName})}"
-              ></th:block>
-            </p>
-            <p
-              th:unless="${privateCalendarShare.calendarPeriod == 'ALL'}"
-              class="mb-8 text-base"
-              th:with="privateCalendarPeriodText=${#messages.msg('calendar.share.me.range.' + privateCalendarShare.calendarPeriod)}"
-            >
-              <th:block
-                th:if="${isSignedInUser}"
-                th:text="#{calendar.share.me.isshared.paragraph.status(${privateCalendarPeriodText})}"
-              ></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.me.isshared.paragraph.status.other(${personName}, ${privateCalendarPeriodText})}"
-              ></th:block>
-            </p>
-            <p th:text="#{calendar.share.me.isshared.paragraph.info}" class="mb-2 text-base"></p>
-            <div
-              is="uv-copy-to-clipboard-input"
-              class="mb-8"
-              th:data-message-button-title="#{calendar.share.me.button.clipboard.tooltip}"
-            >
-              <input
-                type="text"
-                th:value="${privateCalendarShare.calendarUrl}"
-                class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
-                readonly
-              />
-            </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <button
-                th:text="#{calendar.share.me.reset.form.submit.text}"
-                type="submit"
-                class="button mb-4 sm:mb-0"
-              ></button>
-              <button
-                th:text="#{calendar.share.me.unlink.form.submit.text}"
-                type="submit"
-                name="unlink"
-                class="button sm:mb-0"
-              ></button>
-            </div>
-          </div>
-        </div>
-      </form>
+        </form>
+      </turbo-frame>
 
       <div th:if="${departmentCalendars.size() > 0}" class="mb-8">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-department-heading-body}, ~{})}"
         >
           <th:block th:ref="calendarsharing-department-heading-body">
-            <h2 th:text="#{calendar.share.department.title}" id="calendar-department" class="text-xl">Abteilung</h2>
+            <h2 th:text="#{calendar.share.department.title}" class="text-xl">Abteilung</h2>
           </th:block>
         </div>
         <ul th:if="${departmentCalendars.size() > 1}" role="tablist">
@@ -167,232 +169,236 @@
           th:classappend="${departmentCal.active ? 'tab-panel--active' : ''}"
           th:id="|departmentcal-${departmentCal.departmentId}|"
         >
-          <form
-            method="post"
-            th:action="@{/web/calendars/share/persons/{personId}/departments/{departmentId}#calendar-department (personId=${privateCalendarShare.personId}, departmentId=${departmentCal.departmentId})}"
-            th:id="${'department-calendar-form-' + loop.index}"
-          >
-            <div th:if="${#strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-3xl">
-              <p class="mb-8 text-base">
-                <th:block
-                  th:if="${isSignedInUser}"
-                  th:text="#{calendar.share.department.paragraph.status(${departmentCal.departmentName})}"
-                ></th:block>
-                <th:block
-                  th:if="${not isSignedInUser}"
-                  th:text="#{calendar.share.department.paragraph.status.other(${departmentCal.departmentName}, ${personName})}"
-                ></th:block>
-              </p>
-              <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
-              <div class="mb-4">
-                <div th:each="calendarPeriod, periodLoop : ${calendarPeriods}">
-                  <label th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|">
-                    <input
-                      th:id="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
-                      type="radio"
-                      name="calendarPeriod"
-                      th:value="${calendarPeriod}"
-                      th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
-                    />
-                    <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}">Jahres</span>
-                  </label>
+          <turbo-frame th:id="|frame-calendar-share-department-${departmentCal.departmentId}|">
+            <form
+              method="post"
+              th:action="@{/web/calendars/share/persons/{personId}/departments/{departmentId} (personId=${privateCalendarShare.personId}, departmentId=${departmentCal.departmentId})}"
+              th:id="${'department-calendar-form-' + loop.index}"
+            >
+              <div th:if="${#strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-3xl">
+                <p class="mb-8 text-base">
+                  <th:block
+                    th:if="${isSignedInUser}"
+                    th:text="#{calendar.share.department.paragraph.status(${departmentCal.departmentName})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${not isSignedInUser}"
+                    th:text="#{calendar.share.department.paragraph.status.other(${departmentCal.departmentName}, ${personName})}"
+                  ></th:block>
+                </p>
+                <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+                <div class="mb-4">
+                  <div th:each="calendarPeriod, periodLoop : ${calendarPeriods}">
+                    <label th:for="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|">
+                      <input
+                        th:id="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
+                        type="radio"
+                        name="calendarPeriod"
+                        th:value="${calendarPeriod}"
+                        th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
+                      />
+                      <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}">Jahres</span>
+                    </label>
+                  </div>
+                </div>
+                <button type="submit" class="button-main">
+                  <th:block
+                    th:if="${isSignedInUser}"
+                    th:text="#{calendar.share.department.form.submit.text(${departmentCal.departmentName})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${not isSignedInUser}"
+                    th:text="#{calendar.share.department.form.submit.text.other(${departmentCal.departmentName}, ${personName})}"
+                  ></th:block>
+                </button>
+              </div>
+              <div th:if="${not #strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-4xl">
+                <p th:if="${departmentCal.calendarPeriod == 'ALL'}" class="mb-8 text-base">
+                  <th:block
+                    th:if="${isSignedInUser}"
+                    th:text="#{calendar.share.department.isshared.paragraph.status.all(${departmentCal.departmentName})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${not isSignedInUser}"
+                    th:text="#{calendar.share.department.isshared.paragraph.status.all.other(${departmentCal.departmentName}, ${personName})}"
+                  ></th:block>
+                </p>
+                <p
+                  th:unless="${departmentCal.calendarPeriod == 'ALL'}"
+                  class="mb-8 text-base"
+                  th:with="departmentCalendarPeriodText=${#messages.msg('calendar.share.department.range.' + departmentCal.calendarPeriod)}"
+                >
+                  <th:block
+                    th:if="${isSignedInUser}"
+                    th:text="#{calendar.share.department.isshared.paragraph.status(${departmentCal.departmentName}, ${departmentCalendarPeriodText})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${not isSignedInUser}"
+                    th:text="#{calendar.share.department.isshared.paragraph.status(${departmentCal.departmentName}, ${departmentCalendarPeriodText}, ${personName})}"
+                  ></th:block>
+                </p>
+                <p th:text="#{calendar.share.department.isshared.paragraph.info}" class="mb-2 text-base"></p>
+                <div
+                  is="uv-copy-to-clipboard-input"
+                  class="mb-8"
+                  th:data-message-button-title="#{calendar.share.department.button.clipboard.tooltip}"
+                >
+                  <input
+                    type="text"
+                    th:value="${departmentCal.calendarUrl}"
+                    class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
+                    readonly
+                  />
+                </div>
+                <div class="flex flex-col gap-2 @2xl/main:flex-row">
+                  <button
+                    th:text="#{calendar.share.department.reset.form.submit.text}"
+                    type="submit"
+                    class="button mb-4 @2xl/main:mb-0"
+                  ></button>
+                  <button
+                    th:text="#{calendar.share.department.unlink.form.submit.text}"
+                    type="submit"
+                    name="unlink"
+                    class="button @2xl/main:mb-0"
+                  ></button>
                 </div>
               </div>
-              <button type="submit" class="button-main">
-                <th:block
-                  th:if="${isSignedInUser}"
-                  th:text="#{calendar.share.department.form.submit.text(${departmentCal.departmentName})}"
-                ></th:block>
-                <th:block
-                  th:if="${not isSignedInUser}"
-                  th:text="#{calendar.share.department.form.submit.text.other(${departmentCal.departmentName}, ${personName})}"
-                ></th:block>
-              </button>
-            </div>
-            <div th:if="${not #strings.isEmpty(departmentCal.calendarUrl)}" class="max-w-4xl">
-              <p th:if="${departmentCal.calendarPeriod == 'ALL'}" class="mb-8 text-base">
-                <th:block
-                  th:if="${isSignedInUser}"
-                  th:text="#{calendar.share.department.isshared.paragraph.status.all(${departmentCal.departmentName})}"
-                ></th:block>
-                <th:block
-                  th:if="${not isSignedInUser}"
-                  th:text="#{calendar.share.department.isshared.paragraph.status.all.other(${departmentCal.departmentName}, ${personName})}"
-                ></th:block>
-              </p>
-              <p
-                th:unless="${departmentCal.calendarPeriod == 'ALL'}"
-                class="mb-8 text-base"
-                th:with="departmentCalendarPeriodText=${#messages.msg('calendar.share.department.range.' + departmentCal.calendarPeriod)}"
-              >
-                <th:block
-                  th:if="${isSignedInUser}"
-                  th:text="#{calendar.share.department.isshared.paragraph.status(${departmentCal.departmentName}, ${departmentCalendarPeriodText})}"
-                ></th:block>
-                <th:block
-                  th:if="${not isSignedInUser}"
-                  th:text="#{calendar.share.department.isshared.paragraph.status(${departmentCal.departmentName}, ${departmentCalendarPeriodText}, ${personName})}"
-                ></th:block>
-              </p>
-              <p th:text="#{calendar.share.department.isshared.paragraph.info}" class="mb-2 text-base"></p>
-              <div
-                is="uv-copy-to-clipboard-input"
-                class="mb-8"
-                th:data-message-button-title="#{calendar.share.department.button.clipboard.tooltip}"
-              >
-                <input
-                  type="text"
-                  th:value="${departmentCal.calendarUrl}"
-                  class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
-                  readonly
-                />
-              </div>
-              <div class="flex flex-col gap-2 sm:flex-row">
-                <button
-                  th:text="#{calendar.share.department.reset.form.submit.text}"
-                  type="submit"
-                  class="button mb-4 sm:mb-0"
-                ></button>
-                <button
-                  th:text="#{calendar.share.department.unlink.form.submit.text}"
-                  type="submit"
-                  name="unlink"
-                  class="button sm:mb-0"
-                ></button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </turbo-frame>
         </div>
       </div>
 
       <div th:if="${companyCalendarAccessible != null || companyCalendarShare != null}">
         <div th:replace="~{fragments/section-heading::section-heading(~{::calendarsharing-company-heading-body}, ~{})}">
           <th:block th:ref="calendarsharing-company-heading-body">
-            <h2 th:text="#{calendar.share.company.title}" id="calendar-company" class="text-xl">Firma</h2>
+            <h2 th:text="#{calendar.share.company.title}" class="text-xl">Firma</h2>
           </th:block>
         </div>
-        <form
-          th:if="${companyCalendarAccessible != null}"
-          method="post"
-          th:action="@{/web/calendars/share/persons/{personId}/company/accessible#calendar-company (personId=${personId})}"
-        >
-          <input type="hidden" name="accessible" th:value="${not companyCalendarAccessible.accessible}" />
-          <div class="max-w-3xl mb-12">
-            <p
-              th:if="${companyCalendarAccessible.accessible}"
-              th:text="#{calendar.share.company.accessible.enabled.paragraph}"
-              class="mb-4 text-base"
-            ></p>
-            <button
-              th:if="${companyCalendarAccessible.accessible}"
-              th:text="#{calendar.share.company.accessible.disable.button.text}"
-              type="submit"
-              class="button"
-            ></button>
-            <p
-              th:unless="${companyCalendarAccessible.accessible}"
-              th:text="#{calendar.share.company.accessible.disabled.paragraph}"
-              class="mb-4 text-base"
-            ></p>
-            <button
-              th:unless="${companyCalendarAccessible.accessible}"
-              th:text="#{calendar.share.company.accessible.enable.button.text}"
-              type="submit"
-              class="button-main"
-            ></button>
-          </div>
-        </form>
+        <turbo-frame th:if="${companyCalendarAccessible != null}" id="frame-calendar-share-company-accessible">
+          <form
+            method="post"
+            th:action="@{/web/calendars/share/persons/{personId}/company/accessible (personId=${personId})}"
+          >
+            <input type="hidden" name="accessible" th:value="${not companyCalendarAccessible.accessible}" />
+            <div class="max-w-3xl mb-12">
+              <p
+                th:if="${companyCalendarAccessible.accessible}"
+                th:text="#{calendar.share.company.accessible.enabled.paragraph}"
+                class="mb-4 text-base"
+              ></p>
+              <button
+                th:if="${companyCalendarAccessible.accessible}"
+                th:text="#{calendar.share.company.accessible.disable.button.text}"
+                type="submit"
+                class="button"
+              ></button>
+              <p
+                th:unless="${companyCalendarAccessible.accessible}"
+                th:text="#{calendar.share.company.accessible.disabled.paragraph}"
+                class="mb-4 text-base"
+              ></p>
+              <button
+                th:unless="${companyCalendarAccessible.accessible}"
+                th:text="#{calendar.share.company.accessible.enable.button.text}"
+                type="submit"
+                class="button-main"
+              ></button>
+            </div>
+          </form>
+        </turbo-frame>
 
-        <form
-          th:if="${companyCalendarShare != null}"
-          method="post"
-          th:action="@{/web/calendars/share/persons/{personId}/company#calendar-company (personId=${companyCalendarShare.personId})}"
-          th:object="${companyCalendarShare}"
-        >
-          <div th:if="${#strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-3xl">
-            <p class="mb-8 text-base">
-              <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.paragraph.status}"></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.company.paragraph.status.other(${personName})}"
-              ></th:block>
-            </p>
-            <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
-            <div class="mb-4">
-              <div th:each="calendarPeriod, loop : ${calendarPeriods}">
-                <label th:for="${'company-calendar-period-' + loop.index}">
-                  <input
-                    th:id="${'company-calendar-period-' + loop.index}"
-                    type="radio"
-                    name="calendarPeriod"
-                    th:value="${calendarPeriod}"
-                    th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
-                  />
-                  <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}">Jahres</span>
-                </label>
+        <turbo-frame th:if="${companyCalendarShare != null}" id="frame-calendar-share-company-share">
+          <form
+            method="post"
+            th:action="@{/web/calendars/share/persons/{personId}/company (personId=${companyCalendarShare.personId})}"
+            th:object="${companyCalendarShare}"
+          >
+            <div th:if="${#strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-3xl">
+              <p class="mb-8 text-base">
+                <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.paragraph.status}"></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.company.paragraph.status.other(${personName})}"
+                ></th:block>
+              </p>
+              <p class="mb-4" th:text="#{calendar.share.range.paragraph}"></p>
+              <div class="mb-4">
+                <div th:each="calendarPeriod, loop : ${calendarPeriods}">
+                  <label th:for="${'company-calendar-period-' + loop.index}">
+                    <input
+                      th:id="${'company-calendar-period-' + loop.index}"
+                      type="radio"
+                      name="calendarPeriod"
+                      th:value="${calendarPeriod}"
+                      th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
+                    />
+                    <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}">Jahres</span>
+                  </label>
+                </div>
+              </div>
+              <button type="submit" class="button-main">
+                <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.form.submit.text}"></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.company.form.submit.text.other(${personName})}"
+                ></th:block>
+              </button>
+            </div>
+            <div th:if="${not #strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-4xl">
+              <p th:if="${companyCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
+                <th:block
+                  th:if="${isSignedInUser}"
+                  th:text="#{calendar.share.company.isshared.paragraph.status.all}"
+                ></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.company.isshared.paragraph.status.all.other(${personName})}"
+                ></th:block>
+              </p>
+              <p
+                th:unless="${companyCalendarShare.calendarPeriod == 'ALL'}"
+                class="mb-8 text-base"
+                th:with="calendarPeriodText=${#messages.msg('calendar.share.company.range.' + companyCalendarShare.calendarPeriod)}"
+              >
+                <th:block
+                  th:if="${isSignedInUser}"
+                  th:text="#{calendar.share.company.isshared.paragraph.status(${calendarPeriodText})}"
+                ></th:block>
+                <th:block
+                  th:if="${not isSignedInUser}"
+                  th:text="#{calendar.share.company.isshared.paragraph.status.other(${personName}, ${calendarPeriodText})}"
+                ></th:block>
+              </p>
+              <p th:text="#{calendar.share.company.isshared.paragraph.info}" class="mb-2 text-base"></p>
+              <div
+                is="uv-copy-to-clipboard-input"
+                class="mb-8"
+                th:data-message-button-title="#{calendar.share.company.button.clipboard.tooltip}"
+              >
+                <input
+                  type="text"
+                  th:value="${companyCalendarShare.calendarUrl}"
+                  class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
+                  readonly
+                />
+              </div>
+              <div class="flex flex-col gap-2 @2xl/main:flex-row">
+                <button
+                  th:text="#{calendar.share.company.reset.form.submit.text}"
+                  type="submit"
+                  class="button mb-4 @2xl/main:mb-0"
+                ></button>
+                <button
+                  th:text="#{calendar.share.company.unlink.form.submit.text}"
+                  type="submit"
+                  name="unlink"
+                  class="button @2xl/main:mb-0"
+                ></button>
               </div>
             </div>
-            <button type="submit" class="button-main">
-              <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.form.submit.text}"></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.company.form.submit.text.other(${personName})}"
-              ></th:block>
-            </button>
-          </div>
-          <div th:if="${not #strings.isEmpty(companyCalendarShare.calendarUrl)}" class="max-w-4xl">
-            <p th:if="${companyCalendarShare.calendarPeriod == 'ALL'}" class="mb-8 text-base">
-              <th:block
-                th:if="${isSignedInUser}"
-                th:text="#{calendar.share.company.isshared.paragraph.status.all}"
-              ></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.company.isshared.paragraph.status.all.other(${personName})}"
-              ></th:block>
-            </p>
-            <p
-              th:unless="${companyCalendarShare.calendarPeriod == 'ALL'}"
-              class="mb-8 text-base"
-              th:with="calendarPeriodText=${#messages.msg('calendar.share.company.range.' + companyCalendarShare.calendarPeriod)}"
-            >
-              <th:block
-                th:if="${isSignedInUser}"
-                th:text="#{calendar.share.company.isshared.paragraph.status(${calendarPeriodText})}"
-              ></th:block>
-              <th:block
-                th:if="${not isSignedInUser}"
-                th:text="#{calendar.share.company.isshared.paragraph.status.other(${personName}, ${calendarPeriodText})}"
-              ></th:block>
-            </p>
-            <p th:text="#{calendar.share.company.isshared.paragraph.info}" class="mb-2 text-base"></p>
-            <div
-              is="uv-copy-to-clipboard-input"
-              class="mb-8"
-              th:data-message-button-title="#{calendar.share.company.button.clipboard.tooltip}"
-            >
-              <input
-                type="text"
-                th:value="${companyCalendarShare.calendarUrl}"
-                class="px-3 py-2 text-base flex-1 border-0 outline-hidden dark:bg-zinc-700"
-                readonly
-              />
-            </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <button
-                th:text="#{calendar.share.company.reset.form.submit.text}"
-                type="submit"
-                class="button mb-4 sm:mb-0"
-              ></button>
-              <button
-                th:text="#{calendar.share.company.unlink.form.submit.text}"
-                type="submit"
-                name="unlink"
-                class="button sm:mb-0"
-              ></button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </turbo-frame>
       </div>
     </main>
   </body>

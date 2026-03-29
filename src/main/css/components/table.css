@@ -191,7 +191,7 @@ td.halves h4 {
 table.absence-type-settings-table thead {
   z-index: 1; /* color-picker should not cover the sticky header */
   position: sticky;
-  top: var(--uv-header-height);
+  top: 0;
   @apply bg-white;
   @apply dark:bg-zinc-900;
 }

@@ -4,8 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -21,7 +19,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -92,17 +89,25 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyDepartmentLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
@@ -126,21 +131,6 @@ class FrameDataProviderTest {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         sut.postHandle(request, null, null, modelAndView);
-
-        assertThat(modelAndView.getModelMap().get("navigation"))
-            .isNotNull()
-            .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
-                );
-            });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
@@ -167,17 +157,26 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link"),
-                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"),
-                    new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", "navigation-settings-link")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createSickNoteLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyDepartmentLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).containsExactlyElementsOf(settingsLinks());
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
@@ -205,15 +204,24 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
@@ -241,15 +249,25 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createSickNoteLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
@@ -277,15 +295,24 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
@@ -313,15 +340,25 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).containsExactly(
-                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
-                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
-                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
-                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user", "navigation-persons-link")
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).containsExactly(
+                    createApplicationLink(),
+                    createSickNoteLink(),
+                    createOvertimeLink()
                 );
+                assertThat(dto.basic()).containsExactly(
+                    basicApplicationLink(),
+                    basicAbsenceOverviewLink(),
+                    basicAbsenceLink(),
+                    basicSickNoteLink(),
+                    basicOvertimeLink()
+                );
+                assertThat(dto.company()).containsExactly(
+                    companyPersonLink(),
+                    companyApplicationsLink(),
+                    companySickNoteLink()
+                );
+                assertThat(dto.settings()).isEmpty();
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
@@ -376,12 +413,8 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements()).contains(
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock")
-                );
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).contains(createOvertimeLink());
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
@@ -405,76 +438,11 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements())
-                    .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).doesNotContain(createOvertimeLink());
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
-    }
-
-    static Stream<Arguments> modelPropertiesNavigation() {
-        return Stream.of(
-            Arguments.of("navigationRequestPopupEnabled", true, false, true),
-            Arguments.of("navigationRequestPopupEnabled", true, false, false),
-            Arguments.of("navigationRequestPopupEnabled", true, true, true),
-            Arguments.of("navigationRequestPopupEnabled", true, true, false)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("modelPropertiesNavigation")
-    void ensureForOvertimeAndRequestIsCorrectSetForOffice(String property, boolean propertyValue, boolean overtimeEnabled, boolean overtimeWritePrivilegedOnly) {
-        mockSettings(overtimeEnabled, overtimeWritePrivilegedOnly, true, false);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        sut.postHandle(request, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry(property, propertyValue);
-    }
-
-    @Test
-    void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabledAndSubmitSicknotesIsDisabled() {
-        mockSettings(false, false, true, false);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        sut.postHandle(request, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", false);
-    }
-
-    @Test
-    void ensureQuickAddPopupIsEnabledWhenUserIsLoggedInAndOvertimeIsDisabledAndSubmitSicknotesIsEnabled() {
-        mockSettings(false, false, true, true);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(USER));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        sut.postHandle(request, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
     }
 
     @Test
@@ -493,12 +461,9 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOf(NavigationDto.class)
-            .satisfies(navigation -> {
-                final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.elements())
-                    .isNotEmpty()
-                    .contains(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
+                assertThat(dto.favorites()).doesNotContain(createOvertimeLink());
+                assertThat(dto.basic()).contains(basicOvertimeLink());
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
@@ -519,6 +484,129 @@ class FrameDataProviderTest {
         sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap()).containsEntry("gravatarEnabled", gravatarEnabled);
+    }
+
+    private static NavigationItemDto createApplicationLink() {
+        return createApplicationLink(false);
+    }
+
+    private static NavigationItemDto createApplicationLink(boolean active) {
+        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", active);
+    }
+
+    private static NavigationItemDto createSickNoteLink() {
+        return createSickNoteLink(false);
+    }
+
+    private static NavigationItemDto createSickNoteLink(boolean active) {
+        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", active);
+    }
+
+    private static NavigationItemDto createOvertimeLink() {
+        return createOvertimeLink(false);
+    }
+
+    private static NavigationItemDto createOvertimeLink(boolean active) {
+        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active);
+    }
+
+    private static NavigationItemDto basicApplicationLink() {
+        return basicApplicationLink(false);
+    }
+
+    private static NavigationItemDto basicApplicationLink(boolean active) {
+        return new NavigationItemDto("basic-application-link", "/web/application", "nav.basic.absence-todos", active);
+    }
+
+    private static NavigationItemDto basicAbsenceOverviewLink() {
+        return basicAbsenceOverviewLink(false);
+    }
+
+    private static NavigationItemDto basicAbsenceOverviewLink(boolean active) {
+        return new NavigationItemDto("basic-absence-overview-link", "/web/absences", "nav.basic.absence-overview", active);
+    }
+
+    private static NavigationItemDto basicAbsenceLink() {
+        return basicAbsenceLink(false);
+    }
+
+    private static NavigationItemDto basicAbsenceLink(boolean active) {
+        return new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", active);
+    }
+
+    private static NavigationItemDto basicSickNoteLink() {
+        return basicSickNoteLink(false);
+    }
+
+    private static NavigationItemDto basicSickNoteLink(boolean active) {
+        return new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", active);
+    }
+
+    private static NavigationItemDto basicOvertimeLink() {
+        return basicOvertimeLink(false);
+    }
+
+    private static NavigationItemDto basicOvertimeLink(boolean active) {
+        return new NavigationItemDto("basic-overtime-link", "/web/overtime", "nav.basic.my-overtimes", active);
+    }
+
+    private static NavigationItemDto companyPersonLink() {
+        return companyPersonLink(false);
+    }
+
+    private static NavigationItemDto companyPersonLink(boolean active) {
+        return new NavigationItemDto("company-person-link", "/web/person", "nav.company.staff", active, "navigation-persons-link");
+    }
+
+    private static NavigationItemDto companyApplicationsLink() {
+        return companyApplicationsLink(false);
+    }
+
+    private static NavigationItemDto companyApplicationsLink(boolean active) {
+        return new NavigationItemDto("company-application-link", "/web/application/statistics", "nav.company.applications", active);
+    }
+
+    private static NavigationItemDto companyDepartmentLink() {
+        return companyDepartmentLink(false);
+    }
+
+    private static NavigationItemDto companyDepartmentLink(boolean active) {
+        return new NavigationItemDto("company-department-link", "/web/department", "nav.company.departments", active);
+    }
+
+    private static NavigationItemDto companySickNoteLink() {
+        return companySickNoteLink(false);
+    }
+
+    private static NavigationItemDto companySickNoteLink(boolean active) {
+        return new NavigationItemDto("company-sicknote-link", "/web/sickdays", "nav.company.sicknotes", active, "navigation-sick-notes-link")
+            .withSubItems(
+                List.of(
+                    new NavigationItemDto("company-sicknote-overview-link", "/web/sickdays", "nav.company.sicknotes.overview", active),
+                    new NavigationItemDto("company-sicknote-statistics-link", "/web/sicknote/statistics", "nav.company.sicknotes.statistics", false, "navigation-sick-notes-statistics-link")
+                )
+            );
+    }
+
+    private static NavigationItemDto companyOvertimeLink() {
+        return companyOvertimeLink(false);
+    }
+
+    private static NavigationItemDto companyOvertimeLink(boolean active) {
+        return new NavigationItemDto("company-overtime-link", "/web/overtime", "nav.company.overtimes", active);
+    }
+
+    private static List<NavigationItemDto> settingsLinks() {
+        return List.of(
+            new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence"),
+            new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes"),
+            new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime"),
+            new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays"),
+            new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account"),
+            new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar"),
+            new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar"),
+            new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync")
+        );
     }
 
     private void mockSettings(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly, boolean gravatarEnabled, boolean submitSicknotesEnabled) {

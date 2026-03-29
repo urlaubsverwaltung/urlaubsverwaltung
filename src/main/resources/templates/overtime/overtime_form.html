@@ -24,8 +24,8 @@
       <script defer type="module" asset:src="overtime_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-2xl mx-auto px-4 lg:px-12 lg:max-w-6xl xl:px-0">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container">
       <form
         method="post"
         th:with="actionUrl=${overtime.id == null ? '/web/overtime' : '/web/overtime/__${overtime.id}__'}"
@@ -50,10 +50,10 @@
             >
               Überstunden eintragen
             </h2>
-            <div class="ml-auto flex flex-col sm:flex-row sm:gap-2">
+            <div class="ml-auto flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
               <a
                 th:href="@{/web/overtime?person=__${person.id}__}"
-                class="icon-link flex items-center flex-row-reverse sm:flex-row"
+                class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
                 aria-hidden="true"
               >
                 <svg th:replace="~{icon/clock::svg(className='w-5 h-5')}"></svg>&nbsp;

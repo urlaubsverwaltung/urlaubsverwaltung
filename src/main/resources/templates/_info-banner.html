@@ -7,7 +7,7 @@
   <body>
     <th:block th:ref="banner">
       <th:block th:if="${not #strings.isEmpty(infoBannerText)}">
-        <div class="info-banner">
+        <div id="info-banner" class="info-banner" style="grid-area: banner">
           <p class="info-banner-text" th:utext="${infoBannerText}">Info Banner Text</p>
         </div>
       </th:block>

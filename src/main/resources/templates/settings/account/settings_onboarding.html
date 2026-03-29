@@ -9,9 +9,9 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+  <body th:replace="~{_layout::body(~{::content})}">
     <th:block th:ref="content">
-      <main class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <main class="content-container">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>
 
         <form method="post" th:action="@{/web/settings/account}" th:object="${settings}" class="uv-form uv-form-grid">
@@ -19,7 +19,6 @@
           <button type="submit" hidden></button>
 
           <th:block th:replace="~{settings/fragments::save-feedback}" />
-          <th:block th:replace="~{settings/fragments::tab-navigation(activeElement='account')}" />
 
           <div role="group" aria-describedby="group-working-time-description">
             <h2 id="group-working-time-description" class="uv-form-legend" th:text="#{settings.workingTime.title}">

@@ -14,9 +14,9 @@
       <script defer type="module" asset:src="absences_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main">
-      <div class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0">
+      <div class="content-container">
         <div
           th:replace="~{fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})}"
         >
@@ -27,13 +27,17 @@
             <button th:replace="~{fragments/print::button}"></button>
           </th:block>
         </div>
-        <div class="mt-4 md:mt-6">
+        <div class="mt-4 @3xl/main:mt-6">
           <form action="#" th:action="@{/web/absences}" id="absenceOverviewForm" class="print:hidden px-4">
             <div
-              class="items-baseline md:grid gap-x-8 gap-y-4"
+              class="items-baseline @3xl/main:grid gap-x-8 gap-y-4"
               style="grid-template-columns: min-content minmax(0, 22rem) 1fr"
             >
-              <label class="mb-1 col-start-1 row-start-1 md:mb-0" for="yearSelect" th:text="#{absences.overview.year}">
+              <label
+                class="mb-1 col-start-1 row-start-1 @3xl/main:mb-0"
+                for="yearSelect"
+                th:text="#{absences.overview.year}"
+              >
                 Year
               </label>
               <span class="col-start-2 col-end-2 row-start-1">
@@ -63,13 +67,13 @@
               </span>
 
               <label
-                class="mt-4 mb-1 col-start-1 row-start-2 md:mt-0 md:mb-0"
+                class="mt-4 mb-1 col-start-1 row-start-2 @3xl/main:mt-0 @3xl/main:mb-0"
                 for="monthSelect"
                 th:text="#{absences.overview.month}"
               >
                 Month
               </label>
-              <span class="md:mt-0 col-start-2 col-end-2 row-start-2">
+              <span class="@3xl/main:mt-0 col-start-2 col-end-2 row-start-2">
                 <select
                   th:replace="~{fragments/select::one(id='monthSelect', name='month', options=~{::month-select-options})}"
                   id="monthSelect"
@@ -106,7 +110,7 @@
 
               <th:block th:if="${not #lists.isEmpty(visibleDepartments)}">
                 <label
-                  class="mt-4 mb-1 col-start-1 col-end-1 row-start-3 md:mt-0 md:mb-2"
+                  class="mt-4 mb-1 col-start-1 col-end-1 row-start-3 @3xl/main:mt-0 @3xl/main:mb-2"
                   for="departmentSelect"
                   th:text="#{absences.overview.department}"
                 >
@@ -126,7 +130,7 @@
                     ></option>
                   </th:block>
                 </select>
-                <p class="uv-help-block hidden md:flex col-start-3 row-start-3">
+                <p class="uv-help-block hidden @3xl/main:flex col-start-3 row-start-3">
                   <svg th:replace="~{icon/info::svg(className='uv-help-block-icon')}"></svg>
                   <th:block th:text="#{absences.overview.department.help}"></th:block>
                 </p>
@@ -136,7 +140,7 @@
         </div>
       </div>
 
-      <div class="mt-8 min-w-max xl:max-w-max mx-auto px-4">
+      <div class="max-w-7xl px-8 mx-auto mt-8">
         <hr class="print:hidden" />
         <div th:each="month : ${absenceOverview.months}" class="mb-14 print:break-inside-avoid">
           <h2
@@ -161,7 +165,7 @@
               <tr>
                 <th
                   scope="col"
-                  class="print:hidden cursor-default p-2 sticky -left-0.5 bg-gradient-to-r from-white dark:from-zinc-900 dark:via-zinc-900 z-40"
+                  class="print:hidden cursor-default p-2 sticky -left-0.5 bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900"
                 >
                   &nbsp;
                 </th>
@@ -186,7 +190,7 @@
               <tr role="row" th:each="person : ${month.persons}">
                 <th
                   scope="row"
-                  class="p-0.5 print:hidden sticky -left-px bg-gradient-to-r from-white dark:from-zinc-900 dark:via-zinc-900 z-40 border-l-0 z-10"
+                  class="p-0.5 print:hidden sticky -left-px bg-linear-to-r from-white dark:from-zinc-900 dark:via-zinc-900 border-l-0 z-10"
                 >
                   <div class="print:hidden text-blue-50 dark:text-sky-800">
                     <img

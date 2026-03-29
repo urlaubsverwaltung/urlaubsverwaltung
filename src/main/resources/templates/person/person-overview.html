@@ -29,8 +29,8 @@
       <script defer type="module" asset:src="person_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="max-w-6xl mx-auto px-4 lg:px-12 xl:px-0" data-page="overview">
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container" data-page="overview">
       <div class="mb-12">
         <div th:replace="~{person/overview/section-vacation-days::section}"></div>
       </div>
@@ -39,7 +39,7 @@
         <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>
 
-      <div class="mb-4 lg:mb-12">
+      <div class="mb-4 @5xl/main:mb-12">
         <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
 

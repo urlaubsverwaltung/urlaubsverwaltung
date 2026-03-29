@@ -72,14 +72,14 @@
   display: flex;
   flex-direction: column-reverse;
   gap: 0.5rem;
-  @apply md:flex-row;
+  @apply @3xl/main:flex-row;
 }
 
 .absence-type-translation-inputs__element__input {
   @apply flex-1;
   @apply px-3;
   @apply py-2;
-  @apply md:max-w-sm;
+  @apply @3xl/main:max-w-sm;
   @apply rounded-sm;
   @apply border;
 }
@@ -139,7 +139,7 @@
   .absence-type-list-head {
     z-index: 1; /* place above color picker */
     position: sticky;
-    top: var(--uv-header-height);
+    top: 0;
     padding: 0 1rem;
     @apply bg-white;
     @apply dark:bg-zinc-900;

@@ -12,10 +12,10 @@
           <h2 id="anchorSickNotes" th:text="#{sicknotes.title}">Krankmeldungen</h2>
         </th:block>
         <th:block th:ref="absences-heading-actions">
-          <div class="flex flex-col sm:flex-row sm:gap-2">
+          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
             <a
               th:if="${canAddSickNoteAnotherUser}"
-              class="icon-link flex items-center flex-row-reverse sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/sicknote/new (person=${person.id})}"
             >
@@ -26,9 +26,9 @@
         </th:block>
       </div>
 
-      <div class="mb-4 lg:mb-6">
-        <div class="flex flex-wrap space-y-8 sm:space-y-0">
-          <div class="w-full sm:w-1/2">
+      <div class="mb-4 @5xl/main:mb-6">
+        <div class="flex flex-wrap space-y-8 @2xl/main:space-y-0">
+          <div class="w-full @2xl/main:w-1/2">
             <div th:replace="~{fragments/box::box-with-icon(~{::sick-days-box-icon}, ~{::sick-days-box-body})}">
               <th:block th:ref="sick-days-box-icon">
                 <div
@@ -62,7 +62,7 @@
               </th:block>
             </div>
           </div>
-          <div class="w-full sm:w-1/2">
+          <div class="w-full @2xl/main:w-1/2">
             <div
               th:replace="~{fragments/box::box-with-icon(~{::child-sick-days-box-icon}, ~{::child-sick-days-box-body})}"
             >
@@ -127,7 +127,7 @@
                 &nbsp;
               </div>
             </td>
-            <td class="is-centered print:hidden state ${sickNote.status}">
+            <td class="text-center print:hidden state ${sickNote.status}">
               <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
                 <svg th:replace="~{icon/child::svg(className='w-6 h-6')}"></svg>
               </th:block>
@@ -141,7 +141,7 @@
                   class="block mb-1 text-lg group-hover:underline group-focus:underline"
                   th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
                 ></span>
-                <span class="flex flex-col lg:flex-row text-[#444444] dark:text-zinc-200">
+                <span class="flex flex-col @5xl/main:flex-row text-[#444444] dark:text-zinc-200">
                   <th:block th:text="#{absence.period.for}" />
                   <th:block
                     th:replace="~{fragments/date-range::date-range-all(
@@ -162,10 +162,10 @@
                 </span>
               </a>
             </td>
-            <td class="is-centered">
+            <td class="text-center">
               <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
             </td>
-            <td class="print:hidden hidden md:table-cell">
+            <td class="print:hidden hidden @3xl/main:table-cell">
               <div class="flex items-center justify-center">
                 <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                 <span>

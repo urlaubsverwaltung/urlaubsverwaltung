@@ -3,9 +3,9 @@
   <head th:replace="~{_layout::head(~{::title})}">
     <title th:text="#{application.error.notEditable.title}"></title>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
-    <main th:fragment="main" class="text-center mt-24">
-      <p class="md:text-2xl" th:text="#{application.error.notEditable.body}"></p>
+  <body th:replace="~{_layout::body(~{::main})}">
+    <main th:fragment="main" class="content-container text-center">
+      <p class="@3xl/main:text-2xl" th:text="#{application.error.notEditable.body}"></p>
     </main>
   </body>
 </html>

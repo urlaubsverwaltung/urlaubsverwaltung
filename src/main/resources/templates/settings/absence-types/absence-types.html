@@ -54,7 +54,7 @@
               <li
                 th:fragment="item-absence-type(absenceType,index)"
                 th:with="index=${index ?: loop.index}, isCustomVacationType=${not #lists.isEmpty(absenceType.labels)}"
-                class="absence-type-card border rounded-sm p-4 md:border-none md:py-2"
+                class="absence-type-card border rounded-sm p-4 @3xl/main:border-none @3xl/main:py-2"
                 th:data-enabled="${absenceType.active}"
                 data-test-id="vacation-type"
               >
@@ -93,7 +93,7 @@
                     th:name="|absenceTypeSettings.items[${index}].label|"
                     th:value="${absenceType.label}"
                   />
-                  <span th:text="${absenceType.label}" class="break-words md:truncate"></span>
+                  <span th:text="${absenceType.label}" class="break-words @3xl/main:truncate"></span>
                 </div>
                 <div th:if="${isCustomVacationType}" class="absence-type-card__label-translation">
                   <th:block
@@ -106,15 +106,18 @@
                       th:attrappend="open=${(absenceType.id eq null or hasLabelsErrors) ? true : null}"
                       th:aria-label="#{settings.absenceTypes.action.labels.aria-description}"
                     >
-                      <summary class="flex items-center cursor-pointer md:mt-2">
+                      <summary class="flex items-center cursor-pointer @3xl/main:mt-2">
                         <svg
-                          th:replace="~{icon/languages::svg(className='w-5 h-5 text-blue-400 mr-2 md:w-4 md:h-4')}"
+                          th:replace="~{icon/languages::svg(className='w-5 h-5 text-blue-400 mr-2 @3xl/main:w-4 @3xl/main:h-4')}"
                         ></svg>
-                        <span th:text="#{settings.absenceTypes.action.labels.translation.summary}" class="md:text-sm">
+                        <span
+                          th:text="#{settings.absenceTypes.action.labels.translation.summary}"
+                          class="@3xl/main:text-sm"
+                        >
                           Übersetzungen
                         </span>
                       </summary>
-                      <div class="absence-type-translation-inputs pb-1 ml-7 mt-4 md:ml-6 md:mt-2">
+                      <div class="absence-type-translation-inputs pb-1 ml-7 mt-4 @3xl/main:ml-6 @3xl/main:mt-2">
                         <div
                           th:each="label : ${absenceType.labels}"
                           th:with="
@@ -163,7 +166,7 @@
                       <p
                         th:each="error : ${#fields.errors(labelsFieldname)}"
                         th:text="${error}"
-                        class="error ml-7 md:ml-6"
+                        class="error ml-7 @3xl/main:ml-6"
                         data-test-id="vacation-type-missing-translation-error"
                       ></p>
                     </th:block>

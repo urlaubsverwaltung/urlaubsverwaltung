@@ -12,10 +12,10 @@
           <h2 id="vacation" th:text="#{applications.title}">Abwesenheiten</h2>
         </th:block>
         <th:block th:ref="absences-heading-actions">
-          <div class="flex flex-col sm:flex-row sm:gap-2">
+          <div class="flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
             <a
               th:if="${person.id == signedInUser.id}"
-              class="icon-link flex items-center flex-row-reverse sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/application/new}"
             >
@@ -24,7 +24,7 @@
             </a>
             <a
               th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
-              class="icon-link flex items-center flex-row-reverse sm:flex-row"
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
               href="#"
               th:href="@{/web/application/new (personId=${person.id})}"
             >
@@ -35,9 +35,9 @@
         </th:block>
       </div>
 
-      <div class="mb-4 lg:mb-6">
-        <div class="flex flex-wrap space-y-8 sm:space-y-0">
-          <div class="w-full sm:w-1/2">
+      <div class="mb-4 @5xl/main:mb-6">
+        <div class="flex flex-wrap space-y-8 @2xl/main:space-y-0">
+          <div class="w-full @2xl/main:w-1/2">
             <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
               <th:block th:ref="holidays-sum-box-icon">
                 <div
@@ -71,7 +71,7 @@
               </th:block>
             </div>
           </div>
-          <div class="w-full sm:w-1/2">
+          <div class="w-full @2xl/main:w-1/2">
             <div
               th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
             >
@@ -110,7 +110,7 @@
         </div>
       </div>
 
-      <div class="mb-4 lg:mb-12">
+      <div class="mb-4 @5xl/main:mb-12">
         <table class="list-table selectable-table text-sm">
           <caption class="sr-only" th:text="#{applications.title}">
             Abwesenheiten
@@ -124,10 +124,10 @@
                   th:text="#{overview.vacations.expired.description(${expiredRemainingVacationDays}, ${vacationDaysLeft.remainingVacationDays})}"
                 ></th:block>
               </td>
-              <td class="is-centered">
+              <td class="text-center">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="hidden md:table-cell print:hidden">
+              <td class="hidden @3xl/main:table-cell print:hidden">
                 <div class="flex items-center justify-center">
                   <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
@@ -191,7 +191,7 @@
                   </span>
                 </a>
               </td>
-              <td class="is-centered">
+              <td class="text-center">
                 <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
                   <span th:class="|text-gray-500 days-${loopStatus.index}|">
@@ -224,7 +224,7 @@
                   <th:block th:text="#{application.data.hours.number}" />
                 </span>
               </td>
-              <td class="hidden md:table-cell print:hidden">
+              <td class="hidden @3xl/main:table-cell print:hidden">
                 <div class="flex items-center justify-center">
                   <svg th:replace="~{icon/clock::svg(className='w-4 h-4')}"></svg>&nbsp;
                   <span>

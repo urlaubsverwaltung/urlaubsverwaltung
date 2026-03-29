@@ -1,31 +1,3 @@
-/* ------------------------- */
-/* start bootstrap migration */
-
-fieldset {
-  /* Chrome and Firefox set a `min-width: min-content;` on fieldsets, */
-  /* so we reset that to ensure it behaves more like a standard block element. */
-  /* See https://github.com/twbs/bootstrap/issues/12359. */
-  min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-}
-
-legend {
-  display: block;
-  width: 100%;
-  padding: 0;
-  margin-bottom: 20px;
-  font-size: calc(14px * 1.5);
-  line-height: inherit;
-  color: #333;
-  border: 0;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-/* end bootstrap migration */
-/* ----------------------- */
-
 .uv-help-block {
   display: flex;
   align-items: center;
@@ -284,11 +256,6 @@ textarea.error {
   /* fieldset does not support subgrid :/ therefore workaround with a div[role=group] */
   /* note that this div cannot be disabled like a fieldset... */
   div[role="group"] {
-    /* margin-top for role=group when it is adjacent to global-feedback */
-    &:where(.uv-form__global-feedback + *) {
-      margin-top: 1.5rem;
-    }
-    /* or other group  */
     ~ div[role="group"] {
       margin-top: 2.5rem;
     }
