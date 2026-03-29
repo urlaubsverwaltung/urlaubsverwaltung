@@ -285,20 +285,18 @@
     transform: translateX(var(--popover-fade-x-end));
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    --duration: 200ms;
-    transform: unset;
-    transition:
-      display var(--duration),
-      overlay var(--duration),
-      opacity var(--duration);
-  }
-
   @starting-style {
     &:popover-open {
       opacity: 0;
       transform: translateX(var(--popover-fade-x-start));
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* reduced-motion: faster transitioning */
+    --duration: 150ms;
+    /* and not movement */
+    transform: unset !important;
   }
 }
 
