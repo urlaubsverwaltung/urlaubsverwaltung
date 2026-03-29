@@ -9,7 +9,7 @@
       <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+  <body th:replace="~{_layout::body(~{::content})}">
     <th:block th:ref="content">
       <main class="content-container" data-page="settings-absences">
         <h1 th:text="#{settings.header.title}" class="sr-only">Einstellungen</h1>

@@ -25,7 +25,7 @@
       <script defer type="module" asset:src="sick_note_extend.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container">
       <h1 class="sr-only" th:text="#{absences.overview.sick}">Krankmeldung</h1>
       <div class="mt-4 grid grid-cols-2 gap-2 flex-wrap @2xl/main:flex @5xl/main:mt-0">

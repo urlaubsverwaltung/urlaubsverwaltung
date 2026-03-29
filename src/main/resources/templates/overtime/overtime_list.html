@@ -14,7 +14,7 @@
       <script defer type="module" asset:src="overtime_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container">
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{::overtime-list-heading-actions})}"

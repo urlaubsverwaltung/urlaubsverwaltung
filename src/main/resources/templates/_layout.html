@@ -124,7 +124,7 @@
     <th:block th:replace="${additional}"></th:block>
     <th:block th:replace="~{_header-script::script}"></th:block>
   </head>
-  <body th:fragment="body(content, scripts)">
+  <body th:fragment="body(content)">
     <div th:replace="~{_info-banner::banner}"></div>
     <nav th:replace="~{_navigation::nav}">navigation block</nav>
 
@@ -157,7 +157,5 @@
         <footer th:replace="~{_footer::footer}">footer block</footer>
       </div>
     </div>
-
-    <th:block th:replace="${scripts}"></th:block>
   </body>
 </html>
