@@ -11,8 +11,18 @@
   }
 
   .navigation {
+    --popover-fade-x-start: -100%;
+    --popover-fade-x-end: 0;
+
+    top: anchor(bottom);
     padding: 2rem calc(var(--spacing) * 8);
     background-color: inherit;
+
+    .navigation-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
     ul {
       display: flex;
@@ -163,10 +173,6 @@
     }
 
     &:popover-open {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-
       position: fixed;
       inset: 0;
       top: anchor(bottom);
@@ -266,6 +272,7 @@
   }
 }
 
+.navigation,
 .nav-avatar-popover,
 .nav-launchpad-popover {
   /* animate opacity only */
@@ -326,6 +333,11 @@
     /* and not movement */
     transform: unset !important;
   }
+}
+
+.navigation {
+  --popover-fade-x-start: -100%;
+  --popover-fade-x-end: 0;
 }
 
 .nav-launchpad-popover {
@@ -391,12 +403,18 @@
       flex: 1 0 0;
       width: 100%;
       position: static;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
       padding: 2rem calc(var(--spacing) * 5);
       overflow: auto;
       overscroll-behavior: none;
+
+      /* override popover hidden display */
+      display: block;
+
+      /* override animation stuff, there is not animation on desktop */
+      --popover-fade-x-start: 0;
+      --popover-fade-x-end: 0;
+      top: auto;
+      opacity: 1;
 
       .navigation-link {
         padding: var(--spacing) calc(var(--spacing) * 2);
