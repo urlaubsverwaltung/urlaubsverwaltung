@@ -266,29 +266,55 @@
 }
 
 .popover--fade {
+  /* animate opacity only */
+  /* this is progressively enhanced below adding slide in/out movement */
+
   --popover-fade-x-start: 0;
   --popover-fade-x-end: 0;
-  --duration: 500ms;
+  --duration: 300ms;
 
   transition:
     display var(--duration),
     overlay var(--duration),
-    transform var(--duration),
     opacity var(--duration);
-  transition-behavior: allow-discrete;
 
-  transform: translateX(var(--popover-fade-x-start));
   opacity: 0;
 
   &:popover-open {
     opacity: 1;
-    transform: translateX(var(--popover-fade-x-end));
   }
 
   @starting-style {
     &:popover-open {
       opacity: 0;
-      transform: translateX(var(--popover-fade-x-start));
+    }
+  }
+
+  @supports (overlay: auto) {
+    /* webkit/safari has a bug not positioning the popover to it's anchor anymore when hidden
+     * since hiding popover is animated (with `transition-behavior:allow-discrete`) we're just animating when supported...
+     * there are some issues I've found that may or may not be related to this:
+     * - https://bugs.webkit.org/show_bug.cgi?id=276727 -> https://github.com/WebKit/WebKit/pull/59831
+     * - https://bugs.webkit.org/show_bug.cgi?id=309921
+     * - https://github.com/whatwg/html/issues/11694
+     */
+    --duration: 500ms;
+    transform: translateX(var(--popover-fade-x-start));
+    transition:
+      display var(--duration),
+      overlay var(--duration),
+      transform var(--duration),
+      opacity var(--duration);
+    transition-behavior: allow-discrete;
+
+    &:popover-open {
+      transform: translateX(var(--popover-fade-x-end));
+    }
+
+    @starting-style {
+      &:popover-open {
+        transform: translateX(var(--popover-fade-x-start));
+      }
     }
   }
 
