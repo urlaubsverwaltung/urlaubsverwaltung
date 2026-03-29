@@ -180,7 +180,7 @@
 
       /* prevent body scrolling with overscroll behaviour and height + 1px */
       overscroll-behavior: none;
-      height: calc(100vh + 1px);
+      height: calc(100dvh - anchor-size(height) - var(--info-banner-height));
     }
   }
 
