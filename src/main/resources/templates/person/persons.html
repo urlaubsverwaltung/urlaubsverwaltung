@@ -14,7 +14,7 @@
       <script defer type="module" asset:src="persons.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container" data-turbo="true">
       <th:block
         th:if="${personDeletionSuccess}"

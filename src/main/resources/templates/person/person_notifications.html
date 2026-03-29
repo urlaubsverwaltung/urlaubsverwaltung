@@ -15,7 +15,7 @@
     </th:block>
   </head>
 
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <th:block
