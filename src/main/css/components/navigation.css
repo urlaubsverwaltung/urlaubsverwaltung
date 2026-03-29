@@ -406,6 +406,7 @@
         display: none;
       }
 
+      .navigation-link--loading ~ .subnav-group,
       .navigation-link--active ~ .subnav-group {
         display: flex;
       }
