@@ -265,7 +265,8 @@
   }
 }
 
-.popover--fade {
+.nav-avatar-popover,
+.nav-launchpad-popover {
   /* animate opacity only */
   /* this is progressively enhanced below adding slide in/out movement */
 
