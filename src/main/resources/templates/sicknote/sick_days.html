@@ -21,7 +21,7 @@
       <script defer type="module" asset:src="sick_notes.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container" data-turbo="true">
       <div
         th:replace="~{fragments/section-heading::section-heading(~{::sick-notes-heading-body}, ~{::sick-notes-heading-actions})}"
