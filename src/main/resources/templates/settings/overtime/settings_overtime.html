@@ -25,8 +25,9 @@
               Einstellungen zu Überstunden
             </h2>
             <div th:replace="~{settings/overtime/overtime::section}"></div>
-            <th:block th:replace="~{settings/fragments::save-button(testId='submit-overtime-button')}" />
           </div>
+
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>

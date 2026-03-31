@@ -4,6 +4,7 @@
 @import "../components/alert.css" layer(components);
 @import "../components/action-link.css" layer(components);
 @import "../components/button.css" layer(components);
+@import "../components/bottom-bar.css" layer(components);
 @import "../components/box.css" layer(components);
 @import "../components/checkbox.css" layer(components);
 @import "../components/checkbox-switch.css" layer(components);

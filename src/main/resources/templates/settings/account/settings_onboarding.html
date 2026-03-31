@@ -25,7 +25,6 @@
               Einstellungen für Arbeitszeiten
             </h2>
             <div th:replace="~{settings/account/default-workingtime::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
 
           <div role="group" aria-describedby="group-vacation-description">
@@ -33,8 +32,9 @@
               Einstellungen zu Urlaub
             </h2>
             <div th:replace="~{settings/account/account::section}"></div>
-            <div th:replace="~{settings/fragments::save-button}"></div>
           </div>
+
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>

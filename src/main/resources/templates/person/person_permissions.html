@@ -216,9 +216,11 @@
           </div>
         </div>
 
-        <div class="uv-form__actions">
-          <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+        <div class="bottom-bar" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center mt-16">
+            <button type="submit" class="button-main-green w-56" th:text="#{action.save}">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
         </div>
       </form>
     </main>

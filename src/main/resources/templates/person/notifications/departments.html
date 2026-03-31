@@ -203,11 +203,12 @@
       </div>
 
       <noscript>
-        <hr class="mt-6" />
-
-        <div class="mt-6 flex justify-between gap-4">
-          <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>
-          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+        <!-- TODO maybe even with javascript now? and no autosave? this just looks awesome :o) -->
+        <div class="bottom-bar" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center mt-16">
+            <button th:text="#{action.save}" class="button-main-green w-56" type="submit">Speichern</button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
+          </div>
         </div>
       </noscript>
     </form>

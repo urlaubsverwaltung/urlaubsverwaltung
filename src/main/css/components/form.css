@@ -397,17 +397,6 @@ textarea.error {
     }
   }
 
-  .uv-form__actions {
-    margin-top: 4rem;
-    padding-top: 1rem;
-    border-top: 1px solid #ddd;
-    display: flex;
-    gap: 1rem;
-    justify-content: space-between;
-    @apply dark:border-t;
-    @apply dark:border-zinc-600;
-  }
-
   @media screen and (width >= 1024px) {
     --uv-form-label-col-width: 200px;
 
@@ -527,10 +516,6 @@ textarea.error {
           grid-row: auto;
         }
       }
-    }
-
-    .uv-form__actions {
-      grid-column: label / end;
     }
   }
 
