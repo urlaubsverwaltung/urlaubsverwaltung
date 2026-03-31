@@ -27,6 +27,6 @@ public class SettingsWorkingTimePage {
      * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */
     public void submit() {
-        page.locator("[data-test-id=submit-overtime-button]").click();
+        page.locator("[data-test-id=settings-save-button]").click();
     }
 }

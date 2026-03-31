@@ -21,15 +21,17 @@
       </div>
     </th:block>
 
-    <th:block th:fragment="save-button" th:with="testId=${#strings.isEmpty(testId) ? 'settings-save-button' : testId}">
-      <div style="grid-column: label / end; margin-top: 2rem">
-        <button
-          th:text="#{action.save}"
-          type="submit"
-          class="button-main-green"
-          th:data-test-id="${testId}"
-          data-turbo="false"
-        ></button>
+    <th:block th:fragment="bottom-bar-form-actions">
+      <div class="bottom-bar mt-12" style="grid-column: label/end">
+        <div class="bottom-bar-inner">
+          <button
+            th:text="#{action.save}"
+            type="submit"
+            class="button-main-green"
+            data-test-id="settings-save-button"
+            data-turbo="false"
+          ></button>
+        </div>
       </div>
     </th:block>
   </body>

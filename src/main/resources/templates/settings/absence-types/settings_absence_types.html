@@ -33,13 +33,6 @@
             <div th:replace="~{settings/absence-types/absence-types::section}"></div>
             <div class="mt-8 flex flex-col-reverse gap-4 @lg/main:flex-row @lg/main:gap-4">
               <button
-                th:text="#{action.save}"
-                type="submit"
-                class="button-main-green"
-                data-test-id="submit-custom-absence-types-button"
-                data-turbo="false"
-              ></button>
-              <button
                 type="submit"
                 name="add-absence-type"
                 class="button"
@@ -57,8 +50,9 @@
               Einstellungen zu Sonderurlaub
             </h2>
             <div th:replace="~{settings/absence-types/special-leave::section}"></div>
-            <th:block th:replace="~{settings/fragments::save-button}" />
           </div>
+
+          <div th:replace="~{settings/fragments::bottom-bar-form-actions}"></div>
         </form>
       </main>
     </th:block>
