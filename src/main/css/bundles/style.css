@@ -184,6 +184,10 @@
 }
 
 @layer components {
+  uv-sticky {
+    display: block;
+  }
+
   .top-bar-content-separator {
     border-top: 1px solid var(--color-gray-100);
 

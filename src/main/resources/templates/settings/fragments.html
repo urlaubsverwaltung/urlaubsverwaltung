@@ -22,7 +22,7 @@
     </th:block>
 
     <th:block th:fragment="bottom-bar-form-actions">
-      <div class="bottom-bar mt-12" style="grid-column: label/end">
+      <uv-sticky data-sticky="bottom" class="bottom-bar mt-12" style="grid-column: label/end">
         <div class="bottom-bar-inner">
           <button
             th:text="#{action.save}"
@@ -32,7 +32,7 @@
             data-turbo="false"
           ></button>
         </div>
-      </div>
+      </uv-sticky>
     </th:block>
   </body>
 </html>
