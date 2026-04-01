@@ -264,8 +264,8 @@
           </div>
         </div>
 
-        <div class="bottom-bar" style="grid-column: label/end">
-          <div class="bottom-bar-inner flex justify-between items-center mt-16">
+        <uv-sticky data-sticky="bottom" class="bottom-bar mt-16" style="grid-column: label/end">
+          <div class="bottom-bar-inner flex justify-between items-center">
             <th:block th:if="${editMode}">
               <button
                 type="submit"
@@ -288,7 +288,7 @@
             </th:block>
             <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
-        </div>
+        </uv-sticky>
       </form>
     </main>
   </body>
