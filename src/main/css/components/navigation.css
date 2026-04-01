@@ -15,13 +15,36 @@
     --popover-fade-x-end: 0;
 
     top: anchor(bottom);
-    padding: 2rem calc(var(--spacing) * 8);
     background-color: inherit;
 
     .navigation-inner {
+      padding: 2rem calc(var(--spacing) * 8);
+      padding-bottom: 1rem;
+      min-height: 100%;
+
       display: flex;
       flex-direction: column;
       gap: 2rem;
+
+      .navigation-inner__bottom {
+        margin-top: auto;
+        background: white;
+        padding: 0.5rem 0;
+        border-top: 1px solid transparent;
+        transition: border-color 150ms;
+
+        @variant dark {
+          background-color: var(--color-zinc-900);
+        }
+
+        &.uv-sticky--stuck {
+          border-top-color: var(--color-gray-100);
+
+          @variant dark {
+            border-top-color: var(--color-zinc-800);
+          }
+        }
+      }
     }
 
     ul {
@@ -403,7 +426,6 @@
       flex: 1 0 0;
       width: 100%;
       position: static;
-      padding: 2rem calc(var(--spacing) * 5);
       overflow: auto;
       overscroll-behavior: none;
 
@@ -416,23 +438,40 @@
       top: auto;
       opacity: 1;
 
-      .navigation-link {
-        padding: var(--spacing) calc(var(--spacing) * 2);
-      }
+      .navigation-inner {
+        padding: 2rem calc(var(--spacing) * 5);
+        padding-bottom: 0.5rem;
 
-      .navigation-link ~ .subnav-group {
-        display: none;
-      }
+        .navigation-inner__bottom {
+          @variant dark {
+            background-color: var(--color-zinc-950);
+          }
 
-      .navigation-link--loading ~ .subnav-group,
-      .navigation-link--active ~ .subnav-group {
-        display: flex;
-      }
+          .uv-sticky--stuck {
+            @variant dark {
+              border-top-color: var(--color-zinc-900);
+            }
+          }
+        }
 
-      .subnav-group {
-        margin-top: 0.25rem;
-        margin-bottom: 0.25rem;
-        gap: 0.25rem;
+        .navigation-link {
+          padding: var(--spacing) calc(var(--spacing) * 2);
+        }
+
+        .navigation-link ~ .subnav-group {
+          display: none;
+        }
+
+        .navigation-link--loading ~ .subnav-group,
+        .navigation-link--active ~ .subnav-group {
+          display: flex;
+        }
+
+        .subnav-group {
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+          gap: 0.25rem;
+        }
       }
 
       &:popover-open {
