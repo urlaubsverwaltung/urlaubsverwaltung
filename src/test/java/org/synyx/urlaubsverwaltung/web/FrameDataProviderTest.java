@@ -95,6 +95,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -164,6 +165,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -210,6 +212,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -256,6 +259,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -301,6 +305,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -347,6 +352,7 @@ class FrameDataProviderTest {
                     createOvertimeLink()
                 );
                 assertThat(dto.basic()).containsExactly(
+                    basicOverviewLink(10L),
                     basicApplicationLink(),
                     basicAbsenceOverviewLink(),
                     basicAbsenceLink(),
@@ -508,6 +514,14 @@ class FrameDataProviderTest {
 
     private static NavigationItemDto createOvertimeLink(boolean active) {
         return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active);
+    }
+
+    private static NavigationItemDto basicOverviewLink(long userId) {
+        return basicOverviewLink(userId, false);
+    }
+
+    private static NavigationItemDto basicOverviewLink(long userId, boolean active) {
+        return new NavigationItemDto("basic-overview-link", "/web/person/%d/overview".formatted(userId), "nav.basic.overview", active);
     }
 
     private static NavigationItemDto basicApplicationLink() {
