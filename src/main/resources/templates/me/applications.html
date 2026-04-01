@@ -9,7 +9,7 @@
       <script defer type="module" asset:src="person_applications.js"></script>
     </th:block>
   </head>
-  <body th:replace="~{_layout::body(~{::main}, ~{})}">
+  <body th:replace="~{_layout::body(~{::main})}">
     <main th:fragment="main" class="content-container" data-page="applications">
       <div th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{})}">
         <th:block th:ref="applications-heading-body">
