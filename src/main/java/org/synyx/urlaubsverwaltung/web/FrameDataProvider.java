@@ -81,7 +81,7 @@ public class FrameDataProvider implements DataProviderInterface {
     private NavigationDto createNavigation(HttpServletRequest request, Settings settings, Person user) {
 
         final List<NavigationItemDto> favoriteItems = navFavoritesGroup(request, settings, user);
-        final List<NavigationItemDto> basicItems = navBasicGroup(request, settings);
+        final List<NavigationItemDto> basicItems = navBasicGroup(request, settings, user);
         final List<NavigationItemDto> companyItems = navCompanyGroup(request, settings, user);
         final List<NavigationItemDto> settingItems = navSettingsGroup(request, settings, user);
 
@@ -112,15 +112,17 @@ public class FrameDataProvider implements DataProviderInterface {
         return elements;
     }
 
-    private List<NavigationItemDto> navBasicGroup(HttpServletRequest request, Settings settings) {
+    private List<NavigationItemDto> navBasicGroup(HttpServletRequest request, Settings settings, Person user) {
         final List<NavigationItemDto> elements = new ArrayList<>();
 
         final String url = request.getRequestURI();
 
+        final String overview = "/web/person/%d/overview".formatted(user.getId());
         final String application = "/web/application";
         final String absence = "/web/absences";
         final String overtime = "/web/overtime";
 
+        elements.add(new NavigationItemDto("basic-overview-link", overview, "nav.basic.overview", url.equals(overview)));
         elements.add(new NavigationItemDto("basic-application-link", application, "nav.basic.absence-todos", url.equals(application)));
         elements.add(new NavigationItemDto("basic-absence-overview-link", absence, "nav.basic.absence-overview", url.equals(absence)));
         elements.add(new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", false));
