@@ -24,7 +24,6 @@ function cleanupLoadingClasses() {
 function removeClasses(className) {
   let elements = document.querySelectorAll(`.${className}`);
   for (let element of elements) {
-    console.log("remove loading class", className, element);
     element.classList.remove(className);
   }
 }
