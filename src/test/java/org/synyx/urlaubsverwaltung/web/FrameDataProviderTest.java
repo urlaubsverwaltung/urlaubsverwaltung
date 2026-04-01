@@ -540,8 +540,9 @@ class FrameDataProviderTest {
         return basicAbsenceLink(false);
     }
 
+
     private static NavigationItemDto basicAbsenceLink(boolean active) {
-        return new NavigationItemDto("basic-absence-link", "#", "nav.basic.my-absences", active);
+        return new NavigationItemDto("basic-absence-link", "/web/persons/me/applications", "nav.basic.my-absences", active);
     }
 
     private static NavigationItemDto basicSickNoteLink() {
@@ -549,7 +550,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto basicSickNoteLink(boolean active) {
-        return new NavigationItemDto("basic-sicknote-link", "#", "nav.basic.my-sicknotes", active);
+        return new NavigationItemDto("basic-sicknote-link", "/web/persons/me/sicknotes", "nav.basic.my-sicknotes", active);
     }
 
     private static NavigationItemDto basicOvertimeLink() {
