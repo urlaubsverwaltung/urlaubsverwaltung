@@ -102,6 +102,21 @@
                 </li>
               </ul>
             </div>
+            <uv-sticky data-sticky="bottom" class="navigation-inner__bottom flex flex-col gap-2">
+              <a
+                class="navigation-link flex items-center gap-2"
+                th:href="${menuHelpUrl}"
+                target="_blank"
+                rel="noopener"
+              >
+                <span
+                  class="whitespace-nowrap text-ellipsis overflow-hidden"
+                  style="min-width: 0"
+                  th:text="#{nav.help.title}"
+                ></span>
+                <svg th:replace="~{icon/external-link::svg(className='h-4 w-4')}"></svg>
+              </a>
+            </uv-sticky>
           </div>
         </nav>
       </div>

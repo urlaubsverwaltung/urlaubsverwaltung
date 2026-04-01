@@ -51,13 +51,6 @@
           <ul class="navigation-popover-menu">
             <li>
               <a
-                th:replace="~{::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})}"
-              >
-                <svg th:ref="menu-help-icon" th:replace="~{icon/help-circle::svg(className='w-6 h-6')}"></svg>
-              </a>
-            </li>
-            <li>
-              <a
                 th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})}"
               >
                 <svg th:ref="menu-person-icon" th:replace="~{icon/user-circle::svg(className='w-6 h-6')}"></svg>
