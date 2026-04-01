@@ -1,6 +1,15 @@
 document.addEventListener("click", function (event) {
   /** @type HTMLElement */
   const target = event.target;
+
+  if (event.shiftKey || event.metaKey || event.ctrlKey || event.altKey || target.getAttribute("target") === "_blank") {
+    // shiftKey: new window
+    // metaKey: new tab (macOS)
+    // ctrlKey: new tab (not macOS)
+    // altKey: download
+    return;
+  }
+
   navlink(target);
   subnavlink(target);
 });
