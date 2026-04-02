@@ -125,7 +125,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
             final Application application = new Application();
             application.setStartDate(from.plusDays(1));
@@ -185,7 +185,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
             assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(15.5));
             assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(10.5));
@@ -197,7 +197,7 @@ class WorkingTimeCalendarTest {
             final LocalDate from = LocalDate.of(2022, 8, 1);
             final LocalDate to = LocalDate.of(2022, 8, 31);
 
-            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, date -> workingDayInformation);
+            final WorkingTimeCalendar sut = workingTimeCalendar(from, to, _ -> workingDayInformation);
 
             assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
         }

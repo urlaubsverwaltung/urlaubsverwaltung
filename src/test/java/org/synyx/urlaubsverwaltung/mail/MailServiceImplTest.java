@@ -66,7 +66,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(hans)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -92,7 +92,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -121,7 +121,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
@@ -151,7 +151,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
@@ -175,7 +175,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(List.of(franz, franz))
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .build();
 
         sut.send(mail);
@@ -198,7 +198,7 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withRecipient(List.of(hans))
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> new HashMap<>())
+            .withTemplate(templateName, _ -> new HashMap<>())
             .withAttachment("fileName", iCal)
             .withReplyToFrom(hans)
             .build();

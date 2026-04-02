@@ -378,8 +378,8 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeApplications.stream()
             .collect(toMap(Application::getPerson, application -> {
                 final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarByPersonId.get(application.getPerson().getIdAsPersonId());
-                final Duration yearReduction = application.getOvertimeReductionShareFor(yearRange, (personId, range) -> workingTimeCalendar);
-                final Duration dateRangeReduction = application.getOvertimeReductionShareFor(dateRange, (personId, range) -> workingTimeCalendar);
+                final Duration yearReduction = application.getOvertimeReductionShareFor(yearRange, (_, _) -> workingTimeCalendar);
+                final Duration dateRangeReduction = application.getOvertimeReductionShareFor(dateRange, (_, _) -> workingTimeCalendar);
                 return new OvertimeReduction(yearReduction, dateRangeReduction);
             }, OvertimeReduction::plus));
     }

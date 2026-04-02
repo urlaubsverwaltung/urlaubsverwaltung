@@ -101,7 +101,7 @@ public class TurnOfTheYearAccountUpdaterService {
         final Mail mailToOffice = Mail.builder()
             .withRecipient(personService.getActivePersonsByRole(OFFICE))
             .withSubject(subjectMessageKey)
-            .withTemplate(templateName, locale -> model)
+            .withTemplate(templateName, _ -> model)
             .build();
         mailService.send(mailToOffice);
     }

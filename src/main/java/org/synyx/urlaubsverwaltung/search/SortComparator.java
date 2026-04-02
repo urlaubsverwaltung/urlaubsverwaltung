@@ -37,7 +37,7 @@ public class SortComparator<T> implements Comparator<T> {
     private static <T> Comparator<T> buildComparator(Class<T> type, Sort sort) {
         final Iterator<Sort.Order> orderIterator = sort.iterator();
         if (!orderIterator.hasNext()) {
-            return comparing(t -> 0);
+            return comparing(_ -> 0);
         }
 
         Comparator<T> comparator = sortComparable(type, orderIterator.next());

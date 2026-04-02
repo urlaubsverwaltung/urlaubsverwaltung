@@ -443,7 +443,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
         staffByDepartmentId.forEach((departmentId, staff) -> {
             for (DepartmentMembership member : staff.members()) {
-                final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), key -> new HashSet<>());
+                final Set<String> departmentNames = departmentsByPerson.computeIfAbsent(member.personId(), _ -> new HashSet<>());
                 if (departmentNameById.containsKey(departmentId)) {
                     departmentNames.add(departmentNameById.get(departmentId));
                 }

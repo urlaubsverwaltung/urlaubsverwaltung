@@ -95,7 +95,7 @@ public class OvertimeAbsenceApiController {
 
         final Person person = application.getPerson();
         final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarService.getWorkingTimesByPersons(Set.of(person), application.getDateRange()).get(person);
-        final Map<LocalDate, Duration> overtimeReductionByDate = application.getOvertimeReductionShares((p, r) -> workingTimeCalendar);
+        final Map<LocalDate, Duration> overtimeReductionByDate = application.getOvertimeReductionShares((_, _) -> workingTimeCalendar);
 
         return new OvertimeAbsenceDto(applicationId, application.getHours(), overtimeReductionByDate);
     }
