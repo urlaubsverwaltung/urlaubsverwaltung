@@ -6,10 +6,22 @@
   <body>
     <th:block th:fragment="section">
       <div
-        th:replace="~{fragments/section-heading::section-heading(~{::overtime-heading-body}, ~{::overtime-heading-actions})}"
+        th:replace="~{fragments/section-heading::section-heading(~{::applications-heading-body}, ~{::applications-heading-actions})}"
       >
-        <th:block th:ref="overtime-heading-body">
+        <th:block th:ref="applications-heading-body">
           <h2 id="overtime" th:text="#{applications.title}">Abwesenheiten</h2>
+        </th:block>
+        <th:block th:ref="applications-heading-actions">
+          <div class="ml-auto flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
+            <a
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              href="#"
+              th:href="@{/web/persons/me/applications (year=${selectedYear})}"
+            >
+              <svg th:replace="~{icon/sun::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.applications.list}"></span>
+            </a>
+          </div>
         </th:block>
       </div>
 

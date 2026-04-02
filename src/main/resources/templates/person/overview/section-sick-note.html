@@ -11,6 +11,18 @@
         <th:block th:ref="absences-heading-body">
           <h2 id="anchorSickNotes" th:text="#{sicknotes.title}">Krankmeldungen</h2>
         </th:block>
+        <th:block th:ref="absences-heading-actions">
+          <div class="ml-auto flex flex-col @2xl/main:flex-row @2xl/main:gap-2">
+            <a
+              class="icon-link flex items-center flex-row-reverse @2xl/main:flex-row"
+              href="#"
+              th:href="@{/web/persons/me/sicknotes (year=${selectedYear})}"
+            >
+              <svg th:replace="~{icon/medkit::svg(className='w-5 h-5')}"></svg>&nbsp;
+              <span th:text="#{action.sicknote.list}"></span>
+            </a>
+          </div>
+        </th:block>
       </div>
 
       <div class="flex flex-wrap space-y-8 @5xl/main:space-y-0">
