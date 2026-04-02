@@ -72,8 +72,10 @@ public class ApplicationsViewController implements HasLaunchpad {
 
 
     @GetMapping(MY_APPLICATIONS_PATH)
-    public String showMyApplications(@PathVariable("personId") Long personId,
-                                     @RequestParam(value = "year", required = false) Integer year, Model model, Locale locale)
+    public String showMyApplications(
+        @PathVariable("personId") Long personId,
+        @RequestParam(value = "year", required = false) Integer year, Model model, Locale locale
+    )
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));

@@ -21,7 +21,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
-import java.util.Locale;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Comparator.comparing;
@@ -38,7 +37,6 @@ public class SickNotesViewController implements HasLaunchpad {
     private static final String PERSON_ATTRIBUTE = "person";
     public static final String MY_SICKNOTES_ANONYMOUS_PATH = "/web/persons/me/sicknotes";
     public static final String MY_SICKNOTES_PATH = "/web/persons/{personId}/sicknotes";
-
 
     private final PersonService personService;
     private final WorkDaysCountService workDaysCountService;
@@ -72,8 +70,11 @@ public class SickNotesViewController implements HasLaunchpad {
     }
 
     @GetMapping(MY_SICKNOTES_PATH)
-    public String showMySickNotes(@PathVariable("personId") Long personId,
-                                  @RequestParam(value = "year", required = false) Integer year, Model model, Locale locale)
+    public String showMySickNotes(
+        @PathVariable("personId") Long personId,
+        @RequestParam(value = "year", required = false) Integer year,
+        Model model
+    )
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
