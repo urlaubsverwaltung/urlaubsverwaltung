@@ -195,7 +195,7 @@
                 <p
                   class="account-form-expire-description m-0"
                   th:with="
-                  settingsLink=@{/web/settings},
+                  settingsLink=@{/web/settings/account},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
                   messageKey=${account.doRemainingVacationDaysExpireGlobally ? 'person.form.annualVacation.remainingVacation.expire.global-info.true' : 'person.form.annualVacation.remainingVacation.expire.global-info.false'}
                 "
@@ -279,7 +279,7 @@
                 <p
                   class="account-form-expire-description m-0"
                   th:with="
-                  settingsLink=@{/web/settings},
+                  settingsLink=@{/web/settings/account},
                   settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expiryDate.global-info.settings') + '</a>'},
                   date=${account.expiryDateGlobally == null ? null : '<span class=&quot;font-bold&quot;>' + #temporals.format(account.expiryDateGlobally, #messages.msg('pattern.date')) + '</span>'},
                   messageKey=${account.expiryDateGlobally == null ? 'person.form.annualVacation.remainingVacation.expiryDate.global-info.none' : 'person.form.annualVacation.remainingVacation.expiryDate.global-info'}
