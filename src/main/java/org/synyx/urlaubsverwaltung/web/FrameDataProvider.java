@@ -97,16 +97,16 @@ public class FrameDataProvider implements DataProviderInterface {
         final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
 
         final String application = "/web/application/new";
-        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", url.equals(application)));
+        elements.add(new NavigationItemDto("create-application-link", application, "nav.quick.absence", url.equals(application), "create-application-link"));
 
         if (isAllowedToAddOrSubmitSickNote(user, sickNoteSettings)) {
             final String sickNote = "/web/sicknote/new";
-            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", url.equals(sickNote)));
+            elements.add(new NavigationItemDto("create-sicknote-link", sickNote, "nav.quick.sicknote", url.equals(sickNote), "create-sicknote-link"));
         }
 
         if (isUserAllowedToWriteOvertime(user, overtimeSettings)) {
             final String overtime = "/web/overtime/new";
-            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", url.equals(overtime)));
+            elements.add(new NavigationItemDto("create-overtime-link", overtime, "nav.quick.overtime", url.equals(overtime), "create-overtime-link"));
         }
 
         return elements;
@@ -189,7 +189,7 @@ public class FrameDataProvider implements DataProviderInterface {
             final String url = request.getRequestURI();
 
             final String absences = "/web/settings/absences";
-            final String absencTypes = "/web/settings/absence-types";
+            final String absenceTypes = "/web/settings/absence-types";
             final String overtime = "/web/settings/overtime";
             final String publicHolidays = "/web/settings/public-holidays";
             final String account = "/web/settings/account";
@@ -197,14 +197,14 @@ public class FrameDataProvider implements DataProviderInterface {
             final String calendar = "/web/settings/calendar";
             final String calendarSync = "/web/settings/calendar-sync";
 
-            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", url.equals(absences)));
-            elements.add(new NavigationItemDto("settings-absencetypes-link", absencTypes, "nav.settings.absenceTypes", url.equals(absencTypes)));
-            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", url.equals(overtime)));
-            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", url.equals(publicHolidays)));
-            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", url.equals(account)));
-            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", url.equals(avatar)));
-            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", url.equals(calendar)));
-            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", url.equals(calendarSync)));
+            elements.add(new NavigationItemDto("settings-absence-link", absences, "nav.settings.absence", url.equals(absences), "settings-absence-link"));
+            elements.add(new NavigationItemDto("settings-absencetypes-link", absenceTypes, "nav.settings.absenceTypes", url.equals(absenceTypes), "settings-absencetypes-link"));
+            elements.add(new NavigationItemDto("settings-overtime-link", overtime, "nav.settings.overtime", url.equals(overtime), "settings-overtime-link"));
+            elements.add(new NavigationItemDto("settings-public-holiday-link", publicHolidays, "nav.settings.publicHolidays", url.equals(publicHolidays), "settings-public-holiday-link"));
+            elements.add(new NavigationItemDto("settings-holiday-account-link", account, "nav.settings.account", url.equals(account), "settings-holiday-account-link"));
+            elements.add(new NavigationItemDto("settings-avatar-link", avatar, "nav.settings.avatar", url.equals(avatar), "settings-avatar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-link", calendar, "nav.settings.calendar", url.equals(calendar), "settings-calendar-link"));
+            elements.add(new NavigationItemDto("settings-calendar-sync-link", calendarSync, "nav.settings.calendarSync", url.equals(calendarSync), "settings-calendar-sync-link"));
         }
 
         return elements;

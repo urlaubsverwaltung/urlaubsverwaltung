@@ -45,6 +45,6 @@ public class SettingsAbsenceTypesPage {
      * Submits the form, does not wait for anything. You have to wait for the next visible page yourself!
      */
     public void submitCustomAbsenceTypes() {
-        page.locator("[data-test-id=submit-custom-absence-types-button]").click();
+        page.locator("[data-test-id=settings-save-button]").click();
     }
 }

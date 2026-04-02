@@ -127,6 +127,7 @@ class SickNoteUIIT {
 
         // Login office
         login(loginPage, office);
+        navigationPage.settingsMenu.clickAbsence();
         enableUserSickNoteCreation(page, true);
         navigationPage.logout();
 
@@ -141,18 +142,15 @@ class SickNoteUIIT {
     }
 
     private void enableUserSickNoteCreation(Page page, boolean enable) {
-        final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
-
-        navigationPage.clickSettings();
+        final SettingsAbsencesPage settingsAbsencesPage = new SettingsAbsencesPage(page);
 
         if (enable) {
-            settingsPage.clickUserSubmitSickNotesAllowed();
+            settingsAbsencesPage.clickUserSubmitSickNotesAllowed();
         } else {
-            settingsPage.clickUserToSubmitSickNotesForbidden();
+            settingsAbsencesPage.clickUserToSubmitSickNotesForbidden();
         }
 
-        settingsPage.submitAndWaitForPageRefresh();
+        settingsAbsencesPage.submitAndWaitForPageRefresh();
     }
 
     private void login(LoginPage loginPage, Person person) {
@@ -174,8 +172,7 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewSickNote();
+        navigationPage.quickAdd.clickCreateNewSickNote();
         sickNotePage.waitForVisible();
 
         if (person.hasRole(OFFICE)) {
@@ -196,8 +193,7 @@ class SickNoteUIIT {
         final SickNoteExtensionPage sickNoteExtensionPage = new SickNoteExtensionPage(page, messageSource, GERMAN);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewSickNote();
+        navigationPage.quickAdd.clickCreateNewSickNote();
 
         // waiting for fetched assets (we may have to wait a little more for datepicker instantiation?)
         page.waitForLoadState(LoadState.DOMCONTENTLOADED);
@@ -220,8 +216,7 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewSickNote();
+        navigationPage.quickAdd.clickCreateNewSickNote();
         sickNotePage.waitForVisible();
 
         sickNotePage.personSelected(person.getNiceName());
@@ -249,8 +244,7 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewSickNote();
+        navigationPage.quickAdd.clickCreateNewSickNote();
         sickNotePage.waitForVisible();
 
         sickNotePage.personSelected(person.getNiceName());
@@ -275,8 +269,7 @@ class SickNoteUIIT {
         final SickNoteFormPage sickNotePage = new SickNoteFormPage(page);
         final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewSickNote();
+        navigationPage.quickAdd.clickCreateNewSickNote();
         sickNotePage.waitForVisible();
 
         sickNotePage.personSelected(person.getNiceName());

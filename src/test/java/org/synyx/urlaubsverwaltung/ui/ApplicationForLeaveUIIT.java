@@ -98,16 +98,13 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         // log in as office user and disable the overtime feature
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        navigationPage.clickSettings();
-
-        settingsPage.navigation().clickOvertime();
+        navigationPage.settingsMenu.clickOvertime();
         settingsWorkingTimePage.disableOvertime();
         settingsWorkingTimePage.submit();
         page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
@@ -136,15 +133,12 @@ class ApplicationForLeaveUIIT {
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        navigationPage.clickSettings();
-
-        settingsPage.navigation().clickOvertime();
+        navigationPage.settingsMenu.clickOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submit();
         page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
@@ -156,8 +150,7 @@ class ApplicationForLeaveUIIT {
         page.waitForURL(OverviewPage.URL_PATTERN);
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(userPerson.getNiceName(), LocalDate.now().getYear()));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         applicationFormPage.waitForVisible();
 
@@ -181,8 +174,7 @@ class ApplicationForLeaveUIIT {
         page.waitForURL(OverviewPage.URL_PATTERN);
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         applicationFormPage.waitForVisible();
         applicationFormPage.from(getNextWorkday());
@@ -229,8 +221,7 @@ class ApplicationForLeaveUIIT {
         page.waitForURL(OverviewPage.URL_PATTERN);
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         applicationFormPage.waitForVisible();
         assertThat(applicationFormPage.reasonLocator()).not().isVisible();
@@ -259,7 +250,6 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
         final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
@@ -271,14 +261,12 @@ class ApplicationForLeaveUIIT {
         assertThat(page).hasTitle(overviewPage.getExpectedPageTitle(officePerson.getNiceName(), LocalDate.now().getYear()));
 
         // ensure overtime feature is enabled
-        navigationPage.clickSettings();
-        settingsPage.navigation().clickOvertime();
+        navigationPage.settingsMenu.clickOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submit();
         page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         applicationFormPage.waitForVisible();
         assertThat(applicationFormPage.overtimeHoursLocator()).not().isVisible();
@@ -313,15 +301,14 @@ class ApplicationForLeaveUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
+        final SettingsAbsencesPage settingsAbsencesPage = new SettingsAbsencesPage(page);
         final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
         // log in as office user and disable halfDay
         loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         // default is: half days enabled
         applicationFormPage.waitForVisible();
@@ -329,14 +316,12 @@ class ApplicationForLeaveUIIT {
         assertThat(applicationFormPage.dayLengthMorningLocator()).isVisible();
         assertThat(applicationFormPage.dayLengthMorningLocator()).isVisible();
 
-        navigationPage.clickSettings();
+        navigationPage.settingsMenu.clickAbsence();
 
-        settingsPage.waitForVisible();
-        settingsPage.clickDisableHalfDayAbsence();
-        settingsPage.submitAndWaitForPageRefresh();
+        settingsAbsencesPage.clickDisableHalfDayAbsence();
+        settingsAbsencesPage.submitAndWaitForPageRefresh();
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
 
         applicationFormPage.waitForVisible();
         // we just disabled half days in the settings: no dayLength inputs should be visible

@@ -6,10 +6,6 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 public class SettingsAbsencesPage {
 
-    public static final String URL = "**/web/settings/absences";
-
-    private static final String DATA_PAGE = "main[data-page='settings-absences']";
-
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
     private static final String HALF_DAY_DISABLE_SELECTOR = "[data-test-id=vacation-half-day-disable]";
 
@@ -17,14 +13,6 @@ public class SettingsAbsencesPage {
 
     public SettingsAbsencesPage(Page page) {
         this.page = page;
-    }
-
-    public void waitForVisible() {
-        page.waitForSelector(DATA_PAGE);
-    }
-
-    public SettingsSubNavigation navigation() {
-        return new SettingsSubNavigation(page);
     }
 
     public void submitAndWaitForPageRefresh() {

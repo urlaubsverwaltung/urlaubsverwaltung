@@ -80,22 +80,18 @@ class OvertimeUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsWorkingTimePage settingsWorkingTimePage = new SettingsWorkingTimePage(page);
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        navigationPage.clickSettings();
-
-        settingsPage.navigation().clickOvertime();
+        navigationPage.settingsMenu.clickOvertime();
         settingsWorkingTimePage.enableOvertime();
         settingsWorkingTimePage.submit();
         page.waitForURL(url -> url.endsWith(SettingsWorkingTimePage.URL));
 
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewOvertime();
+        navigationPage.quickAdd.clickCreateNewOvertime();
         overtimePage.waitForVisible();
 
         final int currentYear = LocalDate.now().getYear();
