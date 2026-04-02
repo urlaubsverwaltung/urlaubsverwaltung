@@ -419,9 +419,7 @@ class FrameDataProviderTest {
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.favorites()).contains(createOvertimeLink());
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.favorites()).contains(createOvertimeLink()));
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", true);
     }
@@ -444,9 +442,7 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
             .isInstanceOf(NavigationDto.class)
-            .isInstanceOfSatisfying(NavigationDto.class, dto -> {
-                assertThat(dto.favorites()).doesNotContain(createOvertimeLink());
-            });
+            .isInstanceOfSatisfying(NavigationDto.class, dto -> assertThat(dto.favorites()).doesNotContain(createOvertimeLink()));
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeAddAccess", false);
     }
@@ -497,7 +493,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createApplicationLink(boolean active) {
-        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", active);
+        return new NavigationItemDto("create-application-link", "/web/application/new", "nav.quick.absence", active, "create-application-link");
     }
 
     private static NavigationItemDto createSickNoteLink() {
@@ -505,7 +501,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createSickNoteLink(boolean active) {
-        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", active);
+        return new NavigationItemDto("create-sicknote-link", "/web/sicknote/new", "nav.quick.sicknote", active, "create-sicknote-link");
     }
 
     private static NavigationItemDto createOvertimeLink() {
@@ -513,7 +509,7 @@ class FrameDataProviderTest {
     }
 
     private static NavigationItemDto createOvertimeLink(boolean active) {
-        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active);
+        return new NavigationItemDto("create-overtime-link", "/web/overtime/new", "nav.quick.overtime", active, "create-overtime-link");
     }
 
     private static NavigationItemDto basicOverviewLink(long userId) {
@@ -612,14 +608,14 @@ class FrameDataProviderTest {
 
     private static List<NavigationItemDto> settingsLinks() {
         return List.of(
-            new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence"),
-            new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes"),
-            new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime"),
-            new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays"),
-            new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account"),
-            new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar"),
-            new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar"),
-            new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync")
+            new NavigationItemDto("settings-absence-link", "/web/settings/absences", "nav.settings.absence", false, "settings-absence-link"),
+            new NavigationItemDto("settings-absencetypes-link", "/web/settings/absence-types", "nav.settings.absenceTypes", false, "settings-absencetypes-link"),
+            new NavigationItemDto("settings-overtime-link", "/web/settings/overtime", "nav.settings.overtime", false, "settings-overtime-link"),
+            new NavigationItemDto("settings-public-holiday-link", "/web/settings/public-holidays", "nav.settings.publicHolidays", false, "settings-public-holiday-link"),
+            new NavigationItemDto("settings-holiday-account-link", "/web/settings/account", "nav.settings.account", false, "settings-holiday-account-link"),
+            new NavigationItemDto("settings-avatar-link", "/web/settings/avatar", "nav.settings.avatar", false, "settings-avatar-link"),
+            new NavigationItemDto("settings-calendar-link", "/web/settings/calendar", "nav.settings.calendar", false, "settings-calendar-link"),
+            new NavigationItemDto("settings-calendar-sync-link", "/web/settings/calendar-sync", "nav.settings.calendarSync", false, "settings-calendar-sync-link")
         );
     }
 

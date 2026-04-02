@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.ui.pages.ApplicationFormPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsenceTypesPage;
-import org.synyx.urlaubsverwaltung.ui.pages.settings.SettingsAbsencesPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -82,14 +81,12 @@ class CustomAbsenceTypeUIIT {
 
         final LoginPage loginPage = new LoginPage(page, port);
         final NavigationPage navigationPage = new NavigationPage(page);
-        final SettingsAbsencesPage settingsPage = new SettingsAbsencesPage(page);
         final SettingsAbsenceTypesPage settingsAbsenceTypesPage = new SettingsAbsenceTypesPage(page);
         final ApplicationFormPage applicationFormPage = new ApplicationFormPage(page);
 
         loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
-        navigationPage.clickSettings();
-        settingsPage.navigation().clickAbsenceTypes();
+        navigationPage.settingsMenu.clickAbsenceTypes();
         settingsAbsenceTypesPage.addNewVacationType();
 
         // ensure at least one translation required error hint
@@ -114,8 +111,7 @@ class CustomAbsenceTypeUIIT {
         assertThat(settingsAbsenceTypesPage.vacationTypeUniqueTranslationError(settingsAbsenceTypesPage.lastVacationType(), GERMAN)).isVisible();
 
         // ensure vacation type is selectable creating a new application for leave
-        navigationPage.quickAdd.togglePopover();
-        navigationPage.quickAdd.clickPopoverNewApplication();
+        navigationPage.quickAdd.clickCreateNewApplication();
         applicationFormPage.waitForVisible();
 
         // this throws when the name cannot be found
