@@ -100,7 +100,7 @@ class BackupCreateServiceIT {
     private static Optional<Path> getCreatedBackupFile() {
         try (var paths = Files.list(tempDir)) {
             return paths.filter(path -> path.getFileName().toString().matches("urlaubsverwaltung-\\d+\\.json")).findFirst();
-        } catch (IOException e) {
+        } catch (IOException _) {
             return Optional.empty();
         }
     }

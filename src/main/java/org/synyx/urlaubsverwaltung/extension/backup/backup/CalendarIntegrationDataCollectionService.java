@@ -39,7 +39,7 @@ class CalendarIntegrationDataCollectionService {
     private Optional<CalendarSettings> getCalendarSettings() {
         try {
             return Optional.of(calendarSettingsService.getCalendarSettings());
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException _) {
             return Optional.empty();
         }
     }

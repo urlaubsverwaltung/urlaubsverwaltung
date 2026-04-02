@@ -42,9 +42,9 @@ public class ICalViewController {
         final ByteArrayResource iCal;
         try {
             iCal = personCalendarService.getCalendarForPerson(personId, secret, locale);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new ResponseStatusException(BAD_REQUEST, "Could not generate person calendar");
-        } catch (CalendarException e) {
+        } catch (CalendarException _) {
             throw new ResponseStatusException(NO_CONTENT);
         }
 
@@ -59,9 +59,9 @@ public class ICalViewController {
         final ByteArrayResource iCal;
         try {
             iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret, locale);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new ResponseStatusException(BAD_REQUEST, "Could not generate department calendar");
-        } catch (CalendarException e) {
+        } catch (CalendarException _) {
             throw new ResponseStatusException(NO_CONTENT);
         }
 
@@ -76,9 +76,9 @@ public class ICalViewController {
         final ByteArrayResource iCal;
         try {
             iCal = companyCalendarService.getCalendarForAll(personId, secret, locale);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new ResponseStatusException(BAD_REQUEST, "Could not generate company calendar");
-        } catch (CalendarException e) {
+        } catch (CalendarException _) {
             throw new ResponseStatusException(NO_CONTENT);
         }
 

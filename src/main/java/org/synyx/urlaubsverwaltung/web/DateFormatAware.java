@@ -68,7 +68,7 @@ public class DateFormatAware {
         try {
             final Date parse = dateFormatter.parse(dateString, locale);
             d = Optional.of(parse);
-        } catch (ParseException e) {
+        } catch (ParseException _) {
             LOG.debug("could not parse dateString={} locale={}", dateString, locale);
         }
 

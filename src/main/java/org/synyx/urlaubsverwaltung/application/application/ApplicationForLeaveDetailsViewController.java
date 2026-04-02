@@ -184,7 +184,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final Application allowedApplicationForLeave;
         try {
             allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
-        } catch (NotPrivilegedToApproveException e) {
+        } catch (NotPrivilegedToApproveException _) {
             redirectAttributes.addFlashAttribute("notPrivilegedToApprove", true);
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
@@ -399,9 +399,9 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         try {
             applicationInteractionService.remind(application);
             redirectAttributes.addFlashAttribute("remindIsSent", true);
-        } catch (RemindAlreadySentException ex) {
+        } catch (RemindAlreadySentException _) {
             redirectAttributes.addFlashAttribute("remindAlreadySent", true);
-        } catch (ImpatientAboutApplicationForLeaveProcessException ex) {
+        } catch (ImpatientAboutApplicationForLeaveProcessException _) {
             redirectAttributes.addFlashAttribute("remindNoWay", true);
         }
 
@@ -461,7 +461,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
                 application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
             .sorted(Map.Entry.comparingByKey(comparing(DateRange::startDate)))
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> newValue, LinkedHashMap::new));
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (_, newValue) -> newValue, LinkedHashMap::new));
         model.addAttribute("dateRangeWorkingTimes", workingTime);
 
         // DEPARTMENT APPLICATIONS FOR LEAVE

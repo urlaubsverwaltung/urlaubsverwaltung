@@ -42,6 +42,6 @@ class SessionServiceImpl<S extends Session> implements SessionService {
     @EventListener
     void deleteSessionByEvent(PersonDeletedEvent event) {
         sessionRepository.findByPrincipalName(event.person().getUsername())
-            .forEach((s, session) -> sessionRepository.deleteById(session.getId()));
+            .forEach((_, session) -> sessionRepository.deleteById(session.getId()));
     }
 }

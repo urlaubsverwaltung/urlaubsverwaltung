@@ -400,7 +400,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Application savedApplicationForLeave;
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
-        } catch (EditApplicationForLeaveNotAllowedException e) {
+        } catch (EditApplicationForLeaveNotAllowedException _) {
             return "application/application-not-editable";
         }
 

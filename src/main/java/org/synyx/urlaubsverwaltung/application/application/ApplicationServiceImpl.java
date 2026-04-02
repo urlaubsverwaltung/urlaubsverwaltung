@@ -156,7 +156,7 @@ class ApplicationServiceImpl implements ApplicationService {
         final Map<Person, Duration> overtimeReductionByPerson = overtimeReductions.stream().map(this::toApplication)
             .map(application -> {
                 final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), untilInclusive);
-                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod, (personId, range) -> workingTimeCalendarByPersonId.get(personId));
+                final Duration overtimeReduction = application.getOvertimeReductionShareFor(dateRangeOfPeriod, (personId, _) -> workingTimeCalendarByPersonId.get(personId));
                 return Map.entry(application.getPerson(), overtimeReduction);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));

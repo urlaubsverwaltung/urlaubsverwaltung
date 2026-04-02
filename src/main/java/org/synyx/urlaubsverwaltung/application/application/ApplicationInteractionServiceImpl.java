@@ -83,7 +83,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // check if a two stage approval is set for the Department
         departments.stream()
             .filter(Department::isTwoStageApproval)
-            .forEach(department -> application.setTwoStageApproval(true));
+            .forEach(_ -> application.setTwoStageApproval(true));
 
         application.setStatus(WAITING);
         application.setApplier(applier);

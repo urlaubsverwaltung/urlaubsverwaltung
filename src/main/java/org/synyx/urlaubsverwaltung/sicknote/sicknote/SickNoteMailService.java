@@ -99,14 +99,14 @@ public class SickNoteMailService {
             final Mail toSickNotePerson = Mail.builder()
                 .withRecipient(sickNote.getPerson())
                 .withSubject("subject.sicknote.endOfSickPay")
-                .withTemplate("sicknote_end_of_sick_pay", locale -> model)
+                .withTemplate("sicknote_end_of_sick_pay", _ -> model)
                 .build();
             mailService.send(toSickNotePerson);
 
             final Mail toOffice = Mail.builder()
                 .withRecipient(personService.getActivePersonsByRole(OFFICE))
                 .withSubject("subject.sicknote.endOfSickPay.office", sickNote.getPerson().getNiceName())
-                .withTemplate("sicknote_end_of_sick_pay_office", locale -> model)
+                .withTemplate("sicknote_end_of_sick_pay_office", _ -> model)
                 .build();
             mailService.send(toOffice);
             sickNoteService.setEndOfSickPayNotificationSend(sickNote);
@@ -123,7 +123,7 @@ public class SickNoteMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.created.to_applicant_by_management")
-            .withTemplate("sick_note_created_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withTemplate("sick_note_created_by_management_to_applicant", _ -> Map.of("sickNote", sickNote))
             .withReplyToFrom(sickNote.getApplier())
             .build();
         mailService.send(mailToApplicant);
@@ -141,7 +141,7 @@ public class SickNoteMailService {
         final ByteArrayResource calendarFile = generateCalendar(sickNote, DEFAULT, sickNote.getPerson());
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of("sickNote", sickNote);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -163,7 +163,7 @@ public class SickNoteMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.edited.to_applicant_by_management")
-            .withTemplate("sick_note_edited_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withTemplate("sick_note_edited_by_management_to_applicant", _ -> Map.of("sickNote", sickNote))
             .withReplyToFrom(editor)
             .build();
         mailService.send(mailToApplicant);
@@ -179,7 +179,7 @@ public class SickNoteMailService {
         final Mail mailToManagement = Mail.builder()
             .withRecipient(recipientsWithoutEditor)
             .withSubject("subject.sicknote.edited_by_management.to_management", editor.getNiceName())
-            .withTemplate("sick_note_edited_by_management_to_management", locale -> Map.of("sickNote", editedSickNote, "comment", comment, "editor", editor))
+            .withTemplate("sick_note_edited_by_management_to_management", _ -> Map.of("sickNote", editedSickNote, "comment", comment, "editor", editor))
             .withReplyToFrom(editor)
             .build();
         mailService.send(mailToManagement);
@@ -196,7 +196,7 @@ public class SickNoteMailService {
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.cancelled.to_applicant_by_management")
-            .withTemplate("sick_note_cancelled_by_management_to_applicant", locale -> Map.of("sickNote", sickNote))
+            .withTemplate("sick_note_cancelled_by_management_to_applicant", _ -> Map.of("sickNote", sickNote))
             .withReplyToFrom(canceller)
             .build();
         mailService.send(mailToRelevantColleagues);
@@ -212,7 +212,7 @@ public class SickNoteMailService {
     void sendCancelToColleagues(SickNote sickNote) {
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of("sickNote", sickNote);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of("sickNote", sickNote);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -227,7 +227,7 @@ public class SickNoteMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(submittedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_SUBMITTED_BY_USER_TO_USER)
             .withSubject("subject.sicknote.submitted_by_user.to_applicant")
-            .withTemplate("sick_note_submitted_by_user_to_applicant", locale -> Map.of("sickNote", submittedSickNote))
+            .withTemplate("sick_note_submitted_by_user_to_applicant", _ -> Map.of("sickNote", submittedSickNote))
             .build();
         mailService.send(mailToApplicant);
     }
@@ -237,7 +237,7 @@ public class SickNoteMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(acceptedSickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_ACCEPTED_BY_MANAGEMENT_TO_USER)
             .withSubject("subject.sicknote.accepted_by_management.to_applicant")
-            .withTemplate("sick_note_accepted_by_management_to_applicant", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+            .withTemplate("sick_note_accepted_by_management_to_applicant", _ -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
             .withReplyToFrom(maintainer)
             .build();
         mailService.send(mailToApplicant);
@@ -251,7 +251,7 @@ public class SickNoteMailService {
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.sicknote.submitted_by_user.to_management", submittedSickNote.getPerson().getNiceName())
-            .withTemplate("sick_note_submitted_by_user_to_management", locale -> Map.of("sickNote", submittedSickNote))
+            .withTemplate("sick_note_submitted_by_user_to_management", _ -> Map.of("sickNote", submittedSickNote))
             .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);
@@ -267,7 +267,7 @@ public class SickNoteMailService {
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
             .withRecipient(recipientsWithoutApplier)
             .withSubject("subject.sicknote.created_by_management.to_management", createdSickNote.getPerson().getNiceName())
-            .withTemplate("sick_note_created_by_management_to_management", locale -> Map.of("sickNote", createdSickNote, "comment", comment))
+            .withTemplate("sick_note_created_by_management_to_management", _ -> Map.of("sickNote", createdSickNote, "comment", comment))
             .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);
@@ -282,7 +282,7 @@ public class SickNoteMailService {
         final Mail mailToOfficeAndResponsibleManagement = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.sicknote.accepted_by_management.to_management", acceptedSickNote.getPerson().getNiceName())
-            .withTemplate("sick_note_accepted_by_management_to_management", locale -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
+            .withTemplate("sick_note_accepted_by_management_to_management", _ -> Map.of("sickNote", acceptedSickNote, "maintainer", maintainer))
             .build();
 
         mailService.send(mailToOfficeAndResponsibleManagement);

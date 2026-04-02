@@ -99,7 +99,7 @@ class ApplicationForLeaveStatisticsBuilder {
 
     private void addMissingPersonsToStatistics(Map<Person, Optional<ApplicationForLeaveStatistics>> statisticsByPerson, List<Person> persons) {
         persons.forEach(person ->
-            statisticsByPerson.computeIfAbsent(person, p -> Optional.empty())
+            statisticsByPerson.computeIfAbsent(person, _ -> Optional.empty())
         );
     }
 

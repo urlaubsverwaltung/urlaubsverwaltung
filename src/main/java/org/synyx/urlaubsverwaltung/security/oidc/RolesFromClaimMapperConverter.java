@@ -22,7 +22,7 @@ class RolesFromClaimMapperConverter implements Converter<String, GrantedAuthorit
         try {
             final String authority = source.replace(properties.getRolePrefix(), "").toUpperCase();
             return new SimpleGrantedAuthority(Role.valueOf(authority).name());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             return null;
         }
     }

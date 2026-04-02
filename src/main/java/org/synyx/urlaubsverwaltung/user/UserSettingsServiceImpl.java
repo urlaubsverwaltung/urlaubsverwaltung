@@ -75,7 +75,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
                 UserSettingsEntity::getPerson,
                 UserSettingsServiceImpl::getEffectiveLocale
             ));
-        persons.forEach(person -> personLocale.computeIfAbsent(person, unused -> Locale.GERMAN));
+        persons.forEach(person -> personLocale.computeIfAbsent(person, _ -> Locale.GERMAN));
         return personLocale;
     }
 

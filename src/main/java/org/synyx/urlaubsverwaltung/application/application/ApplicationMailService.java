@@ -127,7 +127,7 @@ class ApplicationMailService {
         mailService.send(mailToRelevantRecipients);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -214,14 +214,14 @@ class ApplicationMailService {
             mailToApplicant = Mail.builder()
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
                 .withSubject("subject.application.edited.to_applicant_by_applicant")
-                .withTemplate("application_edited_by_applicant_to_applicant", locale -> Map.of(APPLICATION, application))
+                .withTemplate("application_edited_by_applicant_to_applicant", _ -> Map.of(APPLICATION, application))
                 .withReplyToFrom(editor)
                 .build();
         } else {
             mailToApplicant = Mail.builder()
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_EDITED)
                 .withSubject("subject.application.edited.to_applicant_by_management", editor.getNiceName())
-                .withTemplate("application_edited_by_management_to_applicant", locale -> Map.of(APPLICATION, application, "editor", editor))
+                .withTemplate("application_edited_by_management_to_applicant", _ -> Map.of(APPLICATION, application, "editor", editor))
                 .withReplyToFrom(editor)
                 .build();
         }
@@ -231,7 +231,7 @@ class ApplicationMailService {
         final Mail mailToManagement = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.edited.management", application.getPerson().getNiceName(), editor.getNiceName())
-            .withTemplate("application_edited_by_applicant_to_management", locale -> Map.of(APPLICATION, application, "editor", editor))
+            .withTemplate("application_edited_by_applicant_to_management", _ -> Map.of(APPLICATION, application, "editor", editor))
             .withReplyToFrom(editor)
             .build();
         mailService.send(mailToManagement);
@@ -245,7 +245,7 @@ class ApplicationMailService {
     @Async
     void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment, Person canceller) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             COMMENT, comment
         );
@@ -279,7 +279,7 @@ class ApplicationMailService {
     @Async
     void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             COMMENT, createdComment
         );
@@ -313,7 +313,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CONVERTED)
             .withSubject("subject.sicknote.converted")
-            .withTemplate("sicknote_converted", locale -> Map.of(APPLICATION, application))
+            .withTemplate("sicknote_converted", _ -> Map.of(APPLICATION, application))
             .withReplyToFrom(application.getApplier())
             .build();
         mailService.send(mailToApplicant);
@@ -322,7 +322,7 @@ class ApplicationMailService {
         final Mail mailToManagement = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.sicknote.converted.management", application.getPerson().getNiceName())
-            .withTemplate("sicknote_converted_to_management", locale -> Map.of(APPLICATION, application))
+            .withTemplate("sicknote_converted_to_management", _ -> Map.of(APPLICATION, application))
             .build();
         mailService.send(mailToManagement);
     }
@@ -353,7 +353,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -388,7 +388,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -438,7 +438,7 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, CalendarAbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
             HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
@@ -465,7 +465,7 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application, Person applierOrEditor) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
             HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
@@ -493,7 +493,7 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, CalendarAbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
             HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
@@ -522,7 +522,7 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson()
         );
@@ -548,7 +548,7 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application, Person editor) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
             HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote()
@@ -627,7 +627,7 @@ class ApplicationMailService {
     @Async
     void sendRevokedNotifications(Application application, ApplicationComment comment) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             COMMENT, comment
         );
@@ -713,7 +713,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -748,7 +748,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -796,7 +796,7 @@ class ApplicationMailService {
         mailService.send(mailToRelevantPersons);
 
         // Inform colleagues of applicant which are in same department
-        final MailTemplateModelSupplier modelColleaguesSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelColleaguesSupplier = _ -> Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
@@ -849,7 +849,7 @@ class ApplicationMailService {
     void sendTemporaryAllowedNotificationByManagement(Application application, ApplicationComment comment, Person temporaryApprover) {
 
         // Inform user that the application for leave has been allowed temporary
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
             APPLICATION, application,
             COMMENT, comment
         );
@@ -890,7 +890,7 @@ class ApplicationMailService {
     @Async
     void sendRemindNotificationToManagement(Application application) {
 
-        final MailTemplateModelSupplier modelSupplier = locale -> Map.of(APPLICATION, application);
+        final MailTemplateModelSupplier modelSupplier = _ -> Map.of(APPLICATION, application);
 
         final List<Person> recipients = mailRecipientService.getResponsibleManagersOf(application.getPerson());
         final Mail mailToAllowAndRemind = Mail.builder()
@@ -905,7 +905,7 @@ class ApplicationMailService {
     void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications) {
         for (Application application : applications) {
 
-            final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+            final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
                 APPLICATION, application,
                 "daysBeforeUpcomingApplication", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate())
             );
@@ -924,7 +924,7 @@ class ApplicationMailService {
         for (Application application : applications) {
             for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
 
-                final MailTemplateModelSupplier modelSupplier = locale -> Map.of(
+                final MailTemplateModelSupplier modelSupplier = _ -> Map.of(
                     APPLICATION, application,
                     "daysBeforeUpcomingHolidayReplacement", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()),
                     "replacementNote", holidayReplacement.getNote()
