@@ -33,6 +33,7 @@ jobs:
         with:
           name: Release Urlaubsverwaltung ${{ steps.vars.outputs.version }}
           body_path: .chglog/${{ steps.vars.outputs.version }}.md
+          prerelease: true
           files: |
             ./target/urlaubsverwaltung-*.jar
 
