@@ -44,7 +44,14 @@ public class ApplicationsViewController implements HasLaunchpad {
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final Clock clock;
 
-    public ApplicationsViewController(PersonService personService, DepartmentService departmentService, ApplicationService applicationService, WorkDaysCountService workDaysCountService, VacationTypeViewModelService vacationTypeViewModelService, Clock clock) {
+    public ApplicationsViewController(
+        PersonService personService,
+        DepartmentService departmentService,
+        ApplicationService applicationService,
+        WorkDaysCountService workDaysCountService,
+        VacationTypeViewModelService vacationTypeViewModelService,
+        Clock clock
+    ) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;

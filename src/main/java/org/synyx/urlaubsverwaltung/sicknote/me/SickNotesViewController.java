@@ -47,11 +47,13 @@ public class SickNotesViewController implements HasLaunchpad {
     private final Clock clock;
 
     @Autowired
-    public SickNotesViewController(PersonService personService,
-                                   WorkDaysCountService workDaysCountService,
-                                   SickNoteService sickNoteService,
-                                   DepartmentService departmentService,
-                                   Clock clock) {
+    public SickNotesViewController(
+        PersonService personService,
+        WorkDaysCountService workDaysCountService,
+        SickNoteService sickNoteService,
+        DepartmentService departmentService,
+        Clock clock
+    ) {
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteService = sickNoteService;
@@ -90,7 +92,10 @@ public class SickNotesViewController implements HasLaunchpad {
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
 
-        model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
+        model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
 
         return "me/sicknotes";
     }
